@@ -30,37 +30,6 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Objects
 {
-    public enum LegionRole
-    {
-        Admin,
-        Manager,
-        Committed,
-        Trainee,
-        AwaitingInvite
-    }
-
-    public enum LegionPublicity
-    {
-        Public, //Will display on the 'Join Legion' page, anyone can join
-        PublicInviteOnly, //Will display on the 'Join Legion' page but you must be invited
-        Unlisted, //Won't display on 'Join Legion', but anyone can join
-        UnlistedInviteOnly //Won't display in 'Join Legion', and admin/manager invitation is required.
-    }
-
-    public class Legion
-    {
-        public string Name { get; set; }
-        public LegionPublicity Publicity { get; set; }
-        public ConsoleColor BannerColor { get; set; }
-        public string Description { get; set; }
-        public string ShortName { get; set; }
-
-        public Dictionary<string, LegionRole> Roles { get; set; }
-        public Dictionary<LegionRole, string> RoleNames { get; set; }
-
-        
-    }
-
     public class MUDMemo
     {
         public string UserFrom { get; set; }
@@ -68,12 +37,6 @@ namespace ShiftOS.Objects
         public MemoType Type { get; set; }
         public string Body { get; set; }
         public string Subject { get; set; }
-    }
-
-    public class ClientSave
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 
     public enum MemoType
@@ -121,45 +84,4 @@ namespace ShiftOS.Objects
         public string Contents { get; set; }
         public string GUID { get; set; }
     }
-
-    //Better to store this stuff server-side so we can do some neat stuff with hacking...
-    public class Save
-    {
-        public string Username { get; set; }
-        public int Codepoints { get; set; }
-        public Dictionary<string, bool> Upgrades { get; set; }
-        public int StoryPosition { get; set; }
-        public string Language { get; set; }
-
-        public List<string> CurrentLegions { get; set; }
-
-        public int MajorVersion { get; set; }
-        public int MinorVersion { get; set; }
-        public int Revision { get; set; }
-
-        public string Password { get; set; }
-        public string SystemName { get; set; }
-
-        public string DiscourseName { get; set; }
-
-        /// <summary>
-        /// If the user has entered their Discourse account into ShiftOS, this is the password they gave.
-        /// 
-        /// ANY developer caught abusing this property will have their dev status revoked and their account PERMANENTLY SUSPENDED. - Michael
-        /// </summary>
-        public string DiscoursePass { get; set; } 
-
-
-        public int CountUpgrades()
-        {
-            int count = 0;
-            foreach (var upg in Upgrades)
-            {
-                if (upg.Value == true)
-                    count++;
-            }
-            return count;
-        }
-    }
-
 }
