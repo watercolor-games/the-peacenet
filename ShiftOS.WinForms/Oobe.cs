@@ -427,5 +427,10 @@ namespace ShiftOS.WinForms
     password: ""{txtlpass.Text}""
 }}");
         }
+
+        private void Oobe_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -83,6 +83,8 @@ namespace ShiftOS.WinForms
             this.button1 = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.pnlterminaltutorial = new System.Windows.Forms.Panel();
+            this.pgsystemstatus = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
+            this.txtterm = new ShiftOS.WinForms.Controls.TerminalBox();
             this.pnlreenteruserinfo = new System.Windows.Forms.Panel();
             this.flowLayoutPanel8 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel9 = new System.Windows.Forms.FlowLayoutPanel();
@@ -99,8 +101,6 @@ namespace ShiftOS.WinForms
             this.pnlauthdone = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
-            this.pgsystemstatus = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
-            this.txtterm = new ShiftOS.WinForms.Controls.TerminalBox();
             this.pnlrelogin = new System.Windows.Forms.Panel();
             this.flowLayoutPanel11 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel12 = new System.Windows.Forms.FlowLayoutPanel();
@@ -469,6 +469,31 @@ namespace ShiftOS.WinForms
             this.pnlterminaltutorial.Size = new System.Drawing.Size(940, 604);
             this.pnlterminaltutorial.TabIndex = 5;
             // 
+            // pgsystemstatus
+            // 
+            this.pgsystemstatus.BackColor = System.Drawing.Color.Black;
+            this.pgsystemstatus.BlockSize = 5;
+            this.pgsystemstatus.Location = new System.Drawing.Point(4, 578);
+            this.pgsystemstatus.Maximum = 100;
+            this.pgsystemstatus.Name = "pgsystemstatus";
+            this.pgsystemstatus.Size = new System.Drawing.Size(933, 23);
+            this.pgsystemstatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pgsystemstatus.TabIndex = 2;
+            this.pgsystemstatus.Text = "shiftedProgressBar1";
+            this.pgsystemstatus.Value = 0;
+            this.pgsystemstatus.Visible = false;
+            // 
+            // txtterm
+            // 
+            this.txtterm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtterm.Location = new System.Drawing.Point(4, 3);
+            this.txtterm.Name = "txtterm";
+            this.txtterm.Size = new System.Drawing.Size(933, 598);
+            this.txtterm.TabIndex = 1;
+            this.txtterm.Text = "";
+            // 
             // pnlreenteruserinfo
             // 
             this.pnlreenteruserinfo.BackColor = System.Drawing.Color.DarkGray;
@@ -663,31 +688,6 @@ namespace ShiftOS.WinForms
             this.label12.Text = "Registration Failure\r\n\r\nYou may proceed on with your regular day.";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pgsystemstatus
-            // 
-            this.pgsystemstatus.BackColor = System.Drawing.Color.Black;
-            this.pgsystemstatus.BlockSize = 5;
-            this.pgsystemstatus.Location = new System.Drawing.Point(4, 578);
-            this.pgsystemstatus.Maximum = 100;
-            this.pgsystemstatus.Name = "pgsystemstatus";
-            this.pgsystemstatus.Size = new System.Drawing.Size(933, 23);
-            this.pgsystemstatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pgsystemstatus.TabIndex = 2;
-            this.pgsystemstatus.Text = "shiftedProgressBar1";
-            this.pgsystemstatus.Value = 0;
-            this.pgsystemstatus.Visible = false;
-            // 
-            // txtterm
-            // 
-            this.txtterm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtterm.Location = new System.Drawing.Point(4, 3);
-            this.txtterm.Name = "txtterm";
-            this.txtterm.Size = new System.Drawing.Size(933, 598);
-            this.txtterm.TabIndex = 1;
-            this.txtterm.Text = "";
-            // 
             // pnlrelogin
             // 
             this.pnlrelogin.BackColor = System.Drawing.Color.DarkGray;
@@ -849,7 +849,7 @@ namespace ShiftOS.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkBlue;
-            this.ClientSize = new System.Drawing.Size(1916, 1000);
+            this.ClientSize = new System.Drawing.Size(1354, 733);
             this.Controls.Add(this.pnlrelogerror);
             this.Controls.Add(this.pnlrelogin);
             this.Controls.Add(this.pnlauthdone);
@@ -863,6 +863,7 @@ namespace ShiftOS.WinForms
             this.Font = new System.Drawing.Font("Lucida Console", 9F);
             this.Name = "Oobe";
             this.Text = "OutOfBoxExperience";
+            this.Load += new System.EventHandler(this.Oobe_Load);
             this.pnllanguage.ResumeLayout(false);
             this.pnllanguage.PerformLayout();
             this.pnluserinfo.ResumeLayout(false);

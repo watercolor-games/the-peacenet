@@ -239,15 +239,18 @@ namespace ShiftOS.WinForms.Applications {
                         a.SuppressKeyPress = true;
                     }
                 }
-                  //( ͡° ͜ʖ ͡° ) You found the lennyface without looking at the commit message. Message Michael in the #shiftos channel on Discord saying "ladouceur" somewhere in your message if you see this.
-                  else if (a.KeyCode == Keys.Up) {
+                //( ͡° ͜ʖ ͡° ) You found the lennyface without looking at the commit message. Message Michael in the #shiftos channel on Discord saying "ladouceur" somewhere in your message if you see this.
+                else if (a.KeyCode == Keys.Up) {
                     var tostring3 = txt.Lines[txt.Lines.Length - 1];
                     if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                         Console.Write(TerminalBackend.LastCommand);
                     a.SuppressKeyPress = true;
 
                 } else {
-
+                    if (TerminalBackend.InStory)
+                    {
+                        a.SuppressKeyPress = true;
+                    }
                     AppearanceManager.CurrentPosition++;
                 }
 
