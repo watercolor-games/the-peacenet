@@ -36,25 +36,41 @@ namespace ShiftOS.Engine
 {
     public class Infobox
     {
+        // Set the infobox's interface to null
         private static IInfobox _infobox = null;
-
+        
+        /// <summary>
+        /// Creates a new infobox
+        /// </summary>
+        /// <param name="title">Infobox title</param>
+        /// <param name="message">Infobox message</param>
         [Obsolete("Please use Infobox.Show instead.")]
         public Infobox(string title, string message)
         {
             Infobox.Show(title, message);
         }
-
+        
+        /// <summary>
+        /// Shows an infobox
+        /// </summary>
+        /// <param name="title">Infobox title</param>
+        /// <param name="message">Infobox message</param>
         public static void Show(string title, string message)
         {
             _infobox.Open(title, message);
         }
-
+        
+        /// <summary>
+        /// Inits an infobox
+        /// </summary>
+        /// <param name="info">Interface for infobox</param>
         public static void Init(IInfobox info)
         {
             _infobox = info;
         }
     }
-
+    
+    // Infobox Interface
     public interface IInfobox
     {
         void Open(string title, string msg);
