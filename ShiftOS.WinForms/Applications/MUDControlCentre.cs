@@ -334,5 +334,49 @@ Current legions: {legionname}";
             ServerManager.SendMessage("user_get_legion", JsonConvert.SerializeObject(SaveSystem.CurrentSave));
 
         }
+
+        Legion newLegion = null;
+
+        private void createLegionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newLegion = new Legion();
+
+            SetupLegionEditor(newLegion);
+        }
+
+        public void SetupLegionEditor(Legion l)
+        {
+            if (l.ShortName == null)
+                l.ShortName = "NAME";
+            if (l.Name == null)
+                l.Name = "Legion name";
+            if (l.Description == null)
+                l.Description = "This is your legion description.";
+
+            txtnewlegionshortname.Text = l.ShortName;
+            txtnewlegiondescription.Text = l.Description;
+            txtnewlegiontitle.Text = l.Name;
+
+            lgn_create.BringToFront();
+        }
+
+        private void txtnewlegionshortname_TextChanged(object sender, EventArgs e)
+        {
+            var g = txtnewlegionshortname.CreateGraphics();
+
+            SizeF sf = g.MeasureString(txtnewlegionshortname.Text, txtnewlegionshortname.Font);
+
+            txtnewlegionshortname.Size = new Size((int)sf.Width, (int)sf.Height);
+        }
+
+        private void txtnewlegiontitle_TextChanged(object sender, EventArgs e)
+        {
+            var g = txtnewlegiontitle.CreateGraphics();
+
+            SizeF sf = g.MeasureString(txtnewlegiontitle.Text, txtnewlegiontitle.Font);
+
+            txtnewlegiontitle.Size = new Size((int)sf.Width, (int)sf.Height);
+
+        }
     }
 }
