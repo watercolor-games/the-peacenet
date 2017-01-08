@@ -304,3 +304,4 @@ namespace ShiftOS.WinForms.Applications {
         }
     }
 }
+//lol you found this comment i made so i chould push a change to make a point
