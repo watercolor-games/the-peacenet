@@ -1,5 +1,6 @@
 # ShiftOS
-[![Discord](https://discordapp.com/api/guilds/234414439330349056/widget.png?style=shield](https://discord.gg/Kd8BJ93)
+[![Discord](https://discordapp.com/api/guilds/234414439330349056/widget.png?style=shield]
+(https://discord.gg/Kd8BJ93)
 
 The official, open-source, C# revamp of ShiftOS by Michael VanOverbeek and the ShiftOS devs.
 
