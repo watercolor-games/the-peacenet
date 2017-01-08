@@ -162,7 +162,7 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "Shifter";
-            this.Text = "Shifter";
+            this.Text = "{SHIFTER_NAME}";
             this.Size = new System.Drawing.Size(893, 539);
             this.Load += new System.EventHandler(this.Shifter_Load);
             this.panel1.ResumeLayout(false);

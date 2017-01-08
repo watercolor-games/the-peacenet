@@ -149,7 +149,7 @@ namespace ShiftOS.WinForms.Applications
             this.ClientSize = new System.Drawing.Size(634, 369);
             this.Controls.Add(this.panel1);
             this.Name = "FileDialog";
-            this.Text = "File Dialog";
+            this.Text = "{FILE_DIALOG_NAME}";
             this.panel1.ResumeLayout(false);
             this.pnlfiletype.ResumeLayout(false);
             this.pnlfiletype.PerformLayout();

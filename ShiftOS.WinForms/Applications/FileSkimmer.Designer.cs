@@ -94,7 +94,7 @@ namespace ShiftOS.WinForms.Applications
             this.ClientSize = new System.Drawing.Size(634, 369);
             this.Controls.Add(this.panel1);
             this.Name = "FileSkimmer";
-            this.Text = "File Skimmer";
+            this.Text = "{FILE_SKIMMER_NAME}";
             this.Load += new System.EventHandler(this.FileSkimmer_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);

@@ -426,7 +426,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.pnlborder);
             this.Controls.Add(this.pnldesktop);
             this.Name = "Skin_Loader";
-            this.Text = "Skin Loader";
+            this.Text = "{SKIN_LOADER_NAME}";
             this.pnldesktop.ResumeLayout(false);
             this.pnlborder.ResumeLayout(false);
             this.flbuttons.ResumeLayout(false);

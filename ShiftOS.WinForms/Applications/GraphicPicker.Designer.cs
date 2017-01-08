@@ -252,7 +252,7 @@ namespace ShiftOS.WinForms.Applications
             this.ClientSize = new System.Drawing.Size(390, 383);
             this.Controls.Add(this.pgcontents);
             this.Name = "GraphicPicker";
-            this.Text = "Graphic Picker";
+            this.Text = "{GRAPHIC_PICKER_NAME}";
             this.Load += new System.EventHandler(this.Graphic_Picker_Load);
             this.pgcontents.ResumeLayout(false);
             this.pgcontents.PerformLayout();

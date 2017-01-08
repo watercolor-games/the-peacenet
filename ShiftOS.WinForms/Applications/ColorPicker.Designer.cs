@@ -3266,7 +3266,7 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pgcontents);
             this.Name = "ColorPicker";
-            this.Text = "Color Picker";
+            this.Text = "{COLOR_PICKER_NAME}";
             this.Size = new System.Drawing.Size(552, 657);
             this.Load += new System.EventHandler(this.Color_Picker_Load);
             this.pgcontents.ResumeLayout(false);
