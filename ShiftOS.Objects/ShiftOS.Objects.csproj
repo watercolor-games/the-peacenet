@@ -54,10 +54,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientSave.cs" />
     <Compile Include="DiscourseUser.cs" />
+    <Compile Include="Exploit.cs" />
+    <Compile Include="ExploitContext.cs" />
     <Compile Include="Hack.cs" />
+    <Compile Include="Legion.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftOSMenuRenderer.cs" />
   </ItemGroup>
