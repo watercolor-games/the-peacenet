@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<title>Multi-User Domain &bull; Administration Panel - Page not found.</title>
+	</head>
+	<body>
+		<h1>This page wasn't found.</h1>
+		<p>We couldn't find this page...</p>
+	</body>
+</html>

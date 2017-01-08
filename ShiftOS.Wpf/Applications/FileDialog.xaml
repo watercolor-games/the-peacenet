@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="ShiftOS.Wpf.Applications.FileDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShiftOS.Wpf.Applications"
+             mc:Ignorable="d" 
+         Height="400" Width="650">
+    <DockPanel LastChildFill="True">
+        <WrapPanel Style="{DynamicResource Toolbar}" DockPanel.Dock="Top">
+            <Button Style="{DynamicResource ToolbarButton}" x:Name="newFolder">New Folder</Button>
+            <Button Style="{DynamicResource ToolbarButton}" x:Name="deleteSelected">Delete</Button>
+        </WrapPanel>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Bottom">
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Filename:  </TextBlock>
+            <DockPanel LastChildFill="True" DockPanel.Dock="Right">
+                <Button DockPanel.Dock="Right"  x:Name="btnconfirm" Click="btnconfirm_Click" Style="{DynamicResource ToolbarButton}">Open</Button>
+                <ComboBox Width="75" x:Name="filter" SelectionChanged="filter_SelectionChanged"></ComboBox>
+
+            </DockPanel>
+            <TextBox x:Name="txtfilename"></TextBox>
+        </DockPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <WrapPanel x:Name="lbfiles">
+
+            </WrapPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>ShiftOS Multi-User Domain &bull; Admin Panel</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<a class="navbar-brand" href="/">MUD Admin Panel</a>
+			
+				<ul class="nav navbar-nav">
+					<li><a href="/chats">Chat manager</a></li>
+					<li><a href="/status" class="active">System status</a></li>
+				</ul>
+			</div>
+		</nav>
+
+		<div class="container">
+
+			{BODY}
+
+			<footer>
+				<p>MUD server on {IP_ADDR}:{PORT}</p>
+			</footer>
+		</div>
+	</body>
+</html>

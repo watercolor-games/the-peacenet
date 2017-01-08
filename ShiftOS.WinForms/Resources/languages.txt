@@ -1,0 +1,4 @@
+[
+	"english"
+	"deutsch - in beta"
+]

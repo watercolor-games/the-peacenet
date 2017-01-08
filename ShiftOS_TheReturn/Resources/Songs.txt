@@ -1,0 +1,4 @@
+[
+	"http://downloads.michaeltheshifter.me/music/blockride.mp3",
+	"http://downloads.michaeltheshifter.me/music/nightcoding.mp3"
+]

@@ -1,0 +1,12 @@
+diff a/ShiftOS_TheReturn/Applications/Terminal.cs b/ShiftOS_TheReturn/Applications/Terminal.cs	(rejected hunks)
+@@ -228,6 +228,10 @@
+             string args = text.Substring(argStart, text.Length - argStart);
+             text = text.Remove(argStart, text.Length - argStart).Replace(" ", "");
+ 
++            if(string.IsNullOrWhiteSpace(args))
++            {
++                return new Dictionary<string, object>();
++            }
+             return JsonConvert.DeserializeObject<Dictionary<string, object>>(args);
+         }
+ 

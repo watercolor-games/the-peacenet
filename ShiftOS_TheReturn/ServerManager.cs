@@ -1,0 +1,177 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ShiftOS.Objects;
+using NetSockets;
+using System.Windows.Forms;
+using System.Threading;
+using ShiftOS;
+using static ShiftOS.Engine.SaveSystem;
+using Newtonsoft.Json;
+
+namespace ShiftOS.Engine
+{
+    public static class ServerManager
+    {
+        public static void PrintDiagnostics()
+        {
+            Console.WriteLine($@"{{CLIENT_DIAGNOSTICS}}
+
+{{GUID}}: {thisGuid}
+{{CLIENT_DATA}}:
+
+{JsonConvert.SerializeObject(client, Formatting.Indented)}");
+        }
+
+        private static Guid thisGuid { get; set; }
+        private static NetObjectClient client { get; set; }
+
+        public static void Disconnect()
+        {
+            if (client != null)
+            {
+                client.Disconnect();
+            }
+            Disconnected?.Invoke();
+
+        }
+
+        public static event EmptyEventHandler Disconnected;
+        
+        public static void InitiateMUDHack()
+        {
+            MessageReceived += ServerManager_MessageReceived;
+            SendMessage("mudhack_init", "");
+        }
+
+        public static event Action<string> ServerPasswordGenerated;
+        public static event EmptyEventHandler ServerAccessGranted;
+        public static event EmptyEventHandler ServerAccessDenied;
+        public static event Action<string> GUIDReceived;
+        public static event Action<List<OnlineUser>> UsersReceived;
+
+        private static void ServerManager_MessageReceived(ServerMessage msg)
+        {
+            switch(msg.Name)
+            {
+                case "mudhack_users":
+                    UsersReceived?.Invoke(JsonConvert.DeserializeObject<List<OnlineUser>>(msg.Contents));
+                    break;
+                case "mudhack_init":
+                    ServerPasswordGenerated?.Invoke(msg.Contents);
+                    break;
+                case "mudhack_denied":
+                    ServerAccessDenied?.Invoke();
+                    break;
+                case "mudhack_granted":
+                    ServerAccessGranted?.Invoke();
+                    break;
+                case "getguid_fromserver":
+                    if(SaveSystem.CurrentSave.Username == msg.Contents)
+                    {
+                        client.Send(new NetObject("yes_i_am", new ServerMessage
+                        {
+                            Name = "getguid_reply",
+                            GUID = msg.GUID,
+                            Contents = thisGuid.ToString(),
+                        }));
+                    }
+                    break;
+                case "getguid_reply":
+                    GUIDReceived?.Invoke(msg.Contents);
+                    break;
+            }
+        }
+
+        public static void Detach_ServerManager_MessageReceived()
+        {
+            MessageReceived -= new ServerMessageReceived(ServerManager_MessageReceived);
+        }
+
+        public static void Initiate(string mud_address, int port)
+        {
+            client = new NetObjectClient();
+
+            client.OnReceived += (o, a) =>
+            {
+                var msg = a.Data.Object as ServerMessage;
+                if (msg.Name == "Welcome")
+                {
+                    thisGuid = new Guid(msg.Contents);
+                    GUIDReceived?.Invoke(msg.Contents);
+                }
+                else if(msg.Name =="broadcast")
+                {
+                    Console.WriteLine(msg.Contents);
+                }
+                else if (msg.Name == "Error")
+                {
+                    var ex = JsonConvert.DeserializeObject<Exception>(msg.Contents);
+                    TerminalBackend.PrefixEnabled = true;
+                    Console.WriteLine($@"{{MUD_ERROR}}: {ex.Message}");
+                    TerminalBackend.PrefixEnabled = true;
+                    Console.Write($"{SaveSystem.CurrentSave.Username}@{CurrentSave.SystemName}:~$ ");
+                }
+                else
+                {
+                    MessageReceived?.Invoke(msg);
+                }
+            };
+
+            client.Connect(mud_address, port);
+
+        }
+
+        public static void SendMessage(string name, string contents)
+        {
+            var sMsg = new ServerMessage
+            {
+                Name = name,
+                Contents = contents,
+                GUID = thisGuid.ToString(),
+            };
+
+            client.Send(new NetObject("msg", sMsg));
+
+        }
+
+        private static bool singleplayer = false;
+        public static bool IsSingleplayer { get { return singleplayer; } }
+
+        public static void StartLANServer()
+        {
+            singleplayer = true;
+            ShiftOS.Server.Program.ServerStarted += (address) =>
+            {
+                Console.WriteLine($"Connecting to {address}...");
+                Initiate(address, 13370);
+            };
+            Disconnected += () =>
+            {
+                ShiftOS.Server.Program.Stop();
+            };
+            ShiftOS.Server.Program.Main(new[] { "" });
+
+
+        }
+
+
+        public static event ServerMessageReceived MessageReceived;
+
+    }
+
+    public delegate void ServerMessageReceived(ServerMessage msg);
+
+    public class MultiplayerOnlyAttribute : Attribute
+    {
+        /// <summary>
+        /// Marks this application as a multiplayer-only application.
+        /// </summary>
+        public MultiplayerOnlyAttribute()
+        {
+
+        }
+    }
+}

@@ -1,0 +1,464 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2295D2E2-3A00-4E02-B66F-B961AC329FE6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ShiftOS.WinForms</RootNamespace>
+    <AssemblyName>ShiftOS.WinForms</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Applications\Artpad.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Artpad.Designer.cs">
+      <DependentUpon>Artpad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Chat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Chat.Designer.cs">
+      <DependentUpon>Chat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\CoherenceOverlay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\CoherenceOverlay.Designer.cs">
+      <DependentUpon>CoherenceOverlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\ColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ColorPicker.Designer.cs">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Dialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Dialog.Designer.cs">
+      <DependentUpon>Dialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\FileDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\FileDialog.Designer.cs">
+      <DependentUpon>FileDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\FileSkimmer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\FileSkimmer.Designer.cs">
+      <DependentUpon>FileSkimmer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\GraphicPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\GraphicPicker.Designer.cs">
+      <DependentUpon>GraphicPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\mp3Player.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\mp3Player.Designer.cs">
+      <DependentUpon>mp3Player.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\MUDAuthenticator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\MUDAuthenticator.Designer.cs">
+      <DependentUpon>MUDAuthenticator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\MUDControlCentre.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\MUDControlCentre.Designer.cs">
+      <DependentUpon>MUDControlCentre.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\MUDPasswordCracker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\MUDPasswordCracker.Designer.cs">
+      <DependentUpon>MUDPasswordCracker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\NameChanger.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\NameChanger.Designer.cs">
+      <DependentUpon>NameChanger.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Pong.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Pong.Designer.cs">
+      <DependentUpon>Pong.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Shifter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Shifter.Designer.cs">
+      <DependentUpon>Shifter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\ShiftoriumFrontend.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
+      <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Skin Loader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Skin Loader.Designer.cs">
+      <DependentUpon>Skin Loader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TextPad.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TextPad.Designer.cs">
+      <DependentUpon>TextPad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\VirusScanner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\VirusScanner.Designer.cs">
+      <DependentUpon>VirusScanner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Terminal.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Terminal.Designer.cs">
+      <DependentUpon>Terminal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands.cs" />
+    <Compile Include="Controls\ColorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ColorControl.Designer.cs">
+      <DependentUpon>ColorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ShiftedProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ShiftedProgressBar.Designer.cs">
+      <DependentUpon>ShiftedProgressBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TerminalBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Oobe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Oobe.Designer.cs">
+      <DependentUpon>Oobe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\ColorPickerDataBackend.cs" />
+    <Compile Include="Tools\ControlManager.cs" />
+    <Compile Include="Tools\DitheringEngine.cs" />
+    <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
+    <Compile Include="WFLanguageProvider.cs" />
+    <Compile Include="WindowBorder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowBorder.Designer.cs">
+      <DependentUpon>WindowBorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinformsDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinformsDesktop.Designer.cs">
+      <DependentUpon>WinformsDesktop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WinformsWindowManager.cs" />
+    <EmbeddedResource Include="Applications\Artpad.resx">
+      <DependentUpon>Artpad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Chat.resx">
+      <DependentUpon>Chat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ColorPicker.resx">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\FileDialog.resx">
+      <DependentUpon>FileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\FileSkimmer.resx">
+      <DependentUpon>FileSkimmer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\GraphicPicker.resx">
+      <DependentUpon>GraphicPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\mp3Player.resx">
+      <DependentUpon>mp3Player.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\MUDAuthenticator.resx">
+      <DependentUpon>MUDAuthenticator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\MUDControlCentre.resx">
+      <DependentUpon>MUDControlCentre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\MUDPasswordCracker.resx">
+      <DependentUpon>MUDPasswordCracker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\NameChanger.resx">
+      <DependentUpon>NameChanger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Pong.resx">
+      <DependentUpon>Pong.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Shifter.resx">
+      <DependentUpon>Shifter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
+      <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Skin Loader.resx">
+      <DependentUpon>Skin Loader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TextPad.resx">
+      <DependentUpon>TextPad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\VirusScanner.resx">
+      <DependentUpon>VirusScanner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Terminal.resx">
+      <DependentUpon>Terminal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Oobe.resx">
+      <DependentUpon>Oobe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="WindowBorder.resx">
+      <DependentUpon>WindowBorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShiftOS.Objects\ShiftOS.Objects.csproj">
+      <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
+      <Name>ShiftOS.Objects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShiftOS_TheReturn\ShiftOS.Engine.csproj">
+      <Project>{7c979b07-0585-4033-a110-e5555b9d6651}</Project>
+      <Name>ShiftOS.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadcirclerubber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadcirclerubberselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPaderacer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadfloodfill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadlinetool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadmagnify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadnew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadopen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadOval.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadpaintbrush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadpencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadpixelplacer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadRectangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadredo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadsave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadsquarerubber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadsquarerubberselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadtexttool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArtPadundo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon0.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon3.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon4.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon5.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon6.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon7.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon8.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon9.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon10.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon11.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon12.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon13.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon14.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon15.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon16.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon17.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon18.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileicon19.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fileiconsaa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FloppyDriveIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hello.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\languages.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shiftorium.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Songs.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strings_de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strings_en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sys_shiftoriumstory.txt" />
+    <Content Include="Resources\hello.txt" />
+    <None Include="Resources\secretlang.txt" />
+    <None Include="Resources\strings_ver.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

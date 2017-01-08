@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="ShiftOS.Wpf.Applications.SkinLoader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShiftOS.Wpf.Applications"
+             mc:Ignorable="d" 
+             Height="400" Width="700">
+    <DockPanel LastChildFill="True">
+        <WrapPanel Height="Auto" DockPanel.Dock="Bottom">
+            <Button x:Name="close" Click="close_Click">Close</Button>
+            <Button x:Name="loaddefault" Click="loaddefault_Click">Load default</Button>
+            <Button x:Name="import" Click="import_Click">Import</Button>
+            <Button x:Name="export" Click="export_Click">Export</Button>
+            <Button x:Name="apply" Click="apply_Click">Apply</Button>
+        </WrapPanel>
+
+        <Canvas DockPanel.Dock="Top" Background="{DynamicResource desktoppanelbg}" Name="desktoppanel" Height="{DynamicResource desktoppanelheight}" HorizontalAlignment="Stretch" VerticalAlignment="{DynamicResource desktoppanelpos}">
+
+
+            <Button Click="apps_Click" Width="100" Height="24" Name="apps">
+                <TextBlock Text="Applications">
+
+                </TextBlock>
+            </Button>
+        </Canvas>
+        
+        <Canvas x:Name="windowlayer">
+            <StackPanel x:Name="appsmenu" Canvas.Left="0" Canvas.Top="0" Background="White" Width="100" Visibility="Hidden"></StackPanel>
+
+            <DockPanel Canvas.Left="50" Canvas.Top="50" Width="300" Height="300">
+                <Grid DockPanel.Dock="Top" x:Name="titlemaster" Height="30" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <Canvas x:Name="titleleft" HorizontalAlignment="Left" Background="Gray" Width="2"></Canvas>
+                    <Canvas x:Name="titlebar" HorizontalAlignment="Stretch" Background="Gray">
+                        <TextBlock x:Name="titletext" VerticalAlignment="Center" Foreground="White" Height="Auto" HorizontalAlignment="Stretch" FontFamily="Tahoma" FontSize="18">Template</TextBlock>
+                        <Button Width="24" Height="24" x:Name="closebtn" Background="Red" Canvas.Left="266" Canvas.Top="6"/>
+                        <Button Width="24" Height="24" x:Name="max" Background="green" Canvas.Left="239" Canvas.Top="4" RenderTransformOrigin="0.5,0.5">
+
+                        </Button>
+                        <Button Width="24" Height="24" x:Name="min" Background="yellow" Canvas.Left="212" Canvas.Top="3"/>
+
+                    </Canvas>
+                    <Canvas x:Name="titleright" HorizontalAlignment="Right" Background="Gray" Width="2"></Canvas>
+
+                </Grid>
+                <DockPanel x:Name="bottommaster" DockPanel.Dock="Bottom" Height="2" HorizontalAlignment="Stretch">
+                    <Canvas DockPanel.Dock="Left" x:Name="borderbottoml" HorizontalAlignment="Left" Background="Red" Width="2">
+
+                    </Canvas>
+                    <Canvas DockPanel.Dock="Right" x:Name="borderbottomr" HorizontalAlignment="Right" Background="Red" Width="2" Grid.Column="1">
+
+                    </Canvas>
+                    <Canvas x:Name="borderbottom" Background="Red" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
+
+                    </Canvas>
+
+                </DockPanel>
+                <DockPanel Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Canvas DockPanel.Dock="Left" x:Name="borderleft" HorizontalAlignment="Left" Background="Red" Width="2">
+
+                    </Canvas>
+                    <Canvas DockPanel.Dock="Right" x:Name="borderright" HorizontalAlignment="Right" Background="Red" Width="2">
+
+                    </Canvas>
+                    <UserControl x:Name="pgcontents" Background="White" HorizontalAlignment="Stretch">
+
+                    </UserControl>
+
+                </DockPanel>
+
+            </DockPanel>
+
+        </Canvas>            
+    </DockPanel>
+</UserControl>

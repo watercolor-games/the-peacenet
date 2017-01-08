@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="ShiftOS.Wpf.Applications.Infobox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShiftOS.Wpf.Applications"
+             mc:Ignorable="d" 
+             Height="300" Width="475">
+    <Grid>
+        <TextBlock x:Name="txtmessage" VerticalAlignment="Center" HorizontalAlignment="Center">Message goes here.</TextBlock>
+        <Button x:Name="btnokay" Click="btnokay_Click" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">OK</Button>
+    </Grid>
+</UserControl>

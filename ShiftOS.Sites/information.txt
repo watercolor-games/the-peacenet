@@ -1,0 +1,14 @@
+The ShiftOS Site repo was moved to automate deployment.
+
+However, this also comes at a toll to the rest of you developers:
+
+To help protect the automated deployment system from griefing, trolling etc. from other developers - nobody will have access to this other repo.
+
+There are only two people who are allowed access to the website repository:
+
+- Me (NarodGaming): I own and run the website itself, i even own the hardware it runs on.
+- Michael: He owns the damn project, and is trustworthy.
+
+If you believe that you should have access, just PM me on Discord on the forums, and I'll give it a think.
+
+Sorry for any inconvinience caused - but I hope you understand.

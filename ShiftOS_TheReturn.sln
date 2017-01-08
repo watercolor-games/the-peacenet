@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Engine", "ShiftOS_TheReturn\ShiftOS.Engine.csproj", "{7C979B07-0585-4033-A110-E5555B9D6651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Objects", "ShiftOS.Objects\ShiftOS.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Server", "ShiftOS.Server\ShiftOS.Server.csproj", "{226C63B4-E60D-4949-B4E7-7A2DDBB96776}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Wpf", "ShiftOS.Wpf\ShiftOS.Wpf.csproj", "{A589969D-227A-48AF-A176-81022CF01E62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.WinForms", "ShiftOS.WinForms\ShiftOS.WinForms.csproj", "{2295D2E2-3A00-4E02-B66F-B961AC329FE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.MFSProfiler", "ShiftOS.MFSProfiler\ShiftOS.MFSProfiler.csproj", "{AF587F3F-CA85-4183-BEEB-ACF527B1FFF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C979B07-0585-4033-A110-E5555B9D6651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C979B07-0585-4033-A110-E5555B9D6651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C979B07-0585-4033-A110-E5555B9D6651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C979B07-0585-4033-A110-E5555B9D6651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A069089A-8962-4607-B2B2-4CF4A371066E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A069089A-8962-4607-B2B2-4CF4A371066E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226C63B4-E60D-4949-B4E7-7A2DDBB96776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226C63B4-E60D-4949-B4E7-7A2DDBB96776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226C63B4-E60D-4949-B4E7-7A2DDBB96776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226C63B4-E60D-4949-B4E7-7A2DDBB96776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A589969D-227A-48AF-A176-81022CF01E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A589969D-227A-48AF-A176-81022CF01E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A589969D-227A-48AF-A176-81022CF01E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A589969D-227A-48AF-A176-81022CF01E62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2295D2E2-3A00-4E02-B66F-B961AC329FE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2295D2E2-3A00-4E02-B66F-B961AC329FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2295D2E2-3A00-4E02-B66F-B961AC329FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2295D2E2-3A00-4E02-B66F-B961AC329FE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF587F3F-CA85-4183-BEEB-ACF527B1FFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF587F3F-CA85-4183-BEEB-ACF527B1FFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF587F3F-CA85-4183-BEEB-ACF527B1FFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF587F3F-CA85-4183-BEEB-ACF527B1FFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,45 @@
+{
+	Character: "sys",
+	Lines:[
+		"Hello there, %user.",
+		"Welcome to ShiftOS.",
+		"This is an automated message to all new sentiences within the ShiftOS multi-user domain.",
+		"Before you can begin with ShiftOS, you'll need to know a few things about it.",
+		"One: Terminal command syntax.",
+		"Inside ShiftOS, the bulk of your time is going to be spent within the Terminal.",
+		"The Terminal is an application that starts up when you turn on your computer. It allows you to execute system commands, open programs and control your system.",
+		"To enter commands into your terminal, simply type in the user who created the command's name, a.k.a it's \"namespace\", followed by a period (.) followed by the command's name.",
+		"For example, sos.help.",
+		"If you would like to specify command parameters, you can do so by entering a set of curly braces {} after the command name.",
+		"An empty set of curly braces, or none at all, means no parameters. However, if you'd like to send a parameter, inside the curly braces, type the parameter name",
+		"followed by a colon (:) and then the value.",
+		"There are various value types you can use:
+
+ - Booleans ({key:true, key2:false})
+ - Integers ({number:123}) - Note that integers have a maximum value of 2.4 billion.
+ - Strings ({key:\"value\"})
+ - Objects ({key:{key2:\"value\"}})
+ - Arrays ({key:[\"element 1\", \"element 2\"]})",
+		"For example, I can do win.open{app:\"pong\"} to open the Pong application from the Terminal.",
+		"Next on the list - Codepoints and the Shiftorium.",
+		"Right now you only have two applications - the Terminal, and Pong.",
+		"This is not a usable operating system.",
+		"You can only have one application open.",
+		"You can't customize it.",
+		"You can't access your files.",
+		"Only the Terminal and Pong.",
+		"But fear not. You can upgrade ShiftOS just like you would a car or a home.",
+		"You can buy new applications, tweaks, features, and other upgrades.",
+		"But how?",
+		"First, you need Codepoints.",
+		"cmd:givecp 50",
+		"You have been given 50 Codepoints.",
+		"You can use Codepoints to buy upgrades inside the Shiftorium.",
+		"The first upgrade you want to buy is called MUD Fundamentals.",
+		"It unlocks certain capabilities within the multi-user domain such as the ability to run scripts and commands within the multi-user domain, as well as the ability to chat with other sentiences and upload your own programs.",
+		"It costs 50 Codepoints. You may buy it using the codepoints you have been given, or you can try and earn your own Codepoints using pong.",
+		"But be careful, it's best to buy things that can give you even more Codepoints...",
+		"because when you run out and can't make any more.... you're stuck with what you've got.",
+		"Disconnecting from sentience '%user' on system %domain.",
+	]
+}

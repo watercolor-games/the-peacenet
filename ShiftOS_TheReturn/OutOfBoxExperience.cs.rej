@@ -1,0 +1,105 @@
+diff a/ShiftOS_TheReturn/OutOfBoxExperience.cs b/ShiftOS_TheReturn/OutOfBoxExperience.cs	(rejected hunks)
+@@ -98,36 +98,84 @@
+ 
+             var t = new Thread(new ThreadStart(() =>
+             {
+-                int current = 0;
++            int current = 0;
++            Console.WriteLine("{INSTALLING_SHIFTOS}");
++            while (current != 100)
++            {
++                string parse = Localization.Parse("{TERMINAL_FORMATTING_DRIVE}", new Dictionary<string, string>()
++                {
++                    { "%percent", $"{current}" }
++                });
+                 Console.WriteLine("{INSTALLING_SHIFTOS}");
+-                while (current != 100)
++                Console.WriteLine(parse);
++                Thread.Sleep(250);
++                this.Invoke(new Action(() =>
+                 {
+-                    string parse = Localization.Parse("{TERMINAL_FORMATTING_DRIVE}", new Dictionary<string, string>()
++                    txtterm.Text = "";
++                }));
++                current += 1;
++            }
++
++            string p = Localization.Parse("{TERMINAL_FORMATTING_DRIVE}", new Dictionary<string, string>()
+                 {
+                     { "%percent", $"{current}" }
+                 });
+-                    Console.WriteLine("{INSTALLING_SHIFTOS}");
+-                    Console.WriteLine(parse);
+-                    Thread.Sleep(250);
+-                    this.Invoke(new Action(() =>
+-                    {
+-                        txtterm.Text = "";
+-                    }));
+-                    current += 1;
++            Console.WriteLine("{INSTALLING_SHIFTOS}");
++            Console.WriteLine(p);
++
++            Thread.Sleep(1000);
++
++            Console.WriteLine("{GENERATING_PATHS}");
++
++            ScanAllFiles("0:");
++
++            Thread.Sleep(1250);
++
++            Console.WriteLine("{CREATING_USER}");
++
++            Thread.Sleep(300);
++
++            Console.WriteLine("{SHIFTOS_HAS_BEEN_INSTALLED}");
++
++                for (int i = 5; i >= 0; i--)
++                {
++                    Console.WriteLine(Localization.Parse("{REBOOTING_SYSTEM}", new Dictionary<string, string>()
++                {
++                        { "%i", i.ToString()}
++            }));
++                    Thread.Sleep(1000);
+                 }
+ 
+-                string p = Localization.Parse("{TERMINAL_FORMATTING_DRIVE}", new Dictionary<string, string>()
++                this.Invoke(new Action(() =>
+                 {
+-                    { "%percent", $"{current}" }
+-                });
+-                Console.WriteLine("{INSTALLING_SHIFTOS}");
+-                Console.WriteLine(p);
++                    txtterm.Text = "";
++                }));
+ 
+-                Thread.Sleep(1000);
++                Console.WriteLine("{TERMINAL_TUTORIAL_1}");
+ 
+-                Console.WriteLine("{GENERATING_PATHS}");
++                SaveSystem.TransferCodepointsFrom("sos", 50);
+ 
+-                ScanAllFiles("0:");
++                Applications.Terminal.InStory = false;
++
++                while (!Shiftorium.UpgradeInstalled("mud_fundamentals"))
++                {
++
++                }
++
++                var t2 = new Thread(new ThreadStart(() =>
++                {
++                    int storyPos = SaveSystem.CurrentSave.StoryPosition + 1;
++                    while(storyPos > SaveSystem.CurrentSave.StoryPosition)
++                    {
++                        this.Invoke(new Action(() =>
++                        {
++                            this.Close();
++                        }));
++                    }
++                }));
++                t2.IsBackground = true;
++                t2.Start();
++                Story.StartDevXLies();
+ 
+             }));
+             t.IsBackground = true;
