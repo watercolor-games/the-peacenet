@@ -748,6 +748,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.toolStripContainer1);
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "MUDControlCentre";
+            this.Text = "{MUD_CONTROL_CENTRE_NAME}";
             this.Size = new System.Drawing.Size(756, 488);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

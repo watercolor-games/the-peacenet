@@ -54,7 +54,7 @@ namespace ShiftOS.WinForms.Applications
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Dialog";
+            this.Text = "{DIALOG_NAME}";
         }
 
         #endregion

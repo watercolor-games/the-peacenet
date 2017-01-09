@@ -199,7 +199,7 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pgcontents);
             this.Name = "VirusScanner";
-            this.Text = "Virus Scanner";
+            this.Text = "{VIRUS_SCANNER_NAME}";
             this.Size = new System.Drawing.Size(565, 343);
             this.Load += new System.EventHandler(this.VirusScanner_Load);
             this.grpresults.ResumeLayout(false);

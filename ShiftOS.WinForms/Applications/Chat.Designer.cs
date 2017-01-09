@@ -93,7 +93,7 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "Chat";
-            this.Text = "Chat";
+            this.Text = "{CHAT_NAME}";
             this.Size = new System.Drawing.Size(633, 318);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

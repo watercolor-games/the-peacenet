@@ -169,6 +169,13 @@ namespace ShiftOS.Engine {
             AppearanceManager.ConsoleOut.Clear();
             return true;
         }
+        
+        [Command("echo")]
+        [RequiresArgument("text")]
+        public static bool Echo(Dictionary<string, object> args) {
+            Console.WriteLine(args["text"]);
+            return true;
+        }
     }
 
 #if DEVEL

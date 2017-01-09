@@ -206,7 +206,7 @@ namespace ShiftOS.WinForms.Applications
             this.ClientSize = new System.Drawing.Size(622, 430);
             this.Controls.Add(this.panel1);
             this.Name = "MUDAuthenticator";
-            this.Text = "Multi-User Domain Admin Panel";
+            this.Text = "{MUD_AUTHENTICATOR_NAME}";
             this.panel1.ResumeLayout(false);
             this.pnlmain.ResumeLayout(false);
             this.pnlusers.ResumeLayout(false);

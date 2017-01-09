@@ -85,6 +85,7 @@ namespace ShiftOS.WinForms.Applications
             lbupgrades.Items.Clear();
             upgrades.Clear();
             Timer();
+            label2.Text = "You have: " + SaveSystem.CurrentSave.Codepoints.ToString() + " Codepoints";
 
             foreach (var upg in backend.GetAvailable())
             {
