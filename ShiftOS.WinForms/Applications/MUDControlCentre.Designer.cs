@@ -71,6 +71,20 @@ namespace ShiftOS.WinForms.Applications
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.txtappstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.lgn_create = new System.Windows.Forms.Panel();
+            this.txtnewlegiondescription = new System.Windows.Forms.TextBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtnewlegionshortname = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtnewlegiontitle = new System.Windows.Forms.TextBox();
+            this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            this.button3 = new System.Windows.Forms.Button();
             this.lgn_view = new System.Windows.Forms.Panel();
             this.pnllgnusers = new System.Windows.Forms.Panel();
             this.lvusers = new System.Windows.Forms.ListView();
@@ -95,26 +109,17 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.lgn_create = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.txtnewlegionshortname = new System.Windows.Forms.TextBox();
-            this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtnewlegiontitle = new System.Windows.Forms.TextBox();
-            this.txtnewlegiondescription = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.lgn_create.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.flowLayoutPanel4.SuspendLayout();
+            this.flowLayoutPanel3.SuspendLayout();
             this.lgn_view.SuspendLayout();
             this.pnllgnusers.SuspendLayout();
             this.banner.SuspendLayout();
@@ -124,11 +129,6 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel2.SuspendLayout();
             this.you_memos.SuspendLayout();
             this.you_systemstatus.SuspendLayout();
-            this.lgn_create.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.flowLayoutPanel3.SuspendLayout();
-            this.flowLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -231,21 +231,21 @@ namespace ShiftOS.WinForms.Applications
             // createLegionToolStripMenuItem
             // 
             this.createLegionToolStripMenuItem.Name = "createLegionToolStripMenuItem";
-            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.createLegionToolStripMenuItem.Text = "Create Legion";
             this.createLegionToolStripMenuItem.Click += new System.EventHandler(this.createLegionToolStripMenuItem_Click);
             // 
             // joinLegionToolStripMenuItem
             // 
             this.joinLegionToolStripMenuItem.Name = "joinLegionToolStripMenuItem";
-            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.joinLegionToolStripMenuItem.Text = "Join Legion";
             this.joinLegionToolStripMenuItem.Click += new System.EventHandler(this.joinLegionToolStripMenuItem_Click);
             // 
             // myLegionToolStripMenuItem
             // 
             this.myLegionToolStripMenuItem.Name = "myLegionToolStripMenuItem";
-            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.myLegionToolStripMenuItem.Text = "My Legion";
             this.myLegionToolStripMenuItem.Click += new System.EventHandler(this.myLegionToolStripMenuItem_Click);
             // 
@@ -291,6 +291,173 @@ namespace ShiftOS.WinForms.Applications
             // toolStripContainer1.TopToolStripPanel
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip1);
+            // 
+            // lgn_create
+            // 
+            this.lgn_create.Controls.Add(this.txtnewlegiondescription);
+            this.lgn_create.Controls.Add(this.panel2);
+            this.lgn_create.Controls.Add(this.label7);
+            this.lgn_create.Controls.Add(this.panel4);
+            this.lgn_create.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lgn_create.Location = new System.Drawing.Point(0, 0);
+            this.lgn_create.Name = "lgn_create";
+            this.lgn_create.Size = new System.Drawing.Size(756, 442);
+            this.lgn_create.TabIndex = 4;
+            // 
+            // txtnewlegiondescription
+            // 
+            this.txtnewlegiondescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtnewlegiondescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtnewlegiondescription.Location = new System.Drawing.Point(21, 176);
+            this.txtnewlegiondescription.Multiline = true;
+            this.txtnewlegiondescription.Name = "txtnewlegiondescription";
+            this.txtnewlegiondescription.Size = new System.Drawing.Size(368, 240);
+            this.txtnewlegiondescription.TabIndex = 4;
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.label10);
+            this.panel2.Controls.Add(this.label5);
+            this.panel2.Location = new System.Drawing.Point(413, 130);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(337, 286);
+            this.panel2.TabIndex = 3;
+            // 
+            // label10
+            // 
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Location = new System.Drawing.Point(0, 13);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(337, 273);
+            this.label10.TabIndex = 3;
+            this.label10.Text = resources.GetString("label10.Text");
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Tag = "header2";
+            this.label5.Text = "Instructions";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(21, 130);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(60, 13);
+            this.label7.TabIndex = 1;
+            this.label7.Tag = "header2";
+            this.label7.Text = "Description";
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.Blue;
+            this.panel4.Controls.Add(this.flowLayoutPanel4);
+            this.panel4.Controls.Add(this.flowLayoutPanel3);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(756, 100);
+            this.panel4.TabIndex = 0;
+            this.panel4.Tag = "keepbg";
+            // 
+            // flowLayoutPanel4
+            // 
+            this.flowLayoutPanel4.AutoSize = true;
+            this.flowLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel4.Controls.Add(this.label9);
+            this.flowLayoutPanel4.Controls.Add(this.txtnewlegionshortname);
+            this.flowLayoutPanel4.Controls.Add(this.label11);
+            this.flowLayoutPanel4.Controls.Add(this.txtnewlegiontitle);
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(27, 33);
+            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(174, 19);
+            this.flowLayoutPanel4.TabIndex = 4;
+            this.flowLayoutPanel4.Tag = "keepbg";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(3, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(10, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Tag = "keepbg header1";
+            this.label9.Text = "[";
+            // 
+            // txtnewlegionshortname
+            // 
+            this.txtnewlegionshortname.BackColor = System.Drawing.Color.Blue;
+            this.txtnewlegionshortname.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtnewlegionshortname.ForeColor = System.Drawing.Color.White;
+            this.txtnewlegionshortname.Location = new System.Drawing.Point(19, 3);
+            this.txtnewlegionshortname.MaxLength = 4;
+            this.txtnewlegionshortname.MinimumSize = new System.Drawing.Size(4, 13);
+            this.txtnewlegionshortname.Name = "txtnewlegionshortname";
+            this.txtnewlegionshortname.Size = new System.Drawing.Size(36, 13);
+            this.txtnewlegionshortname.TabIndex = 3;
+            this.txtnewlegionshortname.Tag = "inheritbg inheritfg header1";
+            this.txtnewlegionshortname.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtnewlegionshortname.TextChanged += new System.EventHandler(this.txtnewlegionshortname_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(61, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(13, 13);
+            this.label11.TabIndex = 5;
+            this.label11.Tag = "keepbg header1";
+            this.label11.Text = "] ";
+            // 
+            // txtnewlegiontitle
+            // 
+            this.txtnewlegiontitle.BackColor = System.Drawing.Color.Blue;
+            this.txtnewlegiontitle.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtnewlegiontitle.ForeColor = System.Drawing.Color.White;
+            this.txtnewlegiontitle.Location = new System.Drawing.Point(80, 3);
+            this.txtnewlegiontitle.MaxLength = 25;
+            this.txtnewlegiontitle.MinimumSize = new System.Drawing.Size(91, 13);
+            this.txtnewlegiontitle.Name = "txtnewlegiontitle";
+            this.txtnewlegiontitle.Size = new System.Drawing.Size(91, 13);
+            this.txtnewlegiontitle.TabIndex = 6;
+            this.txtnewlegiontitle.Tag = "inheritbg inheritfg header1";
+            this.txtnewlegiontitle.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtnewlegiontitle.TextChanged += new System.EventHandler(this.txtnewlegiontitle_TextChanged);
+            // 
+            // flowLayoutPanel3
+            // 
+            this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel3.AutoSize = true;
+            this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel3.Controls.Add(this.button3);
+            this.flowLayoutPanel3.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(667, 68);
+            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(86, 29);
+            this.flowLayoutPanel3.TabIndex = 2;
+            this.flowLayoutPanel3.Tag = "keepbg";
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.AutoSize = true;
+            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button3.Location = new System.Drawing.Point(3, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(80, 23);
+            this.button3.TabIndex = 1;
+            this.button3.Tag = "keepbg";
+            this.button3.Text = "Change color";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // lgn_view
             // 
@@ -573,173 +740,6 @@ namespace ShiftOS.WinForms.Applications
             this.label1.Tag = "header1";
             this.label1.Text = "You";
             // 
-            // lgn_create
-            // 
-            this.lgn_create.Controls.Add(this.txtnewlegiondescription);
-            this.lgn_create.Controls.Add(this.panel2);
-            this.lgn_create.Controls.Add(this.label7);
-            this.lgn_create.Controls.Add(this.panel4);
-            this.lgn_create.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lgn_create.Location = new System.Drawing.Point(0, 0);
-            this.lgn_create.Name = "lgn_create";
-            this.lgn_create.Size = new System.Drawing.Size(756, 442);
-            this.lgn_create.TabIndex = 4;
-            // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.label10);
-            this.panel2.Controls.Add(this.label5);
-            this.panel2.Location = new System.Drawing.Point(413, 130);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(337, 286);
-            this.panel2.TabIndex = 3;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label5.Location = new System.Drawing.Point(0, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Tag = "header2";
-            this.label5.Text = "Instructions";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(21, 130);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(60, 13);
-            this.label7.TabIndex = 1;
-            this.label7.Tag = "header2";
-            this.label7.Text = "Description";
-            // 
-            // panel4
-            // 
-            this.panel4.BackColor = System.Drawing.Color.Blue;
-            this.panel4.Controls.Add(this.flowLayoutPanel4);
-            this.panel4.Controls.Add(this.flowLayoutPanel3);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel4.Location = new System.Drawing.Point(0, 0);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(756, 100);
-            this.panel4.TabIndex = 0;
-            this.panel4.Tag = "keepbg";
-            // 
-            // flowLayoutPanel3
-            // 
-            this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel3.AutoSize = true;
-            this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel3.Controls.Add(this.button3);
-            this.flowLayoutPanel3.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(667, 68);
-            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(86, 29);
-            this.flowLayoutPanel3.TabIndex = 2;
-            this.flowLayoutPanel3.Tag = "keepbg";
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.AutoSize = true;
-            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button3.Location = new System.Drawing.Point(3, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 23);
-            this.button3.TabIndex = 1;
-            this.button3.Tag = "keepbg";
-            this.button3.Text = "Change color";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // label10
-            // 
-            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(0, 13);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(337, 273);
-            this.label10.TabIndex = 3;
-            this.label10.Text = resources.GetString("label10.Text");
-            // 
-            // txtnewlegionshortname
-            // 
-            this.txtnewlegionshortname.BackColor = System.Drawing.Color.Blue;
-            this.txtnewlegionshortname.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtnewlegionshortname.ForeColor = System.Drawing.Color.White;
-            this.txtnewlegionshortname.Location = new System.Drawing.Point(19, 3);
-            this.txtnewlegionshortname.MaxLength = 4;
-            this.txtnewlegionshortname.MinimumSize = new System.Drawing.Size(4, 13);
-            this.txtnewlegionshortname.Name = "txtnewlegionshortname";
-            this.txtnewlegionshortname.Size = new System.Drawing.Size(36, 13);
-            this.txtnewlegionshortname.TabIndex = 3;
-            this.txtnewlegionshortname.Tag = "inheritbg inheritfg header1";
-            this.txtnewlegionshortname.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtnewlegionshortname.TextChanged += new System.EventHandler(this.txtnewlegionshortname_TextChanged);
-            // 
-            // flowLayoutPanel4
-            // 
-            this.flowLayoutPanel4.AutoSize = true;
-            this.flowLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel4.Controls.Add(this.label9);
-            this.flowLayoutPanel4.Controls.Add(this.txtnewlegionshortname);
-            this.flowLayoutPanel4.Controls.Add(this.label11);
-            this.flowLayoutPanel4.Controls.Add(this.txtnewlegiontitle);
-            this.flowLayoutPanel4.Location = new System.Drawing.Point(27, 33);
-            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(174, 19);
-            this.flowLayoutPanel4.TabIndex = 4;
-            this.flowLayoutPanel4.Tag = "keepbg";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(3, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(10, 13);
-            this.label9.TabIndex = 4;
-            this.label9.Tag = "keepbg header1";
-            this.label9.Text = "[";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(61, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(13, 13);
-            this.label11.TabIndex = 5;
-            this.label11.Tag = "keepbg header1";
-            this.label11.Text = "] ";
-            // 
-            // txtnewlegiontitle
-            // 
-            this.txtnewlegiontitle.BackColor = System.Drawing.Color.Blue;
-            this.txtnewlegiontitle.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtnewlegiontitle.ForeColor = System.Drawing.Color.White;
-            this.txtnewlegiontitle.Location = new System.Drawing.Point(80, 3);
-            this.txtnewlegiontitle.MaxLength = 25;
-            this.txtnewlegiontitle.MinimumSize = new System.Drawing.Size(91, 13);
-            this.txtnewlegiontitle.Name = "txtnewlegiontitle";
-            this.txtnewlegiontitle.Size = new System.Drawing.Size(91, 13);
-            this.txtnewlegiontitle.TabIndex = 6;
-            this.txtnewlegiontitle.Tag = "inheritbg inheritfg header1";
-            this.txtnewlegiontitle.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtnewlegiontitle.TextChanged += new System.EventHandler(this.txtnewlegiontitle_TextChanged);
-            // 
-            // txtnewlegiondescription
-            // 
-            this.txtnewlegiondescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtnewlegiondescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtnewlegiondescription.Location = new System.Drawing.Point(21, 176);
-            this.txtnewlegiondescription.Multiline = true;
-            this.txtnewlegiondescription.Name = "txtnewlegiondescription";
-            this.txtnewlegiondescription.Size = new System.Drawing.Size(368, 240);
-            this.txtnewlegiondescription.TabIndex = 4;
-            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -748,7 +748,6 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.toolStripContainer1);
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "MUDControlCentre";
-            this.Text = "{MUD_CONTROL_CENTRE_NAME}";
             this.Size = new System.Drawing.Size(756, 488);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -761,6 +760,16 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.lgn_create.ResumeLayout(false);
+            this.lgn_create.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.flowLayoutPanel4.ResumeLayout(false);
+            this.flowLayoutPanel4.PerformLayout();
+            this.flowLayoutPanel3.ResumeLayout(false);
+            this.flowLayoutPanel3.PerformLayout();
             this.lgn_view.ResumeLayout(false);
             this.lgn_view.PerformLayout();
             this.pnllgnusers.ResumeLayout(false);
@@ -778,16 +787,6 @@ namespace ShiftOS.WinForms.Applications
             this.you_memos.PerformLayout();
             this.you_systemstatus.ResumeLayout(false);
             this.you_systemstatus.PerformLayout();
-            this.lgn_create.ResumeLayout(false);
-            this.lgn_create.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.panel4.PerformLayout();
-            this.flowLayoutPanel3.ResumeLayout(false);
-            this.flowLayoutPanel3.PerformLayout();
-            this.flowLayoutPanel4.ResumeLayout(false);
-            this.flowLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
