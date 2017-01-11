@@ -210,6 +210,13 @@ namespace ShiftOS.Engine
                                                             {
                                                                 return (bool)method.Invoke(null, new[] { args });
                                                             }
+                                                            catch (TargetInvocationException e)
+                                                            {
+                                                                Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
+                                                                Console.WriteLine(e.InnerException.Message);
+                                                                Console.WriteLine(e.InnerException.StackTrace);
+                                                                return true;
+                                                            }
                                                             catch
                                                             {
                                                                 return (bool)method.Invoke(null, new object[] { });

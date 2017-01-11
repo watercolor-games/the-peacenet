@@ -286,7 +286,6 @@ namespace ShiftOS.Engine {
             }
         }
 
-
         [Command("help", "{COMMAND_HELP_USAGE}", "{COMMAND_HELP_DESCRIPTION}")]
         public static bool Help() {
             var asm = Assembly.GetExecutingAssembly();

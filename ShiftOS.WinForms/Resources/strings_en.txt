@@ -176,6 +176,7 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{COMMAND_DEV_MULTARG_DESCRIPTION}":"A command which requiers multiple arguments",
 
 	"{ERR_COMMAND_NOT_FOUND}":"Command not found.",
+	"{ERROR_EXCEPTION_THROWN_IN_METHOD}":"An error occurred within the command. Error details:",
 	"{MUD_ERROR}":"MUD error",
 	
 	"{PROLOGUE_NO_USER_DETECTED}":"No user detected. Please enter a username.",
