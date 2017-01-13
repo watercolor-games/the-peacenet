@@ -407,7 +407,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpinkoptions.Controls.Add(this.txtpinksblue);
             this.pnlpinkoptions.Location = new System.Drawing.Point(282, 2);
             this.pnlpinkoptions.Name = "pnlpinkoptions";
-            this.pnlpinkoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlpinkoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlpinkoptions.TabIndex = 33;
             this.pnlpinkoptions.Visible = false;
             // 
@@ -442,7 +442,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtpinksred.Location = new System.Drawing.Point(64, 2);
             this.txtpinksred.Multiline = true;
             this.txtpinksred.Name = "txtpinksred";
-            this.txtpinksred.Size = new System.Drawing.Size(23, 17);
+            this.txtpinksred.Size = new System.Drawing.Size(28, 17);
             this.txtpinksred.TabIndex = 21;
             this.txtpinksred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtpinksred.TextChanged += new System.EventHandler(this.txtpinksred_TextChanged);
@@ -483,7 +483,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlpinkcustomcolour
             // 
             this.pnlpinkcustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlpinkcustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlpinkcustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlpinkcustomcolour.Name = "pnlpinkcustomcolour";
             this.pnlpinkcustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlpinkcustomcolour.TabIndex = 18;
@@ -693,7 +693,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlredoptions.Controls.Add(this.txtredsgreen);
             this.pnlredoptions.Location = new System.Drawing.Point(282, 2);
             this.pnlredoptions.Name = "pnlredoptions";
-            this.pnlredoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlredoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlredoptions.TabIndex = 32;
             this.pnlredoptions.Visible = false;
             // 
@@ -727,7 +727,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtredsred.Location = new System.Drawing.Point(64, 2);
             this.txtredsred.Multiline = true;
             this.txtredsred.Name = "txtredsred";
-            this.txtredsred.Size = new System.Drawing.Size(23, 17);
+            this.txtredsred.Size = new System.Drawing.Size(28, 17);
             this.txtredsred.TabIndex = 21;
             this.txtredsred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -766,7 +766,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlredcustomcolour
             // 
             this.pnlredcustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlredcustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlredcustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlredcustomcolour.Name = "pnlredcustomcolour";
             this.pnlredcustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlredcustomcolour.TabIndex = 18;
@@ -976,7 +976,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbrownoptions.Controls.Add(this.txtbrownsgreen);
             this.pnlbrownoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlbrownoptions.Name = "pnlbrownoptions";
-            this.pnlbrownoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlbrownoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlbrownoptions.TabIndex = 31;
             this.pnlbrownoptions.Visible = false;
             // 
@@ -1010,7 +1010,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtbrownsred.Location = new System.Drawing.Point(64, 2);
             this.txtbrownsred.Multiline = true;
             this.txtbrownsred.Name = "txtbrownsred";
-            this.txtbrownsred.Size = new System.Drawing.Size(23, 17);
+            this.txtbrownsred.Size = new System.Drawing.Size(28, 17);
             this.txtbrownsred.TabIndex = 21;
             this.txtbrownsred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1049,7 +1049,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlbrowncustomcolour
             // 
             this.pnlbrowncustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlbrowncustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlbrowncustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlbrowncustomcolour.Name = "pnlbrowncustomcolour";
             this.pnlbrowncustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlbrowncustomcolour.TabIndex = 18;
@@ -1259,7 +1259,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlorangeoptions.Controls.Add(this.txtorangesgreen);
             this.pnlorangeoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlorangeoptions.Name = "pnlorangeoptions";
-            this.pnlorangeoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlorangeoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlorangeoptions.TabIndex = 30;
             this.pnlorangeoptions.Visible = false;
             // 
@@ -1293,7 +1293,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtorangesred.Location = new System.Drawing.Point(64, 2);
             this.txtorangesred.Multiline = true;
             this.txtorangesred.Name = "txtorangesred";
-            this.txtorangesred.Size = new System.Drawing.Size(23, 17);
+            this.txtorangesred.Size = new System.Drawing.Size(28, 17);
             this.txtorangesred.TabIndex = 21;
             this.txtorangesred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1332,7 +1332,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlorangecustomcolour
             // 
             this.pnlorangecustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlorangecustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlorangecustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlorangecustomcolour.Name = "pnlorangecustomcolour";
             this.pnlorangecustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlorangecustomcolour.TabIndex = 18;
@@ -1542,7 +1542,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlyellowoptions.Controls.Add(this.txtyellowsgreen);
             this.pnlyellowoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlyellowoptions.Name = "pnlyellowoptions";
-            this.pnlyellowoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlyellowoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlyellowoptions.TabIndex = 29;
             this.pnlyellowoptions.Visible = false;
             // 
@@ -1576,7 +1576,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtyellowsred.Location = new System.Drawing.Point(64, 2);
             this.txtyellowsred.Multiline = true;
             this.txtyellowsred.Name = "txtyellowsred";
-            this.txtyellowsred.Size = new System.Drawing.Size(23, 17);
+            this.txtyellowsred.Size = new System.Drawing.Size(28, 17);
             this.txtyellowsred.TabIndex = 21;
             this.txtyellowsred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1615,7 +1615,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlyellowcustomcolour
             // 
             this.pnlyellowcustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlyellowcustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlyellowcustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlyellowcustomcolour.Name = "pnlyellowcustomcolour";
             this.pnlyellowcustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlyellowcustomcolour.TabIndex = 18;
@@ -1825,7 +1825,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgreenoptions.Controls.Add(this.txtgreensblue);
             this.pnlgreenoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlgreenoptions.Name = "pnlgreenoptions";
-            this.pnlgreenoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlgreenoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlgreenoptions.TabIndex = 29;
             this.pnlgreenoptions.Visible = false;
             // 
@@ -1859,7 +1859,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtgreensgreen.Location = new System.Drawing.Point(66, 2);
             this.txtgreensgreen.Multiline = true;
             this.txtgreensgreen.Name = "txtgreensgreen";
-            this.txtgreensgreen.Size = new System.Drawing.Size(23, 17);
+            this.txtgreensgreen.Size = new System.Drawing.Size(26, 17);
             this.txtgreensgreen.TabIndex = 21;
             this.txtgreensgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1898,7 +1898,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlgreencustomcolour
             // 
             this.pnlgreencustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlgreencustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlgreencustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlgreencustomcolour.Name = "pnlgreencustomcolour";
             this.pnlgreencustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlgreencustomcolour.TabIndex = 18;
@@ -2108,7 +2108,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlblueoptions.Controls.Add(this.txtbluesgreen);
             this.pnlblueoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlblueoptions.Name = "pnlblueoptions";
-            this.pnlblueoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlblueoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlblueoptions.TabIndex = 27;
             this.pnlblueoptions.Visible = false;
             // 
@@ -2139,10 +2139,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtbluesblue.BackColor = System.Drawing.Color.White;
             this.txtbluesblue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtbluesblue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtbluesblue.Location = new System.Drawing.Point(65, 2);
+            this.txtbluesblue.Location = new System.Drawing.Point(64, 2);
             this.txtbluesblue.Multiline = true;
             this.txtbluesblue.Name = "txtbluesblue";
-            this.txtbluesblue.Size = new System.Drawing.Size(23, 17);
+            this.txtbluesblue.Size = new System.Drawing.Size(28, 17);
             this.txtbluesblue.TabIndex = 21;
             this.txtbluesblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2181,7 +2181,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlbluecustomcolour
             // 
             this.pnlbluecustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlbluecustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlbluecustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlbluecustomcolour.Name = "pnlbluecustomcolour";
             this.pnlbluecustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlbluecustomcolour.TabIndex = 18;
@@ -2391,7 +2391,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpurpleoptions.Controls.Add(this.txtpurplesred);
             this.pnlpurpleoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlpurpleoptions.Name = "pnlpurpleoptions";
-            this.pnlpurpleoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlpurpleoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlpurpleoptions.TabIndex = 28;
             this.pnlpurpleoptions.Visible = false;
             // 
@@ -2425,7 +2425,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtpurplesblue.Location = new System.Drawing.Point(65, 2);
             this.txtpurplesblue.Multiline = true;
             this.txtpurplesblue.Name = "txtpurplesblue";
-            this.txtpurplesblue.Size = new System.Drawing.Size(23, 17);
+            this.txtpurplesblue.Size = new System.Drawing.Size(27, 17);
             this.txtpurplesblue.TabIndex = 21;
             this.txtpurplesblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2464,7 +2464,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlpurplecustomcolour
             // 
             this.pnlpurplecustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlpurplecustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlpurplecustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlpurplecustomcolour.Name = "pnlpurplecustomcolour";
             this.pnlpurplecustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlpurplecustomcolour.TabIndex = 18;
@@ -2669,7 +2669,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.lblcustomshadetut.AutoSize = true;
             this.lblcustomshadetut.BackColor = System.Drawing.Color.Transparent;
-            this.lblcustomshadetut.Location = new System.Drawing.Point(290, 5);
+            this.lblcustomshadetut.Location = new System.Drawing.Point(298, 2);
             this.lblcustomshadetut.Name = "lblcustomshadetut";
             this.lblcustomshadetut.Size = new System.Drawing.Size(102, 13);
             this.lblcustomshadetut.TabIndex = 20;
@@ -2681,7 +2681,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtcustomgrayshade.BackColor = System.Drawing.Color.White;
             this.txtcustomgrayshade.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtcustomgrayshade.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtcustomgrayshade.Location = new System.Drawing.Point(317, 20);
+            this.txtcustomgrayshade.Location = new System.Drawing.Point(332, 21);
             this.txtcustomgrayshade.Multiline = true;
             this.txtcustomgrayshade.Name = "txtcustomgrayshade";
             this.txtcustomgrayshade.Size = new System.Drawing.Size(45, 17);
@@ -2693,7 +2693,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlgraycustomcolour
             // 
             this.pnlgraycustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlgraycustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlgraycustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlgraycustomcolour.Name = "pnlgraycustomcolour";
             this.pnlgraycustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlgraycustomcolour.TabIndex = 18;
@@ -2903,7 +2903,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlanyoptions.Controls.Add(this.txtanysblue);
             this.pnlanyoptions.Location = new System.Drawing.Point(282, 3);
             this.pnlanyoptions.Name = "pnlanyoptions";
-            this.pnlanyoptions.Size = new System.Drawing.Size(120, 40);
+            this.pnlanyoptions.Size = new System.Drawing.Size(142, 40);
             this.pnlanyoptions.TabIndex = 34;
             this.pnlanyoptions.Visible = false;
             this.pnlanyoptions.MouseLeave += new System.EventHandler(this.pnlanyoptions_MouseLeave);
@@ -2936,10 +2936,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtanysred.BackColor = System.Drawing.Color.White;
             this.txtanysred.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtanysred.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtanysred.Location = new System.Drawing.Point(62, 2);
+            this.txtanysred.Location = new System.Drawing.Point(64, 3);
             this.txtanysred.Multiline = true;
             this.txtanysred.Name = "txtanysred";
-            this.txtanysred.Size = new System.Drawing.Size(23, 17);
+            this.txtanysred.Size = new System.Drawing.Size(28, 17);
             this.txtanysred.TabIndex = 21;
             this.txtanysred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtanysred.TextChanged += new System.EventHandler(this.txtanysred_TextChanged);
@@ -2980,7 +2980,7 @@ namespace ShiftOS.WinForms.Applications
             // pnlanycustomcolour
             // 
             this.pnlanycustomcolour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlanycustomcolour.Location = new System.Drawing.Point(406, 8);
+            this.pnlanycustomcolour.Location = new System.Drawing.Point(430, 8);
             this.pnlanycustomcolour.Name = "pnlanycustomcolour";
             this.pnlanycustomcolour.Size = new System.Drawing.Size(32, 30);
             this.pnlanycustomcolour.TabIndex = 17;
@@ -3266,7 +3266,6 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pgcontents);
             this.Name = "ColorPicker";
-            this.Text = "{COLOR_PICKER_NAME}";
             this.Size = new System.Drawing.Size(552, 657);
             this.Load += new System.EventHandler(this.Color_Picker_Load);
             this.pgcontents.ResumeLayout(false);
