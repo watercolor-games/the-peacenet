@@ -34,6 +34,6 @@ namespace ShiftOS.Objects
         public Dictionary<string, LegionRole> Roles { get; set; }
         public Dictionary<LegionRole, string> RoleNames { get; set; }
 
-
+        //Just adding a birbb in here
     }
 }
