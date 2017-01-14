@@ -35,12 +35,24 @@ using ShiftOS.Engine;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.WinForms.Tools;
 
+/// <summary>
+/// Winforms desktop.
+/// </summary>
 namespace ShiftOS.WinForms
 {
+	/// <summary>
+	/// Winforms desktop.
+	/// </summary>
     public partial class WinformsDesktop : Form, IDesktop
     {
+		/// <summary>
+		/// Occurs when window added.
+		/// </summary>
         private static event Action<WindowBorder> windowAdded;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
+		/// </summary>
         public WinformsDesktop()
         {
             InitializeComponent();
@@ -97,6 +109,10 @@ namespace ShiftOS.WinForms
             this.DoubleBuffered = true;
         }
 
+		/// <summary>
+		/// Populates the panel buttons.
+		/// </summary>
+		/// <returns>The panel buttons.</returns>
         public void PopulatePanelButtons()
         {
             panelbuttonholder.Controls.Clear();
@@ -138,6 +154,10 @@ namespace ShiftOS.WinForms
             }
         }
 
+		/// <summary>
+		/// Setups the desktop.
+		/// </summary>
+		/// <returns>The desktop.</returns>
         public void SetupDesktop()
         {
             ToolStripManager.Renderer = new ShiftOSMenuRenderer();
@@ -208,6 +228,11 @@ namespace ShiftOS.WinForms
             PopulatePanelButtons();
         }
 
+		/// <summary>
+		/// Populates the app launcher.
+		/// </summary>
+		/// <returns>The app launcher.</returns>
+		/// <param name="items">Items.</param>
         public void PopulateAppLauncher(LauncherItem[] items)
         {
             apps.DropDownItems.Clear();
@@ -238,7 +263,12 @@ namespace ShiftOS.WinForms
         }
 
 
-
+		/// <summary>
+		/// Desktops the load.
+		/// </summary>
+		/// <returns>The load.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void Desktop_Load(object sender, EventArgs e)
         {
 
@@ -247,6 +277,11 @@ namespace ShiftOS.WinForms
             SetupDesktop();
         }
 
+		/// <summary>
+		/// Shows the window.
+		/// </summary>
+		/// <returns>The window.</returns>
+		/// <param name="border">Border.</param>
         public void ShowWindow(IWindowBorder border)
         {
             var brdr = border as Form;
@@ -255,31 +290,60 @@ namespace ShiftOS.WinForms
             brdr.TopMost = true;
         }
 
+		/// <summary>
+		/// Kills the window.
+		/// </summary>
+		/// <returns>The window.</returns>
+		/// <param name="border">Border.</param>
         public void KillWindow(IWindowBorder border)
         {
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// Minimizes the window.
+		/// </summary>
+		/// <returns>The window.</returns>
+		/// <param name="brdr">Brdr.</param>
         public void MinimizeWindow(IWindowBorder brdr)
         {
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// Maximizes the window.
+		/// </summary>
+		/// <returns>The window.</returns>
+		/// <param name="brdr">Brdr.</param>
         public void MaximizeWindow(IWindowBorder brdr)
         {
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// Restores the window.
+		/// </summary>
+		/// <returns>The window.</returns>
+		/// <param name="brdr">Brdr.</param>
         public void RestoreWindow(IWindowBorder brdr)
         {
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// Invokes the on worker thread.
+		/// </summary>
+		/// <returns>The on worker thread.</returns>
+		/// <param name="act">Act.</param>
         public void InvokeOnWorkerThread(Action act)
         {
             this.Invoke(act);
         }
 
+		/// <summary>
+		/// Gets the size.
+		/// </summary>
+		/// <returns>The size.</returns>
         public Size GetSize()
         {
             return this.Size;
