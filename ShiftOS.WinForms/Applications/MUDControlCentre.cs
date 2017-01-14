@@ -164,6 +164,7 @@ namespace ShiftOS.WinForms.Applications
                 case ConsoleColor.DarkRed:
                     return Color.DarkRed;
                 case ConsoleColor.DarkYellow:
+                    return Color.YellowGreen;
                 case ConsoleColor.Yellow:
                     return Color.Yellow;
                 case ConsoleColor.Green:
@@ -346,26 +347,54 @@ Current legions: {legionname}";
 
         public void SetupLegionEditor(Legion l)
         {
-            if (l.ShortName == null)
-                l.ShortName = "NAME";
-            if (l.Name == null)
-                l.Name = "Legion name";
-            if (l.Description == null)
-                l.Description = "This is your legion description.";
+            editingLegion = l;
+            cbcolorchooser.Items.Clear();
+            foreach(var name in Enum.GetNames(typeof(ConsoleColor)))
+            {
+                cbcolorchooser.Items.Add(name);
+            }
+            cbcolorchooser.Text = l.BannerColor.ToString();
+            cbcolorchooser.SelectedIndexChanged += (o, a) =>
+            {
+                panel4.BackColor = GetColor((ConsoleColor)Enum.Parse(typeof(ConsoleColor), cbcolorchooser.Text));
+                editingLegion.BannerColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), cbcolorchooser.Text);
+            };
 
-            txtnewlegionshortname.Text = l.ShortName;
-            txtnewlegiondescription.Text = l.Description;
-            txtnewlegiontitle.Text = l.Name;
+            cbpublicity.Items.Clear();
+            cbpublicity.SelectedIndexChanged += (o, a) =>
+            {
+                var pb = (LegionPublicity)Enum.Parse(typeof(LegionPublicity), cbpublicity.Text);
+                editingLegion.Publicity = pb;
+            };
+            foreach(var pb in Enum.GetNames(typeof(LegionPublicity)))
+            {
+                cbpublicity.Items.Add(pb);
+            }
+            cbpublicity.Text = editingLegion.Publicity.ToString();
+
+            if (editingLegion.ShortName == null)
+                editingLegion.ShortName = "NAME";
+            if (editingLegion.Name == null)
+                editingLegion.Name = "Legion name";
+            if (editingLegion.Description == null)
+                editingLegion.Description = "This is your legion description.";
+
+            txtnewlegionshortname.Text = editingLegion.ShortName;
+            txtnewlegiondescription.Text = editingLegion.Description;
+            txtnewlegiontitle.Text = editingLegion.Name;
+            panel4.BackColor = GetColor(editingLegion.BannerColor);
 
             lgn_create.BringToFront();
         }
+
+        Legion editingLegion;
 
         private void txtnewlegionshortname_TextChanged(object sender, EventArgs e)
         {
             var g = txtnewlegionshortname.CreateGraphics();
 
             SizeF sf = g.MeasureString(txtnewlegionshortname.Text, txtnewlegionshortname.Font);
-
+            editingLegion.ShortName = txtnewlegionshortname.Text;
             txtnewlegionshortname.Size = new Size((int)sf.Width, (int)sf.Height);
         }
 
@@ -374,9 +403,27 @@ Current legions: {legionname}";
             var g = txtnewlegiontitle.CreateGraphics();
 
             SizeF sf = g.MeasureString(txtnewlegiontitle.Text, txtnewlegiontitle.Font);
-
+            editingLegion.Name = txtnewlegiontitle.Text;
             txtnewlegiontitle.Size = new Size((int)sf.Width, (int)sf.Height);
 
+        }
+
+        private void flowLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void cbcolorchooser_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void btncreate_Click(object sender, EventArgs e)
+        {
+            ServerManager.SendMessage("legion_create", JsonConvert.SerializeObject(editingLegion));
+            SaveSystem.CurrentSave.CurrentLegions.Clear();
+            SaveSystem.CurrentSave.CurrentLegions.Add(editingLegion.ShortName);
+            SaveSystem.SaveGame();
+            myLegionToolStripMenuItem_Click(sender, e);
         }
     }
 }

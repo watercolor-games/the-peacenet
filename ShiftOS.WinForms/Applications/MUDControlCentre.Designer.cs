@@ -84,7 +84,6 @@ namespace ShiftOS.WinForms.Applications
             this.label11 = new System.Windows.Forms.Label();
             this.txtnewlegiontitle = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-            this.button3 = new System.Windows.Forms.Button();
             this.lgn_view = new System.Windows.Forms.Panel();
             this.pnllgnusers = new System.Windows.Forms.Panel();
             this.lvusers = new System.Windows.Forms.ListView();
@@ -109,6 +108,10 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.openAShopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbcolorchooser = new System.Windows.Forms.ComboBox();
+            this.btncreate = new System.Windows.Forms.Button();
+            this.cbpublicity = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -119,7 +122,6 @@ namespace ShiftOS.WinForms.Applications
             this.panel2.SuspendLayout();
             this.panel4.SuspendLayout();
             this.flowLayoutPanel4.SuspendLayout();
-            this.flowLayoutPanel3.SuspendLayout();
             this.lgn_view.SuspendLayout();
             this.pnllgnusers.SuspendLayout();
             this.banner.SuspendLayout();
@@ -180,7 +182,8 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.shopsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.browseToolStripMenuItem,
-            this.myShopToolStripMenuItem});
+            this.myShopToolStripMenuItem,
+            this.openAShopToolStripMenuItem});
             this.shopsToolStripMenuItem.Name = "shopsToolStripMenuItem";
             this.shopsToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.shopsToolStripMenuItem.Text = "Shops";
@@ -188,13 +191,13 @@ namespace ShiftOS.WinForms.Applications
             // browseToolStripMenuItem
             // 
             this.browseToolStripMenuItem.Name = "browseToolStripMenuItem";
-            this.browseToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.browseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.browseToolStripMenuItem.Text = "Browse";
             // 
             // myShopToolStripMenuItem
             // 
             this.myShopToolStripMenuItem.Name = "myShopToolStripMenuItem";
-            this.myShopToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.myShopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.myShopToolStripMenuItem.Text = "My Shop";
             // 
             // tasksToolStripMenuItem
@@ -294,6 +297,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lgn_create
             // 
+            this.lgn_create.Controls.Add(this.btncreate);
             this.lgn_create.Controls.Add(this.txtnewlegiondescription);
             this.lgn_create.Controls.Add(this.panel2);
             this.lgn_create.Controls.Add(this.label7);
@@ -324,7 +328,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel2.Controls.Add(this.label5);
             this.panel2.Location = new System.Drawing.Point(413, 130);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(337, 286);
+            this.panel2.Size = new System.Drawing.Size(337, 256);
             this.panel2.TabIndex = 3;
             // 
             // label10
@@ -332,7 +336,7 @@ namespace ShiftOS.WinForms.Applications
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(0, 13);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(337, 273);
+            this.label10.Size = new System.Drawing.Size(337, 243);
             this.label10.TabIndex = 3;
             this.label10.Text = resources.GetString("label10.Text");
             // 
@@ -360,8 +364,10 @@ namespace ShiftOS.WinForms.Applications
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.Color.Blue;
-            this.panel4.Controls.Add(this.flowLayoutPanel4);
+            this.panel4.Controls.Add(this.cbpublicity);
+            this.panel4.Controls.Add(this.cbcolorchooser);
             this.panel4.Controls.Add(this.flowLayoutPanel3);
+            this.panel4.Controls.Add(this.flowLayoutPanel4);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
@@ -425,7 +431,6 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewlegiontitle.ForeColor = System.Drawing.Color.White;
             this.txtnewlegiontitle.Location = new System.Drawing.Point(80, 3);
             this.txtnewlegiontitle.MaxLength = 25;
-            this.txtnewlegiontitle.MinimumSize = new System.Drawing.Size(91, 13);
             this.txtnewlegiontitle.Name = "txtnewlegiontitle";
             this.txtnewlegiontitle.Size = new System.Drawing.Size(91, 13);
             this.txtnewlegiontitle.TabIndex = 6;
@@ -438,26 +443,13 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel3.AutoSize = true;
             this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel3.Controls.Add(this.button3);
             this.flowLayoutPanel3.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(667, 68);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(712, 224);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(86, 29);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel3.TabIndex = 2;
             this.flowLayoutPanel3.Tag = "keepbg";
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.AutoSize = true;
-            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button3.Location = new System.Drawing.Point(3, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 23);
-            this.button3.TabIndex = 1;
-            this.button3.Tag = "keepbg";
-            this.button3.Text = "Change color";
-            this.button3.UseVisualStyleBackColor = true;
+            this.flowLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel3_Paint);
             // 
             // lgn_view
             // 
@@ -740,6 +732,42 @@ namespace ShiftOS.WinForms.Applications
             this.label1.Tag = "header1";
             this.label1.Text = "You";
             // 
+            // openAShopToolStripMenuItem
+            // 
+            this.openAShopToolStripMenuItem.Name = "openAShopToolStripMenuItem";
+            this.openAShopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openAShopToolStripMenuItem.Text = "Open a Shop";
+            // 
+            // cbcolorchooser
+            // 
+            this.cbcolorchooser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbcolorchooser.FormattingEnabled = true;
+            this.cbcolorchooser.Location = new System.Drawing.Point(629, 73);
+            this.cbcolorchooser.Name = "cbcolorchooser";
+            this.cbcolorchooser.Size = new System.Drawing.Size(121, 21);
+            this.cbcolorchooser.TabIndex = 5;
+            this.cbcolorchooser.SelectedIndexChanged += new System.EventHandler(this.cbcolorchooser_SelectedIndexChanged);
+            // 
+            // btncreate
+            // 
+            this.btncreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btncreate.Location = new System.Drawing.Point(672, 393);
+            this.btncreate.Name = "btncreate";
+            this.btncreate.Size = new System.Drawing.Size(75, 23);
+            this.btncreate.TabIndex = 5;
+            this.btncreate.Text = "Create";
+            this.btncreate.UseVisualStyleBackColor = true;
+            this.btncreate.Click += new System.EventHandler(this.btncreate_Click);
+            // 
+            // cbpublicity
+            // 
+            this.cbpublicity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbpublicity.FormattingEnabled = true;
+            this.cbpublicity.Location = new System.Drawing.Point(502, 73);
+            this.cbpublicity.Name = "cbpublicity";
+            this.cbpublicity.Size = new System.Drawing.Size(121, 21);
+            this.cbpublicity.TabIndex = 6;
+            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -768,8 +796,6 @@ namespace ShiftOS.WinForms.Applications
             this.panel4.PerformLayout();
             this.flowLayoutPanel4.ResumeLayout(false);
             this.flowLayoutPanel4.PerformLayout();
-            this.flowLayoutPanel3.ResumeLayout(false);
-            this.flowLayoutPanel3.PerformLayout();
             this.lgn_view.ResumeLayout(false);
             this.lgn_view.PerformLayout();
             this.pnllgnusers.ResumeLayout(false);
@@ -848,6 +874,9 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox txtnewlegiontitle;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ToolStripMenuItem openAShopToolStripMenuItem;
+        private System.Windows.Forms.ComboBox cbcolorchooser;
+        private System.Windows.Forms.Button btncreate;
+        private System.Windows.Forms.ComboBox cbpublicity;
     }
 }
