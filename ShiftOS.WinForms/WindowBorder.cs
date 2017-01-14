@@ -37,10 +37,20 @@ using System.Runtime.InteropServices;
 using ShiftOS.Engine;
 using ShiftOS.WinForms.Tools;
 
+/// <summary>
+/// Window border.
+/// </summary>
 namespace ShiftOS.WinForms
 {
+	/// <summary>
+	/// Window border.
+	/// </summary>
     public partial class WindowBorder : Form, IWindowBorder
     {
+		/// <summary>
+		/// Raises the closing event.
+		/// </summary>
+		/// <param name="e">E.</param>
         protected override void OnClosing(CancelEventArgs e)
         {
             if ((ParentWindow as IShiftOSWindow).OnUnload())
@@ -54,8 +64,16 @@ namespace ShiftOS.WinForms
             }
             base.OnClosing(e);
         }
+
+		/// <summary>
+		/// The parent window.
+		/// </summary>
         private UserControl _parentWindow = null;
 
+        /// <summary>
+        /// Gets or sets the parent window.
+        /// </summary>
+        /// <value>The parent window.</value>
         public IShiftOSWindow ParentWindow
         {
             get
@@ -68,6 +86,10 @@ namespace ShiftOS.WinForms
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WindowBorder"/> class.
+        /// </summary>
+        /// <param name="win">Window.</param>
         public WindowBorder(UserControl win)
         {
             InitializeComponent();
@@ -110,6 +132,12 @@ namespace ShiftOS.WinForms
 
         }
 
+        /// <summary>
+        /// Universals the key down.
+        /// </summary>
+        /// <returns>The key down.</returns>
+        /// <param name="o">O.</param>
+        /// <param name="a">The alpha component.</param>
         public static void Universal_KeyDown(object o, KeyEventArgs a)
         {
             if (a.Control && a.KeyCode == Keys.T)
@@ -127,6 +155,12 @@ namespace ShiftOS.WinForms
             }
         }
 
+        /// <summary>
+        /// Windows the border load.
+        /// </summary>
+        /// <returns>The border load.</returns>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         public void WindowBorder_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
@@ -172,6 +206,9 @@ namespace ShiftOS.WinForms
             sWin.OnLoad();
         }
 
+        /// <summary>
+        /// Setup this instance.
+        /// </summary>
         public void Setup()
         {
             this.lbtitletext.Text = Localization.Parse(this._parentWindow.Text);
@@ -194,6 +231,10 @@ namespace ShiftOS.WinForms
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
+        /// <value>The text.</value>
         public override string Text
         {
             get
@@ -207,6 +248,10 @@ namespace ShiftOS.WinForms
             }
         }
 
+        /// <summary>
+        /// Setups the skin.
+        /// </summary>
+        /// <returns>The skin.</returns>
         public void SetupSkin()
         {
             this.DoubleBuffered = true;
@@ -285,43 +330,99 @@ namespace ShiftOS.WinForms
             }
         }
 
+        /// <summary>
+        /// Froms the right.
+        /// </summary>
+        /// <returns>The right.</returns>
+        /// <param name="input">Input.</param>
         public Point FromRight(Point input)
         {
             return new Point(pnltitle.Width - input.X, input.Y);
         }
 
+		/// <summary>
+		/// Lbtitletexts the click.
+		/// </summary>
+		/// <returns>The click.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void lbtitletext_Click(object sender, EventArgs e)
         {
 
         }
 
+		/// <summary>
+		/// Pnlcloses the click.
+		/// </summary>
+		/// <returns>The click.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void pnlclose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+		/// <summary>
+		/// Pnlmaximizes the click.
+		/// </summary>
+		/// <returns>The click.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void pnlmaximize_Click(object sender, EventArgs e)
         {
             TerminalBackend.InvokeCommand($"win.max{{id:{this.ParentForm.GetHashCode()}}}");
         }
 
+		/// <summary>
+		/// Pnlminimizes the click.
+		/// </summary>
+		/// <returns>The click.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void pnlminimize_Click(object sender, EventArgs e)
         {
             TerminalBackend.InvokeCommand($"win.mini{{id:{this.ParentForm.GetHashCode()}}}");
         }
 
         
+        /// <summary>
+        /// The W m NCLBUTTONDOW.
+        /// </summary>
         public const int WM_NCLBUTTONDOWN = 0xA1;
+        /// <summary>
+        /// The H t CAPTIO.
+        /// </summary>
         public const int HT_CAPTION = 0x2;
 
+        /// <summary>
+        /// The is dialog.
+        /// </summary>
         public bool IsDialog = false;
 
 
         [DllImportAttribute("user32.dll")]
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <returns>The message.</returns>
+        /// <param name="hWnd">H window.</param>
+        /// <param name="Msg">Message.</param>
+        /// <param name="wParam">W parameter.</param>
+        /// <param name="lParam">L parameter.</param>
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImportAttribute("user32.dll")]
+        /// <summary>
+        /// Releases the capture.
+        /// </summary>
+        /// <returns>The capture.</returns>
         public static extern bool ReleaseCapture();
 
+		/// <summary>
+		/// Pnltitles the mouse move.
+		/// </summary>
+		/// <returns>The mouse move.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void pnltitle_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && Shiftorium.UpgradeInstalled("draggable_windows"))
@@ -331,10 +432,22 @@ namespace ShiftOS.WinForms
             }
         }
 
+		/// <summary>
+		/// Pnltitles the paint.
+		/// </summary>
+		/// <returns>The paint.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void pnltitle_Paint(object sender, PaintEventArgs e) {
 
         }
 
+		/// <summary>
+		/// Lbtitletexts the mouse move.
+		/// </summary>
+		/// <returns>The mouse move.</returns>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
         private void lbtitletext_MouseMove(object sender, MouseEventArgs e) {
             pnltitle_MouseMove(sender, e);
         }
