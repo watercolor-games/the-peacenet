@@ -126,6 +126,16 @@ namespace ShiftOS.Engine
                     thisGuid = new Guid(msg.Contents);
                     GUIDReceived?.Invoke(msg.Contents);
                 }
+                else if(msg.Name == "update_your_cp")
+                {
+                    var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                    if(args["username"] as string == SaveSystem.CurrentSave.Username)
+                    {
+                        SaveSystem.CurrentSave.Codepoints += (int)args["amount"];
+                        Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");
+                        SaveSystem.SaveGame();
+                    }
+                }
                 else if(msg.Name =="broadcast")
                 {
                     Console.WriteLine(msg.Contents);

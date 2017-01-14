@@ -281,6 +281,36 @@ Contents:
 
                 switch (msg.Name)
                 {
+                    case "usr_givecp":
+                        if (args["username"] != null && args["amount"] != null)
+                        {
+                            string userName = args["username"] as string;
+                            int amount = (int)args["amount"];
+
+                            if (Directory.Exists("saves"))
+                            {
+                                foreach(var saveFile in Directory.GetFiles("saves"))
+                                {
+                                    var saveFileContents = JsonConvert.DeserializeObject<Save>(File.ReadAllText(saveFile));
+                                    if(saveFileContents.Username == userName)
+                                    {
+                                        saveFileContents.Codepoints += amount;
+                                        File.WriteAllText(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
+                                        server.DispatchAll(new NetObject("pikachu_use_thunderbolt_oh_yeah_and_if_you_happen_to_be_doing_backend_and_see_this_post_a_picture_of_ash_ketchum_from_the_unova_series_in_the_discord_dev_room_holy_crap_this_is_a_long_snake_case_thing_about_ash_ketchum_and_pikachu", new ServerMessage
+                                        {
+                                            Name = "update_your_cp",
+                                            GUID = "server",
+                                            Contents = $@"{{
+    username: ""{userName}"",
+    amount: {amount}
+}}"
+                                        }));
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        break;
                     case "mud_login":
                         if (args["username"] != null && args["password"] != null)
                         {

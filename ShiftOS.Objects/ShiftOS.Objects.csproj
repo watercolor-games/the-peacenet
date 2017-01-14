@@ -65,6 +65,7 @@
     <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftOSMenuRenderer.cs" />
+    <Compile Include="Shop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
