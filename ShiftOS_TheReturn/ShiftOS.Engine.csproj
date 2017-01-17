@@ -163,6 +163,7 @@
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
     <Compile Include="TerminalTextWriter.cs" />
+    <Compile Include="TutorialManager.cs" />
     <Compile Include="VirusEngine.cs" />
     <Compile Include="WinOpenAttribute.cs" />
     <EmbeddedResource Include="AltTabWindow.resx">

@@ -33,119 +33,10 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
-using Nancy.Hosting.Self;
-using Nancy;
-using Nancy.Authentication.Basic;
-using Nancy.Security;
-using Nancy.TinyIoc;
-using Nancy.Bootstrapper;
 
 namespace ShiftOS.Server
 {
-	/// <summary>
-	/// user mapper.
-	/// </summary>
-	public interface IUserMapper
-	{
-		/// <summary>
-		/// Get the real username from an identifier
-		/// </summary>
-		/// <param name="identifier">User identifier</param>
-		/// <param name="context">The current NancyFx context</param>
-		/// <returns>Matching populated IUserIdentity object, or empty</returns>
-		IUserIdentity GetUserFromIdentifier(Guid identifier, NancyContext context);
-	}
-
-	/// <summary>
-	/// MUD user validator.
-	/// </summary>
-	public class MUDUserValidator : IUserValidator
-	{
-		/// <summary>
-		/// Validate the specified username and password.
-		/// </summary>
-		/// <param name="username">Username.</param>
-		/// <param name="password">Password.</param>
-		public IUserIdentity Validate(string username, string password)
-		{
-			if(username == Program.AdminUsername && password == Program.AdminPassword)
-			{
-				return null;
-			}
-			else
-			{
-				return null;
-			}
-		}
-	}
-
-	/// <summary>
-	/// MUD user identity.
-	/// </summary>
-	public class MUDUserIdentity : IUserIdentity
-	{
-		/// <summary>
-		/// The claims of the authenticated user.
-		/// </summary>
-		/// <value>The claims.</value>
-		public IEnumerable<string> Claims
-		{
-			get
-			{
-				return null;
-			}
-		}
-
-		/// <summary>
-		/// The username of the authenticated user.
-		/// </summary>
-		/// <value>The name of the user.</value>
-		public string UserName
-		{
-			get
-			{
-				return uname;
-			}
-		}
-
-		/// <summary>
-		/// The uname.
-		/// </summary>
-		public string uname = "";
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ShiftOS.Server.MUDUserIdentity"/> class.
-		/// </summary>
-		/// <param name="username">Username.</param>
-		public MUDUserIdentity(string username)
-		{
-			uname = username;
-		}
-	}
-
-	/// <summary>
-	/// Authentication bootstrapper.
-	/// </summary>
-	public class AuthenticationBootstrapper : DefaultNancyBootstrapper
-	{
-		/// <summary>
-		/// Initialise the bootstrapper - can be used for adding pre/post hooks and
-		///  any other initialisation tasks that aren't specifically container setup
-		///  related
-		/// </summary>
-		/// <param name="container">Container instance for resolving types if required.</param>
-		/// <returns>The startup.</returns>
-		/// <param name="pipelines">Pipelines.</param>
-		protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
-		{
-			base.ApplicationStartup(container, pipelines);
-
-			pipelines.EnableBasicAuthentication(new BasicAuthenticationConfiguration(
-				container.Resolve<MUDUserValidator>(),
-				"MUD", UserPromptBehaviour.NonAjax));
-		}
-	}
-
+	
 	/// <summary>
 	/// Program.
 	/// </summary>
@@ -294,17 +185,11 @@ namespace ShiftOS.Server
 
 			}
 
-			var hConf = new HostConfiguration();
-			hConf.UrlReservations.CreateAutomatically = true;
-
-			var nancy = new NancyHost(hConf, new Uri("http://localhost:13371/"));
-
 			server.OnStopped += (o, a) =>
 			{
-				nancy.Stop();
-			};
+                Console.WriteLine("Server stopping.");
 
-			nancy.Start();
+			};
 		}
 
 		/// <summary>

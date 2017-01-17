@@ -149,9 +149,22 @@ namespace ShiftOS.Engine
 
                 Shiftorium.Init();
 
-                while (CurrentSave.StoryPosition < 5)
+                while (CurrentSave.StoryPosition < 1)
                 {
 
+                }
+
+                if(CurrentSave.StoryPosition == 1)
+                {
+                    Desktop.InvokeOnWorkerThread(new Action(() =>
+                    {
+                        TutorialManager.StartTutorial();
+                    }));
+
+                    while(CurrentSave.StoryPosition < 2)
+                    {
+
+                    }
                 }
 
                 Thread.Sleep(75);

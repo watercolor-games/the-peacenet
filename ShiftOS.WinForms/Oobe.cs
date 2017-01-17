@@ -173,6 +173,7 @@ namespace ShiftOS.WinForms
                 Thread.Sleep(500);
                 TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
                 SaveSystem.CurrentSave = MySave;
+                SaveSystem.CurrentSave.StoryPosition = 1;
                 SaveSystem.SaveGame();
                 this.Invoke(new Action(() =>
                 {
