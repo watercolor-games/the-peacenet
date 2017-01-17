@@ -14,9 +14,8 @@ namespace ShiftOS.Objects
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
         public string Language { get; set; }
-
+        public string MyShop { get; set; }
         public List<string> CurrentLegions { get; set; }
-
         public int MajorVersion { get; set; }
         public int MinorVersion { get; set; }
         public int Revision { get; set; }

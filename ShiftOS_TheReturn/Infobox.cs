@@ -60,6 +60,11 @@ namespace ShiftOS.Engine
             _infobox.Open(title, message);
         }
         
+        public static void PromptText(string title, string message, Action<string> callback)
+        {
+            _infobox.PromptText(title, message, callback);
+        }
+
         /// <summary>
         /// Inits an infobox
         /// </summary>
@@ -74,5 +79,6 @@ namespace ShiftOS.Engine
     public interface IInfobox
     {
         void Open(string title, string msg);
+        void PromptText(string title, string message, Action<string> callback);
     }
 }

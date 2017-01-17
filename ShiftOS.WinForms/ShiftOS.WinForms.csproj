@@ -186,6 +186,12 @@
     <Compile Include="Controls\TerminalBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="FakeSetupScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FakeSetupScreen.Designer.cs">
+      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -265,6 +271,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Terminal.resx">
       <DependentUpon>Terminal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FakeSetupScreen.resx">
+      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
@@ -439,6 +448,7 @@
     <None Include="Resources\Shiftorium.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ShiftOS.rtf" />
     <None Include="Resources\Songs.txt" />
   </ItemGroup>
   <ItemGroup>

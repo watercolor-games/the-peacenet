@@ -41,396 +41,167 @@ namespace ShiftOS.WinForms
 {
     public partial class Oobe : Form, IOobe
     {
-        public Save MySave { get; private set; }
-
-        public bool IsTransferMode = false;
-
         public Oobe()
         {
             InitializeComponent();
-        }
-
-        public void HideAll()
-        {
-            foreach (Control ctrl in this.Controls)
-            {
-                if (ctrl != this.pnlshadow)
-                {
-                    ctrl.Hide();
-                }
-            }
-        }
-
-        public void SetupUI()
-        {
-            HideAll();
-            Panel shown = null;
-            if (IsTransferMode == false)
-            {
-                switch (MySave.StoryPosition)
-                {
-                    case 0:
-                        shown = pnllanguage;
-                        SetupLanguages();
-                        break;
-                    case 1:
-                        shown = pnluserinfo;
-                        break;
-                    case 2:
-                        shown = pnldiscourse;
-                        break;
-                    default:
-                        shown = pnlterminaltutorial;
-                        SetupTerminal();
-                        break;
-                }
-            }
-            else
-            {
-                switch (TransferProgress)
-                {
-                    case 0:
-                        shown = pnlreenteruserinfo;
-                        break;
-                    case 1:
-                        shown = pnlauthfail;
-                        break;
-                    case 2:
-                        shown = pnlauthdone;
-                        break;
-                    case 4:
-                        shown = pnlrelogin;
-                        break;
-                    case 5:
-                        shown = pnlrelogerror;
-                        break;
-                }
-            }
-            
-            if (shown != null)
-            {
-                shown.Location = new Point((int)(shown.Parent?.Width - shown.Width) / 2, (int)(shown?.Parent.Height - shown.Height) / 2);
-                pnlshadow.Size = (Size)shown.Size;
-                pnlshadow.Location = new Point((int)shown.Left + 15, (int)shown.Top + 15);
-                shown.Show();
-            }
-        }
-
-        private int TransferProgress = 0;
-
-        public void SetupTerminal()
-        {
-            //just so that the terminal can access our save
-            SaveSystem.CurrentSave = MySave;
-
-           Applications.Terminal.MakeWidget(txtterm);
-            TerminalBackend.InStory = false;
-            TerminalBackend.PrefixEnabled = true;
-            Console.WriteLine("{TERMINAL_TUTORIAL_1}");
-            SaveSystem.TransferCodepointsFrom("oobe", 50);
-
-            Shiftorium.Installed += () =>
-            {
-                if (SaveSystem.CurrentSave.StoryPosition < 5)
-                {
-                    if (Shiftorium.UpgradeInstalled("mud_fundamentals"))
-                    {
-                        Console.WriteLine("{TERMINAL_TUTORIAL_2}");
-                        txtterm.Height -= pgsystemstatus.Height - 4;
-                        pgsystemstatus.Show();
-                        
-                        StartInstall();
-                        
-                    }
-                }
-            };
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.BackColor = Color.Black;
 
         }
 
-        public int thingsDone
+
+        string rtext;
+        string gtexttotype;
+        int charcount;
+        int currentletter;
+        int slashcount;
+        int conversationcount = 0;
+        Label textgeninput;
+        bool needtoclose = false;
+        public bool upgraded = false;
+        int hackeffect;
+        int percentcount;
+
+        
+        public void TextType(string texttotype)
         {
-            get
+            charcount = texttotype.Length;
+            gtexttotype = texttotype;
+            currentletter = 0;
+            slashcount = 1;
+            foreach (var c in gtexttotype)
             {
-                return pgsystemstatus.Value;
-            }
-            set
-            {
+                rtext += c;
                 this.Invoke(new Action(() =>
                 {
-                    pgsystemstatus.Value = value;
+                    textgeninput.Text = rtext + "|";
                 }));
+                Console.Beep(750, 50);
+                slashcount++;
+                if (slashcount == 5)
+                    slashcount = 1;
             }
+            rtext += Environment.NewLine;
         }
 
-        public int thingsToDo
-        {
-            get
-            {
-                return pgsystemstatus.Maximum;
-            }
-            set
-            {
-                this.Invoke(new Action(() =>
-                {
-                    pgsystemstatus.Maximum = value;
-                }));
-            }
-        }
-
-        public void StartInstall()
-        {
-            Dictionary<string, string> Aliases = new Dictionary<string, string>();
-            Aliases.Add("help", "sos.help");
-            Aliases.Add("save", "sos.save");
-            Aliases.Add("shutdown", "sys.shutdown");
-            Aliases.Add("status", "sos.status");
-            Aliases.Add("pong", "win.open{app:\"pong\"}");
-            Aliases.Add("programs", "sos.help{topic:\"programs\"}");
-
-            foreach (var path in Paths.GetAll())
-            {
-                Console.WriteLine("{CREATE}: " + path);
-                thingsDone += 1;
-                Thread.Sleep(500);
-            }
-            thingsToDo = Aliases.Count + Paths.GetAll().Length + 2;
-
-            Console.WriteLine("{INSTALL}: {PONG}");
-            thingsDone++;
-            Thread.Sleep(200);
-
-            Console.WriteLine("{INSTALL}: {TERMINAL}");
-            thingsDone++;
-            Thread.Sleep(200);
-
-            foreach (var kv in Aliases)
-            {
-                Console.WriteLine($"{{ALIAS}}: {kv.Key} => {kv.Value}");
-                thingsDone++;
-                Thread.Sleep(450);
-            }
-
-            SaveSystem.CurrentSave.StoryPosition = 5;
-            SaveSystem.SaveGame();
-        }
-
-        List<string> supportedLangs
-        {
-            get
-            {
-                //return JsonConvert.DeserializeObject<List<string>>(Properties.Resources.languages);
-
-                return new List<string>(new[] { "english" });
-            }
-        }
-
-        public void SetupLanguages()
-        {
-            lblanguage.Items.Clear();
-
-            foreach (var supportedLang in supportedLangs)
-            {
-                lblanguage.Items.Add(supportedLang);
-            }
-        }
-
-        public void SetupAllControls()
-        {
-            foreach (Control ctrl in this.Controls)
-            {
-                SetupControl(ctrl);
-            }
-        }
-
-        public void SetupControl(Control ctrl)
-        {
-            if (!string.IsNullOrWhiteSpace(ctrl.Text))
-                ctrl.Text = Localization.Parse(ctrl.Text);
-            try
-            {
-                foreach (Control child in ctrl.Controls)
-                {
-                    SetupControl(child);
-                }
-            }
-            catch
-            {
-            }
-
-        }
-
-        private void btnselectlang_Click(object sender, EventArgs e)
-        {
-            if (lblanguage.SelectedItem != null)
-            {
-                string l = lblanguage.SelectedItem as string;
-                MySave.Language = l;
-                MySave.StoryPosition = 1;
-                SetupUI();
-            }
-        }
-
-        private void btnsetuserinfo_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(txtusername.Text))
-            {
-                MySave.Username = txtusername.Text;
-
-                MySave.Password = txtpassword.Text;
-
-                MySave.SystemName = (string.IsNullOrWhiteSpace(txtsysname.Text)) ? "shiftos" : txtsysname.Text;
-
-                MySave.StoryPosition = 2;
-
-                SetupUI();
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(txtdiscoursename.Text))
-            {
-                MySave.DiscourseName = txtdiscoursename.Text;
-                MySave.DiscoursePass = txtdiscoursepass.Text;
-            }
-            MySave.StoryPosition = 3;
-            SetupUI();
-        }
+        public Save MySave = null;
 
         public void StartShowing(Save save)
         {
-            IsTransferMode = false;
-            MySave = save;
-            SetupAllControls();
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.TopMost = true;
+            var t = new Thread(new ThreadStart(() =>
+            {
+                textgeninput = this.lblHijack;
+                TextType("Your system is now being hijacked.");
+                rtext = "";
+                Thread.Sleep(1000);
+                textgeninput = this.lblhackwords;
+                this.Invoke(new Action(() =>
+                {
+                    lblHijack.Hide();
+                }));
+                TextType("Hello, and welcome to ShiftOS.");
+                Thread.Sleep(500);
+                TextType("You have been cordially and involuntarily selected to participate in the development and testing of this operating system.");
+                Thread.Sleep(500);
+                TextType("My identity shall remain secret, but if you've been through this before, you'll know exactly who I am.");
+                Thread.Sleep(500);
+                TextType("But that doesn't matter.");
+                Thread.Sleep(500);
+                TextType("I will now begin to prepare your system for the installation of ShiftOS.");
+                Thread.Sleep(1000);
+                FakeSetupScreen fakeForm = null;
+                this.Invoke(new Action(() =>
+                {
+                    fakeForm = new FakeSetupScreen(this);
+                    fakeForm.Show();
+                    MySave = save;
+                    lblhackwords.GotFocus += (o, a) =>
+                    {
+                        try
+                        {
+                            fakeForm.Invoke(new Action(() =>
+                            {
+                                fakeForm.Focus();
+                                fakeForm.BringToFront();
+                            }));
+                        }
+                        catch { }
+                    };
+                    fakeForm.TextSent += (txt) =>
+                    {
+                        TextType(txt);
+                    };
+                }));
+                while(fakeForm?.Visible == true)
+                {
 
-            this.Load += (o, a) =>
-            {
-                SetupUI();
-            };
-            SaveSystem.GameReady += () =>
-            {
+                }
+                TextType("That's all the information I need for now.");
+                Thread.Sleep(2000);
+                TextType("Beginning installation of ShiftOS on " + MySave.SystemName + ".");
+                Thread.Sleep(500);
+                TextType("Creating new user: " + MySave.Username);
+                TextType("...with 0 Codepoints, 0 installed upgrades, no legion, and no user shops...");
+                MySave.Codepoints = 0;
+                MySave.Upgrades = new Dictionary<string, bool>();
+                MySave.CurrentLegions = new List<string>();
+                MySave.MyShop = "";
+                TextType("User created successfully.");
+                Thread.Sleep(450);
+                TextType("You may be wondering what all that meant... You see, in ShiftOS, your user account holds everything I need to know about you.");
+                Thread.Sleep(640);
+                TextType("It holds the amount of Codepoints you have - Codepoints are a special currency you can get by doing various tasks in ShiftOS.");
+                Thread.Sleep(500);
+                TextType("It also holds all the upgrades you've installed onto ShiftOS - features, applications, enhancements, patches, all that stuff.");
+                Thread.Sleep(500);
+                TextType("As for the legions and the shop thing, I'll reveal that to you when it becomes necessary.");
+                Thread.Sleep(500);
+                TextType("Your user account is stored on a server of mine called the multi-user domain. It holds every single user account, every script, every application, every thing within ShiftOS.");
+                Thread.Sleep(600);
+                TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last successful username and password pair.");
+                Thread.Sleep(500);
+                TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, but you have a secondary task if you choose to accept it.");
+                Thread.Sleep(500);
+                TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, and even spread damaging viruses.");
+                Thread.Sleep(500);
+                TextType("I want you to stop them.");
+                Thread.Sleep(500);
+                TextType("Whoever can stop these hackers will gain eternal control over the multi-user domain. They will be given the ability to do as they please, so long as it doesn't interfere with my experiments.");
+                Thread.Sleep(500);
+                TextType("I have been installing ShiftOS on your system in the background as I was talking with you. Before I can set you free, I need to give you a tutorial on how to use the system.");
+                Thread.Sleep(500);
+                TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
+                SaveSystem.CurrentSave = MySave;
+                SaveSystem.SaveGame();
                 this.Invoke(new Action(() =>
                 {
                     this.Close();
-                    (AppearanceManager.OpenForms[0] as WindowBorder).BringToFront();
-                    Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                 }));
-
-            };
+            }));
             this.Show();
+            this.BringToFront();
+            this.TopMost = true;
+            t.IsBackground = true;
+            t.Start();
+        }
+
+        public void Clear()
+        {
+            this.Invoke(new Action(() =>
+            {
+                textgeninput.Text = "";
+            }));
         }
 
         public void ShowSaveTransfer(Save save)
         {
-            MySave = save;
-            ServerManager.MessageReceived += (msg) =>
-            {
-                if(msg.Name == "mud_notfound")
-                {
-                    TransferProgress = 2;
-                    this.Invoke(new Action(() => { SetupUI(); }));
-                }
-                else if(msg.Name == "mud_found")
-                {
-                    TransferProgress = 1;
-                    this.Invoke(new Action(() => { SetupUI(); }));
-                }
-                else if(msg.Name == "mud_saved")
-                {
-                    try
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            SaveSystem.CurrentSave = MySave;
-                            this.Close();
-                            Utils.Delete(Paths.SaveFileInner);
-                        }));
-                    }
-                    catch { }
-                }
-            };
-            IsTransferMode = true;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.TopMost = true;
-            this.Show();
-            SetupUI();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            pnlreenteruserinfo.Hide();
-            pnlshadow.Size = new Size(0, 0);
-            ServerManager.SendMessage("mud_checkuserexists", $@"{{
-    username: ""{txtruser.Text}"",
-    password: ""{txtrpass.Text}""
-}}");
-            MySave.Username = txtruser.Text;
-            MySave.Password = txtrpass.Text;
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            TransferProgress = 0;
-            SetupUI();
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(MySave));
+            throw new NotImplementedException();
         }
 
         public void PromptForLogin()
         {
-            ServerManager.MessageReceived += (msg) =>
-            {
-                if (msg.Name == "mud_notfound")
-                {
-                    TransferProgress = 5;
-                    this.Invoke(new Action(() => { SetupUI(); }));
-                }
-                else if (msg.Name == "mud_found")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        Utils.WriteAllText(Paths.GetPath("user.dat"), $@"{{
-    username: ""{txtluser.Text}"",
-    password: ""{txtlpass.Text}""
-}}");
-                        SaveSystem.ReadSave();
-                        this.Close();
-                    }));
-                }
-            };
-            IsTransferMode = true;
-            TransferProgress = 4;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.TopMost = true;
-            this.Show();
-            SetupUI();
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            TransferProgress = 4;
-            SetupUI();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            ServerManager.SendMessage("mud_checkuserexists", $@"{{
-    username: ""{txtluser.Text}"",
-    password: ""{txtlpass.Text}""
-}}");
-        }
-
-        private void Oobe_Load(object sender, EventArgs e)
-        {
-
+            throw new NotImplementedException();
         }
     }
 }

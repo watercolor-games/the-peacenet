@@ -112,6 +112,21 @@ namespace ShiftOS.WinForms.Applications
             this.cbcolorchooser = new System.Windows.Forms.ComboBox();
             this.btncreate = new System.Windows.Forms.Button();
             this.cbpublicity = new System.Windows.Forms.ComboBox();
+            this.shop_view = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.lbupgradetitle = new System.Windows.Forms.Label();
+            this.lbshopname = new System.Windows.Forms.Label();
+            this.lbcodepoints = new System.Windows.Forms.Label();
+            this.lbupgrades = new System.Windows.Forms.ListBox();
+            this.pnlbuy = new System.Windows.Forms.Panel();
+            this.btnbuy = new System.Windows.Forms.Button();
+            this.lbprice = new System.Windows.Forms.Label();
+            this.lbupggradedesc = new System.Windows.Forms.Label();
+            this.job_current = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.lbtaskname = new System.Windows.Forms.Label();
+            this.lbtaskdescription = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -131,6 +146,11 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel2.SuspendLayout();
             this.you_memos.SuspendLayout();
             this.you_systemstatus.SuspendLayout();
+            this.shop_view.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel5.SuspendLayout();
+            this.pnlbuy.SuspendLayout();
+            this.job_current.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -212,13 +232,14 @@ namespace ShiftOS.WinForms.Applications
             // currentTaskToolStripMenuItem
             // 
             this.currentTaskToolStripMenuItem.Name = "currentTaskToolStripMenuItem";
-            this.currentTaskToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.currentTaskToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.currentTaskToolStripMenuItem.Text = "Current task";
+            this.currentTaskToolStripMenuItem.Click += new System.EventHandler(this.currentTaskToolStripMenuItem_Click);
             // 
             // browseJobsToolStripMenuItem
             // 
             this.browseJobsToolStripMenuItem.Name = "browseJobsToolStripMenuItem";
-            this.browseJobsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.browseJobsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.browseJobsToolStripMenuItem.Text = "Browse Jobs";
             // 
             // legionsToolStripMenuItem
@@ -278,6 +299,8 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.job_current);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_join);
@@ -319,6 +342,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewlegiondescription.Name = "txtnewlegiondescription";
             this.txtnewlegiondescription.Size = new System.Drawing.Size(368, 240);
             this.txtnewlegiondescription.TabIndex = 4;
+            this.txtnewlegiondescription.TextChanged += new System.EventHandler(this.txtnewlegiondescription_TextChanged);
             // 
             // panel2
             // 
@@ -768,6 +792,167 @@ namespace ShiftOS.WinForms.Applications
             this.cbpublicity.Size = new System.Drawing.Size(121, 21);
             this.cbpublicity.TabIndex = 6;
             // 
+            // shop_view
+            // 
+            this.shop_view.Controls.Add(this.panel5);
+            this.shop_view.Controls.Add(this.panel1);
+            this.shop_view.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shop_view.Location = new System.Drawing.Point(0, 0);
+            this.shop_view.Name = "shop_view";
+            this.shop_view.Size = new System.Drawing.Size(756, 442);
+            this.shop_view.TabIndex = 6;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.lbupgrades);
+            this.panel1.Controls.Add(this.lbcodepoints);
+            this.panel1.Controls.Add(this.lbshopname);
+            this.panel1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(389, 442);
+            this.panel1.TabIndex = 0;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.lbupggradedesc);
+            this.panel5.Controls.Add(this.pnlbuy);
+            this.panel5.Controls.Add(this.lbupgradetitle);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(389, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(367, 442);
+            this.panel5.TabIndex = 1;
+            // 
+            // lbupgradetitle
+            // 
+            this.lbupgradetitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbupgradetitle.Location = new System.Drawing.Point(0, 0);
+            this.lbupgradetitle.Name = "lbupgradetitle";
+            this.lbupgradetitle.Size = new System.Drawing.Size(367, 43);
+            this.lbupgradetitle.TabIndex = 0;
+            this.lbupgradetitle.Tag = "header2";
+            this.lbupgradetitle.Text = "Welcome to my shop!";
+            this.lbupgradetitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbshopname
+            // 
+            this.lbshopname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbshopname.Location = new System.Drawing.Point(0, 0);
+            this.lbshopname.Name = "lbshopname";
+            this.lbshopname.Size = new System.Drawing.Size(389, 46);
+            this.lbshopname.TabIndex = 0;
+            this.lbshopname.Tag = "header1";
+            this.lbshopname.Text = "My shop";
+            this.lbshopname.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbcodepoints
+            // 
+            this.lbcodepoints.AutoSize = true;
+            this.lbcodepoints.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lbcodepoints.Location = new System.Drawing.Point(0, 429);
+            this.lbcodepoints.Margin = new System.Windows.Forms.Padding(10);
+            this.lbcodepoints.Name = "lbcodepoints";
+            this.lbcodepoints.Size = new System.Drawing.Size(72, 13);
+            this.lbcodepoints.TabIndex = 1;
+            this.lbcodepoints.Tag = "header2";
+            this.lbcodepoints.Text = "Codepoints: 0";
+            // 
+            // lbupgrades
+            // 
+            this.lbupgrades.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbupgrades.FormattingEnabled = true;
+            this.lbupgrades.Location = new System.Drawing.Point(0, 46);
+            this.lbupgrades.Name = "lbupgrades";
+            this.lbupgrades.Size = new System.Drawing.Size(389, 383);
+            this.lbupgrades.TabIndex = 2;
+            // 
+            // pnlbuy
+            // 
+            this.pnlbuy.Controls.Add(this.lbprice);
+            this.pnlbuy.Controls.Add(this.btnbuy);
+            this.pnlbuy.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlbuy.Location = new System.Drawing.Point(0, 406);
+            this.pnlbuy.Name = "pnlbuy";
+            this.pnlbuy.Size = new System.Drawing.Size(367, 36);
+            this.pnlbuy.TabIndex = 1;
+            // 
+            // btnbuy
+            // 
+            this.btnbuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnbuy.Location = new System.Drawing.Point(283, 3);
+            this.btnbuy.Name = "btnbuy";
+            this.btnbuy.Size = new System.Drawing.Size(75, 23);
+            this.btnbuy.TabIndex = 0;
+            this.btnbuy.Text = "button3";
+            this.btnbuy.UseVisualStyleBackColor = true;
+            // 
+            // lbprice
+            // 
+            this.lbprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbprice.AutoSize = true;
+            this.lbprice.Location = new System.Drawing.Point(6, 10);
+            this.lbprice.Name = "lbprice";
+            this.lbprice.Size = new System.Drawing.Size(35, 13);
+            this.lbprice.TabIndex = 1;
+            this.lbprice.Text = "label6";
+            // 
+            // lbupggradedesc
+            // 
+            this.lbupggradedesc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbupggradedesc.Location = new System.Drawing.Point(0, 43);
+            this.lbupggradedesc.Name = "lbupggradedesc";
+            this.lbupggradedesc.Size = new System.Drawing.Size(367, 363);
+            this.lbupggradedesc.TabIndex = 2;
+            this.lbupggradedesc.Text = "label6";
+            this.lbupggradedesc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // job_current
+            // 
+            this.job_current.Controls.Add(this.lbtaskdescription);
+            this.job_current.Controls.Add(this.lbtaskname);
+            this.job_current.Controls.Add(this.label6);
+            this.job_current.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.job_current.Location = new System.Drawing.Point(0, 0);
+            this.job_current.Name = "job_current";
+            this.job_current.Size = new System.Drawing.Size(756, 442);
+            this.job_current.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label6.Location = new System.Drawing.Point(0, 0);
+            this.label6.Margin = new System.Windows.Forms.Padding(15);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(68, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Tag = "header1";
+            this.label6.Text = "Current Task";
+            // 
+            // lbtaskname
+            // 
+            this.lbtaskname.AutoSize = true;
+            this.lbtaskname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbtaskname.Location = new System.Drawing.Point(0, 13);
+            this.lbtaskname.Margin = new System.Windows.Forms.Padding(15);
+            this.lbtaskname.Name = "lbtaskname";
+            this.lbtaskname.Size = new System.Drawing.Size(60, 13);
+            this.lbtaskname.TabIndex = 1;
+            this.lbtaskname.Tag = "header2";
+            this.lbtaskname.Text = "Task name";
+            // 
+            // lbtaskdescription
+            // 
+            this.lbtaskdescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbtaskdescription.Location = new System.Drawing.Point(0, 26);
+            this.lbtaskdescription.Margin = new System.Windows.Forms.Padding(30);
+            this.lbtaskdescription.Name = "lbtaskdescription";
+            this.lbtaskdescription.Size = new System.Drawing.Size(756, 416);
+            this.lbtaskdescription.TabIndex = 2;
+            this.lbtaskdescription.Text = "label12";
+            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -813,6 +998,14 @@ namespace ShiftOS.WinForms.Applications
             this.you_memos.PerformLayout();
             this.you_systemstatus.ResumeLayout(false);
             this.you_systemstatus.PerformLayout();
+            this.shop_view.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.pnlbuy.ResumeLayout(false);
+            this.pnlbuy.PerformLayout();
+            this.job_current.ResumeLayout(false);
+            this.job_current.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -878,5 +1071,20 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ComboBox cbcolorchooser;
         private System.Windows.Forms.Button btncreate;
         private System.Windows.Forms.ComboBox cbpublicity;
+        private System.Windows.Forms.Panel shop_view;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Label lbupggradedesc;
+        private System.Windows.Forms.Panel pnlbuy;
+        private System.Windows.Forms.Label lbprice;
+        private System.Windows.Forms.Button btnbuy;
+        private System.Windows.Forms.Label lbupgradetitle;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ListBox lbupgrades;
+        private System.Windows.Forms.Label lbcodepoints;
+        private System.Windows.Forms.Label lbshopname;
+        private System.Windows.Forms.Panel job_current;
+        private System.Windows.Forms.Label lbtaskname;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lbtaskdescription;
     }
 }

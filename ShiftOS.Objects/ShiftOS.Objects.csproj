@@ -59,6 +59,7 @@
     <Compile Include="Exploit.cs" />
     <Compile Include="ExploitContext.cs" />
     <Compile Include="Hack.cs" />
+    <Compile Include="Job.cs" />
     <Compile Include="Legion.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -398,6 +398,8 @@ Current legions: {legionname}";
             txtnewlegionshortname.Size = new Size((int)sf.Width, (int)sf.Height);
         }
 
+        private Shop CurrentShop = null;
+
         private void txtnewlegiontitle_TextChanged(object sender, EventArgs e)
         {
             var g = txtnewlegiontitle.CreateGraphics();
@@ -424,6 +426,16 @@ Current legions: {legionname}";
             SaveSystem.CurrentSave.CurrentLegions.Add(editingLegion.ShortName);
             SaveSystem.SaveGame();
             myLegionToolStripMenuItem_Click(sender, e);
+        }
+
+        private void txtnewlegiondescription_TextChanged(object sender, EventArgs e)
+        {
+            editingLegion.Description = txtnewlegiondescription.Text;
+        }
+
+        private void currentTaskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.job_current.BringToFront();
         }
     }
 }

@@ -108,6 +108,50 @@ namespace ShiftOS.WinForms
             AppearanceManager.SetupDialog(frm);
 
         }
+
+        public void PromptText(string title, string msg, Action<string> callback)
+        {
+            Dialog frm = new Dialog();
+            frm.Text = title;
+            var pnl = new Panel();
+            var flow = new FlowLayoutPanel();
+            var btnok = new Button();
+            btnok.AutoSize = true;
+            btnok.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flow.Height = btnok.Height + 4;
+            btnok.Text = "ok";
+            flow.Dock = DockStyle.Bottom;
+            flow.Controls.Add(btnok);
+            var txtinput = new TextBox();
+            btnok.Show(); btnok.Click += (o, a) =>
+            {
+                callback?.Invoke(txtinput.Text);
+                frm.Close();
+            };
+            txtinput.Dock = DockStyle.Bottom;
+            txtinput.KeyDown += (o, a) =>
+            {
+                if(a.KeyCode == Keys.Enter)
+                {
+                    a.SuppressKeyPress = true;
+                    callback?.Invoke(txtinput.Text);
+                    frm.Close();
+                }
+            };
+            pnl.Controls.Add(flow);
+            pnl.Controls.Add(txtinput);txtinput.Show();
+            flow.Show();
+            var lbl = new Label();
+            lbl.Text = msg;
+            lbl.TextAlign = ContentAlignment.MiddleCenter;
+            lbl.Dock = DockStyle.Fill;
+            lbl.AutoSize = false;
+            pnl.Controls.Add(lbl); lbl.Show();
+            frm.Controls.Add(pnl);
+            pnl.Dock = DockStyle.Fill;
+            frm.Size = new Size(320, 200);
+            AppearanceManager.SetupDialog(frm);
+        }
     }
 
     public class WinformsFSFrontend : IFileSkimmer
