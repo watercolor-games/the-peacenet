@@ -131,7 +131,7 @@ namespace ShiftOS.Server
 			server.OnStarted += (o, a) =>
 			{
 				Console.WriteLine($"Server started on address {server.Address}, port {server.Port}.");
-				ServerStarted?.Invoke(server.Address.MapToIPv4().ToString());
+				ServerStarted?.Invoke(server.Address.ToString());
 			};
 
 			server.OnStopped += (o, a) =>
