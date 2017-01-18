@@ -208,6 +208,7 @@ namespace ShiftOS.WinForms
         {
             this.Invoke(new Action(() =>
             {
+                rtext = "";
                 textgeninput.Text = "";
             }));
         }
@@ -220,6 +221,77 @@ namespace ShiftOS.WinForms
         public void PromptForLogin()
         {
             throw new NotImplementedException();
+        }
+
+        public void StartTrailer()
+        {
+            while(AppearanceManager.OpenForms.Count > 0)
+            {
+                AppearanceManager.OpenForms[0].Close();
+            }
+            
+            this.Show();
+            this.TopMost = true;
+            this.TransparencyKey = Color.Magenta;
+            this.BackColor = this.TransparencyKey;
+            textgeninput = lblHijack;
+            textgeninput.BackColor = Color.Black;
+            textgeninput.Font = new Font("Lucida Console", 13F, FontStyle.Bold);
+            textgeninput.AutoSize = true;
+            textgeninput.TextAlign = ContentAlignment.MiddleCenter;
+            textgeninput.TextChanged += (o, a) =>
+            {
+                textgeninput.Location = new Point(
+                        (this.Width - textgeninput.Width) / 2,
+                        (this.Height - textgeninput.Height) / 2
+                    );
+            };
+            var t = new Thread(() =>
+            {
+                Clear();
+                Thread.Sleep(5000);
+                TextType("Michael VanOverbeek");
+                TextType("presents...");
+                Thread.Sleep(2000);
+                Clear();
+                Thread.Sleep(1000);
+                TextType("A community-developed game");
+                Thread.Sleep(3000);
+                Clear();
+                Thread.Sleep(1000);
+                this.Invoke(new Action(() =>
+                {
+                    textgeninput.Font = new Font("Lucida Console", 14F, FontStyle.Bold);
+                    this.BackColor = Color.Black;
+                }));
+                TextType("Welcome to ShiftOS.");
+                Thread.Sleep(4000);
+                Clear();
+                textgeninput = lblhackwords;
+                TextType("Hello.");
+                Thread.Sleep(500);
+                TextType("You have been cordially and involuntarily selected to participate in the development and testing of an experimental operating system called ShiftOS.");
+                Thread.Sleep(500);
+                TextType("I want ShiftOS to be the most advanced operating system in the world.");
+                Thread.Sleep(500);
+                TextType("In ShiftOS, you start out with nothing.");
+                Thread.Sleep(500);
+                TextType("And your goal is to upgrade the operating system from a barebones command line to a fully graphical operating system.");
+                Thread.Sleep(500);
+                TextType("Along the way, you'll meet many people - hackers, rebels, programmers, administrators and many more.");
+                Thread.Sleep(500);
+                TextType("You'll meet new friends and foes.");
+                Thread.Sleep(500);
+                TextType("Your goal: Take it over. Upgrade the operating system, and take over its multi-user domain.");
+                Thread.Sleep(500);
+                TextType("I won't reveal quite what you have to do, but if you can handle it, head over to http://getshiftos.ml/ and download the operating system now.");
+                Thread.Sleep(5000);
+                Clear();
+                textgeninput = lblHijack;
+                TextType("Think you can handle it?");
+            });
+            t.IsBackground = false;
+            t.Start();
         }
 
         public void Start()

@@ -201,6 +201,7 @@
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
+    <Compile Include="TrailerCommands.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WindowBorder.cs">
       <SubType>Form</SubType>
