@@ -120,7 +120,7 @@ namespace ShiftOS.WinForms.Tools
                 {
                     var frm = OpenForms[0] as WindowBorder;
                     frm.Location = new Point(0, 0);
-                    frm.Size = frm.ParentForm.Size;
+                    frm.Size = Desktop.Size;
                     OpenForms[0] = frm;
 
                 }

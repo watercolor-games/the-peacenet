@@ -44,6 +44,9 @@ namespace ShiftOS.WinForms
         [STAThread]
         static void Main()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
             Localization.RegisterProvider(new WFLanguageProvider());
             Shiftorium.RegisterProvider(new WinformsShiftoriumProvider());
             AppearanceManager.OnExit += () =>
@@ -51,12 +54,12 @@ namespace ShiftOS.WinForms
                 Environment.Exit(0);
             };
 
+            TutorialManager.RegisterTutorial(new Oobe());
+
             TerminalBackend.TerminalRequested += () =>
             {
                 AppearanceManager.SetupWindow(new Applications.Terminal());
             };
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
             AppearanceManager.Initiate(new WinformsWindowManager());
             OutOfBoxExperience.Init(new Oobe());
             Infobox.Init(new WinformsInfobox());

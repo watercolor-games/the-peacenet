@@ -43,10 +43,12 @@ using System.Collections;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.Engine;
 
-namespace ShiftOS.WinForms.Applications {
+namespace ShiftOS.WinForms.Applications
+{
     [Launcher("Terminal", false)]
     [WinOpen("terminal")]
-    public partial class Terminal : UserControl, IShiftOSWindow {
+    public partial class Terminal : UserControl, IShiftOSWindow
+    {
         public static Stack<string> ConsoleStack = new Stack<string>();
 
         public static System.Windows.Forms.Timer ti = new System.Windows.Forms.Timer();
@@ -92,29 +94,48 @@ namespace ShiftOS.WinForms.Applications {
             }
         }
 
+        public int TutorialProgress
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         [Obsolete("This is used for compatibility with old parts of the backend. Please use TerminalBackend instead.")]
         public static void InvokeCommand(string text)
         {
             TerminalBackend.InvokeCommand(text);
         }
 
-        public Terminal() {
+        public Terminal()
+        {
 
             InitializeComponent();
-            SaveSystem.GameReady += () => {
-                try {
-                    this.Invoke(new Action(() => {
+            SaveSystem.GameReady += () =>
+            {
+                try
+                {
+                    this.Invoke(new Action(() =>
+                    {
                         ResetAllKeywords();
                         rtbterm.Text = "";
                         TerminalBackend.PrefixEnabled = true;
                         TerminalBackend.InStory = false;
                         Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-                        if (SaveSystem.CurrentSave.StoryPosition == 6) {
+                        if (SaveSystem.CurrentSave.StoryPosition == 6)
+                        {
                             Infobox.Show("Welcome to ShiftOS.", "Welcome to the ShiftOS multi-user domain. Your goal is to upgrade your system as much as possible, and gain as much wealth as possible. The first step is to get a feel for the environment. Go forth and explore, young Shifter.");
                             SaveSystem.CurrentSave.StoryPosition++;
                         }
                     }));
-                } catch { }
+                }
+                catch { }
             };
 
 
@@ -122,31 +143,44 @@ namespace ShiftOS.WinForms.Applications {
 
         }
 
-        public void FocusOnTerminal() {
+        public void FocusOnTerminal()
+        {
             rtbterm.Focus();
         }
 
-        public static string GetTime() {
+        public static string GetTime()
+        {
             var time = DateTime.Now;
-            if (ShiftoriumFrontend.UpgradeInstalled("full_precision_time")) {
+            if (ShiftoriumFrontend.UpgradeInstalled("full_precision_time"))
+            {
                 return DateTime.Now.ToString("h:mm:ss tt");
-            } else if (ShiftoriumFrontend.UpgradeInstalled("clock_am_and_pm")) {
+            }
+            else if (ShiftoriumFrontend.UpgradeInstalled("clock_am_and_pm"))
+            {
                 return time.TimeOfDay.TotalHours > 12 ? $"{time.Hour - 12} PM" : $"{time.Hour} AM";
-            } else if (ShiftoriumFrontend.UpgradeInstalled("clock_hours")) {
+            }
+            else if (ShiftoriumFrontend.UpgradeInstalled("clock_hours"))
+            {
                 return ((int)time.TimeOfDay.TotalHours).ToString();
-            } else if (ShiftoriumFrontend.UpgradeInstalled("clock_minutes")) {
+            }
+            else if (ShiftoriumFrontend.UpgradeInstalled("clock_minutes"))
+            {
                 return ((int)time.TimeOfDay.TotalMinutes).ToString();
-            } else if (ShiftoriumFrontend.UpgradeInstalled("clock")) {
+            }
+            else if (ShiftoriumFrontend.UpgradeInstalled("clock"))
+            {
                 return ((int)time.TimeOfDay.TotalSeconds).ToString();
             }
 
             return "";
         }
 
-        
-        public static event TextSentEventHandler TextSent;
 
-        public void ResetAllKeywords() {
+        public static event TextSentEventHandler TextSent;
+        public event EventHandler OnComplete;
+
+        public void ResetAllKeywords()
+        {
             string primary = SaveSystem.CurrentSave.Username + " ";
             string secondary = "shiftos ";
 
@@ -155,18 +189,27 @@ namespace ShiftOS.WinForms.Applications {
 
             var types = asm.GetTypes();
 
-            foreach (var type in types) {
-                foreach (var a in type.GetCustomAttributes(false)) {
-                    if (ShiftoriumFrontend.UpgradeAttributesUnlocked(type)) {
-                        if (a is Namespace) {
+            foreach (var type in types)
+            {
+                foreach (var a in type.GetCustomAttributes(false))
+                {
+                    if (ShiftoriumFrontend.UpgradeAttributesUnlocked(type))
+                    {
+                        if (a is Namespace)
+                        {
                             var ns = a as Namespace;
-                            if (!primary.Contains(ns.name)) {
+                            if (!primary.Contains(ns.name))
+                            {
                                 primary += ns.name + " ";
                             }
-                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static)) {
-                                if (ShiftoriumFrontend.UpgradeAttributesUnlocked(method)) {
-                                    foreach (var ma in method.GetCustomAttributes(false)) {
-                                        if (ma is Command) {
+                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                            {
+                                if (ShiftoriumFrontend.UpgradeAttributesUnlocked(method))
+                                {
+                                    foreach (var ma in method.GetCustomAttributes(false))
+                                    {
+                                        if (ma is Command)
+                                        {
                                             var cmd = ma as Command;
                                             if (!secondary.Contains(cmd.name))
                                                 secondary += cmd.name + " ";
@@ -182,14 +225,19 @@ namespace ShiftOS.WinForms.Applications {
 
         }
 
-        public static void MakeWidget(Controls.TerminalBox txt) {
+        public static void MakeWidget(Controls.TerminalBox txt)
+        {
             AppearanceManager.StartConsoleOut();
-            txt.GotFocus += (o, a) => {
+            txt.GotFocus += (o, a) =>
+            {
                 AppearanceManager.ConsoleOut = txt;
             };
-            txt.KeyDown += (o, a) => {
-                if (a.KeyCode == Keys.Enter) {
-                    try {
+            txt.KeyDown += (o, a) =>
+            {
+                if (a.KeyCode == Keys.Enter)
+                {
+                    try
+                    {
                         a.SuppressKeyPress = true;
                         Console.WriteLine("");
                         var text = txt.Lines.ToArray();
@@ -197,30 +245,48 @@ namespace ShiftOS.WinForms.Applications {
                         var text3 = "";
                         var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
 
-                        if (TerminalBackend.PrefixEnabled) {
+                        if (TerminalBackend.PrefixEnabled)
+                        {
                             text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                         }
                         TerminalBackend.LastCommand = text3;
                         TextSent?.Invoke(text4);
-                        if (TerminalBackend.InStory == false) {
+                        if (TerminalBackend.InStory == false)
+                        {
                             TerminalBackend.InvokeCommand(text3);
                         }
-                        if (TerminalBackend.PrefixEnabled) {
+                        if (TerminalBackend.PrefixEnabled)
+                        {
                             Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                         }
-                    } catch {
                     }
-                } else if (a.KeyCode == Keys.Back) {
-                    var tostring3 = txt.Lines[txt.Lines.Length - 1];
-                    var tostringlen = tostring3.Length + 1;
-                    var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
-                    var derp = workaround.Length + 1;
-                    if (tostringlen != derp) {
-                        AppearanceManager.CurrentPosition--;
-                    } else {
-                        a.SuppressKeyPress = true;
+                    catch
+                    {
                     }
-                } else if (a.KeyCode == Keys.Left)
+                }
+                else if (a.KeyCode == Keys.Back)
+                {
+                    try
+                    {
+                        var tostring3 = txt.Lines[txt.Lines.Length - 1];
+                        var tostringlen = tostring3.Length + 1;
+                        var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var derp = workaround.Length + 1;
+                        if (tostringlen != derp)
+                        {
+                            AppearanceManager.CurrentPosition--;
+                        }
+                        else
+                        {
+                            a.SuppressKeyPress = true;
+                        }
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("Drunky alert in terminal.");
+                    }
+                }
+                else if (a.KeyCode == Keys.Left)
                 {
                     var getstring = txt.Lines[txt.Lines.Length - 1];
                     var stringlen = getstring.Length + 1;
@@ -240,13 +306,16 @@ namespace ShiftOS.WinForms.Applications {
                     }
                 }
                 //( ͡° ͜ʖ ͡° ) You found the lennyface without looking at the commit message. Message Michael in the #shiftos channel on Discord saying "ladouceur" somewhere in your message if you see this.
-                else if (a.KeyCode == Keys.Up) {
+                else if (a.KeyCode == Keys.Up)
+                {
                     var tostring3 = txt.Lines[txt.Lines.Length - 1];
                     if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                         Console.Write(TerminalBackend.LastCommand);
                     a.SuppressKeyPress = true;
 
-                } else {
+                }
+                else
+                {
                     if (TerminalBackend.InStory)
                     {
                         a.SuppressKeyPress = true;
@@ -266,19 +335,24 @@ namespace ShiftOS.WinForms.Applications {
 
         }
 
-        private void Terminal_Load(object sender, EventArgs e) {
+        private void Terminal_Load(object sender, EventArgs e)
+        {
 
         }
 
-        private void Terminal_FormClosing(object sender, FormClosingEventArgs e) {
+        private void Terminal_FormClosing(object sender, FormClosingEventArgs e)
+        {
             ti.Stop();
         }
 
-        public void OnLoad() {
+        public void OnLoad()
+        {
             MakeWidget(rtbterm);
 
-            if (SaveSystem.CurrentSave != null) {
-                if (!ShiftoriumFrontend.UpgradeInstalled("window_manager")) {
+            if (SaveSystem.CurrentSave != null)
+            {
+                if (!ShiftoriumFrontend.UpgradeInstalled("window_manager"))
+                {
                     rtbterm.Text = AppearanceManager.LastTerminalText;
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
@@ -289,30 +363,42 @@ namespace ShiftOS.WinForms.Applications {
 
         }
 
-        public void OnSkinLoad() {
-            try {
+        public void OnSkinLoad()
+        {
+            try
+            {
                 rtbterm.Font = LoadedSkin.TerminalFont;
                 rtbterm.ForeColor = LoadedSkin.TerminalForeColor;
                 rtbterm.BackColor = LoadedSkin.TerminalBackColor;
-            } catch {
+            }
+            catch
+            {
 
             }
 
         }
 
-        public bool OnUnload() {
-            if (SaveSystem.ShuttingDown == false) {
-                if (!ShiftoriumFrontend.UpgradeInstalled("desktop")) {
-                    if (AppearanceManager.OpenForms.Count <= 1) {
+        public bool OnUnload()
+        {
+            if (SaveSystem.ShuttingDown == false)
+            {
+                if (!ShiftoriumFrontend.UpgradeInstalled("desktop"))
+                {
+                    if (AppearanceManager.OpenForms.Count <= 1)
+                    {
                         Console.WriteLine("");
                         Console.WriteLine("{WIN_CANTCLOSETERMINAL}");
-                        try {
+                        try
+                        {
                             Console.WriteLine("");
 
-                            if (TerminalBackend.PrefixEnabled) {
+                            if (TerminalBackend.PrefixEnabled)
+                            {
                                 Console.Write($"{SaveSystem.CurrentSave.Username}@shiftos:~$ ");
                             }
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex)
+                        {
                             Console.WriteLine(ex);
                         }
                         return false;
@@ -322,13 +408,15 @@ namespace ShiftOS.WinForms.Applications {
             return true;
         }
 
-        public void OnUpgrade() {
+        public void OnUpgrade()
+        {
         }
 
         private void rtbterm_TextChanged(object sender, EventArgs e)
         {
 
         }
+        
     }
 }
 //lol you found this comment i made so i chould push a change to make a point.

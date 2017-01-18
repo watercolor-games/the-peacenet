@@ -154,19 +154,6 @@ namespace ShiftOS.Engine
 
                 }
 
-                if(CurrentSave.StoryPosition == 1)
-                {
-                    Desktop.InvokeOnWorkerThread(new Action(() =>
-                    {
-                        TutorialManager.StartTutorial();
-                    }));
-
-                    while(CurrentSave.StoryPosition < 2)
-                    {
-
-                    }
-                }
-
                 Thread.Sleep(75);
 
 
@@ -189,6 +176,14 @@ namespace ShiftOS.Engine
                 Shiftorium.LogOrphanedUpgrades = true;
                 Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
                 GameReady?.Invoke();
+                if (CurrentSave.StoryPosition == 1)
+                {
+                    Desktop.InvokeOnWorkerThread(new Action(() =>
+                    {
+                        TutorialManager.StartTutorial();
+                    }));
+                }
+
             }));
             thread.IsBackground = true;
             thread.Start();

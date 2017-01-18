@@ -36,6 +36,8 @@ namespace ShiftOS.Engine
 {
     public static class TerminalBackend
     {
+        public static event Action<string, string> CommandProcessed;
+
         public static bool Elevated { get; set; }
 
         public static Dictionary<string, object> GetArgs(ref string text)
@@ -84,6 +86,7 @@ namespace ShiftOS.Engine
     args: ""{JsonConvert.SerializeObject(args)}""
 }}");
                 }
+                CommandProcessed?.Invoke(text, JsonConvert.SerializeObject(args));
             }
             catch (Exception ex)
             {
