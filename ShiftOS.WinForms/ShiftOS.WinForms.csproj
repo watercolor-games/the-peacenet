@@ -191,6 +191,7 @@
     <Compile Include="FakeSetupScreen.Designer.cs">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="JobTasks.cs" />
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>

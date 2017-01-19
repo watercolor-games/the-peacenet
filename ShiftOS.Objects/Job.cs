@@ -15,12 +15,12 @@ namespace ShiftOS.Objects
         public string Author { get; set; }
     }
 
-    public class JobTask
+    public abstract class JobTask
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public int Reward { get; set; }
 
-        public bool Completed { get; set; }
+        public abstract bool IsComplete { get; }
     }
 }
