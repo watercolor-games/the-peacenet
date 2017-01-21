@@ -245,6 +245,99 @@ Contents:
 
 				switch (msg.Name)
 				{
+                    case "usr_getcp":
+
+                        break;
+                    case "usr_takecp":
+                        if (args["username"] != null && args["password"] != null && args["amount"] != null && args["yourusername"] != null)
+                        {
+                            string userName = args["username"] as string;
+                            string passw = args["password"] as string;
+                            int amount = (int)args["amount"];
+
+                            if (Directory.Exists("saves"))
+                            {
+                                foreach (var saveFile in Directory.GetFiles("saves"))
+                                {
+                                    var saveFileContents = JsonConvert.DeserializeObject<Save>(File.ReadAllText(saveFile));
+                                    if (saveFileContents.Username == userName && saveFileContents.Password == passw)
+                                    {
+                                        saveFileContents.Codepoints += amount;
+                                        File.WriteAllText(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
+                                        server.DispatchAll(new NetObject("stop_being_drunk_michael", new ServerMessage
+                                        {
+                                            Name = "update_your_cp",
+                                            GUID = "server",
+                                            Contents = $@"{{
+    username: ""{userName}"",
+    amount: -{amount}
+}}"
+                                        }));
+                                        server.DispatchTo(new Guid(msg.GUID), new NetObject("argh", new ServerMessage
+                                        {
+                                            Name = "update_your_cp",
+                                            GUID = "server",
+                                            Contents = $@"{{
+    username: ""{args["yourusername"]}"",
+    amount: {amount}
+}}"
+                                        }));
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        server.DispatchTo(new Guid(msg.GUID), new NetObject("no", new ServerMessage
+                        {
+                            Name = "user_cp_not_found",
+                            GUID = "Server",
+                        }));
+                        break;
+                    case "trm_handshake_accept":
+                        if(args["guid"] != null)
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("hold_it", new ServerMessage
+                            {
+                                Name = "trm_handshake_guid",
+                                GUID = args["guid"] as string
+                            }));
+                        }
+                        break;
+                    case "trm_handshake_request":
+                        if(args["username"] != null && args["password"] != null && args["sysname"] != null)
+                        {
+                            server.DispatchAll(new NetObject("hold_my_hand", new ServerMessage
+                            {
+                                Name = "handshake_from",
+                                GUID = msg.GUID,
+                                Contents = JsonConvert.SerializeObject(args)
+                            }));
+                        }
+                        break;
+                    case "write":
+                        if(args["guid"] != null && args["text"] != null)
+                        {
+                            server.DispatchTo(new Guid(args["guid"] as string), new NetObject("pleaseWrite", new ServerMessage
+                            {
+                                Name = "pleasewrite",
+                                GUID = "server",
+                                Contents = args["text"] as string
+                            }));
+                        }
+                        break;
+                    case "trm_invcmd":
+                        if(args["guid"] != null && args["cmdstr"] != null)
+                        {
+                            string cmd = args["cmdstr"] as string;
+                            string cGuid = args["guid"] as string;
+                            server.DispatchTo(new Guid(cGuid), new NetObject("trminvoke", new ServerMessage
+                            {
+                                Name = "trm_invokecommand",
+                                GUID = "server",
+                                Contents = cmd
+                            }));
+                        }
+                        break;
 				case "usr_givecp":
 					if (args["username"] != null && args["amount"] != null)
 					{
@@ -400,7 +493,7 @@ Contents:
 						}));
 
 					break;
-				case "mud_checkuserexists":
+                case "mud_checkuserexists":
 					if (args["username"] != null && args["password"] != null)
 					{
 						foreach (var savefile in Directory.GetFiles("saves"))

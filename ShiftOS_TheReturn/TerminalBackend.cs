@@ -240,6 +240,61 @@ namespace ShiftOS.Engine
             return false;
         }
         
+        static TerminalBackend()
+        {
+            ServerMessageReceived onMessageReceived = (msg) =>
+            {
+                if (msg.Name == "trm_invokecommand")
+                {
+                    string text3 = "";
+                    string text4 = msg.Contents;
 
+                    if (TerminalBackend.PrefixEnabled)
+                    {
+                        text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                    }
+                    IsForwardingConsoleWrites = true;
+                    if (TerminalBackend.InStory == false)
+                    {
+                        TerminalBackend.InvokeCommand(text3);
+                    }
+                    if (TerminalBackend.PrefixEnabled)
+                    {
+                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                    }
+                    IsForwardingConsoleWrites = false;
+                }
+                else if(msg.Name == "pleasewrite")
+                {
+                    Console.Write(msg.Contents);
+                }
+                else if(msg.Name == "handshake_from")
+                {
+                    var a = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                    string uName = a["username"] as string;
+                    string pass = a["password"] as string;
+                    string sys = a["sysname"] as string;
+                    string guid = msg.GUID;
+                    if(SaveSystem.CurrentSave.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
+                    {
+                        ForwardGUID = guid;
+                        ServerManager.SendMessage("trm_handshake_accept", $@"{{
+    guid: ""{ServerManager.thisGuid}""
+}}");
+
+                        IsForwardingConsoleWrites = true;
+                        InvokeCommand("sos.status");
+                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        IsForwardingConsoleWrites = false;
+                    }
+                }
+            };
+
+            ServerManager.MessageReceived += onMessageReceived;
+        }
+
+        public static bool IsForwardingConsoleWrites { get; private set; }
+        public static string ForwardGUID { get; private set; }
+        
     }
 }

@@ -65,20 +65,41 @@ namespace ShiftOS.Engine
 
         public override void Write(char value)
         {
-            Desktop.InvokeOnWorkerThread(new Action(() =>
+            if (TerminalBackend.IsForwardingConsoleWrites)
             {
-                UnderlyingControl.Write(value.ToString());
-                select();
-            }));
+                ServerManager.SendMessage("write", $@"{{
+    guid: ""{TerminalBackend.ForwardGUID}"",
+    text: ""{value}""
+}}");
+            }
+            else
+            {
+                Desktop.InvokeOnWorkerThread(new Action(() =>
+                {
+                    UnderlyingControl.Write(value.ToString());
+                    select();
+                }));
+            }
         }
 
         public override void WriteLine(string value)
         {
-            Desktop.InvokeOnWorkerThread(new Action(() =>
+            if (TerminalBackend.IsForwardingConsoleWrites)
+            {
+                ServerManager.SendMessage("write", $@"{{
+    guid: ""{TerminalBackend.ForwardGUID}"",
+    text: ""{value + Environment.NewLine}""
+}}");
+            }
+            else
+            {
+
+                Desktop.InvokeOnWorkerThread(new Action(() =>
             {
                 UnderlyingControl.WriteLine(value);
                 select();
             }));
+            }
         }
 
         public void SetLastText()
@@ -87,11 +108,22 @@ namespace ShiftOS.Engine
 
         public override void Write(string value)
         {
-            Desktop.InvokeOnWorkerThread(new Action(() =>
+            if (TerminalBackend.IsForwardingConsoleWrites)
+            {
+                ServerManager.SendMessage("write", $@"{{
+    guid: ""{TerminalBackend.ForwardGUID}"",
+    text: ""{value}""
+}}");
+            }
+            else
+            {
+
+                Desktop.InvokeOnWorkerThread(new Action(() =>
             {
                 UnderlyingControl.Write(value.ToString());
                 select();
             }));
+            }
         }
 
 

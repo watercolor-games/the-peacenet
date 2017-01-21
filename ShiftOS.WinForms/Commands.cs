@@ -32,12 +32,36 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Coherence commands.
 /// </summary>
 namespace ShiftOS.WinForms
 {
+    [Namespace("trm")]
+    public static class TerminalExtensions
+    {
+        [Command("setpass", true)]
+        [RequiresArgument("pass")]
+        public static bool setPass(Dictionary<string, object> args)
+        {
+            SaveSystem.CurrentSave.Password = args["pass"] as string;
+            return true;
+        }
+
+        [Command("remote", "username:,sysname:,pass:", "Allows you to control a remote system on the multi-user domain given a username, password and system name.")]
+        [RequiresArgument("username")]
+        [RequiresArgument("sysname")]
+        [RequiresArgument("pass")]
+        public static bool RemoteControl(Dictionary<string, object> args)
+        {
+            ServerManager.SendMessage("trm_handshake_request", JsonConvert.SerializeObject(args));
+            return true;
+        }
+    }
+
+
     [Namespace("coherence")]
     [RequiresUpgrade("kernel_coherence")]
     public static class CoherenceCommands

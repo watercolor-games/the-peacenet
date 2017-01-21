@@ -42,6 +42,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.Engine;
+using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -54,6 +55,10 @@ namespace ShiftOS.WinForms.Applications
         public static System.Windows.Forms.Timer ti = new System.Windows.Forms.Timer();
 
         public static string latestCommmand = "";
+
+
+        public static bool IsInRemoteSystem = false;
+        public static string RemoteGuid = "";
 
         [Obsolete("This is used for compatibility with old parts of the backend. Please use TerminalBackend instead.")]
         public static bool PrefixEnabled
@@ -110,6 +115,7 @@ namespace ShiftOS.WinForms.Applications
         [Obsolete("This is used for compatibility with old parts of the backend. Please use TerminalBackend instead.")]
         public static void InvokeCommand(string text)
         {
+            
             TerminalBackend.InvokeCommand(text);
         }
 
@@ -245,19 +251,29 @@ namespace ShiftOS.WinForms.Applications
                         var text3 = "";
                         var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
 
-                        if (TerminalBackend.PrefixEnabled)
+                        if (IsInRemoteSystem == true)
                         {
-                            text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                            ServerManager.SendMessage("trm_invcmd", $@"{{
+    guid = ""{RemoteGuid}"",
+    command: ""{text4}""
+}}");
                         }
-                        TerminalBackend.LastCommand = text3;
-                        TextSent?.Invoke(text4);
-                        if (TerminalBackend.InStory == false)
+                        else
                         {
-                            TerminalBackend.InvokeCommand(text3);
-                        }
-                        if (TerminalBackend.PrefixEnabled)
-                        {
-                            Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                            if (TerminalBackend.PrefixEnabled)
+                            {
+                                text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                            }
+                            TerminalBackend.LastCommand = text3;
+                            TextSent?.Invoke(text4);
+                            if (TerminalBackend.InStory == false)
+                            {
+                                TerminalBackend.InvokeCommand(text3);
+                            }
+                            if (TerminalBackend.PrefixEnabled)
+                            {
+                                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                            }
                         }
                     }
                     catch
@@ -337,12 +353,22 @@ namespace ShiftOS.WinForms.Applications
 
         private void Terminal_Load(object sender, EventArgs e)
         {
+            ServerManager.MessageReceived += (msg) =>
+            {
+                if(msg.Name == "trm_handshake_guid")
+                {
+                    IsInRemoteSystem = true;
+                    RemoteGuid = msg.GUID;
+                }
+            };
 
         }
 
         private void Terminal_FormClosing(object sender, FormClosingEventArgs e)
         {
             ti.Stop();
+            IsInRemoteSystem = false;
+            RemoteGuid = "";
         }
 
         public void OnLoad()

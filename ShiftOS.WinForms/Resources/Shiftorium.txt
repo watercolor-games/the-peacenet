@@ -303,6 +303,12 @@
 		Dependencies: "mud_fundamentals;app_launcher"
 	},
 	{
+		Name: "Another test upgrade",
+		Cost: 1,
+		Description: "Read the ID or Name",
+		Dependencies: "test_upgrade"
+	},
+	{
 		Name: "Draggable windows",
 		Cost: 400,
 		Description: "Allows you to drag windows around with the mouse using the title bar.",

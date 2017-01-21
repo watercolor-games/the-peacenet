@@ -49,7 +49,7 @@ namespace ShiftOS.Engine
 {JsonConvert.SerializeObject(client, Formatting.Indented)}");
         }
 
-        private static Guid thisGuid { get; set; }
+        public static Guid thisGuid { get; private set; }
         private static NetObjectClient client { get; set; }
 
         public static void Disconnect()
