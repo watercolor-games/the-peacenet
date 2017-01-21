@@ -50,10 +50,10 @@ namespace ShiftOS.WinForms
             return true;
         }
 
-        [Command("remote", "username:,sysname:,pass:", "Allows you to control a remote system on the multi-user domain given a username, password and system name.")]
+        [Command("remote", "username:,sysname:,password:", "Allows you to control a remote system on the multi-user domain given a username, password and system name.")]
         [RequiresArgument("username")]
         [RequiresArgument("sysname")]
-        [RequiresArgument("pass")]
+        [RequiresArgument("password")]
         public static bool RemoteControl(Dictionary<string, object> args)
         {
             ServerManager.SendMessage("trm_handshake_request", JsonConvert.SerializeObject(args));
