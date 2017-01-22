@@ -93,7 +93,7 @@ namespace ShiftOS.Engine
 
 
             if (args.ContainsKey("file"))
-                file = args["file"] as string;
+                file = args["file"] as string;F
             else
                 throw new Exception("No 'file' argument provided.");
 
@@ -127,7 +127,7 @@ namespace ShiftOS.Engine
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("{ERROR}: " + ex.Exception);
+                    Console.WriteLine("{ERROR}: " + ex.Message);
                 }
                 return true;
             }
