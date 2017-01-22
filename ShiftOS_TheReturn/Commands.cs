@@ -292,15 +292,8 @@ namespace ShiftOS.Engine
         [Command("crash")]
         public static bool CrashInstantly()
         {
-            try
-            {
-                throw new Exception("ShiftOS was sent a command to forcefully crash.");
-            }
-            catch (Exception e)
-            {
-                CrashHandler.Start(e);
-                return true;
-            }
+            CrashHandler.Start(new Exception("ShiftOS was sent a command to forcefully crash."));
+            return true;
         }
     }
 #endif
