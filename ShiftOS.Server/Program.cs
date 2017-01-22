@@ -326,16 +326,21 @@ Contents:
                         }
                         break;
                     case "trm_invcmd":
+                        Console.WriteLine("Before arg check");
+                        args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                         if(args["guid"] != null && args["command"] != null)
                         {
+                            Console.WriteLine("arg check finished");
                             string cmd = args["command"] as string;
                             string cGuid = args["guid"] as string;
+                            Console.WriteLine("Before dispatch");
                             server.DispatchTo(new Guid(cGuid), new NetObject("trminvoke", new ServerMessage
                             {
                                 Name = "trm_invokecommand",
                                 GUID = "server",
                                 Contents = cmd
                             }));
+                            Console.WriteLine("After dispatch");
                         }
                         break;
 				case "usr_givecp":

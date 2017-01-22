@@ -253,10 +253,11 @@ namespace ShiftOS.WinForms.Applications
 
                         if (IsInRemoteSystem == true)
                         {
-                            ServerManager.SendMessage("trm_invcmd", $@"{{
-    guid = ""{RemoteGuid}"",
-    command: ""{text4}""
-}}");
+                            ServerManager.SendMessage("trm_invcmd", JsonConvert.SerializeObject(new
+                            {
+                                guid = RemoteGuid,
+                                command = text4
+                            }));
                         }
                         else
                         {

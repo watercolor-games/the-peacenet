@@ -66,7 +66,7 @@ namespace ShiftOS.Engine
 
         public static string LastCommand = "";
 
-        public static void InvokeCommand(string text)
+        public static void InvokeCommand(string text, bool isRemote = false)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace ShiftOS.Engine
 
                 var args = GetArgs(ref text);
 
-                bool commandWasClient = RunClient(text, args);
+                bool commandWasClient = RunClient(text, args, isRemote);
 
                 if (!commandWasClient && !string.IsNullOrWhiteSpace(text))
                 {
@@ -109,7 +109,21 @@ namespace ShiftOS.Engine
             TerminalRequested?.Invoke();
         }
 
-        public static bool RunClient(string text, Dictionary<string, object> args)
+        public static bool CanRunRemotely(MethodInfo mth, bool isRemote)
+        {
+            if (!isRemote)
+                return true;
+
+            foreach(var attr in mth.GetCustomAttributes(false))
+            {
+                if (attr is RemoteLockAttribute)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false)
         {
             latestCommmand = text;
 
@@ -136,96 +150,104 @@ namespace ShiftOS.Engine
                                         {
                                             if (Shiftorium.UpgradeAttributesUnlocked(method))
                                             {
-                                                foreach (var ma in method.GetCustomAttributes(false))
+                                                if (CanRunRemotely(method, isRemote))
                                                 {
-                                                    if (ma is Command)
+                                                    foreach (var ma in method.GetCustomAttributes(false))
                                                     {
-                                                        var cmd = ma as Command;
-                                                        if (text.Split('.')[1] == cmd.name)
+                                                        if (ma is Command)
                                                         {
-
-                                                            var attr = method.GetCustomAttribute<CommandObsolete>();
-
-                                                            if (attr != null)
+                                                            var cmd = ma as Command;
+                                                            if (text.Split('.')[1] == cmd.name)
                                                             {
-                                                                string newcommand = attr.newcommand;
-                                                                if (attr.warn)
+
+                                                                var attr = method.GetCustomAttribute<CommandObsolete>();
+
+                                                                if (attr != null)
                                                                 {
-                                                                    Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
+                                                                    string newcommand = attr.newcommand;
+                                                                    if (attr.warn)
+                                                                    {
+                                                                        Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
                                                                 {"%newcommand", newcommand}
                                                             }));
-                                                                }
-                                                                if (newcommand != "")
-                                                                {
-                                                                    // redo the entire process running newcommand
-
-                                                                    return RunClient(newcommand, args);
-                                                                }
-                                                            }
-
-                                                            var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
-
-                                                            bool error = false;
-                                                            bool providedusage = false;
-
-                                                            foreach (RequiresArgument argument in requiresArgs)
-                                                            {
-                                                                if (!args.ContainsKey(argument.argument))
-                                                                {
-
-                                                                    if (!providedusage)
+                                                                    }
+                                                                    if (newcommand != "")
                                                                     {
-                                                                        string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                        if (usageparse == Localization.Parse(usageparse))
-                                                                            usageparse = "";
-                                                                        else
-                                                                            usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
+                                                                        // redo the entire process running newcommand
+
+                                                                        return RunClient(newcommand, args);
+                                                                    }
+                                                                }
+
+                                                                var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
+
+                                                                bool error = false;
+                                                                bool providedusage = false;
+
+                                                                foreach (RequiresArgument argument in requiresArgs)
+                                                                {
+                                                                    if (!args.ContainsKey(argument.argument))
+                                                                    {
+
+                                                                        if (!providedusage)
+                                                                        {
+                                                                            string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
+                                                                            if (usageparse == Localization.Parse(usageparse))
+                                                                                usageparse = "";
+                                                                            else
+                                                                                usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
                                                                         {"%ns", ns.name},
                                                                         {"%cmd", cmd.name}
                                                                     }) : "";
 
-                                                                        Console.WriteLine(usageparse);
+                                                                            Console.WriteLine(usageparse);
 
-                                                                        providedusage = true;
-                                                                    }
+                                                                            providedusage = true;
+                                                                        }
 
-                                                                    if (Shiftorium.UpgradeInstalled("help_usage"))
-                                                                    {
-                                                                        Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
+                                                                        if (Shiftorium.UpgradeInstalled("help_usage"))
+                                                                        {
+                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
                                                                     {"%argument", argument.argument}
                                                                 }));
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
-                                                                    }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
+                                                                        }
 
-                                                                    error = true;
+                                                                        error = true;
+                                                                    }
                                                                 }
-                                                            }
 
-                                                            if (error)
-                                                            {
-                                                                throw new Exception("{ERROR_COMMAND_WRONG}");
-                                                            }
+                                                                if (error)
+                                                                {
+                                                                    throw new Exception("{ERROR_COMMAND_WRONG}");
+                                                                }
 
-                                                            try
-                                                            {
-                                                                return (bool)method.Invoke(null, new[] { args });
-                                                            }
-                                                            catch (TargetInvocationException e)
-                                                            {
-                                                                Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
-                                                                Console.WriteLine(e.InnerException.Message);
-                                                                Console.WriteLine(e.InnerException.StackTrace);
-                                                                return true;
-                                                            }
-                                                            catch
-                                                            {
-                                                                return (bool)method.Invoke(null, new object[] { });
+                                                                try
+                                                                {
+                                                                    return (bool)method.Invoke(null, new[] { args });
+                                                                }
+                                                                catch (TargetInvocationException e)
+                                                                {
+                                                                    Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
+                                                                    Console.WriteLine(e.InnerException.Message);
+                                                                    Console.WriteLine(e.InnerException.StackTrace);
+                                                                    return true;
+                                                                }
+                                                                catch
+                                                                {
+                                                                    return (bool)method.Invoke(null, new object[] { });
+                                                                }
                                                             }
                                                         }
                                                     }
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine(text + " cannot be ran in a remote session");
+                                                    return true;
                                                 }
                                             }
                                         }
@@ -256,7 +278,7 @@ namespace ShiftOS.Engine
                     IsForwardingConsoleWrites = true;
                     if (TerminalBackend.InStory == false)
                     {
-                        TerminalBackend.InvokeCommand(text3);
+                        TerminalBackend.InvokeCommand(text3, true);
                     }
                     if (TerminalBackend.PrefixEnabled)
                     {

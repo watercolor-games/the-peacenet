@@ -308,6 +308,7 @@ namespace ShiftOS.Engine
     [Namespace("sos")]
     public static class ShiftOSCommands
     {
+        [RemoteLock]
         [Command("shutdown")]
         public static bool Shutdown()
         {
@@ -540,7 +541,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
 
 
 
-
+        [RemoteLock]
         [Command("list")]
         public static bool List()
         {
@@ -553,6 +554,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             return true;
         }
 
+        [RemoteLock]
         [Command("open")]
         public static bool Open(Dictionary<string, object> args)
         {
