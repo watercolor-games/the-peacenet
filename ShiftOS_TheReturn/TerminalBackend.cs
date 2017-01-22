@@ -279,7 +279,8 @@ namespace ShiftOS.Engine
                     {
                         ForwardGUID = guid;
                         ServerManager.SendMessage("trm_handshake_accept", $@"{{
-    guid: ""{ServerManager.thisGuid}""
+    guid: ""{ServerManager.thisGuid}"",
+    target: ""{guid}""
 }}");
 
                         IsForwardingConsoleWrites = true;

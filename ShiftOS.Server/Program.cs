@@ -294,9 +294,9 @@ Contents:
                         }));
                         break;
                     case "trm_handshake_accept":
-                        if(args["guid"] != null)
+                        if(args["guid"] != null && args["target"] != null)
                         {
-                            server.DispatchTo(new Guid(msg.GUID), new NetObject("hold_it", new ServerMessage
+                            server.DispatchTo(new Guid(args["target"] as string), new NetObject("hold_it", new ServerMessage
                             {
                                 Name = "trm_handshake_guid",
                                 GUID = args["guid"] as string
