@@ -326,9 +326,9 @@ Contents:
                         }
                         break;
                     case "trm_invcmd":
-                        if(args["guid"] != null && args["cmdstr"] != null)
+                        if(args["guid"] != null && args["command"] != null)
                         {
-                            string cmd = args["cmdstr"] as string;
+                            string cmd = args["command"] as string;
                             string cGuid = args["guid"] as string;
                             server.DispatchTo(new Guid(cGuid), new NetObject("trminvoke", new ServerMessage
                             {
