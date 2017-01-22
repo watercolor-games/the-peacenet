@@ -286,7 +286,7 @@ namespace ShiftOS.Engine
                     }
                     IsForwardingConsoleWrites = false;
                 }
-                else if(msg.Name == "pleasewrite")
+                else if (msg.Name == "pleasewrite")
                 {
                     Console.Write(msg.Contents);
                 }

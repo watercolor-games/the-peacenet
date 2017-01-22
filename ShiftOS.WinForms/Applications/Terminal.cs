@@ -361,6 +361,11 @@ namespace ShiftOS.WinForms.Applications
                     IsInRemoteSystem = true;
                     RemoteGuid = msg.GUID;
                 }
+                else if(msg.Name == "trm_handshake_stop")
+                {
+                    IsInRemoteSystem = false;
+                    RemoteGuid = "";
+                }
             };
 
         }

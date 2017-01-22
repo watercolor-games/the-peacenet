@@ -42,6 +42,25 @@ namespace ShiftOS.WinForms
     [Namespace("trm")]
     public static class TerminalExtensions
     {
+        [Command("exit")]
+        public static bool StopRemoting()
+        {
+            if(TerminalBackend.IsForwardingConsoleWrites == true)
+            {
+                ServerManager.SendMessage("trm_handshake_stop", $@"{{
+    guid: ""{TerminalBackend.ForwardGUID}""
+}}");
+                Console.WriteLine("Goodbye!");
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
         [Command("setpass", true)]
         [RequiresArgument("pass")]
         public static bool setPass(Dictionary<string, object> args)

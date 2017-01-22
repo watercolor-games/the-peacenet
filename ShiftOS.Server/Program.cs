@@ -314,6 +314,16 @@ Contents:
                             }));
                         }
                         break;
+                    case "trm_handshake_stop":
+                        if(args["guid"] != null)
+                        {
+                            server.DispatchTo(new Guid(args["guid"] as string), new NetObject("trm_handshake_stop", new ServerMessage
+                            {
+                                Name = "trm_handshake_stop",
+                                GUID = msg.GUID
+                            }));
+                        }
+                        break;
                     case "write":
                         if(args["guid"] != null && args["text"] != null)
                         {
