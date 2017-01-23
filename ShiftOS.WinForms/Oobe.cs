@@ -215,6 +215,7 @@ namespace ShiftOS.WinForms
 
         public void ShowSaveTransfer(Save save)
         {
+            this.Show();
             var fSetup = new FakeSetupScreen(this, 7);
 
             var t = new Thread(() =>
