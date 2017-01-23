@@ -96,7 +96,7 @@ namespace ShiftOS.WinForms
             // 
             this.hackeffecttimer.Interval = 50;
             // 
-            // HijackScreen
+            // Oobe
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -104,7 +104,7 @@ namespace ShiftOS.WinForms
             this.ClientSize = new System.Drawing.Size(653, 457);
             this.Controls.Add(this.lblhackwords);
             this.Controls.Add(this.lblHijack);
-            this.Name = "HijackScreen";
+            this.Name = "Oobe";
             this.Text = "ShiftOS";
             this.TransparencyKey = System.Drawing.Color.White;
             this.ResumeLayout(false);

@@ -18,10 +18,11 @@ namespace ShiftOS.WinForms
 
         public Action<bool> MUDUserFound = null;
 
-        public FakeSetupScreen(Oobe _oobe)
+        public FakeSetupScreen(Oobe _oobe, int page = 0)
         {
             oobe = _oobe;
             InitializeComponent();
+            currentPage = page;
             SetupUI();
             ServerManager.MessageReceived += (msg) =>
             {
@@ -133,8 +134,67 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     CanClose = true;
                     this.Close();
                     break;
+                case 7:
+                    btnnext.Show();
+                    btnback.Hide();
+                    pgrereg.BringToFront();
+                    TextType("You have two choices - either you can migrate your local user file to this multi-user domain, or you can restart with 0 Codepoints, no upgrades, and still keep your files.");
+                    break;
+                case 8:
+                    btnnext.Hide();
+                    ServerMessageReceived rc = null;
+
+                    rc = (msg) =>
+                    {
+                        if(msg.Name == "mud_found")
+                        {
+                            TextType("That username and password already exists in this multi-user domain. Please choose another.");
+                            currentPage = 7;
+                        }
+                        else if(msg.Name == "mud_notfound")
+                        {
+                            currentPage = 9;
+                            SetupUI();
+                        }
+                        ServerManager.MessageReceived -= rc;
+                    };
+
+                    if (string.IsNullOrEmpty(txtruname.Text))
+                    {
+                        TextType("You must provide a username.");
+                        currentPage = 7;
+                    }
+
+                    if (string.IsNullOrEmpty(txtrpass.Text))
+                    {
+                        TextType("You must provide a password.");
+                        currentPage = 7;
+                    }
+
+                    if (string.IsNullOrEmpty(txtrsys.Text))
+                    {
+                        TextType("You must provide a system hostname.");
+                        currentPage = 7;
+                    }
+
+                    if (currentPage == 7)
+                        return;
+
+                    ServerManager.MessageReceived += rc;
+                    ServerManager.SendMessage("mud_checkuserexists", $@"{{
+    username: ""{txtruname.Text}"",
+    password: ""{txtrpass.Text}""
+}}");
+                    break;
+                case 9:
+                    UserReregistered?.Invoke(txtruname.Text, txtrpass.Text, txtrsys.Text);
+                    this.CanClose = true;
+                    this.Close();
+                    break;
             }
         }
+
+        public event Action<string, string, string> UserReregistered;
 
         public void StartWipingInBackground(long arbitraryAmountOfBytes)
         {

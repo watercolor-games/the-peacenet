@@ -51,12 +51,23 @@
             this.page4 = new System.Windows.Forms.Panel();
             this.txtlicenseagreement = new System.Windows.Forms.RichTextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.pgrereg = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtruname = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtrpass = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtrsys = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.flbuttons.SuspendLayout();
             this.page1.SuspendLayout();
             this.page2.SuspendLayout();
             this.page3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.page4.SuspendLayout();
+            this.pgrereg.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlheader
@@ -300,11 +311,104 @@
             this.label10.TabIndex = 3;
             this.label10.Text = "License Agreement";
             // 
+            // pgrereg
+            // 
+            this.pgrereg.Controls.Add(this.tableLayoutPanel2);
+            this.pgrereg.Controls.Add(this.label11);
+            this.pgrereg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgrereg.Location = new System.Drawing.Point(138, 0);
+            this.pgrereg.Name = "pgrereg";
+            this.pgrereg.Size = new System.Drawing.Size(352, 300);
+            this.pgrereg.TabIndex = 8;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.label7, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.txtruname, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label8, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.txtrpass, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label9, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.txtrsys, 1, 2);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(20, 61);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(212, 72);
+            this.tableLayoutPanel2.TabIndex = 4;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(58, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Username:";
+            // 
+            // txtruname
+            // 
+            this.txtruname.Location = new System.Drawing.Point(109, 3);
+            this.txtruname.Name = "txtruname";
+            this.txtruname.Size = new System.Drawing.Size(100, 20);
+            this.txtruname.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(3, 26);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(56, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "Password:";
+            // 
+            // txtrpass
+            // 
+            this.txtrpass.Location = new System.Drawing.Point(109, 29);
+            this.txtrpass.Name = "txtrpass";
+            this.txtrpass.PasswordChar = '*';
+            this.txtrpass.Size = new System.Drawing.Size(100, 20);
+            this.txtrpass.TabIndex = 3;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(3, 52);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "System Name:";
+            // 
+            // txtrsys
+            // 
+            this.txtrsys.Location = new System.Drawing.Point(109, 55);
+            this.txtrsys.Name = "txtrsys";
+            this.txtrsys.Size = new System.Drawing.Size(100, 20);
+            this.txtrsys.TabIndex = 5;
+            // 
+            // label11
+            // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label11.Location = new System.Drawing.Point(16, 9);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(321, 26);
+            this.label11.TabIndex = 3;
+            this.label11.Text = "User information";
+            // 
             // FakeSetupScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 329);
+            this.Controls.Add(this.pgrereg);
             this.Controls.Add(this.page3);
             this.Controls.Add(this.page4);
             this.Controls.Add(this.page2);
@@ -328,6 +432,10 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.page4.ResumeLayout(false);
+            this.pgrereg.ResumeLayout(false);
+            this.pgrereg.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,5 +466,14 @@
         private System.Windows.Forms.Panel page4;
         private System.Windows.Forms.RichTextBox txtlicenseagreement;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Panel pgrereg;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txtruname;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtrpass;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtrsys;
+        private System.Windows.Forms.Label label11;
     }
 }

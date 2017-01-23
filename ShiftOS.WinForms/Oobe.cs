@@ -215,7 +215,35 @@ namespace ShiftOS.WinForms
 
         public void ShowSaveTransfer(Save save)
         {
-            throw new NotImplementedException();
+            var fSetup = new FakeSetupScreen(this, 7);
+
+            var t = new Thread(() =>
+            {
+                textgeninput = lblhackwords;
+                Clear();
+                TextType("Welcome back to ShiftOS.");
+                Thread.Sleep(500);
+                TextType("Since your last time inside ShiftOS, the operating system has changed. Your user account is no longer stored on your local system.");
+                Thread.Sleep(500);
+                this.Invoke(new Action(() =>
+                {
+                    //UPS is drunky heaven over here... it's a liquor store, I think... - Drunk Michael
+                    fSetup.UserReregistered += (u, p, s) =>
+                    {
+                        save.Username = u;
+                        save.Password = p;
+                        save.SystemName = s;
+                        SaveSystem.CurrentSave = save;
+                        SaveSystem.SaveGame();
+                        if(Utils.FileExists(Paths.SaveFileInner))
+                            Utils.Delete(Paths.SaveFileInner);
+                        this.Close();
+                    };
+                    fSetup.Show();
+                }));
+            });
+            t.IsBackground = true;
+            t.Start();
         }
 
         public void PromptForLogin()
