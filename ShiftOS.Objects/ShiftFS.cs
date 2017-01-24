@@ -43,6 +43,7 @@ namespace ShiftOS.Objects.ShiftFS
     {
         public string Name;
         public byte[] Data;
+        public byte[] HeaderData;
         public bool ReadAccessToLowUsers;
         public Permissions permissions;
         public System.IO.Stream GetStream()
@@ -344,6 +345,27 @@ namespace ShiftOS.Objects.ShiftFS
             }
             return dir.FindFileByName(pathlist[pathlist.Length - 1]);
 
+        }
+
+        public static byte[] GetHeaderData(string filePath)
+        {
+            return GetFileInfo(filePath).HeaderData;
+        }
+
+        public static string GetHeaderText(string filePath)
+        {
+            byte[] header = GetHeaderData(filePath);
+            return (header == null) ? "" : Encoding.UTF8.GetString(header);
+        }
+
+        public static void SetHeaderData(string filePath, byte[] data)
+        {
+            GetFileInfo(filePath).HeaderData = data;
+        }
+
+        public static void SetHeaderText(string filePath, string text)
+        {
+            SetHeaderData(filePath, Encoding.UTF8.GetBytes(text));
         }
 
         public static string[] GetDirectories(string path)
