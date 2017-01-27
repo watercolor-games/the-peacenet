@@ -113,12 +113,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AltTabWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AltTabWindow.Designer.cs">
-      <DependentUpon>AltTabWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="AppearanceManager.cs" />
     <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="Commands.cs" />
@@ -127,7 +121,6 @@
     <Compile Include="CrashHandler.Designer.cs">
       <DependentUpon>CrashHandler.cs</DependentUpon>
     </Compile>
-    <Compile Include="CtrlTabMenu.cs" />
     <Compile Include="Desktop.cs" />
     <Compile Include="FileSkimmerBackend.cs" />
     <Compile Include="Infobox.cs" />
@@ -153,9 +146,6 @@
     <Compile Include="TutorialManager.cs" />
     <Compile Include="VirusEngine.cs" />
     <Compile Include="WinOpenAttribute.cs" />
-    <EmbeddedResource Include="AltTabWindow.resx">
-      <DependentUpon>AltTabWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>
     </EmbeddedResource>

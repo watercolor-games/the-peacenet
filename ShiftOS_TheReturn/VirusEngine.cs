@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using static ShiftOS.Objects.ShiftFS.Utils;
 
 
@@ -35,130 +36,53 @@ namespace ShiftOS.Engine
 {
     public static class VirusEngine
     {
-        private static List<Virus> _infections = new List<Virus>();
-
-        public static void Add(Virus virus)
-        {
-            _infections.Add(virus);
-        }
-
         public static void InfectFile(string file, string virusid)
         {
-            string existing = "";
+            var infected = new List<string>();
+            var hData = GetHeaderText(file);
 
-            if(probeFile(file, out existing) == true)
+            if (hData == "")
             {
-                existing = existing.Replace("<<VIRUSENGINE_HEAD>>", "").Replace("<<VIRUSENGINE_END>>", "");
-
-                existing += ";" + virusid;
-
-                existing = "<<VIRUSENGINE_HEAD>>" + existing + "<<VIRUSENGINE_END>>";
-
-                string c = ReadAllText(file);
-
-                string temp = "";
-
-                if(probeFile(file, out temp) == true)
-                {
-                    c = c.Replace(temp, existing);
-                }
-                else
-                {
-                    c = existing + c;
-                }
-                WriteAllText(file, c);
-                return;
+                infected.Add(virusid);
             }
             else
             {
-                existing = "<<VIRUSENGINE_HEAD>>" + virusid + "<<VIRUSENGINE_END>>";
-                string c = ReadAllText(file);
-                c = existing + c;
-                WriteAllText(file, c);
-                return;
+                infected = JsonConvert.DeserializeObject<List<string>>(hData);
+                if (!infected.Contains(virusid))
+                    infected.Add(virusid);
             }
 
+            SetHeaderText(file, JsonConvert.SerializeObject(infected));
+        }
 
+        public static void DisinfectFile(string file, int threatlevel)
+        {
+            var infected = new List<string>();
+            var hData = GetHeaderText(file);
+
+            if (hData != "")
+            {
+                infected = JsonConvert.DeserializeObject<List<string>>(hData);
+                for (int i = 0; i < infected.Count; i++)
+                {
+                    string[] splitID = infected[i].Split('.');
+                    int th = Convert.ToInt32(splitID[splitID.Length - 1]);
+                    if (th <= threatlevel)
+                    {
+                        infected.RemoveAt(i);
+                    }
+                }
+            }
+
+            SetHeaderText(file, JsonConvert.SerializeObject(infected));
         }
 
         internal static string[] FindAllVirusesInFile(string file)
         {
-            string existing = "";
-            if(probeFile(file, out existing) == true)
-            {
-                existing = existing.Replace("<<VIRUSENGINE_HEAD>>", "").Replace("<<VIRUSENGINE_END>>", "");
-                return existing.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries); ;
-            }
-            else
-            {
-                return null;
-            }
+            string hdata = GetHeaderText(file);
+            return (hdata != "") ? new string[0] : JsonConvert.DeserializeObject<string[]>(hdata);
         }
 
-        private static bool probeFile(string file, out string existing)
-        {
-            int startIndex = 0;
-            int endIndex = 0;
-
-            bool found = false;
-
-            string contents = ReadAllText(file);
-
-            for(int i = 0; i < contents.Length; i++)
-            {
-                string end = "<<VIRUSENGINE_END>>";
-                try
-                {
-                    if (contents.Substring(i, end.Length) == end)
-                    {
-                        endIndex = i + end.Length;
-                        found = true;
-                        break;
-                    }
-                }
-                catch { }
-            }
-
-            if (found == false) {
-                existing = "<<VIRUSENGINE_HEAD>><<VIRUSENGINE_END>>";
-            }
-            else
-            {
-                existing = contents.Substring(startIndex, endIndex);
-            }
-            return found;
-        }
-
-        public static void Infect(string virusid)
-        {
-            string[] id_split = virusid.Split('.');
-
-            foreach(var v in _infections)
-            {
-                if(v.Type == id_split[0])
-                {
-                    if(v.Signature == id_split[1])
-                    {
-                        if(v.ThreatLevel == Convert.ToInt32(id_split[2]))
-                        {
-                            var t = new Thread(new ThreadStart(() =>
-                            {
-                                v.Activate();
-                            }));
-                            t.IsBackground = true;
-                            t.Start();
-                            return;
-                        }
-                    }
-                }
-            }
-            throw new Exception("Virus not found in the system.");
-        }
-
-        internal static void ProbeFileRaw(string filePath, out string existing)
-        {
-            probeFile(filePath, out existing);
-        }
     }
 
     public abstract class Virus

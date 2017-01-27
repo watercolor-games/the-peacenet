@@ -188,17 +188,6 @@ namespace ShiftOS.WinForms
                     case FileType.Executable:
                         //NYI
                         throw new Exception();
-                    case FileType.Python:
-                        var p = new Engine.Scripting.PythonInterpreter();
-                        try
-                        {
-                            p.ExecuteFile(path);
-                        }
-                        catch (Exception ex)
-                        {
-                            Infobox.Show("{PY_EXCEPTION}", ex.Message);
-                        }
-                        break;
                     case FileType.Lua:
                         try
                         {

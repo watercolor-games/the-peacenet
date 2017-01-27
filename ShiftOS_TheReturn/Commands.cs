@@ -44,69 +44,10 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Engine
 {
-    [Namespace("virus")]
-    public class VirusTestCommands
-    {
-        [Command("infect")]
-        public static void InfectFileWithMUDVirus(Dictionary<string, object> args)
-        {
-            string signature = "";
-
-            if (args.ContainsKey("signature"))
-                signature = args["signature"] as string;
-            else
-                throw new Exception("Virus signature not provided.");
-
-            string script = "";
-
-            Action<string> scriptFound = new Action<string>((s) =>
-            {
-                script = s;
-                Virus v = new LuaVirus(s, 1);
-                VirusEngine.Add(v);
-                VirusEngine.Infect($"lua.{v.Signature}.1");
-            });
-
-            ServerManager.MessageReceived += (srv) =>
-            {
-                if (srv.Name == "mud_virus")
-                {
-                    scriptFound?.Invoke(srv.Contents);
-                    scriptFound = null;
-                }
-            };
-
-            ServerManager.SendMessage("getvirus", signature);
-        }
-    }
-
-
     [RequiresUpgrade("mud_fundamentals")]
     [Namespace("mud")]
     public static class MUDCommands
     {
-        [Command("addvirus")]
-        public static void Virus_AddToDatabase(Dictionary<string, object> args)
-        {
-            string file = "";
-            int threatLevel = 0;
-
-
-            if (args.ContainsKey("file"))
-                file = args["file"] as string;
-            else
-                throw new Exception("No 'file' argument provided.");
-
-            if (args.ContainsKey("threatlevel"))
-                threatLevel = Convert.ToInt32(args["threatlevel"].ToString());
-
-            Virus lua = new LuaVirus(Utils.ReadAllText(file), threatLevel);
-
-            Console.WriteLine("Virus uploaded to current multi-user domain successfully.");
-
-        }
-
-
         [Command("status")]
         public static bool Status()
         {
