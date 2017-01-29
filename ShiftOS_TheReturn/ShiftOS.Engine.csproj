@@ -61,6 +61,10 @@
     <Reference Include="Discoursistency.Util">
       <HintPath>..\Libraries\Discoursistency.Util.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NetSockets">
       <HintPath>..\Libraries\NetSockets.dll</HintPath>
     </Reference>
@@ -115,6 +119,7 @@
   <ItemGroup>
     <Compile Include="AppearanceManager.cs" />
     <Compile Include="AppLauncherDaemon.cs" />
+    <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CrashHandler.cs" />

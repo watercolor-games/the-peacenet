@@ -148,6 +148,37 @@ namespace ShiftOS.Engine.Scripting
         }
     }
 
+    [Exposed("console")]
+    public class ConsoleFunctions
+    {
+        public void write(dynamic text)
+        {
+            Console.Write(text.ToString());
+        }
+
+        public void writeLine(dynamic text)
+        {
+            Console.WriteLine(text.ToString());
+        }
+    }
+
+    [Exposed("sos")]
+    public class SystemFunctions
+    {
+        public int getCodepoints() { return SaveSystem.CurrentSave.Codepoints; }
+
+
+        public bool runCommand(string cmd)
+        {
+            var args = TerminalBackend.GetArgs(ref cmd);
+
+            return TerminalBackend.RunClient(cmd, args);
+        }
+
+        
+    }
+
+
     public class ExposedAttribute : Attribute
     {
         /// <summary>

@@ -47,6 +47,10 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Vlc.DotNet.Core.Interops, Version=2.1.130.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=x86">
+      <HintPath>..\packages\Vlc.DotNet.Core.Interops.2.1.130\lib\net45\x86\Vlc.DotNet.Core.Interops.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Applications\Artpad.cs">
@@ -169,6 +173,7 @@
     <Compile Include="Applications\Terminal.Designer.cs">
       <DependentUpon>Terminal.cs</DependentUpon>
     </Compile>
+    <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Controls\ColorControl.cs">
       <SubType>UserControl</SubType>
@@ -198,6 +203,7 @@
     <Compile Include="Oobe.Designer.cs">
       <DependentUpon>Oobe.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />
