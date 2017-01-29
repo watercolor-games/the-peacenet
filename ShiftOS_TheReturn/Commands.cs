@@ -44,6 +44,20 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Engine
 {
+    [Namespace("audio")]
+    public static class AudioCommands
+    {
+        [Command("setvol", description = "Set the volume of the system audio to anywhere between 0 and 100.")]
+        [RequiresArgument("value")]
+        public static bool SetVolume(Dictionary<string,object> args)
+        {
+            int val = Convert.ToInt32(args["value"].ToString());
+            float volume = (val / 100F);
+            AudioManager.SetVolume(volume);
+            return true;
+        }
+    }
+
     [RequiresUpgrade("mud_fundamentals")]
     [Namespace("mud")]
     public static class MUDCommands

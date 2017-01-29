@@ -51,7 +51,11 @@ namespace ShiftOS.Engine
             t.Start();
         }
 
-
+        public static void SetVolume(float volume)
+        {
+            _provider.Volume = volume; //persist between songs
+            _out.Volume = volume;
+        }
     }
 
     public interface IAudioProvider
