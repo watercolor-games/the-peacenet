@@ -54,6 +54,7 @@ namespace ShiftOS.WinForms.Applications
             try
             {
                 InitializeComponent();
+                
             }
             catch (Exception ex)
             {
@@ -1851,7 +1852,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
-            
+            foreach (Control ctrl in flowcolours.Controls)
+            {
+                ctrl.Tag = "keepbg";
+                ctrl.BackColor = Color.Black;
+            }
         }
 
         public void OnSkinLoad()

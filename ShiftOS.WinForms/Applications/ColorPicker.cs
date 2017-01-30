@@ -62,54 +62,65 @@ namespace ShiftOS.WinForms.Applications
             foreach (Control ctrl in pnlanycolours.Controls)
             {
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionany);
+                ctrl.Tag = "keepbg";
             }
             foreach (Control ctrl in pnlgraycolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctiongray);
             }
 
             foreach (Control ctrl in pnlredcolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionred);
             }
 
             foreach (Control ctrl in pnlgreencolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctiongreen);
             }
 
             foreach (Control ctrl in pnlbluecolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionblue);
             }
 
             foreach (Control ctrl in pnlorangecolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionorange);
             }
 
             foreach (Control ctrl in pnlyellowcolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionyellow);
             }
 
             foreach (Control ctrl in pnlbrowncolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionbrown);
             }
 
             foreach (Control ctrl in pnlpurplecolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionpurple);
             }
 
             foreach (Control ctrl in pnlpinkcolours.Controls)
             {
+                ctrl.Tag = "keepbg";
                 ctrl.MouseDown += new MouseEventHandler(this.colourselctionpink);
             }
-
+            pnloldcolour.Tag = "keepbg";
             pnloldcolour.Click += new EventHandler(pnloldcolour_Click);
             pnlnewcolour.Click += new EventHandler(pnlnewcolour_Click);
+            pnlnewcolour.Tag = "keepbg";
         }
 
         public int anylevel = 0;

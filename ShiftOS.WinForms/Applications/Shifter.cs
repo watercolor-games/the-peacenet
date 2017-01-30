@@ -379,7 +379,7 @@ namespace ShiftOS.WinForms.Applications
 
                         var f = en[style.SelectedIndex];
 
-                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToInt32(size.Text), f));
+                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
                         CodepointValue += 100;
                     };
 
@@ -389,7 +389,7 @@ namespace ShiftOS.WinForms.Applications
 
                         var f = en[style.SelectedIndex];
 
-                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToInt32(size.Text), f));
+                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
                         CodepointValue += 50;
                     };
 
@@ -401,7 +401,7 @@ namespace ShiftOS.WinForms.Applications
 
                             var f = en[style.SelectedIndex];
 
-                            c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToInt32(size.Text), f));
+                            c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
                         }
                         catch
                         {

@@ -45,6 +45,8 @@ namespace ShiftOS.Engine
                     {
                         Thread.Sleep(5000); //even when the player isn't playing, this will give a good delay between songs.
                     }
+                    _reader.Dispose();
+                    _out.Dispose();
                 }
             });
             t.IsBackground = true;
@@ -56,6 +58,8 @@ namespace ShiftOS.Engine
             _provider.Volume = volume; //persist between songs
             _out.Volume = volume;
         }
+
+        
     }
 
     public interface IAudioProvider
