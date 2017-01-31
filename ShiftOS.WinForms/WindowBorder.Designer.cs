@@ -75,16 +75,16 @@ namespace ShiftOS.WinForms
             // pnltitle
             // 
             this.pnltitle.BackColor = System.Drawing.Color.Black;
-            this.pnltitle.Controls.Add(this.pnltitleleft);
-            this.pnltitle.Controls.Add(this.pnltitleright);
             this.pnltitle.Controls.Add(this.pnlminimize);
             this.pnltitle.Controls.Add(this.pnlmaximize);
             this.pnltitle.Controls.Add(this.pnlclose);
+            this.pnltitle.Controls.Add(this.pnltitleleft);
+            this.pnltitle.Controls.Add(this.pnltitleright);
             this.pnltitle.Controls.Add(this.lbtitletext);
             this.pnltitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnltitle.Location = new System.Drawing.Point(2, 0);
+            this.pnltitle.Location = new System.Drawing.Point(0, 0);
             this.pnltitle.Name = "pnltitle";
-            this.pnltitle.Size = new System.Drawing.Size(726, 30);
+            this.pnltitle.Size = new System.Drawing.Size(730, 30);
             this.pnltitle.TabIndex = 0;
             this.pnltitle.Paint += new System.Windows.Forms.PaintEventHandler(this.pnltitle_Paint);
             this.pnltitle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnltitle_MouseMove);
@@ -100,7 +100,7 @@ namespace ShiftOS.WinForms
             // pnltitleright
             // 
             this.pnltitleright.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnltitleright.Location = new System.Drawing.Point(724, 0);
+            this.pnltitleright.Location = new System.Drawing.Point(728, 0);
             this.pnltitleright.Name = "pnltitleright";
             this.pnltitleright.Size = new System.Drawing.Size(2, 30);
             this.pnltitleright.TabIndex = 5;
@@ -109,7 +109,7 @@ namespace ShiftOS.WinForms
             // 
             this.pnlminimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlminimize.BackColor = System.Drawing.Color.Green;
-            this.pnlminimize.Location = new System.Drawing.Point(645, 3);
+            this.pnlminimize.Location = new System.Drawing.Point(649, 3);
             this.pnlminimize.Name = "pnlminimize";
             this.pnlminimize.Size = new System.Drawing.Size(24, 24);
             this.pnlminimize.TabIndex = 3;
@@ -119,7 +119,7 @@ namespace ShiftOS.WinForms
             // 
             this.pnlmaximize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlmaximize.BackColor = System.Drawing.Color.Yellow;
-            this.pnlmaximize.Location = new System.Drawing.Point(672, 3);
+            this.pnlmaximize.Location = new System.Drawing.Point(676, 3);
             this.pnlmaximize.Name = "pnlmaximize";
             this.pnlmaximize.Size = new System.Drawing.Size(24, 24);
             this.pnlmaximize.TabIndex = 2;
@@ -129,7 +129,7 @@ namespace ShiftOS.WinForms
             // 
             this.pnlclose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlclose.BackColor = System.Drawing.Color.Red;
-            this.pnlclose.Location = new System.Drawing.Point(699, 3);
+            this.pnlclose.Location = new System.Drawing.Point(703, 3);
             this.pnlclose.Name = "pnlclose";
             this.pnlclose.Size = new System.Drawing.Size(24, 24);
             this.pnlclose.TabIndex = 1;
@@ -185,18 +185,18 @@ namespace ShiftOS.WinForms
             // 
             this.pnlleft.BackColor = System.Drawing.Color.Black;
             this.pnlleft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlleft.Location = new System.Drawing.Point(0, 0);
+            this.pnlleft.Location = new System.Drawing.Point(0, 30);
             this.pnlleft.Name = "pnlleft";
-            this.pnlleft.Size = new System.Drawing.Size(2, 493);
+            this.pnlleft.Size = new System.Drawing.Size(2, 463);
             this.pnlleft.TabIndex = 2;
             // 
             // pnlright
             // 
             this.pnlright.BackColor = System.Drawing.Color.Black;
             this.pnlright.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlright.Location = new System.Drawing.Point(728, 0);
+            this.pnlright.Location = new System.Drawing.Point(728, 30);
             this.pnlright.Name = "pnlright";
-            this.pnlright.Size = new System.Drawing.Size(2, 493);
+            this.pnlright.Size = new System.Drawing.Size(2, 463);
             this.pnlright.TabIndex = 3;
             // 
             // pnlcontents
@@ -204,9 +204,9 @@ namespace ShiftOS.WinForms
             this.pnlcontents.BackColor = System.Drawing.Color.Black;
             this.pnlcontents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlcontents.ForeColor = System.Drawing.Color.White;
-            this.pnlcontents.Location = new System.Drawing.Point(2, 30);
+            this.pnlcontents.Location = new System.Drawing.Point(0, 30);
             this.pnlcontents.Name = "pnlcontents";
-            this.pnlcontents.Size = new System.Drawing.Size(726, 461);
+            this.pnlcontents.Size = new System.Drawing.Size(730, 463);
             this.pnlcontents.TabIndex = 4;
             // 
             // WindowBorder
@@ -214,11 +214,11 @@ namespace ShiftOS.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(730, 493);
-            this.Controls.Add(this.pnlcontents);
-            this.Controls.Add(this.pnltitle);
             this.Controls.Add(this.pnlbottom);
             this.Controls.Add(this.pnlright);
             this.Controls.Add(this.pnlleft);
+            this.Controls.Add(this.pnlcontents);
+            this.Controls.Add(this.pnltitle);
             this.Name = "WindowBorder";
             this.Load += new System.EventHandler(this.WindowBorder_Load);
             this.pnltitle.ResumeLayout(false);

@@ -126,6 +126,7 @@ namespace ShiftOS.WinForms
                         {
                             var pnlbtn = new Panel();
                             pnlbtn.Margin = new Padding(2, LoadedSkin.PanelButtonFromTop, 0, 0);
+                            pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
                             pnlbtn.BackgroundImage = GetImage("panelbutton");
                             pnlbtn.BackgroundImageLayout = GetImageLayout("panelbutton");
 
@@ -135,6 +136,7 @@ namespace ShiftOS.WinForms
                             pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
                             pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;
                             pnlbtntext.Font = LoadedSkin.PanelButtonFont;
+                            pnlbtntext.BackColor = Color.Transparent;
 
                             pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
                             if (pnlbtn.BackgroundImage != null)
@@ -142,10 +144,10 @@ namespace ShiftOS.WinForms
                                 pnlbtntext.BackColor = Color.Transparent;
                             }
                             pnlbtn.Size = LoadedSkin.PanelButtonSize;
-
+                            pnlbtn.Tag = "keepbg";
+                            pnlbtntext.Tag = "keepbg";
                             pnlbtn.Controls.Add(pnlbtntext);
                             this.panelbuttonholder.Controls.Add(pnlbtn);
-                            ControlManager.SetupControls(pnlbtn);
                             pnlbtn.Show();
                             pnlbtntext.Show();
                         }
