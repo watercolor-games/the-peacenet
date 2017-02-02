@@ -63,9 +63,9 @@
             this.pglogin = new System.Windows.Forms.Panel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.label12 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtluser = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtlpass = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.flbuttons.SuspendLayout();
@@ -432,9 +432,9 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.label12, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.textBox1, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.txtluser, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.label13, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.textBox2, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.txtlpass, 1, 1);
             this.tableLayoutPanel3.Location = new System.Drawing.Point(20, 61);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 3;
@@ -453,12 +453,12 @@
             this.label12.TabIndex = 0;
             this.label12.Text = "Username:";
             // 
-            // textBox1
+            // txtluser
             // 
-            this.textBox1.Location = new System.Drawing.Point(109, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 1;
+            this.txtluser.Location = new System.Drawing.Point(109, 3);
+            this.txtluser.Name = "txtluser";
+            this.txtluser.Size = new System.Drawing.Size(100, 20);
+            this.txtluser.TabIndex = 1;
             // 
             // label13
             // 
@@ -469,13 +469,13 @@
             this.label13.TabIndex = 2;
             this.label13.Text = "Password:";
             // 
-            // textBox2
+            // txtlpass
             // 
-            this.textBox2.Location = new System.Drawing.Point(109, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PasswordChar = '*';
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 3;
+            this.txtlpass.Location = new System.Drawing.Point(109, 29);
+            this.txtlpass.Name = "txtlpass";
+            this.txtlpass.PasswordChar = '*';
+            this.txtlpass.Size = new System.Drawing.Size(100, 20);
+            this.txtlpass.TabIndex = 3;
             // 
             // label15
             // 
@@ -578,9 +578,9 @@
         private System.Windows.Forms.Panel pglogin;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtluser;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtlpass;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button button1;
     }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms
@@ -192,10 +193,86 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     this.Close();
                     break;
                 case 10:
+                    btnnext.Show();
+                    btnback.Hide();
                     pglogin.BringToFront();
+                    break;
+                case 11:
+                    btnnext.Hide();
+                    ServerMessageReceived login = null;
+
+                    login = (msg) =>
+                    {
+                        if (msg.Name == "mud_found")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                currentPage = 12;
+                                SetupUI();
+                            }));
+                        }
+                        else if (msg.Name == "mud_notfound")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                currentPage = 10;
+                                SetupUI();
+                            }));
+                        }
+                        ServerManager.MessageReceived -= login;
+                    };
+
+                    ServerManager.MessageReceived += login;
+                    if(!string.IsNullOrWhiteSpace(txtluser.Text) && !string.IsNullOrWhiteSpace(txtlpass.Text))
+                    {
+                        ServerManager.SendMessage("mud_checkuserexists", JsonConvert.SerializeObject(new
+                        {
+                            username = txtluser.Text,
+                            password = txtlpass.Text
+                        }));
+                    }
+                    break;
+                case 12:
+                    btnnext.Hide();
+                    ServerMessageReceived getsave = null;
+
+                    getsave = (msg) =>
+                    {
+                        if (msg.Name == "mud_found")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                currentPage = 12;
+                                SetupUI();
+                            }));
+                        }
+                        else if (msg.Name == "mud_notfound")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                currentPage = 10;
+                                SetupUI();
+                            }));
+                        }
+                        ServerManager.MessageReceived -= getsave;
+                    };
+
+                    ServerManager.MessageReceived += getsave;
+
+                    ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                    {
+                        username = txtluser.Text,
+                        password = txtlpass.Text
+                    }));
+
+                    DoneLoggingIn?.Invoke();
+                    this.CanClose = true;
+                    this.Close();
                     break;
             }
         }
+
+        public event Action DoneLoggingIn;
 
         public event Action<string, string, string> UserReregistered;
 

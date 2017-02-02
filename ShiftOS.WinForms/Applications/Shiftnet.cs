@@ -65,6 +65,12 @@ namespace ShiftOS.WinForms.Applications
                 font-size: {LoadedSkin.Header3Font.SizeInPoints}pt;
             }}
 
+            pre, code {{
+                font-family: ""{LoadedSkin.TerminalFont.Name}"";
+                font-size: {LoadedSkin.TerminalFont.SizeInPoints}pt;
+                color: rgb({LoadedSkin.TerminalForeColor.R}, {LoadedSkin.TerminalForeColor.G}, {LoadedSkin.TerminalForeColor.B});
+                background-color: rgb({LoadedSkin.TerminalBackColor.R}, {LoadedSkin.TerminalBackColor.G}, {LoadedSkin.TerminalBackColor.B});                
+            }}
         </style>
     </head>
     <body>
@@ -128,20 +134,34 @@ namespace ShiftOS.WinForms.Applications
 
         private void btnback_Click(object sender, EventArgs e)
         {
-            string hist = History.Pop();
-            if (!string.IsNullOrEmpty(hist))
+            try
             {
-                Future.Push(hist);
-                ShiftnetNavigate(hist, false);
+                string hist = History.Pop();
+                if (!string.IsNullOrEmpty(hist))
+                {
+                    Future.Push(hist);
+                    ShiftnetNavigate(hist, false);
+                }
+            }
+            catch
+            {
+
             }
         }
 
         private void btnforward_Click(object sender, EventArgs e)
         {
-            string fut = Future.Pop();
-            if (!string.IsNullOrEmpty(fut))
+            try
             {
-                ShiftnetNavigate(fut);
+                string fut = Future.Pop();
+                if (!string.IsNullOrEmpty(fut))
+                {
+                    ShiftnetNavigate(fut);
+                }
+            }
+            catch
+            {
+
             }
         }
 

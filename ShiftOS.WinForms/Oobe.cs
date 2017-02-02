@@ -257,6 +257,10 @@ namespace ShiftOS.WinForms
             var fsw = new FakeSetupScreen(this, 10);
             fsw.Show();
             fsw.TopMost = true;
+            fsw.DoneLoggingIn += () =>
+            {
+                this.Close();
+            };
         }
 
         public void StartTrailer()
