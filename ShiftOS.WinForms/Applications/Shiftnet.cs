@@ -104,6 +104,7 @@ namespace ShiftOS.WinForms.Applications
             {
                 url = Url
             }));
+            txturl.Text = Url;
         }
 
         public void OnLoad()
