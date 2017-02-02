@@ -12,7 +12,7 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Modding.VirtualMachine
 {
-    [Launcher("ShiftOS Virtual Machine", false)]
+    [Launcher("ShiftOS Virtual Machine", false, null, "Programming")]
     public partial class Form1 : UserControl, IShiftOSWindow
     {
         private byte[] memory = null; //program binary

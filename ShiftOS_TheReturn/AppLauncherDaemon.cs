@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Engine
 {
@@ -84,6 +85,15 @@ namespace ShiftOS.Engine
                     }
                 }
             }
+
+            foreach(var file in Utils.GetFiles(Paths.GetPath("applauncher")))
+            {
+                if (file.EndsWith(".al"))
+                {
+                    var item = JsonConvert.DeserializeObject<LuaLauncherItem>(Utils.ReadAllText(file));
+                    win.Add(item);
+                }
+            }
             return win;
         }
 
@@ -94,5 +104,15 @@ namespace ShiftOS.Engine
         public LauncherAttribute DisplayData { get; internal set; }
         public Type LaunchType { get; internal set; }
 
+    }
+
+    public class LuaLauncherItem : LauncherItem
+    {
+        public LuaLauncherItem(string file)
+        {
+            LaunchPath = file;
+        }
+
+        public string LaunchPath { get; private set; }
     }
 }

@@ -56,6 +56,7 @@ namespace ShiftOS.Engine
             AddPath("local", "deutsch.local");
             AddPath("local", "verbose.local");
             AddPath("system", "data");
+            AddPath("system", "applauncher");
             AddPath("data", "save.json");
             AddPath("data", "user.dat");
             AddPath("data", "skin");

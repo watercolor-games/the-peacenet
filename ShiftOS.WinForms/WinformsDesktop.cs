@@ -263,7 +263,16 @@ namespace ShiftOS.WinForms
                 item.Text = kv.DisplayData.Name;
                 item.Click += (o, a) =>
                 {
-                    Engine.AppearanceManager.SetupWindow(Activator.CreateInstance(kv.LaunchType) as IShiftOSWindow);
+                    if (kv is LuaLauncherItem)
+                    {
+                        var interpreter = new Engine.Scripting.LuaInterpreter();
+                        interpreter.ExecuteFile((kv as LuaLauncherItem).LaunchPath);
+                    }
+                    else 
+                    {
+                        Engine.AppearanceManager.SetupWindow(Activator.CreateInstance(kv.LaunchType) as IShiftOSWindow);
+                    }
+
                 };
                 if (sortedItems.ContainsKey(kv.DisplayData.Category))
                 {
