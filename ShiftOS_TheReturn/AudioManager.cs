@@ -31,6 +31,10 @@ namespace ShiftOS.Engine
             {
                 SaveSystem.GameReady += () =>
                 {
+                    while(_out == null)
+                    {
+
+                    }
                     _out.Volume = _provider.Volume;
                 };
                 Random rnd = new Random();

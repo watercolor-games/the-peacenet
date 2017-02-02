@@ -81,7 +81,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txturl.Location = new System.Drawing.Point(61, 3);
             this.txturl.Name = "txturl";
-            this.txturl.Size = new System.Drawing.Size(702, 20);
+            this.txturl.Size = new System.Drawing.Size(678, 20);
             this.txturl.TabIndex = 2;
             this.txturl.WordWrap = false;
             this.txturl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txturl_KeyDown);
@@ -91,7 +91,7 @@
             this.btngo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btngo.AutoSize = true;
             this.btngo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btngo.Location = new System.Drawing.Point(769, 3);
+            this.btngo.Location = new System.Drawing.Point(745, 3);
             this.btngo.Name = "btngo";
             this.btngo.Size = new System.Drawing.Size(31, 23);
             this.btngo.TabIndex = 3;
@@ -102,7 +102,6 @@
             // wbcanvas
             // 
             this.wbcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wbcanvas.IsWebBrowserContextMenuEnabled = false;
             this.wbcanvas.Location = new System.Drawing.Point(0, 29);
             this.wbcanvas.MinimumSize = new System.Drawing.Size(20, 20);
             this.wbcanvas.Name = "wbcanvas";

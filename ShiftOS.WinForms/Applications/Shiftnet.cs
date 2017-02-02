@@ -43,27 +43,26 @@ namespace ShiftOS.WinForms.Applications
             string html = $@"<html>
     <head>
         <style>
-            <!-- Skin the web page -->
             body {{
                 background-color: rgb({LoadedSkin.ControlColor.R}, {LoadedSkin.ControlColor.G}, {LoadedSkin.ControlColor.B});
                 color: rgb({LoadedSkin.ControlTextColor.R}, {LoadedSkin.ControlTextColor.G}, {LoadedSkin.ControlTextColor.B});
                 font-family: ""{LoadedSkin.MainFont.Name}"";
-                font-size: {LoadedSkin.MainFont.Size}em;
+                font-size: {LoadedSkin.MainFont.SizeInPoints}pt;
             }}
 
             h1 {{
                 font-family: ""{LoadedSkin.HeaderFont.Name}"";
-                font-size: {LoadedSkin.HeaderFont.Size}em;
+                font-size: {LoadedSkin.HeaderFont.SizeInPoints}pt;
             }}
 
             h2 {{
                 font-family: ""{LoadedSkin.Header2Font.Name}"";
-                font-size: {LoadedSkin.Header2Font.Size}em;
+                font-size: {LoadedSkin.Header2Font.SizeInPoints}pt;
             }}
 
             h3 {{
                 font-family: ""{LoadedSkin.Header3Font.Name}"";
-                font-size: {LoadedSkin.Header3Font.Size}em;
+                font-size: {LoadedSkin.Header3Font.SizeInPoints}pt;
             }}
 
         </style>
@@ -84,7 +83,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void wbcanvas_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (CurrentUrl != e.Url.ToString())
+            if (CurrentUrl != e.Url.ToString() && !e.Url.ToString().StartsWith("about:"))
             {
                 e.Cancel = true;
                 Future.Clear();
