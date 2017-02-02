@@ -53,10 +53,12 @@ namespace ShiftOS.Engine
             {
                 if (asmExec.EndsWith(".dll") | asmExec.EndsWith(".exe"))
                 {
-                    var asm = Assembly.LoadFrom(asmExec);
-
-                    if (asm.GetReferencedAssemblies().Contains("ShiftOS.Engine") || asm.FullName.Contains("ShiftOS.Engine"))
+                    try
                     {
+                        var asm = Assembly.LoadFrom(asmExec);
+
+                        if (asm.GetReferencedAssemblies().Contains("ShiftOS.Engine") || asm.FullName.Contains("ShiftOS.Engine"))
+                        {
                             foreach (var type in asm.GetTypes())
                             {
                                 if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
@@ -74,6 +76,11 @@ namespace ShiftOS.Engine
                                     }
                                 }
                             }
+                        }
+                    }
+                    catch
+                    {
+
                     }
                 }
             }
