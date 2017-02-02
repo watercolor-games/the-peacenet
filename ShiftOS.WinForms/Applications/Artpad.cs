@@ -41,7 +41,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Artpad", true, "al_artpad")]
+    [Launcher("Artpad", true, "al_artpad", "Graphics")]
     [RequiresUpgrade("artpad")]
     [WinOpen("artpad")]
     public partial class Artpad : UserControl, IShiftOSWindow

@@ -13,7 +13,7 @@ using static ShiftOS.Engine.SkinEngine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Shiftnet", false)]
+    [Launcher("Shiftnet", false, null, "Networking")]
     public partial class Shiftnet : UserControl, IShiftOSWindow
     {
         public Shiftnet()

@@ -39,7 +39,7 @@ using ShiftOS.WinForms.Tools;
 namespace ShiftOS.WinForms.Applications
 {
     [RequiresUpgrade("mud_fundamentals")]
-    [Launcher("MUD Control Centre", true, "al_mud_control_centre")]
+    [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]
     public partial class MUDControlCentre : UserControl, IShiftOSWindow
     {

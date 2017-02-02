@@ -46,7 +46,7 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Terminal", false)]
+    [Launcher("Terminal", false, null, "Utilities")]
     [WinOpen("terminal")]
     public partial class Terminal : UserControl, IShiftOSWindow
     {

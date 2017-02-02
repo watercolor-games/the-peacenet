@@ -35,7 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    public partial class Dialog : UserControl, IShiftOSWindow
+    public partial class Dialog : UserControl, IShiftOSWindow, IInfobox
     {
         public Dialog()
         {
@@ -57,6 +57,82 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+        }
+
+        internal void OpenInternal(string title, string msg)
+        {
+            AppearanceManager.SetupWindow(this);
+            this.Parent.Text = title;
+            lbmessage.Text = msg;
+            txtinput.Hide();
+            flyesno.Hide();
+            btnok.Show();
+            btnok.Click += (o, a) =>
+            {
+                AppearanceManager.Close(this);
+            };
+
+        }
+
+        public void Open(string title, string msg)
+        {
+            new Dialog().OpenInternal(title, msg);
+        }
+
+        public void PromptTextInternal(string title, string message, Action<string> callback)
+        {
+            AppearanceManager.SetupWindow(this);
+            this.Parent.Text = title;
+            lbmessage.Text = message;
+            txtinput.Show();
+            flyesno.Hide();
+            btnok.Show();
+            btnok.Click += (o, a) =>
+            {
+                callback?.Invoke(txtinput.Text);
+                AppearanceManager.Close(this);
+            };
+            txtinput.KeyDown += (o, a) =>
+            {
+                if(a.KeyCode == Keys.Enter)
+                {
+                    a.SuppressKeyPress = true;
+                    callback?.Invoke(txtinput.Text);
+                    AppearanceManager.Close(this);
+                }
+            };
+        }
+
+        public void PromptText(string title, string message, Action<string> callback)
+        {
+            new Dialog().PromptTextInternal(title, message, callback);
+        }
+
+        public void PromptYesNo(string title, string message, Action<bool> callback)
+        {
+            new Dialog().PromptYesNoInternal(title, message, callback);
+        }
+
+
+
+        public void PromptYesNoInternal(string title, string message, Action<bool> callback)
+        {
+            AppearanceManager.SetupWindow(this);
+            this.Parent.Text = title;
+            lbmessage.Text = message;
+            txtinput.Hide();
+            flyesno.Show();
+            btnok.Hide();
+            btnyes.Click += (o, a) =>
+            {
+                callback?.Invoke(true);
+                AppearanceManager.Close(this);
+            };
+            btnno.Click += (o, a) =>
+            {
+                callback?.Invoke(false);
+                AppearanceManager.Close(this);
+            };
         }
     }
 }

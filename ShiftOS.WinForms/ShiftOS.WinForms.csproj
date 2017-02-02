@@ -244,6 +244,9 @@
     <EmbeddedResource Include="Applications\ColorPicker.resx">
       <DependentUpon>ColorPicker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Dialog.resx">
+      <DependentUpon>Dialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\FileDialog.resx">
       <DependentUpon>FileDialog.cs</DependentUpon>
     </EmbeddedResource>

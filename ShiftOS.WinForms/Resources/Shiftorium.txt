@@ -303,10 +303,10 @@
 		Dependencies: "mud_fundamentals;app_launcher"
 	},
 	{
-		Name: "Another test upgrade",
-		Cost: 1,
-		Description: "Read the ID or Name",
-		Dependencies: "test_upgrade"
+		Name: "App Launcher Categories",
+		Cost: 1000,
+		Dependencies: "app_launcher",
+		Description: "Is your App Launcher getting full of items? Perhaps a little too full? Are you having trouble finding things? This upgrade should help - it'll sort all App Launcher items into categories for you."
 	},
 	{
 		Name: "Draggable windows",

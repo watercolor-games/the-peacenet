@@ -37,7 +37,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("MUD Chat", true, "al_mud_chat")]
+    [Launcher("MUD Chat", true, "al_mud_chat", "Networking")]
     [RequiresUpgrade("mud_fundamentals")]
     [WinOpen("chat")]
     public partial class Chat : UserControl, IShiftOSWindow

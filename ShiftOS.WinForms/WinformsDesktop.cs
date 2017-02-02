@@ -230,6 +230,20 @@ namespace ShiftOS.WinForms
             PopulatePanelButtons();
         }
 
+        public ToolStripMenuItem GetALCategoryWithName(string text)
+        {
+            foreach(ToolStripMenuItem menuitem in apps.DropDownItems)
+            {
+                if (menuitem.Text == text)
+                    return menuitem;
+            }
+
+            var itm = new ToolStripMenuItem();
+            itm.Text = text;
+            apps.DropDownItems.Add(itm);
+            return itm;
+        }
+
 		/// <summary>
 		/// Populates the app launcher.
 		/// </summary>
@@ -239,6 +253,10 @@ namespace ShiftOS.WinForms
         {
             apps.DropDownItems.Clear();
 
+            Dictionary<string, List<ToolStripMenuItem>> sortedItems = new Dictionary<string, List<ToolStripMenuItem>>();
+
+
+
             foreach (var kv in items)
             {
                 var item = new ToolStripMenuItem();
@@ -247,7 +265,34 @@ namespace ShiftOS.WinForms
                 {
                     Engine.AppearanceManager.SetupWindow(Activator.CreateInstance(kv.LaunchType) as IShiftOSWindow);
                 };
-                apps.DropDownItems.Add(item);
+                if (sortedItems.ContainsKey(kv.DisplayData.Category))
+                {
+                    sortedItems[kv.DisplayData.Category].Add(item);
+                }
+                else
+                {
+                    sortedItems.Add(kv.DisplayData.Category, new List<ToolStripMenuItem>());
+                    sortedItems[kv.DisplayData.Category].Add(item);
+                }
+            }
+
+            foreach(var kv in sortedItems)
+            {
+                if (Shiftorium.UpgradeInstalled("app_launcher_categories"))
+                {
+                    var cat = GetALCategoryWithName(kv.Key);
+                    foreach(var subItem in kv.Value)
+                    {
+                        cat.DropDownItems.Add(subItem);
+                    }
+                }
+                else
+                {
+                    foreach(var subItem in kv.Value)
+                    {
+                        apps.DropDownItems.Add(subItem);
+                    }
+                }
             }
 
             if (Shiftorium.UpgradeInstalled("al_shutdown"))

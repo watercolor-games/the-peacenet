@@ -37,7 +37,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("MUD Administrator", true, "al_mud_cracker")]
+    [Launcher("MUD Administrator", true, "al_mud_cracker", "Administration")]
     [RequiresUpgrade("mud_cracker")]
     [WinOpen("mud_administrator")]
     public partial class MUDAuthenticator : UserControl, IShiftOSWindow

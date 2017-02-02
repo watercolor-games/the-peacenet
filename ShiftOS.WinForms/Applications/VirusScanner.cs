@@ -39,7 +39,7 @@ using static ShiftOS.Objects.ShiftFS.Utils;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Virus Scanner", true, "al_virus_scanner")]
+    [Launcher("Virus Scanner", true, "al_virus_scanner", "Administration")]
     [RequiresUpgrade("virus_scanner")]
     [WinOpen("virus_scanner")]
     public partial class VirusScanner : UserControl, IShiftOSWindow

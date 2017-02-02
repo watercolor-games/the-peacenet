@@ -40,7 +40,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Shifter", true, "al_shifter")]
+    [Launcher("Shifter", true, "al_shifter", "Customization")]
     [RequiresUpgrade("shifter")]
     [WinOpen("shifter")]
     public partial class Shifter : UserControl, IShiftOSWindow

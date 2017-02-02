@@ -35,7 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
 
-    [Launcher("Name Changer", true, "al_name_changer")]
+    [Launcher("Name Changer", true, "al_name_changer", "Customization")]
     [RequiresUpgrade("name_changer")]
     [WinOpen("name_changer")]
     public partial class NameChanger : UserControl, IShiftOSWindow {

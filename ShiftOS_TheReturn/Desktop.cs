@@ -44,8 +44,10 @@ namespace ShiftOS.Engine
         /// <param name="name">The text displayed on the launcher item</param>
         /// <param name="requiresUpgrade">Whether or not an upgrade must be installed to see the launcher</param>
         /// <param name="upgradeID">The ID of the upgrade - leave blank if requiresUpgrade is false.</param>
-        public LauncherAttribute(string name, bool requiresUpgrade, string upgradeID = "")
+        /// <param name="category">The category that the item will appear in.</param>
+        public LauncherAttribute(string name, bool requiresUpgrade, string upgradeID = "", string category = "Other")
         {
+            Category = category;
             Name = name;
             RequiresUpgrade = requiresUpgrade;
             ID = upgradeID;
@@ -54,6 +56,7 @@ namespace ShiftOS.Engine
         public string Name { get; set; }
         public bool RequiresUpgrade { get; set; }
         public string ID { get; set; }
+        public string Category { get; private set; }
         public bool UpgradeInstalled
         {
             get

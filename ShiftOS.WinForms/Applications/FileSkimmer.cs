@@ -39,7 +39,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("File Skimmer", true, "al_file_skimmer")]
+    [Launcher("File Skimmer", true, "al_file_skimmer", "Utilities")]
     [RequiresUpgrade("file_skimmer")]
     [WinOpen("file_skimmer")]
     public partial class FileSkimmer : UserControl, IShiftOSWindow

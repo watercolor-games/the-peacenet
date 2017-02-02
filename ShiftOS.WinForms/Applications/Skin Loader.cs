@@ -37,7 +37,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Skin Loader", true, "al_skin_loader")]
+    [Launcher("Skin Loader", true, "al_skin_loader", "Customization")]
     [RequiresUpgrade("skinning")]
     [WinOpen("skin_loader")]
     public partial class Skin_Loader : UserControl, IShiftOSWindow

@@ -37,7 +37,7 @@ using static ShiftOS.Engine.SkinEngine;
 using backend = ShiftOS.Engine.Shiftorium;
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Shiftorium", true, "al_shiftorium")]
+    [Launcher("Shiftorium", true, "al_shiftorium", "Utilities")]
     [RequiresUpgrade("shiftorium_gui")]
     [WinOpen("shiftorium")]
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow

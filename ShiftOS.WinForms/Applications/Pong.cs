@@ -37,7 +37,7 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Pong", true, "al_pong")]
+    [Launcher("Pong", true, "al_pong", "Games")]
     [WinOpen("pong")]
     public partial class Pong : UserControl, IShiftOSWindow
     {
