@@ -126,10 +126,12 @@ namespace ShiftOS.WinForms.Applications
                         var bytes = JsonConvert.DeserializeObject<byte[]>(msg.Contents);
                         string destPath = null;
                         string ext = Url.Split('.')[Url.Split('.').Length - 1];
-
-                        FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) =>
+                        this.Invoke(new Action(() =>
                         {
-                            destPath = file;
+                            FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) =>
+                            {
+                                destPath = file;
+                            }));
                         }));
                         while (string.IsNullOrEmpty(destPath))
                         {
@@ -143,7 +145,10 @@ namespace ShiftOS.WinForms.Applications
                             Progress = 0,
                         };
                         DownloadManager.StartDownload(d);
-                        AppearanceManager.SetupWindow(new Downloader());
+                        this.Invoke(new Action(() =>
+                        {
+                            AppearanceManager.SetupWindow(new Downloader());
+                        }));
                         ServerManager.MessageReceived -= smr;
                     }
                 };
