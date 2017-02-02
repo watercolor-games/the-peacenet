@@ -60,6 +60,14 @@
             this.label9 = new System.Windows.Forms.Label();
             this.txtrsys = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.pglogin = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.flbuttons.SuspendLayout();
             this.page1.SuspendLayout();
             this.page2.SuspendLayout();
@@ -68,6 +76,8 @@
             this.page4.SuspendLayout();
             this.pgrereg.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.pglogin.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlheader
@@ -403,11 +413,97 @@
             this.label11.TabIndex = 3;
             this.label11.Text = "User information";
             // 
+            // pglogin
+            // 
+            this.pglogin.Controls.Add(this.tableLayoutPanel3);
+            this.pglogin.Controls.Add(this.label15);
+            this.pglogin.Controls.Add(this.button1);
+            this.pglogin.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pglogin.Location = new System.Drawing.Point(138, 0);
+            this.pglogin.Name = "pglogin";
+            this.pglogin.Size = new System.Drawing.Size(352, 300);
+            this.pglogin.TabIndex = 9;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.label12, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.textBox1, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label13, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.textBox2, 1, 1);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(20, 61);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(212, 72);
+            this.tableLayoutPanel3.TabIndex = 4;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 0);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(58, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Username:";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(109, 3);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 1;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 26);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(56, 13);
+            this.label13.TabIndex = 2;
+            this.label13.Text = "Password:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(109, 29);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.PasswordChar = '*';
+            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.TabIndex = 3;
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label15.Location = new System.Drawing.Point(16, 9);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(321, 26);
+            this.label15.TabIndex = 3;
+            this.label15.Text = "User information";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(129, 142);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 21);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Register";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FakeSetupScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 329);
+            this.Controls.Add(this.pglogin);
             this.Controls.Add(this.pgrereg);
             this.Controls.Add(this.page3);
             this.Controls.Add(this.page4);
@@ -420,7 +516,7 @@
             this.MinimizeBox = false;
             this.Name = "FakeSetupScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FakeSetupScreen";
+            this.Text = "ShiftOS";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FakeSetupScreen_FormClosing);
             this.flbuttons.ResumeLayout(false);
@@ -436,6 +532,10 @@
             this.pgrereg.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.pglogin.ResumeLayout(false);
+            this.pglogin.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -475,5 +575,13 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtrsys;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Panel pglogin;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button button1;
     }
 }

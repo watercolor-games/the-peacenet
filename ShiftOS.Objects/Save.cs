@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,15 +24,15 @@ namespace ShiftOS.Objects
         public string Password { get; set; }
         public string SystemName { get; set; }
 
-        public string DiscourseName { get; set; }
+        private dynamic _settings = new SettingsObject();
 
-        /// <summary>
-        /// If the user has entered their Discourse account into ShiftOS, this is the password they gave.
-        /// 
-        /// ANY developer caught abusing this property will have their dev status revoked and their account PERMANENTLY SUSPENDED. - Michael
-        /// </summary>
-        public string DiscoursePass { get; set; }
-
+        public dynamic Settings
+        {
+            get
+            {
+                return _settings;
+            }
+        }
 
         public int CountUpgrades()
         {
@@ -42,6 +43,49 @@ namespace ShiftOS.Objects
                     count++;
             }
             return count;
+        }
+    }
+
+    public class SettingsObject : DynamicObject
+    {
+        private Dictionary<string, object> _settings = null;
+
+        public SettingsObject()
+        {
+            _settings = new Dictionary<string, object>();
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return _settings.Keys.ToArray();
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            if (_settings.ContainsKey(binder.Name))
+            {
+                result = _settings[binder.Name];
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            if (_settings.ContainsKey(binder.Name))
+            {
+                _settings[binder.Name] = value;
+            }
+            else
+            {
+                _settings.Add(binder.Name, value);
+            }
+
+            return true;
         }
     }
 }

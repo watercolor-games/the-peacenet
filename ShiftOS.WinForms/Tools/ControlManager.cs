@@ -180,7 +180,14 @@ namespace ShiftOS.WinForms.Tools
                     ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
                 }
 
-                ctrl.Text = Localization.Parse(ctrl.Text);
+                try
+                {
+                    ctrl.Text = Localization.Parse(ctrl.Text);
+                }
+                catch
+                {
+
+                }
                 ctrl.KeyDown += (o, a) =>
                 {
                     if (a.Control && a.KeyCode == Keys.T)

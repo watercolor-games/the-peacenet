@@ -654,8 +654,45 @@ Contents:
 						}
 					}
 
-
 					break;
+                    case "shiftnet_get":
+                        string surl = args["url"] as string;
+                        while (surl.EndsWith("/"))
+                        {
+                            surl = surl.Remove(surl.Length - 1, 1);
+                        }
+                        if (File.Exists(surl))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = File.ReadAllText(surl)
+                            }));
+                        }
+                else if (File.Exists(surl + "/home.rnp"))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = File.ReadAllText(surl + "/home.rnp")
+                            }));
+
+                        }
+                        else
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = (File.Exists("notfound.md") == true) ? File.ReadAllText("notfound.md") : @"# Not found.
+
+The page you requested at was not found on this multi-user domain."
+                            }));
+
+                        }
+                        break;
 				case "mud_scanvirus":
 					Dictionary<string, string> _virusDB = new Dictionary<string, string>();
 

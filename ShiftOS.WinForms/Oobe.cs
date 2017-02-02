@@ -249,7 +249,14 @@ namespace ShiftOS.WinForms
 
         public void PromptForLogin()
         {
-            throw new NotImplementedException();
+            this.Show();
+            this.TopMost = true;
+            lblHijack.Text = "";
+            textgeninput = lblhackwords;
+
+            var fsw = new FakeSetupScreen(this, 10);
+            fsw.Show();
+            fsw.TopMost = true;
         }
 
         public void StartTrailer()

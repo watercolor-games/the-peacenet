@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
@@ -19,18 +20,27 @@ namespace ShiftOS.WinForms
             }
         }
 
-        private float _vol = 1.0f;
 
         public float Volume
         {
             get
             {
-                return _vol;
+                if (SaveSystem.CurrentSave == null)
+                    return 1.0f;
+                try
+                {
+                    return SaveSystem.CurrentSave.Settings.audioVolume;
+                }
+                catch
+                {
+                    SaveSystem.CurrentSave.Settings.audioVolume = 1.0f;
+                    return 1.0f;
+                }
             }
 
             set
             {
-                _vol = value;
+                SaveSystem.CurrentSave.Settings.audioVolume = value;
             }
         }
 

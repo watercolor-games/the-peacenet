@@ -34,6 +34,7 @@ using System.Dynamic;
 using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.Threading;
+using System.Net;
 
 namespace ShiftOS.Engine.Scripting
 {
@@ -125,6 +126,16 @@ namespace ShiftOS.Engine.Scripting
                 t.IsBackground = true;
                 t.Start();
             });
+            Lua.includeScript = new Action<string>((file) =>
+            {
+                if (!Utils.FileExists(file))
+                    throw new ArgumentException("File does not exist.");
+
+                if (!file.EndsWith(".lua"))
+                    throw new ArgumentException("File is not a lua file.");
+
+                Lua(Utils.ReadAllText(file));
+            });
         }
 
         
@@ -142,10 +153,29 @@ namespace ShiftOS.Engine.Scripting
 
         public void Execute(string lua)
         {
+            try
+            {
                 Console.WriteLine("");
                 Lua(lua);
                 Console.WriteLine($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+            }
+            catch (Exception e)
+            {
+                Infobox.Show("Script error", $@"Script threw {e.GetType().Name}:
+
+{e.Message}");
+            }
         }
+    }
+
+    [Exposed("net")]
+    public class NetFunctions
+    {
+        public string get(string url)
+        {
+            return new WebClient().DownloadString(url);
+        }
+        
     }
 
     [Exposed("console")]
@@ -175,7 +205,18 @@ namespace ShiftOS.Engine.Scripting
             return TerminalBackend.RunClient(cmd, args);
         }
 
-        
+        public void addCodepoints(int cp)
+        {
+            if (cp > 100 || cp <= 0)
+            {
+                throw new Exception("Value 'cp' must be at or below 100, and above 0.");
+            }
+            else
+            {
+                SaveSystem.CurrentSave.Codepoints += cp;
+                SaveSystem.SaveGame();
+            }
+        }
     }
 
 

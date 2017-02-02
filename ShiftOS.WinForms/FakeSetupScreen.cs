@@ -191,6 +191,9 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     this.CanClose = true;
                     this.Close();
                     break;
+                case 10:
+                    pglogin.BringToFront();
+                    break;
             }
         }
 
@@ -261,6 +264,13 @@ So make sure your password is secure enough that it can't be guessed, but easy f
         {
             currentPage++;
             SetupUI();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ShiftOS.Objects.ShiftFS.Utils.Delete(Paths.GetPath("user.dat"));
+            System.IO.File.WriteAllText(Paths.SaveFile, ShiftOS.Objects.ShiftFS.Utils.ExportMount(0));
+            Application.Restart();
         }
     }
 }

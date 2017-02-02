@@ -101,15 +101,16 @@ namespace ShiftOS.Engine
 
                 if (defaultConf.ConnectToMud == true)
                 {
+                    bool guidReceived = false;
+                    ServerManager.GUIDReceived += (str) =>
+                    {
+                        guidReceived = true;
+                        Console.WriteLine("{CONNECTION_SUCCESSFUL}");
+                    };
+
                     try
                     {
-                        bool guidReceived = false;
-                        ServerManager.GUIDReceived += (str) =>
-                        {
-                            guidReceived = true;
-                            Console.WriteLine("{CONNECTION_SUCCESSFUL}");
-                        };
-
+                        
                         ServerManager.Initiate("secondary4162.cloudapp.net", 13370);
                         while(guidReceived == false)
                         {
@@ -121,6 +122,10 @@ namespace ShiftOS.Engine
                         Console.WriteLine("{ERROR}: " + ex.Message);
                         Thread.Sleep(3000);
                         ServerManager.StartLANServer();
+                        while (guidReceived == false)
+                        {
+
+                        }
                     }
                 }
                 else

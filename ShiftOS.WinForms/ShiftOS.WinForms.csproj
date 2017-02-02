@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -142,6 +146,12 @@
     </Compile>
     <Compile Include="Applications\Shifter.Designer.cs">
       <DependentUpon>Shifter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Shiftnet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Shiftnet.Designer.cs">
+      <DependentUpon>Shiftnet.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\ShiftoriumFrontend.cs">
       <SubType>UserControl</SubType>
@@ -263,6 +273,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Shiftnet.resx">
+      <DependentUpon>Shiftnet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
