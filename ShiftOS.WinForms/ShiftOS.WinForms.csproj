@@ -87,6 +87,12 @@
     <Compile Include="Applications\Dialog.Designer.cs">
       <DependentUpon>Dialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Downloader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Downloader.Designer.cs">
+      <DependentUpon>Downloader.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\FileDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -246,6 +252,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Dialog.resx">
       <DependentUpon>Dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Downloader.resx">
+      <DependentUpon>Downloader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\FileDialog.resx">
       <DependentUpon>FileDialog.cs</DependentUpon>

@@ -102,15 +102,54 @@ namespace ShiftOS.WinForms.Applications
 
         public void ShiftnetNavigate(string Url, bool pushHistory = true)
         {
-            if (!string.IsNullOrEmpty(CurrentUrl) && pushHistory)
-                History.Push(CurrentUrl);
-            CurrentUrl = Url;
+            
 
-            ServerManager.SendMessage("shiftnet_get", JsonConvert.SerializeObject(new
+            if (Url.EndsWith(".rnp") || !Url.Contains("."))
             {
-                url = Url
-            }));
-            txturl.Text = Url;
+                if (!string.IsNullOrEmpty(CurrentUrl) && pushHistory)
+                    History.Push(CurrentUrl);
+                CurrentUrl = Url;
+                ServerManager.SendMessage("shiftnet_get", JsonConvert.SerializeObject(new
+                {
+                    url = Url
+                }));
+                txturl.Text = Url;
+
+            }
+            else
+            {
+                ServerMessageReceived smr = null;
+                smr = (msg) =>
+                {
+                    if(msg.Name == "download_meta")
+                    {
+                        var bytes = JsonConvert.DeserializeObject<byte[]>(msg.Contents);
+                        string destPath = null;
+                        string ext = Url.Split('.')[Url.Split('.').Length - 1];
+
+                        FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) =>
+                        {
+                            destPath = file;
+                        }));
+                        while (string.IsNullOrEmpty(destPath))
+                        {
+                            
+                        }
+                        var d = new Download
+                        {
+                            ShiftnetUrl = Url,
+                            Destination = destPath,
+                            Bytes = bytes,
+                            Progress = 0,
+                        };
+                        DownloadManager.StartDownload(d);
+                        AppearanceManager.SetupWindow(new Downloader());
+                        ServerManager.MessageReceived -= smr;
+                    }
+                };
+                ServerManager.MessageReceived += smr;
+                ServerManager.SendMessage("download_start", Url);
+            }
         }
 
         public void OnLoad()

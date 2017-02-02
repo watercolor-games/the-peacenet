@@ -655,6 +655,29 @@ Contents:
 					}
 
 					break;
+                    case "download_start":
+                        if (File.Exists(msg.Contents))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("download", new ServerMessage
+                            {
+                                Name = "download_meta",
+                                GUID = "server",
+                                Contents = JsonConvert.SerializeObject(File.ReadAllBytes(msg.Contents))
+                            }));
+                        }
+                        else
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = (File.Exists("notfound.md") == true) ? File.ReadAllText("notfound.md") : @"# Not found.
+
+The page you requested at was not found on this multi-user domain."
+                            }));
+
+                        }
+                        break;
                     case "shiftnet_get":
                         string surl = args["url"] as string;
                         while (surl.EndsWith("/"))
