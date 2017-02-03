@@ -45,7 +45,7 @@ Partial Class SkinConverter
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(397, 116)
+        Me.Panel1.Size = New System.Drawing.Size(397, 183)
         Me.Panel1.TabIndex = 0
         '
         'txtin
@@ -60,9 +60,9 @@ Partial Class SkinConverter
         '
         'txtout
         '
-        Me.txtout.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.txtout.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtout.Location = New System.Drawing.Point(81, 58)
+        Me.txtout.Location = New System.Drawing.Point(81, 51)
         Me.txtout.Name = "txtout"
         Me.txtout.ReadOnly = True
         Me.txtout.Size = New System.Drawing.Size(221, 20)
@@ -79,9 +79,8 @@ Partial Class SkinConverter
         '
         'Label2
         '
-        Me.Label2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(14, 61)
+        Me.Label2.Location = New System.Drawing.Point(17, 54)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(58, 13)
         Me.Label2.TabIndex = 3
@@ -99,8 +98,8 @@ Partial Class SkinConverter
         '
         'btnout
         '
-        Me.btnout.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnout.Location = New System.Drawing.Point(308, 55)
+        Me.btnout.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnout.Location = New System.Drawing.Point(308, 48)
         Me.btnout.Name = "btnout"
         Me.btnout.Size = New System.Drawing.Size(75, 23)
         Me.btnout.TabIndex = 5
@@ -112,7 +111,7 @@ Partial Class SkinConverter
         Me.btnconvert.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.btnconvert.AutoSize = True
         Me.btnconvert.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.btnconvert.Location = New System.Drawing.Point(168, 84)
+        Me.btnconvert.Location = New System.Drawing.Point(168, 151)
         Me.btnconvert.Name = "btnconvert"
         Me.btnconvert.Size = New System.Drawing.Size(54, 23)
         Me.btnconvert.TabIndex = 6
@@ -125,7 +124,7 @@ Partial Class SkinConverter
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.Controls.Add(Me.Panel1)
         Me.Name = "SkinConverter"
-        Me.Size = New System.Drawing.Size(397, 116)
+        Me.Size = New System.Drawing.Size(397, 183)
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)

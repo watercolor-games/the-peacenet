@@ -1,217 +1,256 @@
 ﻿Imports System.IO
 Imports System.Drawing
 Imports System.Windows.Forms
+Imports ShiftOS.Engine
 
-Module Skins
+
+Public Class Skins
 #Region "Declarations"
     Dim firstrun As Boolean = True
     'WINDOW SETTINGS/IMAGES
     'images
-    Public titlebar As Image = Nothing
-    Public titlebarlayout As String = 3
-    Public borderleft As Image = Nothing
-    Public borderleftlayout As String = 3
-    Public borderright As Image = Nothing
-    Public borderrightlayout As String = 3
-    Public borderbottom As Image = Nothing
-    Public borderbottomlayout As String = 3
-    Public closebtn As Image = Nothing
-    Public closebtnlayout As String = 3
-    Public closebtnhover As Image = Nothing
-    Public closebtnclick As Image = Nothing
-    Public rollbtn As Image = Nothing
-    Public rollbtnlayout As String = 3
-    Public rollbtnhover As Image = Nothing
-    Public rollbtnclick As Image = Nothing
-    Public minbtn As Image = Nothing
-    Public minbtnlayout As String = 3
-    Public minbtnhover As Image = Nothing
-    Public minbtnclick As Image = Nothing
-    Public rightcorner As Image = Nothing
-    Public rightcornerlayout As String = 3
-    Public leftcorner As Image = Nothing
-    Public leftcornerlayout As String = 3
+    Public Shared titlebar As Image = Nothing
+    <Image("titlebar")>
+    Public Shared titlebarlayout As String = 3
+    Public Shared borderleft As Image = Nothing
+    <Image("leftborder")>
+    Public Shared borderleftlayout As String = 3
+    Public Shared borderright As Image = Nothing
+    <Image("rightborder")>
+    Public Shared borderrightlayout As String = 3
+    Public Shared borderbottom As Image = Nothing
+    <Image("bottomborder")>
+    Public Shared borderbottomlayout As String = 3
+    Public Shared closebtn As Image = Nothing
+    <Image("closebutton")>
+    Public Shared closebtnlayout As String = 3
+    Public Shared closebtnhover As Image = Nothing
+    Public Shared closebtnclick As Image = Nothing
+    Public Shared rollbtn As Image = Nothing
+    <Image("maximizebutton")>
+    Public Shared rollbtnlayout As String = 3
+    Public Shared rollbtnhover As Image = Nothing
+    Public Shared rollbtnclick As Image = Nothing
+    Public Shared minbtn As Image = Nothing
+    <Image("minimizebutton")>
+    Public Shared minbtnlayout As String = 3
+    Public Shared minbtnhover As Image = Nothing
+    Public Shared minbtnclick As Image = Nothing
+    Public Shared rightcorner As Image = Nothing
+    <Image("titleright")>
+    Public Shared rightcornerlayout As String = 3
+    Public Shared leftcorner As Image = Nothing
+    <Image("titleleft")>
+    Public Shared leftcornerlayout As String = 3
     ' Late entry: need to fix window code to include this
-    Public bottomleftcorner As Image = Nothing
-    Public bottomleftcornerlayout As String = 3
-    Public bottomrightcorner As Image = Nothing
-    Public bottomrightcornerlayout As String = 3
-    Public bottomleftcornercolour As Color = Color.Gray
-    Public bottomrightcornercolour As Color = Color.Gray
+    Public Shared bottomleftcorner As Image = Nothing
+    <Image("bottomlborder")>
+    Public Shared bottomleftcornerlayout As String = 3
+    Public Shared bottomrightcorner As Image = Nothing
+    <Image("bottomrborder")>
+    Public Shared bottomrightcornerlayout As String = 3
+    Public Shared bottomleftcornercolour As Color = Color.Gray
+    Public Shared bottomrightcornercolour As Color = Color.Gray
 
-    Public enablebordercorners As Boolean = False
+    Public Shared enablebordercorners As Boolean = False
 
     ' settings
-    Public closebtnsize As Size = New Size(22, 22)
-    Public rollbtnsize As Size = New Size(22, 22)
-    Public minbtnsize As Size = New Size(22, 22)
-    Public titlebarheight As Integer = 30
-    Public closebtnfromtop As Integer = 5
-    Public closebtnfromside As Integer = 2
-    Public rollbtnfromtop As Integer = 5
-    Public rollbtnfromside As Integer = 26
-    Public minbtnfromtop As Integer = 5
-    Public minbtnfromside As Integer = 52
-    Public borderwidth As Integer = 2
-    Public enablecorners As Boolean = False
-    Public titlebarcornerwidth As Integer = 5
-    Public titleiconfromside As Integer = 4
-    Public titleiconfromtop As Integer = 4
+    Public Shared closebtnsize As Size = New Size(22, 22)
+    Public Shared rollbtnsize As Size = New Size(22, 22)
+    Public Shared minbtnsize As Size = New Size(22, 22)
+    Public Shared titlebarheight As Integer = 30
+    Public Shared closebtnfromtop As Integer = 5
+    Public Shared closebtnfromside As Integer = 2
+    Public Shared rollbtnfromtop As Integer = 5
+    Public Shared rollbtnfromside As Integer = 26
+    Public Shared minbtnfromtop As Integer = 5
+    Public Shared minbtnfromside As Integer = 52
+    Public Shared borderwidth As Integer = 2
+    Public Shared enablecorners As Boolean = False
+    Public Shared titlebarcornerwidth As Integer = 5
+    Public Shared titleiconfromside As Integer = 4
+    Public Shared titleiconfromtop As Integer = 4
     'colours
-    Public titlebarcolour As Color = Color.Gray
-    Public borderleftcolour As Color = Color.Gray
-    Public borderrightcolour As Color = Color.Gray
-    Public borderbottomcolour As Color = Color.Gray
-    Public closebtncolour As Color = Color.Black
-    Public closebtnhovercolour As Color = Color.Black
-    Public closebtnclickcolour As Color = Color.Black
-    Public rollbtncolour As Color = Color.Black
-    Public rollbtnhovercolour As Color = Color.Black
-    Public rollbtnclickcolour As Color = Color.Black
-    Public minbtncolour As Color = Color.Black
-    Public minbtnhovercolour As Color = Color.Black
-    Public minbtnclickcolour As Color = Color.Black
-    Public rightcornercolour As Color = Color.Gray
-    Public leftcornercolour As Color = Color.Gray
+    Public Shared titlebarcolour As Color = Color.Gray
+    Public Shared borderleftcolour As Color = Color.Gray
+    Public Shared borderrightcolour As Color = Color.Gray
+    Public Shared borderbottomcolour As Color = Color.Gray
+    Public Shared closebtncolour As Color = Color.Black
+    Public Shared closebtnhovercolour As Color = Color.Black
+    Public Shared closebtnclickcolour As Color = Color.Black
+    Public Shared rollbtncolour As Color = Color.Black
+    Public Shared rollbtnhovercolour As Color = Color.Black
+    Public Shared rollbtnclickcolour As Color = Color.Black
+    Public Shared minbtncolour As Color = Color.Black
+    Public Shared minbtnhovercolour As Color = Color.Black
+    Public Shared minbtnclickcolour As Color = Color.Black
+    Public Shared rightcornercolour As Color = Color.Gray
+    Public Shared leftcornercolour As Color = Color.Gray
     ' Text
-    Public titletextfontfamily As String = "Microsoft Sans Serif"
-    Public titletextfontsize As Integer = 10
-    Public titletextfontstyle As String = FontStyle.Bold
-    Public titletextpos As String = "Left"
-    Public titletextfromtop As Integer = 3
-    Public titletextfromside As Integer = 24
-    Public titletextcolour As Color = Color.White
+    Public Shared titletextfontfamily As String = "Microsoft Sans Serif"
+    Public Shared titletextfontsize As Integer = 10
+    Public Shared titletextfontstyle As String = FontStyle.Bold
+    Public Shared titletextpos As String = "Left"
+    Public Shared titletextfromtop As Integer = 3
+    Public Shared titletextfromside As Integer = 24
+    Public Shared titletextcolour As Color = Color.White
 
     'DESKTOP
-    Public desktoppanelcolour As Color = Color.Gray
-    Public desktopbackgroundcolour As Color
-    Public desktoppanelheight As Integer = 24
-    Public desktoppanelposition As String = "Top"
-    Public clocktextcolour As Color = Color.Black
-    Public clockbackgroundcolor As Color = Color.Gray
-    Public panelclocktexttop As Integer = 3
-    Public panelclocktextsize As Integer = 10
-    Public panelclocktextfont As String = "Byington"
-    Public panelclocktextstyle As FontStyle = FontStyle.Bold
-    Public applauncherbuttoncolour As Color = Color.Gray
-    Public applauncherbuttonclickedcolour As Color = Color.Gray
-    Public applauncherbackgroundcolour As Color = Color.Gray
-    Public applaunchermouseovercolour As Color = Color.Gray
-    Public applicationsbuttontextcolour As Color = Color.Black
-    Public applicationbuttonheight As Integer = 24
-    Public applicationbuttontextsize As Integer = 10
-    Public applicationbuttontextfont As String = "Byington"
-    Public applicationbuttontextstyle As FontStyle = FontStyle.Bold
-    Public applicationlaunchername As String = "Applications"
-    Public titletextposition As String = "Left"
-    Public applaunchermenuholderwidth As Integer = 100
-    Public panelbuttonicontop As Integer = 3
-    Public panelbuttoniconside As Integer = 4
-    Public panelbuttoniconsize As Integer = 16
-    Public panelbuttonheight As Integer = 20
-    Public panelbuttonwidth As Integer = 185
-    Public panelbuttoncolour As Color = Color.Black
-    Public panelbuttontextcolour As Color = Color.White
-    Public panelbuttontextsize As Integer = 10
-    Public panelbuttontextfont As String = "Byington"
-    Public panelbuttontextstyle As FontStyle = FontStyle.Regular
-    Public panelbuttontextside As Integer = 16
-    Public panelbuttontexttop As Integer = 2
-    Public panelbuttongap As Integer = 4
-    Public panelbuttonfromtop As Integer = 2
-    Public panelbuttoninitialgap As Integer = 8
+    Public Shared desktoppanelcolour As Color = Color.Gray
+    Public Shared desktopbackgroundcolour As Color
+    Public Shared desktoppanelheight As Integer = 24
+    Public Shared desktoppanelposition As String = "Top"
+    Public Shared clocktextcolour As Color = Color.Black
+    Public Shared clockbackgroundcolor As Color = Color.Gray
+    Public Shared panelclocktexttop As Integer = 3
+    Public Shared panelclocktextsize As Integer = 10
+    Public Shared panelclocktextfont As String = "Byington"
+    Public Shared panelclocktextstyle As FontStyle = FontStyle.Bold
+    Public Shared applauncherbuttoncolour As Color = Color.Gray
+    Public Shared applauncherbuttonclickedcolour As Color = Color.Gray
+    Public Shared applauncherbackgroundcolour As Color = Color.Gray
+    Public Shared applaunchermouseovercolour As Color = Color.Gray
+    Public Shared applicationsbuttontextcolour As Color = Color.Black
+    Public Shared applicationbuttonheight As Integer = 24
+    Public Shared applicationbuttontextsize As Integer = 10
+    Public Shared applicationbuttontextfont As String = "Byington"
+    Public Shared applicationbuttontextstyle As FontStyle = FontStyle.Bold
+    Public Shared applicationlaunchername As String = "Applications"
+    Public Shared titletextposition As String = "Left"
+    Public Shared applaunchermenuholderwidth As Integer = 100
+    Public Shared panelbuttonicontop As Integer = 3
+    Public Shared panelbuttoniconside As Integer = 4
+    Public Shared panelbuttoniconsize As Integer = 16
+    Public Shared panelbuttonheight As Integer = 20
+    Public Shared panelbuttonwidth As Integer = 185
+    Public Shared panelbuttoncolour As Color = Color.Black
+    Public Shared panelbuttontextcolour As Color = Color.White
+    Public Shared panelbuttontextsize As Integer = 10
+    Public Shared panelbuttontextfont As String = "Byington"
+    Public Shared panelbuttontextstyle As FontStyle = FontStyle.Regular
+    Public Shared panelbuttontextside As Integer = 16
+    Public Shared panelbuttontexttop As Integer = 2
+    Public Shared panelbuttongap As Integer = 4
+    Public Shared panelbuttonfromtop As Integer = 2
+    Public Shared panelbuttoninitialgap As Integer = 8
 
-    Public launcheritemsize As Integer = 10
-    Public launcheritemfont As String = "Byington"
-    Public launcheritemstyle As FontStyle = FontStyle.Regular
-    Public launcheritemcolour As Color = Color.Black
+    Public Shared launcheritemsize As Integer = 10
+    Public Shared launcheritemfont As String = "Byington"
+    Public Shared launcheritemstyle As FontStyle = FontStyle.Regular
+    Public Shared launcheritemcolour As Color = Color.Black
 
     ' Images
-    Public desktoppanel As Image = Nothing
-    Public desktoppanellayout As String = 3
-    Public desktopbackground As Image = Nothing
-    Public desktopbackgroundlayout As String = 3
-    Public panelclock As Image = Nothing
-    Public panelclocklayout As String = 3
-    Public applaunchermouseover As Image = Nothing
-    Public applauncher As Image = Nothing
-    Public applauncherlayout As String = 3
-    Public applauncherclick As Image = Nothing
-    Public panelbutton As Image = Nothing
-    Public panelbuttonlayout As String = 3
+    Public Shared desktoppanel As Image = Nothing
+    <Image("desktoppanel")>
+    Public Shared desktoppanellayout As String = 3
+    Public Shared desktopbackground As Image = Nothing
+    <Image("desktopbackground")>
+    Public Shared desktopbackgroundlayout As String = 3
+    Public Shared panelclock As Image = Nothing
+    <Image("panelclock")>
+    Public Shared panelclocklayout As String = 3
+    Public Shared applaunchermouseover As Image = Nothing
+    Public Shared applauncher As Image = Nothing
+    <Image("applauncher")>
+    Public Shared applauncherlayout As String = 3
+    Public Shared applauncherclick As Image = Nothing
+    Public Shared panelbutton As Image = Nothing
+    <Image("panelbutton")>
+    Public Shared panelbuttonlayout As String = 3
 
     'Below is all for the Desktop Icons patch.
 
-    Public enabledraggableicons As Boolean = True
-    Public icontextcolor As Color = Color.White
-    Public showicons As Boolean = True
-    Public iconview1 As View = View.LargeIcon
-    Public iconview2 As View = View.Tile
+    Public Shared enabledraggableicons As Boolean = True
+    Public Shared icontextcolor As Color = Color.White
+    Public Shared showicons As Boolean = True
+    Public Shared iconview1 As View = View.LargeIcon
+    Public Shared iconview2 As View = View.Tile
 
     'DevX's Advanced App Launcher (coded by The Ultimate Hacker)
 
-    Public topBarHeight As Integer = 50
-    Public bottomBarHeight As Integer = 50
-    Public placesSide As String = "Left"
-    Public startHeight As Integer = 526
-    Public startWidth As Integer = 320
-    Public shutdownstring As String = "Shut Down ShiftOS"
-    Public userNamePosition = "Middle, Right"
-    Public recentIconsHorizontal As Boolean = False
-    Public usernametextcolor As Color = Color.White
-    Public usernamefont As String = "Trebuchet MS"
-    Public usernamefontsize As Integer = 12
-    Public usernamefontstyle As FontStyle = FontStyle.Bold
-    Public userNamePanelBackgroundColor As Color = Color.Gray
-    Public userNamePanelBackground As Image
-    Public powerPanelBackgroundColor As Color = Color.Gray
-    Public powerPanelBackgroundImage As Image
-    Public shutdownTextColor As Color = Color.White
-    Public shutdownTextFont As String = "Trebuchet MS"
-    Public shutdownTextSize As Integer = 12
-    Public shutdownTextStyle As FontStyle = FontStyle.Italic
-    Public usrPanelBackgroundLayout As ImageLayout = ImageLayout.Stretch
-    Public pwrPanelBackgroundLayout As ImageLayout = ImageLayout.Stretch
-    Public useClassicAppLauncher As Boolean = True
+    Public Shared topBarHeight As Integer = 50
+    Public Shared bottomBarHeight As Integer = 50
+    Public Shared placesSide As String = "Left"
+    Public Shared startHeight As Integer = 526
+    Public Shared startWidth As Integer = 320
+    Public Shared shutdownstring As String = "Shut Down ShiftOS"
+    Public Shared userNamePosition = "Middle, Right"
+    Public Shared recentIconsHorizontal As Boolean = False
+    Public Shared usernametextcolor As Color = Color.White
+    Public Shared usernamefont As String = "Trebuchet MS"
+    Public Shared usernamefontsize As Integer = 12
+    Public Shared usernamefontstyle As FontStyle = FontStyle.Bold
+    Public Shared userNamePanelBackgroundColor As Color = Color.Gray
+    Public Shared userNamePanelBackground As Image
+    Public Shared powerPanelBackgroundColor As Color = Color.Gray
+    Public Shared powerPanelBackgroundImage As Image
+    Public Shared shutdownTextColor As Color = Color.White
+    Public Shared shutdownTextFont As String = "Trebuchet MS"
+    Public Shared shutdownTextSize As Integer = 12
+    Public Shared shutdownTextStyle As FontStyle = FontStyle.Italic
+    Public Shared usrPanelBackgroundLayout As ImageLayout = ImageLayout.Stretch
+    Public Shared pwrPanelBackgroundLayout As ImageLayout = ImageLayout.Stretch
+    Public Shared useClassicAppLauncher As Boolean = True
 
 
     '0.0.9 ALPHA 2
 
     'Login Screen
 
-    Public autologin As Boolean = True
-    Public fullScreen As Boolean = False
-    Public inputfont As String = "Trebuchet MS"
-    Public inputfontsize As Integer = 12
-    Public inputfontstyle As FontStyle = FontStyle.Regular
-    Public inputforecolor As Color = Color.Gray
-    Public inputbackcolor As Color = Color.Black
-    Public buttonfont As String = "Trebuchet MS"
-    Public buttonfontsize As Integer = 12
-    Public buttonfontstyle As FontStyle = FontStyle.Italic
+    Public Shared autologin As Boolean = True
+    Public Shared fullScreen As Boolean = False
+    Public Shared inputfont As String = "Trebuchet MS"
+    Public Shared inputfontsize As Integer = 12
+    Public Shared inputfontstyle As FontStyle = FontStyle.Regular
+    Public Shared inputforecolor As Color = Color.Gray
+    Public Shared inputbackcolor As Color = Color.Black
+    Public Shared buttonfont As String = "Trebuchet MS"
+    Public Shared buttonfontsize As Integer = 12
+    Public Shared buttonfontstyle As FontStyle = FontStyle.Italic
 
-    Public userimagesize As Integer = 128
-    Public userimagelocation As Point = New Point(36, 202)
-    Public userimage As Image
-    Public userimagelayout As ImageLayout = ImageLayout.Stretch
+    Public Shared userimagesize As Integer = 128
+    Public Shared userimagelocation As Point = New Point(36, 202)
+    Public Shared userimage As Image
+    Public Shared userimagelayout As ImageLayout = ImageLayout.Stretch
 
-    Public loginbg As Image
-    Public loginbgcolor As Color = Color.Black
-    Public loginbglayout As ImageLayout = ImageLayout.Stretch
+    Public Shared loginbg As Image
+    Public Shared loginbgcolor As Color = Color.Black
+    Public Shared loginbglayout As ImageLayout = ImageLayout.Stretch
 
     'Locations...
 
-    Public userTextboxX As Integer = 171
-    Public userTextBoxY As Integer = 202
-    Public passTextBoxX As Integer = 171
-    Public passTextBoxY As Integer = 243
-    Public loginbtnX As Integer = 268
-    Public loginbtnY As Integer = 286
-    Public shutdownbtnX As Integer = 1755
-    Public shutdownbtnY As Integer = 979
+    Public Shared userTextboxX As Integer = 171
+    Public Shared userTextBoxY As Integer = 202
+    Public Shared passTextBoxX As Integer = 171
+    Public Shared passTextBoxY As Integer = 243
+    Public Shared loginbtnX As Integer = 268
+    Public Shared loginbtnY As Integer = 286
+    Public Shared shutdownbtnX As Integer = 1755
+    Public Shared shutdownbtnY As Integer = 979
+
+    Public Shared Function GetLayout(id As String) As ImageLayout
+        Dim type = GetType(Skins)
+        For Each member As System.Reflection.FieldInfo In type.GetFields(System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.Static)
+            For Each attribute As Attribute In member.GetCustomAttributes(False)
+                Try
+                    Dim image As ImageAttribute = attribute
+                    'WHY CAN'T WE HAVE A C#-LIKE Is OPERATOR, VB?
+                    'I don't want to use a damn BODGE to check if my attribute is an ImageAttribute.
+                    'Oh well.
+
+                    If id = image.Name Then Return member.GetValue(Nothing)
+                Catch ex As Exception
+                    Console.WriteLine(ex.Message)
+                End Try
+            Next
+        Next
 
 
-    Private Function GetImage(ByVal fileName As String) As Bitmap
+        Console.WriteLine("Couldn't find layout of ID " + id + ". Assuming a tile layout.")
+        Return ImageLayout.Tile
+    End Function
+
+    Private Shared Function GetImage(ByVal fileName As String) As Bitmap
         Dim ret As Bitmap
         Using img As Image = Image.FromFile(fileName)
             ret = New Bitmap(img)
@@ -224,7 +263,7 @@ Module Skins
     Const loadedskin As String = "temp_skn/"
 
     ' LOAD SKIN FROM SAVE FOLDER
-    Public Sub loadimages()
+    Public Shared Sub loadimages()
         If File.Exists(loadedskin & "userpic") Then
             userimage = GetImage(loadedskin & "userpic")
         End If
@@ -502,4 +541,4 @@ Module Skins
 
         End If
     End Sub
-End Module
+End Class
