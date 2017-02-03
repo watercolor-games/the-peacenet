@@ -132,6 +132,11 @@ namespace ShiftOS.Engine {
 
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
 
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]
         [RequiresUpgrade("shift_title_text")]
