@@ -50,7 +50,6 @@ namespace ShiftOS.WinForms.Applications
                     SetupUI();
                 }));
             };
-            DownloadManager.ProgressUpdate += pupdate;
             DownloadManager.DownloadStarted += started;
             DownloadManager.DownloadCompleted += completed;
         }
@@ -62,7 +61,6 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
-            DownloadManager.ProgressUpdate -= pupdate;
             DownloadManager.DownloadStarted -= started;
             DownloadManager.DownloadCompleted -= completed;
             return true;
@@ -78,46 +76,22 @@ namespace ShiftOS.WinForms.Applications
 
             int heightMultiplier = 0;
 
-            foreach(var download in DownloadManager.Downloads)
+            for(int i = 0; i < DownloadManager.Downloads.Length; i++)
             {
-                var pnl = new Panel();
-                pnl.Width = fllist.Width;
-                pnl.Height = 50;
-                var picpreview = new PictureBox();
-                picpreview.Size = new Size(42, 42);
-                picpreview.Image = FileSkimmerBackend.GetImage(download.Destination);
-                picpreview.Location = new Point(4, 4);
-                if (heightMultiplier < 5)
+                var dctrl = new DownloadControl(i);
+                if(heightMultiplier < 10)
+                {
                     heightMultiplier++;
-                pnl.Controls.Add(picpreview);
-                picpreview.Show();
-                var prg = new ShiftedProgressBar();
-                prg.Maximum = 100;
-                prg.Value = download.Progress;
-                prg.Width = pnl.Width - 8;
-                prg.Left = 4;
-                prg.Top = picpreview.Height + 8;
-                prg.Height = 20;
-                var lbtitle = new Label();
-                lbtitle.Tag = "header1";
-                lbtitle.Text = download.ShiftnetUrl;
-                lbtitle.Top = 4;
-                lbtitle.Left = 8 + picpreview.Height;
-                pnl.Controls.Add(lbtitle);
-                lbtitle.Show();
-                lbtitle.AutoSize = true;
-                pnl.Controls.Add(prg);
-                prg.Show();
-
-                fllist.Controls.Add(pnl);
-                pnl.Show();
-                ControlManager.SetupControls(pnl);
+                }
+                
+                fllist.Controls.Add(dctrl);
+                dctrl.Show();
             }
 
             if (heightMultiplier == 0)
                 heightMultiplier = 1;
 
-            this.Parent.Height = 50 * heightMultiplier;
+            this.ParentForm.Height = 150 * heightMultiplier;
         }
     }
 
@@ -149,8 +123,8 @@ namespace ShiftOS.WinForms.Applications
                 for (int i = 0; i < down.Bytes.Length; i += byteWrite)
                 {
                     Thread.Sleep(1000);
-                    _downloads[_downloads.IndexOf(down)].Progress = i / down.Bytes.Length;
-                    ProgressUpdate?.Invoke(_downloads.IndexOf(down), i / down.Bytes.Length);
+                    _downloads[_downloads.IndexOf(down)].Progress = (int)((float)(i / down.Bytes.Length) * 100);
+                    ProgressUpdate?.Invoke(_downloads.IndexOf(down), (int)((float)(i / down.Bytes.Length) * 100));
                 }
                 ShiftOS.Objects.ShiftFS.Utils.WriteAllBytes(down.Destination, down.Bytes);
                 _downloads.Remove(down);

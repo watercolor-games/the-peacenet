@@ -111,7 +111,7 @@ namespace ShiftOS.WinForms.Controls
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.Clear(this.BackColor);
+            pe.Graphics.Clear(Color.Black);
             switch (_style)
             {
                 case ProgressBarStyle.Continuous:

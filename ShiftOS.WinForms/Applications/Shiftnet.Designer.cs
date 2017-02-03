@@ -102,6 +102,7 @@
             // wbcanvas
             // 
             this.wbcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.wbcanvas.IsWebBrowserContextMenuEnabled = false;
             this.wbcanvas.Location = new System.Drawing.Point(0, 29);
             this.wbcanvas.MinimumSize = new System.Drawing.Size(20, 20);
             this.wbcanvas.Name = "wbcanvas";
@@ -109,6 +110,7 @@
             this.wbcanvas.Size = new System.Drawing.Size(805, 510);
             this.wbcanvas.TabIndex = 1;
             this.wbcanvas.WebBrowserShortcutsEnabled = false;
+            this.wbcanvas.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.wbcanvas_Navigated);
             this.wbcanvas.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.wbcanvas_Navigating);
             // 
             // Shiftnet

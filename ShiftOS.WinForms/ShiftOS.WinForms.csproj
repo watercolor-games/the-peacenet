@@ -206,6 +206,12 @@
     <Compile Include="Controls\TerminalBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DownloadControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DownloadControl.Designer.cs">
+      <DependentUpon>DownloadControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="FakeSetupScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -303,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Terminal.resx">
       <DependentUpon>Terminal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DownloadControl.resx">
+      <DependentUpon>DownloadControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FakeSetupScreen.resx">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>

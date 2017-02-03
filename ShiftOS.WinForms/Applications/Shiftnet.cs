@@ -89,11 +89,12 @@ namespace ShiftOS.WinForms.Applications
 
         private void wbcanvas_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (CurrentUrl != e.Url.ToString() && !e.Url.ToString().StartsWith("about:"))
+            string Url = e.Url.ToString().Replace("http://", "");
+            if (CurrentUrl != Url.ToString() && !Url.ToString().StartsWith("about:"))
             {
                 e.Cancel = true;
                 Future.Clear();
-                ShiftnetNavigate(e.Url.ToString());
+                ShiftnetNavigate(Url.ToString());
             }
         }
 
@@ -227,5 +228,10 @@ namespace ShiftOS.WinForms.Applications
                 e.SuppressKeyPress = true;
             }
         }
+
+        private void wbcanvas_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+        }
     }
 }
+
