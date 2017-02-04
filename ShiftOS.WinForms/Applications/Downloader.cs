@@ -56,7 +56,6 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad()
         {
-            SetupUI();
         }
 
         public bool OnUnload()

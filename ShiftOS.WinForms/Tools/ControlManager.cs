@@ -148,7 +148,8 @@ namespace ShiftOS.WinForms.Tools
                 var gfx = Graphics.FromImage(mBmp);
                 var handle = mBmp.GetHicon();
 
-                ctrl.Cursor = new Cursor(handle);
+                var cursor = new Cursor(handle);
+                ctrl.Cursor = cursor;
             }
         }
 
