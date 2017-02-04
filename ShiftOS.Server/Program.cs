@@ -420,14 +420,36 @@ Contents:
 							}));
 					}
 					break;
-				case "legion_create":
+				case "legion_createnew":
 					List<Legion> legions = new List<Legion>();
 					if (File.Exists("legions.json"))
 						legions = JsonConvert.DeserializeObject<List<Legion>>(File.ReadAllText("legions.json"));
 
 					var l = JsonConvert.DeserializeObject<Legion>(msg.Contents);
+                        bool legionExists = false;
 
-					legions.Add(l);
+                        foreach (var legion in legions)
+                            if (legion.ShortName == l.ShortName)
+                                legionExists = true;
+
+                        if (legionExists == false)
+                        {
+                            legions.Add(l);
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("test", new ServerMessage
+                            {
+                                Name = "legion_create_ok",
+                                GUID = "server"
+                            }));
+
+                        }
+                        else
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("test", new ServerMessage
+                            {
+                                Name = "legion_alreadyexists",
+                                GUID = "server"
+                            }));
+                        }
 
 					File.WriteAllText("legions.json", JsonConvert.SerializeObject(legions, Formatting.Indented));
 					break;

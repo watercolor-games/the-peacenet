@@ -66,6 +66,17 @@ namespace ShiftOS.WinForms.Applications
                                 BannerColor = ConsoleColor.DarkRed
                             });
                         }
+                        else if(msg.Name == "legion_create_ok")
+                        {
+                            SaveSystem.CurrentSave.CurrentLegions.Clear();
+                            SaveSystem.CurrentSave.CurrentLegions.Add(editingLegion.ShortName);
+                            SaveSystem.SaveGame();
+                            myLegionToolStripMenuItem_Click(this, EventArgs.Empty);
+                        }
+                        else if(msg.Name == "legion_alreadyexists")
+                        {
+                            Infobox.Show("Legion already exists", "A legion with the short name you provided already exists. Please choose another.");
+                        }
                         else if(msg.Name == "legion_users_found")
                         {
                             lvusers.Items.Clear();
@@ -421,11 +432,7 @@ Current legions: {legionname}";
 
         private void btncreate_Click(object sender, EventArgs e)
         {
-            ServerManager.SendMessage("legion_create", JsonConvert.SerializeObject(editingLegion));
-            SaveSystem.CurrentSave.CurrentLegions.Clear();
-            SaveSystem.CurrentSave.CurrentLegions.Add(editingLegion.ShortName);
-            SaveSystem.SaveGame();
-            myLegionToolStripMenuItem_Click(sender, e);
+            ServerManager.SendMessage("legion_createnew", JsonConvert.SerializeObject(editingLegion));
         }
 
         private void txtnewlegiondescription_TextChanged(object sender, EventArgs e)

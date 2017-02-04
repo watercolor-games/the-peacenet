@@ -305,9 +305,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.job_current);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_join);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_memos);
