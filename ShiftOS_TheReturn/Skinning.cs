@@ -137,6 +137,9 @@ namespace ShiftOS.Engine {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
+        [ShifterHidden]
+        public Dictionary<string, string> AppNames = new Dictionary<string, string>(); 
+
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]
         [RequiresUpgrade("shift_title_text")]

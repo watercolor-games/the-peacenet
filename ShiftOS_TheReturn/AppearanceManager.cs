@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -75,6 +76,39 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static IEnumerable<Type> GetAllWindowTypes()
+        {
+            List<Type> types = new List<Type>();
+            foreach(var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(file.EndsWith(".exe") || file.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(file);
+                        foreach(var type in asm.GetTypes())
+                        {
+                            if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
+                                types.Add(type);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return types;
+        }
+
+        public static string GetDefaultTitle(Type winType)
+        {
+            foreach(var attrib in winType.GetCustomAttributes(false))
+            {
+                if(attrib is DefaultTitleAttribute)
+                {
+                    return (attrib as DefaultTitleAttribute).Title;
+                }
+            }
+            return winType.Name;
+        }
 
         public static string LastTerminalText { get; set; }
         public static int CurrentPosition { get; set; }
@@ -205,4 +239,15 @@ namespace ShiftOS.Engine
         string Text { get; set; }
         IShiftOSWindow ParentWindow { get; set; }
     }
+    
+    public class DefaultTitleAttribute : Attribute
+    {
+        public DefaultTitleAttribute(string title)
+        {
+            Title = title;
+        }
+        
+        public string Title { get; private set; }
+    }
+
 }

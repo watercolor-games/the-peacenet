@@ -38,8 +38,10 @@ namespace ShiftOS.WinForms.Applications {
     [Launcher("Name Changer", true, "al_name_changer", "Customization")]
     [RequiresUpgrade("name_changer")]
     [WinOpen("name_changer")]
-    public partial class NameChanger : UserControl, IShiftOSWindow {
-        public NameChanger() {
+    public partial class NameChanger : UserControl, IShiftOSWindow
+    {
+        public NameChanger()
+        {
             InitializeComponent();
         }
 
@@ -60,13 +62,50 @@ namespace ShiftOS.WinForms.Applications {
         {
         }
 
-        private void NameChanger_Load(object sender, EventArgs e) {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void NameChanger_Load(object sender, EventArgs e)
         {
 
+        }
+        
+    }
+
+    public static class NameChangerBackend
+    {
+        public static Dictionary<string, string> GetDefault()
+        {
+            var dict = new Dictionary<string, string>();
+            foreach(var winType in AppearanceManager.GetAllWindowTypes())
+            {
+                if (dict.ContainsKey(winType.Name))
+                    dict[winType.Name] = AppearanceManager.GetDefaultTitle(winType);
+                else
+                    dict.Add(winType.Name, AppearanceManager.GetDefaultTitle(winType));
+            }
+            return dict;
+        }
+
+        public static Dictionary<string,string> GetCurrent()
+        {
+            if (SkinEngine.LoadedSkin == null)
+                return GetDefault();
+
+            if (SkinEngine.LoadedSkin.AppNames == null)
+                SkinEngine.LoadedSkin.AppNames = GetDefault();
+            return SkinEngine.LoadedSkin.AppNames;
+        }
+
+        public static string GetName(IShiftOSWindow win)
+        {
+            if (SkinEngine.LoadedSkin == null)
+                return AppearanceManager.GetDefaultTitle(win.GetType());
+
+            if (SkinEngine.LoadedSkin.AppNames == null)
+                SkinEngine.LoadedSkin.AppNames = GetDefault();
+
+            if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(win.GetType().Name))
+                SkinEngine.LoadedSkin.AppNames.Add(win.GetType().Name, AppearanceManager.GetDefaultTitle(win.GetType()));
+
+            return SkinEngine.LoadedSkin.AppNames[win.GetType().Name];
         }
     }
 }

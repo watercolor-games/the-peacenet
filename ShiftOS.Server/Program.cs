@@ -429,8 +429,10 @@ Contents:
                         bool legionExists = false;
 
                         foreach (var legion in legions)
+                        {
                             if (legion.ShortName == l.ShortName)
                                 legionExists = true;
+                        }
 
                         if (legionExists == false)
                         {
