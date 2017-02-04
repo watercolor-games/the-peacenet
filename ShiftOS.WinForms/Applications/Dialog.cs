@@ -35,6 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [DefaultTitle("Information")]
     public partial class Dialog : UserControl, IShiftOSWindow, IInfobox
     {
         public Dialog()

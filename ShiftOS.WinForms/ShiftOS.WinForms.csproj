@@ -111,29 +111,11 @@
     <Compile Include="Applications\GraphicPicker.Designer.cs">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\mp3Player.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\mp3Player.Designer.cs">
-      <DependentUpon>mp3Player.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\MUDAuthenticator.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\MUDAuthenticator.Designer.cs">
-      <DependentUpon>MUDAuthenticator.cs</DependentUpon>
-    </Compile>
     <Compile Include="Applications\MUDControlCentre.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Applications\MUDControlCentre.Designer.cs">
       <DependentUpon>MUDControlCentre.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\MUDPasswordCracker.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\MUDPasswordCracker.Designer.cs">
-      <DependentUpon>MUDPasswordCracker.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\NameChanger.cs">
       <SubType>UserControl</SubType>
@@ -176,12 +158,6 @@
     </Compile>
     <Compile Include="Applications\TextPad.Designer.cs">
       <DependentUpon>TextPad.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\VirusScanner.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\VirusScanner.Designer.cs">
-      <DependentUpon>VirusScanner.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Terminal.cs">
       <SubType>UserControl</SubType>
@@ -271,17 +247,8 @@
     <EmbeddedResource Include="Applications\GraphicPicker.resx">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Applications\mp3Player.resx">
-      <DependentUpon>mp3Player.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\MUDAuthenticator.resx">
-      <DependentUpon>MUDAuthenticator.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Applications\MUDControlCentre.resx">
       <DependentUpon>MUDControlCentre.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\MUDPasswordCracker.resx">
-      <DependentUpon>MUDPasswordCracker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\NameChanger.resx">
       <DependentUpon>NameChanger.cs</DependentUpon>
@@ -303,9 +270,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TextPad.resx">
       <DependentUpon>TextPad.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\VirusScanner.resx">
-      <DependentUpon>VirusScanner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Terminal.resx">
       <DependentUpon>Terminal.cs</DependentUpon>
