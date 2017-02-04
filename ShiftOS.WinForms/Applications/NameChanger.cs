@@ -31,20 +31,67 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using ShiftOS.Engine;
+using ShiftOS.Objects.ShiftFS;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
 
     [Launcher("Name Changer", true, "al_name_changer", "Customization")]
     [RequiresUpgrade("name_changer")]
     [WinOpen("name_changer")]
-    public partial class NameChanger : UserControl, IShiftOSWindow {
-        public NameChanger() {
+    [DefaultTitle("Name Changer")]
+    public partial class NameChanger : UserControl, IShiftOSWindow
+    {
+        public NameChanger()
+        {
             InitializeComponent();
         }
 
+        private Dictionary<string, string> names = new Dictionary<string, string>();
+
         public void OnLoad()
         {
+            names = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(NameChangerBackend.GetCurrent()));
+            SetupUI();
+        }
+
+        public void SetupUI()
+        {
+            flnames.Controls.Clear();
+            foreach(var name in names)
+            {
+                var pnl = new Panel();
+                var lbl = new Label();
+                var txt = new TextBox();
+                pnl.Controls.Add(lbl);
+                lbl.Show();
+                pnl.Controls.Add(txt);
+                txt.Show();
+
+                ControlManager.SetupControls(pnl);
+
+                pnl.Width = flnames.Width - 10;
+                pnl.Height = 50;
+                lbl.Left = 10;
+                lbl.Width = (pnl.Width / 4) - 10;
+                lbl.Text = name.Key;
+                lbl.Top = (pnl.Height - lbl.Height) / 2;
+                lbl.TextAlign = ContentAlignment.MiddleLeft;
+                
+                txt.Text = name.Value;
+                
+                txt.TextChanged += (o, a) =>
+                {
+                    names[name.Key] = txt.Text;
+                };
+                txt.Width = pnl.Width - (pnl.Width / 4) - 20;
+                txt.Left = lbl.Width + 20;
+                txt.Top = (pnl.Height - txt.Height) / 2;
+                flnames.Controls.Add(pnl);
+                pnl.Show();
+            }
         }
 
         public void OnSkinLoad()
@@ -60,13 +107,90 @@ namespace ShiftOS.WinForms.Applications {
         {
         }
 
-        private void NameChanger_Load(object sender, EventArgs e) {
+        private void NameChanger_Load(object sender, EventArgs e)
+        {
 
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnclose_Click(object sender, EventArgs e)
         {
+            this.Close();
+        }
 
+        private void btnloaddefault_Click(object sender, EventArgs e)
+        {
+            names = NameChangerBackend.GetDefault();
+            SetupUI();
+        }
+
+        private void btnimport_Click(object sender, EventArgs e)
+        {
+            FileSkimmerBackend.GetFile(new[] { ".nme" }, FileOpenerStyle.Open, new Action<string>((path) =>
+             {
+                 names = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(path));
+             }));
+        }
+
+        private void btnexport_Click(object sender, EventArgs e)
+        {
+            FileSkimmerBackend.GetFile(new[] { ".nme" }, FileOpenerStyle.Save, new Action<string>((path) =>
+            {
+                Utils.WriteAllText(path, JsonConvert.SerializeObject(names));
+            }));
+        }
+
+        private void btnapply_Click(object sender, EventArgs e)
+        {
+            SkinEngine.LoadedSkin.AppNames = names;
+            Utils.WriteAllText(Paths.GetPath("skin.json"), SkinEngine.LoadedSkin.ToString());
+            SkinEngine.LoadSkin();
+        }
+    }
+
+    public static class NameChangerBackend
+    {
+        public static Dictionary<string, string> GetDefault()
+        {
+            var dict = new Dictionary<string, string>();
+            foreach(var winType in AppearanceManager.GetAllWindowTypes())
+            {
+                if (dict.ContainsKey(winType.Name))
+                    dict[winType.Name] = AppearanceManager.GetDefaultTitle(winType);
+                else
+                    dict.Add(winType.Name, AppearanceManager.GetDefaultTitle(winType));
+            }
+            return dict;
+        }
+
+        public static Dictionary<string,string> GetCurrent()
+        {
+            if (SkinEngine.LoadedSkin == null)
+                return GetDefault();
+
+            if (SkinEngine.LoadedSkin.AppNames == null)
+                SkinEngine.LoadedSkin.AppNames = GetDefault();
+
+            foreach(var def in GetDefault())
+            {
+                if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(def.Key))
+                    SkinEngine.LoadedSkin.AppNames.Add(def.Key, def.Value);
+            }
+
+            return SkinEngine.LoadedSkin.AppNames;
+        }
+
+        public static string GetName(IShiftOSWindow win)
+        {
+            if (SkinEngine.LoadedSkin == null)
+                return AppearanceManager.GetDefaultTitle(win.GetType());
+
+            if (SkinEngine.LoadedSkin.AppNames == null)
+                SkinEngine.LoadedSkin.AppNames = GetDefault();
+
+            if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(win.GetType().Name))
+                SkinEngine.LoadedSkin.AppNames.Add(win.GetType().Name, AppearanceManager.GetDefaultTitle(win.GetType()));
+
+            return SkinEngine.LoadedSkin.AppNames[win.GetType().Name];
         }
     }
 }

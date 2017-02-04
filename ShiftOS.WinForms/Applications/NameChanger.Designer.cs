@@ -47,33 +47,139 @@ namespace ShiftOS.WinForms.Applications {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.flnames = new System.Windows.Forms.FlowLayoutPanel();
+            this.flbuttons = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnclose = new System.Windows.Forms.Button();
+            this.btnloaddefault = new System.Windows.Forms.Button();
+            this.btnimport = new System.Windows.Forms.Button();
+            this.btnexport = new System.Windows.Forms.Button();
+            this.btnapply = new System.Windows.Forms.Button();
+            this.panel1.SuspendLayout();
+            this.flbuttons.SuspendLayout();
             this.SuspendLayout();
             // 
-            // listBox1
+            // panel1
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(3, 3);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(138, 342);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.panel1.Controls.Add(this.flnames);
+            this.panel1.Controls.Add(this.flbuttons);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(354, 349);
+            this.panel1.TabIndex = 0;
+            // 
+            // flnames
+            // 
+            this.flnames.AutoScroll = true;
+            this.flnames.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flnames.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flnames.Location = new System.Drawing.Point(0, 0);
+            this.flnames.Name = "flnames";
+            this.flnames.Size = new System.Drawing.Size(354, 320);
+            this.flnames.TabIndex = 0;
+            this.flnames.WrapContents = false;
+            // 
+            // flbuttons
+            // 
+            this.flbuttons.AutoSize = true;
+            this.flbuttons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flbuttons.Controls.Add(this.btnclose);
+            this.flbuttons.Controls.Add(this.btnloaddefault);
+            this.flbuttons.Controls.Add(this.btnimport);
+            this.flbuttons.Controls.Add(this.btnexport);
+            this.flbuttons.Controls.Add(this.btnapply);
+            this.flbuttons.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flbuttons.Location = new System.Drawing.Point(0, 320);
+            this.flbuttons.Name = "flbuttons";
+            this.flbuttons.Size = new System.Drawing.Size(354, 29);
+            this.flbuttons.TabIndex = 0;
+            // 
+            // btnclose
+            // 
+            this.btnclose.AutoSize = true;
+            this.btnclose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnclose.Location = new System.Drawing.Point(3, 3);
+            this.btnclose.Name = "btnclose";
+            this.btnclose.Size = new System.Drawing.Size(43, 23);
+            this.btnclose.TabIndex = 0;
+            this.btnclose.Text = "Close";
+            this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
+            // 
+            // btnloaddefault
+            // 
+            this.btnloaddefault.AutoSize = true;
+            this.btnloaddefault.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnloaddefault.Location = new System.Drawing.Point(52, 3);
+            this.btnloaddefault.Name = "btnloaddefault";
+            this.btnloaddefault.Size = new System.Drawing.Size(76, 23);
+            this.btnloaddefault.TabIndex = 1;
+            this.btnloaddefault.Text = "Load default";
+            this.btnloaddefault.UseVisualStyleBackColor = true;
+            this.btnloaddefault.Click += new System.EventHandler(this.btnloaddefault_Click);
+            // 
+            // btnimport
+            // 
+            this.btnimport.AutoSize = true;
+            this.btnimport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnimport.Location = new System.Drawing.Point(134, 3);
+            this.btnimport.Name = "btnimport";
+            this.btnimport.Size = new System.Drawing.Size(46, 23);
+            this.btnimport.TabIndex = 2;
+            this.btnimport.Text = "Import";
+            this.btnimport.UseVisualStyleBackColor = true;
+            this.btnimport.Click += new System.EventHandler(this.btnimport_Click);
+            // 
+            // btnexport
+            // 
+            this.btnexport.AutoSize = true;
+            this.btnexport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnexport.Location = new System.Drawing.Point(186, 3);
+            this.btnexport.Name = "btnexport";
+            this.btnexport.Size = new System.Drawing.Size(47, 23);
+            this.btnexport.TabIndex = 3;
+            this.btnexport.Text = "Export";
+            this.btnexport.UseVisualStyleBackColor = true;
+            this.btnexport.Click += new System.EventHandler(this.btnexport_Click);
+            // 
+            // btnapply
+            // 
+            this.btnapply.AutoSize = true;
+            this.btnapply.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnapply.Location = new System.Drawing.Point(239, 3);
+            this.btnapply.Name = "btnapply";
+            this.btnapply.Size = new System.Drawing.Size(43, 23);
+            this.btnapply.TabIndex = 4;
+            this.btnapply.Text = "Apply";
+            this.btnapply.UseVisualStyleBackColor = true;
+            this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
             // NameChanger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.panel1);
             this.Name = "NameChanger";
-            this.Text = "Name Changer";
-            this.Size = new System.Drawing.Size(459, 406);
+            this.Size = new System.Drawing.Size(354, 349);
             this.Load += new System.EventHandler(this.NameChanger_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.flbuttons.ResumeLayout(false);
+            this.flbuttons.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.FlowLayoutPanel flnames;
+        private System.Windows.Forms.FlowLayoutPanel flbuttons;
+        private System.Windows.Forms.Button btnclose;
+        private System.Windows.Forms.Button btnloaddefault;
+        private System.Windows.Forms.Button btnimport;
+        private System.Windows.Forms.Button btnexport;
+        private System.Windows.Forms.Button btnapply;
     }
 }

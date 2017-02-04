@@ -41,6 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("mud_fundamentals")]
     [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]
+    [DefaultTitle("MUD Control Centre")]
     public partial class MUDControlCentre : UserControl, IShiftOSWindow
     {
         public MUDControlCentre()
@@ -66,21 +67,27 @@ namespace ShiftOS.WinForms.Applications
                                 BannerColor = ConsoleColor.DarkRed
                             });
                         }
-                        else if(msg.Name == "legion_create_ok")
+                        else if (msg.Name == "legion_create_ok")
                         {
                             SaveSystem.CurrentSave.CurrentLegions.Clear();
                             SaveSystem.CurrentSave.CurrentLegions.Add(editingLegion.ShortName);
                             SaveSystem.SaveGame();
-                            myLegionToolStripMenuItem_Click(this, EventArgs.Empty);
+                            this.Invoke(new Action(() =>
+                            {
+                                myLegionToolStripMenuItem_Click(this, EventArgs.Empty);
+                            }));
                         }
-                        else if(msg.Name == "legion_alreadyexists")
+                        else if (msg.Name == "legion_alreadyexists")
                         {
-                            Infobox.Show("Legion already exists", "A legion with the short name you provided already exists. Please choose another.");
+                            this.Invoke(new Action(() =>
+                            {
+                                Infobox.Show("Legion already exists", "A legion with the short name you provided already exists. Please choose another.");
+                            }));
                         }
-                        else if(msg.Name == "legion_users_found")
+                        else if (msg.Name == "legion_users_found")
                         {
                             lvusers.Items.Clear();
-                            foreach(var usr in JsonConvert.DeserializeObject<string[]>(msg.Contents))
+                            foreach (var usr in JsonConvert.DeserializeObject<string[]>(msg.Contents))
                             {
                                 lvusers.Items.Add(usr);
                             }
@@ -89,7 +96,7 @@ namespace ShiftOS.WinForms.Applications
                         {
                             ShowLegionInfo(JsonConvert.DeserializeObject<Legion>(msg.Contents));
                         }
-                        else if(msg.Name == "legion_all")
+                        else if (msg.Name == "legion_all")
                         {
                             PopulateJoinLegion(JsonConvert.DeserializeObject<List<Legion>>(msg.Contents));
                         }

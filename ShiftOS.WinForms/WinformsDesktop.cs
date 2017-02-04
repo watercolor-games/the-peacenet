@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.WinForms.Tools;
+using ShiftOS.WinForms.Applications;
 
 /// <summary>
 /// Winforms desktop.
@@ -131,7 +132,7 @@ namespace ShiftOS.WinForms
                             pnlbtn.BackgroundImageLayout = GetImageLayout("panelbutton");
 
                             var pnlbtntext = new Label();
-                            pnlbtntext.Text = form.Text;
+                            pnlbtntext.Text = NameChangerBackend.GetName(form.ParentWindow);
                             pnlbtntext.AutoSize = true;
                             pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
                             pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;

@@ -36,6 +36,7 @@ using static ShiftOS.Engine.SkinEngine;
 using System.Runtime.InteropServices;
 using ShiftOS.Engine;
 using ShiftOS.WinForms.Tools;
+using ShiftOS.WinForms.Applications;
 
 /// <summary>
 /// Window border.
@@ -211,7 +212,7 @@ namespace ShiftOS.WinForms
         /// </summary>
         public void Setup()
         {
-            this.lbtitletext.Text = Localization.Parse(this._parentWindow.Text);
+            this.lbtitletext.Text = NameChangerBackend.GetName(ParentWindow);
             
             if (SaveSystem.CurrentSave != null)
             {
@@ -228,23 +229,6 @@ namespace ShiftOS.WinForms
                 this.pnlminimize.Visible = false;
                 this.pnlmaximize.Visible = false;
 
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the text.
-        /// </summary>
-        /// <value>The text.</value>
-        public override string Text
-        {
-            get
-            {
-                return lbtitletext?.Text;
-            }
-
-            set
-            {
-                lbtitletext.Text = value;
             }
         }
 
