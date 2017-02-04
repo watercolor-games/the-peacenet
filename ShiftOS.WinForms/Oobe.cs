@@ -235,6 +235,9 @@ namespace ShiftOS.WinForms
                         save.Password = p;
                         save.SystemName = s;
                         SaveSystem.CurrentSave = save;
+                        SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
+                        Shiftorium.Init();
+
                         SaveSystem.SaveGame();
                         if(Utils.FileExists(Paths.SaveFileInner))
                             Utils.Delete(Paths.SaveFileInner);
