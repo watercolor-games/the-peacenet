@@ -135,19 +135,25 @@ namespace ShiftOS.WinForms.Tools
             }
         }
 
+        public static void SetCursor(Control ctrl)
+        {
+            if (!(ctrl is WebBrowser))
+            {
+                var mouse = SkinEngine.GetImage("mouse");
+                if (mouse == null)
+                    mouse = Properties.Resources.DefaultMouse;
+
+                var mBmp = new Bitmap(mouse);
+                var gfx = Graphics.FromImage(mBmp);
+                var handle = mBmp.GetHicon();
+
+                ctrl.Cursor = new Cursor(handle);
+            }
+        }
 
         public static void SetupControl(Control ctrl)
         {
-
-            var mouse = SkinEngine.GetImage("mouse");
-            if (mouse == null)
-                mouse = Properties.Resources.DefaultMouse;
-
-            var mBmp = new Bitmap(mouse);
-            var gfx = Graphics.FromImage(mBmp);
-            var handle = mBmp.GetHicon();
-
-            ctrl.Cursor = new Cursor(handle);
+            SetCursor(ctrl);
             if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
             {
                 string tag = "";

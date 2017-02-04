@@ -109,6 +109,16 @@ namespace ShiftOS.WinForms
             time.Start();
 
             this.DoubleBuffered = true;
+            SetCursors(this);
+        }
+
+        public void SetCursors(Control ctrl)
+        {
+            ControlManager.SetupControl(ctrl);
+            foreach(Control child in ctrl.Controls)
+            {
+                SetCursors(child);
+            }
         }
 
 		/// <summary>
@@ -178,6 +188,7 @@ namespace ShiftOS.WinForms
                                 pnlbtn.Click += onClick;
                                 pnlbtntext.Click += onClick;
                             }
+                            SetCursors(pnlbtn);
                         }
                     }
                 }
