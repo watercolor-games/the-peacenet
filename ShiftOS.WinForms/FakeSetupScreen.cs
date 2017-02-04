@@ -283,6 +283,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
             {
                 for(long i = 0; i <= arbitraryAmountOfBytes; i++)
                 {
+                    Thread.Sleep(40);
                     this.Invoke(new Action(() =>
                     {
                         pgformatprogress.Value = (int)i;
