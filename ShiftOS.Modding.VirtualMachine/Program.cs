@@ -14,7 +14,7 @@ namespace ShiftOS.Modding.VirtualMachine
         [STAThread]
         static void Main()
         {
-            ShiftOS.WinForms.Program.Main();
+            
         }
     }
 }
