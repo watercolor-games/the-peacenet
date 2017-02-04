@@ -105,6 +105,7 @@ namespace ShiftOS.WinForms.Applications {
             this.btnclose.TabIndex = 0;
             this.btnclose.Text = "Close";
             this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
             // 
             // btnloaddefault
             // 
@@ -116,6 +117,7 @@ namespace ShiftOS.WinForms.Applications {
             this.btnloaddefault.TabIndex = 1;
             this.btnloaddefault.Text = "Load default";
             this.btnloaddefault.UseVisualStyleBackColor = true;
+            this.btnloaddefault.Click += new System.EventHandler(this.btnloaddefault_Click);
             // 
             // btnimport
             // 
@@ -127,6 +129,7 @@ namespace ShiftOS.WinForms.Applications {
             this.btnimport.TabIndex = 2;
             this.btnimport.Text = "Import";
             this.btnimport.UseVisualStyleBackColor = true;
+            this.btnimport.Click += new System.EventHandler(this.btnimport_Click);
             // 
             // btnexport
             // 
@@ -138,6 +141,7 @@ namespace ShiftOS.WinForms.Applications {
             this.btnexport.TabIndex = 3;
             this.btnexport.Text = "Export";
             this.btnexport.UseVisualStyleBackColor = true;
+            this.btnexport.Click += new System.EventHandler(this.btnexport_Click);
             // 
             // btnapply
             // 
@@ -149,6 +153,7 @@ namespace ShiftOS.WinForms.Applications {
             this.btnapply.TabIndex = 4;
             this.btnapply.Text = "Apply";
             this.btnapply.UseVisualStyleBackColor = true;
+            this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
             // NameChanger
             // 
