@@ -144,6 +144,7 @@ namespace ShiftOS.WinForms.Tools
                     mouse = Properties.Resources.DefaultMouse;
 
                 var mBmp = new Bitmap(mouse);
+                mBmp.MakeTransparent(Color.FromArgb(1, 0, 1));
                 var gfx = Graphics.FromImage(mBmp);
                 var handle = mBmp.GetHicon();
 
