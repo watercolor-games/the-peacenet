@@ -152,6 +152,14 @@ namespace ShiftOS.Engine {
         [ShifterName("System Font")]
         [ShifterDescription("The font style used by the system.")]
         public Font MainFont = SysFont;
+        
+        [Image("mouse")]
+        [ShifterMeta("System")]
+        [ShifterCategory("General")]
+        [ShifterName("Mouse image")]
+        [ShifterDescription("Select an image to be displayed as the system mouse cursor.")]
+        [RequiresUpgrade("skinning")]
+        public byte[] MouseCursorImage = null;
 
         [ShifterEnumMask(new[] { "Right", "Left"})]
         [ShifterMeta("Windows")]
