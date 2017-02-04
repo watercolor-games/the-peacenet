@@ -264,6 +264,51 @@ Public Class Skins
 
     ' LOAD SKIN FROM SAVE FOLDER
     Public Shared Sub loadimages()
+        If File.Exists(loadedskin + "startbutton.png") Then
+            applauncher = GetImage(loadedskin + "taskbar.png")
+            applauncherclick = GetImage(loadedskin + "taskbar.png")
+            applaunchermouseover = GetImage(loadedskin + "taskbar.png")
+        End If
+        If File.Exists(loadedskin + "taskbar.png") Then
+            desktoppanel = GetImage(loadedskin + "taskbar.png")
+        End If
+        If File.Exists(loadedskin + "time.png") Then
+            panelclock = GetImage(loadedskin + "time.png")
+        End If
+        If File.Exists(loadedskin + "background.png") Then
+            desktopbackground = GetImage(loadedskin + "background.png")
+        End If
+        If File.Exists(loadedskin + "borders.png") Then
+            borderleft = GetImage(loadedskin + "borders.png")
+            borderright = GetImage(loadedskin + "borders.png")
+            borderbottom = GetImage(loadedskin + "borders.png")
+            bottomleftcorner = GetImage(loadedskin + "borders.png")
+            bottomrightcorner = GetImage(loadedskin + "borders.png")
+        End If
+        If File.Exists(loadedskin + "closebutton.png") Then
+            closebtn = GetImage(loadedskin + "closebutton.png")
+        End If
+        If File.Exists(loadedskin + "minimizebutton.png") Then
+            minbtn = GetImage(loadedskin + "minimizebutton.png")
+        End If
+        If File.Exists(loadedskin + "panelbutton.png") Then
+            panelbutton = GetImage(loadedskin + "panelbutton.png")
+        End If
+        If File.Exists(loadedskin + "rollup.png") Then
+            rollbtn = GetImage(loadedskin + "rollup.png")
+        End If
+        If File.Exists(loadedskin + "titlebar.png") Then
+            titlebar = GetImage(loadedskin + "titlebar.png")
+        End If
+        If File.Exists(loadedskin + "titlebarleft.png") Then
+            leftcorner = GetImage(loadedskin + "titlebarleft.png")
+        End If
+        If File.Exists(loadedskin + "titlebarright.png") Then
+            rightcorner = GetImage(loadedskin + "titlebarright.png")
+        End If
+
+
+
         If File.Exists(loadedskin & "userpic") Then
             userimage = GetImage(loadedskin & "userpic")
         End If
