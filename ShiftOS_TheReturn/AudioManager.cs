@@ -67,7 +67,13 @@ namespace ShiftOS.Engine
             _out.Volume = volume;
         }
 
-        
+        internal static void Kill()
+        {
+            _running = false;
+            _out.Stop();
+            _out.Dispose();
+            _reader.Dispose();
+        }
     }
 
     public interface IAudioProvider

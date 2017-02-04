@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A8CBA038-C147-4A8D-B170-DE6D9ECE8364}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <StartupObject>ShiftOS.Modding.VB.LegacySkinConverter.Module1</StartupObject>
+    <OutputType>Library</OutputType>
+    <StartupObject>
+    </StartupObject>
     <RootNamespace>ShiftOS.Modding.VB.LegacySkinConverter</RootNamespace>
     <AssemblyName>ShiftOS.Modding.VB.LegacySkinConverter</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>Console</MyType>
+    <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>

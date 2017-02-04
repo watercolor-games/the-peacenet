@@ -58,6 +58,11 @@ namespace ShiftOS.Engine
         /// <param name="useDefaultUI">Whether ShiftOS should initiate it's Windows Forms front-end.</param>
         public static void Begin(bool useDefaultUI = true)
         {
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                CrashHandler.Start((Exception)a.ExceptionObject);
+            };
+
             if (!System.IO.File.Exists(Paths.SaveFile))
             {
                 var root = new ShiftOS.Objects.ShiftFS.Directory();

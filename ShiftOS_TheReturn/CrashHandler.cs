@@ -95,19 +95,13 @@ namespace ShiftOS.Engine
 
         public static void Start(Exception e)
         {
-            if (SaveSystem.CurrentSave != null)
-            {
-                TerminalBackend.InvokeCommand("sos.save"); //save ShiftOS to disk before killing the session
-            }
-
-            //Close ALL FORMS in the current session.
-            while (Application.OpenForms.Count != 0)
-            {
-                Application.OpenForms[0].Dispose();
-            }
-
-            //Disconnect us from the ShiftOS multi-user domain.
+            if(SaveSystem.CurrentSave != null)
+                TerminalBackend.InvokeCommand("sos.save");
+            AudioManager.Kill();
             ServerManager.Disconnect();
+
+            while (Application.OpenForms.Count > 0)
+                Application.OpenForms[0].Close();
 
             //Set our global exception variable, and show the exception dialog.
             HandledException = e;
