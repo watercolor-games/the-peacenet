@@ -35,6 +35,7 @@ using ShiftOS.Engine;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.WinForms.Tools;
 using ShiftOS.WinForms.Applications;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Winforms desktop.
@@ -125,6 +126,26 @@ namespace ShiftOS.WinForms
                     {
                         if (form.Visible == true)
                         {
+                            EventHandler onClick = (o, a) =>
+                            {
+                                if(form == focused)
+                                {
+                                    if (form.IsMinimized)
+                                    {
+                                        RestoreWindow(form);
+                                    }
+                                    else
+                                    {
+                                        MinimizeWindow(form);
+                                    }
+                                }
+                                else
+                                {
+                                    form.BringToFront();
+                                    focused = form;
+                                }
+                            };
+
                             var pnlbtn = new Panel();
                             pnlbtn.Margin = new Padding(2, LoadedSkin.PanelButtonFromTop, 0, 0);
                             pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
@@ -151,6 +172,12 @@ namespace ShiftOS.WinForms
                             this.panelbuttonholder.Controls.Add(pnlbtn);
                             pnlbtn.Show();
                             pnlbtntext.Show();
+
+                            if (Shiftorium.UpgradeInstalled("useful_panel_buttons"))
+                            {
+                                pnlbtn.Click += onClick;
+                                pnlbtntext.Click += onClick;
+                            }
                         }
                     }
                 }
@@ -342,6 +369,11 @@ namespace ShiftOS.WinForms
         public void ShowWindow(IWindowBorder border)
         {
             var brdr = border as Form;
+            focused = border;
+            brdr.GotFocus += (o, a) =>
+            {
+                focused = border;
+            };
             brdr.FormBorderStyle = FormBorderStyle.None;
             brdr.Show();
             brdr.TopMost = true;
@@ -354,17 +386,26 @@ namespace ShiftOS.WinForms
 		/// <param name="border">Border.</param>
         public void KillWindow(IWindowBorder border)
         {
-            throw new NotImplementedException();
+            border.Close();
         }
 
-		/// <summary>
-		/// Minimizes the window.
-		/// </summary>
-		/// <returns>The window.</returns>
-		/// <param name="brdr">Brdr.</param>
+        private IWindowBorder focused = null;
+
+
+        /// <summary>
+        /// Minimizes the window.
+        /// </summary>
+        /// <param name="brdr">Brdr.</param>
         public void MinimizeWindow(IWindowBorder brdr)
         {
-            throw new NotImplementedException();
+            var loc = (brdr as WindowBorder).Location;
+            var sz = (brdr as WindowBorder).Size;
+            (brdr as WindowBorder).Tag = JsonConvert.SerializeObject(new
+            {
+                Size = sz,
+                Location = loc
+            });
+            (brdr as WindowBorder).Location = new Point(this.GetSize().Width * 2, this.GetSize().Height * 2);
         }
 
 		/// <summary>
@@ -374,24 +415,38 @@ namespace ShiftOS.WinForms
 		/// <param name="brdr">Brdr.</param>
         public void MaximizeWindow(IWindowBorder brdr)
         {
-            throw new NotImplementedException();
+            int startY = (LoadedSkin.DesktopPanelPosition == 1) ? 0 : LoadedSkin.DesktopPanelHeight;
+            int h = this.GetSize().Height - LoadedSkin.DesktopPanelHeight;
+            var loc = (brdr as WindowBorder).Location;
+            var sz = (brdr as WindowBorder).Size;
+            (brdr as WindowBorder).Tag = JsonConvert.SerializeObject(new
+            {
+                Size = sz,
+                Location = loc
+            });
+            (brdr as WindowBorder).Location = new Point(0, startY);
+            (brdr as WindowBorder).Size = new Size(this.GetSize().Width, h);
+
         }
 
-		/// <summary>
-		/// Restores the window.
-		/// </summary>
-		/// <returns>The window.</returns>
-		/// <param name="brdr">Brdr.</param>
+        /// <summary>
+        /// Restores the window.
+        /// </summary>
+        /// <returns>The window.</returns>
+        /// <param name="brdr">Brdr.</param>
         public void RestoreWindow(IWindowBorder brdr)
         {
-            throw new NotImplementedException();
+            dynamic tag = JsonConvert.DeserializeObject<dynamic>((brdr as WindowBorder).Tag.ToString());
+            (brdr as WindowBorder).Location = tag.Location;
+            (brdr as WindowBorder).Size = tag.Size;
+
         }
 
-		/// <summary>
-		/// Invokes the on worker thread.
-		/// </summary>
-		/// <returns>The on worker thread.</returns>
-		/// <param name="act">Act.</param>
+        /// <summary>
+        /// Invokes the on worker thread.
+        /// </summary>
+        /// <returns>The on worker thread.</returns>
+        /// <param name="act">Act.</param>
         public void InvokeOnWorkerThread(Action act)
         {
             this.Invoke(act);

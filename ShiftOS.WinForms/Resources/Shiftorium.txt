@@ -217,6 +217,12 @@
 		Name: "Minimize Command",
 		Cost: 1250,
 		Description: "Use the win.mini{id} command to minimize/restore windows.",
+		Dependencies: "useful_panel_buttons"
+	},
+	{
+		Name: "Useful Panel Buttons",
+		Cost: 250,
+		Description: "Minimize and restore windows by clicking their Panel Button!",
 		Dependencies: "desktop"
 	},
 	{

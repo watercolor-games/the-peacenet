@@ -134,10 +134,13 @@ namespace ShiftOS.WinForms.Applications
                         TerminalBackend.PrefixEnabled = true;
                         TerminalBackend.InStory = false;
                         Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-                        if (SaveSystem.CurrentSave.StoryPosition == 6)
+                        if (Shiftorium.UpgradeInstalled("wm_free_placement"))
                         {
-                            Infobox.Show("Welcome to ShiftOS.", "Welcome to the ShiftOS multi-user domain. Your goal is to upgrade your system as much as possible, and gain as much wealth as possible. The first step is to get a feel for the environment. Go forth and explore, young Shifter.");
-                            SaveSystem.CurrentSave.StoryPosition++;
+                            this.ParentForm.Width = 640;
+                            this.ParentForm.Height = 480;
+                            this.ParentForm.Left = (Screen.PrimaryScreen.Bounds.Width - 640) / 2;
+                            this.ParentForm.Top = (Screen.PrimaryScreen.Bounds.Height - 480) / 2;
+
                         }
                     }));
                 }

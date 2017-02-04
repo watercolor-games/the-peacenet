@@ -354,21 +354,49 @@ namespace ShiftOS.WinForms
 		/// <param name="e">E.</param>
         private void pnlmaximize_Click(object sender, EventArgs e)
         {
-            TerminalBackend.InvokeCommand($"win.max{{id:{this.ParentForm.GetHashCode()}}}");
+            if (maximized == false)
+                Desktop.MaximizeWindow(this);
+            else
+                Desktop.RestoreWindow(this);
+            maximized = !maximized;
         }
 
-		/// <summary>
-		/// Pnlminimizes the click.
-		/// </summary>
-		/// <returns>The click.</returns>
-		/// <param name="sender">Sender.</param>
-		/// <param name="e">E.</param>
+        bool minimized = false;
+        bool maximized = false;
+
+        public bool IsMinimized
+        {
+            get
+            {
+                return minimized;
+            }
+        }
+
+        public bool IsMaximized
+        {
+            get
+            {
+                return maximized;
+            }
+        }
+
+
+        /// <summary>
+        /// Pnlminimizes the click.
+        /// </summary>
+        /// <returns>The click.</returns>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         private void pnlminimize_Click(object sender, EventArgs e)
         {
-            TerminalBackend.InvokeCommand($"win.mini{{id:{this.ParentForm.GetHashCode()}}}");
+            if (minimized == false)
+                Desktop.MinimizeWindow(this);
+            else
+                Desktop.RestoreWindow(this);
+            minimized = !minimized;
         }
 
-        
+
         /// <summary>
         /// The W m NCLBUTTONDOW.
         /// </summary>

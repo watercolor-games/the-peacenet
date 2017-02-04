@@ -99,6 +99,22 @@ namespace ShiftOS.Engine
             _desktop = desk;
         }
 
+        public static void MinimizeWindow(IWindowBorder brdr)
+        {
+            _desktop.MinimizeWindow(brdr);
+        }
+
+        public static void MaximizeWindow(IWindowBorder brdr)
+        {
+            _desktop.MaximizeWindow(brdr);
+        }
+
+        public static void RestoreWindow(IWindowBorder brdr)
+        {
+            _desktop.RestoreWindow(brdr);
+        }
+
+
         public static void InvokeOnWorkerThread(Action act)
         {
             _desktop.InvokeOnWorkerThread(act);
