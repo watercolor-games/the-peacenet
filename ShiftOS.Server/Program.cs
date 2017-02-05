@@ -706,6 +706,7 @@ Contents:
 
 You have sent a bad request to the multi-user domain. Please try again."
                             }));
+                            return;
                         }
 
                         if (File.Exists(msg.Contents))
