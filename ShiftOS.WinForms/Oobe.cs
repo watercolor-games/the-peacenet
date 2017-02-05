@@ -63,16 +63,24 @@ namespace ShiftOS.WinForms
         int hackeffect;
         int percentcount;
 
+        private bool typing = false;
         
         public void TextType(string texttotype)
         {
+            while(typing == true)
+            {
+
+            }
+            
             charcount = texttotype.Length;
             gtexttotype = texttotype;
             currentletter = 0;
             slashcount = 1;
             foreach (var c in gtexttotype)
             {
+                typing = true;
                 rtext += c;
+
                 this.Invoke(new Action(() =>
                 {
                     textgeninput.Text = rtext + "|";
@@ -82,6 +90,7 @@ namespace ShiftOS.WinForms
                     slashcount = 1;
             }
             rtext += Environment.NewLine;
+            typing = false;
         }
 
         public Save MySave = null;
