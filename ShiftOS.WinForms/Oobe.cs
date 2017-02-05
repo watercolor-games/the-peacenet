@@ -77,7 +77,6 @@ namespace ShiftOS.WinForms
                 {
                     textgeninput.Text = rtext + "|";
                 }));
-                Console.Beep(750, 50);
                 slashcount++;
                 if (slashcount == 5)
                     slashcount = 1;
