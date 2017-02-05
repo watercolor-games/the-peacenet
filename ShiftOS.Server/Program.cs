@@ -405,11 +405,14 @@ Contents:
 
 								if(save.Username == args["username"].ToString() && save.Password == hashedPass)
 								{
-									server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
-										{
-											Name = "mud_savefile",
-											GUID = "server",
-											Contents = File.ReadAllText(savefile)
+                                        if(save.PasswordHashed == true)
+                                            save.Password = Encryption.Decrypt(save.Password);
+
+                                        server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
+                                        {
+                                            Name = "mud_savefile",
+                                            GUID = "server",
+                                            Contents = JsonConvert.SerializeObject(save)
 										}));
 									return;
 								}
@@ -1281,7 +1284,34 @@ The page you requested at was not found on this multi-user domain."
             }
         }
 
+
+        public static string Decrypt(string cipherText)
+        {
+            byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+            using (PasswordDeriveBytes password = new PasswordDeriveBytes(GetMacAddress(), null))
+            {
+                byte[] keyBytes = password.GetBytes(keysize / 8);
+                using (RijndaelManaged symmetricKey = new RijndaelManaged())
+                {
+                    symmetricKey.Mode = CipherMode.CBC;
+                    using (ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes))
+                    {
+                        using (MemoryStream memoryStream = new MemoryStream(cipherTextBytes))
+                        {
+                            using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                            {
+                                byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+                                int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
+
+
 }
 
-// Commenting by Carver
+// Uncommenting by Michael
