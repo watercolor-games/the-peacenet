@@ -22,6 +22,7 @@ namespace ShiftOS.Objects
         public int Revision { get; set; }
 
         public string Password { get; set; }
+        public bool PasswordHashed { get; set; }
         public string SystemName { get; set; }
 
         private dynamic _settings = new SettingsObject();

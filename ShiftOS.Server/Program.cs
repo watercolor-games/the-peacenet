@@ -33,6 +33,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 
 namespace ShiftOS.Server
 {
@@ -104,6 +105,13 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
+            foreach(var save in Directory.GetFiles("saves"))
+            {
+                var save_obj = JsonConvert.DeserializeObject<Save>(File.ReadAllText(save));
+                if (save_obj.PasswordHashed == false)
+                    save_obj.Password = Encryption.Encrypt(save_obj.Password);
+            }
+
 			if (!Directory.Exists("saves"))
 			{
 				Directory.CreateDirectory("saves");
@@ -392,7 +400,9 @@ Contents:
 							{
 								var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(savefile));
 
-								if(save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                                    string hashedPass = Encryption.Encrypt(args["password"].ToString());
+
+								if(save.Username == args["username"].ToString() && save.Password == hashedPass)
 								{
 									server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
 										{
@@ -523,7 +533,13 @@ Contents:
 					break;
 				case "mud_save":
 					var sav = JsonConvert.DeserializeObject<Save>(msg.Contents);
-					File.WriteAllText("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
+                        if (!sav.PasswordHashed)
+                        {
+                            sav.Password = Encryption.Encrypt(sav.Password.ToString());
+                            sav.PasswordHashed = true;
+                        }
+
+                        File.WriteAllText("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
 					server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
 						{
@@ -541,7 +557,9 @@ Contents:
 							{
 								var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(savefile));
 
-								if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                                    string hashed = Encryption.Encrypt(args["password"].ToString());
+
+								if (save.Username == args["username"].ToString() && save.Password == hashed)
 								{
 									server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
 										{
@@ -680,6 +698,18 @@ Contents:
 
 					break;
                     case "download_start":
+                        if (!msg.Contents.StartsWith("shiftnet/"))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = (File.Exists("badrequest.md") == true) ? File.ReadAllText("badrequest.md") : @"# Bad request.
+
+You have sent a bad request to the multi-user domain. Please try again."
+                            }));
+                        }
+
                         if (File.Exists(msg.Contents))
                         {
                             server.DispatchTo(new Guid(msg.GUID), new NetObject("download", new ServerMessage
@@ -708,6 +738,20 @@ The page you requested at was not found on this multi-user domain."
                         {
                             surl = surl.Remove(surl.Length - 1, 1);
                         }
+                        if (!surl.StartsWith("shiftnet/"))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
+                            {
+                                Name = "shiftnet_file",
+                                GUID = "server",
+                                Contents = (File.Exists("badrequest.md") == true) ? File.ReadAllText("badrequest.md") : @"# Bad request.
+
+You have sent a bad request to the multi-user domain. Please try again."
+                            }));
+
+                            return;
+                        }
+
                         if (File.Exists(surl))
                         {
                             server.DispatchTo(new Guid(msg.GUID), new NetObject("shiftnet_got", new ServerMessage
@@ -1184,6 +1228,59 @@ The page you requested at was not found on this multi-user domain."
 		/// </summary>
 		public static List<Channel> chats = new List<Channel>();
 	}
+
+    public static class Encryption
+    {
+        public static string GetMacAddress()
+        {
+            if (!File.Exists("hash.dat"))
+                File.WriteAllText("hash.dat", Guid.NewGuid().ToString());
+
+            return File.ReadAllText("hash.dat");
+
+        }
+
+
+        // This constant string is used as a "salt" value for the PasswordDeriveBytes function calls.
+        // This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be
+        // 32 bytes long.  Using a 16 character string here gives us 32 bytes when converted to a byte array.
+        private static readonly byte[] initVectorBytes = Encoding.ASCII.GetBytes("tu89geji340t89u2");
+
+        // This constant is used to determine the keysize of the encryption algorithm.
+        private const int keysize = 256;
+
+        /// <summary>
+        /// Encrypt a string.
+        /// </summary>
+        /// <param name="plainText">Raw string to encrypt.</param>
+        /// <returns>The encrypted string.</returns>
+        public static string Encrypt(string plainText)
+        {
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            using (PasswordDeriveBytes password = new PasswordDeriveBytes(GetMacAddress(), null))
+            {
+                byte[] keyBytes = password.GetBytes(keysize / 8);
+                using (RijndaelManaged symmetricKey = new RijndaelManaged())
+                {
+                    symmetricKey.Mode = CipherMode.CBC;
+                    using (ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes))
+                    {
+                        using (MemoryStream memoryStream = new MemoryStream())
+                        {
+                            using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                            {
+                                cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+                                cryptoStream.FlushFinalBlock();
+                                byte[] cipherTextBytes = memoryStream.ToArray();
+                                return Convert.ToBase64String(cipherTextBytes);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 // Commenting by Carver
