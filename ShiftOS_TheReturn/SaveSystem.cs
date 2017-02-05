@@ -216,6 +216,12 @@ namespace ShiftOS.Engine
                 Console.WriteLine($"{{SHIFTORIUM_TRANSFERRED_TO}}: {amount} -> sys");
         }
 
+        public static void Restart()
+        {
+            TerminalBackend.InvokeCommand("sos.shutdown");
+            System.Windows.Forms.Application.Restart();
+        }
+
         public static void ReadSave()
         {
             //Migrate old saves.

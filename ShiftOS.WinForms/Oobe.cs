@@ -190,11 +190,14 @@ namespace ShiftOS.WinForms
                 TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
                 SaveSystem.CurrentSave = MySave;
                 SaveSystem.CurrentSave.StoryPosition = 1;
-                SaveSystem.SaveGame();
-                this.Invoke(new Action(() =>
+                Utils.WriteAllText(Paths.GetPath("user.dat"), JsonConvert.SerializeObject(new
                 {
-                    this.Close();
+                    username = MySave.Username,
+                    password = MySave.Password
                 }));
+                SaveSystem.SaveGame();
+                Thread.Sleep(5000);
+                SaveSystem.Restart();
             }));
             this.Show();
             this.BringToFront();

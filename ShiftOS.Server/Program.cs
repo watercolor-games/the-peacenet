@@ -220,6 +220,16 @@ namespace ShiftOS.Server
 		}
 
 
+        public static string ReadEncFile(string fPath)
+        {
+            return Encryption.Decrypt(File.ReadAllText(fPath));
+        }
+
+        public static void WriteEncFile(string fPath, string contents)
+        {
+            File.WriteAllText(fPath, Encryption.Encrypt(contents));
+        }
+
 		/// <summary>
 		/// Interpret the specified msg.
 		/// </summary>
@@ -268,11 +278,11 @@ Contents:
                             {
                                 foreach (var saveFile in Directory.GetFiles("saves"))
                                 {
-                                    var saveFileContents = JsonConvert.DeserializeObject<Save>(File.ReadAllText(saveFile));
+                                    var saveFileContents = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
                                     if (saveFileContents.Username == userName && saveFileContents.Password == passw)
                                     {
                                         saveFileContents.Codepoints += amount;
-                                        File.WriteAllText(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
+                                        WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
                                         server.DispatchAll(new NetObject("stop_being_drunk_michael", new ServerMessage
                                         {
                                             Name = "update_your_cp",
@@ -372,11 +382,11 @@ Contents:
 						{
 							foreach(var saveFile in Directory.GetFiles("saves"))
 							{
-								var saveFileContents = JsonConvert.DeserializeObject<Save>(File.ReadAllText(saveFile));
+								var saveFileContents = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
 								if(saveFileContents.Username == userName)
 								{
 									saveFileContents.Codepoints += amount;
-									File.WriteAllText(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
+									WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
 									server.DispatchAll(new NetObject("pikachu_use_thunderbolt_oh_yeah_and_if_you_happen_to_be_doing_backend_and_see_this_post_a_picture_of_ash_ketchum_from_the_unova_series_in_the_discord_dev_room_holy_crap_this_is_a_long_snake_case_thing_about_ash_ketchum_and_pikachu", new ServerMessage
 										{
 											Name = "update_your_cp",
@@ -399,14 +409,11 @@ Contents:
 						{
 							try
 							{
-								var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(savefile));
+								var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-                                    string hashedPass = Encryption.Encrypt(args["password"].ToString());
 
-								if(save.Username == args["username"].ToString() && save.Password == hashedPass)
+								if(save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
 								{
-                                        if(save.PasswordHashed == true)
-                                            save.Password = Encryption.Decrypt(save.Password);
 
                                         server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
                                         {
@@ -537,13 +544,8 @@ Contents:
 					break;
 				case "mud_save":
 					var sav = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                        if (!sav.PasswordHashed)
-                        {
-                            sav.Password = Encryption.Encrypt(sav.Password.ToString());
-                            sav.PasswordHashed = true;
-                        }
-
-                        File.WriteAllText("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
+                        
+                        WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
 					server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
 						{
@@ -559,11 +561,10 @@ Contents:
 						{
 							try
 							{
-								var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(savefile));
+								var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-                                    string hashed = Encryption.Encrypt(args["password"].ToString());
 
-								if (save.Username == args["username"].ToString() && save.Password == hashed)
+								if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
 								{
 									server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
 										{

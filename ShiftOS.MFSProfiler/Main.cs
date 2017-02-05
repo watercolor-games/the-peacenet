@@ -65,6 +65,7 @@ namespace ShiftOS.MFSProfiler
 
         public void RecursiveDirectoryAdd(TreeNode node)
         {
+            node.ContextMenuStrip = ctxfileoptions;
             foreach (var dir in GetDirectories(node.Tag.ToString()))
             {
                 var dirInf = GetDirectoryInfo(dir);
@@ -130,6 +131,15 @@ Size: {finf.Data.Length}
 System path: {tvfiles.SelectedNode.Tag.ToString()}";
                 }
             } catch { }
+        }
+
+        private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fCreator = new FileCreator(tvfiles.SelectedNode.Tag.ToString());
+            if(fCreator.ShowDialog() == DialogResult.OK)
+            {
+                SetupTree();
+            }
         }
     }
 }
