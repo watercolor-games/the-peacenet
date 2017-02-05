@@ -110,6 +110,7 @@ namespace ShiftOS.Server
                 var save_obj = JsonConvert.DeserializeObject<Save>(File.ReadAllText(save));
                 if (save_obj.PasswordHashed == false)
                     save_obj.Password = Encryption.Encrypt(save_obj.Password);
+                File.WriteAllText(save, JsonConvert.SerializeObject(save_obj, Formatting.Indented));
             }
 
 			if (!Directory.Exists("saves"))
