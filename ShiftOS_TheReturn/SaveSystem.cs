@@ -286,20 +286,22 @@ namespace ShiftOS.Engine
                 Console.WriteLine("");
             if(!Shiftorium.Silent)
                 Console.Write("{SE_SAVING}... ");
-
-            string username = CurrentSave.Username;
-            string password = CurrentSave.Password;
-
-            if (!Utils.FileExists(Paths.GetPath("user.dat")))
+            if (SaveSystem.CurrentSave != null)
             {
-                Utils.WriteAllText(Paths.GetPath("user.dat"), $@"{{
+                string username = CurrentSave.Username;
+                string password = CurrentSave.Password;
+
+                if (!Utils.FileExists(Paths.GetPath("user.dat")))
+                {
+                    Utils.WriteAllText(Paths.GetPath("user.dat"), $@"{{
     username: ""{username}"",
     password: ""{password}""
 }}");
-            }
+                }
 
-            ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
-            if(!Shiftorium.Silent)
+                ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
+            }
+            if (!Shiftorium.Silent)
                 Console.WriteLine(" ...{DONE}.");
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }

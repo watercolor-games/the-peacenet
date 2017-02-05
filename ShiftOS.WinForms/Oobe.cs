@@ -197,7 +197,10 @@ namespace ShiftOS.WinForms
                 }));
                 SaveSystem.SaveGame();
                 Thread.Sleep(5000);
-                SaveSystem.Restart();
+                this.Invoke(new Action(() =>
+                {
+                    TutorialManager.StartTutorial();
+                }));
             }));
             this.Show();
             this.BringToFront();
