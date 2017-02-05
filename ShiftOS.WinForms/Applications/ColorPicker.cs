@@ -410,7 +410,6 @@ namespace ShiftOS.WinForms.Applications
             switch (graylevel)
             {
                 case 1:
-                    lblgraylevel.Text = "Level 1";
                     pnlgray1.BackColor = Color.Black;
                     pnlgray1.Show();
                     pnlgray2.BackColor = Color.Gray;
@@ -419,7 +418,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlgray3.Show();
                     break;
                 case 2:
-                    lblgraylevel.Text = "Level 2";
                     pnlgray1.BackColor = Color.Black;
                     pnlgray1.Show();
                     pnlgray2.BackColor = Color.DimGray;
@@ -432,7 +430,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlgray5.Show();
                     break;
                 case 3:
-                    lblgraylevel.Text = "Level 3";
                     pnlgray1.BackColor = Color.Black;
                     pnlgray1.Show();
                     pnlgray2.BackColor = Color.DimGray;
@@ -453,7 +450,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlgray9.Show();
                     break;
                 case 4:
-                    lblgraylevel.Text = "Level 4";
                     pnlgray1.BackColor = Color.Black;
                     pnlgray1.Show();
                     pnlgray2.BackColor = Color.DimGray;
@@ -495,12 +491,10 @@ namespace ShiftOS.WinForms.Applications
             switch (purplelevel)
             {
                 case 1:
-                    lblpurplelevel.Text = "Level 1";
                     pnlpurple1.BackColor = Color.Purple;
                     pnlpurple1.Show();
                     break;
                 case 2:
-                    lblpurplelevel.Text = "Level 2";
                     pnlpurple1.BackColor = Color.Indigo;
                     pnlpurple1.Show();
                     pnlpurple2.BackColor = Color.Purple;
@@ -509,7 +503,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlpurple3.Show();
                     break;
                 case 3:
-                    lblpurplelevel.Text = "Level 3";
                     pnlpurple1.BackColor = Color.Indigo;
                     pnlpurple1.Show();
                     pnlpurple2.BackColor = Color.DarkSlateBlue;
@@ -544,7 +537,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlpurple16.Show();
                     break;
                 case 4:
-                    lblpurplelevel.Text = "Level 4";
                     pnlpurple1.BackColor = Color.Indigo;
                     pnlpurple1.Show();
                     pnlpurple2.BackColor = Color.DarkSlateBlue;
@@ -585,12 +577,10 @@ namespace ShiftOS.WinForms.Applications
             switch (bluelevel)
             {
                 case 1:
-                    lblbluelevel.Text = "Level 1";
                     pnlblue1.BackColor = Color.Blue;
                     pnlblue1.Show();
                     break;
                 case 2:
-                    lblbluelevel.Text = "Level 2";
                     pnlblue1.BackColor = Color.Navy;
                     pnlblue1.Show();
                     pnlblue2.BackColor = Color.Blue;
@@ -599,7 +589,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlblue3.Show();
                     break;
                 case 3:
-                    lblbluelevel.Text = "Level 3";
                     pnlblue1.BackColor = Color.MidnightBlue;
                     pnlblue1.Show();
                     pnlblue2.BackColor = Color.Navy;
@@ -634,7 +623,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlblue16.Show();
                     break;
                 case 4:
-                    lblbluelevel.Text = "Level 4";
                     pnlblue1.BackColor = Color.MidnightBlue;
                     pnlblue1.Show();
                     pnlblue2.BackColor = Color.Navy;
@@ -675,12 +663,10 @@ namespace ShiftOS.WinForms.Applications
             switch (greenlevel)
             {
                 case 1:
-                    lblgreenlevel.Text = "Level 1";
                     pnlgreen1.BackColor = Color.Green;
                     pnlgreen1.Show();
                     break;
                 case 2:
-                    lblgreenlevel.Text = "Level 2";
                     pnlgreen1.BackColor = Color.DarkGreen;
                     pnlgreen1.Show();
                     pnlgreen2.BackColor = Color.Green;
@@ -689,7 +675,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlgreen3.Show();
                     break;
                 case 3:
-                    lblgreenlevel.Text = "Level 3";
                     pnlgreen1.BackColor = Color.DarkGreen;
                     pnlgreen1.Show();
                     pnlgreen2.BackColor = Color.Green;
@@ -724,7 +709,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlgreen16.Show();
                     break;
                 case 4:
-                    lblgreenlevel.Text = "Level 4";
                     pnlgreen1.BackColor = Color.DarkGreen;
                     pnlgreen1.Show();
                     pnlgreen2.BackColor = Color.Green;
@@ -765,12 +749,10 @@ namespace ShiftOS.WinForms.Applications
             switch (yellowlevel)
             {
                 case 1:
-                    lblyellowlevel.Text = "Level 1";
                     pnlyellow1.BackColor = Color.Yellow;
                     pnlyellow1.Show();
                     break;
                 case 2:
-                    lblyellowlevel.Text = "Level 2";
                     pnlyellow1.BackColor = Color.DarkKhaki;
                     pnlyellow1.Show();
                     pnlyellow2.BackColor = Color.Yellow;
@@ -779,7 +761,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlyellow3.Show();
                     break;
                 case 3:
-                    lblyellowlevel.Text = "Level 3";
                     pnlyellow1.BackColor = Color.DarkKhaki;
                     pnlyellow1.Show();
                     pnlyellow2.BackColor = Color.Yellow;
@@ -802,7 +783,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlyellow10.Show();
                     break;
                 case 4:
-                    lblyellowlevel.Text = "Level 4";
                     pnlyellow1.BackColor = Color.DarkKhaki;
                     pnlyellow1.Show();
                     pnlyellow2.BackColor = Color.Yellow;
@@ -843,12 +823,10 @@ namespace ShiftOS.WinForms.Applications
             switch (orangelevel)
             {
                 case 1:
-                    lblorangelevel.Text = "Level 1";
                     pnlorange1.BackColor = Color.DarkOrange;
                     pnlorange1.Show();
                     break;
                 case 2:
-                    lblorangelevel.Text = "Level 2";
                     pnlorange1.BackColor = Color.OrangeRed;
                     pnlorange1.Show();
                     pnlorange2.BackColor = Color.DarkOrange;
@@ -857,7 +835,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlorange3.Show();
                     break;
                 case 3:
-                    lblorangelevel.Text = "Level 3";
                     pnlorange1.BackColor = Color.OrangeRed;
                     pnlorange1.Show();
                     pnlorange2.BackColor = Color.Tomato;
@@ -872,7 +849,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlorange6.Show();
                     break;
                 case 4:
-                    lblorangelevel.Text = "Level 4";
                     pnlorange1.BackColor = Color.OrangeRed;
                     pnlorange1.Show();
                     pnlorange2.BackColor = Color.Tomato;
@@ -913,12 +889,10 @@ namespace ShiftOS.WinForms.Applications
             switch (brownlevel)
             {
                 case 1:
-                    lblbrownlevel.Text = "Level 1";
                     pnlbrown1.BackColor = Color.Sienna;
                     pnlbrown1.Show();
                     break;
                 case 2:
-                    lblbrownlevel.Text = "Level 2";
                     pnlbrown1.BackColor = Color.SaddleBrown;
                     pnlbrown1.Show();
                     pnlbrown2.BackColor = Color.Sienna;
@@ -927,7 +901,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlbrown3.Show();
                     break;
                 case 3:
-                    lblbrownlevel.Text = "Level 3";
                     pnlbrown1.BackColor = Color.Maroon;
                     pnlbrown1.Show();
                     pnlbrown2.BackColor = Color.Brown;
@@ -962,7 +935,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlbrown16.Show();
                     break;
                 case 4:
-                    lblbrownlevel.Text = "Level 4";
                     pnlbrown1.BackColor = Color.Maroon;
                     pnlbrown1.Show();
                     pnlbrown2.BackColor = Color.Brown;
@@ -1003,12 +975,10 @@ namespace ShiftOS.WinForms.Applications
             switch (redlevel)
             {
                 case 1:
-                    lblredlevel.Text = "Level 1";
                     pnlred1.BackColor = Color.Red;
                     pnlred1.Show();
                     break;
                 case 2:
-                    lblredlevel.Text = "Level 2";
                     pnlred1.BackColor = Color.DarkRed;
                     pnlred1.Show();
                     pnlred2.BackColor = Color.Red;
@@ -1017,7 +987,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlred3.Show();
                     break;
                 case 3:
-                    lblredlevel.Text = "Level 3";
                     pnlred1.BackColor = Color.DarkRed;
                     pnlred1.Show();
                     pnlred2.BackColor = Color.Red;
@@ -1038,7 +1007,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlred9.Show();
                     break;
                 case 4:
-                    lblredlevel.Text = "Level 4";
                     pnlred1.BackColor = Color.DarkRed;
                     pnlred1.Show();
                     pnlred2.BackColor = Color.Red;
@@ -1079,12 +1047,9 @@ namespace ShiftOS.WinForms.Applications
             switch (pinklevel)
             {
                 case 1:
-                    lblpinklevel.Text = "Level 1";
                     pnlpink1.BackColor = Color.HotPink;
                     pnlpink1.Show();
                     break;
-                case 2:
-                    lblpinklevel.Text = "Level 2";
                     pnlpink1.BackColor = Color.DeepPink;
                     pnlpink1.Show();
                     pnlpink2.BackColor = Color.HotPink;
@@ -1093,7 +1058,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlpink3.Show();
                     break;
                 case 3:
-                    lblpinklevel.Text = "Level 3";
                     pnlpink1.BackColor = Color.MediumVioletRed;
                     pnlpink1.Show();
                     pnlpink2.BackColor = Color.PaleVioletRed;
@@ -1108,7 +1072,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlpink6.Show();
                     break;
                 case 4:
-                    lblpinklevel.Text = "Level 4";
                     pnlpink1.BackColor = Color.MediumVioletRed;
                     pnlpink1.Show();
                     pnlpink2.BackColor = Color.PaleVioletRed;
@@ -1149,14 +1112,12 @@ namespace ShiftOS.WinForms.Applications
             switch (anylevel)
             {
                 case 1:
-                    lblanylevel.Text = "Level 1";
                     pnlany1.BackColor = Color.White;
                     pnlany1.Show();
                     pnlanycustomcolour.Show();
                     pnlanyoptions.Show();
                     break;
                 case 2:
-                    lblanylevel.Text = "Level 2";
                     pnlany1.BackColor = Color.White;
                     pnlany1.Show();
                     pnlany2.BackColor = Color.White;
@@ -1169,7 +1130,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlanyoptions.Show();
                     break;
                 case 3:
-                    lblanylevel.Text = "Level 3";
                     pnlany1.BackColor = Color.White;
                     pnlany1.Show();
                     pnlany2.BackColor = Color.White;
@@ -1190,7 +1150,6 @@ namespace ShiftOS.WinForms.Applications
                     pnlanyoptions.Show();
                     break;
                 case 4:
-                    lblanylevel.Text = "Level 4";
                     pnlany1.BackColor = Color.White;
                     pnlany1.Show();
                     pnlany2.BackColor = Color.White;

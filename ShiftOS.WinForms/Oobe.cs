@@ -196,6 +196,7 @@ namespace ShiftOS.WinForms
                     password = MySave.Password
                 }));
                 SaveSystem.SaveGame();
+                Thread.Sleep(3000);
                 this.Invoke(new Action(() =>
                 {
                     TutorialManager.StartTutorial();
