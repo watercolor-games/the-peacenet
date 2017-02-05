@@ -159,5 +159,9 @@ namespace ShiftOS.WinForms
 
         }
 
+        public Image GetImage(string path)
+        {
+            return Applications.FileSkimmer.GetImage(FileSkimmerBackend.GetFileType(path));
+        }
     }
 }

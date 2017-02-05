@@ -103,8 +103,6 @@ namespace ShiftOS.WinForms.Applications
 
         public void ShiftnetNavigate(string Url, bool pushHistory = true)
         {
-            
-
             if (Url.EndsWith(".rnp") || !Url.Contains("."))
             {
                 if (!string.IsNullOrEmpty(CurrentUrl) && pushHistory)

@@ -131,7 +131,7 @@ namespace ShiftOS.Engine
 
         public static System.Drawing.Image GetImage(string filepath)
         {
-            return new Bitmap(42, 42);
+            return _fs.GetImage(filepath);
         }
     }
 
@@ -143,6 +143,7 @@ namespace ShiftOS.Engine
         void OpenFile(string filepath);
         void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback);
         void OpenDirectory(string path);
+        Image GetImage(string path);
     }
 
 
