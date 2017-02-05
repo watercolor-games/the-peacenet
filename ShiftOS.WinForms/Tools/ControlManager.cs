@@ -137,6 +137,7 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetCursor(Control ctrl)
         {
+#if STUPID
             if (!(ctrl is WebBrowser))
             {
                 var mouse = SkinEngine.GetImage("mouse");
@@ -151,6 +152,7 @@ namespace ShiftOS.WinForms.Tools
                 var cursor = new Cursor(handle);
                 ctrl.Cursor = cursor;
             }
+#endif
         }
 
         public static void SetupControl(Control ctrl)
