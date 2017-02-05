@@ -74,6 +74,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpink5 = new System.Windows.Forms.Panel();
             this.pnlpink3 = new System.Windows.Forms.Panel();
             this.pnlpink1 = new System.Windows.Forms.Panel();
+            this.lblpinklevel = new System.Windows.Forms.Label();
             this.Label23 = new System.Windows.Forms.Label();
             this.pnlredcolours = new System.Windows.Forms.Panel();
             this.pnlredoptions = new System.Windows.Forms.Panel();
@@ -100,6 +101,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlred5 = new System.Windows.Forms.Panel();
             this.pnlred3 = new System.Windows.Forms.Panel();
             this.pnlred1 = new System.Windows.Forms.Panel();
+            this.lblredlevel = new System.Windows.Forms.Label();
             this.Label21 = new System.Windows.Forms.Label();
             this.pnlbrowncolours = new System.Windows.Forms.Panel();
             this.pnlbrownoptions = new System.Windows.Forms.Panel();
@@ -126,6 +128,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbrown5 = new System.Windows.Forms.Panel();
             this.pnlbrown3 = new System.Windows.Forms.Panel();
             this.pnlbrown1 = new System.Windows.Forms.Panel();
+            this.lblbrownlevel = new System.Windows.Forms.Label();
             this.Label19 = new System.Windows.Forms.Label();
             this.pnlorangecolours = new System.Windows.Forms.Panel();
             this.pnlorangeoptions = new System.Windows.Forms.Panel();
@@ -152,6 +155,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlorange5 = new System.Windows.Forms.Panel();
             this.pnlorange3 = new System.Windows.Forms.Panel();
             this.pnlorange1 = new System.Windows.Forms.Panel();
+            this.lblorangelevel = new System.Windows.Forms.Label();
             this.Label13 = new System.Windows.Forms.Label();
             this.pnlyellowcolours = new System.Windows.Forms.Panel();
             this.pnlyellowoptions = new System.Windows.Forms.Panel();
@@ -178,6 +182,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlyellow5 = new System.Windows.Forms.Panel();
             this.pnlyellow3 = new System.Windows.Forms.Panel();
             this.pnlyellow1 = new System.Windows.Forms.Panel();
+            this.lblyellowlevel = new System.Windows.Forms.Label();
             this.Label11 = new System.Windows.Forms.Label();
             this.pnlgreencolours = new System.Windows.Forms.Panel();
             this.pnlgreenoptions = new System.Windows.Forms.Panel();
@@ -204,6 +209,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgreen5 = new System.Windows.Forms.Panel();
             this.pnlgreen3 = new System.Windows.Forms.Panel();
             this.pnlgreen1 = new System.Windows.Forms.Panel();
+            this.lblgreenlevel = new System.Windows.Forms.Label();
             this.Label9 = new System.Windows.Forms.Label();
             this.pnlbluecolours = new System.Windows.Forms.Panel();
             this.pnlblueoptions = new System.Windows.Forms.Panel();
@@ -230,6 +236,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlblue5 = new System.Windows.Forms.Panel();
             this.pnlblue3 = new System.Windows.Forms.Panel();
             this.pnlblue1 = new System.Windows.Forms.Panel();
+            this.lblbluelevel = new System.Windows.Forms.Label();
             this.Label7 = new System.Windows.Forms.Label();
             this.pnlpurplecolours = new System.Windows.Forms.Panel();
             this.pnlpurpleoptions = new System.Windows.Forms.Panel();
@@ -256,6 +263,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpurple5 = new System.Windows.Forms.Panel();
             this.pnlpurple3 = new System.Windows.Forms.Panel();
             this.pnlpurple1 = new System.Windows.Forms.Panel();
+            this.lblpurplelevel = new System.Windows.Forms.Label();
             this.Label5 = new System.Windows.Forms.Label();
             this.pnlgraycolours = new System.Windows.Forms.Panel();
             this.lblcustomshadetut = new System.Windows.Forms.Label();
@@ -277,6 +285,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgray5 = new System.Windows.Forms.Panel();
             this.pnlgray3 = new System.Windows.Forms.Panel();
             this.pnlgray1 = new System.Windows.Forms.Panel();
+            this.lblgraylevel = new System.Windows.Forms.Label();
             this.Label3 = new System.Windows.Forms.Label();
             this.pnlanycolours = new System.Windows.Forms.Panel();
             this.pnlanyoptions = new System.Windows.Forms.Panel();
@@ -303,6 +312,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlany5 = new System.Windows.Forms.Panel();
             this.pnlany3 = new System.Windows.Forms.Panel();
             this.pnlany1 = new System.Windows.Forms.Panel();
+            this.lblanylevel = new System.Windows.Forms.Label();
             this.Label1 = new System.Windows.Forms.Label();
             this.Panel1 = new System.Windows.Forms.Panel();
             this.lblnewcolourrgb = new System.Windows.Forms.Label();
@@ -378,6 +388,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpinkcolours.Controls.Add(this.pnlpink5);
             this.pnlpinkcolours.Controls.Add(this.pnlpink3);
             this.pnlpinkcolours.Controls.Add(this.pnlpink1);
+            this.pnlpinkcolours.Controls.Add(this.lblpinklevel);
             this.pnlpinkcolours.Controls.Add(this.Label23);
             this.pnlpinkcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlpinkcolours.Location = new System.Drawing.Point(0, 521);
@@ -404,7 +415,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label35.AutoSize = true;
             this.Label35.BackColor = System.Drawing.Color.Transparent;
-            this.Label35.Location = new System.Drawing.Point(61, 24);
+            this.Label35.Location = new System.Drawing.Point(56, 24);
             this.Label35.Name = "Label35";
             this.Label35.Size = new System.Drawing.Size(39, 13);
             this.Label35.TabIndex = 26;
@@ -415,10 +426,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtpinksgreen.BackColor = System.Drawing.Color.White;
             this.txtpinksgreen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtpinksgreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtpinksgreen.Location = new System.Drawing.Point(100, 22);
+            this.txtpinksgreen.Location = new System.Drawing.Point(95, 22);
             this.txtpinksgreen.Multiline = true;
             this.txtpinksgreen.Name = "txtpinksgreen";
-            this.txtpinksgreen.Size = new System.Drawing.Size(28, 17);
+            this.txtpinksgreen.Size = new System.Drawing.Size(23, 17);
             this.txtpinksgreen.TabIndex = 25;
             this.txtpinksgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtpinksgreen.TextChanged += new System.EventHandler(this.txtpinksred_TextChanged);
@@ -464,7 +475,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtpinksblue.Location = new System.Drawing.Point(32, 22);
             this.txtpinksblue.Multiline = true;
             this.txtpinksblue.Name = "txtpinksblue";
-            this.txtpinksblue.Size = new System.Drawing.Size(29, 17);
+            this.txtpinksblue.Size = new System.Drawing.Size(23, 17);
             this.txtpinksblue.TabIndex = 23;
             this.txtpinksblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtpinksblue.TextChanged += new System.EventHandler(this.txtpinksred_TextChanged);
@@ -622,6 +633,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpink1.TabIndex = 2;
             this.pnlpink1.Visible = false;
             // 
+            // lblpinklevel
+            // 
+            this.lblpinklevel.AutoSize = true;
+            this.lblpinklevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblpinklevel.Location = new System.Drawing.Point(5, 25);
+            this.lblpinklevel.Name = "lblpinklevel";
+            this.lblpinklevel.Size = new System.Drawing.Size(49, 15);
+            this.lblpinklevel.TabIndex = 1;
+            this.lblpinklevel.Text = "Level: 4";
+            // 
             // Label23
             // 
             this.Label23.AutoSize = true;
@@ -653,6 +674,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlredcolours.Controls.Add(this.pnlred5);
             this.pnlredcolours.Controls.Add(this.pnlred3);
             this.pnlredcolours.Controls.Add(this.pnlred1);
+            this.pnlredcolours.Controls.Add(this.lblredlevel);
             this.pnlredcolours.Controls.Add(this.Label21);
             this.pnlredcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlredcolours.Location = new System.Drawing.Point(0, 475);
@@ -679,7 +701,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label32.AutoSize = true;
             this.Label32.BackColor = System.Drawing.Color.Transparent;
-            this.Label32.Location = new System.Drawing.Point(69, 24);
+            this.Label32.Location = new System.Drawing.Point(64, 24);
             this.Label32.Name = "Label32";
             this.Label32.Size = new System.Drawing.Size(31, 13);
             this.Label32.TabIndex = 26;
@@ -690,10 +712,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtredsblue.BackColor = System.Drawing.Color.White;
             this.txtredsblue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtredsblue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtredsblue.Location = new System.Drawing.Point(100, 22);
+            this.txtredsblue.Location = new System.Drawing.Point(95, 22);
             this.txtredsblue.Multiline = true;
             this.txtredsblue.Name = "txtredsblue";
-            this.txtredsblue.Size = new System.Drawing.Size(28, 17);
+            this.txtredsblue.Size = new System.Drawing.Size(23, 17);
             this.txtredsblue.TabIndex = 25;
             this.txtredsblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -737,7 +759,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtredsgreen.Location = new System.Drawing.Point(40, 22);
             this.txtredsgreen.Multiline = true;
             this.txtredsgreen.Name = "txtredsgreen";
-            this.txtredsgreen.Size = new System.Drawing.Size(29, 17);
+            this.txtredsgreen.Size = new System.Drawing.Size(23, 17);
             this.txtredsgreen.TabIndex = 23;
             this.txtredsgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -894,6 +916,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlred1.TabIndex = 2;
             this.pnlred1.Visible = false;
             // 
+            // lblredlevel
+            // 
+            this.lblredlevel.AutoSize = true;
+            this.lblredlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblredlevel.Location = new System.Drawing.Point(5, 25);
+            this.lblredlevel.Name = "lblredlevel";
+            this.lblredlevel.Size = new System.Drawing.Size(49, 15);
+            this.lblredlevel.TabIndex = 1;
+            this.lblredlevel.Text = "Level: 4";
+            // 
             // Label21
             // 
             this.Label21.AutoSize = true;
@@ -925,6 +957,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbrowncolours.Controls.Add(this.pnlbrown5);
             this.pnlbrowncolours.Controls.Add(this.pnlbrown3);
             this.pnlbrowncolours.Controls.Add(this.pnlbrown1);
+            this.pnlbrowncolours.Controls.Add(this.lblbrownlevel);
             this.pnlbrowncolours.Controls.Add(this.Label19);
             this.pnlbrowncolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlbrowncolours.Location = new System.Drawing.Point(0, 429);
@@ -951,7 +984,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label29.AutoSize = true;
             this.Label29.BackColor = System.Drawing.Color.Transparent;
-            this.Label29.Location = new System.Drawing.Point(69, 24);
+            this.Label29.Location = new System.Drawing.Point(64, 24);
             this.Label29.Name = "Label29";
             this.Label29.Size = new System.Drawing.Size(31, 13);
             this.Label29.TabIndex = 26;
@@ -962,10 +995,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtbrownsblue.BackColor = System.Drawing.Color.White;
             this.txtbrownsblue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtbrownsblue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtbrownsblue.Location = new System.Drawing.Point(100, 22);
+            this.txtbrownsblue.Location = new System.Drawing.Point(95, 22);
             this.txtbrownsblue.Multiline = true;
             this.txtbrownsblue.Name = "txtbrownsblue";
-            this.txtbrownsblue.Size = new System.Drawing.Size(28, 17);
+            this.txtbrownsblue.Size = new System.Drawing.Size(23, 17);
             this.txtbrownsblue.TabIndex = 25;
             this.txtbrownsblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1009,7 +1042,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtbrownsgreen.Location = new System.Drawing.Point(40, 22);
             this.txtbrownsgreen.Multiline = true;
             this.txtbrownsgreen.Name = "txtbrownsgreen";
-            this.txtbrownsgreen.Size = new System.Drawing.Size(29, 17);
+            this.txtbrownsgreen.Size = new System.Drawing.Size(23, 17);
             this.txtbrownsgreen.TabIndex = 23;
             this.txtbrownsgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1166,6 +1199,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbrown1.TabIndex = 2;
             this.pnlbrown1.Visible = false;
             // 
+            // lblbrownlevel
+            // 
+            this.lblbrownlevel.AutoSize = true;
+            this.lblbrownlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblbrownlevel.Location = new System.Drawing.Point(5, 25);
+            this.lblbrownlevel.Name = "lblbrownlevel";
+            this.lblbrownlevel.Size = new System.Drawing.Size(49, 15);
+            this.lblbrownlevel.TabIndex = 1;
+            this.lblbrownlevel.Text = "Level: 4";
+            // 
             // Label19
             // 
             this.Label19.AutoSize = true;
@@ -1197,6 +1240,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlorangecolours.Controls.Add(this.pnlorange5);
             this.pnlorangecolours.Controls.Add(this.pnlorange3);
             this.pnlorangecolours.Controls.Add(this.pnlorange1);
+            this.pnlorangecolours.Controls.Add(this.lblorangelevel);
             this.pnlorangecolours.Controls.Add(this.Label13);
             this.pnlorangecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlorangecolours.Location = new System.Drawing.Point(0, 383);
@@ -1223,7 +1267,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label25.AutoSize = true;
             this.Label25.BackColor = System.Drawing.Color.Transparent;
-            this.Label25.Location = new System.Drawing.Point(71, 24);
+            this.Label25.Location = new System.Drawing.Point(64, 24);
             this.Label25.Name = "Label25";
             this.Label25.Size = new System.Drawing.Size(31, 13);
             this.Label25.TabIndex = 26;
@@ -1234,10 +1278,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtorangesblue.BackColor = System.Drawing.Color.White;
             this.txtorangesblue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtorangesblue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtorangesblue.Location = new System.Drawing.Point(102, 22);
+            this.txtorangesblue.Location = new System.Drawing.Point(95, 22);
             this.txtorangesblue.Multiline = true;
             this.txtorangesblue.Name = "txtorangesblue";
-            this.txtorangesblue.Size = new System.Drawing.Size(26, 17);
+            this.txtorangesblue.Size = new System.Drawing.Size(23, 17);
             this.txtorangesblue.TabIndex = 25;
             this.txtorangesblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1281,7 +1325,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtorangesgreen.Location = new System.Drawing.Point(40, 22);
             this.txtorangesgreen.Multiline = true;
             this.txtorangesgreen.Name = "txtorangesgreen";
-            this.txtorangesgreen.Size = new System.Drawing.Size(30, 17);
+            this.txtorangesgreen.Size = new System.Drawing.Size(23, 17);
             this.txtorangesgreen.TabIndex = 23;
             this.txtorangesgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1438,6 +1482,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlorange1.TabIndex = 2;
             this.pnlorange1.Visible = false;
             // 
+            // lblorangelevel
+            // 
+            this.lblorangelevel.AutoSize = true;
+            this.lblorangelevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblorangelevel.Location = new System.Drawing.Point(5, 25);
+            this.lblorangelevel.Name = "lblorangelevel";
+            this.lblorangelevel.Size = new System.Drawing.Size(49, 15);
+            this.lblorangelevel.TabIndex = 1;
+            this.lblorangelevel.Text = "Level: 4";
+            // 
             // Label13
             // 
             this.Label13.AutoSize = true;
@@ -1469,6 +1523,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlyellowcolours.Controls.Add(this.pnlyellow5);
             this.pnlyellowcolours.Controls.Add(this.pnlyellow3);
             this.pnlyellowcolours.Controls.Add(this.pnlyellow1);
+            this.pnlyellowcolours.Controls.Add(this.lblyellowlevel);
             this.pnlyellowcolours.Controls.Add(this.Label11);
             this.pnlyellowcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlyellowcolours.Location = new System.Drawing.Point(0, 337);
@@ -1495,7 +1550,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label20.AutoSize = true;
             this.Label20.BackColor = System.Drawing.Color.Transparent;
-            this.Label20.Location = new System.Drawing.Point(70, 24);
+            this.Label20.Location = new System.Drawing.Point(64, 24);
             this.Label20.Name = "Label20";
             this.Label20.Size = new System.Drawing.Size(31, 13);
             this.Label20.TabIndex = 26;
@@ -1506,10 +1561,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtyellowsblue.BackColor = System.Drawing.Color.White;
             this.txtyellowsblue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtyellowsblue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtyellowsblue.Location = new System.Drawing.Point(101, 22);
+            this.txtyellowsblue.Location = new System.Drawing.Point(95, 22);
             this.txtyellowsblue.Multiline = true;
             this.txtyellowsblue.Name = "txtyellowsblue";
-            this.txtyellowsblue.Size = new System.Drawing.Size(27, 17);
+            this.txtyellowsblue.Size = new System.Drawing.Size(23, 17);
             this.txtyellowsblue.TabIndex = 25;
             this.txtyellowsblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1553,7 +1608,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtyellowsgreen.Location = new System.Drawing.Point(40, 22);
             this.txtyellowsgreen.Multiline = true;
             this.txtyellowsgreen.Name = "txtyellowsgreen";
-            this.txtyellowsgreen.Size = new System.Drawing.Size(29, 17);
+            this.txtyellowsgreen.Size = new System.Drawing.Size(23, 17);
             this.txtyellowsgreen.TabIndex = 23;
             this.txtyellowsgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1710,6 +1765,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlyellow1.TabIndex = 2;
             this.pnlyellow1.Visible = false;
             // 
+            // lblyellowlevel
+            // 
+            this.lblyellowlevel.AutoSize = true;
+            this.lblyellowlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblyellowlevel.Location = new System.Drawing.Point(5, 25);
+            this.lblyellowlevel.Name = "lblyellowlevel";
+            this.lblyellowlevel.Size = new System.Drawing.Size(49, 15);
+            this.lblyellowlevel.TabIndex = 1;
+            this.lblyellowlevel.Text = "Level: 4";
+            // 
             // Label11
             // 
             this.Label11.AutoSize = true;
@@ -1741,6 +1806,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgreencolours.Controls.Add(this.pnlgreen5);
             this.pnlgreencolours.Controls.Add(this.pnlgreen3);
             this.pnlgreencolours.Controls.Add(this.pnlgreen1);
+            this.pnlgreencolours.Controls.Add(this.lblgreenlevel);
             this.pnlgreencolours.Controls.Add(this.Label9);
             this.pnlgreencolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlgreencolours.Location = new System.Drawing.Point(0, 291);
@@ -1767,7 +1833,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label15.AutoSize = true;
             this.Label15.BackColor = System.Drawing.Color.Transparent;
-            this.Label15.Location = new System.Drawing.Point(70, 24);
+            this.Label15.Location = new System.Drawing.Point(62, 24);
             this.Label15.Name = "Label15";
             this.Label15.Size = new System.Drawing.Size(30, 13);
             this.Label15.TabIndex = 26;
@@ -1778,10 +1844,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtgreensred.BackColor = System.Drawing.Color.White;
             this.txtgreensred.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtgreensred.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtgreensred.Location = new System.Drawing.Point(101, 22);
+            this.txtgreensred.Location = new System.Drawing.Point(92, 22);
             this.txtgreensred.Multiline = true;
             this.txtgreensred.Name = "txtgreensred";
-            this.txtgreensred.Size = new System.Drawing.Size(27, 17);
+            this.txtgreensred.Size = new System.Drawing.Size(23, 17);
             this.txtgreensred.TabIndex = 25;
             this.txtgreensred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1825,7 +1891,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtgreensblue.Location = new System.Drawing.Point(33, 22);
             this.txtgreensblue.Multiline = true;
             this.txtgreensblue.Name = "txtgreensblue";
-            this.txtgreensblue.Size = new System.Drawing.Size(29, 17);
+            this.txtgreensblue.Size = new System.Drawing.Size(23, 17);
             this.txtgreensblue.TabIndex = 23;
             this.txtgreensblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -1982,6 +2048,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgreen1.TabIndex = 2;
             this.pnlgreen1.Visible = false;
             // 
+            // lblgreenlevel
+            // 
+            this.lblgreenlevel.AutoSize = true;
+            this.lblgreenlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblgreenlevel.Location = new System.Drawing.Point(5, 25);
+            this.lblgreenlevel.Name = "lblgreenlevel";
+            this.lblgreenlevel.Size = new System.Drawing.Size(49, 15);
+            this.lblgreenlevel.TabIndex = 1;
+            this.lblgreenlevel.Text = "Level: 4";
+            // 
             // Label9
             // 
             this.Label9.AutoSize = true;
@@ -2013,6 +2089,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbluecolours.Controls.Add(this.pnlblue5);
             this.pnlbluecolours.Controls.Add(this.pnlblue3);
             this.pnlbluecolours.Controls.Add(this.pnlblue1);
+            this.pnlbluecolours.Controls.Add(this.lblbluelevel);
             this.pnlbluecolours.Controls.Add(this.Label7);
             this.pnlbluecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlbluecolours.Location = new System.Drawing.Point(0, 245);
@@ -2039,7 +2116,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label6.AutoSize = true;
             this.Label6.BackColor = System.Drawing.Color.Transparent;
-            this.Label6.Location = new System.Drawing.Point(70, 24);
+            this.Label6.Location = new System.Drawing.Point(65, 24);
             this.Label6.Name = "Label6";
             this.Label6.Size = new System.Drawing.Size(30, 13);
             this.Label6.TabIndex = 26;
@@ -2050,10 +2127,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtbluesred.BackColor = System.Drawing.Color.White;
             this.txtbluesred.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtbluesred.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtbluesred.Location = new System.Drawing.Point(100, 22);
+            this.txtbluesred.Location = new System.Drawing.Point(95, 22);
             this.txtbluesred.Multiline = true;
             this.txtbluesred.Name = "txtbluesred";
-            this.txtbluesred.Size = new System.Drawing.Size(28, 17);
+            this.txtbluesred.Size = new System.Drawing.Size(23, 17);
             this.txtbluesred.TabIndex = 25;
             this.txtbluesred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2097,7 +2174,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtbluesgreen.Location = new System.Drawing.Point(41, 22);
             this.txtbluesgreen.Multiline = true;
             this.txtbluesgreen.Name = "txtbluesgreen";
-            this.txtbluesgreen.Size = new System.Drawing.Size(29, 17);
+            this.txtbluesgreen.Size = new System.Drawing.Size(23, 17);
             this.txtbluesgreen.TabIndex = 23;
             this.txtbluesgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2254,6 +2331,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlblue1.TabIndex = 2;
             this.pnlblue1.Visible = false;
             // 
+            // lblbluelevel
+            // 
+            this.lblbluelevel.AutoSize = true;
+            this.lblbluelevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblbluelevel.Location = new System.Drawing.Point(5, 25);
+            this.lblbluelevel.Name = "lblbluelevel";
+            this.lblbluelevel.Size = new System.Drawing.Size(49, 15);
+            this.lblbluelevel.TabIndex = 1;
+            this.lblbluelevel.Text = "Level: 4";
+            // 
             // Label7
             // 
             this.Label7.AutoSize = true;
@@ -2285,6 +2372,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpurplecolours.Controls.Add(this.pnlpurple5);
             this.pnlpurplecolours.Controls.Add(this.pnlpurple3);
             this.pnlpurplecolours.Controls.Add(this.pnlpurple1);
+            this.pnlpurplecolours.Controls.Add(this.lblpurplelevel);
             this.pnlpurplecolours.Controls.Add(this.Label5);
             this.pnlpurplecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlpurplecolours.Location = new System.Drawing.Point(0, 199);
@@ -2311,7 +2399,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label8.AutoSize = true;
             this.Label8.BackColor = System.Drawing.Color.Transparent;
-            this.Label8.Location = new System.Drawing.Point(61, 24);
+            this.Label8.Location = new System.Drawing.Point(56, 24);
             this.Label8.Name = "Label8";
             this.Label8.Size = new System.Drawing.Size(39, 13);
             this.Label8.TabIndex = 26;
@@ -2322,10 +2410,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtpurplesgreen.BackColor = System.Drawing.Color.White;
             this.txtpurplesgreen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtpurplesgreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtpurplesgreen.Location = new System.Drawing.Point(100, 22);
+            this.txtpurplesgreen.Location = new System.Drawing.Point(95, 22);
             this.txtpurplesgreen.Multiline = true;
             this.txtpurplesgreen.Name = "txtpurplesgreen";
-            this.txtpurplesgreen.Size = new System.Drawing.Size(28, 17);
+            this.txtpurplesgreen.Size = new System.Drawing.Size(23, 17);
             this.txtpurplesgreen.TabIndex = 25;
             this.txtpurplesgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2369,7 +2457,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtpurplesred.Location = new System.Drawing.Point(32, 22);
             this.txtpurplesred.Multiline = true;
             this.txtpurplesred.Name = "txtpurplesred";
-            this.txtpurplesred.Size = new System.Drawing.Size(29, 17);
+            this.txtpurplesred.Size = new System.Drawing.Size(23, 17);
             this.txtpurplesred.TabIndex = 23;
             this.txtpurplesred.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -2526,6 +2614,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpurple1.TabIndex = 2;
             this.pnlpurple1.Visible = false;
             // 
+            // lblpurplelevel
+            // 
+            this.lblpurplelevel.AutoSize = true;
+            this.lblpurplelevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblpurplelevel.Location = new System.Drawing.Point(5, 25);
+            this.lblpurplelevel.Name = "lblpurplelevel";
+            this.lblpurplelevel.Size = new System.Drawing.Size(49, 15);
+            this.lblpurplelevel.TabIndex = 1;
+            this.lblpurplelevel.Text = "Level: 4";
+            // 
             // Label5
             // 
             this.Label5.AutoSize = true;
@@ -2558,6 +2656,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgraycolours.Controls.Add(this.pnlgray5);
             this.pnlgraycolours.Controls.Add(this.pnlgray3);
             this.pnlgraycolours.Controls.Add(this.pnlgray1);
+            this.pnlgraycolours.Controls.Add(this.lblgraylevel);
             this.pnlgraycolours.Controls.Add(this.Label3);
             this.pnlgraycolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlgraycolours.Location = new System.Drawing.Point(0, 153);
@@ -2744,6 +2843,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgray1.TabIndex = 2;
             this.pnlgray1.Visible = false;
             // 
+            // lblgraylevel
+            // 
+            this.lblgraylevel.AutoSize = true;
+            this.lblgraylevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblgraylevel.Location = new System.Drawing.Point(5, 25);
+            this.lblgraylevel.Name = "lblgraylevel";
+            this.lblgraylevel.Size = new System.Drawing.Size(49, 15);
+            this.lblgraylevel.TabIndex = 1;
+            this.lblgraylevel.Text = "Level: 4";
+            // 
             // Label3
             // 
             this.Label3.AutoSize = true;
@@ -2775,6 +2884,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlanycolours.Controls.Add(this.pnlany5);
             this.pnlanycolours.Controls.Add(this.pnlany3);
             this.pnlanycolours.Controls.Add(this.pnlany1);
+            this.pnlanycolours.Controls.Add(this.lblanylevel);
             this.pnlanycolours.Controls.Add(this.Label1);
             this.pnlanycolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlanycolours.Location = new System.Drawing.Point(0, 107);
@@ -2802,7 +2912,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.Label38.AutoSize = true;
             this.Label38.BackColor = System.Drawing.Color.Transparent;
-            this.Label38.Location = new System.Drawing.Point(61, 24);
+            this.Label38.Location = new System.Drawing.Point(56, 24);
             this.Label38.Name = "Label38";
             this.Label38.Size = new System.Drawing.Size(39, 13);
             this.Label38.TabIndex = 26;
@@ -2813,10 +2923,10 @@ namespace ShiftOS.WinForms.Applications
             this.txtanysgreen.BackColor = System.Drawing.Color.White;
             this.txtanysgreen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtanysgreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtanysgreen.Location = new System.Drawing.Point(100, 22);
+            this.txtanysgreen.Location = new System.Drawing.Point(95, 22);
             this.txtanysgreen.Multiline = true;
             this.txtanysgreen.Name = "txtanysgreen";
-            this.txtanysgreen.Size = new System.Drawing.Size(28, 15);
+            this.txtanysgreen.Size = new System.Drawing.Size(23, 17);
             this.txtanysgreen.TabIndex = 25;
             this.txtanysgreen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtanysgreen.TextChanged += new System.EventHandler(this.txtanysred_TextChanged);
@@ -2862,7 +2972,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtanysblue.Location = new System.Drawing.Point(32, 22);
             this.txtanysblue.Multiline = true;
             this.txtanysblue.Name = "txtanysblue";
-            this.txtanysblue.Size = new System.Drawing.Size(29, 17);
+            this.txtanysblue.Size = new System.Drawing.Size(23, 17);
             this.txtanysblue.TabIndex = 23;
             this.txtanysblue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtanysblue.TextChanged += new System.EventHandler(this.txtanysred_TextChanged);
@@ -3019,6 +3129,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlany1.Size = new System.Drawing.Size(20, 13);
             this.pnlany1.TabIndex = 2;
             this.pnlany1.Visible = false;
+            // 
+            // lblanylevel
+            // 
+            this.lblanylevel.AutoSize = true;
+            this.lblanylevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblanylevel.Location = new System.Drawing.Point(5, 25);
+            this.lblanylevel.Name = "lblanylevel";
+            this.lblanylevel.Size = new System.Drawing.Size(49, 15);
+            this.lblanylevel.TabIndex = 1;
+            this.lblanylevel.Text = "Level: 4";
             // 
             // Label1
             // 
@@ -3209,6 +3329,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlany5;
         internal System.Windows.Forms.Panel pnlany3;
         internal System.Windows.Forms.Panel pnlany1;
+        internal System.Windows.Forms.Label lblanylevel;
         internal System.Windows.Forms.Label Label1;
         internal System.Windows.Forms.Panel Panel1;
         internal System.Windows.Forms.Panel pnlnewcolour;
@@ -3235,6 +3356,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlpink5;
         internal System.Windows.Forms.Panel pnlpink3;
         internal System.Windows.Forms.Panel pnlpink1;
+        internal System.Windows.Forms.Label lblpinklevel;
         internal System.Windows.Forms.Label Label23;
         internal System.Windows.Forms.Panel pnlredcolours;
         internal System.Windows.Forms.Panel pnlred16;
@@ -3253,6 +3375,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlred5;
         internal System.Windows.Forms.Panel pnlred3;
         internal System.Windows.Forms.Panel pnlred1;
+        internal System.Windows.Forms.Label lblredlevel;
         internal System.Windows.Forms.Label Label21;
         internal System.Windows.Forms.Panel pnlbrowncolours;
         internal System.Windows.Forms.Panel pnlbrown16;
@@ -3271,6 +3394,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlbrown5;
         internal System.Windows.Forms.Panel pnlbrown3;
         internal System.Windows.Forms.Panel pnlbrown1;
+        internal System.Windows.Forms.Label lblbrownlevel;
         internal System.Windows.Forms.Label Label19;
         internal System.Windows.Forms.Panel pnlorangecolours;
         internal System.Windows.Forms.Panel pnlorange16;
@@ -3289,6 +3413,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlorange5;
         internal System.Windows.Forms.Panel pnlorange3;
         internal System.Windows.Forms.Panel pnlorange1;
+        internal System.Windows.Forms.Label lblorangelevel;
         internal System.Windows.Forms.Label Label13;
         internal System.Windows.Forms.Panel pnlyellowcolours;
         internal System.Windows.Forms.Panel pnlyellow16;
@@ -3307,6 +3432,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlyellow5;
         internal System.Windows.Forms.Panel pnlyellow3;
         internal System.Windows.Forms.Panel pnlyellow1;
+        internal System.Windows.Forms.Label lblyellowlevel;
         internal System.Windows.Forms.Label Label11;
         internal System.Windows.Forms.Panel pnlgreencolours;
         internal System.Windows.Forms.Panel pnlgreen16;
@@ -3325,6 +3451,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlgreen5;
         internal System.Windows.Forms.Panel pnlgreen3;
         internal System.Windows.Forms.Panel pnlgreen1;
+        internal System.Windows.Forms.Label lblgreenlevel;
         internal System.Windows.Forms.Label Label9;
         internal System.Windows.Forms.Panel pnlbluecolours;
         internal System.Windows.Forms.Panel pnlblue16;
@@ -3343,6 +3470,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlblue5;
         internal System.Windows.Forms.Panel pnlblue3;
         internal System.Windows.Forms.Panel pnlblue1;
+        internal System.Windows.Forms.Label lblbluelevel;
         internal System.Windows.Forms.Label Label7;
         internal System.Windows.Forms.Panel pnlpurplecolours;
         internal System.Windows.Forms.Panel pnlpurple16;
@@ -3361,6 +3489,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlpurple5;
         internal System.Windows.Forms.Panel pnlpurple3;
         internal System.Windows.Forms.Panel pnlpurple1;
+        internal System.Windows.Forms.Label lblpurplelevel;
         internal System.Windows.Forms.Label Label5;
         internal System.Windows.Forms.Panel pnlgraycolours;
         internal System.Windows.Forms.Panel pnlgray16;
@@ -3379,6 +3508,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Panel pnlgray5;
         internal System.Windows.Forms.Panel pnlgray3;
         internal System.Windows.Forms.Panel pnlgray1;
+        internal System.Windows.Forms.Label lblgraylevel;
         internal System.Windows.Forms.Label Label3;
         internal System.Windows.Forms.Panel pnlpinkcustomcolour;
         internal System.Windows.Forms.Panel pnlredcustomcolour;
