@@ -116,100 +116,110 @@ namespace ShiftOS.WinForms
         {
             var t = new Thread(new ThreadStart(() =>
             {
-                textgeninput = this.lblHijack;
-                TextType("Your system is now being hijacked.");
-                rtext = "";
-                Thread.Sleep(1000);
-                textgeninput = this.lblhackwords;
-                this.Invoke(new Action(() =>
+                try
                 {
-                    lblHijack.Hide();
-                }));
-                TextType("Hello, and welcome to ShiftOS.");
-                Thread.Sleep(500);
-                TextType("You have been cordially and involuntarily selected to participate in the development and testing of this operating system.");
-                Thread.Sleep(500);
-                TextType("My identity shall remain secret, but if you've been through this before, you'll know exactly who I am.");
-                Thread.Sleep(500);
-                TextType("But that doesn't matter.");
-                Thread.Sleep(500);
-                TextType("I will now begin to prepare your system for the installation of ShiftOS.");
-                Thread.Sleep(1000);
-                FakeSetupScreen fakeForm = null;
-                this.Invoke(new Action(() =>
-                {
-                    fakeForm = new FakeSetupScreen(this);
-                    fakeForm.Show();
-                    MySave = save;
-                    lblhackwords.GotFocus += (o, a) =>
+                    textgeninput = this.lblHijack;
+                    TextType("Your system is now being hijacked.");
+                    rtext = "";
+                    Thread.Sleep(1000);
+                    textgeninput = this.lblhackwords;
+                    this.Invoke(new Action(() =>
                     {
-                        try
+                        lblHijack.Hide();
+                    }));
+                    TextType("Hello, and welcome to ShiftOS.");
+                    Thread.Sleep(500);
+                    TextType("You have been cordially and involuntarily selected to participate in the development and testing of this operating system.");
+                    Thread.Sleep(500);
+                    TextType("My identity shall remain secret, but if you've been through this before, you'll know exactly who I am.");
+                    Thread.Sleep(500);
+                    TextType("But that doesn't matter.");
+                    Thread.Sleep(500);
+                    TextType("I will now begin to prepare your system for the installation of ShiftOS.");
+                    Thread.Sleep(1000);
+                    FakeSetupScreen fakeForm = null;
+                    this.Invoke(new Action(() =>
+                    {
+                        fakeForm = new FakeSetupScreen(this);
+                        fakeForm.Show();
+                        MySave = save;
+                        lblhackwords.GotFocus += (o, a) =>
                         {
-                            fakeForm.Invoke(new Action(() =>
+                            try
                             {
-                                fakeForm.Focus();
-                                fakeForm.BringToFront();
-                            }));
-                        }
-                        catch { }
-                    };
-                    fakeForm.TextSent += (txt) =>
+                                fakeForm.Invoke(new Action(() =>
+                                {
+                                    fakeForm.Focus();
+                                    fakeForm.BringToFront();
+                                }));
+                            }
+                            catch { }
+                        };
+                        fakeForm.TextSent += (txt) =>
+                        {
+                            TextType(txt);
+                        };
+                    }));
+                    while (fakeForm?.Visible == true)
                     {
-                        TextType(txt);
-                    };
-                }));
-                while(fakeForm?.Visible == true)
-                {
-
+                        Thread.Sleep(10);
+                    }
+                    TextType("That's all the information I need for now.");
+                    Thread.Sleep(2000);
+                    TextType("Beginning installation of ShiftOS on " + MySave.SystemName + ".");
+                    Thread.Sleep(500);
+                    TextType("Creating new user: " + MySave.Username);
+                    TextType("...with 0 Codepoints, 0 installed upgrades, no legion, and no user shops...");
+                    MySave.Codepoints = 0;
+                    MySave.Upgrades = new Dictionary<string, bool>();
+                    MySave.CurrentLegions = new List<string>();
+                    MySave.MyShop = "";
+                    TextType("User created successfully.");
+                    Thread.Sleep(450);
+                    TextType("You may be wondering what all that meant... You see, in ShiftOS, your user account holds everything I need to know about you.");
+                    Thread.Sleep(640);
+                    TextType("It holds the amount of Codepoints you have - Codepoints are a special currency you can get by doing various tasks in ShiftOS.");
+                    Thread.Sleep(500);
+                    TextType("It also holds all the upgrades you've installed onto ShiftOS - features, applications, enhancements, patches, all that stuff.");
+                    Thread.Sleep(500);
+                    TextType("As for the legions and the shop thing, I'll reveal that to you when it becomes necessary.");
+                    Thread.Sleep(500);
+                    TextType("Your user account is stored on a server of mine called the multi-user domain. It holds every single user account, every script, every application, every thing within ShiftOS.");
+                    Thread.Sleep(600);
+                    TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last successful username and password pair.");
+                    Thread.Sleep(500);
+                    TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, but you have a secondary task if you choose to accept it.");
+                    Thread.Sleep(500);
+                    TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, and even spread damaging viruses.");
+                    Thread.Sleep(500);
+                    TextType("I want you to stop them.");
+                    Thread.Sleep(500);
+                    TextType("Whoever can stop these hackers will gain eternal control over the multi-user domain. They will be given the ability to do as they please, so long as it doesn't interfere with my experiments.");
+                    Thread.Sleep(500);
+                    TextType("I have been installing ShiftOS on your system in the background as I was talking with you. Before I can set you free, I need to give you a tutorial on how to use the system.");
+                    Thread.Sleep(500);
+                    TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
+                    SaveSystem.CurrentSave = MySave;
+                    SaveSystem.CurrentSave.StoryPosition = 1;
+                    Utils.WriteAllText(Paths.GetPath("user.dat"), JsonConvert.SerializeObject(new
+                    {
+                        username = MySave.Username,
+                        password = MySave.Password
+                    }));
+                    Shiftorium.Silent = true;
+                    SaveSystem.SaveGame();
+                    
+                    Thread.Sleep(3000);
+                    this.Invoke(new Action(() =>
+                    {
+                        TutorialManager.StartTutorial();
+                    }));
                 }
-                TextType("That's all the information I need for now.");
-                Thread.Sleep(2000);
-                TextType("Beginning installation of ShiftOS on " + MySave.SystemName + ".");
-                Thread.Sleep(500);
-                TextType("Creating new user: " + MySave.Username);
-                TextType("...with 0 Codepoints, 0 installed upgrades, no legion, and no user shops...");
-                MySave.Codepoints = 0;
-                MySave.Upgrades = new Dictionary<string, bool>();
-                MySave.CurrentLegions = new List<string>();
-                MySave.MyShop = "";
-                TextType("User created successfully.");
-                Thread.Sleep(450);
-                TextType("You may be wondering what all that meant... You see, in ShiftOS, your user account holds everything I need to know about you.");
-                Thread.Sleep(640);
-                TextType("It holds the amount of Codepoints you have - Codepoints are a special currency you can get by doing various tasks in ShiftOS.");
-                Thread.Sleep(500);
-                TextType("It also holds all the upgrades you've installed onto ShiftOS - features, applications, enhancements, patches, all that stuff.");
-                Thread.Sleep(500);
-                TextType("As for the legions and the shop thing, I'll reveal that to you when it becomes necessary.");
-                Thread.Sleep(500);
-                TextType("Your user account is stored on a server of mine called the multi-user domain. It holds every single user account, every script, every application, every thing within ShiftOS.");
-                Thread.Sleep(600);
-                TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last successful username and password pair.");
-                Thread.Sleep(500);
-                TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, but you have a secondary task if you choose to accept it.");
-                Thread.Sleep(500);
-                TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, and even spread damaging viruses.");
-                Thread.Sleep(500);
-                TextType("I want you to stop them.");
-                Thread.Sleep(500);
-                TextType("Whoever can stop these hackers will gain eternal control over the multi-user domain. They will be given the ability to do as they please, so long as it doesn't interfere with my experiments.");
-                Thread.Sleep(500);
-                TextType("I have been installing ShiftOS on your system in the background as I was talking with you. Before I can set you free, I need to give you a tutorial on how to use the system.");
-                Thread.Sleep(500);
-                TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
-                SaveSystem.CurrentSave = MySave;
-                SaveSystem.CurrentSave.StoryPosition = 1;
-                Utils.WriteAllText(Paths.GetPath("user.dat"), JsonConvert.SerializeObject(new
+                catch(Exception e)
                 {
-                    username = MySave.Username,
-                    password = MySave.Password
-                }));
-                SaveSystem.SaveGame();
-                Thread.Sleep(3000);
-                this.Invoke(new Action(() =>
-                {
-                    TutorialManager.StartTutorial();
-                }));
+                    TextType("I have experienced an error.");
+                    TextType(e.ToString());
+                }
             }));
             this.Show();
             this.BringToFront();
@@ -353,6 +363,7 @@ namespace ShiftOS.WinForms
 
         public void Start()
         {
+            Shiftorium.Silent = false;
             foreach(var frm in AppearanceManager.OpenForms)
             {
                 frm.Close();
@@ -387,7 +398,8 @@ namespace ShiftOS.WinForms
                         TutorialProgress = 5;
                 }
             };
-            this.Show();
+            if(this.Visible == false)
+                this.Show();
             var t = new Thread(() =>
             {
                 textgeninput = lblHijack;
