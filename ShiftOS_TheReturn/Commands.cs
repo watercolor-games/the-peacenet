@@ -54,7 +54,10 @@ namespace ShiftOS.Engine
         [Command("show")]
         public static bool ShowInfo(Dictionary<string, object> args)
         {
-            Infobox.Show(args["title"].ToString(), args["msg"].ToString());
+            Desktop.InvokeOnWorkerThread(new Action(() =>
+            {
+                Infobox.Show(args["title"].ToString(), args["msg"].ToString());
+            }));
             return true;
         }
 
@@ -71,7 +74,11 @@ namespace ShiftOS.Engine
                 Console.WriteLine($"{SaveSystem.CurrentSave.Username} says {resultFriendly}.");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };
-            Infobox.PromptYesNo(args["title"].ToString(), args["msg"].ToString(), callback);
+            Desktop.InvokeOnWorkerThread(new Action(() =>
+            {
+                Infobox.PromptYesNo(args["title"].ToString(), args["msg"].ToString(), callback);
+
+            }));
             return true;
         }
 
@@ -87,8 +94,11 @@ namespace ShiftOS.Engine
                 Console.WriteLine($"{SaveSystem.CurrentSave.Username} says \"{result}\".");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };
-            Infobox.PromptText(args["title"].ToString(), args["msg"].ToString(), callback);
-            return true;
+            Desktop.InvokeOnWorkerThread(new Action(() =>
+            {
+                Infobox.PromptText(args["title"].ToString(), args["msg"].ToString(), callback);
+            }));
+                return true;
         }
 
     }
