@@ -44,6 +44,55 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Engine
 {
+    [Namespace("infobox", hide = true)]
+    [RequiresUpgrade("desktop;wm_free_placement")]
+    public static class InfoboxDebugCommands
+    {
+
+        [RequiresArgument("title")]
+        [RequiresArgument("msg")]
+        [Command("show")]
+        public static bool ShowInfo(Dictionary<string, object> args)
+        {
+            Infobox.Show(args["title"].ToString(), args["msg"].ToString());
+            return true;
+        }
+
+        [RequiresArgument("title")]
+        [RequiresArgument("msg")]
+        [Command("yesno")]
+        public static bool ShowYesNo(Dictionary<string, object> args)
+        {
+            bool forwarding = TerminalBackend.IsForwardingConsoleWrites;
+            Action<bool> callback = (result) =>
+            {
+                TerminalBackend.IsForwardingConsoleWrites = forwarding;
+                string resultFriendly = (result == true) ? "yes" : "no";
+                Console.WriteLine($"{SaveSystem.CurrentSave.Username} says {resultFriendly}.");
+                TerminalBackend.IsForwardingConsoleWrites = false;
+            };
+            Infobox.PromptYesNo(args["title"].ToString(), args["msg"].ToString(), callback);
+            return true;
+        }
+
+        [RequiresArgument("title")]
+        [RequiresArgument("msg")]
+        [Command("text")]
+        public static bool ShowText(Dictionary<string, object> args)
+        {
+            bool forwarding = TerminalBackend.IsForwardingConsoleWrites;
+            Action<string> callback = (result) =>
+            {
+                TerminalBackend.IsForwardingConsoleWrites = forwarding;
+                Console.WriteLine($"{SaveSystem.CurrentSave.Username} says \"{result}\".");
+                TerminalBackend.IsForwardingConsoleWrites = false;
+            };
+            Infobox.PromptText(args["title"].ToString(), args["msg"].ToString(), callback);
+            return true;
+        }
+
+    }
+
     [Namespace("audio")]
     public static class AudioCommands
     {

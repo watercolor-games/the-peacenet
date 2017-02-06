@@ -316,7 +316,7 @@ namespace ShiftOS.Engine
             ServerManager.MessageReceived += onMessageReceived;
         }
 
-        public static bool IsForwardingConsoleWrites { get; private set; }
+        public static bool IsForwardingConsoleWrites { get; internal set; }
         public static string ForwardGUID { get; private set; }
         
     }
