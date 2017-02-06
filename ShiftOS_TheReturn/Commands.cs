@@ -67,9 +67,11 @@ namespace ShiftOS.Engine
         public static bool ShowYesNo(Dictionary<string, object> args)
         {
             bool forwarding = TerminalBackend.IsForwardingConsoleWrites;
+            var fGuid = TerminalBackend.ForwardGUID;
             Action<bool> callback = (result) =>
             {
                 TerminalBackend.IsForwardingConsoleWrites = forwarding;
+                TerminalBackend.ForwardGUID = (forwarding == true) ? fGuid : null;
                 string resultFriendly = (result == true) ? "yes" : "no";
                 Console.WriteLine($"{SaveSystem.CurrentSave.Username} says {resultFriendly}.");
                 TerminalBackend.IsForwardingConsoleWrites = false;
@@ -88,9 +90,11 @@ namespace ShiftOS.Engine
         public static bool ShowText(Dictionary<string, object> args)
         {
             bool forwarding = TerminalBackend.IsForwardingConsoleWrites;
+            var fGuid = TerminalBackend.ForwardGUID;
             Action<string> callback = (result) =>
             {
                 TerminalBackend.IsForwardingConsoleWrites = forwarding;
+                TerminalBackend.ForwardGUID = (forwarding == true) ? fGuid : null;
                 Console.WriteLine($"{SaveSystem.CurrentSave.Username} says \"{result}\".");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };

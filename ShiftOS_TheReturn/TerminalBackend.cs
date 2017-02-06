@@ -317,7 +317,7 @@ namespace ShiftOS.Engine
         }
 
         public static bool IsForwardingConsoleWrites { get; internal set; }
-        public static string ForwardGUID { get; private set; }
+        public static string ForwardGUID { get; internal set; }
         
     }
 }
