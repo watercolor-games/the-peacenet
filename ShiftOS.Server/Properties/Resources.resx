@@ -121,6 +121,114 @@
   <data name="Home" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="iconArtpad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconArtpad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconAudioPlayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconAudioPlayer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBitnoteDigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBitnoteDigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBitnoteWallet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBitnoteWallet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconCalculator.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconClock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconClock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconColourPicker_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconColourPicker.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconDodge" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconDodge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconDownloader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconDownloader.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconFileOpener_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconFileOpener.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconFileSaver_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconFileSaver.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconFileSkimmer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconFileSkimmer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconfloodgate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconfloodgate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icongraphicpicker" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icongraphicpicker.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconIconManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconIconManager.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconInfoBox_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconInfoBox.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconKnowledgeInput" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconKnowledgeInput.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconmaze" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconmaze.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconNameChanger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconNameChanger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconoctocat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconoctocat.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconorcwrite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconorcwrite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconPong" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconPong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconShifter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconShifter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconShiftnet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconShiftnet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconShiftorium" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconShiftorium.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconshutdown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconshutdown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconSkinLoader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconSkinLoader.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconSkinShifter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconSkinShifter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconSnakey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconSnakey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconSysinfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconSysinfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconTerminal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconTerminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconTextPad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconTextPad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconunitytoggle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconunitytoggle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconVideoPlayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconVideoPlayer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconvirusscanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconvirusscanner.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconWebBrowser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconWebBrowser.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="NotFound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\404.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

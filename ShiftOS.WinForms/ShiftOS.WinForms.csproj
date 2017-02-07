@@ -463,6 +463,7 @@
     <None Include="Resources\strings_en.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\IconTerminal.bmp" />
     <None Include="Resources\sys_shiftoriumstory.txt" />
     <None Include="Resources\DefaultMouse.bmp" />
     <Content Include="Resources\hello.txt" />

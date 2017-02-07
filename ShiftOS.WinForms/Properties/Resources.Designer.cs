@@ -490,6 +490,16 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IconTerminal {
+            get {
+                object obj = ResourceManager.GetObject("IconTerminal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [
         ///	&quot;english&quot;
         ///	&quot;deutsch - in beta&quot;

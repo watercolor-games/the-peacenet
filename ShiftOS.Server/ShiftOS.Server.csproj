@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +82,114 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Home.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconArtpad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconAudioPlayer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconBitnoteDigger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconBitnoteWallet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconCalculator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconClock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconColourPicker.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconDodge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconDownloader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconFileOpener.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconFileSaver.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconFileSkimmer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconfloodgate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icongraphicpicker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconIconManager.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconInfoBox.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconKnowledgeInput.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconmaze.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconNameChanger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconoctocat.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconorcwrite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconPong.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconShifter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconShiftnet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconShiftorium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconshutdown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconSkinLoader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconSkinShifter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconSnakey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconSysinfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconTerminal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconTextPad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconunitytoggle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconVideoPlayer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconvirusscanner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconWebBrowser.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

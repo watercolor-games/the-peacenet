@@ -6,6 +6,11 @@
 		Dependencies: null
 	},
 	{
+		Name: "Audio Volume",
+		Cost: 50,
+		Description: "Want to adjust the volume of ShiftOS's audio? This upgrade will let you."
+	},
+	{
 		Name: "Color Depth Dithering",
 		Cost: 1000,
 		Description: "Right now, if you try to display images on the screen, with a low color depth like we have, the image will be totally unrecognizable! With this upgrade, we can adapt a simple 1-dimensional dithering algorithm into the video driver to hopefully smooth out the transition between colors.",

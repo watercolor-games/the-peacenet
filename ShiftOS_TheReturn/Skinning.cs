@@ -33,6 +33,7 @@ using Newtonsoft.Json;
 using System.Windows.Forms;
 using static ShiftOS.Engine.SaveSystem;
 using ShiftOS.Objects.ShiftFS;
+using System.Reflection;
 
 namespace ShiftOS.Engine {
     public static class SkinEngine {
@@ -113,13 +114,51 @@ namespace ShiftOS.Engine {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
         }
 
+        private static IIconProber _iconProber = null;
+
+        public static Image GetDefaultIcon(string id)
+        {
+            if (_iconProber == null)
+            {
+                return new Bitmap(16, 16);
+            }
+            else
+            {
+                foreach(var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                {
+                    if(f.EndsWith(".exe") || f.EndsWith(".dll"))
+                    {
+                        try
+                        {
+                            var asm = Assembly.LoadFile(f);
+                            foreach(var type in asm.GetTypes())
+                            {
+                                if(type.Name == id)
+                                {
+                                    foreach(var attr in type.GetCustomAttributes(true))
+                                    {
+                                        if(attr is DefaultIconAttribute)
+                                        {
+                                            return _iconProber.GetIcon(attr as DefaultIconAttribute);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                }
+                return new Bitmap(16, 16);
+            }
+        }
+
         public static Image GetIcon(string id)
         {
             if (!LoadedSkin.AppIcons.ContainsKey(id))
                 LoadedSkin.AppIcons.Add(id, null);
 
             if (LoadedSkin.AppIcons[id] == null)
-                return new Bitmap(16, 16);
+                return GetDefaultIcon(id);
             else
             {
                 using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))
@@ -129,6 +168,21 @@ namespace ShiftOS.Engine {
             }
              
         }
+    }
+
+    public interface IIconProber
+    {
+        Image GetIcon(DefaultIconAttribute attr);
+    }
+
+    public class DefaultIconAttribute : Attribute
+    {
+        public DefaultIconAttribute(string id)
+        {
+            ID = id;
+        }
+
+        public string ID { get; private set; }
     }
 
     public class Skin {

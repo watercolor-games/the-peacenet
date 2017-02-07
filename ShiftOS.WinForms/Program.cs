@@ -33,6 +33,7 @@ using Newtonsoft.Json;
 using static ShiftOS.Objects.ShiftFS.Utils;
 using ShiftOS.WinForms.Applications;
 using ShiftOS.WinForms.Tools;
+using System.Reflection;
 
 namespace ShiftOS.WinForms
 {
@@ -68,6 +69,26 @@ namespace ShiftOS.WinForms
             var desk = new WinformsDesktop();
             Desktop.Init(desk);
             Application.Run(desk);
+        }
+    }
+
+    internal class ShiftOSIconProvider : IIconProber
+    {
+        public Image GetIcon(DefaultIconAttribute attr)
+        {
+            
+            var res = typeof(Properties.Resources);
+            foreach(var prop in res.GetProperties(BindingFlags.NonPublic | BindingFlags.Static))
+            {
+                if(prop.PropertyType.BaseType == typeof(Image))
+                {
+                    if(prop.Name == attr.ID)
+                    {
+                        return prop.GetValue(null) as Image;
+                    }
+                }
+            }
+            return new Bitmap(16, 16);
         }
     }
 
