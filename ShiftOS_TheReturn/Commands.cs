@@ -119,6 +119,12 @@ namespace ShiftOS.Engine
             AudioManager.SetVolume(volume);
             return true;
         }
+        [Command("mute", description = "Sets the volume of the system audio to 0")]
+        public static bool MuteAudio()
+        {
+            AudioManager.SetVolume(0);
+            return true;
+        }
     }
 
     [RequiresUpgrade("mud_fundamentals")]
