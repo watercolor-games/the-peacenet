@@ -48,6 +48,7 @@ namespace ShiftOS.WinForms.Applications
 {
     [Launcher("Terminal", false, null, "Utilities")]
     [WinOpen("terminal")]
+    [DefaultIcon("iconTerminal")]
     public partial class Terminal : UserControl, IShiftOSWindow
     {
         public static Stack<string> ConsoleStack = new Stack<string>();

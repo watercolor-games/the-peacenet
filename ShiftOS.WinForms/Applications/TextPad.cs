@@ -39,6 +39,7 @@ namespace ShiftOS.WinForms.Applications
     [Launcher("TextPad", true, "al_textpad", "Accessories")]
     [RequiresUpgrade("textpad")]
     [WinOpen("textpad")]
+    [DefaultIcon("iconTextPad")]
     public partial class TextPad : UserControl, IShiftOSWindow
     {
         public TextPad()

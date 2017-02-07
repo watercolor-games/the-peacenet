@@ -44,6 +44,7 @@ namespace ShiftOS.WinForms.Applications
     [Launcher("Artpad", true, "al_artpad", "Graphics")]
     [RequiresUpgrade("artpad")]
     [WinOpen("artpad")]
+    [DefaultIcon("iconArtpad")]
     public partial class Artpad : UserControl, IShiftOSWindow
     {
         /// <summary>

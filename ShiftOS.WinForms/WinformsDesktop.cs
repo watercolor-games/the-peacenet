@@ -299,7 +299,8 @@ namespace ShiftOS.WinForms
             foreach (var kv in items)
             {
                 var item = new ToolStripMenuItem();
-                item.Text = kv.DisplayData.Name;
+                item.Text = (kv.LaunchType == null) ? kv.DisplayData.Name : Applications.NameChangerBackend.GetNameRaw(kv.LaunchType);
+                item.Image = (kv.LaunchType == null) ? null : SkinEngine.GetIcon(kv.LaunchType.Name);
                 item.Click += (o, a) =>
                 {
                     if (kv is LuaLauncherItem)

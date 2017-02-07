@@ -181,16 +181,21 @@ namespace ShiftOS.WinForms.Applications {
 
         public static string GetName(IShiftOSWindow win)
         {
+            return GetNameRaw(win.GetType());
+        }
+
+        internal static string GetNameRaw(Type type)
+        {
             if (SkinEngine.LoadedSkin == null)
-                return AppearanceManager.GetDefaultTitle(win.GetType());
+                return AppearanceManager.GetDefaultTitle(type);
 
             if (SkinEngine.LoadedSkin.AppNames == null)
                 SkinEngine.LoadedSkin.AppNames = GetDefault();
 
-            if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(win.GetType().Name))
-                SkinEngine.LoadedSkin.AppNames.Add(win.GetType().Name, AppearanceManager.GetDefaultTitle(win.GetType()));
+            if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(type.Name))
+                SkinEngine.LoadedSkin.AppNames.Add(type.Name, AppearanceManager.GetDefaultTitle(type));
 
-            return SkinEngine.LoadedSkin.AppNames[win.GetType().Name];
+            return SkinEngine.LoadedSkin.AppNames[type.Name];
         }
     }
 }

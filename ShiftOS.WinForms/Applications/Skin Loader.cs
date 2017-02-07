@@ -41,6 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("skinning")]
     [WinOpen("skin_loader")]
     [DefaultTitle("Skin Loader")]
+    [DefaultIcon("iconSkinLoader")]
     public partial class Skin_Loader : UserControl, IShiftOSWindow
     {
         public Skin_Loader()

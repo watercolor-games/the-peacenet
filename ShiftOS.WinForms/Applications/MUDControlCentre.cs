@@ -41,6 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("mud_fundamentals")]
     [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]
+    [DefaultIcon("iconSysinfo")]
     [DefaultTitle("MUD Control Centre")]
     public partial class MUDControlCentre : UserControl, IShiftOSWindow
     {

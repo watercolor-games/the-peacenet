@@ -64,6 +64,11 @@ namespace ShiftOS.Engine {
             return null;
         }
 
+        public static void SetIconProber(IIconProber prober)
+        {
+            _iconProber = prober;
+        }
+
         public static Image ImageFromBinary(byte[] image) {
             if (image == null)
                 return null;

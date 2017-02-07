@@ -41,6 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("shiftorium_gui")]
     [WinOpen("shiftorium")]
     [DefaultTitle("Shiftorium")]
+    [DefaultIcon("iconShiftorium")]
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow
     {
 

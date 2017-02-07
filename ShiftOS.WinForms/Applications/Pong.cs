@@ -39,6 +39,7 @@ namespace ShiftOS.WinForms.Applications
 {
     [Launcher("Pong", true, "al_pong", "Games")]
     [WinOpen("pong")]
+    [DefaultIcon("iconPong")]
     public partial class Pong : UserControl, IShiftOSWindow
     {
         int xVel = 7;
