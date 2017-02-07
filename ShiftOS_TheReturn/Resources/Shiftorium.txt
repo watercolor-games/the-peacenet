@@ -29,6 +29,11 @@
 		Description: "Sometimes it's useful to have a list of windows that are open on your system so you can easily switch between them.",
 		Dependencies: "desktop;wm_unlimited_windows"
 	},
+	{ 
+		Name: "Audio volume",
+		Cost: 80,
+		Description: "Allows you to change the system music volume"
+	},
 	{
 		Name: "AL Skin Loader",
 		Cost: 125,
