@@ -112,11 +112,19 @@ namespace ShiftOS.Engine
     {
         [Command("setvol", description = "Set the volume of the system audio to anywhere between 0 and 100.")]
         [RequiresArgument("value")]
+        [RequiresUpgrade("audio_volume")]
         public static bool SetVolume(Dictionary<string,object> args)
         {
             int val = Convert.ToInt32(args["value"].ToString());
             float volume = (val / 100F);
             AudioManager.SetVolume(volume);
+            return true;
+        }
+        [RequiresUpgrade("audio_volume")]
+        [Command("mute", description = "Sets the volume of the system audio to 0")]
+        public static bool MuteAudio()
+        {
+            AudioManager.SetVolume(0);
             return true;
         }
     }
