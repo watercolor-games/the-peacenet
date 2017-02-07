@@ -112,6 +112,23 @@ namespace ShiftOS.Engine {
         public static void SaveSkin() {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
         }
+
+        public static Image GetIcon(string id)
+        {
+            if (!LoadedSkin.AppIcons.ContainsKey(id))
+                LoadedSkin.AppIcons.Add(id, null);
+
+            if (LoadedSkin.AppIcons[id] == null)
+                return new Bitmap(16, 16);
+            else
+            {
+                using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))
+                {
+                    return Image.FromStream(sr);
+                }
+            }
+             
+        }
     }
 
     public class Skin {
@@ -138,7 +155,11 @@ namespace ShiftOS.Engine {
         }
 
         [ShifterHidden]
-        public Dictionary<string, string> AppNames = new Dictionary<string, string>(); 
+        public Dictionary<string, string> AppNames = new Dictionary<string, string>();
+
+        [ShifterHidden]
+        public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
+
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]
@@ -914,6 +935,13 @@ namespace ShiftOS.Engine {
         //we DO NOT want this showing in the shifter.
         [ShifterHidden]
         public Dictionary<string, ImageLayout> SkinImageLayouts = new Dictionary<string, ImageLayout>();
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Titlebar")]
+        [ShifterName("App icon from side")]
+        [ShifterDescription("How far from the side should the icon be?")]
+        [RequiresUpgrade("shift_titlebar;app_icons")]
+        public Point TitlebarIconFromSide = new Point(4,4);
     }
 
     public class ShifterHiddenAttribute : Attribute {

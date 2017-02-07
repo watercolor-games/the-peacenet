@@ -43,12 +43,16 @@ namespace ShiftOS.WinForms.Applications
             InitializeComponent();
         }
 
+        public string Title { get; private set; }
+
         public void OnLoad()
         {
+            AppearanceManager.SetWindowTitle(this, this.Title);
         }
 
         public void OnSkinLoad()
         {
+            AppearanceManager.SetWindowTitle(this, this.Title);
         }
 
         public bool OnUnload()
@@ -63,7 +67,7 @@ namespace ShiftOS.WinForms.Applications
         internal void OpenInternal(string title, string msg)
         {
             AppearanceManager.SetupWindow(this);
-            this.Parent.Text = title;
+            Title = title;
             lbmessage.Text = msg;
             txtinput.Hide();
             flyesno.Hide();
@@ -83,7 +87,7 @@ namespace ShiftOS.WinForms.Applications
         public void PromptTextInternal(string title, string message, Action<string> callback)
         {
             AppearanceManager.SetupWindow(this);
-            this.Parent.Text = title;
+            Title = title;
             lbmessage.Text = message;
             txtinput.Show();
             flyesno.Hide();
@@ -119,7 +123,7 @@ namespace ShiftOS.WinForms.Applications
         public void PromptYesNoInternal(string title, string message, Action<bool> callback)
         {
             AppearanceManager.SetupWindow(this);
-            this.Parent.Text = title;
+            Title = title;
             lbmessage.Text = message;
             txtinput.Hide();
             flyesno.Show();

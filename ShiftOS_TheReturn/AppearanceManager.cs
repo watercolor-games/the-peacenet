@@ -76,6 +76,11 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static void SetWindowTitle(IShiftOSWindow window, string title)
+        {
+            winmgr.SetTitle(window, title);
+        }
+
         public static IEnumerable<Type> GetAllWindowTypes()
         {
             List<Type> types = new List<Type>();
@@ -231,6 +236,8 @@ namespace ShiftOS.Engine
         public abstract void SetupDialog(IShiftOSWindow win);
 
         public abstract void InvokeAction(Action act);
+
+        public abstract void SetTitle(IShiftOSWindow win, string title);
     }
 
     public interface IWindowBorder

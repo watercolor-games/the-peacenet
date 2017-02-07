@@ -87,6 +87,11 @@ namespace ShiftOS.WinForms
             }
         }
 
+        internal void SetTitle(string title)
+        {
+            lbtitletext.Text = title;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WindowBorder"/> class.
         /// </summary>
@@ -305,12 +310,26 @@ namespace ShiftOS.WinForms
             switch (LoadedSkin.TitleTextCentered)
             {
                 case false:
-                    lbtitletext.Location = LoadedSkin.TitleTextLeft;
+                    lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                            LoadedSkin.TitleTextLeft.Y);
                     break;
                 default:
                     lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
                     lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
                     break;
+            }
+
+            if (Shiftorium.UpgradeInstalled("app_icons"))
+            {
+                pnlicon.Show();
+                pnlicon.Size = new Size(16, 16);
+                pnlicon.BackgroundImage = GetIcon(this.ParentWindow.GetType().Name);
+                pnlicon.BackgroundImageLayout = ImageLayout.Stretch;
+                pnlicon.Location = LoadedSkin.TitlebarIconFromSide;
+            }
+            else
+            {
+                pnlicon.Hide();
             }
         }
 

@@ -77,6 +77,12 @@ namespace ShiftOS.WinForms
             catch { }
         }
 
+        public override void SetTitle(IShiftOSWindow win, string title)
+        {
+            var wb = (win as UserControl).ParentForm as WindowBorder;
+            wb.SetTitle(title);
+        }
+
         public override void SetupDialog(IShiftOSWindow form)
         {
             if (!Shiftorium.UpgradeAttributesUnlocked(form.GetType()))

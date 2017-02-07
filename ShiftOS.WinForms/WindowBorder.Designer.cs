@@ -56,11 +56,11 @@ namespace ShiftOS.WinForms
         private void InitializeComponent()
         {
             this.pnltitle = new System.Windows.Forms.Panel();
-            this.pnltitleleft = new System.Windows.Forms.Panel();
-            this.pnltitleright = new System.Windows.Forms.Panel();
             this.pnlminimize = new System.Windows.Forms.Panel();
             this.pnlmaximize = new System.Windows.Forms.Panel();
             this.pnlclose = new System.Windows.Forms.Panel();
+            this.pnltitleleft = new System.Windows.Forms.Panel();
+            this.pnltitleright = new System.Windows.Forms.Panel();
             this.lbtitletext = new System.Windows.Forms.Label();
             this.pnlbottom = new System.Windows.Forms.Panel();
             this.pnlbottomr = new System.Windows.Forms.Panel();
@@ -68,6 +68,7 @@ namespace ShiftOS.WinForms
             this.pnlleft = new System.Windows.Forms.Panel();
             this.pnlright = new System.Windows.Forms.Panel();
             this.pnlcontents = new System.Windows.Forms.Panel();
+            this.pnlicon = new System.Windows.Forms.Panel();
             this.pnltitle.SuspendLayout();
             this.pnlbottom.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +76,7 @@ namespace ShiftOS.WinForms
             // pnltitle
             // 
             this.pnltitle.BackColor = System.Drawing.Color.Black;
+            this.pnltitle.Controls.Add(this.pnlicon);
             this.pnltitle.Controls.Add(this.pnlminimize);
             this.pnltitle.Controls.Add(this.pnlmaximize);
             this.pnltitle.Controls.Add(this.pnlclose);
@@ -88,22 +90,6 @@ namespace ShiftOS.WinForms
             this.pnltitle.TabIndex = 0;
             this.pnltitle.Paint += new System.Windows.Forms.PaintEventHandler(this.pnltitle_Paint);
             this.pnltitle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnltitle_MouseMove);
-            // 
-            // pnltitleleft
-            // 
-            this.pnltitleleft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnltitleleft.Location = new System.Drawing.Point(0, 0);
-            this.pnltitleleft.Name = "pnltitleleft";
-            this.pnltitleleft.Size = new System.Drawing.Size(2, 30);
-            this.pnltitleleft.TabIndex = 4;
-            // 
-            // pnltitleright
-            // 
-            this.pnltitleright.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnltitleright.Location = new System.Drawing.Point(728, 0);
-            this.pnltitleright.Name = "pnltitleright";
-            this.pnltitleright.Size = new System.Drawing.Size(2, 30);
-            this.pnltitleright.TabIndex = 5;
             // 
             // pnlminimize
             // 
@@ -135,6 +121,22 @@ namespace ShiftOS.WinForms
             this.pnlclose.TabIndex = 1;
             this.pnlclose.Click += new System.EventHandler(this.pnlclose_Click);
             // 
+            // pnltitleleft
+            // 
+            this.pnltitleleft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pnltitleleft.Location = new System.Drawing.Point(0, 0);
+            this.pnltitleleft.Name = "pnltitleleft";
+            this.pnltitleleft.Size = new System.Drawing.Size(2, 30);
+            this.pnltitleleft.TabIndex = 4;
+            // 
+            // pnltitleright
+            // 
+            this.pnltitleright.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pnltitleright.Location = new System.Drawing.Point(728, 0);
+            this.pnltitleright.Name = "pnltitleright";
+            this.pnltitleright.Size = new System.Drawing.Size(2, 30);
+            this.pnltitleright.TabIndex = 5;
+            // 
             // lbtitletext
             // 
             this.lbtitletext.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -144,7 +146,7 @@ namespace ShiftOS.WinForms
             this.lbtitletext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lbtitletext.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold);
             this.lbtitletext.ForeColor = System.Drawing.Color.White;
-            this.lbtitletext.Location = new System.Drawing.Point(4, 0);
+            this.lbtitletext.Location = new System.Drawing.Point(75, 9);
             this.lbtitletext.Name = "lbtitletext";
             this.lbtitletext.Size = new System.Drawing.Size(77, 14);
             this.lbtitletext.TabIndex = 0;
@@ -209,6 +211,13 @@ namespace ShiftOS.WinForms
             this.pnlcontents.Size = new System.Drawing.Size(730, 463);
             this.pnlcontents.TabIndex = 4;
             // 
+            // pnlicon
+            // 
+            this.pnlicon.Location = new System.Drawing.Point(9, -76);
+            this.pnlicon.Name = "pnlicon";
+            this.pnlicon.Size = new System.Drawing.Size(200, 100);
+            this.pnlicon.TabIndex = 6;
+            // 
             // WindowBorder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -243,5 +252,6 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.Panel pnlcontents;
         private System.Windows.Forms.Panel pnltitleright;
         private System.Windows.Forms.Panel pnltitleleft;
+        private System.Windows.Forms.Panel pnlicon;
     }
 }
