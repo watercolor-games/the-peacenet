@@ -212,7 +212,7 @@ namespace ShiftOS.WinForms
                     Thread.Sleep(3000);
                     try {
                         TutorialManager.StartTutorial();
-                    } catch (Exeption e) {
+                    } catch (Exception e) {
                         TextType("An error has occoured while starting the tutorial");
                         TextType(e.ToString());
                     }
