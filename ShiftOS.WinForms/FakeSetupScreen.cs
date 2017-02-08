@@ -27,10 +27,13 @@ namespace ShiftOS.WinForms
             SetupUI();
             ServerManager.MessageReceived += (msg) =>
             {
-                if (msg.Name == "mud_notfound")
-                    this.Invoke(new Action(() => { MUDUserFound?.Invoke(false); }));
-                else if (msg.Name == "mud_found")
-                    this.Invoke(new Action(() => { MUDUserFound?.Invoke(true); }));
+                if (this.Visible == true)
+                {
+                    if (msg.Name == "mud_notfound")
+                        this.Invoke(new Action(() => { MUDUserFound?.Invoke(false); }));
+                    else if (msg.Name == "mud_found")
+                        this.Invoke(new Action(() => { MUDUserFound?.Invoke(true); }));
+                }
             };
         }
 
