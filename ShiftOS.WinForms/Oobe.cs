@@ -210,11 +210,12 @@ namespace ShiftOS.WinForms
                     SaveSystem.SaveGame();
                     
                     Thread.Sleep(3000);
-                    this.Invoke(new Action(() =>
-                    {
+                    try {
                         TutorialManager.StartTutorial();
-                    }));
-                    TutorialManager.StartTutorial();
+                    } catch (Exeption e) {
+                        TextType("An error has occoured while starting the tutorial");
+                        TextType(e.ToString());
+                    }
                     this.Close();
                 }
                 catch(Exception e)
@@ -368,7 +369,9 @@ namespace ShiftOS.WinForms
             Shiftorium.Silent = false;
             foreach(var frm in AppearanceManager.OpenForms)
             {
-                frm.Close();
+                (frm as Form).Invoke(new Action(() => {
+                    frm.Close();
+                }));
             }
 
             TerminalBackend.CommandProcessed += (cmd, args) =>
