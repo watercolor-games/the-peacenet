@@ -214,6 +214,8 @@ namespace ShiftOS.WinForms
                     {
                         TutorialManager.StartTutorial();
                     }));
+                    TutorialManager.StartTutorial();
+                    this.Close();
                 }
                 catch(Exception e)
                 {
