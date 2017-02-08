@@ -318,4 +318,9 @@ namespace ShiftOS.Engine
     }
 
     public delegate void TextSentEventHandler(string text);
+
+    public class DeveloperAttribute : Attribute
+    {
+
+    }
 }

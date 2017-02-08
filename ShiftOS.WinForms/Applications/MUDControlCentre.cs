@@ -78,6 +78,27 @@ namespace ShiftOS.WinForms.Applications
                                 myLegionToolStripMenuItem_Click(this, EventArgs.Empty);
                             }));
                         }
+                        else if (msg.Name == "user_shop_check_result")
+                        {
+                            if (msg.Contents == "0")
+                            {
+                                ShowCreateShop();
+                            }
+                            else
+                            {
+                                Infobox.PromptYesNo("Close Shop", "You already own a MUD shop. Would you like to close it and create a new one?", new Action<bool>((result) =>
+                                {
+                                    if (result == true)
+                                    {
+                                        ServerManager.SendMessage("shop_removeowned", JsonConvert.SerializeObject(new
+                                        {
+                                            username = SaveSystem.CurrentSave.Username
+                                        }));
+                                        ShowCreateShop();
+                                    }
+                                }));
+                            }
+                        }
                         else if (msg.Name == "legion_alreadyexists")
                         {
                             this.Invoke(new Action(() =>
@@ -97,16 +118,142 @@ namespace ShiftOS.WinForms.Applications
                         {
                             ShowLegionInfo(JsonConvert.DeserializeObject<Legion>(msg.Contents));
                         }
+                        else if (msg.Name == "shop_taken")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                Infobox.Show("Shop name taken.", "A shop with the same name already exists.");
+                            }));
+                        }
+                        else if (msg.Name == "shop_added")
+                        {
+                            ServerManager.SendMessage("shop_getall", "");
+                        }
                         else if (msg.Name == "legion_all")
                         {
                             PopulateJoinLegion(JsonConvert.DeserializeObject<List<Legion>>(msg.Contents));
                         }
-
+                        else if (msg.Name == "shop_allshops")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                PopulateShopList(JsonConvert.DeserializeObject<Shop[]>(msg.Contents));
+                            }));
+                        }
                     }));
                 }
                 catch { }
             };
         }
+
+        private Shop editingShop = null;
+        private string editingShopOldName = "";
+
+        public void ShowCreateShop()
+        {
+            this.Invoke(new Action(() =>
+            {
+                editingShop = new Shop();
+                creatingShop = true;
+                editingShop.Name = "My shop";
+                editingShop.Description = "My shop has lots of awesome items. You should buy from my shop.";
+                editingShop.Owner = SaveSystem.CurrentSave.Username;
+                editingShop.Items = new List<ShopItem>();
+                shop_editor.BringToFront();
+                PopulateShopEditor();
+            }));
+        }
+
+        public void PopulateShopEditor()
+        {
+
+        }
+
+        public void PopulateShopList(Shop[] shops)
+        {
+            shop_all.BringToFront();
+
+            flshoplist.Controls.Clear();
+
+            foreach (var shop in shops)
+            {
+                var bnr = new Panel();
+                bnr.Height = 100;
+                bnr.Tag = "keepbg";
+                
+                bnr.Width = flshoplist.Width;
+
+                var lTitle = new Label();
+                lTitle.AutoSize = true;
+                lTitle.Tag = "keepbg header2";
+                lTitle.Text = shop.Name;
+                lTitle.Location = new Point(18, 17);
+                bnr.Controls.Add(lTitle);
+                lTitle.Show();
+                var desc = new Label();
+                desc.Left = lTitle.Left;
+                desc.Width = (bnr.Width - desc.Left - desc.Left);
+                desc.Top = lTitle.Top + lTitle.Height;
+                desc.Height = (bnr.Height - lTitle.Top);
+                desc.Text = shop.Description;
+                bnr.Controls.Add(desc);
+                desc.Show();
+
+                var flButtons = new FlowLayoutPanel();
+                flButtons.AutoSize = true;
+                flButtons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                flButtons.Tag = "keepbg";
+                flButtons.FlowDirection = FlowDirection.RightToLeft;
+                flButtons.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                flButtons.Top = 2;
+                flButtons.Left = bnr.Width - flButtons.Width - 2;
+                bnr.Controls.Add(flButtons);
+                flButtons.Show();
+
+                var btn = new Button();
+                btn.Text = "Browse";
+                btn.Click += (o, a) =>
+                {
+                    ShowShop(shop);
+                };
+                flButtons.Controls.Add(btn);
+                btn.Show();
+
+                flshoplist.Controls.Add(bnr);
+                bnr.Show();
+                ControlManager.SetupControls(bnr);
+            }
+
+        }
+
+        public void ShowShop(Shop shop)
+        {
+            shop_view.BringToFront();
+
+            lbshopname.Text = shop.Name;
+            lbupgradetitle.Text = $"Welcome to {shop.Name}.";
+            lbupgradedesc.Text = shop.Description;
+            lbprice.Text = "Select an item from the list on the left.";
+            btnbuy.Hide();
+
+            lbupgrades.Items.Clear();
+            shopItems = shop.Items;
+            foreach (var item in shop.Items)
+            {
+                lbupgrades.Items.Add(item.Name);
+            }
+            lbupgrades.SelectedIndexChanged += (o, a) =>
+            {
+                item = shopItems[lbupgrades.SelectedIndex];
+                lbupgradetitle.Text = item.Name;
+                lbupgradedesc.Text = item.Description;
+                lbprice.Text = $"Cost: {item.Cost} CP";
+                btnbuy.Show();
+            };
+        }
+
+        private ShopItem item = null;
+        private List<ShopItem> shopItems = null;
 
         public void PopulateJoinLegion(List<Legion> legions)
         {
@@ -451,6 +598,92 @@ Current legions: {legionname}";
         private void currentTaskToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.job_current.BringToFront();
+        }
+
+        private void browseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ServerManager.SendMessage("shop_getallshops", "");
+        }
+
+        private void btnbuy_Click(object sender, EventArgs e)
+        {
+            if (SaveSystem.CurrentSave.Codepoints >= item.Cost)
+            {
+                //Send the Codepoints to the shop owner. If they're online, the MUD will tell them to update their Codepoints.
+                ServerManager.SendMessage("usr_givecp", JsonConvert.SerializeObject(new
+                {
+                    username = this.CurrentShop.Owner,
+                    amount = item.Cost
+                }));
+
+                string fileExt = FileSkimmerBackend.GetFileExtension((FileType)item.FileType);
+                FileSkimmerBackend.GetFile(new[] { fileExt }, FileOpenerStyle.Save, new Action<string>((dest) =>
+                 {
+                     var d = new Download
+                     {
+                         ShiftnetUrl = $"{CurrentShop.Name}: {item.Name}",
+                         Destination = dest,
+                         Bytes = item.MUDFile
+                     };
+                     DownloadManager.StartDownload(d);
+                 }));
+            
+                
+
+            }
+            else
+            {
+                Infobox.Show("Not enough Codepoints", "You cannot afford this item. You need at least " + item.Cost.ToString() + ".");
+            }
+        }
+
+        private void openAShopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ServerManager.SendMessage("user_shop_check", JsonConvert.SerializeObject(new
+            {
+                username = SaveSystem.CurrentSave.Username
+            }));
+        }
+
+        private void txtshopname_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                editingShop.Name = txtshopname.Text;
+            }
+            catch { }
+        }
+
+        private void txtshopdescription_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                editingShop.Description = txtshopdescription.Text;
+            }
+            catch { }
+        }
+
+        bool creatingShop = false;
+
+        private void btnsaveshop_Click(object sender, EventArgs e)
+        {
+            if(creatingShop == true)
+            {
+                ServerManager.SendMessage("create_shop", JsonConvert.SerializeObject(editingShop));
+            }
+            else
+            {
+                ServerManager.SendMessage("update_shop_by_user", JsonConvert.SerializeObject(new
+                {
+                    username = editingShop.Owner,
+                    shop = editingShop
+                }));
+            }
+        }
+
+        private void btnaddshopitem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

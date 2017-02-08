@@ -133,6 +133,11 @@ namespace ShiftOS.Engine
         {
             return _fs.GetImage(filepath);
         }
+
+        public static string GetFileExtension(FileType fileType)
+        {
+            return _fs.GetFileExtension(fileType);
+        }
     }
 
     /// <summary>
@@ -144,6 +149,7 @@ namespace ShiftOS.Engine
         void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback);
         void OpenDirectory(string path);
         Image GetImage(string path);
+        string GetFileExtension(FileType fileType);
     }
 
 

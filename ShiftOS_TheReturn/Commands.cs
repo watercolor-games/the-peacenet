@@ -230,20 +230,31 @@ namespace ShiftOS.Engine
     }
 
 #if DEVEL
-    [Namespace("cheats", true)]
-    public static class CheatCommands
-    {
-        [Command("freecp", true)]
-        [CommandObsolete("{OBSOLETE_CHEATS_FREECP}", "dev.freecp", true)]
-        public static bool FreeCodepoints(Dictionary<string, object> args)
-        {
-            // never called
-            return true;
-        }
-    }
     [Namespace("dev")]
     public static class ShiftOSDevCommands
     {
+        [Command("unbuy")]
+        [RequiresArgument("upgrade")]
+        public static bool UnbuyUpgrade(Dictionary<string, object> args)
+        {
+            try
+            {
+                SaveSystem.CurrentSave.Upgrades[args["upgrade"] as string] = false;
+            }
+            catch
+            {
+                Console.WriteLine("Upgrade not found.");
+            }
+            return true;
+        }
+
+        [Command("getallupgrades")]
+        public static bool GetAllUpgrades()
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(SaveSystem.CurrentSave.Upgrades, Formatting.Indented));
+            return true;
+        }
+
         [Command("multarg")]
         [RequiresArgument("id")]
         [RequiresArgument("name")]
@@ -275,7 +286,7 @@ namespace ShiftOS.Engine
         }
 
         [Command("unlockeverything")]
-        public static bool GetAllUpgrades()
+        public static bool UnlockAllUpgrades()
         {
             foreach (var upg in Shiftorium.GetDefaults())
             {

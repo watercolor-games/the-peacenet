@@ -72,21 +72,6 @@ namespace ShiftOS.WinForms.Applications
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.txtappstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.job_current = new System.Windows.Forms.Panel();
-            this.lbtaskdescription = new System.Windows.Forms.Label();
-            this.lbtaskname = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.shop_view = new System.Windows.Forms.Panel();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.lbupggradedesc = new System.Windows.Forms.Label();
-            this.pnlbuy = new System.Windows.Forms.Panel();
-            this.lbprice = new System.Windows.Forms.Label();
-            this.btnbuy = new System.Windows.Forms.Button();
-            this.lbupgradetitle = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.lbupgrades = new System.Windows.Forms.ListBox();
-            this.lbcodepoints = new System.Windows.Forms.Label();
-            this.lbshopname = new System.Windows.Forms.Label();
             this.lgn_create = new System.Windows.Forms.Panel();
             this.btncreate = new System.Windows.Forms.Button();
             this.txtnewlegiondescription = new System.Windows.Forms.TextBox();
@@ -103,6 +88,21 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewlegionshortname = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtnewlegiontitle = new System.Windows.Forms.TextBox();
+            this.job_current = new System.Windows.Forms.Panel();
+            this.lbtaskdescription = new System.Windows.Forms.Label();
+            this.lbtaskname = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.shop_view = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.lbupgradedesc = new System.Windows.Forms.Label();
+            this.pnlbuy = new System.Windows.Forms.Panel();
+            this.lbprice = new System.Windows.Forms.Label();
+            this.btnbuy = new System.Windows.Forms.Button();
+            this.lbupgradetitle = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lbupgrades = new System.Windows.Forms.ListBox();
+            this.lbcodepoints = new System.Windows.Forms.Label();
+            this.lbshopname = new System.Windows.Forms.Label();
             this.lgn_view = new System.Windows.Forms.Panel();
             this.pnllgnusers = new System.Windows.Forms.Panel();
             this.lvusers = new System.Windows.Forms.ListView();
@@ -127,21 +127,39 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.shop_all = new System.Windows.Forms.Panel();
+            this.flshoplist = new System.Windows.Forms.FlowLayoutPanel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.shop_editor = new System.Windows.Forms.Panel();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.label15 = new System.Windows.Forms.Label();
+            this.btnsaveshop = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnaddshopitem = new System.Windows.Forms.Button();
+            this.btnremoveitem = new System.Windows.Forms.Button();
+            this.btnedititem = new System.Windows.Forms.Button();
+            this.txtshopname = new System.Windows.Forms.TextBox();
+            this.txtshopdescription = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.lgn_create.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.flowLayoutPanel4.SuspendLayout();
             this.job_current.SuspendLayout();
             this.shop_view.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlbuy.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.lgn_create.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.flowLayoutPanel4.SuspendLayout();
             this.lgn_view.SuspendLayout();
             this.pnllgnusers.SuspendLayout();
             this.banner.SuspendLayout();
@@ -151,6 +169,12 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel2.SuspendLayout();
             this.you_memos.SuspendLayout();
             this.you_systemstatus.SuspendLayout();
+            this.shop_all.SuspendLayout();
+            this.shop_editor.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
+            this.panel9.SuspendLayout();
+            this.flowLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -211,20 +235,22 @@ namespace ShiftOS.WinForms.Applications
             // browseToolStripMenuItem
             // 
             this.browseToolStripMenuItem.Name = "browseToolStripMenuItem";
-            this.browseToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.browseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.browseToolStripMenuItem.Text = "Browse";
+            this.browseToolStripMenuItem.Click += new System.EventHandler(this.browseToolStripMenuItem_Click);
             // 
             // myShopToolStripMenuItem
             // 
             this.myShopToolStripMenuItem.Name = "myShopToolStripMenuItem";
-            this.myShopToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.myShopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.myShopToolStripMenuItem.Text = "My Shop";
             // 
             // openAShopToolStripMenuItem
             // 
             this.openAShopToolStripMenuItem.Name = "openAShopToolStripMenuItem";
-            this.openAShopToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.openAShopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openAShopToolStripMenuItem.Text = "Open a Shop";
+            this.openAShopToolStripMenuItem.Click += new System.EventHandler(this.openAShopToolStripMenuItem_Click);
             // 
             // tasksToolStripMenuItem
             // 
@@ -305,9 +331,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_editor);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.job_current);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_join);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_memos);
@@ -323,167 +351,6 @@ namespace ShiftOS.WinForms.Applications
             // toolStripContainer1.TopToolStripPanel
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip1);
-            // 
-            // job_current
-            // 
-            this.job_current.Controls.Add(this.lbtaskdescription);
-            this.job_current.Controls.Add(this.lbtaskname);
-            this.job_current.Controls.Add(this.label6);
-            this.job_current.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.job_current.Location = new System.Drawing.Point(0, 0);
-            this.job_current.Name = "job_current";
-            this.job_current.Size = new System.Drawing.Size(756, 442);
-            this.job_current.TabIndex = 3;
-            // 
-            // lbtaskdescription
-            // 
-            this.lbtaskdescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbtaskdescription.Location = new System.Drawing.Point(0, 26);
-            this.lbtaskdescription.Margin = new System.Windows.Forms.Padding(30);
-            this.lbtaskdescription.Name = "lbtaskdescription";
-            this.lbtaskdescription.Size = new System.Drawing.Size(756, 416);
-            this.lbtaskdescription.TabIndex = 2;
-            this.lbtaskdescription.Text = "label12";
-            // 
-            // lbtaskname
-            // 
-            this.lbtaskname.AutoSize = true;
-            this.lbtaskname.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lbtaskname.Location = new System.Drawing.Point(0, 13);
-            this.lbtaskname.Margin = new System.Windows.Forms.Padding(15);
-            this.lbtaskname.Name = "lbtaskname";
-            this.lbtaskname.Size = new System.Drawing.Size(60, 13);
-            this.lbtaskname.TabIndex = 1;
-            this.lbtaskname.Tag = "header2";
-            this.lbtaskname.Text = "Task name";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label6.Location = new System.Drawing.Point(0, 0);
-            this.label6.Margin = new System.Windows.Forms.Padding(15);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(68, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Tag = "header1";
-            this.label6.Text = "Current Task";
-            // 
-            // shop_view
-            // 
-            this.shop_view.Controls.Add(this.panel5);
-            this.shop_view.Controls.Add(this.panel1);
-            this.shop_view.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shop_view.Location = new System.Drawing.Point(0, 0);
-            this.shop_view.Name = "shop_view";
-            this.shop_view.Size = new System.Drawing.Size(756, 442);
-            this.shop_view.TabIndex = 6;
-            // 
-            // panel5
-            // 
-            this.panel5.Controls.Add(this.lbupggradedesc);
-            this.panel5.Controls.Add(this.pnlbuy);
-            this.panel5.Controls.Add(this.lbupgradetitle);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(389, 0);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(367, 442);
-            this.panel5.TabIndex = 1;
-            // 
-            // lbupggradedesc
-            // 
-            this.lbupggradedesc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbupggradedesc.Location = new System.Drawing.Point(0, 43);
-            this.lbupggradedesc.Name = "lbupggradedesc";
-            this.lbupggradedesc.Size = new System.Drawing.Size(367, 363);
-            this.lbupggradedesc.TabIndex = 2;
-            this.lbupggradedesc.Text = "label6";
-            this.lbupggradedesc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // pnlbuy
-            // 
-            this.pnlbuy.Controls.Add(this.lbprice);
-            this.pnlbuy.Controls.Add(this.btnbuy);
-            this.pnlbuy.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbuy.Location = new System.Drawing.Point(0, 406);
-            this.pnlbuy.Name = "pnlbuy";
-            this.pnlbuy.Size = new System.Drawing.Size(367, 36);
-            this.pnlbuy.TabIndex = 1;
-            // 
-            // lbprice
-            // 
-            this.lbprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lbprice.AutoSize = true;
-            this.lbprice.Location = new System.Drawing.Point(6, 10);
-            this.lbprice.Name = "lbprice";
-            this.lbprice.Size = new System.Drawing.Size(35, 13);
-            this.lbprice.TabIndex = 1;
-            this.lbprice.Text = "label6";
-            // 
-            // btnbuy
-            // 
-            this.btnbuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnbuy.Location = new System.Drawing.Point(283, 3);
-            this.btnbuy.Name = "btnbuy";
-            this.btnbuy.Size = new System.Drawing.Size(75, 23);
-            this.btnbuy.TabIndex = 0;
-            this.btnbuy.Text = "button3";
-            this.btnbuy.UseVisualStyleBackColor = true;
-            // 
-            // lbupgradetitle
-            // 
-            this.lbupgradetitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lbupgradetitle.Location = new System.Drawing.Point(0, 0);
-            this.lbupgradetitle.Name = "lbupgradetitle";
-            this.lbupgradetitle.Size = new System.Drawing.Size(367, 43);
-            this.lbupgradetitle.TabIndex = 0;
-            this.lbupgradetitle.Tag = "header2";
-            this.lbupgradetitle.Text = "Welcome to my shop!";
-            this.lbupgradetitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.lbupgrades);
-            this.panel1.Controls.Add(this.lbcodepoints);
-            this.panel1.Controls.Add(this.lbshopname);
-            this.panel1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(389, 442);
-            this.panel1.TabIndex = 0;
-            // 
-            // lbupgrades
-            // 
-            this.lbupgrades.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbupgrades.FormattingEnabled = true;
-            this.lbupgrades.Location = new System.Drawing.Point(0, 46);
-            this.lbupgrades.Name = "lbupgrades";
-            this.lbupgrades.Size = new System.Drawing.Size(389, 383);
-            this.lbupgrades.TabIndex = 2;
-            // 
-            // lbcodepoints
-            // 
-            this.lbcodepoints.AutoSize = true;
-            this.lbcodepoints.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lbcodepoints.Location = new System.Drawing.Point(0, 429);
-            this.lbcodepoints.Margin = new System.Windows.Forms.Padding(10);
-            this.lbcodepoints.Name = "lbcodepoints";
-            this.lbcodepoints.Size = new System.Drawing.Size(72, 13);
-            this.lbcodepoints.TabIndex = 1;
-            this.lbcodepoints.Tag = "header2";
-            this.lbcodepoints.Text = "Codepoints: 0";
-            // 
-            // lbshopname
-            // 
-            this.lbshopname.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lbshopname.Location = new System.Drawing.Point(0, 0);
-            this.lbshopname.Name = "lbshopname";
-            this.lbshopname.Size = new System.Drawing.Size(389, 46);
-            this.lbshopname.TabIndex = 0;
-            this.lbshopname.Tag = "header1";
-            this.lbshopname.Text = "My shop";
-            this.lbshopname.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lgn_create
             // 
@@ -671,6 +538,168 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewlegiontitle.Tag = "inheritbg inheritfg header1";
             this.txtnewlegiontitle.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtnewlegiontitle.TextChanged += new System.EventHandler(this.txtnewlegiontitle_TextChanged);
+            // 
+            // job_current
+            // 
+            this.job_current.Controls.Add(this.lbtaskdescription);
+            this.job_current.Controls.Add(this.lbtaskname);
+            this.job_current.Controls.Add(this.label6);
+            this.job_current.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.job_current.Location = new System.Drawing.Point(0, 0);
+            this.job_current.Name = "job_current";
+            this.job_current.Size = new System.Drawing.Size(756, 442);
+            this.job_current.TabIndex = 3;
+            // 
+            // lbtaskdescription
+            // 
+            this.lbtaskdescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbtaskdescription.Location = new System.Drawing.Point(0, 26);
+            this.lbtaskdescription.Margin = new System.Windows.Forms.Padding(30);
+            this.lbtaskdescription.Name = "lbtaskdescription";
+            this.lbtaskdescription.Size = new System.Drawing.Size(756, 416);
+            this.lbtaskdescription.TabIndex = 2;
+            this.lbtaskdescription.Text = "label12";
+            // 
+            // lbtaskname
+            // 
+            this.lbtaskname.AutoSize = true;
+            this.lbtaskname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbtaskname.Location = new System.Drawing.Point(0, 13);
+            this.lbtaskname.Margin = new System.Windows.Forms.Padding(15);
+            this.lbtaskname.Name = "lbtaskname";
+            this.lbtaskname.Size = new System.Drawing.Size(60, 13);
+            this.lbtaskname.TabIndex = 1;
+            this.lbtaskname.Tag = "header2";
+            this.lbtaskname.Text = "Task name";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label6.Location = new System.Drawing.Point(0, 0);
+            this.label6.Margin = new System.Windows.Forms.Padding(15);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(68, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Tag = "header1";
+            this.label6.Text = "Current Task";
+            // 
+            // shop_view
+            // 
+            this.shop_view.Controls.Add(this.panel5);
+            this.shop_view.Controls.Add(this.panel1);
+            this.shop_view.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shop_view.Location = new System.Drawing.Point(0, 0);
+            this.shop_view.Name = "shop_view";
+            this.shop_view.Size = new System.Drawing.Size(756, 442);
+            this.shop_view.TabIndex = 6;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.lbupgradedesc);
+            this.panel5.Controls.Add(this.pnlbuy);
+            this.panel5.Controls.Add(this.lbupgradetitle);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(389, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(367, 442);
+            this.panel5.TabIndex = 1;
+            // 
+            // lbupgradedesc
+            // 
+            this.lbupgradedesc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbupgradedesc.Location = new System.Drawing.Point(0, 43);
+            this.lbupgradedesc.Name = "lbupgradedesc";
+            this.lbupgradedesc.Size = new System.Drawing.Size(367, 363);
+            this.lbupgradedesc.TabIndex = 2;
+            this.lbupgradedesc.Text = "label6";
+            this.lbupgradedesc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pnlbuy
+            // 
+            this.pnlbuy.Controls.Add(this.lbprice);
+            this.pnlbuy.Controls.Add(this.btnbuy);
+            this.pnlbuy.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlbuy.Location = new System.Drawing.Point(0, 406);
+            this.pnlbuy.Name = "pnlbuy";
+            this.pnlbuy.Size = new System.Drawing.Size(367, 36);
+            this.pnlbuy.TabIndex = 1;
+            // 
+            // lbprice
+            // 
+            this.lbprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbprice.AutoSize = true;
+            this.lbprice.Location = new System.Drawing.Point(6, 10);
+            this.lbprice.Name = "lbprice";
+            this.lbprice.Size = new System.Drawing.Size(35, 13);
+            this.lbprice.TabIndex = 1;
+            this.lbprice.Text = "label6";
+            // 
+            // btnbuy
+            // 
+            this.btnbuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnbuy.Location = new System.Drawing.Point(283, 3);
+            this.btnbuy.Name = "btnbuy";
+            this.btnbuy.Size = new System.Drawing.Size(75, 23);
+            this.btnbuy.TabIndex = 0;
+            this.btnbuy.Text = "button3";
+            this.btnbuy.UseVisualStyleBackColor = true;
+            this.btnbuy.Click += new System.EventHandler(this.btnbuy_Click);
+            // 
+            // lbupgradetitle
+            // 
+            this.lbupgradetitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbupgradetitle.Location = new System.Drawing.Point(0, 0);
+            this.lbupgradetitle.Name = "lbupgradetitle";
+            this.lbupgradetitle.Size = new System.Drawing.Size(367, 43);
+            this.lbupgradetitle.TabIndex = 0;
+            this.lbupgradetitle.Tag = "header2";
+            this.lbupgradetitle.Text = "Welcome to my shop!";
+            this.lbupgradetitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.lbupgrades);
+            this.panel1.Controls.Add(this.lbcodepoints);
+            this.panel1.Controls.Add(this.lbshopname);
+            this.panel1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(389, 442);
+            this.panel1.TabIndex = 0;
+            // 
+            // lbupgrades
+            // 
+            this.lbupgrades.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbupgrades.FormattingEnabled = true;
+            this.lbupgrades.Location = new System.Drawing.Point(0, 46);
+            this.lbupgrades.Name = "lbupgrades";
+            this.lbupgrades.Size = new System.Drawing.Size(389, 383);
+            this.lbupgrades.TabIndex = 2;
+            // 
+            // lbcodepoints
+            // 
+            this.lbcodepoints.AutoSize = true;
+            this.lbcodepoints.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lbcodepoints.Location = new System.Drawing.Point(0, 429);
+            this.lbcodepoints.Margin = new System.Windows.Forms.Padding(10);
+            this.lbcodepoints.Name = "lbcodepoints";
+            this.lbcodepoints.Size = new System.Drawing.Size(72, 13);
+            this.lbcodepoints.TabIndex = 1;
+            this.lbcodepoints.Tag = "header2";
+            this.lbcodepoints.Text = "Codepoints: 0";
+            // 
+            // lbshopname
+            // 
+            this.lbshopname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbshopname.Location = new System.Drawing.Point(0, 0);
+            this.lbshopname.Name = "lbshopname";
+            this.lbshopname.Size = new System.Drawing.Size(389, 46);
+            this.lbshopname.TabIndex = 0;
+            this.lbshopname.Tag = "header1";
+            this.lbshopname.Text = "My shop";
+            this.lbshopname.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lgn_view
             // 
@@ -955,6 +984,205 @@ namespace ShiftOS.WinForms.Applications
             this.label1.Tag = "header1";
             this.label1.Text = "You";
             // 
+            // shop_all
+            // 
+            this.shop_all.Controls.Add(this.flshoplist);
+            this.shop_all.Controls.Add(this.label12);
+            this.shop_all.Controls.Add(this.label13);
+            this.shop_all.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shop_all.Location = new System.Drawing.Point(0, 0);
+            this.shop_all.Name = "shop_all";
+            this.shop_all.Size = new System.Drawing.Size(756, 442);
+            this.shop_all.TabIndex = 7;
+            // 
+            // flshoplist
+            // 
+            this.flshoplist.AutoScroll = true;
+            this.flshoplist.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flshoplist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flshoplist.Location = new System.Drawing.Point(0, 94);
+            this.flshoplist.Name = "flshoplist";
+            this.flshoplist.Size = new System.Drawing.Size(756, 348);
+            this.flshoplist.TabIndex = 1;
+            this.flshoplist.WrapContents = false;
+            // 
+            // label12
+            // 
+            this.label12.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label12.Location = new System.Drawing.Point(0, 43);
+            this.label12.Name = "label12";
+            this.label12.Padding = new System.Windows.Forms.Padding(15, 0, 15, 15);
+            this.label12.Size = new System.Drawing.Size(756, 51);
+            this.label12.TabIndex = 0;
+            this.label12.Tag = "";
+            this.label12.Text = resources.GetString("label12.Text");
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label13.Location = new System.Drawing.Point(0, 0);
+            this.label13.Name = "label13";
+            this.label13.Padding = new System.Windows.Forms.Padding(15);
+            this.label13.Size = new System.Drawing.Size(67, 43);
+            this.label13.TabIndex = 2;
+            this.label13.Tag = "header1";
+            this.label13.Text = "Shops";
+            // 
+            // shop_editor
+            // 
+            this.shop_editor.Controls.Add(this.panel7);
+            this.shop_editor.Controls.Add(this.panel9);
+            this.shop_editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shop_editor.Location = new System.Drawing.Point(0, 0);
+            this.shop_editor.Name = "shop_editor";
+            this.shop_editor.Size = new System.Drawing.Size(756, 442);
+            this.shop_editor.TabIndex = 8;
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.txtshopdescription);
+            this.panel7.Controls.Add(this.panel8);
+            this.panel7.Controls.Add(this.label16);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel7.Location = new System.Drawing.Point(389, 0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(367, 442);
+            this.panel7.TabIndex = 1;
+            // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.label15);
+            this.panel8.Controls.Add(this.btnsaveshop);
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel8.Location = new System.Drawing.Point(0, 406);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(367, 36);
+            this.panel8.TabIndex = 1;
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 10);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(267, 13);
+            this.label15.TabIndex = 1;
+            this.label15.Text = "When you are done editing your shop, click this button:";
+            // 
+            // btnsaveshop
+            // 
+            this.btnsaveshop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnsaveshop.Location = new System.Drawing.Point(283, 3);
+            this.btnsaveshop.Name = "btnsaveshop";
+            this.btnsaveshop.Size = new System.Drawing.Size(75, 23);
+            this.btnsaveshop.TabIndex = 0;
+            this.btnsaveshop.Text = "Save";
+            this.btnsaveshop.UseVisualStyleBackColor = true;
+            this.btnsaveshop.Click += new System.EventHandler(this.btnsaveshop_Click);
+            // 
+            // label16
+            // 
+            this.label16.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label16.Location = new System.Drawing.Point(0, 0);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(367, 43);
+            this.label16.TabIndex = 0;
+            this.label16.Tag = "header2";
+            this.label16.Text = "Welcome to my shop!";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.listBox1);
+            this.panel9.Controls.Add(this.txtshopname);
+            this.panel9.Controls.Add(this.flowLayoutPanel5);
+            this.panel9.Cursor = System.Windows.Forms.Cursors.Default;
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel9.Location = new System.Drawing.Point(0, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(389, 442);
+            this.panel9.TabIndex = 0;
+            // 
+            // listBox1
+            // 
+            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(0, 20);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(389, 393);
+            this.listBox1.TabIndex = 2;
+            // 
+            // flowLayoutPanel5
+            // 
+            this.flowLayoutPanel5.AutoSize = true;
+            this.flowLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel5.Controls.Add(this.btnaddshopitem);
+            this.flowLayoutPanel5.Controls.Add(this.btnremoveitem);
+            this.flowLayoutPanel5.Controls.Add(this.btnedititem);
+            this.flowLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(0, 413);
+            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(389, 29);
+            this.flowLayoutPanel5.TabIndex = 3;
+            // 
+            // btnaddshopitem
+            // 
+            this.btnaddshopitem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnaddshopitem.AutoSize = true;
+            this.btnaddshopitem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnaddshopitem.Location = new System.Drawing.Point(3, 3);
+            this.btnaddshopitem.Name = "btnaddshopitem";
+            this.btnaddshopitem.Size = new System.Drawing.Size(36, 23);
+            this.btnaddshopitem.TabIndex = 1;
+            this.btnaddshopitem.Text = "Add";
+            this.btnaddshopitem.UseVisualStyleBackColor = true;
+            this.btnaddshopitem.Click += new System.EventHandler(this.btnaddshopitem_Click);
+            // 
+            // btnremoveitem
+            // 
+            this.btnremoveitem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnremoveitem.AutoSize = true;
+            this.btnremoveitem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnremoveitem.Location = new System.Drawing.Point(45, 3);
+            this.btnremoveitem.Name = "btnremoveitem";
+            this.btnremoveitem.Size = new System.Drawing.Size(57, 23);
+            this.btnremoveitem.TabIndex = 2;
+            this.btnremoveitem.Text = "Remove";
+            this.btnremoveitem.UseVisualStyleBackColor = true;
+            // 
+            // btnedititem
+            // 
+            this.btnedititem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnedititem.AutoSize = true;
+            this.btnedititem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnedititem.Location = new System.Drawing.Point(108, 3);
+            this.btnedititem.Name = "btnedititem";
+            this.btnedititem.Size = new System.Drawing.Size(35, 23);
+            this.btnedititem.TabIndex = 3;
+            this.btnedititem.Text = "Edit";
+            this.btnedititem.UseVisualStyleBackColor = true;
+            // 
+            // txtshopname
+            // 
+            this.txtshopname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtshopname.Location = new System.Drawing.Point(0, 0);
+            this.txtshopname.Name = "txtshopname";
+            this.txtshopname.Size = new System.Drawing.Size(389, 20);
+            this.txtshopname.TabIndex = 4;
+            this.txtshopname.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtshopname.TextChanged += new System.EventHandler(this.txtshopname_TextChanged);
+            // 
+            // txtshopdescription
+            // 
+            this.txtshopdescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtshopdescription.Location = new System.Drawing.Point(0, 43);
+            this.txtshopdescription.Multiline = true;
+            this.txtshopdescription.Name = "txtshopdescription";
+            this.txtshopdescription.Size = new System.Drawing.Size(367, 363);
+            this.txtshopdescription.TabIndex = 2;
+            this.txtshopdescription.TextChanged += new System.EventHandler(this.txtshopdescription_TextChanged);
+            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -975,14 +1203,6 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
-            this.job_current.ResumeLayout(false);
-            this.job_current.PerformLayout();
-            this.shop_view.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            this.pnlbuy.ResumeLayout(false);
-            this.pnlbuy.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.lgn_create.ResumeLayout(false);
             this.lgn_create.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -991,6 +1211,14 @@ namespace ShiftOS.WinForms.Applications
             this.panel4.PerformLayout();
             this.flowLayoutPanel4.ResumeLayout(false);
             this.flowLayoutPanel4.PerformLayout();
+            this.job_current.ResumeLayout(false);
+            this.job_current.PerformLayout();
+            this.shop_view.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.pnlbuy.ResumeLayout(false);
+            this.pnlbuy.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.lgn_view.ResumeLayout(false);
             this.lgn_view.PerformLayout();
             this.pnllgnusers.ResumeLayout(false);
@@ -1008,6 +1236,17 @@ namespace ShiftOS.WinForms.Applications
             this.you_memos.PerformLayout();
             this.you_systemstatus.ResumeLayout(false);
             this.you_systemstatus.PerformLayout();
+            this.shop_all.ResumeLayout(false);
+            this.shop_all.PerformLayout();
+            this.shop_editor.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            this.flowLayoutPanel5.ResumeLayout(false);
+            this.flowLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1075,7 +1314,7 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ComboBox cbpublicity;
         private System.Windows.Forms.Panel shop_view;
         private System.Windows.Forms.Panel panel5;
-        private System.Windows.Forms.Label lbupggradedesc;
+        private System.Windows.Forms.Label lbupgradedesc;
         private System.Windows.Forms.Panel pnlbuy;
         private System.Windows.Forms.Label lbprice;
         private System.Windows.Forms.Button btnbuy;
@@ -1088,5 +1327,23 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Label lbtaskname;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lbtaskdescription;
+        private System.Windows.Forms.Panel shop_all;
+        private System.Windows.Forms.FlowLayoutPanel flshoplist;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Panel shop_editor;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.TextBox txtshopdescription;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnsaveshop;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.TextBox txtshopname;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel5;
+        private System.Windows.Forms.Button btnaddshopitem;
+        private System.Windows.Forms.Button btnremoveitem;
+        private System.Windows.Forms.Button btnedititem;
     }
 }

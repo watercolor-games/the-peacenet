@@ -365,6 +365,109 @@ Contents:
                             Console.WriteLine("After dispatch");
                         }
                         break;
+                    case "update_shop_by_user":
+                        List<Shop> shopList = new List<Shop>();
+                        if (File.Exists("shops.json"))
+                            shopList = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
+
+                        var username = args["username"] as string;
+                        var updateShop = JsonConvert.DeserializeObject<Shop>(msg.Contents);
+
+                        for(int i = 0; i < shopList.Count; i++)
+                        {
+                            if(shopList[i].Owner == username)
+                            {
+                                shopList[i] = updateShop;
+                            }
+                        }
+
+                        File.WriteAllText("shops.json", JsonConvert.SerializeObject(shopList, Formatting.Indented));
+
+                        server.DispatchTo(new Guid(msg.GUID), new NetObject("nametaken", new ServerMessage
+                        {
+                            Name = "shop_added",
+                            GUID = "server",
+                        }));
+
+
+                        break;
+                    case "create_shop":
+                        List<Shop> shopFile = new List<Shop>();
+                        if (File.Exists("shops.json"))
+                            shopFile = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
+
+                        var newShop = JsonConvert.DeserializeObject<Shop>(msg.Contents);
+
+                        foreach (var shop in shopFile)
+                        {
+                            if (shop.Name == newShop.Name)
+                            {
+                                server.DispatchTo(new Guid(msg.GUID), new NetObject("nametaken", new ServerMessage
+                                {
+                                    Name = "shop_taken",
+                                    GUID = "server",
+                                }));
+                            }
+                            return;
+                        }
+
+                        shopFile.Add(newShop);
+                        File.WriteAllText("shops.json", JsonConvert.SerializeObject(shopFile, Formatting.Indented));
+
+                        server.DispatchTo(new Guid(msg.GUID), new NetObject("nametaken", new ServerMessage
+                        {
+                            Name = "shop_added",
+                            GUID = "server",
+                        }));
+
+                        break;
+                    case "user_shop_check":
+                        List<Shop> allshops = new List<Shop>();
+                        if (File.Exists("shops.json"))
+                            allshops = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
+
+                        int res = 0;
+
+                        foreach(var shop in allshops)
+                        {
+                            if(shop.Owner == args["username"] as string)
+                            {
+                                res = 1;
+                            }
+                        }
+
+                        server.DispatchTo(new Guid(msg.GUID), new NetObject("hahhhhhhh", new ServerMessage
+                        {
+                            Name = "user_shop_check_result",
+                            GUID = "server",
+                            Contents = res.ToString()
+                        }));
+
+                        break;
+                    case "shop_getall":
+                        List<Shop> shops = new List<Shop>();
+                        if (File.Exists("shops.json"))
+                            shops = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
+
+                        server.DispatchTo(new Guid(msg.GUID), new NetObject("ladouceur", new ServerMessage
+                        {
+                            Name = "shop_all",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(shops)
+                        }));
+                        break;
+                    case "shop_requestdownload":
+                        string download = args["download"] as string;
+                        if (File.Exists(download) && download.StartsWith("shopDownloads/"))
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("shop_download_meta", new ServerMessage
+                            {
+                                Name = "shop_download_meta",
+                                GUID = "server",
+                                Contents = JsonConvert.SerializeObject(File.ReadAllBytes(download))
+                            }));
+                        }
+                        break;
 				case "usr_givecp":
 					if (args["username"] != null && args["amount"] != null)
 					{
@@ -599,7 +702,7 @@ Contents:
 				case "get_memos_for_user":
 					if(args["username"] != null)
 					{
-						string usrname = args["username"].ToString();
+						string usrnme = args["username"].ToString();
 
 						List<MUDMemo> mmos = new List<MUDMemo>();
 
@@ -607,7 +710,7 @@ Contents:
 						{
 							foreach(var mmo in JsonConvert.DeserializeObject<MUDMemo[]>(File.ReadAllText("memos.json")))
 							{
-								if(mmo.UserTo == usrname)
+								if(mmo.UserTo == usrnme)
 								{
 									mmos.Add(mmo);
 								}
@@ -1128,13 +1231,13 @@ The page you requested at was not found on this multi-user domain."
 					server.DispatchTo(new Guid(msg.GUID), new NetObject("bounce", msg));
 					break;
 				case "getguid_send":
-					string username = msg.Contents;
+					string usrname = msg.Contents;
 					string guid = msg.GUID;
 					server.DispatchAll(new NetObject("are_you_this_guy", new ServerMessage
 						{
 							Name = "getguid_fromserver",
 							GUID = guid,
-							Contents = username,
+							Contents = usrname,
 						}));
 					break;
 				case "script":

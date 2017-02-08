@@ -130,4 +130,7 @@ You can set up a banner color, short and long name, and a description on this sc
 
 The description will be what explains your legion - what does it do? Why should the user join it? Stuff like that.</value>
   </data>
+  <data name="label12.Text" xml:space="preserve">
+    <value>The multi-user domain has many unique shops selling many items such as applications, skins and other things. Just choose a shop, browse for an item you'd like, then pay Codepoints and the download will begin.</value>
+  </data>
 </root>

@@ -104,6 +104,8 @@ namespace ShiftOS.WinForms
 
     public class WinformsFSFrontend : IFileSkimmer
     {
+
+
         public void OpenDirectory(string path)
         {
             var fs = new Applications.FileSkimmer();
@@ -184,6 +186,32 @@ namespace ShiftOS.WinForms
         public Image GetImage(string path)
         {
             return Applications.FileSkimmer.GetImage(FileSkimmerBackend.GetFileType(path));
+        }
+
+        public string GetFileExtension(FileType fileType)
+        {
+            switch (fileType)
+            {
+                case FileType.Executable:
+                    return ".saa";
+                case FileType.Filesystem:
+                    return ".mfs";
+                case FileType.Image:
+                    return ".pic";
+                case FileType.JSON:
+                    return ".json";
+                case FileType.Lua:
+                    return ".lua";
+                case FileType.Python:
+                    return ".py";
+                case FileType.Skin:
+                    return ".skn";
+                case FileType.TextFile:
+                    return ".txt";
+                default:
+                    return ".bin";
+
+            }
         }
     }
 }
