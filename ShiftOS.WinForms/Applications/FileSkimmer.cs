@@ -43,6 +43,7 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("file_skimmer")]
     [WinOpen("file_skimmer")]
     [DefaultTitle("File Skimmer")]
+    [DefaultIcon("iconFileSkimmer")]
     public partial class FileSkimmer : UserControl, IShiftOSWindow
     {
         public FileSkimmer()

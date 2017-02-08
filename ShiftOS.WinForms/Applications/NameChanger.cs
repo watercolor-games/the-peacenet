@@ -42,6 +42,7 @@ namespace ShiftOS.WinForms.Applications {
     [RequiresUpgrade("name_changer")]
     [WinOpen("name_changer")]
     [DefaultTitle("Name Changer")]
+    [DefaultIcon("iconNameChanger")]
     public partial class NameChanger : UserControl, IShiftOSWindow
     {
         public NameChanger()

@@ -16,6 +16,7 @@ using ShiftOS.WinForms.Tools;
 namespace ShiftOS.WinForms.Applications
 {
     [Launcher("Downloader", false, null, "Networking")]
+    [DefaultIcon("iconDownloader")]
     public partial class Downloader : UserControl, IShiftOSWindow
     {
         public Downloader()

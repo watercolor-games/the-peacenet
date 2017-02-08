@@ -37,7 +37,7 @@ using API = ShiftOS.WinForms.Tools.ColorPickerDataBackend;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [DefaultTitle("Choose color")]
+    [DefaultTitle("Choose color")] [DefaultIcon("iconColourPicker")]
     public partial class ColorPicker : UserControl, IShiftOSWindow
     {
         public ColorPicker(Color oldcol, string ctc,  Action<Color> callback)

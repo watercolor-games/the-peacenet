@@ -42,6 +42,7 @@ namespace ShiftOS.WinForms.Applications
     /// 
     /// </summary>
     [DefaultTitle("Choose file")]
+    [DefaultIcon("iconFileSkimmer")]
     public partial class FileDialog : UserControl, IShiftOSWindow
     {
         public FileDialog(string[] filetypes, FileOpenerStyle style, Action<string> _callback)
