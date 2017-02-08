@@ -176,24 +176,27 @@ namespace ShiftOS.Engine
                     Console.WriteLine("   ...{DONE}.");
                 }
 
-                Story.Start();
-
-
                 Thread.Sleep(50);
                 Console.WriteLine("{SYSTEM_INITIATED}");
 
                 TerminalBackend.InStory = false;
+                TerminalBackend.PrefixEnabled = true;
                 Shiftorium.LogOrphanedUpgrades = true;
                 Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
-                GameReady?.Invoke();
                 if (CurrentSave.StoryPosition == 1)
                 {
                     Desktop.InvokeOnWorkerThread(new Action(() =>
                     {
                         TutorialManager.StartTutorial();
+                        
                     }));
+                    while(TutorialManager.IsInTutorial == true) { }
+                        GameReady?.Invoke();
                 }
-
+                else
+                {
+                    GameReady?.Invoke();
+                }
             }));
             thread.IsBackground = true;
             thread.Start();

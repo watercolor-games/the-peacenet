@@ -348,6 +348,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
             ShiftOS.Objects.ShiftFS.Utils.Delete(Paths.GetPath("user.dat"));
             System.IO.File.WriteAllText(Paths.SaveFile, ShiftOS.Objects.ShiftFS.Utils.ExportMount(0));
             SaveSystem.NewSave();
+            this.CanClose = true;
             this.Close();
         }
     }

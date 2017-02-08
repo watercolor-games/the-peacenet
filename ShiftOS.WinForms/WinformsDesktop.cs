@@ -99,7 +99,7 @@ namespace ShiftOS.WinForms
             };
             time.Tick += (o, a) =>
             {
-                if (SaveSystem.CurrentSave != null)
+                if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
                 {
                     lbtime.Text = Applications.Terminal.GetTime();
                     lbtime.Left = desktoppanel.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;

@@ -122,11 +122,14 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        public static bool IsInitiated { get; private set; }
 
         public static void Init()
         {
-            try
+            if (IsInitiated == false)
             {
+                IsInitiated = true;
+                //Let the crash handler deal with this one...
                 var dict = GetDefaults();
                 foreach (var itm in dict)
                 {
@@ -136,9 +139,7 @@ namespace ShiftOS.Engine
                     }
                 }
             }
-            catch
-            {
-            }
+
         }
 
         public static int GetCPValue(string id)

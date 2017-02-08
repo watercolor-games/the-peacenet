@@ -199,6 +199,8 @@ namespace ShiftOS.WinForms
                     TextType("I have been installing ShiftOS on your system in the background as I was talking with you. Before I can set you free, I need to give you a tutorial on how to use the system.");
                     Thread.Sleep(500);
                     TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
+                    
+                    Thread.Sleep(3000);
                     SaveSystem.CurrentSave = MySave;
                     SaveSystem.CurrentSave.StoryPosition = 1;
                     Utils.WriteAllText(Paths.GetPath("user.dat"), JsonConvert.SerializeObject(new
@@ -207,18 +209,10 @@ namespace ShiftOS.WinForms
                         password = MySave.Password
                     }));
                     Shiftorium.Silent = true;
-                    SaveSystem.SaveGame();
-                    
-                    Thread.Sleep(3000);
-                    try {
-                        TutorialManager.StartTutorial();
-                    } catch (Exception e) {
-                        TextType("An error has occoured while starting the tutorial");
-                        TextType(e.ToString());
-                    }
-                    //this.Close(); // This has been commented out because the form closes when the error appears. Uncomment this if no more errors appear
+                    SaveSystem.SaveGame(); //Yknow, just incase it crashes.
+                    this.Invoke(new Action(this.Close));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     TextType("I have experienced an error.");
                     TextType(e.ToString());
