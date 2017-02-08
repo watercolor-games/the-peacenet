@@ -26,21 +26,24 @@ namespace ShiftOS.WinForms
             get
             {
                 if (SaveSystem.CurrentSave == null)
-                    return 1.0f;
+                    return 0.0f;
+                if (TutorialManager.IsInTutorial || SaveSystem.CurrentSave.StoryPosition < 1)
+                    return 0.0f;
                 try
                 {
                     return SaveSystem.CurrentSave.Settings.audioVolume;
                 }
                 catch
                 {
-                    SaveSystem.CurrentSave.Settings.audioVolume = 1.0f;
-                    return 1.0f;
+                    SaveSystem.CurrentSave.Settings.audioVolume = 0.45F;
+                    return 0.45F;
                 }
-            }
+                }
 
             set
             {
                 SaveSystem.CurrentSave.Settings.audioVolume = value;
+                //SaveSystem.SaveGame();
             }
         }
 

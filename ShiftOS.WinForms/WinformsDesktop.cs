@@ -99,11 +99,14 @@ namespace ShiftOS.WinForms
             };
             time.Tick += (o, a) =>
             {
-                if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
+                if (Shiftorium.IsInitiated == true)
                 {
-                    lbtime.Text = Applications.Terminal.GetTime();
-                    lbtime.Left = desktoppanel.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
-                    lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
+                    if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
+                    {
+                        lbtime.Text = Applications.Terminal.GetTime();
+                        lbtime.Left = desktoppanel.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
+                        lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
+                    }
                 }
             };
             time.Start();

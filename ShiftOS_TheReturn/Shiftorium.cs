@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static ShiftOS.Engine.SaveSystem;
+using System.Diagnostics;
 
 namespace ShiftOS.Engine
 {
@@ -242,6 +243,9 @@ namespace ShiftOS.Engine
         public ShiftoriumUpgradeLookupException(string id) : base("A shiftorium upgrade of ID \"" + id + "\" was not found in the system.")
         {
             ID = id;
+
+            Debug.WriteLine("UpgradeNotFound: " + id);
+
         }
 
         public string ID { get; private set; }

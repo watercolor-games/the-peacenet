@@ -171,7 +171,6 @@ namespace ShiftOS.WinForms
                     TextType("Creating new user: " + MySave.Username);
                     TextType("...with 0 Codepoints, 0 installed upgrades, no legion, and no user shops...");
                     MySave.Codepoints = 0;
-                    MySave.Upgrades = new Dictionary<string, bool>();
                     MySave.CurrentLegions = new List<string>();
                     MySave.MyShop = "";
                     TextType("User created successfully.");
