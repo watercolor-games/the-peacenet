@@ -407,8 +407,8 @@ Contents:
                                     Name = "shop_taken",
                                     GUID = "server",
                                 }));
+                                return;
                             }
-                            return;
                         }
 
                         shopFile.Add(newShop);

@@ -77,13 +77,20 @@ namespace ShiftOS.Objects
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if (_settings.ContainsKey(binder.Name))
+            try
             {
-                _settings[binder.Name] = value;
+                if (_settings.ContainsKey(binder.Name))
+                {
+                    _settings[binder.Name] = value;
+                }
+                else
+                {
+                    _settings.Add(binder.Name, value);
+                }
             }
-            else
+            catch
             {
-                _settings.Add(binder.Name, value);
+
             }
 
             return true;

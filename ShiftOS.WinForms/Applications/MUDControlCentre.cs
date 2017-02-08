@@ -147,7 +147,7 @@ namespace ShiftOS.WinForms.Applications
                                 Infobox.Show("No shop.", "You do not currently own any shops. You must open one to use this screen.");
                             }));
                         }
-                        else if (msg.Name == "shop_allshops")
+                        else if (msg.Name == "shop_all")
                         {
                             this.Invoke(new Action(() =>
                             {
@@ -205,10 +205,6 @@ namespace ShiftOS.WinForms.Applications
                 bnr.Controls.Add(lTitle);
                 lTitle.Show();
                 var desc = new Label();
-                desc.Left = lTitle.Left;
-                desc.Width = (bnr.Width - desc.Left - desc.Left);
-                desc.Top = lTitle.Top + lTitle.Height;
-                desc.Height = (bnr.Height - lTitle.Top);
                 desc.Text = shop.Description;
                 bnr.Controls.Add(desc);
                 desc.Show();
@@ -236,6 +232,11 @@ namespace ShiftOS.WinForms.Applications
                 flshoplist.Controls.Add(bnr);
                 bnr.Show();
                 ControlManager.SetupControls(bnr);
+                desc.Left = lTitle.Left;
+                desc.Width = (bnr.Width - desc.Left - desc.Left);
+                desc.Top = lTitle.Top + lTitle.Height;
+                desc.Height = (bnr.Height - lTitle.Top);
+
             }
 
         }
@@ -243,7 +244,7 @@ namespace ShiftOS.WinForms.Applications
         public void ShowShop(Shop shop)
         {
             shop_view.BringToFront();
-
+            CurrentShop = shop;
             lbshopname.Text = shop.Name;
             lbupgradetitle.Text = $"Welcome to {shop.Name}.";
             lbupgradedesc.Text = shop.Description;
@@ -616,7 +617,7 @@ Current legions: {legionname}";
 
         private void browseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ServerManager.SendMessage("shop_getallshops", "");
+            ServerManager.SendMessage("shop_getall", "");
         }
 
         private void btnbuy_Click(object sender, EventArgs e)

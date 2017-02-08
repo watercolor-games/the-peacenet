@@ -643,7 +643,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnbuy.Name = "btnbuy";
             this.btnbuy.Size = new System.Drawing.Size(75, 23);
             this.btnbuy.TabIndex = 0;
-            this.btnbuy.Text = "button3";
+            this.btnbuy.Text = "Buy";
             this.btnbuy.UseVisualStyleBackColor = true;
             this.btnbuy.Click += new System.EventHandler(this.btnbuy_Click);
             // 
