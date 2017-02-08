@@ -180,7 +180,13 @@ namespace ShiftOS.WinForms.Applications
 
         public void PopulateShopEditor()
         {
-
+            txtshopdescription.Text = editingShop.Description;
+            txtshopname.Text = editingShop.Description;
+            lbeditingshopitems.Items.Clear();
+            foreach(var item in editingShop.Items)
+            {
+                lbeditingshopitems.Items.Add(item.Name);
+            }
         }
 
         public void PopulateShopList(Shop[] shops)
@@ -265,6 +271,14 @@ namespace ShiftOS.WinForms.Applications
                 lbprice.Text = $"Cost: {item.Cost} CP";
                 btnbuy.Show();
             };
+            if(shop.Owner == SaveSystem.CurrentSave.Username)
+            {
+                btneditshop.Show();
+            }
+            else
+            {
+                btneditshop.Hide();
+            }
         }
 
         private ShopItem item = null;
@@ -739,6 +753,14 @@ Current legions: {legionname}";
         private void myShopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentSave.Username);
+        }
+
+        private void btneditshop_Click(object sender, EventArgs e)
+        {
+            editingShop = CurrentShop;
+            creatingShop = false;
+            shop_editor.BringToFront();
+            PopulateShopEditor();
         }
     }
 }

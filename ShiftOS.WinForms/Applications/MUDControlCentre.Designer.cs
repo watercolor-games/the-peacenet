@@ -145,6 +145,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnedititem = new System.Windows.Forms.Button();
             this.txtshopname = new System.Windows.Forms.TextBox();
             this.txtshopdescription = new System.Windows.Forms.TextBox();
+            this.btneditshop = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -332,8 +333,8 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_editor);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_editor);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.job_current);
@@ -618,6 +619,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnlbuy
             // 
+            this.pnlbuy.Controls.Add(this.btneditshop);
             this.pnlbuy.Controls.Add(this.lbprice);
             this.pnlbuy.Controls.Add(this.btnbuy);
             this.pnlbuy.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -1186,6 +1188,17 @@ namespace ShiftOS.WinForms.Applications
             this.txtshopdescription.TabIndex = 2;
             this.txtshopdescription.TextChanged += new System.EventHandler(this.txtshopdescription_TextChanged);
             // 
+            // btneditshop
+            // 
+            this.btneditshop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btneditshop.Location = new System.Drawing.Point(198, 3);
+            this.btneditshop.Name = "btneditshop";
+            this.btneditshop.Size = new System.Drawing.Size(75, 23);
+            this.btneditshop.TabIndex = 2;
+            this.btneditshop.Text = "Edit shop";
+            this.btneditshop.UseVisualStyleBackColor = true;
+            this.btneditshop.Click += new System.EventHandler(this.btneditshop_Click);
+            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1348,5 +1361,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btnaddshopitem;
         private System.Windows.Forms.Button btnremoveitem;
         private System.Windows.Forms.Button btnedititem;
+        private System.Windows.Forms.Button btneditshop;
     }
 }

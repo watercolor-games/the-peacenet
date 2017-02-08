@@ -123,14 +123,14 @@
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
+  <data name="label12.Text" xml:space="preserve">
+    <value>The multi-user domain has many unique shops selling many items such as applications, skins and other things. Just choose a shop, browse for an item you'd like, then pay Codepoints and the download will begin.</value>
+  </data>
   <data name="label10.Text" xml:space="preserve">
     <value>On this screen you can customize your legion profile. This is how users will see your legion inside the Join Legion screen.
 
 You can set up a banner color, short and long name, and a description on this screen. The shortname is used to identify your legion. The long name is a more descriptive name for your legion.
 
 The description will be what explains your legion - what does it do? Why should the user join it? Stuff like that.</value>
-  </data>
-  <data name="label12.Text" xml:space="preserve">
-    <value>The multi-user domain has many unique shops selling many items such as applications, skins and other things. Just choose a shop, browse for an item you'd like, then pay Codepoints and the download will begin.</value>
   </data>
 </root>
