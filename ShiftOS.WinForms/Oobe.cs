@@ -186,11 +186,14 @@ namespace ShiftOS.WinForms
                     Thread.Sleep(500);
                     TextType("Your user account is stored on a server of mine called the multi-user domain. It holds every single user account, every script, every application, every thing within ShiftOS.");
                     Thread.Sleep(600);
-                    TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last successful username and password pair.");
+                    TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last ");
+                    TextType("successful username and password pair.");
                     Thread.Sleep(500);
-                    TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, but you have a secondary task if you choose to accept it.");
+                    TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, ");
+                    TextType("but you have a secondary task if you choose to accept it.");
                     Thread.Sleep(500);
-                    TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, and even spread damaging viruses.");
+                    TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, ");
+                    TextType("and even spread damaging viruses.");
                     Thread.Sleep(500);
                     TextType("I want you to stop them.");
                     Thread.Sleep(500);

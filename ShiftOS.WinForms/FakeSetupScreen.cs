@@ -82,7 +82,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     {
                         TextType("You must specify a valid username!");
                         currentPage--;
-                        SetupUI();
+                        //SetupUI();
                         break;
                     }
 
@@ -90,7 +90,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     {
                         TextType("A password would seriously be recommended.");
                         currentPage--;
-                        SetupUI();
+                        //SetupUI();
                         break;
                     }
 
@@ -98,7 +98,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                     {
                         TextType("You must name your computer.");
                         currentPage--;
-                        SetupUI();
+                        //SetupUI();
                         break;
                     }
 
@@ -109,7 +109,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                         {
                             TextType("I have just verified that your username and password already exists on my end. Please choose another.");
                             currentPage--;
-                            SetupUI();
+                            //SetupUI();
                             
                         }
                         else
