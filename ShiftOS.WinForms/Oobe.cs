@@ -216,7 +216,7 @@ namespace ShiftOS.WinForms
                         TextType("An error has occoured while starting the tutorial");
                         TextType(e.ToString());
                     }
-                    this.Close();
+                    //this.Close(); // This has been commented out because the form closes when the error appears. Uncomment this if no more errors appear
                 }
                 catch(Exception e)
                 {
