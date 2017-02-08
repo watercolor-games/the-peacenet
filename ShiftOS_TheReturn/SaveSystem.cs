@@ -313,7 +313,6 @@ namespace ShiftOS.Engine
         {
             Console.WriteLine($"{{SHIFTORIUM_TRANSFERRED_FROM}}: {amount} <- {who}");
             CurrentSave.Codepoints += amount;
-            Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
         }
     }
 
