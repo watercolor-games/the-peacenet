@@ -191,19 +191,18 @@ namespace ShiftOS.Engine
         {
             if (SaveSystem.CurrentSave != null)
             {
-                if (SaveSystem.CurrentSave.Upgrades == null)
+                if (!IsInitiated)
                     Init();
             }
             try
             {
                 return SaveSystem.CurrentSave.Upgrades[id];
             }
-            catch (Exception ex)
+            catch
             {
-                if(LogOrphanedUpgrades == true)
-                    Console.WriteLine($"WHOA, Developers! Upgrade ID '{id}' is unaccounted for in the Shiftorium.txt resource!");
-                return false;
+                throw new ShiftoriumUpgradeLookupException(id);
             }
+
         }
 
         //LEAVE THIS AS FALSE. The game will set it when the save is loaded.
@@ -236,6 +235,16 @@ namespace ShiftOS.Engine
     public interface IShiftoriumProvider
     {
         List<ShiftoriumUpgrade> GetDefaults();
+    }
+
+    public class ShiftoriumUpgradeLookupException : Exception
+    {
+        public ShiftoriumUpgradeLookupException(string id) : base("A shiftorium upgrade of ID \"" + id + "\" was not found in the system.")
+        {
+            ID = id;
+        }
+
+        public string ID { get; private set; }
     }
 
     public class ShiftoriumUpgrade

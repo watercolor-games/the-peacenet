@@ -128,67 +128,70 @@ namespace ShiftOS.WinForms
         public void PopulatePanelButtons()
         {
             panelbuttonholder.Controls.Clear();
-            if (Shiftorium.UpgradeInstalled("wm_panel_buttons"))
+            if (Shiftorium.IsInitiated == true)
             {
-                foreach (WindowBorder form in Engine.AppearanceManager.OpenForms)
+                if (Shiftorium.UpgradeInstalled("wm_panel_buttons"))
                 {
-                    if (form != null)
+                    foreach (WindowBorder form in Engine.AppearanceManager.OpenForms)
                     {
-                        if (form.Visible == true)
+                        if (form != null)
                         {
-                            EventHandler onClick = (o, a) =>
+                            if (form.Visible == true)
                             {
-                                if(form == focused)
+                                EventHandler onClick = (o, a) =>
                                 {
-                                    if (form.IsMinimized)
+                                    if (form == focused)
                                     {
-                                        RestoreWindow(form);
+                                        if (form.IsMinimized)
+                                        {
+                                            RestoreWindow(form);
+                                        }
+                                        else
+                                        {
+                                            MinimizeWindow(form);
+                                        }
                                     }
                                     else
                                     {
-                                        MinimizeWindow(form);
+                                        form.BringToFront();
+                                        focused = form;
                                     }
-                                }
-                                else
-                                {
-                                    form.BringToFront();
-                                    focused = form;
-                                }
-                            };
+                                };
 
-                            var pnlbtn = new Panel();
-                            pnlbtn.Margin = new Padding(2, LoadedSkin.PanelButtonFromTop, 0, 0);
-                            pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
-                            pnlbtn.BackgroundImage = GetImage("panelbutton");
-                            pnlbtn.BackgroundImageLayout = GetImageLayout("panelbutton");
+                                var pnlbtn = new Panel();
+                                pnlbtn.Margin = new Padding(2, LoadedSkin.PanelButtonFromTop, 0, 0);
+                                pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
+                                pnlbtn.BackgroundImage = GetImage("panelbutton");
+                                pnlbtn.BackgroundImageLayout = GetImageLayout("panelbutton");
 
-                            var pnlbtntext = new Label();
-                            pnlbtntext.Text = NameChangerBackend.GetName(form.ParentWindow);
-                            pnlbtntext.AutoSize = true;
-                            pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
-                            pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;
-                            pnlbtntext.Font = LoadedSkin.PanelButtonFont;
-                            pnlbtntext.BackColor = Color.Transparent;
-
-                            pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
-                            if (pnlbtn.BackgroundImage != null)
-                            {
+                                var pnlbtntext = new Label();
+                                pnlbtntext.Text = NameChangerBackend.GetName(form.ParentWindow);
+                                pnlbtntext.AutoSize = true;
+                                pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
+                                pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;
+                                pnlbtntext.Font = LoadedSkin.PanelButtonFont;
                                 pnlbtntext.BackColor = Color.Transparent;
-                            }
-                            pnlbtn.Size = LoadedSkin.PanelButtonSize;
-                            pnlbtn.Tag = "keepbg";
-                            pnlbtntext.Tag = "keepbg";
-                            pnlbtn.Controls.Add(pnlbtntext);
-                            this.panelbuttonholder.Controls.Add(pnlbtn);
-                            pnlbtn.Show();
-                            pnlbtntext.Show();
 
-                            if (Shiftorium.UpgradeInstalled("useful_panel_buttons"))
-                            {
-                                pnlbtn.Click += onClick;
-                                pnlbtntext.Click += onClick;
+                                pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
+                                if (pnlbtn.BackgroundImage != null)
+                                {
+                                    pnlbtntext.BackColor = Color.Transparent;
+                                }
+                                pnlbtn.Size = LoadedSkin.PanelButtonSize;
+                                pnlbtn.Tag = "keepbg";
+                                pnlbtntext.Tag = "keepbg";
+                                pnlbtn.Controls.Add(pnlbtntext);
+                                this.panelbuttonholder.Controls.Add(pnlbtn);
+                                pnlbtn.Show();
+                                pnlbtntext.Show();
+
+                                if (Shiftorium.UpgradeInstalled("useful_panel_buttons"))
+                                {
+                                    pnlbtn.Click += onClick;
+                                    pnlbtntext.Click += onClick;
+                                }
+                                SetCursors(pnlbtn);
                             }
-                            SetCursors(pnlbtn);
                         }
                     }
                 }
@@ -210,7 +213,7 @@ namespace ShiftOS.WinForms
 
             //upgrades
 
-            if (SaveSystem.CurrentSave != null)
+            if (Shiftorium.IsInitiated == true)
             {
                 desktoppanel.Visible = Shiftorium.UpgradeInstalled("desktop");
                 lbtime.Visible = Shiftorium.UpgradeInstalled("desktop_clock_widget");
@@ -327,34 +330,41 @@ namespace ShiftOS.WinForms
 
             foreach(var kv in sortedItems)
             {
-                if (Shiftorium.UpgradeInstalled("app_launcher_categories"))
+                if (Shiftorium.IsInitiated == true)
                 {
-                    var cat = GetALCategoryWithName(kv.Key);
-                    foreach(var subItem in kv.Value)
+                    if (Shiftorium.UpgradeInstalled("app_launcher_categories"))
                     {
-                        cat.DropDownItems.Add(subItem);
+                        var cat = GetALCategoryWithName(kv.Key);
+                        foreach (var subItem in kv.Value)
+                        {
+                            cat.DropDownItems.Add(subItem);
+                        }
                     }
-                }
-                else
-                {
-                    foreach(var subItem in kv.Value)
+
+                    else
                     {
-                        apps.DropDownItems.Add(subItem);
+                        foreach (var subItem in kv.Value)
+                        {
+                            apps.DropDownItems.Add(subItem);
+                        }
                     }
                 }
             }
 
-            if (Shiftorium.UpgradeInstalled("al_shutdown"))
+            if (Shiftorium.IsInitiated == true)
             {
-                apps.DropDownItems.Add(new ToolStripSeparator());
-                var item = new ToolStripMenuItem();
-                item.Text = Localization.Parse("{SHUTDOWN}");
-                item.Click += (o, a) =>
+                if (Shiftorium.UpgradeInstalled("al_shutdown"))
                 {
-                    TerminalBackend.InvokeCommand("sos.shutdown");
-                };
-                apps.DropDownItems.Add(item);
+                    apps.DropDownItems.Add(new ToolStripSeparator());
+                    var item = new ToolStripMenuItem();
+                    item.Text = Localization.Parse("{SHUTDOWN}");
+                    item.Click += (o, a) =>
+                    {
+                        TerminalBackend.InvokeCommand("sos.shutdown");
+                    };
+                    apps.DropDownItems.Add(item);
 
+                }
             }
         }
 
