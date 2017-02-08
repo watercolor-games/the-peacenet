@@ -133,6 +133,20 @@ namespace ShiftOS.WinForms.Applications
                         {
                             PopulateJoinLegion(JsonConvert.DeserializeObject<List<Legion>>(msg.Contents));
                         }
+                        else if(msg.Name == "user_shop")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ShowShop(JsonConvert.DeserializeObject<Shop>(msg.Contents));
+                            }));
+                        }
+                        else if(msg.Name == "user_noshop")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                Infobox.Show("No shop.", "You do not currently own any shops. You must open one to use this screen.");
+                            }));
+                        }
                         else if (msg.Name == "shop_allshops")
                         {
                             this.Invoke(new Action(() =>
@@ -719,6 +733,11 @@ Current legions: {legionname}";
             {
 
             }
+        }
+
+        private void myShopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentSave.Username);
         }
     }
 }

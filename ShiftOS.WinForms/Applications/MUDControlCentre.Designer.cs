@@ -244,6 +244,7 @@ namespace ShiftOS.WinForms.Applications
             this.myShopToolStripMenuItem.Name = "myShopToolStripMenuItem";
             this.myShopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.myShopToolStripMenuItem.Text = "My Shop";
+            this.myShopToolStripMenuItem.Click += new System.EventHandler(this.myShopToolStripMenuItem_Click);
             // 
             // openAShopToolStripMenuItem
             // 
