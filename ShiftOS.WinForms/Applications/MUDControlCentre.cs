@@ -683,7 +683,42 @@ Current legions: {legionname}";
 
         private void btnaddshopitem_Click(object sender, EventArgs e)
         {
+            AppearanceManager.SetupWindow(new ShopItemCreator(new ShopItem(), new Action<ShopItem>((item) =>
+            {
+                editingShop.Items.Add(item);
+            })));
+        }
 
+        private void btnremoveitem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int i = lbeditingshopitems.SelectedIndex;
+                editingShop.Items.RemoveAt(i);
+                PopulateShopEditor();
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void btnedititem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int i = lbeditingshopitems.SelectedIndex;
+                AppearanceManager.SetupWindow(new ShopItemCreator(editingShop.Items[i], new Action<ShopItem>((item) =>
+                {
+                    editingShop.Items[i] = item;
+                })));
+
+                PopulateShopEditor();
+            }
+            catch
+            {
+
+            }
         }
     }
 }

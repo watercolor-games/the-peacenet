@@ -147,6 +147,12 @@
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ShopItemCreator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShopItemCreator.Designer.cs">
+      <DependentUpon>ShopItemCreator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Skin Loader.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -264,6 +270,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShopItemCreator.resx">
+      <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Skin Loader.resx">
       <DependentUpon>Skin Loader.cs</DependentUpon>

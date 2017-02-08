@@ -138,7 +138,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnsaveshop = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.panel9 = new System.Windows.Forms.Panel();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.lbeditingshopitems = new System.Windows.Forms.ListBox();
             this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnaddshopitem = new System.Windows.Forms.Button();
             this.btnremoveitem = new System.Windows.Forms.Button();
@@ -1094,7 +1094,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // panel9
             // 
-            this.panel9.Controls.Add(this.listBox1);
+            this.panel9.Controls.Add(this.lbeditingshopitems);
             this.panel9.Controls.Add(this.txtshopname);
             this.panel9.Controls.Add(this.flowLayoutPanel5);
             this.panel9.Cursor = System.Windows.Forms.Cursors.Default;
@@ -1104,14 +1104,14 @@ namespace ShiftOS.WinForms.Applications
             this.panel9.Size = new System.Drawing.Size(389, 442);
             this.panel9.TabIndex = 0;
             // 
-            // listBox1
+            // lbeditingshopitems
             // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(0, 20);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(389, 393);
-            this.listBox1.TabIndex = 2;
+            this.lbeditingshopitems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbeditingshopitems.FormattingEnabled = true;
+            this.lbeditingshopitems.Location = new System.Drawing.Point(0, 20);
+            this.lbeditingshopitems.Name = "lbeditingshopitems";
+            this.lbeditingshopitems.Size = new System.Drawing.Size(389, 393);
+            this.lbeditingshopitems.TabIndex = 2;
             // 
             // flowLayoutPanel5
             // 
@@ -1150,6 +1150,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnremoveitem.TabIndex = 2;
             this.btnremoveitem.Text = "Remove";
             this.btnremoveitem.UseVisualStyleBackColor = true;
+            this.btnremoveitem.Click += new System.EventHandler(this.btnremoveitem_Click);
             // 
             // btnedititem
             // 
@@ -1162,6 +1163,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnedititem.TabIndex = 3;
             this.btnedititem.Text = "Edit";
             this.btnedititem.UseVisualStyleBackColor = true;
+            this.btnedititem.Click += new System.EventHandler(this.btnedititem_Click);
             // 
             // txtshopname
             // 
@@ -1339,7 +1341,7 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btnsaveshop;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Panel panel9;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox lbeditingshopitems;
         private System.Windows.Forms.TextBox txtshopname;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel5;
         private System.Windows.Forms.Button btnaddshopitem;

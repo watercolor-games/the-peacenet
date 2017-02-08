@@ -14,7 +14,7 @@ namespace ShiftOS.Objects
         public string Owner { get; set; }
     }
 
-    public abstract class ShopItem
+    public class ShopItem
     {
         public string Name { get; set; }
         public string Description { get; set; }
