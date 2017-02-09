@@ -479,7 +479,7 @@ Contents:
                         //This is to save on network bandwidth as it will take a long time to send everyone's shops down if we don't purge the stock.
                         //And with high bandwidth usage, we may end up DOSing our clients when too many people upload too many things.
                         //Furthermore, this'll make the MUD Control Centre seem faster...
-                        for (int i = 0; i <= shops.Count; i++)
+                        for (int i = 0; i < shops.Count; i++)
                         {
                             shops[i].Items = new List<ShopItem>();
                         }
