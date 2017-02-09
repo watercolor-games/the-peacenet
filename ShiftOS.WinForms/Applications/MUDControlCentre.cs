@@ -140,6 +140,15 @@ namespace ShiftOS.WinForms.Applications
                                 ShowShop(JsonConvert.DeserializeObject<Shop>(msg.Contents));
                             }));
                         }
+                        else if(msg.Name == "shop_additem")
+                        {
+                            var contents = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                            if((string)contents["shop"] == CurrentShop.Name)
+                            {
+                                CurrentShop.Items.Add((ShopItem)contents["itemdata"]);
+                                this.Invoke(new Action(PopulateShopView));
+                            }
+                        }
                         else if(msg.Name == "user_noshop")
                         {
                             this.Invoke(new Action(() =>
@@ -181,7 +190,7 @@ namespace ShiftOS.WinForms.Applications
         public void PopulateShopEditor()
         {
             txtshopdescription.Text = editingShop.Description;
-            txtshopname.Text = editingShop.Description;
+            txtshopname.Text = editingShop.Name;
             lbeditingshopitems.Items.Clear();
             foreach(var item in editingShop.Items)
             {
@@ -247,6 +256,17 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        public void PopulateShopView()
+        {
+            lbupgrades.Items.Clear();
+            shopItems = CurrentShop.Items;
+            foreach (var item in CurrentShop.Items)
+            {
+                lbupgrades.Items.Add(item.Name);
+            }
+
+        }
+
         public void ShowShop(Shop shop)
         {
             shop_view.BringToFront();
@@ -257,12 +277,11 @@ namespace ShiftOS.WinForms.Applications
             lbprice.Text = "Select an item from the list on the left.";
             btnbuy.Hide();
 
-            lbupgrades.Items.Clear();
-            shopItems = shop.Items;
-            foreach (var item in shop.Items)
+            ServerManager.SendMessage("shop_getitems", JsonConvert.SerializeObject(new
             {
-                lbupgrades.Items.Add(item.Name);
-            }
+                shopname = CurrentShop.Name
+            }));
+
             lbupgrades.SelectedIndexChanged += (o, a) =>
             {
                 item = shopItems[lbupgrades.SelectedIndex];
@@ -715,6 +734,7 @@ Current legions: {legionname}";
             AppearanceManager.SetupWindow(new ShopItemCreator(new ShopItem(), new Action<ShopItem>((item) =>
             {
                 editingShop.Items.Add(item);
+                PopulateShopEditor();
             })));
         }
 

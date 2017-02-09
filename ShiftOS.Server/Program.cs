@@ -444,11 +444,45 @@ Contents:
                         }));
 
                         break;
+                    case "shop_getitems":
+                        var shopName = args["shopname"] as string;
+                        Shop tempShop = null;
+                        foreach(var item in JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json")))
+                        {
+                            if(item.Name == shopName)
+                            {
+                                tempShop = item;
+                            }
+                        }
+
+                        if(tempShop != null)
+                            foreach(var item in tempShop.Items)
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("item", new ServerMessage
+                            {
+                                Name = "shop_additem",
+                                GUID = "server",
+                                Contents = JsonConvert.SerializeObject(new
+                                {
+                                    shop = shopName,
+                                    itemdata = item
+                                })
+                            }));
+                        }
+
+                        break;
                     case "shop_getall":
                         List<Shop> shops = new List<Shop>();
                         if (File.Exists("shops.json"))
                             shops = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
-
+                        //Purge all items in all shops temporarily.
+                        //This is to save on network bandwidth as it will take a long time to send everyone's shops down if we don't purge the stock.
+                        //And with high bandwidth usage, we may end up DOSing our clients when too many people upload too many things.
+                        //Furthermore, this'll make the MUD Control Centre seem faster...
+                        for (int i = 0; i <= shops.Count; i++)
+                        {
+                            shops[i].Items = new List<ShopItem>();
+                        }
                         server.DispatchTo(new Guid(msg.GUID), new NetObject("ladouceur", new ServerMessage
                         {
                             Name = "shop_all",
