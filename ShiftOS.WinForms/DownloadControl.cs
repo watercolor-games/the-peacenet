@@ -21,6 +21,8 @@ namespace ShiftOS.WinForms
             lbshiftneturl.Text = d.ShiftnetUrl;
             pcicon.Image = FileSkimmerBackend.GetImage(d.Destination);
             int bytesTransferred = 0;
+            pgprogress.Maximum = DownloadManager.Downloads[index].Bytes.Length;
+            pgprogress.Value = DownloadManager.Downloads[index].Progress;
             DownloadManager.ProgressUpdate += (i, p) =>
             {
                 try
