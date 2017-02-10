@@ -378,6 +378,7 @@ namespace ShiftOS.WinForms
             else
                 Desktop.RestoreWindow(this);
             maximized = !maximized;
+            SetupSkin();
         }
 
         bool minimized = false;
