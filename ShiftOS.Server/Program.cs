@@ -34,6 +34,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.IO.Compression;
 
 namespace ShiftOS.Server
 {
@@ -223,11 +224,39 @@ namespace ShiftOS.Server
             File.WriteAllText(fPath, Encryption.Encrypt(contents));
         }
 
-		/// <summary>
-		/// Interpret the specified msg.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		public static void Interpret(ServerMessage msg)
+        public static string Compress(string s)
+        {
+            var bytes = Encoding.Unicode.GetBytes(s);
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    msi.CopyTo(gs);
+                }
+                return Convert.ToBase64String(mso.ToArray());
+            }
+        }
+
+        public static string Decompress(string s)
+        {
+            var bytes = Convert.FromBase64String(s);
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    gs.CopyTo(mso);
+                }
+                return Encoding.Unicode.GetString(mso.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Interpret the specified msg.
+        /// </summary>
+        /// <param name="msg">Message.</param>
+        public static void Interpret(ServerMessage msg)
 		{
 			Dictionary<string, object> args = null;
 
@@ -465,7 +494,7 @@ Contents:
                                 Contents = JsonConvert.SerializeObject(new
                                 {
                                     shop = shopName,
-                                    itemdata = item
+                                    itemdata = Compress(Compress(JsonConvert.SerializeObject(item)))
                                 })
                             }));
                         }

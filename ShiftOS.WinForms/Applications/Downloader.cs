@@ -12,6 +12,8 @@ using ShiftOS.Engine;
 using Newtonsoft.Json;
 using ShiftOS.WinForms.Controls;
 using ShiftOS.WinForms.Tools;
+using System.IO;
+using System.IO.Compression;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -112,6 +114,34 @@ namespace ShiftOS.WinForms.Applications
         public static event Action<string> DownloadCompleted;
 
         public static event Action<Download> DownloadStarted;
+
+        public static string Compress(string s)
+        {
+            var bytes = Encoding.Unicode.GetBytes(s);
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    msi.CopyTo(gs);
+                }
+                return Convert.ToBase64String(mso.ToArray());
+            }
+        }
+
+        public static string Decompress(string s)
+        {
+            var bytes = Convert.FromBase64String(s);
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    gs.CopyTo(mso);
+                }
+                return Encoding.Unicode.GetString(mso.ToArray());
+            }
+        }
 
         public static void StartDownload(Download down)
         {

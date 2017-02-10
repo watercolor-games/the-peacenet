@@ -142,10 +142,10 @@ namespace ShiftOS.WinForms.Applications
                         }
                         else if(msg.Name == "shop_additem")
                         {
-                            var contents = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                            var contents = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg.Contents);
                             if((string)contents["shop"] == CurrentShop.Name)
                             {
-                                CurrentShop.Items.Add(JsonConvert.DeserializeObject<ShopItem>(JsonConvert.SerializeObject(contents["itemdata"])));
+                                CurrentShop.Items.Add(JsonConvert.DeserializeObject<ShopItem>(DownloadManager.Decompress(DownloadManager.Decompress(contents["itemdata"] as string))));
                                 this.Invoke(new Action(PopulateShopView));
                             }
                         }
