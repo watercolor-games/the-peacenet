@@ -386,7 +386,10 @@ namespace ShiftOS.WinForms
                 else if(cmd == "shiftorium.list")
                 {
                     if (TutorialProgress == 2)
+                    {
                         TutorialProgress = 3;
+                        SaveSystem.TransferCodepointsFrom("sys", 50);
+                    }
                 }
                 else if(cmd == "shiftorium.info" && args == "{\"upgrade\":\"mud_fundamentals\"}")
                 {
@@ -458,7 +461,7 @@ namespace ShiftOS.WinForms
                 TextType("You can earn Codepoints by doing things in ShiftOS - such as completing jobs for other users, making things like skins, scripts, documents, etc, and playing games like Pong.");
                 Thread.Sleep(500);
                 TextType("At times, you'll be given Codepoints to help complete a task. You will receive Codepoints from 'sys' - the multi-user domain itself.");
-                SaveSystem.TransferCodepointsFrom("sys", 50);
+                //SaveSystem.TransferCodepointsFrom("sys", 50);
                 TextType("Right now, you don't have any upgrades. Upgrades can give ShiftOS additional features and capabilities - like new core applications, supported file types, and new Terminal commands.");
                 Thread.Sleep(500);
                 TextType("You can easily get upgrades using the Shiftorium - a repository of approved ShiftOS upgrades.");
