@@ -305,6 +305,9 @@
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WinformsDesktop.resx">
+      <DependentUpon>WinformsDesktop.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

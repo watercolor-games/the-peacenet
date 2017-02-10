@@ -47,14 +47,29 @@ namespace ShiftOS.WinForms.Tools
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
         {
-            e.TextFont = LoadedSkin.MainFont;
-            if (e.Item.Selected == true)
+            if (e.Item.Tag?.ToString() == "applauncherbutton")
             {
-                e.TextColor = LoadedSkin.Menu_SelectedTextColor;
+                e.TextFont = LoadedSkin.AppLauncherFont;
+                if(e.Item.Selected == true)
+                {
+                    e.TextColor = LoadedSkin.AppLauncherSelectedTextColor;
+                }
+                else
+                {
+                    e.TextColor = LoadedSkin.AppLauncherTextColor;
+                }
             }
             else
             {
-                e.TextColor = LoadedSkin.Menu_TextColor;
+                e.TextFont = LoadedSkin.MainFont;
+                if (e.Item.Selected == true)
+                {
+                    e.TextColor = LoadedSkin.Menu_SelectedTextColor;
+                }
+                else
+                {
+                    e.TextColor = LoadedSkin.Menu_TextColor;
+                }
             }
             base.OnRenderItemText(e);
         }

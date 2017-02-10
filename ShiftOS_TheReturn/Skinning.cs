@@ -766,6 +766,28 @@ namespace ShiftOS.Engine {
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_app_launcher")]
+        [ShifterName("App Launcher Text Color")]
+        [ShifterDescription("Change the color of the App Launcher text.")]
+        public Color AppLauncherTextColor = Skin.DefaultForeground;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_app_launcher")]
+        [ShifterName("App Launcher Selected Text Color")]
+        [ShifterDescription("Change the color of the app launcher's text while it is selected.")]
+        public Color AppLauncherSelectedTextColor = Skin.TitleFG;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_app_launcher")]
+        [ShifterName("App Launcher Font")]
+        [ShifterDescription("Change the font that the App Launcher text is displayed in.")]
+        public Font AppLauncherFont = Skin.SysFont2;
+
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
         [ShifterName("App launcher text")]
         [ShifterDescription("The text displayed on the app launcher.")]
         [RequiresUpgrade("shift_app_launcher")]

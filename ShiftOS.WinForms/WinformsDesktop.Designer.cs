@@ -52,13 +52,12 @@ namespace ShiftOS.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinformsDesktop));
             this.desktoppanel = new System.Windows.Forms.Panel();
+            this.lbtime = new System.Windows.Forms.Label();
             this.panelbuttonholder = new System.Windows.Forms.FlowLayoutPanel();
             this.sysmenuholder = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.apps = new System.Windows.Forms.ToolStripMenuItem();
-            this.lbtime = new System.Windows.Forms.Label();
             this.desktoppanel.SuspendLayout();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -75,6 +74,18 @@ namespace ShiftOS.WinForms
             this.desktoppanel.Name = "desktoppanel";
             this.desktoppanel.Size = new System.Drawing.Size(1296, 24);
             this.desktoppanel.TabIndex = 0;
+            // 
+            // lbtime
+            // 
+            this.lbtime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbtime.AutoSize = true;
+            this.lbtime.Location = new System.Drawing.Point(3, 0);
+            this.lbtime.Name = "lbtime";
+            this.lbtime.Size = new System.Drawing.Size(49, 14);
+            this.lbtime.TabIndex = 0;
+            this.lbtime.Text = "label1";
+            this.lbtime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelbuttonholder
             // 
@@ -111,21 +122,10 @@ namespace ShiftOS.WinForms
             this.apps.Name = "apps";
             this.apps.Padding = new System.Windows.Forms.Padding(0);
             this.apps.Size = new System.Drawing.Size(58, 20);
+            this.apps.Tag = "applauncherbutton";
             this.apps.Text = "ShiftOS";
             // 
-            // lbtime
-            // 
-            this.lbtime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbtime.AutoSize = true;
-            this.lbtime.Location = new System.Drawing.Point(3, 0);
-            this.lbtime.Name = "lbtime";
-            this.lbtime.Size = new System.Drawing.Size(49, 14);
-            this.lbtime.TabIndex = 0;
-            this.lbtime.Text = "label1";
-            this.lbtime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // Desktop
+            // WinformsDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -135,7 +135,7 @@ namespace ShiftOS.WinForms
             this.Font = new System.Drawing.Font("Consolas", 9F);
             this.ForeColor = System.Drawing.Color.LightGreen;
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Desktop";
+            this.Name = "WinformsDesktop";
             this.Text = "Desktop";
             this.Load += new System.EventHandler(this.Desktop_Load);
             this.desktoppanel.ResumeLayout(false);
