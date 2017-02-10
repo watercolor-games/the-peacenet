@@ -145,7 +145,7 @@ namespace ShiftOS.WinForms.Applications
                             var contents = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                             if((string)contents["shop"] == CurrentShop.Name)
                             {
-                                CurrentShop.Items.Add((ShopItem)contents["itemdata"]);
+                                CurrentShop.Items.Add(JsonConvert.DeserializeObject<ShopItem>(JsonConvert.SerializeObject(contents["itemdata"])));
                                 this.Invoke(new Action(PopulateShopView));
                             }
                         }
