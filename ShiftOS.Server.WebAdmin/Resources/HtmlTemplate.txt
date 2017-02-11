@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<title>Multi-user domain &bull; ShiftOS</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<link rel="stylesheet" href="css/theme.css"/>
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	</head>
+	<body>
+	<!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="http://getshiftos.ml/">
+                        <img src="https://cdn.discordapp.com/attachments/241613675545231360/280020406528901131/unknown.png"/>
+                    </a>
+                </li>
+                <li>
+                    <a href="/status">System status</a>
+                </li>
+                <li>
+                    <a href="/saves">Test subjects</a>
+                </li>
+                <li>
+                    <a href="/shiftnet">Shiftnet</a>
+                </li>
+                <li>
+                    <a href="/scripts">Scripts</a>
+                </li>
+                <li>
+                    <a href="/legions">Legions</a>
+                </li>
+                <li>
+                    <a href="/shops">Shops</a>
+                </li>
+                <li>
+                    <a href="/help">Help</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+				{body}
+			</div>
+		</div>
+	</body>
+</html>

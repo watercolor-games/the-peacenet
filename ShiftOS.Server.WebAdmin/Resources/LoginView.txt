@@ -1,0 +1,20 @@
+<h3>Access denied.</h3>
+
+<p>You require a higher authentication level to access this part of the multi-user domain. Please enter the username and password of whom has access to this sector.</p>
+
+<form method="post" action="">
+	<table class="table">
+		<tr>
+			<td><strong>Username:</strong></td>
+			<td><input class="form-control" type="text" name="username"/></td>
+		</tr>
+		<tr>
+			<td><strong>Password:</strong></td>
+			<td><input class="form-control" type="password" name="password"/></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" class="btn btn-default">Login</input>
+		</tr>
+	</table>
+</form>
