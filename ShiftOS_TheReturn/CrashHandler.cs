@@ -109,7 +109,10 @@ namespace ShiftOS.Engine
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(assembly.Location);
             DateTime lastModified = fileInfo.LastWriteTime;
 
-            string rtbcrash_Text = $@" === ShiftOS has crashed === 
+            string rtbcrash_Text = $@" === {AssemblyName} has crashed. === 
+
+Game:           {AssemblyName}
+Description:    {AssemblyDescription}
 
 Basic Information For User:
 ---------------------------------
@@ -194,6 +197,22 @@ Stack trace:
         {
             this.Close();
             Application.Restart();
+        }
+
+        public static string AssemblyName { get; private set; }
+        public static string AssemblyDescription { get; private set; }
+
+        public static void SetGameMetadata(Assembly assembly)
+        {
+            AssemblyName = assembly.GetName().Name;
+            foreach(var attr in assembly.GetCustomAttributes(true))
+            {
+                if(attr is AssemblyDescriptionAttribute)
+                {
+                    AssemblyDescription = (attr as AssemblyDescriptionAttribute).Description;
+                }
+            }
+
         }
     }
 }

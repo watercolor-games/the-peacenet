@@ -48,6 +48,7 @@ namespace ShiftOS.WinForms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
+            CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
             ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
             Localization.RegisterProvider(new WFLanguageProvider());
