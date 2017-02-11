@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ShiftOS.WinForms")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("I wanted to put a bunch of swears in this description but Rylan hated the idea and when I committed it, William reverted it. Now it's in the latest AppVeyor build until I commit this. Then, THIS will be in appveyor...")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ShiftOS.WinForms")]
