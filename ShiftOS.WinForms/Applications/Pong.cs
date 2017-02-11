@@ -189,8 +189,13 @@ namespace ShiftOS.WinForms.Applications
                     {
                         totalreward = levelrewards[level - 1] + beatairewardtotal;
                         double onePercent = (totalreward / 100);
+                        lblbutyougained.Show();
                         lblbutyougained.Text = Localization.Parse("{BUT_YOU_GAINED}:") + Environment.NewLine + onePercent.ToString("") + (Localization.Parse(" {CODEPOINTS}"));
                         SaveSystem.TransferCodepointsFrom("pong", (totalreward / 100));
+                    }
+                    else
+                    {
+                        lblbutyougained.Hide();
                     }
                 }
 
