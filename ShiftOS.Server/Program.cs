@@ -35,10 +35,19 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.IO.Compression;
+using System.Reflection;
 
 namespace ShiftOS.Server
 {
 	
+    public class MudException : Exception
+    {
+        public MudException(string message) : base(message)
+        {
+
+        }
+    }
+
 	/// <summary>
 	/// Program.
 	/// </summary>
@@ -187,8 +196,8 @@ namespace ShiftOS.Server
 				server.Start(IPAddress.Loopback, 13370);
 
 			}
-
-			server.OnStopped += (o, a) =>
+            ClientDispatcher = new Server.MudClientDispatcher(server);
+            server.OnStopped += (o, a) =>
 			{
                 Console.WriteLine("Server stopping.");
 
@@ -262,120 +271,67 @@ namespace ShiftOS.Server
 
 			try
 			{
-				Console.WriteLine($@"Message received from {msg.GUID}: {msg.Name}
+				Console.WriteLine($@"[{DateTime.Now}] Message received from {msg.GUID}: {msg.Name}");
 
-Contents:
-{msg.Contents}");
-
-				if (!string.IsNullOrWhiteSpace(msg.Contents))
-				{
-					try
-					{
-						//It's gotta be JSON.
-						if (msg.Contents.StartsWith("{"))
-						{
-							args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
-						}
-					}
-					catch
-					{
-						//Damnit, we were wrong.
-						args = null;
-					}
-				}
-
-				switch (msg.Name)
-				{
-                    case "usr_getcp":
-
-                        break;
-                    case "usr_takecp":
-                        if (args["username"] != null && args["password"] != null && args["amount"] != null && args["yourusername"] != null)
+                foreach (var asmFile in Directory.GetFiles(Environment.CurrentDirectory))
+                {
+                    if (asmFile.EndsWith(".exe") || asmFile.EndsWith(".dll"))
+                    {
+                        try
                         {
-                            string userName = args["username"] as string;
-                            string passw = args["password"] as string;
-                            int amount = (int)args["amount"];
-
-                            if (Directory.Exists("saves"))
+                            var asm = Assembly.LoadFile(asmFile);
+                            foreach (var type in asm.GetTypes())
                             {
-                                foreach (var saveFile in Directory.GetFiles("saves"))
+                                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                                 {
-                                    var saveFileContents = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
-                                    if (saveFileContents.Username == userName && saveFileContents.Password == passw)
+                                    foreach (var attrib in method.GetCustomAttributes(false))
                                     {
-                                        saveFileContents.Codepoints += amount;
-                                        WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
-                                        server.DispatchAll(new NetObject("stop_being_drunk_michael", new ServerMessage
+                                        if (attrib is MudRequestAttribute)
                                         {
-                                            Name = "update_your_cp",
-                                            GUID = "server",
-                                            Contents = $@"{{
-    username: ""{userName}"",
-    amount: -{amount}
-}}"
-                                        }));
-                                        server.DispatchTo(new Guid(msg.GUID), new NetObject("argh", new ServerMessage
-                                        {
-                                            Name = "update_your_cp",
-                                            GUID = "server",
-                                            Contents = $@"{{
-    username: ""{args["yourusername"]}"",
-    amount: {amount}
-}}"
-                                        }));
-                                        return;
+                                            if ((attrib as MudRequestAttribute).RequestName == msg.Name)
+                                            {
+                                                try
+                                                {
+                                                    object contents = msg.Contents;
+                                                    try
+                                                    {
+                                                        contents = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                                                    }
+                                                    catch
+                                                    {
+
+                                                    }
+
+                                                    method?.Invoke(null, new[] { msg.GUID, contents });
+                                                }
+                                                catch (MudException mEx)
+                                                {
+                                                    ClientDispatcher.DispatchTo("Error", msg.GUID, mEx);
+                                                }
+                                                catch
+                                                {
+                                                    Console.WriteLine($@"[{DateTime.Now}] {method.Name}: Missing guid and content parameters, request handler NOT RAN.");
+                                                }
+                                                return;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                        server.DispatchTo(new Guid(msg.GUID), new NetObject("no", new ServerMessage
+                        catch (Exception ex)
                         {
-                            Name = "user_cp_not_found",
-                            GUID = "Server",
-                        }));
-                        break;
-                    case "trm_handshake_accept":
-                        if(args["guid"] != null && args["target"] != null)
-                        {
-                            server.DispatchTo(new Guid(args["target"] as string), new NetObject("hold_it", new ServerMessage
-                            {
-                                Name = "trm_handshake_guid",
-                                GUID = args["guid"] as string
-                            }));
+                            Console.WriteLine($"[{DateTime.Now}] Exception while handling request {msg.Name}: {ex}");
+                            return;
                         }
-                        break;
-                    case "trm_handshake_request":
-                        if(args["username"] != null && args["password"] != null && args["sysname"] != null)
-                        {
-                            server.DispatchAll(new NetObject("hold_my_hand", new ServerMessage
-                            {
-                                Name = "handshake_from",
-                                GUID = msg.GUID,
-                                Contents = JsonConvert.SerializeObject(args)
-                            }));
-                        }
-                        break;
-                    case "trm_handshake_stop":
-                        if(args["guid"] != null)
-                        {
-                            server.DispatchTo(new Guid(args["guid"] as string), new NetObject("trm_handshake_stop", new ServerMessage
-                            {
-                                Name = "trm_handshake_stop",
-                                GUID = msg.GUID
-                            }));
-                        }
-                        break;
-                    case "write":
-                        if(args["guid"] != null && args["text"] != null)
-                        {
-                            server.DispatchTo(new Guid(args["guid"] as string), new NetObject("pleaseWrite", new ServerMessage
-                            {
-                                Name = "pleasewrite",
-                                GUID = "server",
-                                Contents = args["text"] as string
-                            }));
-                        }
-                        break;
+                    }
+                }
+
+                ClientDispatcher.DispatchTo("Error", msg.GUID, new MudRequestHandlerNotFoundException());
+
+
+				switch (msg.Name)
+				{
                     case "trm_invcmd":
                         Console.WriteLine("Before arg check");
                         args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
@@ -1388,6 +1344,8 @@ The page you requested at was not found on this multi-user domain."
 		/// </summary>
 		public static Dictionary<string, string> MUDHackPasswords = new Dictionary<string, string>();
 
+        public static MudClientDispatcher ClientDispatcher { get; private set; }
+
 		/// <summary>
 		/// Stop this instance.
 		/// </summary>
@@ -1495,7 +1453,59 @@ The page you requested at was not found on this multi-user domain."
         }
     }
 
+    public class MudRequestHandlerNotFoundException : MudException
+    {
+        public MudRequestHandlerNotFoundException() : base("The request handler for this request couldn't be found.")
+        {
 
+        }
+    }
+
+    public class MudClientDispatcher
+    {
+        public NetObjectServer Server { get; private set; }
+
+        public MudClientDispatcher(NetObjectServer srv)
+        {
+            Server = srv;
+            DispatcherGUID = Guid.NewGuid().ToString();
+            Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Dispatcher started.");
+        }
+
+        public string DispatcherGUID { get; private set; }
+
+        public void Broadcast(string msgHeader, object contents)
+        {
+            Server.DispatchAll(new NetObject
+            {
+                Name = "broadcast",
+                Object = new ServerMessage
+                {
+                    Name = msgHeader,
+                    GUID = DispatcherGUID,
+                    Contents = JsonConvert.SerializeObject(contents)
+                }
+            });
+        }
+
+        public void DispatchTo(string msgName, string cGuid, object mContents)
+        {
+            if(Server.Clients.Contains(new Guid(cGuid)))
+            {
+                Server.DispatchTo(new Guid(cGuid), new NetObject("dispatch", new ServerMessage
+                {
+                    Name = msgName,
+                    GUID = DispatcherGUID,
+                    Contents = JsonConvert.SerializeObject(mContents)
+                }));
+                Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Dispatching to {cGuid}: {msgName}.");
+            }
+            else
+            {
+                Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Client \"{cGuid}\" not found on server. Possibly a connection drop.");
+            }
+        }
+    }
 }
 
 // Uncommenting by Michael
