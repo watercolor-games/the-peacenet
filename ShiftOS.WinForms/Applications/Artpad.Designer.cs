@@ -310,6 +310,7 @@ namespace ShiftOS.WinForms.Applications
             this.pullbottom = new System.Windows.Forms.Timer(this.components);
             this.pullside = new System.Windows.Forms.Timer(this.components);
             this.tmrsetupui = new System.Windows.Forms.Timer(this.components);
+            this.label44 = new System.Windows.Forms.Label();
             this.pgcontents.SuspendLayout();
             this.pnldrawingbackground.SuspendLayout();
             this.pnlinitialcanvassettings.SuspendLayout();
@@ -358,7 +359,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnldrawingbackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnldrawingbackground.Location = new System.Drawing.Point(120, 0);
             this.pnldrawingbackground.Name = "pnldrawingbackground";
-            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 498);
+            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 474);
             this.pnldrawingbackground.TabIndex = 2;
             // 
             // pnlinitialcanvassettings
@@ -601,9 +602,9 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbottompanel.Controls.Add(this.pnlpallet);
             this.pnlbottompanel.Controls.Add(this.pnltoolproperties);
             this.pnlbottompanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbottompanel.Location = new System.Drawing.Point(120, 498);
+            this.pnlbottompanel.Location = new System.Drawing.Point(120, 474);
             this.pnlbottompanel.Name = "pnlbottompanel";
-            this.pnlbottompanel.Size = new System.Drawing.Size(682, 100);
+            this.pnlbottompanel.Size = new System.Drawing.Size(682, 124);
             this.pnlbottompanel.TabIndex = 1;
             // 
             // pnlpallet
@@ -611,12 +612,13 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpallet.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlpallet.Controls.Add(this.label44);
             this.pnlpallet.Controls.Add(this.flowcolours);
             this.pnlpallet.Controls.Add(this.Label4);
             this.pnlpallet.Controls.Add(this.line6);
             this.pnlpallet.Location = new System.Drawing.Point(457, 0);
             this.pnlpallet.Name = "pnlpallet";
-            this.pnlpallet.Size = new System.Drawing.Size(225, 100);
+            this.pnlpallet.Size = new System.Drawing.Size(225, 124);
             this.pnlpallet.TabIndex = 0;
             // 
             // flowcolours
@@ -750,7 +752,7 @@ namespace ShiftOS.WinForms.Applications
             this.flowcolours.Controls.Add(this.colourpallet127);
             this.flowcolours.Controls.Add(this.colourpallet128);
             this.flowcolours.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowcolours.Location = new System.Drawing.Point(0, 27);
+            this.flowcolours.Location = new System.Drawing.Point(0, 51);
             this.flowcolours.Name = "flowcolours";
             this.flowcolours.Padding = new System.Windows.Forms.Padding(1, 1, 0, 0);
             this.flowcolours.Size = new System.Drawing.Size(225, 73);
@@ -2038,12 +2040,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             // Label4
             // 
-            this.Label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Label4.Dock = System.Windows.Forms.DockStyle.Top;
             this.Label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label4.Location = new System.Drawing.Point(11, 2);
+            this.Label4.Location = new System.Drawing.Point(0, 1);
             this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(204, 23);
+            this.Label4.Size = new System.Drawing.Size(225, 23);
             this.Label4.TabIndex = 11;
             this.Label4.Text = "Colours";
             this.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -3278,6 +3279,16 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.tmrsetupui.Tick += new System.EventHandler(this.tmrsetupui_Tick);
             // 
+            // label44
+            // 
+            this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label44.Location = new System.Drawing.Point(0, 24);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(225, 27);
+            this.label44.TabIndex = 13;
+            this.label44.Text = "Left click to select, right click to change color";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Artpad
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3587,5 +3598,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Timer pullbottom;
         internal System.Windows.Forms.Timer pullside;
         private System.Windows.Forms.Timer tmrsetupui;
+        private System.Windows.Forms.Label label44;
     }
 }
