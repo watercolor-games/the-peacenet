@@ -633,6 +633,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            pnlintro.BringToFront();
+            pnlintro.Show();
+            pnlhighscore.Hide();
+            pnlgamestats.Hide();
+            pnlfinalstats.Hide();
         }
 
         public void OnSkinLoad()

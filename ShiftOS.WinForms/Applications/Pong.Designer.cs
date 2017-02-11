@@ -435,25 +435,13 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lblbutyougained
             // 
-            if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade_2"))
-            {
-                this.lblbutyougained.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                this.lblbutyougained.Location = new System.Drawing.Point(3, 125);
-                this.lblbutyougained.Name = "lblbutyougained";
-                this.lblbutyougained.Size = new System.Drawing.Size(146, 35);
-                this.lblbutyougained.TabIndex = 3;
-                this.lblbutyougained.Text = "But you gained 5 Codepoints";
-                this.lblbutyougained.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            } else
-            {
-                this.lblbutyougained.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                this.lblbutyougained.Location = new System.Drawing.Point(3, 125);
-                this.lblbutyougained.Name = "lblbutyougained";
-                this.lblbutyougained.Size = new System.Drawing.Size(0, 0);
-                this.lblbutyougained.TabIndex = 3;
-                this.lblbutyougained.Text = "But you gained 5 Codepoints";
-                this.lblbutyougained.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            }
+            this.lblbutyougained.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblbutyougained.Location = new System.Drawing.Point(3, 125);
+            this.lblbutyougained.Name = "lblbutyougained";
+            this.lblbutyougained.Size = new System.Drawing.Size(146, 35);
+            this.lblbutyougained.TabIndex = 3;
+            this.lblbutyougained.Text = "But you gained 5 Codepoints";
+            this.lblbutyougained.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnlosetryagain
             // 

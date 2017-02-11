@@ -172,7 +172,6 @@ namespace ShiftOS.WinForms
                                 pnlbtntext.AutoSize = true;
                                 pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
                                 pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;
-                                pnlbtntext.Font = LoadedSkin.PanelButtonFont;
                                 pnlbtntext.BackColor = Color.Transparent;
 
                                 pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
@@ -193,7 +192,8 @@ namespace ShiftOS.WinForms
                                     pnlbtn.Click += onClick;
                                     pnlbtntext.Click += onClick;
                                 }
-                                SetCursors(pnlbtn);
+                                pnlbtntext.Font = LoadedSkin.PanelButtonFont;
+
                             }
                         }
                     }
