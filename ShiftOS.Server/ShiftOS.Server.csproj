@@ -53,7 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core.cs" />
     <Compile Include="LegionManager.cs" />
+    <Compile Include="MemoManager.cs" />
     <Compile Include="PongHighscores.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,6 +66,7 @@
     </Compile>
     <Compile Include="RemoteTerminal.cs" />
     <Compile Include="SaveManager.cs" />
+    <Compile Include="ShiftnetBackend.cs" />
     <Compile Include="ShopBackend.cs" />
   </ItemGroup>
   <ItemGroup>
