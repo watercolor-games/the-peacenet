@@ -50,10 +50,14 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            WebRequest joinRequest = WebRequest.Create("http://selfbot-areno.rhcloud.com/send/" + SaveSystem.CurrentSave.Username + " has connected!");
+            joinRequest.GetResponse();
         }
         
         public bool OnUnload()
         {
+            WebRequest leaveRequest = WebRequest.Create("http://selfbot-areno.rhcloud.com/send/" + SaveSystem.CurrentSave.Username + " has left!");
+            leaveRequest.GetResponse();
             return true;
         }
 
