@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using ShiftOS.Objects;
 using System.IO;
 using static ShiftOS.Server.Program;
+using NetSockets;
 
 namespace ShiftOS.Server
 {
@@ -21,7 +22,7 @@ namespace ShiftOS.Server
                 shopList = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
 
             var username = args["username"] as string;
-            var updateShop = JsonConvert.DeserializeObject<Shop>(msg.Contents);
+            var updateShop = JsonConvert.DeserializeObject<Shop>(contents as string);
 
             for (int i = 0; i < shopList.Count; i++)
             {
@@ -44,7 +45,7 @@ namespace ShiftOS.Server
             if (File.Exists("shops.json"))
                 shopFile = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
 
-            var newShop = JsonConvert.DeserializeObject<Shop>(msg.Contents);
+            var newShop = JsonConvert.DeserializeObject<Shop>(contents as string);
 
             foreach (var shop in shopFile)
             {
@@ -137,7 +138,7 @@ namespace ShiftOS.Server
                 {
                     if (shop.Owner == shopOwner)
                     {
-                        server.DispatchTo(new Guid(msg.GUID), new NetObject("ruecuodaL", new ServerMessage
+                        server.DispatchTo(new Guid(guid), new NetObject("ruecuodaL", new ServerMessage
                         {
                             Name = "user_shop",
                             GUID = "server",
@@ -147,7 +148,7 @@ namespace ShiftOS.Server
                     }
                 }
 
-            server.DispatchTo(new Guid(msg.GUID), new NetObject("ruecuodaL", new ServerMessage
+            server.DispatchTo(new Guid(guid), new NetObject("ruecuodaL", new ServerMessage
             {
                 Name = "user_noshop",
                 GUID = "server",

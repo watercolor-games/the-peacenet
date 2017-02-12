@@ -50,7 +50,7 @@ namespace ShiftOS.Server
                         if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
                         {
 
-                            Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
+                            Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {
                                 Name = "mud_savefile",
                                 GUID = "server",
@@ -61,7 +61,7 @@ namespace ShiftOS.Server
                     }
                     catch { }
                 }
-                Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_login_denied",
                     GUID = "server"
@@ -69,7 +69,7 @@ namespace ShiftOS.Server
             }
             else
             {
-                Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_login_denied",
                     GUID = "server"
@@ -93,7 +93,7 @@ namespace ShiftOS.Server
 
                         if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
                         {
-                            server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
+                            server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {
                                 Name = "mud_found",
                                 GUID = "server",
@@ -103,7 +103,7 @@ namespace ShiftOS.Server
                     }
                     catch { }
                 }
-                server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_notfound",
                     GUID = "server"
@@ -111,7 +111,7 @@ namespace ShiftOS.Server
             }
             else
             {
-                server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_notfound",
                     GUID = "server"
@@ -127,7 +127,7 @@ namespace ShiftOS.Server
 
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
-            Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
             {
                 Name = "mud_saved",
                 GUID = "server"
@@ -151,7 +151,7 @@ namespace ShiftOS.Server
                         var saveFileContents = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
                         if (saveFileContents.Username == userName)
                         {
-                            saveFileContents.Codepoints += amount;
+                            saveFileContents.Codepoints += cpAmount;
                             WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
                             Program.ClientDispatcher.Broadcast("update_your_cp", new
                             {

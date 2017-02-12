@@ -32,7 +32,7 @@ namespace ShiftOS.Server
             if (legionExists == false)
             {
                 legions.Add(l);
-                server.DispatchTo(new Guid(msg.GUID), new NetObject("test", new ServerMessage
+                server.DispatchTo(new Guid(guid), new NetObject("test", new ServerMessage
                 {
                     Name = "legion_create_ok",
                     GUID = "server"
@@ -41,7 +41,7 @@ namespace ShiftOS.Server
             }
             else
             {
-                server.DispatchTo(new Guid(msg.GUID), new NetObject("test", new ServerMessage
+                server.DispatchTo(new Guid(guid), new NetObject("test", new ServerMessage
                 {
                     Name = "legion_alreadyexists",
                     GUID = "server"
@@ -60,7 +60,7 @@ namespace ShiftOS.Server
             if (File.Exists("legions.json"))
                 allLegions = JsonConvert.DeserializeObject<List<Legion>>(File.ReadAllText("legions.json"));
 
-            server.DispatchTo(new Guid(msg.GUID), new NetObject("alllegions", new ServerMessage
+            server.DispatchTo(new Guid(guid), new NetObject("alllegions", new ServerMessage
             {
                 Name = "legion_all",
                 GUID = "server",
@@ -89,7 +89,7 @@ namespace ShiftOS.Server
                 catch { }
             }
 
-            server.DispatchTo(new Guid(msg.GUID), new NetObject("userlist", new ServerMessage
+            server.DispatchTo(new Guid(guid), new NetObject("userlist", new ServerMessage
             {
                 Name = "legion_users_found",
                 GUID = "server",
@@ -110,7 +110,7 @@ namespace ShiftOS.Server
                 {
                     if (userSave.CurrentLegions.Contains(legion.ShortName))
                     {
-                        server.DispatchTo(new Guid(msg.GUID), new NetObject("reply", new ServerMessage
+                        server.DispatchTo(new Guid(guid), new NetObject("reply", new ServerMessage
                         {
                             Name = "user_legion",
                             GUID = "server",
@@ -121,7 +121,7 @@ namespace ShiftOS.Server
                 }
             }
 
-            server.DispatchTo(new Guid(msg.GUID), new NetObject("fuck", new ServerMessage
+            server.DispatchTo(new Guid(guid), new NetObject("fuck", new ServerMessage
             {
                 Name = "user_not_found_in_legion",
                 GUID = "server"

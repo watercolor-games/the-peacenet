@@ -7,6 +7,7 @@ using ShiftOS.Objects;
 using Newtonsoft.Json;
 using System.IO;
 using static ShiftOS.Server.Program;
+using NetSockets;
 
 namespace ShiftOS.Server
 {
@@ -17,7 +18,7 @@ namespace ShiftOS.Server
         {
             if (File.Exists("pong_highscores.json"))
             {
-                server.DispatchTo(new Guid(msg.GUID), new NetObject("pongstuff", new ServerMessage
+                server.DispatchTo(new Guid(guid), new NetObject("pongstuff", new ServerMessage
                 {
                     Name = "pong_highscores",
                     GUID = "server",
