@@ -26,6 +26,28 @@ namespace ShiftOS.Server
             }
         }
 
+        [MudRequest("trm_invcmd")]
+        public static void InvokeCommand(string guid, object contents)
+        {
+            Console.WriteLine("Before arg check");
+            var args = contents as Dictionary<string, object>;
+            if (args["guid"] != null && args["command"] != null)
+            {
+                Console.WriteLine("arg check finished");
+                string cmd = args["command"] as string;
+                string cGuid = args["guid"] as string;
+                Console.WriteLine("Before dispatch");
+                Program.ClientDispatcher.Server.DispatchTo(new Guid(cGuid), new NetObject("trminvoke", new ServerMessage
+                {
+                    Name = "trm_invokecommand",
+                    GUID = "server",
+                    Contents = cmd
+                }));
+                Console.WriteLine("After dispatch");
+            }
+
+        }
+
         [MudRequest("trm_handshake_request")]
         public static void RequestHandshake(string guid, object contents)
         {

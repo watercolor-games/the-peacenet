@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ShiftOS.Objects;
 using System.IO;
 using Newtonsoft.Json;
+using NetSockets;
+using static ShiftOS.Server.Program;
 
 namespace ShiftOS.Server
 {
@@ -30,6 +32,139 @@ namespace ShiftOS.Server
 
             throw new MudException("User " + args["username"] as string + " not found on this multi-user domain.");
             
+        }
+
+        [MudRequest("mud_login")]
+        public static void UserLogin(string guid, object contents)
+        {
+            var args = contents as Dictionary<string, object>;
+            if (args["username"] != null && args["password"] != null)
+            {
+                foreach (var savefile in Directory.GetFiles("saves"))
+                {
+                    try
+                    {
+                        var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
+
+
+                        if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                        {
+
+                            Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
+                            {
+                                Name = "mud_savefile",
+                                GUID = "server",
+                                Contents = JsonConvert.SerializeObject(save)
+                            }));
+                            return;
+                        }
+                    }
+                    catch { }
+                }
+                Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_login_denied",
+                    GUID = "server"
+                }));
+            }
+            else
+            {
+                Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_login_denied",
+                    GUID = "server"
+                }));
+            }
+
+        }
+
+        [MudRequest("mud_checkuserexists")]
+        public static void CheckUserExists(string guid, object contents)
+        {
+            var args = contents as Dictionary<string, object>;
+            if (args["username"] != null && args["password"] != null)
+            {
+                foreach (var savefile in Directory.GetFiles("saves"))
+                {
+                    try
+                    {
+                        var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
+
+
+                        if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                        {
+                            server.DispatchTo(new Guid(msg.GUID), new NetObject("mud_savefile", new ServerMessage
+                            {
+                                Name = "mud_found",
+                                GUID = "server",
+                            }));
+                            return;
+                        }
+                    }
+                    catch { }
+                }
+                server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_notfound",
+                    GUID = "server"
+                }));
+            }
+            else
+            {
+                server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_notfound",
+                    GUID = "server"
+                }));
+            }
+
+        }
+
+        [MudRequest("mud_save")]
+        public static void SaveGame(string guid, object contents)
+        {
+            var sav = JsonConvert.DeserializeObject<Save>(contents as string);
+
+            WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
+
+            Program.server.DispatchTo(new Guid(msg.GUID), new NetObject("auth_failed", new ServerMessage
+            {
+                Name = "mud_saved",
+                GUID = "server"
+            }));
+
+        }
+
+        [MudRequest("usr_givecp")]
+        public static void GiveCodepoints(string guid, object contents)
+        {
+            var args = contents as Dictionary<string, object>;
+            if (args["username"] != null && args["amount"] != null)
+            {
+                string userName = args["username"] as string;
+                int cpAmount = (int)args["amount"];
+
+                if (Directory.Exists("saves"))
+                {
+                    foreach (var saveFile in Directory.GetFiles("saves"))
+                    {
+                        var saveFileContents = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
+                        if (saveFileContents.Username == userName)
+                        {
+                            saveFileContents.Codepoints += amount;
+                            WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
+                            Program.ClientDispatcher.Broadcast("update_your_cp", new
+                            {
+                                username = userName,
+                                amount = cpAmount
+                            });
+
+                            return;
+                        }
+                    }
+                }
+            }
+
         }
 
         [MudRequest("usr_takecp")]
