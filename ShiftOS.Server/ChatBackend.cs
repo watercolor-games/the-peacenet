@@ -102,6 +102,17 @@ namespace ShiftOS.Server
 
         public delegate void empty();
 
+        [MudRequest("chat_getallchannels")]
+        public static void GetAllChannels(string guid, object contents)
+        {
+            server.DispatchTo(new Guid(guid), new NetObject("chat_all", new ServerMessage
+            {
+                Name = "chat_all",
+                GUID = "Server",
+                Contents = (File.Exists("chats.json") == true) ? File.ReadAllText("chats.json") : "[]"
+            }));
+        }
+
         [MudRequest("chat_send")]
         public static void ReceiveMessage(string guid, object contents)
         {
