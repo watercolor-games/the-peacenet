@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -122,6 +123,100 @@ namespace ShiftOS.Server.WebAdmin
             return false;
         }
 
+        public static string BuildFormFromObject(object obj)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<form method='post' action=''><table class='table'>");
+            foreach(var prop in obj.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                string name = "";
+                string description = "No description.";
+                foreach(var attrib in prop.GetCustomAttributes(false))
+                {
+                    if(attrib is FriendlyNameAttribute)
+                    {
+                        name = (attrib as FriendlyNameAttribute).Name;
+                    }
+                    if(attrib is FriendlyDescriptionAttribute)
+                    {
+                        description = (attrib as FriendlyDescriptionAttribute).Description;
+                    }
+                }
+                if (name != "")
+                {
+                    sb.AppendLine("<tr>");
+
+                    sb.AppendLine($@"<td width=""45%"">
+    <p><strong>{name}</strong></p>
+    <p>{description}</p>
+</td>
+<td>");
+                    if (prop.PropertyType == typeof(bool))
+                    {
+                        string isChecked = ((bool)prop.GetValue(obj) == true) ? "checked" : "";
+                        sb.AppendLine($"<input class='form-control' type='checkbox' name='{prop.Name}' {isChecked}/>");
+                    }
+                    else if (prop.PropertyType == typeof(string))
+                    {
+                        sb.AppendLine($"<input class='form-control' type='text' name='{prop.Name}' value='{prop.GetValue(obj)}'/>");
+                    }
+
+                    sb.AppendLine("</td></tr>");
+                }
+                else
+                {
+                    sb.AppendLine($"<input type='hidden' name='{prop.Name}' value='{prop.GetValue(obj)}'/>");
+                }
+            }
+            sb.AppendLine("<tr><td></td><td><input class='btn btn-default' type='submit'/></td></tr>");
+            sb.AppendLine("</table></form>");
+            return sb.ToString();
+        }
+
+        public static Channel GetChat(string id)
+        {
+            if (File.Exists("chats.json"))
+                foreach (var channel in JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json")))
+                {
+                    if (channel.ID == id)
+                        return channel;
+                }
+            return new Channel();
+        }
+
+        public static string GetAllChats()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<table class=\"table\">");
+            sb.AppendLine($@"<tr><td><strong>ID</strong></td>
+    <td><strong>Name</strong></td>
+    <td><strong>Topic</strong></td>
+    <td><strong>Is Discord Relay</strong></td>
+    <td><strong>Discord channel ID</strong></td>
+    <td><strong>Discord Bot Token</strong></td>
+    <td><strong>Actions</strong></td></tr>");
+            if (File.Exists("chats.json"))
+            {
+                foreach(var chat in JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json")))
+                {
+                    sb.AppendLine($@"<tr>
+    <td>{chat.ID}</td>
+    <td>{chat.Name}</td>
+    <td>{chat.Topic}</td>
+    <td>{chat.IsDiscordProxy}</td>
+    <td>{chat.DiscordChannelID}</td>
+    <td>{chat.DiscordBotToken}</td>
+    <td>
+        <a href=""/mudadmin/editchat/{chat.ID}"" class=""btn btn-default""><span class=""glyphicon glyphicon-pencil""></span>Edit</a>
+        <a href=""/mudadmin/deletechat/{chat.ID}"" class=""btn btn-default""><span class=""glyphicon glyphicon-delete""></span>Delete</a>
+    </td>
+</tr>");
+                }
+            }
+            sb.AppendLine("</table>");
+            return sb.ToString();
+        }
+
         public static string GetCPWorth()
         {
             if (System.IO.Directory.Exists("saves"))
@@ -222,7 +317,7 @@ namespace ShiftOS.Server.WebAdmin
 
             Get["/logout"] = parameters =>
             {
-                return this.Logout("/");
+                return this.Logout("~/");
             };
 
             Post["/login"] = parameters =>
@@ -269,16 +364,111 @@ namespace ShiftOS.Server.WebAdmin
             this.RequiresClaims("Admin");
             Get["/"] = _ =>
             {
-                return PageBuilder.Build("status", new Dictionary<string, string>{
+                return statusBuilder();
+            };
+            Get["/status"] = _ =>
+            {
+                return statusBuilder();
+            };
+            Get["/chats"] = _ =>
+            {
+                return chatsListBuilder();
+            };
+
+            Get["/createchat"] = _ =>
+            {
+                return PageBuilder.Build("editchat", new Dictionary<string, string>
+                {
+                    {"{body}", Properties.Resources.ChatEditTemplate },
+                    {"{form}", SystemManager.BuildFormFromObject(new Channel()) }
+                });
+            };
+
+            Post["/createchat"] = parameters =>
+            {
+                var chat = this.Bind<Channel>();
+                chat.ID = chat.Name.ToLower().Replace(" ", "_");
+                List<Channel> chats = new List<Channel>();
+                if (File.Exists("chats.json"))
+                    chats = JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json"));
+
+                bool chatExists = false;
+
+                for (int i = 0; i < chats.Count; i++)
+                {
+                    if (chats[i].ID == chat.ID)
+                    {
+                        chats[i] = chat;
+                        chatExists = true;
+                    }
+                }
+
+                if (!chatExists)
+                {
+                    chats.Add(chat);
+                }
+
+                File.WriteAllText("chats.json", JsonConvert.SerializeObject(chats, Formatting.Indented));
+
+                return chatsListBuilder();
+            };
+
+            Get["/editchat/{id}"] = parameters =>
+            {
+                return PageBuilder.Build("editchat", new Dictionary<string, string>
+                {
+                    {"{body}", Properties.Resources.ChatEditTemplate },
+                    {"{form}", SystemManager.BuildFormFromObject(SystemManager.GetChat(parameters.id)) }
+                });
+            };
+
+            Post["/editchat/{id}"] = parameters =>
+            {
+                var chat = this.Bind<Channel>();
+                chat.ID = chat.Name.ToLower().Replace(" ", "_");
+                List<Channel> chats = new List<Channel>();
+                if (File.Exists("chats.json"))
+                    chats = JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json"));
+
+                bool chatExists = false;
+
+                for (int i = 0; i < chats.Count; i++)
+                {
+                    if (chats[i].ID == chat.ID)
+                    {
+                        chats[i] = chat;
+                        chatExists = true;
+                    }
+                }
+
+                if (!chatExists)
+                {
+                    chats.Add(chat);
+                }
+
+                File.WriteAllText("chats.json", JsonConvert.SerializeObject(chats, Formatting.Indented));
+                return chatsListBuilder();
+            };
+
+        }
+
+        private string statusBuilder()
+        {
+            return PageBuilder.Build("status", new Dictionary<string, string>{
                     { "{cp_worth}", SystemManager.GetCPWorth() },
                     { "{user_count}", SystemManager.GetUserCount() },
                     { "{system_time}", DateTime.Now.ToString() },
                 });
-            };
-            Get["/status"] = _ =>
+
+        }
+
+        private string chatsListBuilder()
+        {
+            return PageBuilder.Build("bla", new Dictionary<string, string>
             {
-                return PageBuilder.Build("status");
-            };
+                { "{body}", Properties.Resources.ChatListView },
+                { "{chat_table}", SystemManager.GetAllChats() }
+            });
         }
     }
 

@@ -80,36 +80,6 @@ namespace ShiftOS.Server
 		public static event StringEventHandler ServerStarted;
 
 		/// <summary>
-		/// Saves the chats.
-		/// </summary>
-		/// <returns>The chats.</returns>
-		public static void SaveChats()
-		{
-			List<Channel> saved = new List<Channel>();
-			foreach(var chat in chats)
-			{
-				saved.Add(new Channel
-					{
-						ID = chat.ID,
-						Name = chat.Name,
-						MaxUsers = chat.MaxUsers,
-						Topic = chat.Topic,
-						Users = new List<Save>()
-					});
-			}
-			File.WriteAllText("chats.json", JsonConvert.SerializeObject(saved));
-		}
-
-		/// <summary>
-		/// Loads the chats.
-		/// </summary>
-		/// <returns>The chats.</returns>
-		public static void LoadChats()
-		{
-			chats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json"));
-		}
-
-		/// <summary>
 		/// The entry point of the program, where the program control starts and ends.
 		/// </summary>
 		/// <param name="args">The command-line arguments.</param>
@@ -119,15 +89,6 @@ namespace ShiftOS.Server
 			if (!Directory.Exists("saves"))
 			{
 				Directory.CreateDirectory("saves");
-			}
-
-			if(!File.Exists("chats.json"))
-			{
-				SaveChats();
-			}
-			else
-			{
-				LoadChats();
 			}
 
 			if(!Directory.Exists("scripts"))
@@ -202,28 +163,10 @@ namespace ShiftOS.Server
                 Console.WriteLine("Server stopping.");
 
 			};
+            ChatBackend.StartDiscordBots();
 		}
 
-		/// <summary>
-		/// Users the in chat.
-		/// </summary>
-		/// <returns>The in chat.</returns>
-		/// <param name="chan">Chan.</param>
-		/// <param name="user">User.</param>
-		public static bool UserInChat(Channel chan, Save user)
-		{
-			foreach(var usr in chan.Users)
-			{
-				if(usr.Username == user.Username)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-
-        public static string ReadEncFile(string fPath)
+		public static string ReadEncFile(string fPath)
         {
             return Encryption.Decrypt(File.ReadAllText(fPath));
         }

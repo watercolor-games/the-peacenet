@@ -67,15 +67,49 @@ namespace ShiftOS.Objects
         public string OnlineChat { get; set; }
     }
 
+    public class FriendlyNameAttribute : Attribute
+    {
+        public FriendlyNameAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; private set; }
+    }
+
+    public class FriendlyDescriptionAttribute : Attribute
+    {
+        public FriendlyDescriptionAttribute(string desc)
+        {
+            Description = desc;
+        }
+
+        public string Description { get; private set; }
+    }
+
     public class Channel
     {
+        [FriendlyName("Chat name")]
+        [FriendlyDescription("The human-readable name of your chat. This should be something small, possibly a one or two word description of your chat.")]
         public string Name { get; set; }
+
+        //Don't describe this one. We want it to be hidden from the admin panel's chat editor.
         public string ID { get; set; }
+
+        [FriendlyName("Chat topic")]
+        [FriendlyDescription("A more in-depth version of your chat name. Describe what your chat's about in a sentence.")]
         public string Topic { get; set; }
-        public int MaxUsers { get; set; } //0 for unlimited users (or the MUD maximum)
-        public List<Save> Users = new List<Save>();
+
+        [FriendlyName("Is it a Discord relay?")]
+        [FriendlyDescription("If checked, this channel will use a Discord bot to relay messages between ShiftOS and a chosen Discord channel. Useful if you'd like to integrate your MUD with the rest of your community.")]
         public bool IsDiscordProxy { get; set; }
+
+        [FriendlyName("Discord bot token")]
+        [FriendlyDescription("If this is a discord relay chat, paste the token for your Discord bot here. Note: It MUST be a bot token, not a user token.")]
         public string DiscordBotToken { get; set; }
+
+        [FriendlyName("Discord channel ID")]
+        [FriendlyDescription("If this channel is a Discord relay, paste the ID of the channel you'd like the bot to listen to here. You can get the channel ID by enabling Developer Mode in your Discord settings, then right-clicking your channel name and clicking 'Copy ID', then paste it here.")]
         public string DiscordChannelID { get; set; }
     }
 

@@ -15,25 +15,28 @@
 			</div>
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="/webadmin/status">System status</a>
+                    <a href="/mudadmin/status">System status</a>
                 </li>
                 <li>
-                    <a href="/webadmin/saves">Test subjects</a>
+                    <a href="/mudadmin/saves">Test subjects</a>
                 </li>
                 <li>
-                    <a href="/webadmin/shiftnet">Shiftnet</a>
+                    <a href="/mudadmin/shiftnet">Shiftnet</a>
                 </li>
                 <li>
-                    <a href="/webadmin/scripts">Scripts</a>
+                    <a href="/mudadmin/scripts">Scripts</a>
                 </li>
                 <li>
-                    <a href="/webadmin/legions">Legions</a>
+                    <a href="/mudadmin/legions">Legions</a>
+                </li>
+				<li>
+					<a href="/mudadmin/chats">Chats</a>
+				</li>
+                <li>
+                    <a href="/mudadmin/shops">Shops</a>
                 </li>
                 <li>
-                    <a href="/webadmin/shops">Shops</a>
-                </li>
-                <li>
-                    <a href="/webadmin/help">Help</a>
+                    <a href="/mudadmin/help">Help</a>
                 </li>
             </ul>
 			<ul class="nav navbar-nav navbar-right">

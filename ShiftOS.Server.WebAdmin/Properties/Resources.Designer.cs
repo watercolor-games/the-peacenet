@@ -61,6 +61,34 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Create/edit chat&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;Please fill out the details below for your channel list to be modified.&lt;/p&gt;
+        ///
+        ///{form}.
+        /// </summary>
+        internal static string ChatEditTemplate {
+            get {
+                return ResourceManager.GetString("ChatEditTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Chats&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;On this page you can find a list of all chats in the system. Chats are a part of the multi-user domain that allows online players to talk to eachother in the &apos;MUD Chat&apos; application.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;If you have a Discord server for your multi-user domain, you can also designate a ShiftOS chat to listen on a specific channel on your server. You will need to create a Discord Bot Token and specify the ID of the channel you want tolisten to.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;Once the chat is set up, you should see a bot  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ChatListView {
+            get {
+                return ResourceManager.GetString("ChatListView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;html&gt;
         ///	&lt;head&gt;
         ///		&lt;title&gt;Multi-user domain &amp;bull; ShiftOS&lt;/title&gt;
