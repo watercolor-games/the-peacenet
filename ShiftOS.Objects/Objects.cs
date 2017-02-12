@@ -74,8 +74,26 @@ namespace ShiftOS.Objects
         public string Topic { get; set; }
         public int MaxUsers { get; set; } //0 for unlimited users (or the MUD maximum)
         public List<Save> Users = new List<Save>();
+        public bool IsDiscordProxy { get; set; }
+        public string DiscordBotToken { get; set; }
+        public string DiscordChannelID { get; set; }
     }
 
+    public class ChatMessage
+    {
+        public ChatMessage(string uname, string sys, string message, string chan)
+        {
+            Username = uname;
+            SystemName = sys;
+            Message = message;
+            Channel = chan;
+        }
+
+        public string Username { get; private set; }
+        public string SystemName { get; private set; }
+        public string Channel { get; private set; }
+        public string Message { get; private set; } 
+    }
 
     [Serializable]
     public class ServerMessage
