@@ -3,42 +3,42 @@
 		<title>Multi-user domain &bull; ShiftOS</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-		<link rel="stylesheet" href="css/theme.css"/>
+		<link rel="stylesheet" href="http://getshiftos.ml/css/theme.css"/>
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	</head>
 	<body>
-	<!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="http://getshiftos.ml/">
-                        <img src="https://cdn.discordapp.com/attachments/241613675545231360/280020406528901131/unknown.png"/>
-                    </a>
+        <div class="navbar navbar-default">
+			<div class+"navbar-header">
+				<a class="navbar-brand" href="http://getshiftos.ml">ShiftOS</a>
+			</div>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/webadmin/status">System status</a>
                 </li>
                 <li>
-                    <a href="/status">System status</a>
+                    <a href="/webadmin/saves">Test subjects</a>
                 </li>
                 <li>
-                    <a href="/saves">Test subjects</a>
+                    <a href="/webadmin/shiftnet">Shiftnet</a>
                 </li>
                 <li>
-                    <a href="/shiftnet">Shiftnet</a>
+                    <a href="/webadmin/scripts">Scripts</a>
                 </li>
                 <li>
-                    <a href="/scripts">Scripts</a>
+                    <a href="/webadmin/legions">Legions</a>
                 </li>
                 <li>
-                    <a href="/legions">Legions</a>
+                    <a href="/webadmin/shops">Shops</a>
                 </li>
                 <li>
-                    <a href="/shops">Shops</a>
-                </li>
-                <li>
-                    <a href="/help">Help</a>
+                    <a href="/webadmin/help">Help</a>
                 </li>
             </ul>
+			<ul class="nav navbar-nav navbar-right">
+				{logout}
+			</ul>
         </div>
         <!-- /#sidebar-wrapper -->
 

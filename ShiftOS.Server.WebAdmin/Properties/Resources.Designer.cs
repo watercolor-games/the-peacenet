@@ -66,10 +66,10 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         ///		&lt;title&gt;Multi-user domain &amp;bull; ShiftOS&lt;/title&gt;
         ///		&lt;link rel=&quot;stylesheet&quot; href=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css&quot; integrity=&quot;sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u&quot; crossorigin=&quot;anonymous&quot;&gt;
         ///
-        ///		&lt;link rel=&quot;stylesheet&quot; href=&quot;css/theme.css&quot;/&gt;
+        ///		&lt;link rel=&quot;stylesheet&quot; href=&quot;http://getshiftos.ml/css/theme.css&quot;/&gt;
         ///
         ///		&lt;!-- Latest compiled and minified JavaScript --&gt;
-        ///		&lt;script src=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js&quot; integrity=&quot;sha384-Tc5IQib027qvyjSMfHjOMaLkf [rest of string was truncated]&quot;;.
+        ///		&lt;script src=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js&quot; integrity=&quot;sha384-Tc5I [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HtmlTemplate {
             get {
@@ -96,6 +96,51 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         internal static string LoginView {
             get {
                 return ResourceManager.GetString("LoginView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h1&gt;Initial setup&lt;/h1&gt;
+        ///
+        ///&lt;p&gt;Welcome to your multi-user domain. If you are seeing this screen, it means that the web administration panel is successfully running and listening for requests. Before you can start using the admin panel you must create an Admin account. This account will let you log in and manage other authorized users, manage saves, Shiftnet pages and other information.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;To continue, type a username and password.&lt;/p&gt;
+        ///
+        ///&lt;form method=&quot;post&quot; action=&quot;&quot;&gt;
+        ///	&lt;table class=&quot;table&quot;&gt;
+        ///		&lt;tr&gt;
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SetupView {
+            get {
+                return ResourceManager.GetString("SetupView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;System status&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;Below is a summary of this multi-user domain&apos;s status.&lt;/p&gt;
+        ///
+        ///&lt;div class=&quot;row&quot;&gt;
+        ///	&lt;div class=&quot;col-xs-6&quot;&gt;
+        ///		&lt;h4&gt;MUD stats&lt;/h4&gt;
+        ///		&lt;ul&gt;
+        ///			&lt;li&gt;This server is worth &lt;strong&gt;{cp_worth}&lt;/strong&gt; Codepoints.&lt;/li&gt;
+        ///			&lt;li&gt;This server has &lt;strong&gt;{user_count}&lt;/strong&gt; players registered.&lt;/li&gt;
+        ///		&lt;/ul&gt;
+        ///	&lt;/div&gt;
+        ///	&lt;div class=&quot;col-xs-6&quot;&gt;
+        ///		&lt;h4&gt;System environment&lt;/h4&gt;
+        ///		&lt;ul&gt;
+        ///			&lt;li&gt;&lt;strong&gt;Current system time:&lt;/strong&gt; {system_time}&lt;/li&gt;
+        ///		&lt;/ul&gt;
+        ///	&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string Status {
+            get {
+                return ResourceManager.GetString("Status", resourceCulture);
             }
         }
     }

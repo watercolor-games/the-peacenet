@@ -1,0 +1,19 @@
+<h3>System status</h3>
+
+<p>Below is a summary of this multi-user domain's status.</p>
+
+<div class="row">
+	<div class="col-xs-6">
+		<h4>MUD stats</h4>
+		<ul>
+			<li>This server is worth <strong>{cp_worth}</strong> Codepoints.</li>
+			<li>This server has <strong>{user_count}</strong> players registered.</li>
+		</ul>
+	</div>
+	<div class="col-xs-6">
+		<h4>System environment</h4>
+		<ul>
+			<li><strong>Current system time:</strong> {system_time}</li>
+		</ul>
+	</div>
+</div>

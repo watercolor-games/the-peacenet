@@ -76,6 +76,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ShiftOS.Objects\ShiftOS.Objects.csproj">
+      <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
+      <Name>ShiftOS.Objects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShiftOS.Server\ShiftOS.Server.csproj">
       <Project>{226c63b4-e60d-4949-b4e7-7a2ddbb96776}</Project>
       <Name>ShiftOS.Server</Name>
@@ -92,6 +96,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\LoginView.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SetupView.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Status.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
