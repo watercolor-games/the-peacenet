@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="http://getshiftos.ml/css/theme.css"/>
 
 		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	</head>
 	<body>
@@ -21,34 +22,36 @@
                     <a href="/mudadmin/saves">Test subjects</a>
                 </li>
                 <li>
-                    <a href="/mudadmin/shiftnet">Shiftnet</a>
+                    <a href="#">Shiftnet (NYI)</a>
                 </li>
                 <li>
-                    <a href="/mudadmin/scripts">Scripts</a>
+                    <a href="#">Scripts (NYI)</a>
                 </li>
                 <li>
-                    <a href="/mudadmin/legions">Legions</a>
+                    <a href="#">Legions (NYI)</a>
                 </li>
 				<li>
 					<a href="/mudadmin/chats">Chats</a>
 				</li>
                 <li>
-                    <a href="/mudadmin/shops">Shops</a>
-                </li>
-                <li>
-                    <a href="/mudadmin/help">Help</a>
+                    <a href="#">Shops (NYI)</a>
                 </li>
             </ul>
 			<ul class="nav navbar-nav navbar-right">
+				{mud_restart}
+				{mud_power}
 				{logout}
+				
 			</ul>
         </div>
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <div class="container-fluid">
+            <div class="container-fluid content">
 				{body}
+
+				<p style="text-align:center;"><em>ShiftOS - MUD admin panel - Copyright &copy; 2017 ShiftOS developers</em></p>
 			</div>
 		</div>
 	</body>

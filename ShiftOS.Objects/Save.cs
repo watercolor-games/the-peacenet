@@ -27,6 +27,10 @@ namespace ShiftOS.Objects
 
         private dynamic _settings = new SettingsObject();
 
+        public Guid ID { get; set; }
+
+        public bool IsMUDAdmin { get; set; }
+
         public dynamic Settings
         {
             get

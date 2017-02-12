@@ -89,6 +89,19 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;{listtitle}&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;{listdesc}&lt;/p&gt;
+        ///
+        ///{list}.
+        /// </summary>
+        internal static string GenericTableList {
+            get {
+                return ResourceManager.GetString("GenericTableList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;html&gt;
         ///	&lt;head&gt;
         ///		&lt;title&gt;Multi-user domain &amp;bull; ShiftOS&lt;/title&gt;
@@ -97,7 +110,7 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         ///		&lt;link rel=&quot;stylesheet&quot; href=&quot;http://getshiftos.ml/css/theme.css&quot;/&gt;
         ///
         ///		&lt;!-- Latest compiled and minified JavaScript --&gt;
-        ///		&lt;script src=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js&quot; integrity=&quot;sha384-Tc5I [rest of string was truncated]&quot;;.
+        ///		&lt;script src=&quot;https://code.jquery.com/jquery-3.1.1.js&quot; integrity=&quot;sha256-16cdPddA6VdVInumRGo6IbivbERE8p7C [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HtmlTemplate {
             get {
@@ -128,16 +141,24 @@ namespace ShiftOS.Server.WebAdmin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;No users found.&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;Your multi-user domain is newly-created. Before you can use the admin panel, you must create a ShiftOS user to act as the administrator of the MUD.&lt;/p&gt;
+        ///
+        ///{user_create_form}.
+        /// </summary>
+        internal static string NoUsersFound {
+            get {
+                return ResourceManager.GetString("NoUsersFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h1&gt;Initial setup&lt;/h1&gt;
         ///
-        ///&lt;p&gt;Welcome to your multi-user domain. If you are seeing this screen, it means that the web administration panel is successfully running and listening for requests. Before you can start using the admin panel you must create an Admin account. This account will let you log in and manage other authorized users, manage saves, Shiftnet pages and other information.&lt;/p&gt;
+        ///&lt;p&gt;This multi-user domain contains some users, however none of them are administrators. Please choose your user to make it an admin.&lt;/p&gt;
         ///
-        ///&lt;p&gt;To continue, type a username and password.&lt;/p&gt;
-        ///
-        ///&lt;form method=&quot;post&quot; action=&quot;&quot;&gt;
-        ///	&lt;table class=&quot;table&quot;&gt;
-        ///		&lt;tr&gt;
-        ///	 [rest of string was truncated]&quot;;.
+        ///{savelist}.
         /// </summary>
         internal static string SetupView {
             get {

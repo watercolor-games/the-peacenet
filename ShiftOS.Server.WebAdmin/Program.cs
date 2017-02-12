@@ -45,6 +45,24 @@ namespace ShiftOS.Server.WebAdmin
             {
                 templateParams.Add("{logout}", "<li><a href=\"/mudadmin/logout\">Log out</a></li>");
             }
+            if (SystemManager.MudIsRunning())
+            {
+                templateParams.Add("{mud_power}", "<li><a href='/mudadmin/poweroff'><span class='glyphicon glyphicon-power-off'></span> Power off</a></li>");
+                templateParams.Add("{mud_restart}", "<li><a href='/mudadmin/restart'><span class='glyphicon glyphicon-refresh'></span> Restart</a></li>");
+            }
+            else
+            {
+                templateParams.Add("{mud_power}", "<li><a href='/mudadmin/poweron'><span class='glyphicon glyphicon-power-on'></span> Power on</a></li>");
+                templateParams.Add("{mud_restart}", "");
+            }
+
+            if(templateParams["{logout}"] == "")
+            {
+                templateParams["{mud_power}"] = "";
+                templateParams["{mud_restart}"] = "";
+
+            }
+
             switch (page)
             {
                 case "status":
@@ -97,23 +115,61 @@ namespace ShiftOS.Server.WebAdmin
 
     public static class SystemManager
     {
+        public static bool MudIsRunning()
+        {
+            var processes = System.Diagnostics.Process.GetProcessesByName("ShiftOS.Server");
+            return processes.Length > 0;
+        }
+
+        public static void KillMud()
+        {
+            var processes = System.Diagnostics.Process.GetProcessesByName("ShiftOS.Server");
+            for(int i = 0; i < processes.Length; i++)
+            {
+                try
+                {
+                    processes[i].Kill();
+                }
+                catch
+                {
+                }
+            }
+        }
+
         public static List<string> GetClaims(string username)
         {
-            foreach (var user in JsonConvert.DeserializeObject<List<MudUser>>(ShiftOS.Server.Program.ReadEncFile("users.json")))
+            foreach(var save in GetSaves())
             {
-                if(user.Username == username)
+                if (save.IsMUDAdmin)
                 {
-                    return user.Claims;
+                    return new List<string> { "User", "Admin" };
                 }
             }
             return new List<string>(new[] { "User" });
         }
 
+        public static Save[] GetSaves()
+        {
+            List<Save> saves = new List<Save>();
+            if (Directory.Exists("saves"))
+            {
+                foreach(var saveFile in Directory.GetFiles("saves"))
+                {
+                    try
+                    {
+                        saves.Add(JsonConvert.DeserializeObject<Save>(Server.Program.ReadEncFile(saveFile)));
+                    }
+                    catch { }
+                }
+            }
+            return saves.ToArray();
+        }
+
         public static bool Login(string username, string password, out Guid id)
         {
-            foreach (var user in JsonConvert.DeserializeObject<List<MudUser>>(ShiftOS.Server.Program.ReadEncFile("users.json")))
+            foreach (var user in GetSaves())
             {
-                if (user.Username == username && user.Password == Encryption.Encrypt(password))
+                if (user.Username == username && user.Password == password)
                 {
                     id = user.ID;
                     return true;
@@ -184,6 +240,40 @@ namespace ShiftOS.Server.WebAdmin
             return new Channel();
         }
 
+        public static string BuildSaveListing(Save[] list)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<table class=\"table\">");
+
+            sb.AppendLine(@"<tr>
+    <td><strong>Username</strong></td>
+    <td><strong>System Name</strong></td>
+    <td><strong>Codepoints</strong></td>
+    <td><strong>Shiftorium Upgrades</strong></td>
+    <td><strong>Is MUD Admin</strong></td>
+    <td><strong>Actions</strong></td>
+</tr>");
+
+            foreach(var save in list)
+            {
+                sb.AppendLine($@"<tr>
+    <td>{save.Username}</td>
+    <td>{save.SystemName}</td>
+    <td>{save.Codepoints}</td>
+    <td>{save.CountUpgrades()} installed, {save.Upgrades.Count} total</td>
+    <td>{save.IsMUDAdmin}</td>
+    <td>
+        <a href=""/mudadmin/toggleadmin/{save.ID}"" class=""btn btn-danger"">Toggle admin</a>
+        <a href=""/mudadmin/deletesave/{save.Username}"" class=""btn btn-danger"">Delete save</a>
+    </td>
+</tr>");
+            }
+
+            sb.AppendLine("</table>");
+            return sb.ToString();
+        }
+
+
         public static string GetAllChats()
         {
             StringBuilder sb = new StringBuilder();
@@ -208,13 +298,38 @@ namespace ShiftOS.Server.WebAdmin
     <td>{chat.DiscordBotToken}</td>
     <td>
         <a href=""/mudadmin/editchat/{chat.ID}"" class=""btn btn-default""><span class=""glyphicon glyphicon-pencil""></span>Edit</a>
-        <a href=""/mudadmin/deletechat/{chat.ID}"" class=""btn btn-default""><span class=""glyphicon glyphicon-delete""></span>Delete</a>
+        <a href=""#"" class=""btn btn-default"" data-toggle=""modal"" data-target=""#modal_{chat.ID}""><span class=""glyphicon glyphicon-delete""></span> Delete</a>
     </td>
 </tr>");
+                    sb.AppendLine(CreateModal(chat.ID, "Delete " + chat.Name + "?", "Are you sure you want to delete this chat?", "/deletechat/" + chat.ID));
                 }
             }
             sb.AppendLine("</table>");
             return sb.ToString();
+        }
+
+        public static string CreateModal(string id, string title, string msg, string callbackUrl)
+        {
+            return $@"<div id=""modal_{id}"" class=""modal fade"" role=""dialog"">
+  <div class=""modal-dialog"">
+
+    <!-- Modal content-->
+    <div class=""modal-content"">
+      <div class=""modal-header"">
+        <button type=""button"" class=""close"" data-dismiss=""modal"">&times;</button>
+        <h4 class=""modal-title"">{title}</h4>
+      </div>
+      <div class=""modal-body"">
+        <p>{msg}</p>
+      </div>
+      <div class=""modal-footer"">
+        <a href=""/mudadmin{callbackUrl}"" class=""btn btn-danger"">Yes</a>
+        <button type=""button"" class=""btn btn-default"" data-dismiss=""modal"">No</button>
+      </div>
+    </div>
+
+  </div>
+</div>";
         }
 
         public static string GetCPWorth()
@@ -253,7 +368,7 @@ namespace ShiftOS.Server.WebAdmin
 
         public static MudUserIdentity GetIdentity(Guid id)
         {
-            foreach (var user in JsonConvert.DeserializeObject<List<MudUser>>(ShiftOS.Server.Program.ReadEncFile("users.json")))
+            foreach (var user in GetSaves())
             {
                 if (user.ID == id)
                 {
@@ -262,13 +377,50 @@ namespace ShiftOS.Server.WebAdmin
             }
             return null;
         }
+
+        internal static void MakeAdmin(string username)
+        {
+            Save sav = null;
+            foreach(var save in GetSaves())
+            {
+                if (save.Username == username)
+                    sav = save;
+            }
+            if(sav != null)
+            {
+                sav.IsMUDAdmin = true;
+                Server.Program.WriteEncFile("saves/" + username + ".save", JsonConvert.SerializeObject(sav));
+            }
+        }
+
+        internal static Save[] GetAdmins()
+        {
+            var saves = new List<Save>();
+            foreach(var save in GetSaves())
+            {
+                if(save.IsMUDAdmin == true)
+                {
+                    saves.Add(save);
+                }
+            }
+            return saves.ToArray();
+        }
     }
 
     public class MudUser
     {
+        [FriendlyName("Username")]
+        [FriendlyDescription("The username you will appear as in-game.")]
         public string Username { get; set; }
+
+        [FriendlyName("Password")]
+        [FriendlyDescription("A password that you will use to log in to the admin panel and the game.")]
         public string Password { get; set; }
-        public List<string> Claims { get; set; }
+
+        [FriendlyName("System name")]
+        [FriendlyDescription("An in-game hostname for your account. In ShiftOS, your user ID is always yourusername@yoursystemname. Be creative.")]
+        public string SystemName { get; set; }
+
         public Guid ID { get; set; }
     }
 
@@ -299,18 +451,30 @@ namespace ShiftOS.Server.WebAdmin
         {
             Get["/login"] = parameters =>
             {
-                if (System.IO.File.Exists("users.json"))
+                if (SystemManager.GetSaves().Length > 0)
                 {
-                    return PageBuilder.Build("login", new Dictionary<string, string>
+                    if (SystemManager.GetAdmins().Length > 0)
+                    {
+                        return PageBuilder.Build("login", new Dictionary<string, string>
                     {
                         {"{logout}", "" }
                     });
+                    }
+                    else
+                    {
+                        return PageBuilder.Build("initialsetup", new Dictionary<string, string>
+                    {
+                        {"{logout}", "" },
+                            {"{savelist}", BuildSaveList() }
+                    });
+                    }
                 }
                 else
                 {
-                    return PageBuilder.Build("initialsetup", new Dictionary<string, string>
+                    return PageBuilder.Build("bla", new Dictionary<string, string>
                     {
-                        {"{logout}", "" }
+                        {"{body}", Properties.Resources.NoUsersFound },
+                        {"{user_create_form}", SystemManager.BuildFormFromObject(new MudUser()) }
                     });
                 }
             };
@@ -322,35 +486,79 @@ namespace ShiftOS.Server.WebAdmin
 
             Post["/login"] = parameters =>
             {
-                var p = this.Bind<LoginRequest>();
-                Guid id = new Guid();
-                if (System.IO.File.Exists("users.json"))
+                if (SystemManager.GetSaves().Length > 0)
                 {
-                    if (SystemManager.Login(p.username, p.password, out id) == true)
+                    if (SystemManager.GetAdmins().Length == 0)
                     {
-                        return this.Login(id);
+                        var user = this.Bind<LoginRequest>();
+                        SystemManager.MakeAdmin(user.username);
+                        Guid id = new Guid();
+                        if(SystemManager.Login(user.username, user.password, out id) == true)
+                        {
+                            return this.Login(id);
+                        }
+                        return new UserModule().Redirect("/login");
                     }
                     else
                     {
-                        return PageBuilder.Build("loginFailed", new Dictionary<string, string>
-                    {
-                        {"{logout}", "" }
-                    });
+                        var user = this.Bind<LoginRequest>();
+                        Guid id = new Guid();
+                        if (SystemManager.Login(user.username, user.password, out id) == true)
+                        {
+                            return this.Login(id);
+                        }
+                        return new UserModule().Redirect("/login");
                     }
                 }
                 else
                 {
-                    var mudUser = new MudUser();
-                    mudUser.Username = p.username;
-                    mudUser.Password = Encryption.Encrypt(p.password);
-                    mudUser.Claims = new List<string>(new[] { "Admin" });
-                    mudUser.ID = Guid.NewGuid();
-                    id = mudUser.ID;
-                    List<MudUser> users = new List<MudUser>(new[] { mudUser });
-                    ShiftOS.Server.Program.WriteEncFile("users.json", JsonConvert.SerializeObject(users, Formatting.Indented));
-                    return this.Login(id);
+                    var newUser = this.Bind<MudUser>();
+                    var save = new Save();
+                    save.Username = newUser.Username;
+                    save.SystemName = newUser.SystemName;
+                    save.Password = newUser.Password;
+                    save.Codepoints = 0;
+                    save.MyShop = "";
+                    save.Upgrades = new Dictionary<string, bool>();
+                    save.IsMUDAdmin = true;
+                    save.StoryPosition = 1;
+
+                    if (!Directory.Exists("saves"))
+                        Directory.CreateDirectory("saves");
+                    save.ID = Guid.NewGuid();
+
+                    Server.Program.WriteEncFile("saves/" + save.Username + ".save", JsonConvert.SerializeObject(save));
+                    return this.Login(save.ID);
                 }
             };
+        }
+
+        private string BuildSaveList()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<table class='table'>");
+            sb.AppendLine($@"<tr>
+    <td><strong>Username</strong></td>
+    <td><strong>System name</strong></td>
+    <td><strong>Codepoints</strong></td>
+    <td><strong>Actions</strong></td>
+</tr>");
+
+            foreach(var save in SystemManager.GetSaves())
+            {
+                sb.AppendLine($@"<tr>
+    <td>{save.Username}</td>
+    <td>{save.SystemName}</td>
+    <td>{save.Codepoints}</td>
+    <td><form method='post' action=''>
+        <input type='hidden' name='username' value='{save.Username}'/><input type='hidden' name='password' value='{save.Password}'/>
+        <input type='submit' value='Choose' class='btn btn-default'/>
+    </form></td>
+</tr>");
+            }
+
+            sb.AppendLine("</table>");
+            return sb.ToString();
         }
     }
 
@@ -358,18 +566,89 @@ namespace ShiftOS.Server.WebAdmin
 
     public class UserModule : NancyModule
     {
+        public string Redirect(string url)
+        {
+            return $@"<html>
+    <head>
+        <meta http-equiv=""refresh"" content=""0; url=/mudadmin{url}"" />
+    </ head>
+</html>";
+        }
+
         public UserModule()
         {
             this.RequiresAuthentication();
             this.RequiresClaims("Admin");
             Get["/"] = _ =>
             {
-                return statusBuilder();
+                return Redirect("/status");
             };
+
+            Get["/toggleadmin/{id}"] = parameters =>
+            {
+                string id = parameters.id;
+                for (int i = 0; i < SystemManager.GetSaves().Length; i++)
+                {
+                    var save = SystemManager.GetSaves()[i];
+                    if(save.ID.ToString() == id)
+                    {
+                        save.IsMUDAdmin = !save.IsMUDAdmin;
+                        Server.Program.WriteEncFile("saves/" + save.Username + ".save", JsonConvert.SerializeObject(save));
+                    }
+                }
+                return Redirect("/saves");
+
+            };
+
+            Get["/deletesave/{username}"] = parameters =>
+            {
+
+
+                string id = parameters.username;
+                for (int i = 0; i < SystemManager.GetSaves().Length; i++)
+                {
+                    if (SystemManager.GetSaves()[i].Username.ToString() == id)
+                    {
+                        File.Delete("saves/" + SystemManager.GetSaves()[i].Username + ".save");
+                    }
+                }
+                return Redirect("/saves");
+            };
+
+
+            Get["/saves"] = _ =>
+            {
+                return PageBuilder.Build("bla", new Dictionary<string, string>
+                {
+                    { "{body}", Properties.Resources.GenericTableList },
+                    { "{listtitle}", "Test subjects"  },
+                    { "{listdesc}", "Below is a list of test subjects (save files) on your multi-user domain. You can see their username, system name, Codepoints, amount of installed upgrades, and you can also perform basic actions on each save." },
+                    { "{list}", SystemManager.BuildSaveListing(SystemManager.GetSaves()) }
+                });
+            };
+
             Get["/status"] = _ =>
             {
                 return statusBuilder();
             };
+
+            Get["/deletechat/{id}"] = parameters =>
+            {
+                string chatID = parameters.id;
+                var chats = JsonConvert.DeserializeObject<List<Channel>>(File.ReadAllText("chats.json"));
+                for(int i = 0; i < chats.Count; i++)
+                {
+                    try
+                    {
+                        if (chats[i].ID == chatID)
+                            chats.RemoveAt(i);
+                    }
+                    catch { }
+                }
+                File.WriteAllText("chats.json", JsonConvert.SerializeObject(chats, Formatting.Indented));
+                return Redirect("/chats");
+            };
+
             Get["/chats"] = _ =>
             {
                 return chatsListBuilder();
@@ -410,7 +689,7 @@ namespace ShiftOS.Server.WebAdmin
 
                 File.WriteAllText("chats.json", JsonConvert.SerializeObject(chats, Formatting.Indented));
 
-                return chatsListBuilder();
+                return Redirect("/chats");
             };
 
             Get["/editchat/{id}"] = parameters =>
@@ -447,9 +726,34 @@ namespace ShiftOS.Server.WebAdmin
                 }
 
                 File.WriteAllText("chats.json", JsonConvert.SerializeObject(chats, Formatting.Indented));
-                return chatsListBuilder();
+                return Redirect("/chats");
             };
 
+            Get["/poweron"] = _ =>
+            {
+                if (!SystemManager.MudIsRunning())
+                {
+                    System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+                }
+                return Redirect("/");
+            };
+
+            Get["/poweroff"] = _ =>
+            {
+                if (SystemManager.MudIsRunning())
+                {
+                    SystemManager.KillMud();
+                }
+                return Redirect("/");
+            };
+            Get["/restart"] = _ =>
+            {
+                if (SystemManager.MudIsRunning())
+                {
+                    SystemManager.KillMud();
+                }
+                return Redirect("/poweron");
+            };
         }
 
         private string statusBuilder()
