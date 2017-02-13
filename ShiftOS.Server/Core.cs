@@ -44,41 +44,48 @@ namespace ShiftOS.Server
         [MudRequest("script")]
         public static void RunScript(string guid, object contents)
         {
-            var args = contents as Dictionary<string, string>;
-
-            string user = "";
-            string script = "";
-            string sArgs = "";
-
-            if (!args.ContainsKey("user"))
-                throw new MudException("No 'user' arg specified in message to server");
-
-            if (!args.ContainsKey("script"))
-                throw new MudException("No 'script' arg specified in message to server");
-
-            if (!args.ContainsKey("args"))
-                throw new MudException("No 'args' arg specified in message to server");
-
-            user = args["user"] as string;
-            script = args["script"] as string;
-            sArgs = args["args"] as string;
-
-            if (File.Exists($"scripts/{user}/{script}.lua"))
+            try
             {
-                var script_arguments = JsonConvert.DeserializeObject<Dictionary<string, object>>(sArgs);
-                server.DispatchTo(new Guid(guid), new NetObject("runme", new ServerMessage
+                var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(contents));
+
+                string user = "";
+                string script = "";
+                string sArgs = "";
+
+                if (!args.ContainsKey("user"))
+                    throw new MudException("No 'user' arg specified in message to server");
+
+                if (!args.ContainsKey("script"))
+                    throw new MudException("No 'script' arg specified in message to server");
+
+                if (!args.ContainsKey("args"))
+                    throw new MudException("No 'args' arg specified in message to server");
+
+                user = args["user"] as string;
+                script = args["script"] as string;
+                sArgs = args["args"] as string;
+
+                if (File.Exists($"scripts/{user}/{script}.lua"))
                 {
-                    Name = "run",
-                    GUID = "Server",
-                    Contents = $@"{{
+                    var script_arguments = JsonConvert.DeserializeObject<Dictionary<string, object>>(sArgs);
+                    server.DispatchTo(new Guid(guid), new NetObject("runme", new ServerMessage
+                    {
+                        Name = "run",
+                        GUID = "Server",
+                        Contents = $@"{{
     script:""{File.ReadAllText($"scripts/{user}/{script}.lua").Replace("\"", "\\\"")}"",
 							args:""{sArgs}""
 							}}"
-                }));
+                    }));
+                }
+                else
+                {
+                    throw new MudException($"{user}.{script}: Script not found.");
+                }
             }
-            else
+            catch
             {
-                throw new MudException($"{user}.{script}: Script not found.");
+                throw new MudException($"Command parse error.");
             }
 
         }
