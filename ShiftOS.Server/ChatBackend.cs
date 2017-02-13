@@ -10,6 +10,7 @@ using System.IO;
 using static ShiftOS.Server.Program;
 using Discord;
 using Discord.WebSocket;
+using Discord.Net.WebSockets;
 
 namespace ShiftOS.Server
 {
@@ -22,12 +23,13 @@ namespace ShiftOS.Server
                 File.WriteAllText("chats.json", "[]");
             foreach (var chat in JsonConvert.DeserializeObject<List<ShiftOS.Objects.Channel>>(File.ReadAllText("chats.json")))
             {
-
+                string chatID = chat.ID;
                 bool chatKilled = false;
                 if (chat.IsDiscordProxy == true)
                 {
                     DiscordSocketConfig builder = new DiscordSocketConfig();
                     builder.AudioMode = Discord.Audio.AudioMode.Disabled;
+                    builder.WebSocketProvider = () => Discord.Net.Providers.WS4Net.WS4NetProvider.Instance();
                     var client = new DiscordSocketClient(builder);
                     await client.LoginAsync(TokenType.Bot, chat.DiscordBotToken);
 
@@ -40,12 +42,15 @@ namespace ShiftOS.Server
                         {
                             if (s.Channel.Id == Convert.ToUInt64(chat.DiscordChannelID))
                             {
-                                server.DispatchAll(new NetObject("chat_msgreceived", new ServerMessage
+                                if (s.Author.Id != client.CurrentUser.Id)
                                 {
-                                    Name = "chat_msgreceived",
-                                    GUID = "server",
-                                    Contents = JsonConvert.SerializeObject(new ChatMessage(s.Author.Mention, "discord_" + s.Channel.Name, s.Content, chat.ID))
-                                }));
+                                    server.DispatchAll(new NetObject("chat_msgreceived", new ServerMessage
+                                    {
+                                        Name = "chat_msgreceived",
+                                        GUID = "server",
+                                        Contents = JsonConvert.SerializeObject(new ChatMessage(s.Author.Username, "discord_" + s.Channel.Name, (s as SocketUserMessage).Resolve(0), chatID))
+                                    }));
+                                }
                             }
                         }
                     };
@@ -57,7 +62,7 @@ namespace ShiftOS.Server
                             if (msg.Channel == chat.ID)
                             {
                                 //Get the Discord channel for this chat.
-                                var dChan = client.GetChannel(Convert.ToUInt64(chat.ID)) as ISocketMessageChannel;
+                                var dChan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID)) as ISocketMessageChannel;
                                 //Relay the message to Discord.
                                 dChan.SendMessageAsync($"**[{msg.Username}@{msg.SystemName}] `<mud/{msg.Channel}> {msg.Message}");
 
@@ -119,9 +124,11 @@ namespace ShiftOS.Server
         [MudRequest("chat_send")]
         public static void ReceiveMessage(string guid, object contents)
         {
-            var msg = JsonConvert.DeserializeObject<ChatMessage>(JsonConvert.SerializeObject(contents));
+            var args = contents as Dictionary<string, object>;
+            var msg = new ChatMessage(args["Username"] as string, args["SystemName"] as string, args["Message"] as string, args["Channel"] as string);
             MessageReceived?.Invoke(guid, msg);
 
         }
     }
+
 }

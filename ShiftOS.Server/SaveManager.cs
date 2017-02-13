@@ -123,16 +123,20 @@ namespace ShiftOS.Server
         [MudRequest("mud_save")]
         public static void SaveGame(string guid, object contents)
         {
-            var sav = JsonConvert.DeserializeObject<Save>(contents as string);
+            var sav = JsonConvert.DeserializeObject<Save>(JsonConvert.SerializeObject(contents));
 
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
-            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
-            {
-                Name = "mud_saved",
-                GUID = "server"
-            }));
 
+            try
+            {
+                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_saved",
+                    GUID = "server"
+                }));
+            }
+            catch { }
         }
 
         [MudRequest("usr_givecp")]

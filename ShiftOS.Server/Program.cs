@@ -163,7 +163,8 @@ namespace ShiftOS.Server
                 Console.WriteLine("Server stopping.");
 
 			};
-            ChatBackend.StartDiscordBots();
+            var task = ChatBackend.StartDiscordBots();
+            task.Wait();
 		}
 
 		public static string ReadEncFile(string fPath)
@@ -247,8 +248,9 @@ namespace ShiftOS.Server
 
                                                     method?.Invoke(null, new[] { msg.GUID, contents });
                                                 }
-                                                catch (MudException mEx)
+                                                catch (Exception mEx)
                                                 {
+                                                    Console.WriteLine(mEx);
                                                     ClientDispatcher.DispatchTo("Error", msg.GUID, mEx);
                                                 }
                                                 catch
@@ -264,8 +266,8 @@ namespace ShiftOS.Server
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"[{DateTime.Now}] Exception while handling request {msg.Name}: {ex}");
-                            return;
+                            //Console.WriteLine($"[{DateTime.Now}] Exception while handling request {msg.Name}: {ex}");
+                            //return;
                         }
                     }
                 }
