@@ -36,6 +36,11 @@ namespace ShiftOS.Server
                     await client.ConnectAsync();
                     await client.SetGameAsync("ShiftOS");
                     await client.SetStatusAsync(UserStatus.Online);
+                    //Get the Discord channel for this chat.
+                    var Chan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID)) as ISocketMessageChannel;
+                    //Relay the message to Discord.
+                    await Chan.SendMessageAsync("**Hello! Multi-user domain is online.**");
+
                     client.MessageReceived += async (s) =>
                     {
                         if (chatKilled == false)
@@ -64,7 +69,7 @@ namespace ShiftOS.Server
                                 //Get the Discord channel for this chat.
                                 var dChan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID)) as ISocketMessageChannel;
                                 //Relay the message to Discord.
-                                dChan.SendMessageAsync($"**[{msg.Username}@{msg.SystemName}] `<mud/{msg.Channel}> {msg.Message}");
+                                dChan.SendMessageAsync($"**[{msg.Username}@{msg.SystemName}]** `<mud/{msg.Channel}>` {msg.Message}");
 
                             }
                             //Relay it back to all MUD clients.
