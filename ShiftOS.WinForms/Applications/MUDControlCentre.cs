@@ -182,6 +182,9 @@ namespace ShiftOS.WinForms.Applications
 
             flshoplist.Controls.Clear();
 
+            lblistname.Text = "Chat";
+            lblistdesc.Text = "Want to talk with other Shifters on the multi-user domain? Simply select a chatroom below and click 'Join' to join in!";
+
             foreach (var shop in channels)
             {
                 var bnr = new Panel();
@@ -214,7 +217,7 @@ namespace ShiftOS.WinForms.Applications
                 flButtons.Show();
 
                 var btn = new Button();
-                btn.Text = "Browse";
+                btn.Text = "Join";
                 btn.Click += (o, a) =>
                 {
                     OpenChat(shop.ID);
@@ -273,6 +276,8 @@ namespace ShiftOS.WinForms.Applications
             shop_all.BringToFront();
 
             flshoplist.Controls.Clear();
+            lblistname.Text = "Shops";
+            lblistdesc.Text = "The multi-user domain is full of various shops ran by other users. They can contain anything from skins to applications to full system modifications. Just select a shop below to browse its contents!";
 
             foreach (var shop in shops)
             {

@@ -53,8 +53,8 @@ namespace ShiftOS.WinForms.Applications
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.txtuserinput = new System.Windows.Forms.TextBox();
             this.rtbchat = new System.Windows.Forms.RichTextBox();
+            this.txtuserinput = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +68,18 @@ namespace ShiftOS.WinForms.Applications
             this.panel1.Size = new System.Drawing.Size(633, 318);
             this.panel1.TabIndex = 0;
             // 
+            // rtbchat
+            // 
+            this.rtbchat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbchat.HideSelection = false;
+            this.rtbchat.Location = new System.Drawing.Point(0, 0);
+            this.rtbchat.Name = "rtbchat";
+            this.rtbchat.Size = new System.Drawing.Size(633, 298);
+            this.rtbchat.TabIndex = 1;
+            this.rtbchat.Text = "";
+            this.rtbchat.TextChanged += new System.EventHandler(this.rtbchat_TextChanged);
+            this.rtbchat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
+            // 
             // txtuserinput
             // 
             this.txtuserinput.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -77,23 +89,12 @@ namespace ShiftOS.WinForms.Applications
             this.txtuserinput.TabIndex = 0;
             this.txtuserinput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtuserinput_KeyDown);
             // 
-            // rtbchat
-            // 
-            this.rtbchat.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbchat.Location = new System.Drawing.Point(0, 0);
-            this.rtbchat.Name = "rtbchat";
-            this.rtbchat.Size = new System.Drawing.Size(633, 298);
-            this.rtbchat.TabIndex = 1;
-            this.rtbchat.Text = "";
-            this.rtbchat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
-            // 
             // Chat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "Chat";
-            this.Text = "{CHAT_NAME}";
             this.Size = new System.Drawing.Size(633, 318);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

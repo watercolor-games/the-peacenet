@@ -88,12 +88,6 @@
     <Compile Include="Applications\Dialog.Designer.cs">
       <DependentUpon>Dialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\Discord.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\Discord.Designer.cs">
-      <DependentUpon>Discord.cs</DependentUpon>
-    </Compile>
     <Compile Include="Applications\Downloader.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -247,9 +241,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Dialog.resx">
       <DependentUpon>Dialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\Discord.resx">
-      <DependentUpon>Discord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Downloader.resx">
       <DependentUpon>Downloader.cs</DependentUpon>

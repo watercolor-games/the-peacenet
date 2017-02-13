@@ -114,5 +114,11 @@ namespace ShiftOS.WinForms.Applications
                 txtuserinput.Text = "";
             }
         }
+
+        private void rtbchat_TextChanged(object sender, EventArgs e)
+        {
+            rtbchat.SelectionStart = rtbchat.Text.Length;
+            rtbchat.ScrollToCaret();
+        }
     }
 }

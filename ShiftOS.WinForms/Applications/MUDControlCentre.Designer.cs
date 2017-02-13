@@ -69,6 +69,8 @@ namespace ShiftOS.WinForms.Applications
             this.createLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.joinLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.myLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.joinAChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.txtappstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
@@ -100,8 +102,8 @@ namespace ShiftOS.WinForms.Applications
             this.btnedititem = new System.Windows.Forms.Button();
             this.shop_all = new System.Windows.Forms.Panel();
             this.flshoplist = new System.Windows.Forms.FlowLayoutPanel();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.lblistdesc = new System.Windows.Forms.Label();
+            this.lblistname = new System.Windows.Forms.Label();
             this.lgn_create = new System.Windows.Forms.Panel();
             this.btncreate = new System.Windows.Forms.Button();
             this.txtnewlegiondescription = new System.Windows.Forms.TextBox();
@@ -146,8 +148,6 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.joinAChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -292,23 +292,38 @@ namespace ShiftOS.WinForms.Applications
             // createLegionToolStripMenuItem
             // 
             this.createLegionToolStripMenuItem.Name = "createLegionToolStripMenuItem";
-            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.createLegionToolStripMenuItem.Text = "Create Legion";
             this.createLegionToolStripMenuItem.Click += new System.EventHandler(this.createLegionToolStripMenuItem_Click);
             // 
             // joinLegionToolStripMenuItem
             // 
             this.joinLegionToolStripMenuItem.Name = "joinLegionToolStripMenuItem";
-            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.joinLegionToolStripMenuItem.Text = "Join Legion";
             this.joinLegionToolStripMenuItem.Click += new System.EventHandler(this.joinLegionToolStripMenuItem_Click);
             // 
             // myLegionToolStripMenuItem
             // 
             this.myLegionToolStripMenuItem.Name = "myLegionToolStripMenuItem";
-            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.myLegionToolStripMenuItem.Text = "My Legion";
             this.myLegionToolStripMenuItem.Click += new System.EventHandler(this.myLegionToolStripMenuItem_Click);
+            // 
+            // chatToolStripMenuItem
+            // 
+            this.chatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.joinAChatToolStripMenuItem});
+            this.chatToolStripMenuItem.Name = "chatToolStripMenuItem";
+            this.chatToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.chatToolStripMenuItem.Text = "Chat";
+            // 
+            // joinAChatToolStripMenuItem
+            // 
+            this.joinAChatToolStripMenuItem.Name = "joinAChatToolStripMenuItem";
+            this.joinAChatToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.joinAChatToolStripMenuItem.Text = "Join a chat";
+            this.joinAChatToolStripMenuItem.Click += new System.EventHandler(this.joinAChatToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -336,9 +351,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_editor);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_create);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.job_current);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_view);
@@ -645,8 +660,8 @@ namespace ShiftOS.WinForms.Applications
             // shop_all
             // 
             this.shop_all.Controls.Add(this.flshoplist);
-            this.shop_all.Controls.Add(this.label12);
-            this.shop_all.Controls.Add(this.label13);
+            this.shop_all.Controls.Add(this.lblistdesc);
+            this.shop_all.Controls.Add(this.lblistname);
             this.shop_all.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shop_all.Location = new System.Drawing.Point(0, 0);
             this.shop_all.Name = "shop_all";
@@ -664,28 +679,28 @@ namespace ShiftOS.WinForms.Applications
             this.flshoplist.TabIndex = 1;
             this.flshoplist.WrapContents = false;
             // 
-            // label12
+            // lblistdesc
             // 
-            this.label12.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label12.Location = new System.Drawing.Point(0, 43);
-            this.label12.Name = "label12";
-            this.label12.Padding = new System.Windows.Forms.Padding(15, 0, 15, 15);
-            this.label12.Size = new System.Drawing.Size(756, 51);
-            this.label12.TabIndex = 0;
-            this.label12.Tag = "";
-            this.label12.Text = resources.GetString("label12.Text");
+            this.lblistdesc.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblistdesc.Location = new System.Drawing.Point(0, 43);
+            this.lblistdesc.Name = "lblistdesc";
+            this.lblistdesc.Padding = new System.Windows.Forms.Padding(15, 0, 15, 15);
+            this.lblistdesc.Size = new System.Drawing.Size(756, 51);
+            this.lblistdesc.TabIndex = 0;
+            this.lblistdesc.Tag = "";
+            this.lblistdesc.Text = resources.GetString("lblistdesc.Text");
             // 
-            // label13
+            // lblistname
             // 
-            this.label13.AutoSize = true;
-            this.label13.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label13.Location = new System.Drawing.Point(0, 0);
-            this.label13.Name = "label13";
-            this.label13.Padding = new System.Windows.Forms.Padding(15);
-            this.label13.Size = new System.Drawing.Size(67, 43);
-            this.label13.TabIndex = 2;
-            this.label13.Tag = "header1";
-            this.label13.Text = "Shops";
+            this.lblistname.AutoSize = true;
+            this.lblistname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblistname.Location = new System.Drawing.Point(0, 0);
+            this.lblistname.Name = "lblistname";
+            this.lblistname.Padding = new System.Windows.Forms.Padding(15);
+            this.lblistname.Size = new System.Drawing.Size(67, 43);
+            this.lblistname.TabIndex = 2;
+            this.lblistname.Tag = "header1";
+            this.lblistname.Text = "Shops";
             // 
             // lgn_create
             // 
@@ -1202,21 +1217,6 @@ namespace ShiftOS.WinForms.Applications
             this.label1.Tag = "header1";
             this.label1.Text = "You";
             // 
-            // chatToolStripMenuItem
-            // 
-            this.chatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.joinAChatToolStripMenuItem});
-            this.chatToolStripMenuItem.Name = "chatToolStripMenuItem";
-            this.chatToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.chatToolStripMenuItem.Text = "Chat";
-            // 
-            // joinAChatToolStripMenuItem
-            // 
-            this.joinAChatToolStripMenuItem.Name = "joinAChatToolStripMenuItem";
-            this.joinAChatToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.joinAChatToolStripMenuItem.Text = "Join a chat";
-            this.joinAChatToolStripMenuItem.Click += new System.EventHandler(this.joinAChatToolStripMenuItem_Click);
-            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1363,8 +1363,8 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Label lbtaskdescription;
         private System.Windows.Forms.Panel shop_all;
         private System.Windows.Forms.FlowLayoutPanel flshoplist;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label lblistdesc;
+        private System.Windows.Forms.Label lblistname;
         private System.Windows.Forms.Panel shop_editor;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.TextBox txtshopdescription;
