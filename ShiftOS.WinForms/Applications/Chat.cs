@@ -50,10 +50,17 @@ namespace ShiftOS.WinForms.Applications
                     {
                         this.Invoke(new Action(() =>
                         {
-                            
-                            var cmsg = JsonConvert.DeserializeObject<ShiftOS.Objects.ChatMessage>(msg.Contents);
-                            if(id == cmsg.Channel)
-                                rtbchat.AppendText($"[{cmsg.Username}@{cmsg.SystemName}] {cmsg.Message}{Environment.NewLine}");
+                            try
+                            {
+                                var args = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg.Contents);
+                                var cmsg = new ShiftOS.Objects.ChatMessage(args["Username"] as string, args["SystemName"] as string, args["Message"] as string, args["Channel"] as string);
+                                if (id == cmsg.Channel)
+                                    rtbchat.AppendText($"[{cmsg.Username}@{cmsg.SystemName}] {cmsg.Message}{Environment.NewLine}");
+                            }
+                            catch (Exception ex)
+                            {
+                                rtbchat.AppendText($"[system@multiuserdomain] Exception thrown by client: {ex}");
+                            }
                         }));
                     }
                     catch { }
@@ -63,6 +70,8 @@ namespace ShiftOS.WinForms.Applications
 
         public void SendMessage(string msg)
         {
+            rtbchat.AppendText($"[{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}] {msg}{Environment.NewLine}");
+
             ServerManager.SendMessage("chat_send", JsonConvert.SerializeObject(new ShiftOS.Objects.ChatMessage(SaveSystem.CurrentSave.Username, SaveSystem.CurrentSave.SystemName, msg, id)));
         }
 

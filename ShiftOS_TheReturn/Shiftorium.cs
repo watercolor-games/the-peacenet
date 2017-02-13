@@ -136,7 +136,14 @@ namespace ShiftOS.Engine
                 {
                     if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(itm.ID))
                     {
-                        SaveSystem.CurrentSave.Upgrades.Add(itm.ID, false);
+                        try
+                        {
+                            SaveSystem.CurrentSave.Upgrades.Add(itm.ID, false);
+                        }
+                        catch
+                        {
+
+                        }
                     }
                 }
             }
