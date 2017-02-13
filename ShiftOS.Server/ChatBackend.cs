@@ -9,39 +9,42 @@ using Newtonsoft.Json;
 using System.IO;
 using static ShiftOS.Server.Program;
 using Discord;
+using Discord.WebSocket;
 
 namespace ShiftOS.Server
 {
     public static class ChatBackend
     {
-        public static void StartDiscordBots()
+        public static async Task StartDiscordBots()
         {
             Reinitialized?.Invoke();
+            if (!File.Exists("chats.json"))
+                File.WriteAllText("chats.json", "[]");
             foreach (var chat in JsonConvert.DeserializeObject<List<ShiftOS.Objects.Channel>>(File.ReadAllText("chats.json")))
             {
 
                 bool chatKilled = false;
                 if (chat.IsDiscordProxy == true)
                 {
-                    DiscordConfigBuilder builder = new DiscordConfigBuilder();
-                    builder.AppName = "ShiftOS";
-                    builder.AppVersion = System.Reflection.Assembly.GetExecutingAssembly().FullName;
-                    builder.AppUrl = "http://getshiftos.ml/";
-                    var client = new DiscordClient(builder);
-                    client.Connect(chat.DiscordBotToken, TokenType.Bot);
-                    client.SetGame("ShiftOS");
-                    client.SetStatus(UserStatus.Online);
-                    client.MessageReceived += (s, e) =>
+                    DiscordSocketConfig builder = new DiscordSocketConfig();
+                    builder.AudioMode = Discord.Audio.AudioMode.Disabled;
+                    var client = new DiscordSocketClient(builder);
+                    await client.LoginAsync(TokenType.Bot, chat.DiscordBotToken);
+
+                    await client.ConnectAsync();
+                    await client.SetGameAsync("ShiftOS");
+                    await client.SetStatusAsync(UserStatus.Online);
+                    client.MessageReceived += async (s) =>
                     {
                         if (chatKilled == false)
                         {
-                            if (e.Channel.Id.ToString() == chat.DiscordChannelID)
+                            if (s.Channel.Id == Convert.ToUInt64(chat.DiscordChannelID))
                             {
                                 server.DispatchAll(new NetObject("chat_msgreceived", new ServerMessage
                                 {
                                     Name = "chat_msgreceived",
                                     GUID = "server",
-                                    Contents = JsonConvert.SerializeObject(new ChatMessage(e.User.Name, "discord_" + e.Channel.Name, e.Message.Text, chat.ID))
+                                    Contents = JsonConvert.SerializeObject(new ChatMessage(s.Author.Mention, "discord_" + s.Channel.Name, s.Content, chat.ID))
                                 }));
                             }
                         }
@@ -54,9 +57,9 @@ namespace ShiftOS.Server
                             if (msg.Channel == chat.ID)
                             {
                                 //Get the Discord channel for this chat.
-                                var dChan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID));
+                                var dChan = client.GetChannel(Convert.ToUInt64(chat.ID)) as ISocketMessageChannel;
                                 //Relay the message to Discord.
-                                dChan.SendMessage($"**[{msg.Username}@{msg.SystemName} ({msg.Channel})]: {msg.Message}");
+                                dChan.SendMessageAsync($"**[{msg.Username}@{msg.SystemName}] `<mud/{msg.Channel}> {msg.Message}");
 
                             }
                             //Relay it back to all MUD clients.
@@ -65,8 +68,8 @@ namespace ShiftOS.Server
                     };
                     Reinitialized += () =>
                     {
-                        client.Disconnect();
-                        client.Dispose();
+                        client.DisconnectAsync();
+                        
                         chatKilled = true;
                     };
                 }
