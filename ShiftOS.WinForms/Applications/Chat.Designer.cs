@@ -52,16 +52,25 @@ namespace ShiftOS.WinForms.Applications
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Chat));
             this.panel1 = new System.Windows.Forms.Panel();
             this.rtbchat = new System.Windows.Forms.RichTextBox();
-            this.txtuserinput = new System.Windows.Forms.TextBox();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tschatid = new System.Windows.Forms.ToolStripLabel();
+            this.tsuserdata = new System.Windows.Forms.ToolStripLabel();
+            this.tsbottombar = new System.Windows.Forms.ToolStrip();
+            this.txtuserinput = new System.Windows.Forms.ToolStripTextBox();
+            this.btnsend = new System.Windows.Forms.ToolStripButton();
             this.panel1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            this.tsbottombar.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.rtbchat);
-            this.panel1.Controls.Add(this.txtuserinput);
+            this.panel1.Controls.Add(this.toolStrip1);
+            this.panel1.Controls.Add(this.tsbottombar);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -72,22 +81,65 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.rtbchat.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbchat.HideSelection = false;
-            this.rtbchat.Location = new System.Drawing.Point(0, 0);
+            this.rtbchat.Location = new System.Drawing.Point(0, 25);
             this.rtbchat.Name = "rtbchat";
-            this.rtbchat.Size = new System.Drawing.Size(633, 298);
+            this.rtbchat.Size = new System.Drawing.Size(633, 268);
             this.rtbchat.TabIndex = 1;
             this.rtbchat.Text = "";
             this.rtbchat.TextChanged += new System.EventHandler(this.rtbchat_TextChanged);
             this.rtbchat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tschatid,
+            this.tsuserdata});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(633, 25);
+            this.toolStrip1.TabIndex = 2;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // tschatid
+            // 
+            this.tschatid.Name = "tschatid";
+            this.tschatid.Size = new System.Drawing.Size(86, 22);
+            this.tschatid.Text = "toolStripLabel1";
+            // 
+            // tsuserdata
+            // 
+            this.tsuserdata.Name = "tsuserdata";
+            this.tsuserdata.Size = new System.Drawing.Size(86, 22);
+            this.tsuserdata.Text = "toolStripLabel1";
+            // 
+            // tsbottombar
+            // 
+            this.tsbottombar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tsbottombar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.txtuserinput,
+            this.btnsend});
+            this.tsbottombar.Location = new System.Drawing.Point(0, 293);
+            this.tsbottombar.Name = "tsbottombar";
+            this.tsbottombar.Size = new System.Drawing.Size(633, 25);
+            this.tsbottombar.TabIndex = 3;
+            this.tsbottombar.Text = "toolStrip2";
+            // 
             // txtuserinput
             // 
-            this.txtuserinput.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtuserinput.Location = new System.Drawing.Point(0, 298);
+            this.txtuserinput.AutoSize = false;
             this.txtuserinput.Name = "txtuserinput";
-            this.txtuserinput.Size = new System.Drawing.Size(633, 20);
-            this.txtuserinput.TabIndex = 0;
+            this.txtuserinput.Size = new System.Drawing.Size(100, 25);
             this.txtuserinput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtuserinput_KeyDown);
+            // 
+            // btnsend
+            // 
+            this.btnsend.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnsend.Image = ((System.Drawing.Image)(resources.GetObject("btnsend.Image")));
+            this.btnsend.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnsend.Name = "btnsend";
+            this.btnsend.Size = new System.Drawing.Size(37, 22);
+            this.btnsend.Text = "Send";
+            this.btnsend.Click += new System.EventHandler(this.btnsend_Click);
             // 
             // Chat
             // 
@@ -98,6 +150,10 @@ namespace ShiftOS.WinForms.Applications
             this.Size = new System.Drawing.Size(633, 318);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            this.tsbottombar.ResumeLayout(false);
+            this.tsbottombar.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -106,6 +162,11 @@ namespace ShiftOS.WinForms.Applications
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RichTextBox rtbchat;
-        private System.Windows.Forms.TextBox txtuserinput;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripLabel tschatid;
+        private System.Windows.Forms.ToolStripLabel tsuserdata;
+        private System.Windows.Forms.ToolStrip tsbottombar;
+        private System.Windows.Forms.ToolStripTextBox txtuserinput;
+        private System.Windows.Forms.ToolStripButton btnsend;
     }
 }

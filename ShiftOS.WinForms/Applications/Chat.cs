@@ -70,20 +70,30 @@ namespace ShiftOS.WinForms.Applications
 
         public void SendMessage(string msg)
         {
-            rtbchat.AppendText($"[{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}] {msg}{Environment.NewLine}");
+            if (!string.IsNullOrWhiteSpace(msg))
+            {
+                rtbchat.AppendText($"[{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}] {msg}{Environment.NewLine}");
 
-            ServerManager.SendMessage("chat_send", JsonConvert.SerializeObject(new ShiftOS.Objects.ChatMessage(SaveSystem.CurrentSave.Username, SaveSystem.CurrentSave.SystemName, msg, id)));
+                ServerManager.SendMessage("chat_send", JsonConvert.SerializeObject(new ShiftOS.Objects.ChatMessage(SaveSystem.CurrentSave.Username, SaveSystem.CurrentSave.SystemName, msg, id)));
+            }
+            else
+            {
+                rtbchat.AppendText($"[sys@multiuserdomain] You can't send blank messages. (only you can see this)");
+            }
         }
+
 
         private string id = "";
 
         public void OnLoad()
         {
             SendMessage("User has joined the chat.");
+            RefreshUserInput();
         }
 
         public void OnSkinLoad()
         {
+            RefreshUserInput();
         }
 
         public bool OnUnload()
@@ -95,6 +105,12 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            RefreshUserInput();
+        }
+
+        public void RefreshUserInput()
+        {
+            txtuserinput.Width = (tsbottombar.Width) - (btnsend.Width) - 15;
         }
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -108,10 +124,7 @@ namespace ShiftOS.WinForms.Applications
             {
                 e.SuppressKeyPress = true;
 
-                var save = SaveSystem.CurrentSave;
-
-                SendMessage(txtuserinput.Text);
-                txtuserinput.Text = "";
+                btnsend_Click(sender, EventArgs.Empty);
             }
         }
 
@@ -119,6 +132,15 @@ namespace ShiftOS.WinForms.Applications
         {
             rtbchat.SelectionStart = rtbchat.Text.Length;
             rtbchat.ScrollToCaret();
+            tschatid.Text = id;
+            tsuserdata.Text = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}";
+            RefreshUserInput();
+        }
+
+        private void btnsend_Click(object sender, EventArgs e)
+        {
+            SendMessage(txtuserinput.Text);
+            txtuserinput.Text = "";
         }
     }
 }
