@@ -22,7 +22,7 @@ namespace ShiftOS.Server.WebAdmin
         {
             var HostConf = new HostConfiguration();
             HostConf.UrlReservations.CreateAutomatically = true;
-            
+            HostConf.RewriteLocalhost = true;
             using(var nancy = new NancyHost(HostConf, new Uri("http://localhost:13371/mudadmin/")))
             {
                 nancy.Start();

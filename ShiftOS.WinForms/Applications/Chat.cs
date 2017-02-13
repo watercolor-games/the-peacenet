@@ -36,10 +36,6 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [MultiplayerOnly]
-    [Launcher("MUD Chat", true, "al_mud_chat", "Networking")]
-    [RequiresUpgrade("mud_fundamentals")]
-    [WinOpen("chat")]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat(string chatId)
@@ -48,13 +44,16 @@ namespace ShiftOS.WinForms.Applications
             id = chatId;
             ServerManager.MessageReceived += (msg) =>
             {
-                if (msg.Name == "cbroadcast")
+                if (msg.Name == "chat_msgreceived")
                 {
                     try
                     {
                         this.Invoke(new Action(() =>
                         {
-                            rtbchat.Text += msg.Contents + Environment.NewLine;
+                            
+                            var cmsg = JsonConvert.DeserializeObject<ShiftOS.Objects.ChatMessage>(msg.Contents);
+                            if(id == cmsg.Channel)
+                                rtbchat.AppendText($"[{cmsg.Username}@{cmsg.SystemName}] {cmsg.Message}{Environment.NewLine}");
                         }));
                     }
                     catch { }
@@ -62,15 +61,16 @@ namespace ShiftOS.WinForms.Applications
             };
         }
 
+        public void SendMessage(string msg)
+        {
+            ServerManager.SendMessage("chat_send", JsonConvert.SerializeObject(new ShiftOS.Objects.ChatMessage(SaveSystem.CurrentSave.Username, SaveSystem.CurrentSave.SystemName, msg, id)));
+        }
+
         private string id = "";
 
         public void OnLoad()
         {
-            var save = SaveSystem.CurrentSave;
-            ServerManager.SendMessage("chat_join", $@"{{
-    id: ""{id}"",
-    user: {JsonConvert.SerializeObject(save)}
-}}");
+            SendMessage("User has joined the chat.");
         }
 
         public void OnSkinLoad()
@@ -79,12 +79,8 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
-            var save = SaveSystem.CurrentSave;
-            ServerManager.SendMessage("chat_leave", $@"{{
-    id: ""{id}"",
-    user: {JsonConvert.SerializeObject(save)}
-}}");
-
+            SendMessage("User has left the chat.");
+            id = null;
             return true;
         }
 
@@ -105,11 +101,7 @@ namespace ShiftOS.WinForms.Applications
 
                 var save = SaveSystem.CurrentSave;
 
-                ServerManager.SendMessage("chat", $@"{{
-    id: ""{id}"",
-    user: {JsonConvert.SerializeObject(save)},
-    msg: ""{txtuserinput.Text}""
-}}");
+                SendMessage(txtuserinput.Text);
                 txtuserinput.Text = "";
             }
         }

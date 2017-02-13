@@ -78,6 +78,13 @@ namespace ShiftOS.WinForms.Applications
                                 myLegionToolStripMenuItem_Click(this, EventArgs.Empty);
                             }));
                         }
+                        else if(msg.Name == "chat_all")
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                this.ListAllChats(JsonConvert.DeserializeObject<Channel[]>(msg.Contents));
+                            }));
+                        }
                         else if (msg.Name == "user_shop_check_result")
                         {
                             if (msg.Contents == "0")
@@ -167,6 +174,69 @@ namespace ShiftOS.WinForms.Applications
                 }
                 catch { }
             };
+        }
+
+        public void ListAllChats(Channel[] channels)
+        {
+            shop_all.BringToFront();
+
+            flshoplist.Controls.Clear();
+
+            foreach (var shop in channels)
+            {
+                var bnr = new Panel();
+                bnr.Height = 100;
+                bnr.Tag = "keepbg";
+
+                bnr.Width = flshoplist.Width;
+
+                var lTitle = new Label();
+                lTitle.AutoSize = true;
+                lTitle.Tag = "keepbg header2";
+                lTitle.Text = shop.Name;
+                lTitle.Location = new Point(18, 17);
+                bnr.Controls.Add(lTitle);
+                lTitle.Show();
+                var desc = new Label();
+                desc.Text = shop.Topic;
+                bnr.Controls.Add(desc);
+                desc.Show();
+
+                var flButtons = new FlowLayoutPanel();
+                flButtons.AutoSize = true;
+                flButtons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                flButtons.Tag = "keepbg";
+                flButtons.FlowDirection = FlowDirection.RightToLeft;
+                flButtons.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                flButtons.Top = 2;
+                flButtons.Left = bnr.Width - flButtons.Width - 2;
+                bnr.Controls.Add(flButtons);
+                flButtons.Show();
+
+                var btn = new Button();
+                btn.Text = "Browse";
+                btn.Click += (o, a) =>
+                {
+                    OpenChat(shop.ID);
+                };
+                flButtons.Controls.Add(btn);
+                btn.Show();
+
+                flshoplist.Controls.Add(bnr);
+                bnr.Show();
+                ControlManager.SetupControls(bnr);
+                desc.Left = lTitle.Left;
+                desc.Width = (bnr.Width - desc.Left - desc.Left);
+                desc.Top = lTitle.Top + lTitle.Height;
+                desc.Height = (bnr.Height - lTitle.Top);
+
+            }
+
+        }
+
+        public void OpenChat(string id)
+        {
+            AppearanceManager.SetupWindow(new Chat(id));
         }
 
         private Shop editingShop = null;
@@ -781,6 +851,11 @@ Current legions: {legionname}";
             creatingShop = false;
             shop_editor.BringToFront();
             PopulateShopEditor();
+        }
+
+        private void joinAChatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ServerManager.SendMessage("chat_getallchannels", "");
         }
     }
 }
