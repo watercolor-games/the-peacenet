@@ -213,6 +213,8 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                                 currentPage = 12;
                                 SetupUI();
                             }));
+
+                            ServerManager.MessageReceived -= login;
                         }
                         else if (msg.Name == "mud_notfound")
                         {
@@ -221,8 +223,9 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                                 currentPage = 10;
                                 SetupUI();
                             }));
+
+                            ServerManager.MessageReceived -= login;
                         }
-                        ServerManager.MessageReceived -= login;
                     };
 
                     ServerManager.MessageReceived += login;
@@ -241,12 +244,16 @@ So make sure your password is secure enough that it can't be guessed, but easy f
 
                     getsave = (msg) =>
                     {
-                        if (msg.Name == "mud_found")
+                        if (msg.Name == "mud_savefile")
                         {
                             this.Invoke(new Action(() =>
                             {
-                                currentPage = 12;
-                                SetupUI();
+                                SaveSystem.CurrentSave = JsonConvert.DeserializeObject<ShiftOS.Objects.Save>(msg.Contents);
+                                SaveSystem.SaveGame();
+                                DoneLoggingIn?.Invoke();
+                                this.CanClose = true;
+                                this.Close();
+
                             }));
                         }
                         else if (msg.Name == "mud_notfound")
@@ -268,9 +275,6 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                         password = txtlpass.Text
                     }));
 
-                    DoneLoggingIn?.Invoke();
-                    this.CanClose = true;
-                    this.Close();
                     break;
             }
         }
