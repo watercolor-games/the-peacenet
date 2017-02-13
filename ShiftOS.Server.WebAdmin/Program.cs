@@ -263,7 +263,7 @@ namespace ShiftOS.Server.WebAdmin
     <td>{save.CountUpgrades()} installed, {save.Upgrades.Count} total</td>
     <td>{save.IsMUDAdmin}</td>
     <td>
-        <a href=""/mudadmin/toggleadmin/{save.ID}"" class=""btn btn-danger"">Toggle admin</a>
+        <a href=""/mudadmin/toggleadmin/{save.Username}"" class=""btn btn-danger"">Toggle admin</a>
         <a href=""/mudadmin/deletesave/{save.Username}"" class=""btn btn-danger"">Delete save</a>
     </td>
 </tr>");
@@ -590,7 +590,7 @@ namespace ShiftOS.Server.WebAdmin
                 for (int i = 0; i < SystemManager.GetSaves().Length; i++)
                 {
                     var save = SystemManager.GetSaves()[i];
-                    if(save.ID.ToString() == id)
+                    if(save.Username.ToString() == id)
                     {
                         save.IsMUDAdmin = !save.IsMUDAdmin;
                         Server.Program.WriteEncFile("saves/" + save.Username + ".save", JsonConvert.SerializeObject(save));
