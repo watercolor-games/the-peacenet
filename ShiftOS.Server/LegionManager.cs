@@ -13,14 +13,14 @@ namespace ShiftOS.Server
 {
     public static class LegionManager
     {
-        [MudRequest("legion_createnew")]
+        [MudRequest("legion_createnew", typeof(Legion))]
         public static void CreateLegion(string guid, object contents)
         {
             List<Legion> legions = new List<Legion>();
             if (File.Exists("legions.json"))
                 legions = JsonConvert.DeserializeObject<List<Legion>>(File.ReadAllText("legions.json"));
 
-            var l = JsonConvert.DeserializeObject<Legion>(JsonConvert.SerializeObject(contents));
+            var l = contents as Legion;
             bool legionExists = false;
 
             foreach (var legion in legions)
@@ -52,7 +52,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("legion_get_all")]
+        [MudRequest("legion_get_all", null)]
         public static void GetAllLegions(string guid, object contents)
         {
             List<Legion> allLegions = new List<Legion>();
@@ -69,10 +69,10 @@ namespace ShiftOS.Server
 
         }
         
-        [MudRequest("legion_get_users")]
+        [MudRequest("legion_get_users", typeof(Legion))]
         public static void GetLegionUsers(string guid, object contents)
         {
-            var lgn = JsonConvert.DeserializeObject<Legion>(JsonConvert.SerializeObject(contents));
+            var lgn = contents as Legion;
 
             List<string> userIDs = new List<string>();
 
@@ -98,10 +98,10 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("user_get_legion")]
+        [MudRequest("user_get_legion", typeof(Save))]
         public static void GetUserLegion(string guid, object contents)
         {
-            var userSave = JsonConvert.DeserializeObject<Save>(JsonConvert.SerializeObject(contents));
+            var userSave = contents as Save;
 
             if (File.Exists("legions.json"))
             {

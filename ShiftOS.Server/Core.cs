@@ -14,7 +14,7 @@ namespace ShiftOS.Server
 {
     public static class Core
     {
-        [MudRequest("getguid_reply")]
+        [MudRequest("getguid_reply", typeof(string))]
         public static void GuidBounce(string guid, object contents)
         {
             //The message's GUID was manipulated by the client to send to another client.
@@ -28,7 +28,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("getguid_send")]
+        [MudRequest("getguid_send", typeof(string))]
         public static void GuidReceiver(string guid, object contents)
         {
             string usrname = contents as string;
@@ -41,12 +41,12 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("script")]
+        [MudRequest("script", typeof(Dictionary<string, object>))]
         public static void RunScript(string guid, object contents)
         {
             try
             {
-                var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(contents));
+                var args = contents as Dictionary<string, object>;
 
                 string user = "";
                 string script = "";
@@ -85,7 +85,12 @@ namespace ShiftOS.Server
             }
             catch
             {
-                throw new MudException($"Command parse error.");
+                Program.server.DispatchTo(new Guid(guid), new NetObject("error", new ServerMessage
+                {
+                    Name = "Error",
+                    GUID = "Server",
+                    Contents = JsonConvert.SerializeObject(new MudException("Command parse error"))
+                }));
             }
 
         }

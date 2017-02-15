@@ -13,7 +13,7 @@ namespace ShiftOS.Server
 {
     public static class MemoManager
     {
-        [MudRequest("get_memos_for_user")]
+        [MudRequest("get_memos_for_user", typeof(Dictionary<string, object>))]
         public static void GetMemosForUser(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -44,10 +44,10 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("mud_postmemo")]
+        [MudRequest("mud_postmemo", typeof(MUDMemo))]
         public static void PostMemo(string guid, object contents)
         {
-            MUDMemo memo = JsonConvert.DeserializeObject<MUDMemo>(contents as string);
+            MUDMemo memo = contents as MUDMemo;
             List<MUDMemo> memos = new List<MUDMemo>();
 
             if (File.Exists("memos.json"))

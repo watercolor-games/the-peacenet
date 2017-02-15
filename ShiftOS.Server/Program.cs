@@ -36,6 +36,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.IO.Compression;
 using System.Reflection;
+using System.Threading;
 
 namespace ShiftOS.Server
 {
@@ -230,36 +231,96 @@ namespace ShiftOS.Server
                                 {
                                     foreach (var attrib in method.GetCustomAttributes(false))
                                     {
-                                        if (attrib is MudRequestAttribute)
+                                        new Thread(() =>
                                         {
-                                            if ((attrib as MudRequestAttribute).RequestName == msg.Name)
+                                            if (attrib is MudRequestAttribute)
                                             {
-                                                try
+                                                var mAttrib = attrib as MudRequestAttribute;
+                                                if (mAttrib.RequestName == msg.Name)
                                                 {
-                                                    object contents = msg.Contents;
                                                     try
                                                     {
-                                                        contents = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
+                                                        object contents = null;
+                                                        bool throwOnNull = false;
+
+
+                                                        if(mAttrib.ExpectedType == typeof(int))
+                                                        {
+                                                            int result = 0;
+                                                            if (int.TryParse(msg.Contents, out result) == true)
+                                                            {
+                                                                contents = result;
+                                                            }
+                                                            else
+                                                            {
+                                                                throw new MudException($"Protocol error: {msg.Name} expects a 32-bit signed integer for the message contents.");
+                                                            }
+                                                        }
+                                                        else if(mAttrib.ExpectedType == typeof(long))
+                                                        {
+                                                            long result = 0;
+                                                            if (long.TryParse(msg.Contents, out result) == true)
+                                                            {
+                                                                contents = result;
+                                                            }
+                                                            else
+                                                            {
+                                                                throw new MudException($"Protocol error: {msg.Name} expects a 64-bit signed integer for the message contents.");
+                                                            }
+                                                        }
+                                                        else if(mAttrib.ExpectedType == typeof(bool))
+                                                        {
+                                                            throwOnNull = true;
+                                                            if(msg.Contents.ToLower() == "true")
+                                                            {
+                                                                contents = true;
+                                                            }
+                                                            else if (msg.Contents.ToLower() == "false")
+                                                            {
+                                                                contents = false;
+                                                            }
+                                                            else
+                                                            {
+                                                                contents = null;
+                                                                throw new MudException("Protocol error: " + msg.Name + " expects a content type of 'boolean'. Please send either 'true' or 'false'.");
+                                                            }
+                                                        }
+                                                        else if(mAttrib.ExpectedType == null)
+                                                        {
+                                                            throwOnNull = false;
+                                                        }
+                                                        else
+                                                        {
+                                                            //object type
+                                                            object result = null;
+                                                            try
+                                                            {
+                                                                result = Convert.ChangeType(JsonConvert.DeserializeObject(msg.Contents), mAttrib.ExpectedType);
+                                                            }
+                                                            catch
+                                                            {
+                                                                result = null;
+                                                            }
+                                                            if (result == null)
+                                                                throw new MudException($"Protocol error: {msg.Name} expects an object of type {mAttrib.ExpectedType.FullName}. Please send a JSON string representing an object of this type.");
+                                                            contents = result;
+                                                        }
+
+                                                        method?.Invoke(null, new[] { msg.GUID, contents });
+                                                    }
+                                                    catch (Exception mEx)
+                                                    {
+                                                        Console.WriteLine(mEx);
+                                                        ClientDispatcher.DispatchTo("Error", msg.GUID, mEx);
                                                     }
                                                     catch
                                                     {
-
+                                                        Console.WriteLine($@"[{DateTime.Now}] {method.Name}: Missing guid and content parameters, request handler NOT RAN.");
                                                     }
-
-                                                    method?.Invoke(null, new[] { msg.GUID, contents });
+                                                    return;
                                                 }
-                                                catch (Exception mEx)
-                                                {
-                                                    Console.WriteLine(mEx);
-                                                    ClientDispatcher.DispatchTo("Error", msg.GUID, mEx);
-                                                }
-                                                catch
-                                                {
-                                                    Console.WriteLine($@"[{DateTime.Now}] {method.Name}: Missing guid and content parameters, request handler NOT RAN.");
-                                                }
-                                                return;
                                             }
-                                        }
+                                        }).Start();
                                     }
                                 }
                             }

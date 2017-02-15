@@ -11,7 +11,7 @@ namespace ShiftOS.Server
 {
     public static class RemoteTerminal
     {
-        [MudRequest("trm_handshake_accept")]
+        [MudRequest("trm_handshake_accept", typeof(Dictionary<string, object>))]
         public static void AcceptHandshake(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -26,7 +26,7 @@ namespace ShiftOS.Server
             }
         }
 
-        [MudRequest("trm_invcmd")]
+        [MudRequest("trm_invcmd", typeof(Dictionary<string, object>))]
         public static void InvokeCommand(string guid, object contents)
         {
             Console.WriteLine("Before arg check");
@@ -48,7 +48,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("trm_handshake_request")]
+        [MudRequest("trm_handshake_request", typeof(Dictionary<string, object>))]
         public static void RequestHandshake(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -63,7 +63,7 @@ namespace ShiftOS.Server
             }
         }
 
-        [MudRequest("trm_handshake_stop")]
+        [MudRequest("trm_handshake_stop", typeof(Dictionary<string, object>))]
         public static void StopSession(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -78,7 +78,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("write")]
+        [MudRequest("write", typeof(Dictionary<string, object>))]
         public static void WriteText(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;

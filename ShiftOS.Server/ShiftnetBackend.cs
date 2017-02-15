@@ -13,7 +13,7 @@ namespace ShiftOS.Server
 {
     public static class ShiftnetBackend
     {
-        [MudRequest("download_start")]
+        [MudRequest("download_start", typeof(string))]
         public static void StartDownload(string guid, object contents)
         {
             string url = contents as string;
@@ -54,7 +54,7 @@ The page you requested at was not found on this multi-user domain."
 
         }
 
-        [MudRequest("shiftnet_get")]
+        [MudRequest("shiftnet_get", typeof(Dictionary<string, object>))]
         public static void GetPage(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;

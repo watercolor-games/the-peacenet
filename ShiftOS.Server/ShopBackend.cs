@@ -13,7 +13,7 @@ namespace ShiftOS.Server
 {
     public static class ShopBackend
     {
-        [MudRequest("update_shop_by_user")]
+        [MudRequest("update_shop_by_user", typeof(Dictionary<string, object>))]
         public static void UpdateShopByUser(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -37,7 +37,7 @@ namespace ShiftOS.Server
             Program.ClientDispatcher.DispatchTo("shop_added", guid, "");
         }
 
-        [MudRequest("create_shop")]
+        [MudRequest("create_shop", typeof(Dictionary<string, object>))]
         public static void CreateShop(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -45,7 +45,7 @@ namespace ShiftOS.Server
             if (File.Exists("shops.json"))
                 shopFile = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
 
-            var newShop = JsonConvert.DeserializeObject<Shop>(contents as string);
+            var newShop = JsonConvert.DeserializeObject<Shop>(JsonConvert.SerializeObject(contents));
 
             foreach (var shop in shopFile)
             {
@@ -64,7 +64,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("user_shop_check")]
+        [MudRequest("user_shop_check", typeof(Dictionary<string, object>))]
         public static void UserShopCheck(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -85,7 +85,7 @@ namespace ShiftOS.Server
             Program.ClientDispatcher.DispatchTo("user_shop_check_result", guid, res.ToString());
         }
 
-        [MudRequest("shop_getitems")]
+        [MudRequest("shop_getitems", typeof(Dictionary<string, object>))]
         public static void GetShopItems(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -111,7 +111,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("shop_getall")]
+        [MudRequest("shop_getall", null)]
         public static void GetAllShops(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -129,7 +129,7 @@ namespace ShiftOS.Server
             Program.ClientDispatcher.DispatchTo("shop_all", guid, shops);
         }
 
-        [MudRequest("user_get_shop")]
+        [MudRequest("user_get_shop", typeof(string))]
         public static void GetShop(string guid, object contents)
         {
             string shopOwner = contents as string;

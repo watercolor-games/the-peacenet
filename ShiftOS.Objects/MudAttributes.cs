@@ -15,12 +15,14 @@ namespace ShiftOS.Objects
         /// This attribute can be used on a static method to make the multi-user domain server software see this method as a MUD request handler.
         /// </summary>
         /// <param name="rName">The header ID of the request this method should handle.</param>
-        public MudRequestAttribute(string rName)
+        public MudRequestAttribute(string rName, Type expected)
         {
             RequestName = rName;
+            ExpectedType = expected;
         }
 
         public string RequestName { get; private set; }
+        public Type ExpectedType { get; private set; }
     }
 
     [AttributeUsage(AttributeTargets.Method)]

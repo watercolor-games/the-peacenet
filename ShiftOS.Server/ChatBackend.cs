@@ -115,7 +115,7 @@ namespace ShiftOS.Server
 
         public delegate void empty();
 
-        [MudRequest("chat_getallchannels")]
+        [MudRequest("chat_getallchannels", null)]
         public static void GetAllChannels(string guid, object contents)
         {
             server.DispatchTo(new Guid(guid), new NetObject("chat_all", new ServerMessage
@@ -126,11 +126,10 @@ namespace ShiftOS.Server
             }));
         }
 
-        [MudRequest("chat_send")]
+        [MudRequest("chat_send", typeof(ChatMessage))]
         public static void ReceiveMessage(string guid, object contents)
         {
-            var args = contents as Dictionary<string, object>;
-            var msg = new ChatMessage(args["Username"] as string, args["SystemName"] as string, args["Message"] as string, args["Channel"] as string);
+            var msg = contents as ChatMessage;
             MessageReceived?.Invoke(guid, msg);
 
         }

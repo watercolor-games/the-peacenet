@@ -13,7 +13,7 @@ namespace ShiftOS.Server
 {
     public static class SaveManager
     {
-        [MudRequest("usr_getcp")]
+        [MudRequest("usr_getcp", typeof(Dictionary<string, object>))]
         public static void GetCodepoints(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -34,7 +34,7 @@ namespace ShiftOS.Server
             
         }
 
-        [MudRequest("mud_login")]
+        [MudRequest("mud_login", typeof(Dictionary<string, object>))]
         public static void UserLogin(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -78,7 +78,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("mud_checkuserexists")]
+        [MudRequest("mud_checkuserexists", typeof(Dictionary<string, object>))]
         public static void CheckUserExists(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -120,10 +120,10 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("mud_save")]
+        [MudRequest("mud_save", typeof(Save))]
         public static void SaveGame(string guid, object contents)
         {
-            var sav = JsonConvert.DeserializeObject<Save>(JsonConvert.SerializeObject(contents));
+            var sav = contents as Save;
 
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
@@ -139,7 +139,7 @@ namespace ShiftOS.Server
             catch { }
         }
 
-        [MudRequest("usr_givecp")]
+        [MudRequest("usr_givecp", typeof(Dictionary<string, object>))]
         public static void GiveCodepoints(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
@@ -171,7 +171,7 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("usr_takecp")]
+        [MudRequest("usr_takecp", typeof(Dictionary<string, object>))]
         public static void TakeCodepoints(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;

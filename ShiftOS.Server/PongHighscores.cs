@@ -13,7 +13,7 @@ namespace ShiftOS.Server
 {
     public static class PongHighscores
     {
-        [MudRequest("pong_gethighscores")]
+        [MudRequest("pong_gethighscores", null)]
         public static void GetHighScores(string guid, object contents)
         {
             if (File.Exists("pong_highscores.json"))
@@ -28,14 +28,14 @@ namespace ShiftOS.Server
 
         }
 
-        [MudRequest("pong_sethighscores")]
+        [MudRequest("pong_sethighscores", typeof(PongHighscore))]
         public static void PostHighscores(string guid, object contents)
         {
             var hs = new List<PongHighscore>();
             if (File.Exists("pong_highscores.json"))
                 hs = JsonConvert.DeserializeObject<List<PongHighscore>>(File.ReadAllText("pong_highscores.json"));
 
-            var newHS = JsonConvert.DeserializeObject<PongHighscore>(contents as string);
+            var newHS = contents as PongHighscore;
             for (int i = 0; i <= hs.Count; i++)
             {
                 try
