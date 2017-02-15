@@ -295,10 +295,11 @@ namespace ShiftOS.Server
                                                             object result = null;
                                                             try
                                                             {
-                                                                result = Convert.ChangeType(JsonConvert.DeserializeObject(msg.Contents), mAttrib.ExpectedType);
+                                                                result = JsonConvert.DeserializeObject(msg.Contents, mAttrib.ExpectedType);
                                                             }
-                                                            catch
+                                                            catch (Exception ex)
                                                             {
+                                                                Console.WriteLine(ex);
                                                                 result = null;
                                                             }
                                                             if (result == null)
