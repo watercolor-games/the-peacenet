@@ -126,11 +126,11 @@ namespace ShiftOS.Server
             }));
         }
 
-        [MudRequest("chat_send", typeof(ChatMessage))]
+        [MudRequest("chat_send", typeof(Dictionary<string, string>))]
         public static void ReceiveMessage(string guid, object contents)
         {
-            var msg = contents as ChatMessage;
-            MessageReceived?.Invoke(guid, msg);
+            var msg = contents as Dictionary<string, string>;
+            MessageReceived?.Invoke(guid, new ChatMessage(msg["Username"], msg["SystemName"], msg["Message"], msg["Channel"]));
 
         }
     }
