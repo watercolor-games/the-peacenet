@@ -36,6 +36,9 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [Launcher("Chat", false, null, "Utilities")]
+    [WinOpen("chat")]
+    [DefaultIcon("iconTerminal")]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat(string chatId)
