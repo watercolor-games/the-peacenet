@@ -11,7 +11,7 @@ namespace ShiftOS.Objects
     public class Save
     {
         public string Username { get; set; }
-        public int Codepoints { get; set; }
+        public long Codepoints { get; set; }
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
         public string Language { get; set; }

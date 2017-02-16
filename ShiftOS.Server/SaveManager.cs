@@ -146,7 +146,7 @@ namespace ShiftOS.Server
             if (args["username"] != null && args["amount"] != null)
             {
                 string userName = args["username"] as string;
-                int cpAmount = (int)args["amount"];
+                long cpAmount = (long)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {

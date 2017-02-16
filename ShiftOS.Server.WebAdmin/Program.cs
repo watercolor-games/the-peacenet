@@ -336,7 +336,7 @@ namespace ShiftOS.Server.WebAdmin
         {
             if (System.IO.Directory.Exists("saves"))
             {
-                int cp = 0;
+                long cp = 0;
 
                 foreach(var file in System.IO.Directory.GetFiles("saves"))
                 {
