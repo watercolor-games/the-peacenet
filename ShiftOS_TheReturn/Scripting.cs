@@ -195,7 +195,7 @@ namespace ShiftOS.Engine.Scripting
     [Exposed("sos")]
     public class SystemFunctions
     {
-        public int getCodepoints() { return SaveSystem.CurrentSave.Codepoints; }
+        public long getCodepoints() { return SaveSystem.CurrentSave.Codepoints; }
 
 
         public bool runCommand(string cmd)

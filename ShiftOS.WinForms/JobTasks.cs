@@ -16,7 +16,7 @@ namespace ShiftOS.WinForms
             CodepointsRequired = SaveSystem.CurrentSave.Codepoints + amount;
         }
 
-        public int CodepointsRequired { get; private set; }
+        public long CodepointsRequired { get; private set; }
 
         public override bool IsComplete
         {
