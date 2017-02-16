@@ -166,16 +166,6 @@ namespace ShiftOS.Engine
 
                 Thread.Sleep(75);
 
-
-
-                if (Shiftorium.UpgradeInstalled("desktop"))
-                {
-                    Console.Write("{START_DESKTOP}");
-
-                    Thread.Sleep(50);
-                    Console.WriteLine("   ...{DONE}.");
-                }
-
                 Thread.Sleep(50);
                 Console.WriteLine("{SYSTEM_INITIATED}");
 
