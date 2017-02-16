@@ -231,12 +231,12 @@ namespace ShiftOS.Server
                                 {
                                     foreach (var attrib in method.GetCustomAttributes(false))
                                     {
-                                        new Thread(() =>
+                                        if (attrib is MudRequestAttribute)
                                         {
-                                            if (attrib is MudRequestAttribute)
+                                            var mAttrib = attrib as MudRequestAttribute;
+                                            if (mAttrib.RequestName == msg.Name)
                                             {
-                                                var mAttrib = attrib as MudRequestAttribute;
-                                                if (mAttrib.RequestName == msg.Name)
+                                                new Thread(() =>
                                                 {
                                                     try
                                                     {
@@ -244,7 +244,7 @@ namespace ShiftOS.Server
                                                         bool throwOnNull = false;
 
 
-                                                        if(mAttrib.ExpectedType == typeof(int))
+                                                        if (mAttrib.ExpectedType == typeof(int))
                                                         {
                                                             int result = 0;
                                                             if (int.TryParse(msg.Contents, out result) == true)
@@ -256,7 +256,7 @@ namespace ShiftOS.Server
                                                                 throw new MudException($"Protocol error: {msg.Name} expects a 32-bit signed integer for the message contents.");
                                                             }
                                                         }
-                                                        else if(mAttrib.ExpectedType == typeof(long))
+                                                        else if (mAttrib.ExpectedType == typeof(long))
                                                         {
                                                             long result = 0;
                                                             if (long.TryParse(msg.Contents, out result) == true)
@@ -268,10 +268,10 @@ namespace ShiftOS.Server
                                                                 throw new MudException($"Protocol error: {msg.Name} expects a 64-bit signed integer for the message contents.");
                                                             }
                                                         }
-                                                        else if(mAttrib.ExpectedType == typeof(bool))
+                                                        else if (mAttrib.ExpectedType == typeof(bool))
                                                         {
                                                             throwOnNull = true;
-                                                            if(msg.Contents.ToLower() == "true")
+                                                            if (msg.Contents.ToLower() == "true")
                                                             {
                                                                 contents = true;
                                                             }
@@ -285,7 +285,7 @@ namespace ShiftOS.Server
                                                                 throw new MudException("Protocol error: " + msg.Name + " expects a content type of 'boolean'. Please send either 'true' or 'false'.");
                                                             }
                                                         }
-                                                        else if(mAttrib.ExpectedType == null)
+                                                        else if (mAttrib.ExpectedType == null)
                                                         {
                                                             throwOnNull = false;
                                                         }
@@ -314,14 +314,11 @@ namespace ShiftOS.Server
                                                         Console.WriteLine(mEx);
                                                         ClientDispatcher.DispatchTo("Error", msg.GUID, mEx);
                                                     }
-                                                    catch
-                                                    {
-                                                        Console.WriteLine($@"[{DateTime.Now}] {method.Name}: Missing guid and content parameters, request handler NOT RAN.");
-                                                    }
                                                     return;
-                                                }
+                                                }).Start();
+                                                return;
                                             }
-                                        }).Start();
+                                        }
                                     }
                                 }
                             }
