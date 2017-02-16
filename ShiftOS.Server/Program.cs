@@ -341,7 +341,7 @@ namespace ShiftOS.Server
 				Console.WriteLine("An error occurred with that one.");
 				Console.WriteLine(ex);
 
-				server.DispatchTo(new Guid(msg.GUID), new NetObject("error", new ServerMessage { Name = "Error", GUID = "Server", Contents = JsonConvert.SerializeObject(ex) }));
+                ClientDispatcher.DispatchTo("Error", msg.GUID, ex);
 			}
 		}
 
