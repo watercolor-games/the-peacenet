@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ShiftOS.Objects.ShiftFS;
 using static ShiftOS.Engine.SkinEngine;
 
 namespace ShiftOS.Engine
@@ -72,6 +73,8 @@ namespace ShiftOS.Engine
 
     public interface IDesktop
     {
+        string DesktopName { get; }
+        
         void SetupDesktop();
         void PopulateAppLauncher(LauncherItem[] items);
         void ShowWindow(IWindowBorder border);
@@ -87,6 +90,30 @@ namespace ShiftOS.Engine
     public static class Desktop
     {
         private static IDesktop _desktop = null;
+
+        public static IDesktop[] GetAllDesktops()
+        {
+            List<IDesktop> desktops = new List<IDesktop>();
+            foreach(var exe in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exe);
+                        foreach(var type in asm.GetTypes())
+                        {
+                            if (type.GetInterfaces().Contains(typeof(IDesktop)))
+                            {
+                                desktops.Add(Activator.CreateInstance(type) as IDesktop);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return desktops.ToArray();
+        }
 
         public static Size Size { get
             {

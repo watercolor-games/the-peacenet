@@ -94,6 +94,12 @@
     <Compile Include="Applications\Downloader.Designer.cs">
       <DependentUpon>Downloader.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ExperienceShifter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ExperienceShifter.Designer.cs">
+      <DependentUpon>ExperienceShifter.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\FileDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -202,6 +208,12 @@
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="JobTasks.cs" />
+    <Compile Include="LuaDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaDesktop.Designer.cs">
+      <DependentUpon>LuaDesktop.cs</DependentUpon>
+    </Compile>
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -244,6 +256,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Downloader.resx">
       <DependentUpon>Downloader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ExperienceShifter.resx">
+      <DependentUpon>ExperienceShifter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\FileDialog.resx">
       <DependentUpon>FileDialog.cs</DependentUpon>
@@ -476,6 +491,7 @@
     <None Include="Resources\strings_en.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\RegularDesktopGlyph.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

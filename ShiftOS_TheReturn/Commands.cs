@@ -230,9 +230,25 @@ namespace ShiftOS.Engine
     }
 
 #if DEVEL
+    internal class Rock : Exception
+    {
+        internal Rock() : base("Someone threw a motherfucking rock at the window, and the Terminal fucking shattered.")
+        {
+
+        }
+    }
+    
     [Namespace("dev")]
     public static class ShiftOSDevCommands
     {
+        [Command("rock", description = "A little surprise for unstable builds...")]
+        public static bool ThrowAFuckingRock()
+        {
+            Infobox.Show("Fuck.", new Rock().Message);
+            return false;
+        }
+
+
         [Command("unbuy")]
         [RequiresArgument("upgrade")]
         public static bool UnbuyUpgrade(Dictionary<string, object> args)

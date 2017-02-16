@@ -40,7 +40,7 @@ namespace ShiftOS.Engine.Scripting
 {
     public class LuaInterpreter
     {
-        dynamic Lua = new DynamicLua.DynamicLua();
+        public dynamic Lua = new DynamicLua.DynamicLua();
         public bool Running = true;
 
         public LuaInterpreter()

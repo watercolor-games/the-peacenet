@@ -872,6 +872,16 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RegularDesktopGlyph {
+            get {
+                object obj = ResourceManager.GetObject("RegularDesktopGlyph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [
         ///	{
         ///		Name: &quot;MUD Fundamentals&quot;,

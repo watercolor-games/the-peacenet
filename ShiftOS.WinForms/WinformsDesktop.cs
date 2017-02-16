@@ -416,6 +416,14 @@ namespace ShiftOS.WinForms
 
         private IWindowBorder focused = null;
 
+        public string DesktopName
+        {
+            get
+            {
+                return "ShiftOS Desktop";
+            }
+        }
+
 
         /// <summary>
         /// Minimizes the window.
