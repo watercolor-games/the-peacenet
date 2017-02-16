@@ -505,19 +505,26 @@ namespace ShiftOS.Server
 
         public void DispatchTo(string msgName, string cGuid, object mContents)
         {
-            if(Server.Clients.Contains(new Guid(cGuid)))
+            try
             {
-                Server.DispatchTo(new Guid(cGuid), new NetObject("dispatch", new ServerMessage
+                if (Server.Clients.Contains(new Guid(cGuid)))
                 {
-                    Name = msgName,
-                    GUID = DispatcherGUID,
-                    Contents = JsonConvert.SerializeObject(mContents)
-                }));
-                Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Dispatching to {cGuid}: {msgName}.");
+                    Server.DispatchTo(new Guid(cGuid), new NetObject("dispatch", new ServerMessage
+                    {
+                        Name = msgName,
+                        GUID = DispatcherGUID,
+                        Contents = JsonConvert.SerializeObject(mContents)
+                    }));
+                    Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Dispatching to {cGuid}: {msgName}.");
+                }
+                else
+                {
+                    Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Client \"{cGuid}\" not found on server. Possibly a connection drop.");
+                }
             }
-            else
+            catch
             {
-                Console.WriteLine($"[{DateTime.Now}] <ClientDispatcher> Client \"{cGuid}\" not found on server. Possibly a connection drop.");
+                //FUCKING SHOOT ME.
             }
         }
     }
