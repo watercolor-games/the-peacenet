@@ -323,6 +323,7 @@ namespace ShiftOS.WinForms
             {
                 pnlicon.Show();
                 pnlicon.Size = new Size(16, 16);
+                pnlicon.BackColor = Color.Transparent;
                 pnlicon.BackgroundImage = GetIcon(this.ParentWindow.GetType().Name);
                 pnlicon.BackgroundImageLayout = ImageLayout.Stretch;
                 pnlicon.Location = LoadedSkin.TitlebarIconFromSide;
