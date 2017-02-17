@@ -42,7 +42,10 @@ namespace ShiftOS.WinForms.Applications
         public void PopulateDesktops()
         {
             lbdesktops.Items.Clear();
-            lbdesktops.Items.Add("ShiftOS Desktop");
+            foreach(var desk in Desktop.GetAllDesktops())
+            {
+                lbdesktops.Items.Add(desk.DesktopName);
+            }
         }
 
         public void PopulateLaunchers()

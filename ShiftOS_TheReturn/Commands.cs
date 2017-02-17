@@ -232,7 +232,7 @@ namespace ShiftOS.Engine
 #if DEVEL
     internal class Rock : Exception
     {
-        internal Rock() : base("Someone threw a motherfucking rock at the window, and the Terminal fucking shattered.")
+        internal Rock() : base("Someone threw a rock at the window, and the Terminal shattered.")
         {
 
         }
@@ -244,7 +244,7 @@ namespace ShiftOS.Engine
         [Command("rock", description = "A little surprise for unstable builds...")]
         public static bool ThrowAFuckingRock()
         {
-            Infobox.Show("Fuck.", new Rock().Message);
+            Infobox.Show("He who lives in a glass house shouldn't throw stones...", new Rock().Message);
             return false;
         }
 
