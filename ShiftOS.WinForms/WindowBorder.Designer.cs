@@ -56,6 +56,7 @@ namespace ShiftOS.WinForms
         private void InitializeComponent()
         {
             this.pnltitle = new System.Windows.Forms.Panel();
+            this.pnlicon = new System.Windows.Forms.Panel();
             this.pnlminimize = new System.Windows.Forms.Panel();
             this.pnlmaximize = new System.Windows.Forms.Panel();
             this.pnlclose = new System.Windows.Forms.Panel();
@@ -68,7 +69,6 @@ namespace ShiftOS.WinForms
             this.pnlleft = new System.Windows.Forms.Panel();
             this.pnlright = new System.Windows.Forms.Panel();
             this.pnlcontents = new System.Windows.Forms.Panel();
-            this.pnlicon = new System.Windows.Forms.Panel();
             this.pnltitle.SuspendLayout();
             this.pnlbottom.SuspendLayout();
             this.SuspendLayout();
@@ -90,6 +90,13 @@ namespace ShiftOS.WinForms
             this.pnltitle.TabIndex = 0;
             this.pnltitle.Paint += new System.Windows.Forms.PaintEventHandler(this.pnltitle_Paint);
             this.pnltitle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnltitle_MouseMove);
+            // 
+            // pnlicon
+            // 
+            this.pnlicon.Location = new System.Drawing.Point(9, -76);
+            this.pnlicon.Name = "pnlicon";
+            this.pnlicon.Size = new System.Drawing.Size(200, 100);
+            this.pnlicon.TabIndex = 6;
             // 
             // pnlminimize
             // 
@@ -162,15 +169,15 @@ namespace ShiftOS.WinForms
             this.pnlbottom.Controls.Add(this.pnlbottomr);
             this.pnlbottom.Controls.Add(this.pnlbottoml);
             this.pnlbottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbottom.Location = new System.Drawing.Point(2, 491);
+            this.pnlbottom.Location = new System.Drawing.Point(0, 491);
             this.pnlbottom.Name = "pnlbottom";
-            this.pnlbottom.Size = new System.Drawing.Size(726, 2);
+            this.pnlbottom.Size = new System.Drawing.Size(730, 2);
             this.pnlbottom.TabIndex = 1;
             // 
             // pnlbottomr
             // 
             this.pnlbottomr.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlbottomr.Location = new System.Drawing.Point(724, 0);
+            this.pnlbottomr.Location = new System.Drawing.Point(728, 0);
             this.pnlbottomr.Name = "pnlbottomr";
             this.pnlbottomr.Size = new System.Drawing.Size(2, 2);
             this.pnlbottomr.TabIndex = 3;
@@ -189,7 +196,7 @@ namespace ShiftOS.WinForms
             this.pnlleft.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlleft.Location = new System.Drawing.Point(0, 30);
             this.pnlleft.Name = "pnlleft";
-            this.pnlleft.Size = new System.Drawing.Size(2, 463);
+            this.pnlleft.Size = new System.Drawing.Size(2, 461);
             this.pnlleft.TabIndex = 2;
             // 
             // pnlright
@@ -198,7 +205,7 @@ namespace ShiftOS.WinForms
             this.pnlright.Dock = System.Windows.Forms.DockStyle.Right;
             this.pnlright.Location = new System.Drawing.Point(728, 30);
             this.pnlright.Name = "pnlright";
-            this.pnlright.Size = new System.Drawing.Size(2, 463);
+            this.pnlright.Size = new System.Drawing.Size(2, 461);
             this.pnlright.TabIndex = 3;
             // 
             // pnlcontents
@@ -206,27 +213,20 @@ namespace ShiftOS.WinForms
             this.pnlcontents.BackColor = System.Drawing.Color.Black;
             this.pnlcontents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlcontents.ForeColor = System.Drawing.Color.White;
-            this.pnlcontents.Location = new System.Drawing.Point(0, 30);
+            this.pnlcontents.Location = new System.Drawing.Point(2, 30);
             this.pnlcontents.Name = "pnlcontents";
-            this.pnlcontents.Size = new System.Drawing.Size(730, 463);
+            this.pnlcontents.Size = new System.Drawing.Size(726, 461);
             this.pnlcontents.TabIndex = 4;
-            // 
-            // pnlicon
-            // 
-            this.pnlicon.Location = new System.Drawing.Point(9, -76);
-            this.pnlicon.Name = "pnlicon";
-            this.pnlicon.Size = new System.Drawing.Size(200, 100);
-            this.pnlicon.TabIndex = 6;
             // 
             // WindowBorder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(730, 493);
-            this.Controls.Add(this.pnlbottom);
+            this.Controls.Add(this.pnlcontents);
             this.Controls.Add(this.pnlright);
             this.Controls.Add(this.pnlleft);
-            this.Controls.Add(this.pnlcontents);
+            this.Controls.Add(this.pnlbottom);
             this.Controls.Add(this.pnltitle);
             this.Name = "WindowBorder";
             this.Load += new System.EventHandler(this.WindowBorder_Load);
