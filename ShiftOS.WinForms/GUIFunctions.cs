@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ShiftOS.Engine.Scripting;
 using System.Drawing;
 using ShiftOS.Engine;
+using System.Windows.Forms;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms
 {
@@ -53,6 +55,90 @@ namespace ShiftOS.WinForms
             win.Size = size;
             AppearanceManager.SetupWindow(win);
             return win;
+        }
+
+        public dynamic panel(Control parent, Point loc, Size size)
+        {
+            var pnl = new Panel();
+            pnl.Location = loc;
+            pnl.Size = size;
+            parent.Controls.Add(pnl);
+            pnl.Show();
+            return pnl;
+        }
+
+        public DockStyle dock(string type)
+        {
+            DockStyle d = DockStyle.None;
+            switch (type.ToLower())
+            {
+                case "top":
+                    d = DockStyle.Top;
+                    break;
+                case "bottom":
+                    d = DockStyle.Bottom;
+                    break;
+                case "left":
+                    d = DockStyle.Left;
+                    break;
+                case "right":
+                    d = DockStyle.Right;
+                    break;
+                case "fill":
+                    d = DockStyle.Fill;
+                    break;
+            }
+            return d;
+        }
+
+        public AnchorStyles anchor(bool top, bool left, bool bottom, bool right)
+        {
+            AnchorStyles a = AnchorStyles.None;
+            if (top)
+                a = a | AnchorStyles.Top;
+            if (left)
+                a = a | AnchorStyles.Left;
+            if (bottom)
+                a = a | AnchorStyles.Bottom;
+            if (right)
+                a = a | AnchorStyles.Right;
+            return a;
+        }
+
+        public dynamic flow(Control parent, Point loc, Size size)
+        {
+            var pnl = new FlowLayoutPanel();
+            pnl.Size = size;
+            pnl.Location = loc;
+            parent.Controls.Add(pnl);
+            pnl.Show();
+            return pnl;
+        }
+
+        private Control addToParent(Control parent, Point loc, Size size, Control newControl)
+        {
+            newControl.Size = size;
+            newControl.Location = loc;
+            parent.Controls.Add(newControl);
+            newControl.Show();
+            ControlManager.SetupControls(parent);
+            return newControl;
+        }
+
+        public dynamic button(Control parent, Point loc, Size size, string text)
+        {
+            var btn = new Button();
+            btn.Text = text;
+            btn.AutoSize = false;
+            return addToParent(parent, loc, size, btn);
+        }
+
+        public dynamic label(Control parent, Point loc, Size size, string text)
+        {
+            var lbl = new Label();
+            lbl.Text = text;
+            lbl.AutoSize = false;
+            return addToParent(parent, loc, size, lbl);
         }
     }
 

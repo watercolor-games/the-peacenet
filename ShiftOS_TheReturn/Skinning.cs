@@ -55,6 +55,11 @@ namespace ShiftOS.Engine {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(skn));
             SkinEngine.LoadSkin();
         }
+
+        public dynamic getImage(string id)
+        {
+            return SkinEngine.GetImage(id);
+        }
     }
 
 
