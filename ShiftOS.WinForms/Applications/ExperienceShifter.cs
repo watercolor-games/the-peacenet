@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using ShiftOS.Engine;
+using ShiftOS.Objects.ShiftFS;
+using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -42,10 +44,25 @@ namespace ShiftOS.WinForms.Applications
         public void PopulateDesktops()
         {
             lbdesktops.Items.Clear();
-            foreach(var desk in Desktop.GetAllDesktops())
+            foreach(var desk in GetAllDesktops())
             {
                 lbdesktops.Items.Add(desk.DesktopName);
             }
+        }
+
+        public List<IDesktop> GetAllDesktops()
+        {
+            List<IDesktop> dekstops = new List<IDesktop>();
+            dekstops.Add(new WinformsDesktop());
+            if (!Utils.FileExists(Paths.GetPath("conf.sft")))
+                Utils.WriteAllText(Paths.GetPath("conf.sft"), JsonConvert.SerializeObject(new ShiftOSConfigFile(), Formatting.Indented));
+
+            foreach(var script in JsonConvert.DeserializeObject<ShiftOSConfigFile>(Utils.ReadAllText(Paths.GetPath("conf.sft"))).Desktops)
+            {
+                if(Utils.FileExists(script))
+                    dekstops.Add(new LuaDesktop(script));
+            }
+            return dekstops;
         }
 
         public void PopulateLaunchers()
@@ -82,6 +99,38 @@ namespace ShiftOS.WinForms.Applications
         {
             currentUI = "applauncher";
             SetupUI();
+        }
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileSkimmerBackend.GetFile(new[] { ".lua" }, FileOpenerStyle.Open, new Action<string>((script) =>
+             {
+                 ShiftOSConfigFile conf = new WinForms.ShiftOSConfigFile();
+                 if (Utils.FileExists(Paths.GetPath("conf.sft")))
+                 {
+                     conf = JsonConvert.DeserializeObject<ShiftOSConfigFile>(Utils.ReadAllText(Paths.GetPath("conf.sft")));
+                 }
+                 conf.Desktops.Add(script);
+                 Utils.WriteAllText(Paths.GetPath("conf.sft"), JsonConvert.SerializeObject(conf, Formatting.Indented));
+             }));
+        }
+
+        private void lbdesktops_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach(var desk in GetAllDesktops())
+            {
+                try
+                {
+                    if(desk.DesktopName == lbdesktops.SelectedItem.ToString())
+                    {
+                        Desktop.Init(desk, true);
+                    }
+                }
+                catch
+                {
+
+                }
+            }
         }
     }
 }

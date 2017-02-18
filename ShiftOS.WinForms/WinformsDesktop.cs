@@ -75,8 +75,16 @@ namespace ShiftOS.WinForms
                 }
             };
 
-            SaveSystem.GameReady += () => this.Invoke(new Action(() => SetupDesktop()));
-            Shiftorium.Installed += () => this.Invoke(new Action(() => SetupDesktop()));
+            SaveSystem.GameReady += () =>
+            {
+                if(this.Visible == true)
+                    this.Invoke(new Action(() => SetupDesktop()));
+            };
+            Shiftorium.Installed += () =>
+            {
+                if(this.Visible == true)
+                    this.Invoke(new Action(() => SetupDesktop()));
+            };
             var time = new Timer();
             time.Interval = 100;
             this.KeyDown += (o, a) =>
@@ -112,16 +120,7 @@ namespace ShiftOS.WinForms
             time.Start();
 
             this.DoubleBuffered = true;
-            SetCursors(this);
-        }
-
-        public void SetCursors(Control ctrl)
-        {
-            ControlManager.SetupControl(ctrl);
-            foreach(Control child in ctrl.Controls)
-            {
-                SetCursors(child);
-            }
+            
         }
 
 		/// <summary>

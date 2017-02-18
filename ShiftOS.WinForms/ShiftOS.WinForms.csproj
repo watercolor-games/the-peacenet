@@ -207,6 +207,7 @@
     <Compile Include="FakeSetupScreen.Designer.cs">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUIFunctions.cs" />
     <Compile Include="JobTasks.cs" />
     <Compile Include="LuaDesktop.cs">
       <SubType>Form</SubType>
@@ -221,12 +222,19 @@
       <DependentUpon>Oobe.cs</DependentUpon>
     </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
+    <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
     <Compile Include="WFLanguageProvider.cs" />
+    <Compile Include="Window.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window.Designer.cs">
+      <DependentUpon>Window.cs</DependentUpon>
+    </Compile>
     <Compile Include="WindowBorder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -304,6 +312,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FakeSetupScreen.resx">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaDesktop.resx">
+      <DependentUpon>LuaDesktop.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>

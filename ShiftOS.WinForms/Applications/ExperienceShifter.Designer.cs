@@ -32,16 +32,19 @@
             this.desktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnldesktop = new System.Windows.Forms.Panel();
+            this.lbdesktops = new System.Windows.Forms.ListBox();
             this.gpdesktopsettings = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.pnlapplauncher = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbdesktops = new System.Windows.Forms.ListBox();
-            this.gpalsettings = new System.Windows.Forms.GroupBox();
             this.lblaunchers = new System.Windows.Forms.ListBox();
+            this.gpalsettings = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.menuStrip2 = new System.Windows.Forms.MenuStrip();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.pnldesktop.SuspendLayout();
             this.pnlapplauncher.SuspendLayout();
+            this.menuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -71,6 +74,7 @@
             // 
             // pnldesktop
             // 
+            this.pnldesktop.Controls.Add(this.menuStrip2);
             this.pnldesktop.Controls.Add(this.lbdesktops);
             this.pnldesktop.Controls.Add(this.gpdesktopsettings);
             this.pnldesktop.Controls.Add(this.label2);
@@ -79,6 +83,16 @@
             this.pnldesktop.Name = "pnldesktop";
             this.pnldesktop.Size = new System.Drawing.Size(582, 407);
             this.pnldesktop.TabIndex = 1;
+            // 
+            // lbdesktops
+            // 
+            this.lbdesktops.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbdesktops.FormattingEnabled = true;
+            this.lbdesktops.Location = new System.Drawing.Point(0, 23);
+            this.lbdesktops.Name = "lbdesktops";
+            this.lbdesktops.Size = new System.Drawing.Size(582, 239);
+            this.lbdesktops.TabIndex = 0;
+            this.lbdesktops.SelectedIndexChanged += new System.EventHandler(this.lbdesktops_SelectedIndexChanged);
             // 
             // gpdesktopsettings
             // 
@@ -113,6 +127,25 @@
             this.pnlapplauncher.Size = new System.Drawing.Size(582, 407);
             this.pnlapplauncher.TabIndex = 0;
             // 
+            // lblaunchers
+            // 
+            this.lblaunchers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblaunchers.FormattingEnabled = true;
+            this.lblaunchers.Location = new System.Drawing.Point(0, 23);
+            this.lblaunchers.Name = "lblaunchers";
+            this.lblaunchers.Size = new System.Drawing.Size(582, 239);
+            this.lblaunchers.TabIndex = 4;
+            // 
+            // gpalsettings
+            // 
+            this.gpalsettings.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gpalsettings.Location = new System.Drawing.Point(0, 262);
+            this.gpalsettings.Name = "gpalsettings";
+            this.gpalsettings.Size = new System.Drawing.Size(582, 145);
+            this.gpalsettings.TabIndex = 3;
+            this.gpalsettings.TabStop = false;
+            this.gpalsettings.Text = "Settings for this environment";
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -125,40 +158,30 @@
             this.label1.Tag = "header2";
             this.label1.Text = "App Launcher";
             // 
-            // lbdesktops
+            // menuStrip2
             // 
-            this.lbdesktops.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbdesktops.FormattingEnabled = true;
-            this.lbdesktops.Location = new System.Drawing.Point(0, 23);
-            this.lbdesktops.Name = "lbdesktops";
-            this.lbdesktops.Size = new System.Drawing.Size(582, 239);
-            this.lbdesktops.TabIndex = 0;
+            this.menuStrip2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem});
+            this.menuStrip2.Location = new System.Drawing.Point(0, 238);
+            this.menuStrip2.Name = "menuStrip2";
+            this.menuStrip2.Size = new System.Drawing.Size(582, 24);
+            this.menuStrip2.TabIndex = 0;
+            this.menuStrip2.Text = "menuStrip2";
             // 
-            // gpalsettings
+            // addToolStripMenuItem
             // 
-            this.gpalsettings.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.gpalsettings.Location = new System.Drawing.Point(0, 262);
-            this.gpalsettings.Name = "gpalsettings";
-            this.gpalsettings.Size = new System.Drawing.Size(582, 145);
-            this.gpalsettings.TabIndex = 3;
-            this.gpalsettings.TabStop = false;
-            this.gpalsettings.Text = "Settings for this environment";
-            // 
-            // lblaunchers
-            // 
-            this.lblaunchers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblaunchers.FormattingEnabled = true;
-            this.lblaunchers.Location = new System.Drawing.Point(0, 23);
-            this.lblaunchers.Name = "lblaunchers";
-            this.lblaunchers.Size = new System.Drawing.Size(582, 239);
-            this.lblaunchers.TabIndex = 4;
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
             // ExperienceShifter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pnlapplauncher);
             this.Controls.Add(this.pnldesktop);
+            this.Controls.Add(this.pnlapplauncher);
             this.Controls.Add(this.menuStrip1);
             this.Name = "ExperienceShifter";
             this.Size = new System.Drawing.Size(582, 431);
@@ -168,6 +191,8 @@
             this.pnldesktop.PerformLayout();
             this.pnlapplauncher.ResumeLayout(false);
             this.pnlapplauncher.PerformLayout();
+            this.menuStrip2.ResumeLayout(false);
+            this.menuStrip2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -186,5 +211,7 @@
         private System.Windows.Forms.ListBox lbdesktops;
         private System.Windows.Forms.ListBox lblaunchers;
         private System.Windows.Forms.GroupBox gpalsettings;
+        private System.Windows.Forms.MenuStrip menuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
     }
 }

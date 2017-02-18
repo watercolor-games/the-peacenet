@@ -85,35 +85,14 @@ namespace ShiftOS.Engine
         void RestoreWindow(IWindowBorder brdr);
         void InvokeOnWorkerThread(Action act);
         Size GetSize();
+
+        void Show();
+        void Close();
     }
 
     public static class Desktop
     {
         private static IDesktop _desktop = null;
-
-        public static IDesktop[] GetAllDesktops()
-        {
-            List<IDesktop> desktops = new List<IDesktop>();
-            foreach(var exe in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach(var type in asm.GetTypes())
-                        {
-                            if (type.GetInterfaces().Contains(typeof(IDesktop)))
-                            {
-                                desktops.Add(Activator.CreateInstance(type) as IDesktop);
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-            return desktops.ToArray();
-        }
 
         public static Size Size { get
             {
@@ -121,9 +100,15 @@ namespace ShiftOS.Engine
             }
         }
 
-        public static void Init(IDesktop desk)
+        public static void Init(IDesktop desk, bool show = false)
         {
+            IDesktop deskToClose = null;
+            if (_desktop != null)
+                deskToClose = _desktop;
             _desktop = desk;
+            if (show == true)
+                _desktop.Show();
+            deskToClose?.Close();
         }
 
         public static void MinimizeWindow(IWindowBorder brdr)

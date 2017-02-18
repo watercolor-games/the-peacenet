@@ -45,6 +45,15 @@ namespace ShiftOS.Engine.Scripting
 
         public LuaInterpreter()
         {
+            Lua(@"function totable(clrlist)
+    local t = {}
+    local it = clrlist:GetEnumerator()
+    while it:MoveNext() do
+        t[#t+1] = it.Current
+    end
+    return t
+end");
+
             SetupAPIs();
             Application.ApplicationExit += (o, a) =>
             {
@@ -55,6 +64,14 @@ namespace ShiftOS.Engine.Scripting
         public void SetupAPIs()
         {
 
+            Lua.registerEvent = new Action<string, Action<object>>((eventName, callback) =>
+            {
+                LuaEvent += (e, s) =>
+                {
+                    if(e == eventName)
+                        callback?.Invoke(s);
+                };
+            });
             //This temporary proxy() method will be used by the API prober.
             Lua.proxy = new Func<string, dynamic>((objName) =>
             {
@@ -165,6 +182,21 @@ namespace ShiftOS.Engine.Scripting
 
 {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// Occurs when a Lua event is fired by C#.
+        /// </summary>
+        private static event Action<string, object> LuaEvent;
+
+        /// <summary>
+        /// Raises a Lua event with the specified name and caller object.
+        /// </summary>
+        /// <param name="eventName">The name of the event. Scripts use this to check what type of event occurred.</param>
+        /// <param name="caller">The caller of the event. Scripts can use this to check if they should handle this event.</param>
+        public static void RaiseEvent(string eventName, object caller)
+        {
+            LuaEvent?.Invoke(eventName, caller);
         }
     }
 

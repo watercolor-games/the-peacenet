@@ -57,16 +57,22 @@ namespace ShiftOS.Engine
         /// <param name="message">Infobox message</param>
         public static void Show(string title, string message)
         {
+            title = Localization.Parse(title);
+            message = Localization.Parse(message);
             _infobox.Open(title, message);
         }
         
         public static void PromptText(string title, string message, Action<string> callback)
         {
+            title = Localization.Parse(title);
+            message = Localization.Parse(message);
             _infobox.PromptText(title, message, callback);
         }
 
         public static void PromptYesNo(string title, string message, Action<bool> callback)
         {
+            title = Localization.Parse(title);
+            message = Localization.Parse(message);
             _infobox.PromptYesNo(title, message, callback);
         }
 

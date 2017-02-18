@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define NOSOUND
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +20,7 @@ namespace ShiftOS.Engine
 
         public static void Init(IAudioProvider _p)
         {
+#if !NOSOUND
             _provider = _p;
             AppearanceManager.OnExit += () =>
             {
@@ -59,6 +62,7 @@ namespace ShiftOS.Engine
             });
             t.IsBackground = true;
             t.Start();
+#endif
         }
 
         public static void SetVolume(float volume)

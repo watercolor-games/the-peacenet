@@ -60,6 +60,9 @@ namespace ShiftOS.Engine
             AddPath("data", "save.json");
             AddPath("data", "user.dat");
             AddPath("data", "skin");
+            AddPath("system", "programs");
+            AddPath("system", "kernel.sft");
+            AddPath("system", "conf.sft");
             AddPath("skin", "current");
             AddPath("current", "skin.json");
             AddPath("current", "images");

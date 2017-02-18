@@ -28,11 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.pnlcanvas = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // pnlcanvas
+            // 
+            this.pnlcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlcanvas.Location = new System.Drawing.Point(0, 0);
+            this.pnlcanvas.Name = "pnlcanvas";
+            this.pnlcanvas.Size = new System.Drawing.Size(284, 261);
+            this.pnlcanvas.TabIndex = 0;
+            // 
+            // LuaDesktop
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.pnlcanvas);
+            this.Name = "LuaDesktop";
             this.Text = "LuaDesktop";
+            this.Load += new System.EventHandler(this.LuaDesktop_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel pnlcanvas;
     }
 }
