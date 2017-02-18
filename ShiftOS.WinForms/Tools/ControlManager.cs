@@ -229,8 +229,19 @@ namespace ShiftOS.WinForms.Tools
                     if (a.Control && a.KeyCode == Keys.T)
                     {
                         a.SuppressKeyPress = true;
+
+
+                        if (SaveSystem.CurrentSave != null)
+                        {
+                            if (Shiftorium.UpgradeInstalled("window_manager"))
+                            {
+                                Engine.AppearanceManager.SetupWindow(new Applications.Terminal());
+                            }
+                        }
                     }
 
+                    ShiftOS.Engine.Scripting.LuaInterpreter.RaiseEvent("on_key_down", a);
+                    //a.Handled = true;
                 };
                 if (ctrl is Button)
                 {

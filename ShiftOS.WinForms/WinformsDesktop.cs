@@ -100,6 +100,8 @@ namespace ShiftOS.WinForms
                     if (a.Shift) CtrlTabMenu.CycleBack();
                     else CtrlTabMenu.CycleForwards();
                 }*/ //nyi
+
+                ShiftOS.Engine.Scripting.LuaInterpreter.RaiseEvent("on_key_down", a);
             };
             SkinEngine.SkinLoaded += () =>
             {

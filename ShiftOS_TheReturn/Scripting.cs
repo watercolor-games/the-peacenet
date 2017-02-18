@@ -292,6 +292,21 @@ end");
             return Utils.ReadAllText(path);
         }
 
+        public void copy(string i, string o)
+        {
+            Utils.WriteAllBytes(o, Utils.ReadAllBytes(i));
+        }
+
+        public string[] getFiles(string dir)
+        {
+            return Utils.GetFiles(dir);
+        }
+
+        public string[] getDirectories(string dir)
+        {
+            return Utils.GetDirectories(dir);
+        }
+
         public byte[] readAllBytes(string path)
         {
             return Utils.ReadAllBytes(path);

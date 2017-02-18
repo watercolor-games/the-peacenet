@@ -34,8 +34,30 @@ using System.Windows.Forms;
 using static ShiftOS.Engine.SaveSystem;
 using ShiftOS.Objects.ShiftFS;
 using System.Reflection;
-
+using ShiftOS.Engine.Scripting;
 namespace ShiftOS.Engine {
+
+    [Exposed("skinning")]
+    public class SkinFunctions
+    {
+        public void reload()
+        {
+            SkinEngine.LoadSkin();
+        }    
+
+        public dynamic getSkin()
+        {
+            return SkinEngine.LoadedSkin;
+        }
+
+        public void setSkin(Skin skn)
+        {
+            Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(skn));
+            SkinEngine.LoadSkin();
+        }
+    }
+
+
     public static class SkinEngine {
         public static ImageLayout GetImageLayout(string img) {
             if (LoadedSkin.SkinImageLayouts.ContainsKey(img)) {

@@ -117,7 +117,7 @@ namespace ShiftOS.WinForms
                 {
                     Setup();
                     (ParentWindow as IShiftOSWindow).OnSkinLoad();
-                    ControlManager.SetupControl(this.pnlcontents);
+                    ControlManager.SetupControls(this.pnlcontents);
                 }
                 catch
                 {
@@ -159,6 +159,8 @@ namespace ShiftOS.WinForms
                     }
                 }
             }
+
+            ShiftOS.Engine.Scripting.LuaInterpreter.RaiseEvent("on_key_down", a);
         }
 
         /// <summary>
