@@ -250,6 +250,83 @@ end");
             }
         }
     }
+    
+    [Exposed("infobox")]
+    public class InfoboxFunctions
+    {
+        public void show(string title, string message)
+        {
+            Infobox.Show(title, message);
+        }
+
+        public void question(string title, string message, Action<bool> callback)
+        {
+            Infobox.PromptYesNo(title, message, callback);
+        }
+
+        public void input(string title, string message, Action<string> callback)
+        {
+            Infobox.PromptText(title, message, callback);
+        }
+    }
+
+    [Exposed("fileskimmer")]
+    public class FileSkimmerFunctions
+    {
+        public void openFile(string extensions, Action<string> callback)
+        {
+            FileSkimmerBackend.GetFile(extensions.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries), FileOpenerStyle.Open, callback);
+        }
+
+        public void saveFile(string extensions, Action<string> callback)
+        {
+            FileSkimmerBackend.GetFile(extensions.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries), FileOpenerStyle.Save, callback);
+        }
+    }
+
+    [Exposed("fs")]
+    public class ShiftFSFunctions
+    {
+        public string readAllText(string path)
+        {
+            return Utils.ReadAllText(path);
+        }
+
+        public byte[] readAllBytes(string path)
+        {
+            return Utils.ReadAllBytes(path);
+        }
+
+        public void writeAllText(string path, string contents)
+        {
+            Utils.WriteAllText(path, contents);
+        }
+
+        public void writeAllBytes(string path, byte[] contents)
+        {
+            Utils.WriteAllBytes(path, contents);
+        }
+
+        public bool fileExists(string path)
+        {
+            return Utils.FileExists(path);
+        }
+
+        public bool directoryExists(string path)
+        {
+            return Utils.DirectoryExists(path);
+        }
+
+        public void delete(string path)
+        {
+            Utils.Delete(path);
+        }
+
+        public void createDirectory(string path)
+        {
+            Utils.CreateDirectory(path);
+        }
+    }
 
 
     public class ExposedAttribute : Attribute

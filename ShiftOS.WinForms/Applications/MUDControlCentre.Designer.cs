@@ -62,18 +62,17 @@ namespace ShiftOS.WinForms.Applications
             this.browseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.myShopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openAShopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.currentTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.browseJobsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.legionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.joinLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.myLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.joinAChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.txtappstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.shop_all = new System.Windows.Forms.Panel();
+            this.flshoplist = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblistdesc = new System.Windows.Forms.Label();
+            this.lblistname = new System.Windows.Forms.Label();
             this.shop_view = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.lbupgradedesc = new System.Windows.Forms.Label();
@@ -100,10 +99,6 @@ namespace ShiftOS.WinForms.Applications
             this.btnaddshopitem = new System.Windows.Forms.Button();
             this.btnremoveitem = new System.Windows.Forms.Button();
             this.btnedititem = new System.Windows.Forms.Button();
-            this.shop_all = new System.Windows.Forms.Panel();
-            this.flshoplist = new System.Windows.Forms.FlowLayoutPanel();
-            this.lblistdesc = new System.Windows.Forms.Label();
-            this.lblistname = new System.Windows.Forms.Label();
             this.lgn_create = new System.Windows.Forms.Panel();
             this.btncreate = new System.Windows.Forms.Button();
             this.txtnewlegiondescription = new System.Windows.Forms.TextBox();
@@ -149,11 +144,10 @@ namespace ShiftOS.WinForms.Applications
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
-            this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.shop_all.SuspendLayout();
             this.shop_view.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlbuy.SuspendLayout();
@@ -163,7 +157,6 @@ namespace ShiftOS.WinForms.Applications
             this.panel8.SuspendLayout();
             this.panel9.SuspendLayout();
             this.flowLayoutPanel5.SuspendLayout();
-            this.shop_all.SuspendLayout();
             this.lgn_create.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -186,7 +179,6 @@ namespace ShiftOS.WinForms.Applications
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.youToolStripMenuItem,
             this.shopsToolStripMenuItem,
-            this.tasksToolStripMenuItem,
             this.legionsToolStripMenuItem,
             this.chatToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -257,28 +249,6 @@ namespace ShiftOS.WinForms.Applications
             this.openAShopToolStripMenuItem.Text = "Open a Shop";
             this.openAShopToolStripMenuItem.Click += new System.EventHandler(this.openAShopToolStripMenuItem_Click);
             // 
-            // tasksToolStripMenuItem
-            // 
-            this.tasksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.currentTaskToolStripMenuItem,
-            this.browseJobsToolStripMenuItem});
-            this.tasksToolStripMenuItem.Name = "tasksToolStripMenuItem";
-            this.tasksToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.tasksToolStripMenuItem.Text = "Tasks";
-            // 
-            // currentTaskToolStripMenuItem
-            // 
-            this.currentTaskToolStripMenuItem.Name = "currentTaskToolStripMenuItem";
-            this.currentTaskToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.currentTaskToolStripMenuItem.Text = "Current task";
-            this.currentTaskToolStripMenuItem.Click += new System.EventHandler(this.currentTaskToolStripMenuItem_Click);
-            // 
-            // browseJobsToolStripMenuItem
-            // 
-            this.browseJobsToolStripMenuItem.Name = "browseJobsToolStripMenuItem";
-            this.browseJobsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.browseJobsToolStripMenuItem.Text = "Browse Jobs";
-            // 
             // legionsToolStripMenuItem
             // 
             this.legionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -321,33 +291,12 @@ namespace ShiftOS.WinForms.Applications
             // joinAChatToolStripMenuItem
             // 
             this.joinAChatToolStripMenuItem.Name = "joinAChatToolStripMenuItem";
-            this.joinAChatToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.joinAChatToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.joinAChatToolStripMenuItem.Text = "Join a chat";
             this.joinAChatToolStripMenuItem.Click += new System.EventHandler(this.joinAChatToolStripMenuItem_Click);
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.txtappstatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 0);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(756, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // txtappstatus
-            // 
-            this.txtappstatus.Name = "txtappstatus";
-            this.txtappstatus.Size = new System.Drawing.Size(118, 17);
-            this.txtappstatus.Text = "toolStripStatusLabel1";
-            // 
             // toolStripContainer1
             // 
-            // 
-            // toolStripContainer1.BottomToolStripPanel
-            // 
-            this.toolStripContainer1.BottomToolStripPanel.Controls.Add(this.statusStrip1);
             // 
             // toolStripContainer1.ContentPanel
             // 
@@ -360,7 +309,7 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_join);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_memos);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_systemstatus);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(756, 442);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(756, 464);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
@@ -372,6 +321,51 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip1);
             // 
+            // shop_all
+            // 
+            this.shop_all.Controls.Add(this.flshoplist);
+            this.shop_all.Controls.Add(this.lblistdesc);
+            this.shop_all.Controls.Add(this.lblistname);
+            this.shop_all.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shop_all.Location = new System.Drawing.Point(0, 0);
+            this.shop_all.Name = "shop_all";
+            this.shop_all.Size = new System.Drawing.Size(756, 464);
+            this.shop_all.TabIndex = 7;
+            // 
+            // flshoplist
+            // 
+            this.flshoplist.AutoScroll = true;
+            this.flshoplist.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flshoplist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flshoplist.Location = new System.Drawing.Point(0, 94);
+            this.flshoplist.Name = "flshoplist";
+            this.flshoplist.Size = new System.Drawing.Size(756, 370);
+            this.flshoplist.TabIndex = 1;
+            this.flshoplist.WrapContents = false;
+            // 
+            // lblistdesc
+            // 
+            this.lblistdesc.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblistdesc.Location = new System.Drawing.Point(0, 43);
+            this.lblistdesc.Name = "lblistdesc";
+            this.lblistdesc.Padding = new System.Windows.Forms.Padding(15, 0, 15, 15);
+            this.lblistdesc.Size = new System.Drawing.Size(756, 51);
+            this.lblistdesc.TabIndex = 0;
+            this.lblistdesc.Tag = "";
+            this.lblistdesc.Text = resources.GetString("lblistdesc.Text");
+            // 
+            // lblistname
+            // 
+            this.lblistname.AutoSize = true;
+            this.lblistname.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblistname.Location = new System.Drawing.Point(0, 0);
+            this.lblistname.Name = "lblistname";
+            this.lblistname.Padding = new System.Windows.Forms.Padding(15);
+            this.lblistname.Size = new System.Drawing.Size(67, 43);
+            this.lblistname.TabIndex = 2;
+            this.lblistname.Tag = "header1";
+            this.lblistname.Text = "Shops";
+            // 
             // shop_view
             // 
             this.shop_view.Controls.Add(this.panel5);
@@ -379,7 +373,7 @@ namespace ShiftOS.WinForms.Applications
             this.shop_view.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shop_view.Location = new System.Drawing.Point(0, 0);
             this.shop_view.Name = "shop_view";
-            this.shop_view.Size = new System.Drawing.Size(756, 442);
+            this.shop_view.Size = new System.Drawing.Size(756, 464);
             this.shop_view.TabIndex = 6;
             // 
             // panel5
@@ -390,7 +384,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(389, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(367, 442);
+            this.panel5.Size = new System.Drawing.Size(367, 464);
             this.panel5.TabIndex = 1;
             // 
             // lbupgradedesc
@@ -398,7 +392,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbupgradedesc.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbupgradedesc.Location = new System.Drawing.Point(0, 43);
             this.lbupgradedesc.Name = "lbupgradedesc";
-            this.lbupgradedesc.Size = new System.Drawing.Size(367, 363);
+            this.lbupgradedesc.Size = new System.Drawing.Size(367, 385);
             this.lbupgradedesc.TabIndex = 2;
             this.lbupgradedesc.Text = "label6";
             this.lbupgradedesc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -409,7 +403,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbuy.Controls.Add(this.lbprice);
             this.pnlbuy.Controls.Add(this.btnbuy);
             this.pnlbuy.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbuy.Location = new System.Drawing.Point(0, 406);
+            this.pnlbuy.Location = new System.Drawing.Point(0, 428);
             this.pnlbuy.Name = "pnlbuy";
             this.pnlbuy.Size = new System.Drawing.Size(367, 36);
             this.pnlbuy.TabIndex = 1;
@@ -466,7 +460,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(389, 442);
+            this.panel1.Size = new System.Drawing.Size(389, 464);
             this.panel1.TabIndex = 0;
             // 
             // lbupgrades
@@ -475,14 +469,14 @@ namespace ShiftOS.WinForms.Applications
             this.lbupgrades.FormattingEnabled = true;
             this.lbupgrades.Location = new System.Drawing.Point(0, 46);
             this.lbupgrades.Name = "lbupgrades";
-            this.lbupgrades.Size = new System.Drawing.Size(389, 383);
+            this.lbupgrades.Size = new System.Drawing.Size(389, 405);
             this.lbupgrades.TabIndex = 2;
             // 
             // lbcodepoints
             // 
             this.lbcodepoints.AutoSize = true;
             this.lbcodepoints.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lbcodepoints.Location = new System.Drawing.Point(0, 429);
+            this.lbcodepoints.Location = new System.Drawing.Point(0, 451);
             this.lbcodepoints.Margin = new System.Windows.Forms.Padding(10);
             this.lbcodepoints.Name = "lbcodepoints";
             this.lbcodepoints.Size = new System.Drawing.Size(72, 13);
@@ -508,7 +502,7 @@ namespace ShiftOS.WinForms.Applications
             this.shop_editor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shop_editor.Location = new System.Drawing.Point(0, 0);
             this.shop_editor.Name = "shop_editor";
-            this.shop_editor.Size = new System.Drawing.Size(756, 442);
+            this.shop_editor.Size = new System.Drawing.Size(756, 464);
             this.shop_editor.TabIndex = 8;
             // 
             // panel7
@@ -519,7 +513,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(389, 0);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(367, 442);
+            this.panel7.Size = new System.Drawing.Size(367, 464);
             this.panel7.TabIndex = 1;
             // 
             // txtshopdescription
@@ -528,7 +522,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtshopdescription.Location = new System.Drawing.Point(0, 43);
             this.txtshopdescription.Multiline = true;
             this.txtshopdescription.Name = "txtshopdescription";
-            this.txtshopdescription.Size = new System.Drawing.Size(367, 363);
+            this.txtshopdescription.Size = new System.Drawing.Size(367, 385);
             this.txtshopdescription.TabIndex = 2;
             this.txtshopdescription.TextChanged += new System.EventHandler(this.txtshopdescription_TextChanged);
             // 
@@ -537,7 +531,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel8.Controls.Add(this.label15);
             this.panel8.Controls.Add(this.btnsaveshop);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(0, 406);
+            this.panel8.Location = new System.Drawing.Point(0, 428);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(367, 36);
             this.panel8.TabIndex = 1;
@@ -583,7 +577,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel9.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel9.Location = new System.Drawing.Point(0, 0);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(389, 442);
+            this.panel9.Size = new System.Drawing.Size(389, 464);
             this.panel9.TabIndex = 0;
             // 
             // lbeditingshopitems
@@ -592,7 +586,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbeditingshopitems.FormattingEnabled = true;
             this.lbeditingshopitems.Location = new System.Drawing.Point(0, 20);
             this.lbeditingshopitems.Name = "lbeditingshopitems";
-            this.lbeditingshopitems.Size = new System.Drawing.Size(389, 393);
+            this.lbeditingshopitems.Size = new System.Drawing.Size(389, 415);
             this.lbeditingshopitems.TabIndex = 2;
             // 
             // txtshopname
@@ -613,7 +607,7 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel5.Controls.Add(this.btnremoveitem);
             this.flowLayoutPanel5.Controls.Add(this.btnedititem);
             this.flowLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel5.Location = new System.Drawing.Point(0, 413);
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(0, 435);
             this.flowLayoutPanel5.Name = "flowLayoutPanel5";
             this.flowLayoutPanel5.Size = new System.Drawing.Size(389, 29);
             this.flowLayoutPanel5.TabIndex = 3;
@@ -657,51 +651,6 @@ namespace ShiftOS.WinForms.Applications
             this.btnedititem.UseVisualStyleBackColor = true;
             this.btnedititem.Click += new System.EventHandler(this.btnedititem_Click);
             // 
-            // shop_all
-            // 
-            this.shop_all.Controls.Add(this.flshoplist);
-            this.shop_all.Controls.Add(this.lblistdesc);
-            this.shop_all.Controls.Add(this.lblistname);
-            this.shop_all.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shop_all.Location = new System.Drawing.Point(0, 0);
-            this.shop_all.Name = "shop_all";
-            this.shop_all.Size = new System.Drawing.Size(756, 442);
-            this.shop_all.TabIndex = 7;
-            // 
-            // flshoplist
-            // 
-            this.flshoplist.AutoScroll = true;
-            this.flshoplist.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flshoplist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flshoplist.Location = new System.Drawing.Point(0, 94);
-            this.flshoplist.Name = "flshoplist";
-            this.flshoplist.Size = new System.Drawing.Size(756, 348);
-            this.flshoplist.TabIndex = 1;
-            this.flshoplist.WrapContents = false;
-            // 
-            // lblistdesc
-            // 
-            this.lblistdesc.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblistdesc.Location = new System.Drawing.Point(0, 43);
-            this.lblistdesc.Name = "lblistdesc";
-            this.lblistdesc.Padding = new System.Windows.Forms.Padding(15, 0, 15, 15);
-            this.lblistdesc.Size = new System.Drawing.Size(756, 51);
-            this.lblistdesc.TabIndex = 0;
-            this.lblistdesc.Tag = "";
-            this.lblistdesc.Text = resources.GetString("lblistdesc.Text");
-            // 
-            // lblistname
-            // 
-            this.lblistname.AutoSize = true;
-            this.lblistname.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblistname.Location = new System.Drawing.Point(0, 0);
-            this.lblistname.Name = "lblistname";
-            this.lblistname.Padding = new System.Windows.Forms.Padding(15);
-            this.lblistname.Size = new System.Drawing.Size(67, 43);
-            this.lblistname.TabIndex = 2;
-            this.lblistname.Tag = "header1";
-            this.lblistname.Text = "Shops";
-            // 
             // lgn_create
             // 
             this.lgn_create.Controls.Add(this.btncreate);
@@ -712,13 +661,13 @@ namespace ShiftOS.WinForms.Applications
             this.lgn_create.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lgn_create.Location = new System.Drawing.Point(0, 0);
             this.lgn_create.Name = "lgn_create";
-            this.lgn_create.Size = new System.Drawing.Size(756, 442);
+            this.lgn_create.Size = new System.Drawing.Size(756, 464);
             this.lgn_create.TabIndex = 4;
             // 
             // btncreate
             // 
             this.btncreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btncreate.Location = new System.Drawing.Point(672, 393);
+            this.btncreate.Location = new System.Drawing.Point(672, 415);
             this.btncreate.Name = "btncreate";
             this.btncreate.Size = new System.Drawing.Size(75, 23);
             this.btncreate.TabIndex = 5;
@@ -735,7 +684,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewlegiondescription.Location = new System.Drawing.Point(21, 176);
             this.txtnewlegiondescription.Multiline = true;
             this.txtnewlegiondescription.Name = "txtnewlegiondescription";
-            this.txtnewlegiondescription.Size = new System.Drawing.Size(368, 240);
+            this.txtnewlegiondescription.Size = new System.Drawing.Size(368, 262);
             this.txtnewlegiondescription.TabIndex = 4;
             this.txtnewlegiondescription.TextChanged += new System.EventHandler(this.txtnewlegiondescription_TextChanged);
             // 
@@ -747,7 +696,7 @@ namespace ShiftOS.WinForms.Applications
             this.panel2.Controls.Add(this.label5);
             this.panel2.Location = new System.Drawing.Point(413, 130);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(337, 256);
+            this.panel2.Size = new System.Drawing.Size(337, 278);
             this.panel2.TabIndex = 3;
             // 
             // label10
@@ -755,7 +704,7 @@ namespace ShiftOS.WinForms.Applications
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(0, 13);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(337, 243);
+            this.label10.Size = new System.Drawing.Size(337, 265);
             this.label10.TabIndex = 3;
             this.label10.Text = resources.GetString("label10.Text");
             // 
@@ -897,7 +846,7 @@ namespace ShiftOS.WinForms.Applications
             this.job_current.Dock = System.Windows.Forms.DockStyle.Fill;
             this.job_current.Location = new System.Drawing.Point(0, 0);
             this.job_current.Name = "job_current";
-            this.job_current.Size = new System.Drawing.Size(756, 442);
+            this.job_current.Size = new System.Drawing.Size(756, 464);
             this.job_current.TabIndex = 3;
             // 
             // lbtaskdescription
@@ -906,7 +855,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbtaskdescription.Location = new System.Drawing.Point(0, 26);
             this.lbtaskdescription.Margin = new System.Windows.Forms.Padding(30);
             this.lbtaskdescription.Name = "lbtaskdescription";
-            this.lbtaskdescription.Size = new System.Drawing.Size(756, 416);
+            this.lbtaskdescription.Size = new System.Drawing.Size(756, 438);
             this.lbtaskdescription.TabIndex = 2;
             this.lbtaskdescription.Text = "label12";
             // 
@@ -943,7 +892,7 @@ namespace ShiftOS.WinForms.Applications
             this.lgn_view.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lgn_view.Location = new System.Drawing.Point(0, 0);
             this.lgn_view.Name = "lgn_view";
-            this.lgn_view.Size = new System.Drawing.Size(756, 442);
+            this.lgn_view.Size = new System.Drawing.Size(756, 464);
             this.lgn_view.TabIndex = 2;
             // 
             // pnllgnusers
@@ -954,7 +903,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnllgnusers.Controls.Add(this.label4);
             this.pnllgnusers.Location = new System.Drawing.Point(413, 130);
             this.pnllgnusers.Name = "pnllgnusers";
-            this.pnllgnusers.Size = new System.Drawing.Size(337, 286);
+            this.pnllgnusers.Size = new System.Drawing.Size(337, 308);
             this.pnllgnusers.TabIndex = 3;
             // 
             // lvusers
@@ -965,7 +914,7 @@ namespace ShiftOS.WinForms.Applications
             this.lvusers.HideSelection = false;
             this.lvusers.Location = new System.Drawing.Point(0, 13);
             this.lvusers.Name = "lvusers";
-            this.lvusers.Size = new System.Drawing.Size(337, 273);
+            this.lvusers.Size = new System.Drawing.Size(337, 295);
             this.lvusers.TabIndex = 3;
             this.lvusers.UseCompatibleStateImageBehavior = false;
             this.lvusers.View = System.Windows.Forms.View.SmallIcon;
@@ -988,7 +937,7 @@ namespace ShiftOS.WinForms.Applications
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbdescription.Location = new System.Drawing.Point(24, 185);
             this.lbdescription.Name = "lbdescription";
-            this.lbdescription.Size = new System.Drawing.Size(354, 231);
+            this.lbdescription.Size = new System.Drawing.Size(354, 253);
             this.lbdescription.TabIndex = 2;
             this.lbdescription.Text = "This is the description of this multi-user domain legion. Keep it descriptive.";
             // 
@@ -1073,7 +1022,7 @@ namespace ShiftOS.WinForms.Applications
             this.lgn_join.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lgn_join.Location = new System.Drawing.Point(0, 0);
             this.lgn_join.Name = "lgn_join";
-            this.lgn_join.Size = new System.Drawing.Size(756, 442);
+            this.lgn_join.Size = new System.Drawing.Size(756, 464);
             this.lgn_join.TabIndex = 3;
             // 
             // fllegionlist
@@ -1083,7 +1032,7 @@ namespace ShiftOS.WinForms.Applications
             this.fllegionlist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.fllegionlist.Location = new System.Drawing.Point(0, 100);
             this.fllegionlist.Name = "fllegionlist";
-            this.fllegionlist.Size = new System.Drawing.Size(756, 342);
+            this.fllegionlist.Size = new System.Drawing.Size(756, 364);
             this.fllegionlist.TabIndex = 1;
             this.fllegionlist.WrapContents = false;
             // 
@@ -1156,7 +1105,7 @@ namespace ShiftOS.WinForms.Applications
             this.you_memos.Dock = System.Windows.Forms.DockStyle.Fill;
             this.you_memos.Location = new System.Drawing.Point(0, 0);
             this.you_memos.Name = "you_memos";
-            this.you_memos.Size = new System.Drawing.Size(756, 442);
+            this.you_memos.Size = new System.Drawing.Size(756, 464);
             this.you_memos.TabIndex = 1;
             // 
             // flmemos
@@ -1166,7 +1115,7 @@ namespace ShiftOS.WinForms.Applications
             this.flmemos.Location = new System.Drawing.Point(0, 43);
             this.flmemos.Name = "flmemos";
             this.flmemos.Padding = new System.Windows.Forms.Padding(15);
-            this.flmemos.Size = new System.Drawing.Size(756, 399);
+            this.flmemos.Size = new System.Drawing.Size(756, 421);
             this.flmemos.TabIndex = 1;
             // 
             // label3
@@ -1189,7 +1138,7 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.you_systemstatus.Location = new System.Drawing.Point(0, 0);
             this.you_systemstatus.Name = "you_systemstatus";
-            this.you_systemstatus.Size = new System.Drawing.Size(756, 442);
+            this.you_systemstatus.Size = new System.Drawing.Size(756, 464);
             this.you_systemstatus.TabIndex = 0;
             // 
             // lblsysstatus
@@ -1198,7 +1147,7 @@ namespace ShiftOS.WinForms.Applications
             this.lblsysstatus.Location = new System.Drawing.Point(0, 43);
             this.lblsysstatus.Name = "lblsysstatus";
             this.lblsysstatus.Padding = new System.Windows.Forms.Padding(15);
-            this.lblsysstatus.Size = new System.Drawing.Size(756, 399);
+            this.lblsysstatus.Size = new System.Drawing.Size(756, 421);
             this.lblsysstatus.TabIndex = 1;
             this.lblsysstatus.Text = "Username: {username}\r\nSystem name: {sysname}\r\n\r\nCodepoints: {cp}\r\nUpgrades: {boug" +
     "ht}/{available}\r\n\r\nSystem version: {sysver}\r\n\r\nShared scripts: {scripts}\r\n\r\nCurr" +
@@ -1228,15 +1177,13 @@ namespace ShiftOS.WinForms.Applications
             this.Size = new System.Drawing.Size(756, 488);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
-            this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.shop_all.ResumeLayout(false);
+            this.shop_all.PerformLayout();
             this.shop_view.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlbuy.ResumeLayout(false);
@@ -1252,8 +1199,6 @@ namespace ShiftOS.WinForms.Applications
             this.panel9.PerformLayout();
             this.flowLayoutPanel5.ResumeLayout(false);
             this.flowLayoutPanel5.PerformLayout();
-            this.shop_all.ResumeLayout(false);
-            this.shop_all.PerformLayout();
             this.lgn_create.ResumeLayout(false);
             this.lgn_create.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -1295,11 +1240,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ToolStripMenuItem shopsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem browseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem myShopToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tasksToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem currentTaskToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem browseJobsToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel txtappstatus;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.Panel you_systemstatus;
         private System.Windows.Forms.Label label1;
