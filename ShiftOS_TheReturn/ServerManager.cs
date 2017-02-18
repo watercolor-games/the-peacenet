@@ -132,7 +132,10 @@ namespace ShiftOS.Engine
                     if(args["username"] as string == SaveSystem.CurrentSave.Username)
                     {
                         SaveSystem.CurrentSave.Codepoints += (long)args["amount"];
-                        Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");
+                        Desktop.InvokeOnWorkerThread(new Action(() =>
+                        {
+                            Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");
+                        }));
                         SaveSystem.SaveGame();
                     }
                 }
