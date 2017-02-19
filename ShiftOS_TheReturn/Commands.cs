@@ -615,41 +615,45 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                         if (asmExec.EndsWith(".exe") || asmExec.EndsWith(".dll"))
                         {
                             var asm = Assembly.LoadFile(asmExec);
-
-                            foreach (var type in asm.GetTypes())
+                            try
                             {
-                                if (type.BaseType == typeof(UserControl))
+                                foreach (var type in asm.GetTypes())
                                 {
-                                    foreach (var attr in type.GetCustomAttributes(false))
+                                    if (type.BaseType == typeof(UserControl))
                                     {
-                                        if (attr is WinOpenAttribute)
+                                        foreach (var attr in type.GetCustomAttributes(false))
                                         {
-                                            if (app == (attr as WinOpenAttribute).ID)
+                                            if (attr is WinOpenAttribute)
                                             {
-                                                if (SaveSystem.CurrentSave.Upgrades.ContainsKey(app))
+                                                if (app == (attr as WinOpenAttribute).ID)
                                                 {
-                                                    if (Shiftorium.UpgradeInstalled(app))
+                                                    if (SaveSystem.CurrentSave.Upgrades.ContainsKey(app))
+                                                    {
+                                                        if (Shiftorium.UpgradeInstalled(app))
+                                                        {
+                                                            IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
+                                                            AppearanceManager.SetupWindow(frm);
+                                                            return true;
+                                                        }
+                                                        else
+                                                        {
+                                                            throw new Exception($"{app} was not found on your system! Try looking in the shiftorium...");
+                                                        }
+                                                    }
+                                                    else
                                                     {
                                                         IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
                                                         AppearanceManager.SetupWindow(frm);
                                                         return true;
                                                     }
-                                                    else
-                                                    {
-                                                        throw new Exception($"{app} was not found on your system! Try looking in the shiftorium...");
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
-                                                    AppearanceManager.SetupWindow(frm);
-                                                    return true;
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                            catch { }
+
                         }
                     }
 
@@ -660,24 +664,28 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                     {
                         if (asmExec.EndsWith(".exe") || asmExec.EndsWith(".dll"))
                         {
-                            var asm = Assembly.LoadFile(asmExec);
-
-                            foreach (var type in asm.GetTypes())
+                            try
                             {
-                                if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
+                                var asm = Assembly.LoadFile(asmExec);
+
+                                foreach (var type in asm.GetTypes())
                                 {
-                                    foreach (var attr in type.GetCustomAttributes(false))
+                                    if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
                                     {
-                                        if (attr is WinOpenAttribute)
+                                        foreach (var attr in type.GetCustomAttributes(false))
                                         {
-                                            if (Shiftorium.UpgradeAttributesUnlocked(type))
+                                            if (attr is WinOpenAttribute)
                                             {
-                                                Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
+                                                if (Shiftorium.UpgradeAttributesUnlocked(type))
+                                                {
+                                                    Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                            catch { }
                         }
                     }
 
