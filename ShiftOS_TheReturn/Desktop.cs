@@ -100,6 +100,14 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static IDesktop CurrentDesktop
+        {
+            get
+            {
+                return _desktop;
+            }
+        }
+
         public static void Init(IDesktop desk, bool show = false)
         {
             IDesktop deskToClose = null;

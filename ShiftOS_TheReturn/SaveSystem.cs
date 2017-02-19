@@ -172,6 +172,10 @@ namespace ShiftOS.Engine
                 TerminalBackend.InStory = false;
                 TerminalBackend.PrefixEnabled = true;
                 Shiftorium.LogOrphanedUpgrades = true;
+                Desktop.InvokeOnWorkerThread(new Action(() =>
+                {
+                    ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
+                }));
                 Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
                 if (CurrentSave.StoryPosition == 1)
                 {

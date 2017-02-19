@@ -36,6 +36,7 @@ using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.WinForms.Tools;
 using ShiftOS.WinForms.Applications;
 using Newtonsoft.Json;
+using ShiftOS.Engine.Scripting;
 
 /// <summary>
 /// Winforms desktop.
@@ -122,7 +123,6 @@ namespace ShiftOS.WinForms
             time.Start();
 
             this.DoubleBuffered = true;
-            
         }
 
 		/// <summary>
@@ -131,6 +131,7 @@ namespace ShiftOS.WinForms
 		/// <returns>The panel buttons.</returns>
         public void PopulatePanelButtons()
         {
+
             panelbuttonholder.Controls.Clear();
             if (Shiftorium.IsInitiated == true)
             {
@@ -200,6 +201,8 @@ namespace ShiftOS.WinForms
                     }
                 }
             }
+
+            LuaInterpreter.RaiseEvent("on_panelbutton_populate", this);
         }
 
 		/// <summary>
@@ -272,6 +275,8 @@ namespace ShiftOS.WinForms
                     desktoppanel.Dock = DockStyle.Top;
                 }
             }
+
+            LuaInterpreter.RaiseEvent("on_desktop_skin", this);
 
             PopulatePanelButtons();
         }
@@ -370,6 +375,8 @@ namespace ShiftOS.WinForms
 
                 }
             }
+
+            LuaInterpreter.RaiseEvent("on_al_populate", items);
         }
 
 
@@ -385,13 +392,21 @@ namespace ShiftOS.WinForms
             SaveSystem.Begin();
 
             SetupDesktop();
+
+            SaveSystem.GameReady += () =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    LuaInterpreter.RaiseEvent("on_desktop_load", this);
+                }));
+            };
         }
 
-		/// <summary>
-		/// Shows the window.
-		/// </summary>
-		/// <returns>The window.</returns>
-		/// <param name="border">Border.</param>
+        /// <summary>
+        /// Shows the window.
+        /// </summary>
+        /// <returns>The window.</returns>
+        /// <param name="border">Border.</param>
         public void ShowWindow(IWindowBorder border)
         {
             var brdr = border as Form;
@@ -493,6 +508,15 @@ namespace ShiftOS.WinForms
         public Size GetSize()
         {
             return this.Size;
+        }
+    }
+
+    [ShiftOS.Engine.Scripting.Exposed("desktop")]
+    public class DesktopFunctions
+    {
+        public dynamic getWindow()
+        {
+            return Desktop.CurrentDesktop;
         }
     }
 }

@@ -43,6 +43,24 @@ namespace ShiftOS.Engine.Scripting
         public dynamic Lua = new DynamicLua.DynamicLua();
         public bool Running = true;
 
+        public static void RunSft(string sft)
+        {
+            if (Utils.FileExists(sft))
+            {
+                try
+                {
+                    string b64 = Utils.ReadAllText(sft);
+                    byte[] bytes = Convert.FromBase64String(b64);
+                    string lua = Encoding.UTF8.GetString(bytes);
+                    new LuaInterpreter().Execute(lua);
+                }
+                catch
+                {
+                    Infobox.Show("Invalid binary.", "This file is not a valid ShiftOS binary executable.");
+                }
+            }
+        }
+
         public LuaInterpreter()
         {
             Lua(@"function totable(clrlist)
