@@ -140,11 +140,84 @@ namespace ShiftOS.WinForms
             lbl.AutoSize = false;
             return addToParent(parent, loc, size, lbl);
         }
+
+        public dynamic menu(Control parent)
+        {
+            var mnu = new MenuStrip();
+            parent.Controls.Add(mnu);
+            mnu.Dock = DockStyle.Top;
+            mnu.Show();
+            return mnu;
+        }
+
+        public dynamic menuitem(MenuStrip parent, string text, Action onClick = null)
+        {
+            var mitem = new ToolStripMenuItem();
+            parent.Items.Add(mitem);
+            mitem.Text = text;
+            mitem.Click += (o, a) =>
+            {
+                onClick?.Invoke();
+            };
+            return mitem;
+        }
+
+        public dynamic menuitem(ToolStripMenuItem parent, string text, Action onClick = null)
+        {
+            var mitem = new ToolStripMenuItem();
+            parent.DropDownItems.Add(mitem);
+            mitem.Text = text;
+            mitem.Click += (o, a) =>
+            {
+                onClick?.Invoke();
+            };
+            return mitem;
+        }
+
+        public dynamic textbox(Control parent, Point loc, int width)
+        {
+            var txt = new TextBox();
+            txt.Location = loc;
+            txt.Width = width;
+            parent.Controls.Add(txt);
+            txt.Show();
+            ControlManager.SetupControls(parent);
+            return txt;
+        }
+
+        public dynamic timer(int interval, Action elapsed)
+        {
+            var tmr = new System.Windows.Forms.Timer();
+            tmr.Interval = interval;
+            tmr.Tick += (o, a) =>
+            {
+                elapsed?.Invoke();
+            };
+            return tmr;
+        }
     }
 
     [Exposed("clr")]
     public class CommonLanguageRuntimeInterop
     {
+        public void tryCode(Action code, Action<Exception> error)
+        {
+            try
+            {
+                code?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                error?.Invoke(ex);
+            }
+        }
+
+        public void throwError(string error)
+        {
+            throw new Exception(error);
+        }
+
+
         public dynamic construct(Type type, dynamic[] ctorParams)
         {
             return Activator.CreateInstance(type, ctorParams);
