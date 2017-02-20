@@ -258,6 +258,29 @@ namespace ShiftOS.WinForms.Applications
         public void OnUpgrade()
         {
         }
+
+        private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Infobox.PromptText("New Folder", "Please type a name for your folder.", (path) =>
+            {
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    if(!Utils.DirectoryExists(this.currentdir + "/" + path))
+                    {
+                        Utils.CreateDirectory(currentdir + "/" + path);
+                        this.ResetList();
+                    }
+                    else
+                    {
+                        Infobox.Show("New folder", "A folder with that name already exists.");
+                    }
+                }
+                else
+                {
+                    Infobox.Show("New folder", "You can't create a folder with no name!");
+                }
+            });
+        }
     }
 
    

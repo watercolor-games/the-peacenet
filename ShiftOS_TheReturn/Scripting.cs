@@ -63,6 +63,12 @@ namespace ShiftOS.Engine.Scripting
         public dynamic Lua = new DynamicLua.DynamicLua();
         public bool Running = true;
 
+        public static string CreateSft(string lua)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(lua);
+            return Convert.ToBase64String(bytes);
+        }
+
         public static void RunSft(string sft)
         {
             if (Utils.FileExists(sft))
@@ -72,6 +78,7 @@ namespace ShiftOS.Engine.Scripting
                     string b64 = Utils.ReadAllText(sft);
                     byte[] bytes = Convert.FromBase64String(b64);
                     string lua = Encoding.UTF8.GetString(bytes);
+                    CurrentDirectory = sft.Replace(Utils.GetFileInfo(sft).Name, "");
                     new LuaInterpreter().Execute(lua);
                 }
                 catch
@@ -80,6 +87,8 @@ namespace ShiftOS.Engine.Scripting
                 }
             }
         }
+
+        public static string CurrentDirectory { get; private set; }
 
         public LuaInterpreter()
         {
@@ -101,6 +110,7 @@ end");
 
         public void SetupAPIs()
         {
+            Lua.currentdir = (string.IsNullOrWhiteSpace(CurrentDirectory)) ? "0:" : CurrentDirectory;
             Lua.random = new Func<int, int, int>((min, max) =>
             {
                 return new Random().Next(min, max);
@@ -208,6 +218,7 @@ end");
         {
             if (Utils.FileExists(file))
             {
+                CurrentDirectory = file.Replace(Utils.GetFileInfo(file).Name, "");
                 Execute(Utils.ReadAllText(file));
             }
             else
@@ -245,6 +256,37 @@ end");
         public static void RaiseEvent(string eventName, object caller)
         {
             LuaEvent?.Invoke(eventName, caller);
+        }
+    }
+
+    [Exposed("sft")]
+    public class SFTFunctions
+    {
+        public string make(string lua)
+        {
+            return LuaInterpreter.CreateSft(lua);
+        }
+
+        public void makefile(string lua, string outpath)
+        {
+            Utils.WriteAllText(outpath, make(lua));
+        }
+
+        public void run(string inpath)
+        {
+            LuaInterpreter.RunSft(inpath);
+        }
+
+        public string unmake(string sft)
+        {
+            if (Utils.FileExists(sft))
+            {
+                string b64 = Utils.ReadAllText(sft);
+                byte[] bytes = Convert.FromBase64String(b64);
+                string lua = Encoding.UTF8.GetString(bytes);
+                return lua;
+            }
+            return "";
         }
     }
 
