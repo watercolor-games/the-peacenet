@@ -40,7 +40,7 @@ namespace ShiftOS.Engine {
     [Exposed("skinning")]
     public class SkinFunctions
     {
-        public void reload()
+        public void loadSkin()
         {
             SkinEngine.LoadSkin();
         }    

@@ -38,6 +38,26 @@ using System.Net;
 
 namespace ShiftOS.Engine.Scripting
 {
+    [Exposed("strutils")]
+    public class StringUtils
+    {
+        public bool endswith(string operand, string value)
+        {
+            return operand.EndsWith(value);
+        }
+
+        public bool startswith(string operand, string value)
+        {
+            return operand.StartsWith(value);
+        }
+
+        public bool contains(string operand, string value)
+        {
+            return operand.Contains(value);
+        }
+    }
+
+
     public class LuaInterpreter
     {
         public dynamic Lua = new DynamicLua.DynamicLua();
@@ -81,13 +101,23 @@ end");
 
         public void SetupAPIs()
         {
-
+            Lua.random = new Func<int, int, int>((min, max) =>
+            {
+                return new Random().Next(min, max);
+            });
             Lua.registerEvent = new Action<string, Action<object>>((eventName, callback) =>
             {
                 LuaEvent += (e, s) =>
                 {
-                    if(e == eventName)
-                        callback?.Invoke(s);
+                    if (e == eventName)
+                        try
+                        {
+                            callback?.Invoke(s);
+                        }
+                        catch(Exception ex)
+                        {
+                            Infobox.Show("Event propagation error.", "An error occurred while propagating the " + eventName + " event. " + ex.Message);
+                        }
                 };
             });
             //This temporary proxy() method will be used by the API prober.

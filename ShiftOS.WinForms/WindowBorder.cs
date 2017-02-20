@@ -262,7 +262,7 @@ namespace ShiftOS.WinForms
             pnltitleright.BackgroundImageLayout = GetImageLayout("titleright");
             pnltitle.BackgroundImageLayout = GetImageLayout("titlebar"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
 
-            lbtitletext.BackColor = LoadedSkin.TitleBackgroundColor;
+            lbtitletext.BackColor = (pnltitle.BackgroundImage != null) ? Color.Transparent : LoadedSkin.TitleBackgroundColor;
             lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
             lbtitletext.Font = LoadedSkin.TitleFont;
 
