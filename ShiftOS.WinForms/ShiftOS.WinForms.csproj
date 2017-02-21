@@ -203,12 +203,6 @@
     </Compile>
     <Compile Include="GUIFunctions.cs" />
     <Compile Include="JobTasks.cs" />
-    <Compile Include="LuaDesktop.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaDesktop.Designer.cs">
-      <DependentUpon>LuaDesktop.cs</DependentUpon>
-    </Compile>
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -303,9 +297,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FakeSetupScreen.resx">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaDesktop.resx">
-      <DependentUpon>LuaDesktop.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>

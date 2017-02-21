@@ -348,7 +348,7 @@ namespace ShiftOS.Engine {
         [ShifterName("Panel button holder from left")]
         [ShifterDescription("How far from the left should the panel button holder be?")]
         [RequiresUpgrade("shift_panel_buttons")]
-        public int PanelButtonHolderFromLeft = 68;
+        public int PanelButtonHolderFromLeft = 100;
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Window border")]
@@ -832,7 +832,7 @@ namespace ShiftOS.Engine {
         [ShifterName("App launcher size")]
         [ShifterDescription("The size of the app launcher.")]
         [RequiresUpgrade("shift_app_launcher")]
-        public Size AppLauncherHolderSize = new Size(68, 24);
+        public Size AppLauncherHolderSize = new Size(100, 24);
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("App Launcher")]

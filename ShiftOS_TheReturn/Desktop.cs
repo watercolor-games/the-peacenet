@@ -86,6 +86,8 @@ namespace ShiftOS.Engine
         void InvokeOnWorkerThread(Action act);
         Size GetSize();
 
+        void OpenAppLauncher(Point loc);
+
         void Show();
         void Close();
     }
@@ -153,6 +155,11 @@ namespace ShiftOS.Engine
         public static void PopulateAppLauncher()
         {
             _desktop.PopulateAppLauncher(AppLauncherDaemon.Available().ToArray());
+        }
+
+        public static void OpenAppLauncher(Point loc)
+        {
+            _desktop.OpenAppLauncher(loc);
         }
     }
 
