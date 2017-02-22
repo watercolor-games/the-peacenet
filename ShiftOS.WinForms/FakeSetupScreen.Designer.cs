@@ -68,6 +68,7 @@
             this.txtlpass = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.btnnlogin = new System.Windows.Forms.Button();
             this.flbuttons.SuspendLayout();
             this.page1.SuspendLayout();
             this.page2.SuspendLayout();
@@ -198,6 +199,7 @@
             // 
             // page3
             // 
+            this.page3.Controls.Add(this.btnnlogin);
             this.page3.Controls.Add(this.tableLayoutPanel1);
             this.page3.Controls.Add(this.label4);
             this.page3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -498,14 +500,24 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // btnnlogin
+            // 
+            this.btnnlogin.Location = new System.Drawing.Point(129, 156);
+            this.btnnlogin.Name = "btnnlogin";
+            this.btnnlogin.Size = new System.Drawing.Size(75, 23);
+            this.btnnlogin.TabIndex = 5;
+            this.btnnlogin.Text = "Log in";
+            this.btnnlogin.UseVisualStyleBackColor = true;
+            this.btnnlogin.Click += new System.EventHandler(this.btnnlogin_Click);
+            // 
             // FakeSetupScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 329);
             this.Controls.Add(this.pglogin);
-            this.Controls.Add(this.pgrereg);
             this.Controls.Add(this.page3);
+            this.Controls.Add(this.pgrereg);
             this.Controls.Add(this.page4);
             this.Controls.Add(this.page2);
             this.Controls.Add(this.page1);
@@ -583,5 +595,6 @@
         private System.Windows.Forms.TextBox txtlpass;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnnlogin;
     }
 }

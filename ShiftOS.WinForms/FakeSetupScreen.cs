@@ -358,5 +358,11 @@ So make sure your password is secure enough that it can't be guessed, but easy f
             this.CanClose = true;
             this.Close();
         }
+
+        private void btnnlogin_Click(object sender, EventArgs e)
+        {
+            currentPage = 10;
+            SetupUI();
+        }
     }
 }
