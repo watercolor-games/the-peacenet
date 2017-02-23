@@ -1,3 +1,21 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @craftxbox
+ Sign out
+ Watch 5
+  Star 6
+  Fork 9 shiftos-game/ShiftOS
+ Code  Issues 7  Pull requests 0  Projects 0  Wiki  Pulse  Graphs
+Branch: master Find file Copy pathShiftOS/ShiftOS.WinForms/Applications/Pong.Designer.cs
+6f939e2  12 days ago
+ Michael Fix Pong UI and panel buttons
+0 contributors
+RawBlameHistory     
+718 lines (713 sloc)  39.2 KB
 /*
  * MIT License
  * 
@@ -553,7 +571,11 @@ namespace ShiftOS.WinForms.Applications
             this.paddleHuman.BackColor = System.Drawing.Color.Black;
             this.paddleHuman.Location = new System.Drawing.Point(10, 134);
             this.paddleHuman.Name = "paddleHuman";
-            this.paddleHuman.Size = new System.Drawing.Size(20, 100);
+			if(ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size")){
+				this.paddleHuman.Size = new System.Drawing.Size(20, 150);
+			} else {
+				this.paddleHuman.Size = new System.Drawing.Size(20, 100);
+			}
             this.paddleHuman.TabIndex = 3;
             this.paddleHuman.TabStop = false;
             // 
@@ -564,7 +586,11 @@ namespace ShiftOS.WinForms.Applications
             this.paddleComputer.Location = new System.Drawing.Point(666, 134);
             this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 100);
             this.paddleComputer.Name = "paddleComputer";
-            this.paddleComputer.Size = new System.Drawing.Size(20, 100);
+			if(ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size")){
+				this.paddleComputer.Size = new System.Drawing.Size(20, 150);
+			} else {
+				this.paddleComputer.Size = new System.Drawing.Size(20, 100);
+			}
             this.paddleComputer.TabIndex = 1;
             // 
             // lbllevelandtime
