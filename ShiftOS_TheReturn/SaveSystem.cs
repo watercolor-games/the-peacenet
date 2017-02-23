@@ -288,14 +288,11 @@ namespace ShiftOS.Engine
                 string username = CurrentSave.Username;
                 string password = CurrentSave.Password;
 
-                if (!Utils.FileExists(Paths.GetPath("user.dat")))
-                {
                     Utils.WriteAllText(Paths.GetPath("user.dat"), $@"{{
     username: ""{username}"",
     password: ""{password}""
 }}");
-                }
-
+                
                 ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
             }
             if (!Shiftorium.Silent)

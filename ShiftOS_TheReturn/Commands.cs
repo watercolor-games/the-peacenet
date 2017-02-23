@@ -591,11 +591,11 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
         [Command("list")]
         public static bool List()
         {
-            Console.WriteLine("{ID}\t{WINDOW}");
+            Console.WriteLine("Window ID\tName");
             foreach (var app in AppearanceManager.OpenForms)
             {
-                //All .NET object instances have a unique hash code. Good for fake process management.
-                Console.WriteLine($"{app.GetHashCode()}\t{app.Text}");
+                //Windows are displayed the order in which they were opened.
+                Console.WriteLine($"{AppearanceManager.OpenForms.IndexOf(app)}\t{app.Text}");
             }
             return true;
         }
@@ -702,6 +702,32 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             }
         }
 
+        [RemoteLock]
+        [Command("close", usage = "{win:integer32}", description ="Closes the specified window.")]
+        [RequiresArgument("win")]
+        [RequiresUpgrade("close_command")]
+        public static bool CloseWindow(Dictionary<string, object> args)
+        {
+            int winNum = -1;
+            if (args.ContainsKey("win"))
+                winNum = Convert.ToInt32(args["win"].ToString());
+            string err = null;
+
+            if (winNum < 0 || winNum >= AppearanceManager.OpenForms.Count)
+                err = "The window number must be between 0 and " + (AppearanceManager.OpenForms.Count - 1).ToString() + ".";
+
+            if (string.IsNullOrEmpty(err))
+            {
+                Console.WriteLine($"Closing {AppearanceManager.OpenForms[winNum].Text}...");
+                AppearanceManager.Close(AppearanceManager.OpenForms[winNum].ParentWindow);
+            }
+            else
+            {
+                Console.WriteLine(err);
+            }
+
+            return true;
+        }
 
     }
 }
