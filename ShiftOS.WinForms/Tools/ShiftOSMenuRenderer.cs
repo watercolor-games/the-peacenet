@@ -71,17 +71,28 @@ namespace ShiftOS.WinForms.Tools
                     e.TextColor = LoadedSkin.Menu_TextColor;
                 }
             }
-            e.TextRectangle = GenRect(e.Text, e.TextFont, e.Item.Size, e.Graphics);
+            e.TextRectangle = GenRect(e.Text, e.TextFont, e.Item.Size, e.Graphics, e.TextRectangle);
             base.OnRenderItemText(e);
         }
 
-        private Rectangle GenRect(string t, Font f, Size s, Graphics g)
+        private Rectangle GenRect(string t, Font f, Size s, Graphics g, Rectangle rekt)
         {
+
             Rectangle rect = new Rectangle();
             var fSize = g.MeasureString(t, f);
-            var loc = new Point((s.Width - (int)fSize.Width) / 2, (s.Height - (int)fSize.Height) / 2);
-            var rSize = new Size(loc.X + (int)fSize.Width, loc.Y + (int)fSize.Height);
-            rect = new Rectangle(loc, rSize);
+            int width = rekt.Left + (int)fSize.Width;
+            int height = rekt.Top + (int)fSize.Height;
+
+            int rwidth = rekt.Left + rekt.Width;
+            int rheight = rekt.Top + rekt.Height;
+
+            int wDiff = (width - rwidth);
+            int hDiff = (height - rheight);
+
+            rect = new Rectangle(rekt.Left, rekt.Top, rekt.Width + wDiff, rekt.Height + hDiff);
+
+
+
             return rect;
         }
     }
