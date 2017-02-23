@@ -22,13 +22,21 @@ namespace ShiftOS.Server
                 shopList = JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json"));
 
             var username = args["username"] as string;
-            var updateShop = JsonConvert.DeserializeObject<Shop>(contents as string);
+            var updateShop = args["shop"] as Shop;
 
             for (int i = 0; i < shopList.Count; i++)
             {
-                if (shopList[i].Owner == username)
+                if (shopList[i] == null)
                 {
-                    shopList[i] = updateShop;
+                    shopList.RemoveAt(i);
+                    i--;
+                }
+                else
+                {
+                    if (shopList[i].Owner == username)
+                    {
+                        shopList[i] = updateShop;
+                    }
                 }
             }
 
@@ -49,10 +57,13 @@ namespace ShiftOS.Server
 
             foreach (var shop in shopFile)
             {
-                if (shop.Name == newShop.Name)
+                if (shop != null)
                 {
-                    Program.ClientDispatcher.DispatchTo("shop_taken", guid, "");
-                    return;
+                    if (shop.Name == newShop.Name)
+                    {
+                        Program.ClientDispatcher.DispatchTo("shop_taken", guid, "");
+                        return;
+                    }
                 }
             }
 
@@ -76,9 +87,12 @@ namespace ShiftOS.Server
 
             foreach (var shop in allshops)
             {
-                if (shop.Owner == args["username"] as string)
+                if (shop != null)
                 {
-                    res = 1;
+                    if (shop.Owner == args["username"] as string)
+                    {
+                        res = 1;
+                    }
                 }
             }
 
@@ -93,9 +107,12 @@ namespace ShiftOS.Server
             Shop tempShop = null;
             foreach (var item in JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json")))
             {
-                if (item.Name == shopName)
+                if (item != null)
                 {
-                    tempShop = item;
+                    if (item.Name == shopName)
+                    {
+                        tempShop = item;
+                    }
                 }
             }
 
@@ -124,7 +141,15 @@ namespace ShiftOS.Server
             //Furthermore, this'll make the MUD Control Centre seem faster...
             for (int i = 0; i < shops.Count; i++)
             {
-                shops[i].Items = new List<ShopItem>();
+                if (shops[i] == null)
+                {
+                    shops.RemoveAt(i);
+                    i--;
+                }
+                else
+                {
+                    shops[i].Items = new List<ShopItem>();
+                }
             }
             Program.ClientDispatcher.DispatchTo("shop_all", guid, shops);
         }

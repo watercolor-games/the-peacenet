@@ -85,12 +85,19 @@ namespace ShiftOS.Server
             }
             catch
             {
-                Program.server.DispatchTo(new Guid(guid), new NetObject("error", new ServerMessage
+                try
                 {
-                    Name = "Error",
-                    GUID = "Server",
-                    Contents = JsonConvert.SerializeObject(new MudException("Command parse error"))
-                }));
+                    Program.server.DispatchTo(new Guid(guid), new NetObject("error", new ServerMessage
+                    {
+                        Name = "Error",
+                        GUID = "Server",
+                        Contents = JsonConvert.SerializeObject(new MudException("Command parse error"))
+                    }));
+                }
+                catch
+                {
+                    //fuck.
+                }
             }
 
         }

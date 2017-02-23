@@ -166,7 +166,49 @@ namespace ShiftOS.Server
 			};
             var task = ChatBackend.StartDiscordBots();
             task.Wait();
-		}
+
+            while (server.IsOnline)
+            {
+                Console.Write("> ");
+                string cmd = Console.ReadLine();
+                try
+                {
+                    if (cmd.ToLower().StartsWith("decrypt "))
+                    {
+                        string username = cmd.Remove(0, 8);
+                        if (File.Exists("saves/" + username + ".save"))
+                        {
+                            Console.WriteLine(ReadEncFile("saves/" + username + ".save"));
+                        }
+                        else
+                        {
+                            Console.WriteLine("Save not found.");
+                        }
+                    }
+                    else if (cmd == "purge_all_bad_saves")
+                    {
+                        foreach(var f in Directory.GetFiles("saves"))
+                        {
+                            try
+                            {
+                                Console.WriteLine("Testing " + f + "...");
+                                ReadEncFile(f);
+                                Console.WriteLine("OK");
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Not OK. Deleting.");
+                                File.Delete(f);
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
 
 		public static string ReadEncFile(string fPath)
         {

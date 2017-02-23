@@ -139,6 +139,27 @@ namespace ShiftOS.Server
             catch { }
         }
 
+        [MudRequest("delete_save", typeof(ClientSave))]
+        public static void DeleteSave(string guid, object contents)
+        {
+            var cSave = contents as ClientSave;
+
+            foreach(var saveFile in Directory.GetFiles("saves"))
+            {
+                try
+                {
+                    var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(saveFile));
+                    if(save.Username == cSave.Username && save.Password == cSave.Password)
+                    {
+                        File.Delete(saveFile);
+                        return;
+                    }
+                }
+                catch { }
+            }
+
+        }
+
         [MudRequest("usr_givecp", typeof(Dictionary<string, object>))]
         public static void GiveCodepoints(string guid, object contents)
         {
