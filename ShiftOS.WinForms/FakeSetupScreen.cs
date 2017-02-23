@@ -250,6 +250,7 @@ So make sure your password is secure enough that it can't be guessed, but easy f
                             {
                                 SaveSystem.CurrentSave = JsonConvert.DeserializeObject<ShiftOS.Objects.Save>(msg.Contents);
                                 SaveSystem.SaveGame();
+                                CreateNewSave = false;
                                 DoneLoggingIn?.Invoke();
                                 this.CanClose = true;
                                 this.Close();
@@ -280,6 +281,8 @@ So make sure your password is secure enough that it can't be guessed, but easy f
         }
 
         public event Action DoneLoggingIn;
+
+        public bool CreateNewSave = true;
 
         public event Action<string, string, string> UserReregistered;
 
