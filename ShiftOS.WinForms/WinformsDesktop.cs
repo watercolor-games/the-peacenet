@@ -250,8 +250,10 @@ namespace ShiftOS.WinForms
                         this.BackgroundImage = img;
                     }));
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
-                    desktoppanel.BackgroundImage = GetImage("desktoppanel");
+                    desktoppanel.BackgroundImage = ((Bitmap)GetImage("desktoppanel"));
+                    ((Bitmap)desktoppanel.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
                     menuStrip1.BackgroundImage = GetImage("applauncher");
+                    ((Bitmap)menuStrip1.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
                     lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
                     lbtime.Font = LoadedSkin.DesktopPanelClockFont;
                     if (desktoppanel.BackgroundImage == null)

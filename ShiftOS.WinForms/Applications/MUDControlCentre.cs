@@ -873,7 +873,14 @@ Current legions: {legionname}";
                     {
                         if(second == true)
                         {
+                            ServerManager.SendMessage("delete_save", JsonConvert.SerializeObject(new ClientSave
+                            {
+                                Username = SaveSystem.CurrentSave.Username,
+                                Password = SaveSystem.CurrentSave.Password
+                            }));
+
                             SaveSystem.CurrentSave = null;
+
                             ShiftOS.Objects.ShiftFS.Utils.Delete(Paths.GetPath("user.dat"));
                             TerminalBackend.InvokeCommand("sos.shutdown");
                             MessageBox.Show("Thank you for playing ShiftOS. Your save data has been deleted successfully. You can come back at anytime, but you will have to restart your game.");
