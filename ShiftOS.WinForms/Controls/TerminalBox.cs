@@ -44,6 +44,12 @@ namespace ShiftOS.WinForms.Controls
             catch { }
         }
 
+        protected override void OnClick(EventArgs e)
+        {
+            base.OnClick(e);
+            this.Select(this.TextLength, 0);
+        }
+
         public void Write(string text)
         {
             this.Text += Localization.Parse(text);

@@ -39,6 +39,17 @@ using Newtonsoft.Json;
 /// </summary>
 namespace ShiftOS.WinForms
 {
+    [Namespace("sos")]
+    public static class MichaelDrunkStuff
+    {
+        [Command("drunkmichael")]
+        public static bool Drunky()
+        {
+
+            return true;
+        }
+    }
+
     [Namespace("trm")]
     public static class TerminalExtensions
     {
