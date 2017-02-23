@@ -143,6 +143,7 @@ namespace ShiftOS.WinForms.Applications
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.lblsysstatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btndeletesave = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -262,21 +263,21 @@ namespace ShiftOS.WinForms.Applications
             // createLegionToolStripMenuItem
             // 
             this.createLegionToolStripMenuItem.Name = "createLegionToolStripMenuItem";
-            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.createLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.createLegionToolStripMenuItem.Text = "Create Legion";
             this.createLegionToolStripMenuItem.Click += new System.EventHandler(this.createLegionToolStripMenuItem_Click);
             // 
             // joinLegionToolStripMenuItem
             // 
             this.joinLegionToolStripMenuItem.Name = "joinLegionToolStripMenuItem";
-            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.joinLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.joinLegionToolStripMenuItem.Text = "Join Legion";
             this.joinLegionToolStripMenuItem.Click += new System.EventHandler(this.joinLegionToolStripMenuItem_Click);
             // 
             // myLegionToolStripMenuItem
             // 
             this.myLegionToolStripMenuItem.Name = "myLegionToolStripMenuItem";
-            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.myLegionToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.myLegionToolStripMenuItem.Text = "My Legion";
             this.myLegionToolStripMenuItem.Click += new System.EventHandler(this.myLegionToolStripMenuItem_Click);
             // 
@@ -300,6 +301,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.you_systemstatus);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_editor);
@@ -308,7 +310,6 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_view);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.lgn_join);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_memos);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.you_systemstatus);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(756, 464);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
@@ -1133,6 +1134,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // you_systemstatus
             // 
+            this.you_systemstatus.Controls.Add(this.btndeletesave);
             this.you_systemstatus.Controls.Add(this.lblsysstatus);
             this.you_systemstatus.Controls.Add(this.label1);
             this.you_systemstatus.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1165,6 +1167,20 @@ namespace ShiftOS.WinForms.Applications
             this.label1.TabIndex = 0;
             this.label1.Tag = "header1";
             this.label1.Text = "You";
+            // 
+            // btndeletesave
+            // 
+            this.btndeletesave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btndeletesave.AutoSize = true;
+            this.btndeletesave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btndeletesave.Location = new System.Drawing.Point(613, 415);
+            this.btndeletesave.Name = "btndeletesave";
+            this.btndeletesave.Size = new System.Drawing.Size(99, 23);
+            this.btndeletesave.TabIndex = 2;
+            this.btndeletesave.Tag = "header3";
+            this.btndeletesave.Text = "Delete my system";
+            this.btndeletesave.UseVisualStyleBackColor = true;
+            this.btndeletesave.Click += new System.EventHandler(this.btndeletesave_Click);
             // 
             // MUDControlCentre
             // 
@@ -1322,5 +1338,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btneditshop;
         private System.Windows.Forms.ToolStripMenuItem chatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem joinAChatToolStripMenuItem;
+        private System.Windows.Forms.Button btndeletesave;
     }
 }

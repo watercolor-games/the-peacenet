@@ -862,5 +862,26 @@ Current legions: {legionname}";
         {
             ServerManager.SendMessage("chat_getallchannels", "");
         }
+
+        private void btndeletesave_Click(object sender, EventArgs e)
+        {
+            Infobox.PromptYesNo("Delete your system", "Are you SURE you want to delete your system? If you do, you will lose ALL of your Codepoints and file system.", (firstres) =>
+            {
+                if(firstres == true)
+                {
+                    Infobox.PromptYesNo("Last chance.", "What you are about to do is IRREVERSABLE. You will lose access to any legions or shops you are a part of. Continue anyway?", (second) =>
+                    {
+                        if(second == true)
+                        {
+                            SaveSystem.CurrentSave = null;
+                            ShiftOS.Objects.ShiftFS.Utils.Delete(Paths.GetPath("user.dat"));
+                            TerminalBackend.InvokeCommand("sos.shutdown");
+                            MessageBox.Show("Thank you for playing ShiftOS. Your save data has been deleted successfully. You can come back at anytime, but you will have to restart your game.");
+                            System.IO.File.Delete(Paths.SaveFile);
+                        }
+                    });
+                }
+            });
+        }
     }
 }
