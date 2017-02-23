@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  * 
@@ -553,7 +554,14 @@ namespace ShiftOS.WinForms.Applications
             this.paddleHuman.BackColor = System.Drawing.Color.Black;
             this.paddleHuman.Location = new System.Drawing.Point(10, 134);
             this.paddleHuman.Name = "paddleHuman";
-            this.paddleHuman.Size = new System.Drawing.Size(20, 100);
+            if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
+            {
+                this.paddleHuman.Size = new System.Drawing.Size(20, 150);
+            }
+            else
+            {
+                this.paddleHuman.Size = new System.Drawing.Size(20, 100);
+            }
             this.paddleHuman.TabIndex = 3;
             this.paddleHuman.TabStop = false;
             // 
@@ -564,7 +572,14 @@ namespace ShiftOS.WinForms.Applications
             this.paddleComputer.Location = new System.Drawing.Point(666, 134);
             this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 100);
             this.paddleComputer.Name = "paddleComputer";
-            this.paddleComputer.Size = new System.Drawing.Size(20, 100);
+            if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
+            {
+                this.paddleComputer.Size = new System.Drawing.Size(20, 150);
+            }
+            else
+            {
+                this.paddleComputer.Size = new System.Drawing.Size(20, 100);
+            }
             this.paddleComputer.TabIndex = 1;
             // 
             // lbllevelandtime
@@ -580,7 +595,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lblstatscodepoints
             // 
-            this.lblstatscodepoints.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblstatscodepoints.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblstatscodepoints.Font = new System.Drawing.Font("Georgia", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblstatscodepoints.Location = new System.Drawing.Point(239, 356);
