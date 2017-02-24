@@ -486,6 +486,7 @@ namespace ShiftOS.WinForms
                 {
 
                 }
+                Clear();
                 TextType("Right now, you have enough Codepoints to buy the 'mud_fundamentals' upgrade. You can use shiftorium.info to see information about this upgrade.");
                 Thread.Sleep(500);
                 TextType("Some commands, like shiftorium.info, require you to pass information to them in the form of arguments.");
@@ -498,7 +499,9 @@ namespace ShiftOS.WinForms
                 Thread.Sleep(500);
                 TextType("Then there are boolean values which can be either 'true' or 'false'");
                 Thread.Sleep(500);
-                TextType("Then there are string values, which are enclosed in double-quotes. If for some reason you need to use a double-quote inside a string, you must escape it using a single backslash followed by the quote, like this: key:\"My \\\"awesome\\\" value.\"");
+                TextType("Then there are string values, which are enclosed in double-quotes.");
+                Thread.Sleep(500);
+                TextType(" If for some reason you need to use a double-quote inside a string, you must escape it using a single backslash followed by the quote, like this: key:\"My \\\"awesome\\\" value.\"");
                 Thread.Sleep(500);
                 TextType("If you want to escape a backslash inside a string, simply type two backslashes instead of one - for example key:\"Back\\\\slash.\"");
                 Thread.Sleep(500);
@@ -506,14 +509,14 @@ namespace ShiftOS.WinForms
                 while(TutorialProgress == 3)
                 {
 
-                }
+                } 
                 TextType("As you can see, mud_fundamentals is very useful. In fact, a lot of useful upgrades depend on it. You should buy it!");
                 Thread.Sleep(500);
                 TextType("shiftorium.info already gave you a command that will let you buy the upgrade - go ahead and run that command!");
                 while (!Shiftorium.UpgradeInstalled("mud_fundamentals"))
                 {
 
-                }
+                } 
                 TextType("Hooray! You now have the MUD Fundamentals upgrade.");
                 Thread.Sleep(500);
                 TextType("You can also earn more Codepoints by playing Pong. To open Pong, you can use the win.open command.");
