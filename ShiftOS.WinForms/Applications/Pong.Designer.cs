@@ -553,6 +553,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.paddleHuman.BackColor = System.Drawing.Color.Black;
             this.paddleHuman.Location = new System.Drawing.Point(10, 134);
+            this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 150);
             this.paddleHuman.Name = "paddleHuman";
             if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
             {
@@ -570,7 +571,7 @@ namespace ShiftOS.WinForms.Applications
             this.paddleComputer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.paddleComputer.BackColor = System.Drawing.Color.Black;
             this.paddleComputer.Location = new System.Drawing.Point(666, 134);
-            this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 100);
+            this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 150);
             this.paddleComputer.Name = "paddleComputer";
             if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
             {
