@@ -162,5 +162,5 @@ namespace ShiftOS.Engine
             _desktop.OpenAppLauncher(loc);
         }
     }
-
+    // sorry i almost killed everything :P
 }
