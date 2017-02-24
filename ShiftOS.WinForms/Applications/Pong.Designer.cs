@@ -555,14 +555,7 @@ namespace ShiftOS.WinForms.Applications
             this.paddleHuman.Location = new System.Drawing.Point(10, 134);
             this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 150);
             this.paddleHuman.Name = "paddleHuman";
-            if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
-            {
-                this.paddleHuman.Size = new System.Drawing.Size(20, 150);
-            }
-            else
-            {
-                this.paddleHuman.Size = new System.Drawing.Size(20, 100);
-            }
+            this.paddleHuman.Size = new System.Drawing.Size(20, 100);
             this.paddleHuman.TabIndex = 3;
             this.paddleHuman.TabStop = false;
             // 
@@ -573,14 +566,7 @@ namespace ShiftOS.WinForms.Applications
             this.paddleComputer.Location = new System.Drawing.Point(666, 134);
             this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 150);
             this.paddleComputer.Name = "paddleComputer";
-            if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
-            {
-                this.paddleComputer.Size = new System.Drawing.Size(20, 150);
-            }
-            else
-            {
-                this.paddleComputer.Size = new System.Drawing.Size(20, 100);
-            }
+            this.paddleComputer.Size = new System.Drawing.Size(20, 100);
             this.paddleComputer.TabIndex = 1;
             // 
             // lbllevelandtime

@@ -72,6 +72,8 @@ namespace ShiftOS.WinForms.Applications
             setuplevelrewards();
         }
 
+
+
         // Move the paddle according to the mouse position.
         private void pongMain_MouseMove(object sender, MouseEventArgs e)
         {
@@ -89,10 +91,15 @@ namespace ShiftOS.WinForms.Applications
                 paddleComputer.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
                 paddleHuman.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
 
-
+                //Check if paddle upgrade has been bought and change paddles accordingly
+                if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
+                {
+                    paddleHuman.Height = 150;
+                    paddleComputer.Height = 150;
+                }
 
                 //Set the computer player to move according to the ball's position.
-                if(aiShouldIsbeEnabled)
+                if (aiShouldIsbeEnabled)
                     if (ball.Location.X > 500 - xVel * 10 && xVel > 0)
                     {
                         if (ball.Location.Y > paddleComputer.Location.Y + 50)
@@ -245,7 +252,7 @@ namespace ShiftOS.WinForms.Applications
             if (this.Left < Screen.PrimaryScreen.Bounds.Width)
             {
                 secondsleft = secondsleft - 1;
-                if (secondsleft == 0)
+                if (secondsleft == 1)
                 {
                     secondsleft = 60;
                     level = level + 1;
