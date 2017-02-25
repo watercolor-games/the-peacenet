@@ -47,6 +47,7 @@
             // fllist
             // 
             this.fllist.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fllist.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.fllist.Location = new System.Drawing.Point(0, 33);
             this.fllist.Name = "fllist";
             this.fllist.Size = new System.Drawing.Size(437, 487);

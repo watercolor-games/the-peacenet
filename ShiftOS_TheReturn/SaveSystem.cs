@@ -209,8 +209,7 @@ namespace ShiftOS.Engine
         public static void TransferCodepointsToVoid(int amount)
         {
             CurrentSave.Codepoints -= amount;
-            if(!Shiftorium.Silent)
-                Console.WriteLine($"{{SHIFTORIUM_TRANSFERRED_TO}}: {amount} -> sys");
+            NotificationDaemon.AddNotification(NotificationType.CodepointsSent, amount);
         }
 
         public static void Restart()
@@ -302,7 +301,7 @@ namespace ShiftOS.Engine
 
         public static void TransferCodepointsFrom(string who, int amount)
         {
-            Console.WriteLine($"{{SHIFTORIUM_TRANSFERRED_FROM}}: {amount} <- {who}");
+            NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
             CurrentSave.Codepoints += amount;
         }
     }
