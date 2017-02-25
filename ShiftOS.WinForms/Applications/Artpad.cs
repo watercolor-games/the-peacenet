@@ -1686,7 +1686,7 @@ namespace ShiftOS.WinForms.Applications
             {
                 case "Bold":
                     drawtextfontstyle = FontStyle.Bold;
-                    break;
+                    break; //BREAK COME ON HOO OH YEAHE CHECK IT OUT OH YEAH LETS GO SCRUATCHO HEY
                 case "Italic":
                     drawtextfontstyle = FontStyle.Italic;
                     break;

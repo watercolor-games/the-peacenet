@@ -42,6 +42,7 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconPong")]
     public partial class Pong : UserControl, IShiftOSWindow
     {
+        //I can assure you guaranteed that there is an acorn somewhere, in this place, and the sailors are looking for it
         int xVel = 7;
         int yVel = 8;
         int computerspeed = 8;
