@@ -18,10 +18,23 @@ namespace ShiftOS.WinForms.Applications
         public Notifications()
         {
             InitializeComponent();
+            onMade = (note) =>
+            {
+                SetupUI();
+            };
+        }
+
+        Action<Notification> onMade = null;
+
+        public void SetupUI()
+        {
+
         }
 
         public void OnLoad()
         {
+            SetupUI();
+            NotificationDaemon.NotificationMade += onMade;
         }
 
         public void OnSkinLoad()
@@ -30,6 +43,7 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            NotificationDaemon.NotificationMade -= onMade;
             return true;
         }
 
