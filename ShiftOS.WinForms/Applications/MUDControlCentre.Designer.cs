@@ -69,6 +69,10 @@ namespace ShiftOS.WinForms.Applications
             this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.joinAChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.you_systemstatus = new System.Windows.Forms.Panel();
+            this.btndeletesave = new System.Windows.Forms.Button();
+            this.lblsysstatus = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.shop_all = new System.Windows.Forms.Panel();
             this.flshoplist = new System.Windows.Forms.FlowLayoutPanel();
             this.lblistdesc = new System.Windows.Forms.Label();
@@ -140,14 +144,11 @@ namespace ShiftOS.WinForms.Applications
             this.you_memos = new System.Windows.Forms.Panel();
             this.flmemos = new System.Windows.Forms.FlowLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
-            this.you_systemstatus = new System.Windows.Forms.Panel();
-            this.lblsysstatus = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btndeletesave = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.you_systemstatus.SuspendLayout();
             this.shop_all.SuspendLayout();
             this.shop_view.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -171,7 +172,6 @@ namespace ShiftOS.WinForms.Applications
             this.panel3.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.you_memos.SuspendLayout();
-            this.you_systemstatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -321,6 +321,56 @@ namespace ShiftOS.WinForms.Applications
             // toolStripContainer1.TopToolStripPanel
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip1);
+            // 
+            // you_systemstatus
+            // 
+            this.you_systemstatus.Controls.Add(this.btndeletesave);
+            this.you_systemstatus.Controls.Add(this.lblsysstatus);
+            this.you_systemstatus.Controls.Add(this.label1);
+            this.you_systemstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.you_systemstatus.Location = new System.Drawing.Point(0, 0);
+            this.you_systemstatus.Name = "you_systemstatus";
+            this.you_systemstatus.Size = new System.Drawing.Size(756, 464);
+            this.you_systemstatus.TabIndex = 0;
+            // 
+            // btndeletesave
+            // 
+            this.btndeletesave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btndeletesave.AutoSize = true;
+            this.btndeletesave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btndeletesave.Location = new System.Drawing.Point(613, 415);
+            this.btndeletesave.Name = "btndeletesave";
+            this.btndeletesave.Size = new System.Drawing.Size(99, 23);
+            this.btndeletesave.TabIndex = 2;
+            this.btndeletesave.Tag = "header3";
+            this.btndeletesave.Text = "Delete my system";
+            this.btndeletesave.UseVisualStyleBackColor = true;
+            this.btndeletesave.Click += new System.EventHandler(this.btndeletesave_Click);
+            // 
+            // lblsysstatus
+            // 
+            this.lblsysstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblsysstatus.Location = new System.Drawing.Point(0, 43);
+            this.lblsysstatus.Name = "lblsysstatus";
+            this.lblsysstatus.Padding = new System.Windows.Forms.Padding(15);
+            this.lblsysstatus.Size = new System.Drawing.Size(756, 421);
+            this.lblsysstatus.TabIndex = 1;
+            this.lblsysstatus.Text = "Username: {username}\r\nSystem name: {sysname}\r\n\r\nCodepoints: {cp}\r\nUpgrades: {boug" +
+    "ht}/{available}\r\n\r\nSystem version: {sysver}\r\n\r\nShared scripts: {scripts}\r\n\r\nCurr" +
+    "ent legion: {legionname}\r\nRole: {role}";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Margin = new System.Windows.Forms.Padding(15);
+            this.label1.Name = "label1";
+            this.label1.Padding = new System.Windows.Forms.Padding(15);
+            this.label1.Size = new System.Drawing.Size(56, 43);
+            this.label1.TabIndex = 0;
+            this.label1.Tag = "header1";
+            this.label1.Text = "You";
             // 
             // shop_all
             // 
@@ -1132,56 +1182,6 @@ namespace ShiftOS.WinForms.Applications
             this.label3.Tag = "header1";
             this.label3.Text = "Memos";
             // 
-            // you_systemstatus
-            // 
-            this.you_systemstatus.Controls.Add(this.btndeletesave);
-            this.you_systemstatus.Controls.Add(this.lblsysstatus);
-            this.you_systemstatus.Controls.Add(this.label1);
-            this.you_systemstatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.you_systemstatus.Location = new System.Drawing.Point(0, 0);
-            this.you_systemstatus.Name = "you_systemstatus";
-            this.you_systemstatus.Size = new System.Drawing.Size(756, 464);
-            this.you_systemstatus.TabIndex = 0;
-            // 
-            // lblsysstatus
-            // 
-            this.lblsysstatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblsysstatus.Location = new System.Drawing.Point(0, 43);
-            this.lblsysstatus.Name = "lblsysstatus";
-            this.lblsysstatus.Padding = new System.Windows.Forms.Padding(15);
-            this.lblsysstatus.Size = new System.Drawing.Size(756, 421);
-            this.lblsysstatus.TabIndex = 1;
-            this.lblsysstatus.Text = "Username: {username}\r\nSystem name: {sysname}\r\n\r\nCodepoints: {cp}\r\nUpgrades: {boug" +
-    "ht}/{available}\r\n\r\nSystem version: {sysver}\r\n\r\nShared scripts: {scripts}\r\n\r\nCurr" +
-    "ent legion: {legionname}\r\nRole: {role}";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(15);
-            this.label1.Name = "label1";
-            this.label1.Padding = new System.Windows.Forms.Padding(15);
-            this.label1.Size = new System.Drawing.Size(56, 43);
-            this.label1.TabIndex = 0;
-            this.label1.Tag = "header1";
-            this.label1.Text = "You";
-            // 
-            // btndeletesave
-            // 
-            this.btndeletesave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btndeletesave.AutoSize = true;
-            this.btndeletesave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btndeletesave.Location = new System.Drawing.Point(613, 415);
-            this.btndeletesave.Name = "btndeletesave";
-            this.btndeletesave.Size = new System.Drawing.Size(99, 23);
-            this.btndeletesave.TabIndex = 2;
-            this.btndeletesave.Tag = "header3";
-            this.btndeletesave.Text = "Delete my system";
-            this.btndeletesave.UseVisualStyleBackColor = true;
-            this.btndeletesave.Click += new System.EventHandler(this.btndeletesave_Click);
-            // 
             // MUDControlCentre
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1198,6 +1198,8 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.you_systemstatus.ResumeLayout(false);
+            this.you_systemstatus.PerformLayout();
             this.shop_all.ResumeLayout(false);
             this.shop_all.PerformLayout();
             this.shop_view.ResumeLayout(false);
@@ -1240,8 +1242,6 @@ namespace ShiftOS.WinForms.Applications
             this.flowLayoutPanel2.PerformLayout();
             this.you_memos.ResumeLayout(false);
             this.you_memos.PerformLayout();
-            this.you_systemstatus.ResumeLayout(false);
-            this.you_systemstatus.PerformLayout();
             this.ResumeLayout(false);
 
         }

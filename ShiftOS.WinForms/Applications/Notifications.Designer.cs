@@ -30,6 +30,7 @@
         {
             this.lblnotifications = new System.Windows.Forms.Label();
             this.fllist = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnmarkallread = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblnotifications
@@ -53,10 +54,24 @@
             this.fllist.Size = new System.Drawing.Size(437, 487);
             this.fllist.TabIndex = 1;
             // 
+            // btnmarkallread
+            // 
+            this.btnmarkallread.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnmarkallread.AutoSize = true;
+            this.btnmarkallread.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnmarkallread.Location = new System.Drawing.Point(356, 4);
+            this.btnmarkallread.Name = "btnmarkallread";
+            this.btnmarkallread.Size = new System.Drawing.Size(78, 23);
+            this.btnmarkallread.TabIndex = 2;
+            this.btnmarkallread.Text = "Mark all read";
+            this.btnmarkallread.UseVisualStyleBackColor = true;
+            this.btnmarkallread.Click += new System.EventHandler(this.btnmarkallread_Click);
+            // 
             // Notifications
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnmarkallread);
             this.Controls.Add(this.fllist);
             this.Controls.Add(this.lblnotifications);
             this.Name = "Notifications";
@@ -70,5 +85,6 @@
 
         private System.Windows.Forms.Label lblnotifications;
         private System.Windows.Forms.FlowLayoutPanel fllist;
+        private System.Windows.Forms.Button btnmarkallread;
     }
 }

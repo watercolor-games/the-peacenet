@@ -23,14 +23,9 @@ namespace ShiftOS.WinForms.Applications
             {
                 SetupUI();
             };
-            onRead += () =>
-            {
-                SetupUI();
-            };
         }
 
         Action<Notification> onMade = null;
-        Action onRead = null;
 
         public void SetupUI()
         {
@@ -232,7 +227,6 @@ namespace ShiftOS.WinForms.Applications
         {
             SetupUI();
             NotificationDaemon.NotificationMade += onMade;
-            NotificationDaemon.NotificationRead += onRead;
         }
 
         public void OnSkinLoad()
@@ -242,12 +236,16 @@ namespace ShiftOS.WinForms.Applications
         public bool OnUnload()
         {
             NotificationDaemon.NotificationMade -= onMade;
-            NotificationDaemon.NotificationRead -= onRead;
             return true;
         }
 
         public void OnUpgrade()
         {
+        }
+
+        private void btnmarkallread_Click(object sender, EventArgs e)
+        {
+            NotificationDaemon.MarkAllRead();
         }
     }
 }
