@@ -35,24 +35,17 @@ namespace ShiftOS.Engine
             NotificationMade?.Invoke(lst[lst.Count - 1]);
         }
 
-
-        public static void MarkAllRead()
-        {
-            var notes = GetAllFromFile();
-            for (int i = 0; i < notes.Length; i++)
-                MarkRead(i);
-        }
+        public static event Action NotificationRead;
 
         public static void MarkRead(int note)
         {
-            var lst = new List<Notification>(GetAllFromFile());
             var notes = GetAllFromFile();
             if (note >= notes.Length || note < 0)
                 throw new ArgumentOutOfRangeException("note", new Exception("You cannot mark a notification that does not exist as read."));
 
             notes[note].Read = true;
             WriteNotes(notes);
-            NotificationMade?.Invoke(lst[lst.Count - 1]);
+            NotificationRead?.Invoke();
         }
 
         public static int GetUnreadCount()
