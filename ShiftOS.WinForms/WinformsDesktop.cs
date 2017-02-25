@@ -119,6 +119,9 @@ namespace ShiftOS.WinForms
                         lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
                     }
                 }
+
+                btnnotifications.Left = lbtime.Left - btnnotifications.Width - 2;
+                btnnotifications.Top = (desktoppanel.Height - btnnotifications.Height) / 2;
             };
             time.Start();
 
@@ -228,6 +231,8 @@ namespace ShiftOS.WinForms
                 {
                     desktoppanel.Visible = Shiftorium.UpgradeInstalled("desktop");
                     lbtime.Visible = Shiftorium.UpgradeInstalled("desktop_clock_widget");
+
+                    btnnotifications.Visible = Shiftorium.UpgradeInstalled("panel_notifications");
 
                     //skinning
                     lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
@@ -528,6 +533,11 @@ namespace ShiftOS.WinForms
         public Size GetSize()
         {
             return this.Size;
+        }
+
+        private void btnnotifications_Click(object sender, EventArgs e)
+        {
+            AppearanceManager.SetupWindow(new Applications.Notifications());
         }
     }
 

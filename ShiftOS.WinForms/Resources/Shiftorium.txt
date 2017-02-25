@@ -6,6 +6,18 @@
 		Dependencies: null
 	},
 	{
+		Name: "AL Notifications",
+		Cost: 125,
+		Dependencies: "app_launcher",
+		Description: "Want to open the Notifications application from within the App Launcher? This upgrade is for you."
+	},
+	{
+		Name: "Panel Notifications",
+		Cost: 150,
+		Description: "It's good to know what time it is, but how about knowing how many notifications you have? After all, notifications are a great way to tell what's going on! This upgrade adds a button that displays how many notifications you have. If you click it, you will open the Notifications app!",
+		Dependencies: "desktop_clock_widget"
+	},
+	{
 		Name: "Audio Volume",
 		Cost: 50,
 		Description: "Want to adjust the volume of ShiftOS's audio? This upgrade will let you."

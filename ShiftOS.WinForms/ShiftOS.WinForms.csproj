@@ -124,6 +124,12 @@
     <Compile Include="Applications\NameChanger.Designer.cs">
       <DependentUpon>NameChanger.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Notifications.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Notifications.Designer.cs">
+      <DependentUpon>Notifications.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Pong.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -267,6 +273,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\NameChanger.resx">
       <DependentUpon>NameChanger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Notifications.resx">
+      <DependentUpon>Notifications.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Pong.resx">
       <DependentUpon>Pong.cs</DependentUpon>
