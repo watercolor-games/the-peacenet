@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -914,14 +914,16 @@ namespace ShiftOS.WinForms.Properties {
         ///		Dependencies: null
         ///	},
         ///	{
-        ///		Name: &quot;Audio Volume&quot;,
-        ///		Cost: 50,
-        ///		Description: &quot;Want to adjust the volume of ShiftOS&apos;s audio? This upgrade will let you.&quot;
+        ///		Name: &quot;AL Notifications&quot;,
+        ///		Cost: 125,
+        ///		Dependencies: &quot;app_launcher&quot;,
+        ///		Description: &quot;Want to open the Notifications application from within the App Launcher? This upgrade is for you.&quot;
         ///	},
         ///	{
-        ///		Name: &quot;Color Depth Dithering&quot;,
-        ///		Cost: 1000,
-        ///		Description: &quot;Right now, if you try to display images on the screen, with a low color depth like we have, the image will be totally unrecogn [rest of string was truncated]&quot;;.
+        ///		Name: &quot;Guess the Word&quot;,
+        ///		Cost: 150,
+        ///		Dependencies: null,
+        ///		Description: &quot;Sick and tired of playing Pong? Buy this upgrade [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {

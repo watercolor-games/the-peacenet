@@ -118,6 +118,12 @@
     <Compile Include="Applications\GraphicPicker.Designer.cs">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ShiftLetters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShiftLetters.Designer.cs">
+      <DependentUpon>ShiftLetters.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\MUDControlCentre.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -276,6 +282,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\GraphicPicker.resx">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShiftLetters.resx">
+      <DependentUpon>ShiftLetters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\MUDControlCentre.resx">
       <DependentUpon>MUDControlCentre.cs</DependentUpon>
