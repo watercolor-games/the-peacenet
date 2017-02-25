@@ -35,6 +35,7 @@ namespace ShiftOS.Engine
             NotificationMade?.Invoke(lst[lst.Count - 1]);
         }
 
+        public static event Action NotificationRead;
 
         public static void MarkRead(int note)
         {
@@ -44,6 +45,7 @@ namespace ShiftOS.Engine
 
             notes[note].Read = true;
             WriteNotes(notes);
+            NotificationRead?.Invoke();
         }
 
         public static int GetUnreadCount()

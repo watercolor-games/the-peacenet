@@ -68,6 +68,13 @@ namespace ShiftOS.WinForms
 
             };
 
+            NotificationDaemon.NotificationRead += () =>
+            {
+                //Soon this will pop a balloon note.
+                btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+
+            };
+
             this.LocationChanged += (o, a) =>
             {
                 if (this.Left != 0)
