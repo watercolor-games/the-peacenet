@@ -64,6 +64,13 @@ namespace ShiftOS.WinForms.Applications
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.buttonEquals = new System.Windows.Forms.Button();
+            this.buttonPlus = new System.Windows.Forms.Button();
+            this.buttonMinus = new System.Windows.Forms.Button();
+            this.buttonMultiply = new System.Windows.Forms.Button();
+            this.buttonDivide = new System.Windows.Forms.Button();
+            this.buttonC = new System.Windows.Forms.Button();
+            this.buttonCE = new System.Windows.Forms.Button();
+            this.buttonDecimal = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // numBox
@@ -75,6 +82,7 @@ namespace ShiftOS.WinForms.Applications
             this.numBox.ReadOnly = true;
             this.numBox.Size = new System.Drawing.Size(143, 30);
             this.numBox.TabIndex = 0;
+            this.numBox.TextChanged += new System.EventHandler(this.numBox_TextChanged);
             // 
             // button1
             // 
@@ -184,11 +192,90 @@ namespace ShiftOS.WinForms.Applications
             this.buttonEquals.TabIndex = 12;
             this.buttonEquals.Text = "=";
             this.buttonEquals.UseVisualStyleBackColor = true;
+            this.buttonEquals.Click += new System.EventHandler(this.buttonEquals_Click);
+            // 
+            // buttonPlus
+            // 
+            this.buttonPlus.Location = new System.Drawing.Point(125, 39);
+            this.buttonPlus.Name = "buttonPlus";
+            this.buttonPlus.Size = new System.Drawing.Size(22, 22);
+            this.buttonPlus.TabIndex = 13;
+            this.buttonPlus.Text = "+";
+            this.buttonPlus.UseVisualStyleBackColor = true;
+            this.buttonPlus.Click += new System.EventHandler(this.buttonPlus_Click);
+            // 
+            // buttonMinus
+            // 
+            this.buttonMinus.Location = new System.Drawing.Point(125, 67);
+            this.buttonMinus.Name = "buttonMinus";
+            this.buttonMinus.Size = new System.Drawing.Size(22, 22);
+            this.buttonMinus.TabIndex = 14;
+            this.buttonMinus.Text = "-";
+            this.buttonMinus.UseVisualStyleBackColor = true;
+            this.buttonMinus.Click += new System.EventHandler(this.buttonMinus_Click);
+            // 
+            // buttonMultiply
+            // 
+            this.buttonMultiply.Location = new System.Drawing.Point(125, 95);
+            this.buttonMultiply.Name = "buttonMultiply";
+            this.buttonMultiply.Size = new System.Drawing.Size(22, 22);
+            this.buttonMultiply.TabIndex = 15;
+            this.buttonMultiply.Text = "x";
+            this.buttonMultiply.UseVisualStyleBackColor = true;
+            this.buttonMultiply.Click += new System.EventHandler(this.buttonMultiply_Click);
+            // 
+            // buttonDivide
+            // 
+            this.buttonDivide.Location = new System.Drawing.Point(125, 123);
+            this.buttonDivide.Name = "buttonDivide";
+            this.buttonDivide.Size = new System.Drawing.Size(22, 22);
+            this.buttonDivide.TabIndex = 16;
+            this.buttonDivide.Text = "/";
+            this.buttonDivide.UseVisualStyleBackColor = true;
+            this.buttonDivide.Click += new System.EventHandler(this.buttonDivide_Click);
+            // 
+            // buttonC
+            // 
+            this.buttonC.Location = new System.Drawing.Point(88, 39);
+            this.buttonC.Name = "buttonC";
+            this.buttonC.Size = new System.Drawing.Size(31, 22);
+            this.buttonC.TabIndex = 17;
+            this.buttonC.Text = "C";
+            this.buttonC.UseVisualStyleBackColor = true;
+            this.buttonC.Click += new System.EventHandler(this.buttonC_Click);
+            // 
+            // buttonCE
+            // 
+            this.buttonCE.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonCE.Location = new System.Drawing.Point(88, 67);
+            this.buttonCE.Name = "buttonCE";
+            this.buttonCE.Size = new System.Drawing.Size(31, 22);
+            this.buttonCE.TabIndex = 18;
+            this.buttonCE.Text = "CE";
+            this.buttonCE.UseVisualStyleBackColor = true;
+            this.buttonCE.Click += new System.EventHandler(this.buttonCE_Click);
+            // 
+            // buttonDecimal
+            // 
+            this.buttonDecimal.Location = new System.Drawing.Point(32, 123);
+            this.buttonDecimal.Name = "buttonDecimal";
+            this.buttonDecimal.Size = new System.Drawing.Size(22, 22);
+            this.buttonDecimal.TabIndex = 19;
+            this.buttonDecimal.Text = ".";
+            this.buttonDecimal.UseVisualStyleBackColor = true;
+            this.buttonDecimal.Click += new System.EventHandler(this.buttonDecimal_Click);
             // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonDecimal);
+            this.Controls.Add(this.buttonCE);
+            this.Controls.Add(this.buttonC);
+            this.Controls.Add(this.buttonDivide);
+            this.Controls.Add(this.buttonMultiply);
+            this.Controls.Add(this.buttonMinus);
+            this.Controls.Add(this.buttonPlus);
             this.Controls.Add(this.buttonEquals);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
@@ -202,7 +289,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.button1);
             this.Controls.Add(this.numBox);
             this.Name = "Calculator";
-            this.Size = new System.Drawing.Size(171, 176);
+            this.Size = new System.Drawing.Size(166, 185);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,5 +309,12 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button buttonEquals;
+        private System.Windows.Forms.Button buttonPlus;
+        private System.Windows.Forms.Button buttonMinus;
+        private System.Windows.Forms.Button buttonMultiply;
+        private System.Windows.Forms.Button buttonDivide;
+        private System.Windows.Forms.Button buttonC;
+        private System.Windows.Forms.Button buttonCE;
+        private System.Windows.Forms.Button buttonDecimal;
     }
 }
