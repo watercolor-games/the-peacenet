@@ -43,19 +43,19 @@ using ShiftOS.Engine.Scripting;
 /// </summary>
 namespace ShiftOS.WinForms
 {
-	/// <summary>
-	/// Winforms desktop.
-	/// </summary>
+    /// <summary>
+    /// Winforms desktop.
+    /// </summary>
     public partial class WinformsDesktop : Form, IDesktop
     {
-		/// <summary>
-		/// Occurs when window added.
-		/// </summary>
+        /// <summary>
+        /// Occurs when window added.
+        /// </summary>
         private static event Action<WindowBorder> windowAdded;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
-		/// </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
+        /// </summary>
         public WinformsDesktop()
         {
             InitializeComponent();
@@ -68,8 +68,9 @@ namespace ShiftOS.WinForms
 
             };
 
-            NotificationDaemon.NotificationRead += (note) =>
+            NotificationDaemon.NotificationRead += () =>
             {
+                //Soon this will pop a balloon note.
                 btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
 
             };
@@ -92,7 +93,7 @@ namespace ShiftOS.WinForms
 
             SaveSystem.GameReady += () =>
             {
-                if(this.Visible == true)
+                if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
                 this.Invoke(new Action(() =>
                 {
@@ -101,7 +102,7 @@ namespace ShiftOS.WinForms
             };
             Shiftorium.Installed += () =>
             {
-                if(this.Visible == true)
+                if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
             };
             var time = new Timer();
@@ -146,10 +147,10 @@ namespace ShiftOS.WinForms
             this.DoubleBuffered = true;
         }
 
-		/// <summary>
-		/// Populates the panel buttons.
-		/// </summary>
-		/// <returns>The panel buttons.</returns>
+        /// <summary>
+        /// Populates the panel buttons.
+        /// </summary>
+        /// <returns>The panel buttons.</returns>
         public void PopulatePanelButtons()
         {
             if (DesktopFunctions.ShowDefaultElements == true)
@@ -228,10 +229,10 @@ namespace ShiftOS.WinForms
             LuaInterpreter.RaiseEvent("on_panelbutton_populate", this);
         }
 
-		/// <summary>
-		/// Setups the desktop.
-		/// </summary>
-		/// <returns>The desktop.</returns>
+        /// <summary>
+        /// Setups the desktop.
+        /// </summary>
+        /// <returns>The desktop.</returns>
         public void SetupDesktop()
         {
             if (DesktopFunctions.ShowDefaultElements == true)
@@ -317,7 +318,7 @@ namespace ShiftOS.WinForms
 
         public ToolStripMenuItem GetALCategoryWithName(string text)
         {
-            foreach(ToolStripMenuItem menuitem in apps.DropDownItems)
+            foreach (ToolStripMenuItem menuitem in apps.DropDownItems)
             {
                 if (menuitem.Text == text)
                     return menuitem;
@@ -329,11 +330,11 @@ namespace ShiftOS.WinForms
             return itm;
         }
 
-		/// <summary>
-		/// Populates the app launcher.
-		/// </summary>
-		/// <returns>The app launcher.</returns>
-		/// <param name="items">Items.</param>
+        /// <summary>
+        /// Populates the app launcher.
+        /// </summary>
+        /// <returns>The app launcher.</returns>
+        /// <param name="items">Items.</param>
         public void PopulateAppLauncher(LauncherItem[] items)
         {
             if (DesktopFunctions.ShowDefaultElements == true)
@@ -416,12 +417,12 @@ namespace ShiftOS.WinForms
         }
 
 
-		/// <summary>
-		/// Desktops the load.
-		/// </summary>
-		/// <returns>The load.</returns>
-		/// <param name="sender">Sender.</param>
-		/// <param name="e">E.</param>
+        /// <summary>
+        /// Desktops the load.
+        /// </summary>
+        /// <returns>The load.</returns>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         private void Desktop_Load(object sender, EventArgs e)
         {
 
@@ -456,11 +457,11 @@ namespace ShiftOS.WinForms
             brdr.TopMost = true;
         }
 
-		/// <summary>
-		/// Kills the window.
-		/// </summary>
-		/// <returns>The window.</returns>
-		/// <param name="border">Border.</param>
+        /// <summary>
+        /// Kills the window.
+        /// </summary>
+        /// <returns>The window.</returns>
+        /// <param name="border">Border.</param>
         public void KillWindow(IWindowBorder border)
         {
             border.Close();
@@ -493,11 +494,11 @@ namespace ShiftOS.WinForms
             (brdr as WindowBorder).Location = new Point(this.GetSize().Width * 2, this.GetSize().Height * 2);
         }
 
-		/// <summary>
-		/// Maximizes the window.
-		/// </summary>
-		/// <returns>The window.</returns>
-		/// <param name="brdr">Brdr.</param>
+        /// <summary>
+        /// Maximizes the window.
+        /// </summary>
+        /// <returns>The window.</returns>
+        /// <param name="brdr">Brdr.</param>
         public void MaximizeWindow(IWindowBorder brdr)
         {
             int startY = (LoadedSkin.DesktopPanelPosition == 1) ? 0 : LoadedSkin.DesktopPanelHeight;
@@ -544,10 +545,10 @@ namespace ShiftOS.WinForms
             apps.ShowDropDown();
         }
 
-		/// <summary>
-		/// Gets the size.
-		/// </summary>
-		/// <returns>The size.</returns>
+        /// <summary>
+        /// Gets the size.
+        /// </summary>
+        /// <returns>The size.</returns>
         public Size GetSize()
         {
             return this.Size;
