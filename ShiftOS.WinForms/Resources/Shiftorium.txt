@@ -12,6 +12,18 @@
 		Description: "Want to open the Notifications application from within the App Launcher? This upgrade is for you."
 	},
 	{
+		Name: "ShiftLetters",
+		Cost: 150,
+		Dependencies: null,
+		Description: "Sick and tired of playing Pong? Buy this upgrade to get a whole new game!"
+	},
+	{
+		Name: "AL ShiftLetters",
+		Cost: 100,
+		Dependencies: "app_launcher;shiftletters",
+		Description: "This upgrade allows you to find ShiftLetters in your App Launcher."
+	},
+	{
 		Name: "Panel Notifications",
 		Cost: 150,
 		Description: "It's good to know what time it is, but how about knowing how many notifications you have? After all, notifications are a great way to tell what's going on! This upgrade adds a button that displays how many notifications you have. If you click it, you will open the Notifications app!",
@@ -19,7 +31,7 @@
 	},
 	{
 		Name: "Audio Volume",
-		Cost: 50,
+		Cost: 80,
 		Description: "Want to adjust the volume of ShiftOS's audio? This upgrade will let you."
 	},
 	{
