@@ -1,3 +1,10 @@
+/*
+ * THIS IS AN EXAMPLE FILE
+ *
+ * Any Shiftorium upgrades placed in here won't be recognized by the main ShiftOS frontend
+ * (ShiftOS.WinForms). It uses its own Shiftorium definition file found in its Resources.
+ */
+
 [
 	{
 		Name: "MUD Fundamentals",
