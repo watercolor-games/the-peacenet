@@ -60,6 +60,14 @@ namespace ShiftOS.WinForms
         {
             InitializeComponent();
             this.TopMost = false;
+
+            NotificationDaemon.NotificationMade += (note) =>
+            {
+                //Soon this will pop a balloon note.
+                btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+
+            };
+
             this.LocationChanged += (o, a) =>
             {
                 if (this.Left != 0)
@@ -80,6 +88,10 @@ namespace ShiftOS.WinForms
             {
                 if(this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
+                this.Invoke(new Action(() =>
+                {
+                    btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+                }));
             };
             Shiftorium.Installed += () =>
             {

@@ -45,6 +45,15 @@ namespace ShiftOS.Engine
             notes[note].Read = true;
             WriteNotes(notes);
         }
+
+        public static int GetUnreadCount()
+        {
+            int c = 0;
+            foreach (var note in GetAllFromFile())
+                if (note.Read == false)
+                    c++; //gahh I hate that programming language.
+            return c;
+        }
     }
 
     public struct Notification
@@ -57,13 +66,13 @@ namespace ShiftOS.Engine
              Timestamp = DateTime.Now;
         }
 
-        public bool Read { get; internal set; }
-        public NotificationType Type { get; private set; }
-        public object Data { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public bool Read { get; set; }
+        public NotificationType Type { get; set; }
+        public object Data { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 
-    public enum NotificationType : byte
+    public enum NotificationType
     {
         Generic = 0x00,
         MemoReceived = 0x10,

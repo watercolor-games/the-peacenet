@@ -36,32 +36,41 @@ namespace ShiftOS.WinForms.Applications
             {
                 if (note.Read == false)
                 {
-                    showNoNotes = false;
-                    var headerLabel = new Label();
-                    headerLabel.Tag = "header2";
-                    ControlManager.SetupControl(headerLabel);
-                    headerLabel.Text = ParseNotification(note);
-                    headerLabel.Width = fllist.Width - 4;
-                    fllist.Controls.Add(headerLabel);
-                    headerLabel.Show();
-
-                    var markButton = new Button();
-                    ControlManager.SetupControl(markButton);
-                    markButton.Text = "Mark as read";
-                    markButton.Click += (o, a) =>
+                    try
                     {
-                        NotificationDaemon.MarkRead(new List<Notification>(NotificationDaemon.GetAllFromFile()).IndexOf(note));
-                        SetupUI();
-                    };
-                    fllist.Controls.Add(markButton);
-                    markButton.Show();
+                        showNoNotes = false;
+                        var headerLabel = new Label();
+                        headerLabel.Tag = "header2";
+                        ControlManager.SetupControl(headerLabel);
+                        headerLabel.Text = ParseNotification(note);
+                        headerLabel.Width = fllist.Width - 4;
+                        fllist.Controls.Add(headerLabel);
+                        headerLabel.Show();
 
-                    var dataLabel = new Label();
-                    dataLabel.Text = ParseNotificationData(note);
-                    dataLabel.MaximumSize = new Size(fllist.Width - 4, 0);
-                    dataLabel.AutoSize = true;
-                    fllist.Controls.Add(dataLabel);
-                    dataLabel.Show();
+                        var markButton = new Button();
+                        ControlManager.SetupControl(markButton);
+                        markButton.Text = "Mark as read";
+                        markButton.AutoSize = true;
+                        markButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                        markButton.Click += (o, a) =>
+                        {
+                            NotificationDaemon.MarkRead(new List<Notification>(NotificationDaemon.GetAllFromFile()).IndexOf(note));
+                            SetupUI();
+                        };
+                        fllist.Controls.Add(markButton);
+                        markButton.Show();
+
+                        var dataLabel = new Label();
+                        dataLabel.Text = ParseNotificationData(note);
+                        dataLabel.MaximumSize = new Size(fllist.Width - 4, 0);
+                        dataLabel.AutoSize = true;
+                        fllist.Controls.Add(dataLabel);
+                        dataLabel.Show();
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
             
