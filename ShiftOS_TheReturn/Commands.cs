@@ -242,7 +242,7 @@ namespace ShiftOS.Engine
     public static class ShiftOSDevCommands
     {
         [Command("rock", description = "A little surprise for unstable builds...")]
-        public static bool ThrowAFuckingRock()
+        public static bool ThrowASandwichingRock()
         {
             Infobox.Show("He who lives in a glass house shouldn't throw stones...", new Rock().Message);
             return false;

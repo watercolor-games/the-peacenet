@@ -145,7 +145,7 @@ namespace ShiftOS.Server
                 }
             }
 
-            server.DispatchTo(new Guid(guid), new NetObject("fuck", new ServerMessage
+            server.DispatchTo(new Guid(guid), new NetObject("Sandwich", new ServerMessage //I don't like sandwiches. Have you ever seen me with a sandwich? Why would you think I'd want a sandwich?
             {
                 Name = "user_not_found_in_legion",
                 GUID = "server"
