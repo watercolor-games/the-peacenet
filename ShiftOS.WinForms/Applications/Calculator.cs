@@ -62,17 +62,17 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnSkinLoad()
         {
-            throw new NotImplementedException();
+            
         }
 
         public bool OnUnload()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void OnUpgrade()
@@ -82,7 +82,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void button1_Click(object sender, EventArgs e)
         {
-            numBox.Text = "" + "1";
+            numBox.Text = numBox.Text + "1";
         }
     }
 }

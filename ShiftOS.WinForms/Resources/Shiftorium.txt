@@ -700,6 +700,26 @@
        Cost: 2500,
        Dependencies: "shiftorium_gui",
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
-    }
+    },
+
+		// CALCULATOR UPGRADES
+	{
+		Name: "Calculator",
+		Cost: 1000,
+		Dependencies: "wm_free_placement;desktop",
+		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!"
+	},
+	{
+		Name: "AL Calculator",
+		Cost: 350,
+		Dependencies: "calculator;app_launcher",
+		Description: "Add an App Launcher Entry for the Calculator!"
+	},
+	{
+		Name: "Calc Equals Button",
+		Cost: 600,
+		Dependencies: "calculator",
+		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
+	}
 	
 ]

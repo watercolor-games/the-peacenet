@@ -193,7 +193,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.button1);
             this.Controls.Add(this.numBox);
             this.Name = "Calculator";
-            this.Size = new System.Drawing.Size(150, 149);
+            this.Size = new System.Drawing.Size(186, 190);
             this.Load += new System.EventHandler(this.Template_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
