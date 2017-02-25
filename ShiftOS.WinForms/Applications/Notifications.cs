@@ -242,5 +242,10 @@ namespace ShiftOS.WinForms.Applications
         public void OnUpgrade()
         {
         }
+
+        private void btnmarkallread_Click(object sender, EventArgs e)
+        {
+            NotificationDaemon.MarkAllRead();
+        }
     }
 }

@@ -36,6 +36,13 @@ namespace ShiftOS.Engine
         }
 
 
+        public static void MarkAllRead()
+        {
+            var notes = GetAllFromFile();
+            for (int i = 0; i < notes.Length; i++)
+                MarkRead(i);
+        }
+
         public static void MarkRead(int note)
         {
             var notes = GetAllFromFile();
