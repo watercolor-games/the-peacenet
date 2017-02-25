@@ -136,14 +136,36 @@ namespace ShiftOS.WinForms.Applications
 
         private void buttonPlus_Click(object sender, EventArgs e)
         {
-            if (operationnumber == 0 && activeoperation != 1)
+            if (operationnumber == 0 && activeoperation == 0)
             {
                 operationnumber = currentnumber;
                 activeoperation = 1;
             } else
             {
-
+                solve();
+                operationnumber = currentnumber;
+                activeoperation = 1;
             }
+        }
+
+        private void solve()
+        {
+            switch (activeoperation)
+            {
+                case 1:
+                    numBox.Text = (currentnumber + operationnumber).ToString();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void buttonEquals_Click(object sender, EventArgs e)
+        {
+            solve();
+            operationnumber = 0;
+            activeoperation = 0;
         }
     }
 }
