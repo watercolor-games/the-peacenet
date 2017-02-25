@@ -132,6 +132,7 @@
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />
     <Compile Include="Localization.cs" />
+    <Compile Include="NotificationDaemon.cs" />
     <Compile Include="OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />

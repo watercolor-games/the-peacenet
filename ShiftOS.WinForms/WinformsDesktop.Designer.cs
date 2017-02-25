@@ -53,6 +53,7 @@ namespace ShiftOS.WinForms
         private void InitializeComponent()
         {
             this.desktoppanel = new System.Windows.Forms.Panel();
+            this.btnnotifications = new System.Windows.Forms.Button();
             this.lbtime = new System.Windows.Forms.Label();
             this.panelbuttonholder = new System.Windows.Forms.FlowLayoutPanel();
             this.sysmenuholder = new System.Windows.Forms.Panel();
@@ -66,6 +67,7 @@ namespace ShiftOS.WinForms
             // desktoppanel
             // 
             this.desktoppanel.BackColor = System.Drawing.Color.Green;
+            this.desktoppanel.Controls.Add(this.btnnotifications);
             this.desktoppanel.Controls.Add(this.lbtime);
             this.desktoppanel.Controls.Add(this.panelbuttonholder);
             this.desktoppanel.Controls.Add(this.sysmenuholder);
@@ -74,6 +76,22 @@ namespace ShiftOS.WinForms
             this.desktoppanel.Name = "desktoppanel";
             this.desktoppanel.Size = new System.Drawing.Size(1296, 24);
             this.desktoppanel.TabIndex = 0;
+            // 
+            // btnnotifications
+            // 
+            this.btnnotifications.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnnotifications.AutoSize = true;
+            this.btnnotifications.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnnotifications.BackColor = System.Drawing.Color.Transparent;
+            this.btnnotifications.FlatAppearance.BorderSize = 0;
+            this.btnnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnnotifications.Location = new System.Drawing.Point(1066, -2);
+            this.btnnotifications.Name = "btnnotifications";
+            this.btnnotifications.Size = new System.Drawing.Size(136, 24);
+            this.btnnotifications.TabIndex = 3;
+            this.btnnotifications.Text = "Notifications (0)";
+            this.btnnotifications.UseVisualStyleBackColor = false;
+            this.btnnotifications.Click += new System.EventHandler(this.btnnotifications_Click);
             // 
             // lbtime
             // 
@@ -156,6 +174,7 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem apps;
         private System.Windows.Forms.FlowLayoutPanel panelbuttonholder;
+        private System.Windows.Forms.Button btnnotifications;
     }
 
 }
