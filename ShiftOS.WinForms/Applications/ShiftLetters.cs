@@ -44,6 +44,7 @@ namespace ShiftOS.WinForms.Applications
         int lives = 7;
         string word = "";
         static Random rng = new Random();
+        string guessedCharacters = "";
 
         public ShiftLetters()
         {
@@ -52,6 +53,7 @@ namespace ShiftOS.WinForms.Applications
         
         private void StartGame()
         {
+            guessedCharacters = "";
             lives = 7;
             tbguess.Visible = true;
             lbllives.Visible = true;
@@ -61,11 +63,24 @@ namespace ShiftOS.WinForms.Applications
             {
                 "shiftos",
                 "devx",
-                "delicious",
+                "artpad",
                 "shifter",
                 "pong",
                 "shiftorium",
-                "codepoints"
+                "codepoints",
+                "shiftletters",
+                "shops",
+                "mud",
+                "notification",
+                "namechanger",
+                "skinning",
+                "skinloader",
+                "calculator",
+                "fileskimmer",
+                "lua",
+                "shiftnet",
+                "terminal",
+                "textpad"
             };
             word = wordlist[rng.Next(wordlist.Count)];
             lbllives.Text = "You have 7 lives left!";
@@ -100,7 +115,7 @@ namespace ShiftOS.WinForms.Applications
         {
             if (this.tbguess.Text.Length == 1)
             {
-                var charGuessed = this.tbguess.Text;
+                var charGuessed = this.tbguess.Text.ToLower();
                 bool correct = false;
                 this.tbguess.Text = "";
                 for (int i=0; i < word.Length; i++)
@@ -118,14 +133,15 @@ namespace ShiftOS.WinForms.Applications
                             lives = 0;
                             lbllives.Visible = true;
                             btnrestart.Visible = true;
-                            long cp = word.Length * oldlives;
+                            int cp = word.Length * oldlives;
                             lbllives.Text = "You earned: " + cp + " codepoints!";
-                            ShiftOS.Engine.SaveSystem.CurrentSave.Codepoints += cp;
+                            SaveSystem.TransferCodepointsFrom("shiftletters", cp);
                         }
                     }
                 }
-                if (correct == false & lives > 0)
+                if (correct == false & lives > 0 & !guessedCharacters.Contains(charGuessed))
                 {
+                    guessedCharacters = guessedCharacters + charGuessed;
                     lives--;
                     lbllives.Text = "You have: " + lives + " lives left!";
                     if (lives == 0)

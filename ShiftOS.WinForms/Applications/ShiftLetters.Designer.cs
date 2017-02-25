@@ -62,11 +62,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.lblword.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lblword.AutoSize = true;
-            this.lblword.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.lblword.Location = new System.Drawing.Point(127, 31);
+            this.lblword.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.lblword.Location = new System.Drawing.Point(116, 34);
             this.lblword.Name = "lblword";
             this.lblword.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblword.Size = new System.Drawing.Size(72, 18);
+            this.lblword.Size = new System.Drawing.Size(89, 22);
             this.lblword.TabIndex = 1;
             this.lblword.Text = "Loading...";
             // 
