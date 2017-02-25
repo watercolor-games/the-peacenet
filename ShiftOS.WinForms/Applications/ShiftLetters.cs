@@ -39,6 +39,7 @@ namespace ShiftOS.WinForms.Applications
     [Launcher("ShiftLetters", false, null, "Games")]
     [RequiresUpgrade("shiftletters")]
     [WinOpen("shiftletters")]
+    [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow
     {
         int lives = 7;
