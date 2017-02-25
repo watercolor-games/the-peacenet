@@ -19,6 +19,24 @@
 		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
 	},
 	{
+		Name: "Calc Plus Button",
+		Cost: 700,
+		Dependencies: "calc_equals_button",
+		Description: "With this extra button, your calculator can now do addition problems!"
+	},
+	{
+		Name: "Calc Minus Button",
+		Cost: 700,
+		Dependencies: "calc_equals_button",
+		Description: "With this extra button, your calculator can now do subtraction problems!"
+	},
+	{
+		Name: "Calc Multiply Button",
+		Cost: 800,
+		Dependencies: "calc_plus_button",
+		Description: "You can add numbers together, but it must be tiring to add the same number over and over. This multiplication button will make it easier for you!"
+	},
+	{
 		Name: "MUD Fundamentals",
 		Cost: 50,
 		Description: "Some basic commands for the terminal that'll help you out in the multi-user domain.",

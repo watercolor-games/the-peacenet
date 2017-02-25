@@ -42,6 +42,9 @@ namespace ShiftOS.WinForms.Applications
     public partial class Calculator : UserControl, IShiftOSWindow
     {
         public bool justopened = false;
+        private int activeoperation = 0;
+        private float operationnumber = 0;
+        private float currentnumber = 0;
 
         public Calculator()
         {
@@ -51,6 +54,9 @@ namespace ShiftOS.WinForms.Applications
         private void prepareButtons()
         {
             buttonEquals.Visible = ShiftoriumFrontend.UpgradeInstalled("calc_equals_button");
+            buttonPlus.Visible = ShiftoriumFrontend.UpgradeInstalled("calc_plus_button");
+            buttonMinus.Visible = ShiftoriumFrontend.UpgradeInstalled("calc_minus_button");
+            buttonMultiply.Visible = ShiftoriumFrontend.UpgradeInstalled("calc_multiply_button");
         }
 
         public void OnLoad()
@@ -71,6 +77,11 @@ namespace ShiftOS.WinForms.Applications
         public void OnUpgrade()
         {
             prepareButtons();
+        }
+
+        private void numBox_TextChanged(object sender, EventArgs e)
+        {
+            currentnumber = float.Parse(numBox.Text);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -121,6 +132,18 @@ namespace ShiftOS.WinForms.Applications
         private void button10_Click(object sender, EventArgs e)
         {
             numBox.Text = numBox.Text + "0";
+        }
+
+        private void buttonPlus_Click(object sender, EventArgs e)
+        {
+            if (operationnumber == 0 && activeoperation != 1)
+            {
+                operationnumber = currentnumber;
+                activeoperation = 1;
+            } else
+            {
+
+            }
         }
     }
 }
