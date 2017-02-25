@@ -72,7 +72,7 @@ namespace ShiftOS.Engine
             Type = t;
             Data = data;
             Read = false;
-             Timestamp = DateTime.Now;
+            Timestamp = DateTime.Now;
         }
 
         public bool Read { get; set; }
