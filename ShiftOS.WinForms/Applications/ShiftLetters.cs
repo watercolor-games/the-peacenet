@@ -118,9 +118,9 @@ namespace ShiftOS.WinForms.Applications
                             lives = 0;
                             lbllives.Visible = true;
                             btnrestart.Visible = true;
-                            int cp = word.Length * 2;
-                            cp = cp * oldlives;
+                            long cp = word.Length * oldlives;
                             lbllives.Text = "You earned: " + cp + " codepoints!";
+                            ShiftOS.Engine.SaveSystem.CurrentSave.Codepoints += cp;
                         }
                     }
                 }
