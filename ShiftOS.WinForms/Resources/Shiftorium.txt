@@ -19,6 +19,12 @@
 		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
 	},
 	{
+		Name: "Calc Decimal Button",
+		Cost: 600,
+		Dependencies: "calculator",
+		Description: "Whole numbers can get boring. With this button, you can type decimal numbers!"
+	},
+	{
 		Name: "Calc Plus Button",
 		Cost: 700,
 		Dependencies: "calc_equals_button",
@@ -35,6 +41,24 @@
 		Cost: 800,
 		Dependencies: "calc_plus_button",
 		Description: "You can add numbers together, but it must be tiring to add the same number over and over. This multiplication button will make it easier for you!"
+	},
+	{
+		Name: "Calc Divide Button",
+		Cost: 800,
+		Dependencies: "calc_multiply_button",
+		Description: "You can multiply, but what about reversing multiplication? This divide button will sort that out!"
+	},
+	{
+		Name: "Calc Clear Button",
+		Cost: 750,
+		Dependencies: "calc_equals_button",
+		Description: "Typed the wrong number? No worries! With this Clear button, you can clear the number field, without messing up the equation you're trying to solve!"
+	},
+	{
+		Name: "Calc CE Button",
+		Cost: 750,
+		Dependencies: "calc_clear_button",
+		Description: "Wanna start all over with a new equation? With this CE (Clear Everything) button, you get rid of not only the numbers in the number field, but also the equation!"
 	},
 	{
 		Name: "MUD Fundamentals",
@@ -737,26 +761,6 @@
        Cost: 2500,
        Dependencies: "shiftorium_gui",
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
-    },
-
-		// CALCULATOR UPGRADES
-	{
-		Name: "Calculator",
-		Cost: 1000,
-		Dependencies: "wm_free_placement;desktop",
-		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!"
-	},
-	{
-		Name: "AL Calculator",
-		Cost: 350,
-		Dependencies: "calculator;app_launcher",
-		Description: "Add an App Launcher Entry for the Calculator!"
-	},
-	{
-		Name: "Calc Equals Button",
-		Cost: 600,
-		Dependencies: "calculator",
-		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
-	}
+    }
 	
 ]

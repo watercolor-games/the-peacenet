@@ -67,6 +67,10 @@ namespace ShiftOS.WinForms.Applications
             this.buttonPlus = new System.Windows.Forms.Button();
             this.buttonMinus = new System.Windows.Forms.Button();
             this.buttonMultiply = new System.Windows.Forms.Button();
+            this.buttonDivide = new System.Windows.Forms.Button();
+            this.buttonC = new System.Windows.Forms.Button();
+            this.buttonCE = new System.Windows.Forms.Button();
+            this.buttonDecimal = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // numBox
@@ -208,6 +212,7 @@ namespace ShiftOS.WinForms.Applications
             this.buttonMinus.TabIndex = 14;
             this.buttonMinus.Text = "-";
             this.buttonMinus.UseVisualStyleBackColor = true;
+            this.buttonMinus.Click += new System.EventHandler(this.buttonMinus_Click);
             // 
             // buttonMultiply
             // 
@@ -217,11 +222,57 @@ namespace ShiftOS.WinForms.Applications
             this.buttonMultiply.TabIndex = 15;
             this.buttonMultiply.Text = "x";
             this.buttonMultiply.UseVisualStyleBackColor = true;
+            this.buttonMultiply.Click += new System.EventHandler(this.buttonMultiply_Click);
+            // 
+            // buttonDivide
+            // 
+            this.buttonDivide.Location = new System.Drawing.Point(125, 123);
+            this.buttonDivide.Name = "buttonDivide";
+            this.buttonDivide.Size = new System.Drawing.Size(22, 22);
+            this.buttonDivide.TabIndex = 16;
+            this.buttonDivide.Text = "/";
+            this.buttonDivide.UseVisualStyleBackColor = true;
+            this.buttonDivide.Click += new System.EventHandler(this.buttonDivide_Click);
+            // 
+            // buttonC
+            // 
+            this.buttonC.Location = new System.Drawing.Point(88, 39);
+            this.buttonC.Name = "buttonC";
+            this.buttonC.Size = new System.Drawing.Size(31, 22);
+            this.buttonC.TabIndex = 17;
+            this.buttonC.Text = "C";
+            this.buttonC.UseVisualStyleBackColor = true;
+            this.buttonC.Click += new System.EventHandler(this.buttonC_Click);
+            // 
+            // buttonCE
+            // 
+            this.buttonCE.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonCE.Location = new System.Drawing.Point(88, 67);
+            this.buttonCE.Name = "buttonCE";
+            this.buttonCE.Size = new System.Drawing.Size(31, 22);
+            this.buttonCE.TabIndex = 18;
+            this.buttonCE.Text = "CE";
+            this.buttonCE.UseVisualStyleBackColor = true;
+            this.buttonCE.Click += new System.EventHandler(this.buttonCE_Click);
+            // 
+            // buttonDecimal
+            // 
+            this.buttonDecimal.Location = new System.Drawing.Point(32, 123);
+            this.buttonDecimal.Name = "buttonDecimal";
+            this.buttonDecimal.Size = new System.Drawing.Size(22, 22);
+            this.buttonDecimal.TabIndex = 19;
+            this.buttonDecimal.Text = ".";
+            this.buttonDecimal.UseVisualStyleBackColor = true;
+            this.buttonDecimal.Click += new System.EventHandler(this.buttonDecimal_Click);
             // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonDecimal);
+            this.Controls.Add(this.buttonCE);
+            this.Controls.Add(this.buttonC);
+            this.Controls.Add(this.buttonDivide);
             this.Controls.Add(this.buttonMultiply);
             this.Controls.Add(this.buttonMinus);
             this.Controls.Add(this.buttonPlus);
@@ -261,5 +312,9 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button buttonPlus;
         private System.Windows.Forms.Button buttonMinus;
         private System.Windows.Forms.Button buttonMultiply;
+        private System.Windows.Forms.Button buttonDivide;
+        private System.Windows.Forms.Button buttonC;
+        private System.Windows.Forms.Button buttonCE;
+        private System.Windows.Forms.Button buttonDecimal;
     }
 }
