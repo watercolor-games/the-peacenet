@@ -601,7 +601,7 @@
 	{
 		Name: "Calculator",
 		Cost: 1000,
-		Dependencies: "wm_free_placement; desktop",
+		Dependencies: "wm_free_placement;desktop",
 		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!"
 	},
 	{
@@ -609,5 +609,11 @@
 		Cost: 350,
 		Dependencies: "calculator;app_launcher",
 		Description: "Add an App Launcher Entry for the Calculator!"
+	},
+	{
+		Name: "Calc Equals Button",
+		Cost: 600,
+		Dependencies: "calculator",
+		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
 	}
 ]

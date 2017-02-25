@@ -51,6 +51,13 @@ namespace ShiftOS.WinForms.Applications
         private void Template_Load(object sender, EventArgs e)
         {
             justopened = true;
+
+            prepareButtons();
+        }
+
+        private void prepareButtons()
+        {
+            if (!ShiftoriumFrontend.UpgradeInstalled("calc_equals_button")) buttonEquals.Visible = false;
         }
 
         public void OnLoad()
@@ -71,6 +78,11 @@ namespace ShiftOS.WinForms.Applications
         public void OnUpgrade()
         {
             throw new NotImplementedException();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            numBox.Text = "" + "1";
         }
     }
 }
