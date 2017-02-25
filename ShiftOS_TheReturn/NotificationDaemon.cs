@@ -45,12 +45,14 @@ namespace ShiftOS.Engine
 
         public static void MarkRead(int note)
         {
+            var lst = new List<Notification>(GetAllFromFile());
             var notes = GetAllFromFile();
             if (note >= notes.Length || note < 0)
                 throw new ArgumentOutOfRangeException("note", new Exception("You cannot mark a notification that does not exist as read."));
 
             notes[note].Read = true;
             WriteNotes(notes);
+            NotificationMade?.Invoke(lst[lst.Count - 1]);
         }
 
         public static int GetUnreadCount()
