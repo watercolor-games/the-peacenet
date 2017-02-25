@@ -35,14 +35,12 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Calculator", true, "al_calculator", "Accessories")]
+    [Launcher("Calculator", false, null, "Accessories")]
     [RequiresUpgrade("calculator")]
     [WinOpen("calculator")]
     [DefaultIcon("iconCalculator")]
     public partial class Calculator : UserControl, IShiftOSWindow
     {
-        public bool justopened = false;
-
         public Calculator()
         {
             InitializeComponent();
@@ -50,39 +48,35 @@ namespace ShiftOS.WinForms.Applications
 
         private void Template_Load(object sender, EventArgs e)
         {
-            justopened = true;
-
-            prepareButtons();
         }
 
         private void prepareButtons()
         {
-            if (!ShiftoriumFrontend.UpgradeInstalled("calc_equals_button")) buttonEquals.Visible = false;
+            buttonEquals.Visible = Shiftorium.UpgradeInstalled("calc_equals_button");
         }
 
         public void OnLoad()
         {
-            throw new NotImplementedException();
+            prepareButtons();
         }
 
         public void OnSkinLoad()
         {
-            throw new NotImplementedException();
         }
 
         public bool OnUnload()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void OnUpgrade()
         {
-            throw new NotImplementedException();
+            prepareButtons();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            numBox.Text = "" + "1";
+            numBox.Text = "1";
         }
     }
 }
