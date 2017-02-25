@@ -25,11 +25,14 @@ namespace ShiftOS.Engine
             Utils.WriteAllText(Paths.GetPath("notifications.dat"), JsonConvert.SerializeObject(notes, Formatting.Indented));
         }
 
+        public static event Action<Notification> NotificationMade;
+
         public static void AddNotification(NotificationType note, object data)
         {
             var lst = new List<Notification>(GetAllFromFile());
             lst.Add(new Engine.Notification(note, data));
             WriteNotes(lst.ToArray());
+            NotificationMade?.Invoke(lst[lst.Count - 1]);
         }
 
 
