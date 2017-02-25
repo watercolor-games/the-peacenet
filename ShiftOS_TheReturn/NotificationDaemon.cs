@@ -37,6 +37,13 @@ namespace ShiftOS.Engine
 
         public static event Action NotificationRead;
 
+        public static void MarkAllRead()
+        {
+            var notes = GetAllFromFile();
+            for (int i = 0; i < notes.Length; i++)
+                MarkRead(i);
+        }
+
         public static void MarkRead(int note)
         {
             var notes = GetAllFromFile();
@@ -56,6 +63,7 @@ namespace ShiftOS.Engine
                     c++; //gahh I hate that programming language.
             return c;
         }
+
     }
 
     public struct Notification
