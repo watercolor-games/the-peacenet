@@ -49,11 +49,6 @@ namespace ShiftOS.WinForms
     public partial class WinformsDesktop : Form, IDesktop
     {
         /// <summary>
-        /// Occurs when window added.
-        /// </summary>
-        private static event Action<WindowBorder> windowAdded;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
         /// </summary>
         public WinformsDesktop()

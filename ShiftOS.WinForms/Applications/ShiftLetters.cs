@@ -177,6 +177,7 @@ namespace ShiftOS.WinForms.Applications
             if (ShiftoriumFrontend.UpgradeInstalled("sl_contributors_wordlist")) comboBox1.Items.Add("Contributors");
             if (Shiftorium.UpgradeInstalled("sl_operating_systems_wordlist")) comboBox1.Items.Add("Operating Systems");
             btnrestart.Visible = true;
+            lblword.Left = (this.Width - lblword.Width) / 2;
         }
 
         public void OnUpgrade()
@@ -191,7 +192,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad()
         {
-
+            lblword.Left = (this.Width - lblword.Width) / 2;
         }
 
         string lastword = "";

@@ -194,10 +194,7 @@ namespace ShiftOS.WinForms.Tools
                     }
                 }
 
-                Image dithered = null;
-
-                
-                                ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
+                ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
 
                 ctrl.Font = SkinEngine.LoadedSkin.MainFont;
 
