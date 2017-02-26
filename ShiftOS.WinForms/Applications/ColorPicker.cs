@@ -2349,5 +2349,15 @@ namespace ShiftOS.WinForms.Applications
         public void OnUpgrade()
         {
         }
+
+        private void Label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Label17_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

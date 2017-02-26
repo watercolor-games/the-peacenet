@@ -66,9 +66,59 @@ namespace ShiftOS.WinForms.Applications
             lbllives.Visible = true;
             lblword.Visible = true;
             btnrestart.Visible = false;
-            if ((String)comboBox1.SelectedItem == "ShiftOS") word = shiftWordlist[rng.Next(shiftWordlist.Count)];
-            else if ((String)comboBox1.SelectedItem == "Contributors") word = contributorsWordlist[rng.Next(contributorsWordlist.Count)];
-            else throw new NullWordlistException(":P");
+
+            var wordlist = new List<string>
+            {
+                "shiftos",
+                "devx",
+                "artpad",
+                "shifter",
+                "pong",
+                "shiftorium",
+                "codepoints",
+                "shiftletters",
+                "shops",
+                "mud",
+                "notification",
+                "namechanger",
+                "skinning",
+                "skinloader",
+                "calculator",
+                "fileskimmer",
+                "lua",
+                "shiftnet",
+                "terminal",
+                "textpad"
+            };
+            foreach(var w in shiftWordlist)
+            {
+                if (!wordlist.Contains(w.ToLower())
+                {
+                    wordlist.Add(w.ToLower());
+                }
+            }
+            foreach(var w in contributorsWordlist)
+            {
+                if (!wordlist.Contains(w.ToLower())
+                {
+                    wordlist.Add(w.ToLower());
+                }
+            }
+            //This can diversify the amount of ShiftOS-related words in the game.
+            foreach(var upg in Shiftorium.GetDefaults())
+            {
+                foreach(var w in upg.Name.Split(' '))
+                {
+                    if (!wordlist.Contains(w.ToLower()))
+                        wordlist.Add(w.ToLower());
+                }
+            }
+            word = wordlist[rng.Next(wordlist.Count)];
+            while(word == lastword)
+            {
+                word = wordlist[rng.Next(wordlist.Count)];
+            }
+            lastword = word; //to make the game not choose the same word twice or more in a row
             lbllives.Text = "You have 7 lives left!";
             lblword.Text = "";
             for (int i=0; i<word.Length; i++)
@@ -99,6 +149,8 @@ namespace ShiftOS.WinForms.Applications
         {
 
         }
+
+        string lastword = "";
 
         private void tbguess_TextChanged(object sender, EventArgs e)
         {

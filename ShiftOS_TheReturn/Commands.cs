@@ -358,8 +358,8 @@ namespace ShiftOS.Engine
         [Command("shutdown")]
         public static bool Shutdown()
         {
-            SaveSystem.ShuttingDown = true;
             TerminalBackend.InvokeCommand("sos.save");
+            SaveSystem.ShuttingDown = true;
             AppearanceManager.Exit();
             return true;
         }

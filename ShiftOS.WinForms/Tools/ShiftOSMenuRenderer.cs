@@ -441,11 +441,31 @@ namespace ShiftOS.WinForms.Tools
         }
         public override Color MenuStripGradientBegin
         {
-            get { return LoadedSkin.Menu_MenuStripGradientBegin; }
+            get
+            {
+                if (LoadedSkin.AppLauncherImage != null)
+                {
+                    return Color.Transparent;
+                }
+                else
+                {
+                    return LoadedSkin.Menu_MenuStripGradientBegin;
+                }
+            }
         }
         public override Color MenuStripGradientEnd
         {
-            get { return LoadedSkin.Menu_MenuStripGradientEnd; }
+            get
+            {
+                if (LoadedSkin.AppLauncherImage != null)
+                {
+                    return Color.Transparent;
+                }
+                else
+                {
+                    return LoadedSkin.Menu_MenuStripGradientEnd;
+                }
+            }
         }
         public override Color MenuItemSelected
         {

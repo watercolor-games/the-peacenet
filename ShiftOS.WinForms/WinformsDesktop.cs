@@ -275,7 +275,11 @@ namespace ShiftOS.WinForms
                     }));
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
                     desktoppanel.BackgroundImage = ((Bitmap)GetImage("desktoppanel"));
-                    if (desktoppanel.BackgroundImage != null) ((Bitmap)desktoppanel.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
+                    if (desktoppanel.BackgroundImage != null)
+                    {
+                        ((Bitmap)desktoppanel.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
+                        desktoppanel.BackColor = Color.Transparent;
+                    }
                     menuStrip1.BackgroundImage = GetImage("applauncher");
                     if (menuStrip1.BackgroundImage != null) ((Bitmap)menuStrip1.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
                     lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
