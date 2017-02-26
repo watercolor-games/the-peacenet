@@ -58,6 +58,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Applications\About.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Artpad.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -256,6 +262,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WinformsWindowManager.cs" />
+    <EmbeddedResource Include="Applications\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\Artpad.resx">
       <DependentUpon>Artpad.cs</DependentUpon>
     </EmbeddedResource>
@@ -512,6 +521,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\RegularDesktopGlyph.bmp" />
+    <None Include="Resources\justthes.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
