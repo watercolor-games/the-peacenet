@@ -269,14 +269,28 @@ namespace ShiftOS.WinForms
                         this.BackgroundImage = img;
                     }));
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
-                    desktoppanel.BackgroundImage = ((Bitmap)GetImage("desktoppanel"));
+
+                    var pnlimg = GetImage("desktoppanel");
+                    if (pnlimg != null)
+                    {
+                        var bmp = new Bitmap(pnlimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        pnlimg = bmp;
+                    }
+
+                    desktoppanel.BackgroundImage = pnlimg;
                     if (desktoppanel.BackgroundImage != null)
                     {
-                        ((Bitmap)desktoppanel.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
                         desktoppanel.BackColor = Color.Transparent;
                     }
-                    menuStrip1.BackgroundImage = GetImage("applauncher");
-                    if (menuStrip1.BackgroundImage != null) ((Bitmap)menuStrip1.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
+                    var appimg = GetImage("applauncher");
+                    if (appimg != null)
+                    {
+                        var bmp = new Bitmap(appimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        appimg = bmp;
+                    }
+                    menuStrip1.BackgroundImage = appimg;
                     lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
                     lbtime.Font = LoadedSkin.DesktopPanelClockFont;
                     if (desktoppanel.BackgroundImage == null)
@@ -556,6 +570,11 @@ namespace ShiftOS.WinForms
         private void btnnotifications_Click(object sender, EventArgs e)
         {
             AppearanceManager.SetupWindow(new Applications.Notifications());
+        }
+
+        private void desktoppanel_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
         }
     }
 

@@ -76,6 +76,7 @@ namespace ShiftOS.WinForms
             this.desktoppanel.Name = "desktoppanel";
             this.desktoppanel.Size = new System.Drawing.Size(1296, 24);
             this.desktoppanel.TabIndex = 0;
+            this.desktoppanel.Paint += new System.Windows.Forms.PaintEventHandler(this.desktoppanel_Paint);
             // 
             // btnnotifications
             // 
