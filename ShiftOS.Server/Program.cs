@@ -331,6 +331,10 @@ namespace ShiftOS.Server
                                                         {
                                                             throwOnNull = false;
                                                         }
+                                                        else if(mAttrib.ExpectedType == typeof(string))
+                                                        {
+                                                            contents = msg.Contents;
+                                                        }
                                                         else
                                                         {
                                                             //object type

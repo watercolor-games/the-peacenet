@@ -243,8 +243,7 @@ namespace ShiftOS.WinForms.Applications
         }
 
         private Shop editingShop = null;
-        private string editingShopOldName = "";
-
+        
         public void ShowCreateShop()
         {
             this.Invoke(new Action(() =>

@@ -85,19 +85,27 @@ namespace ShiftOS.Server
                     }
                     catch { }
                 }
-                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                try
                 {
-                    Name = "mud_login_denied",
-                    GUID = "server"
-                }));
+                    Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                    {
+                        Name = "mud_login_denied",
+                        GUID = "server"
+                    }));
+                }
+                catch { }
             }
             else
             {
-                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                try
                 {
-                    Name = "mud_login_denied",
-                    GUID = "server"
-                }));
+                    Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                    {
+                        Name = "mud_login_denied",
+                        GUID = "server"
+                    }));
+                }
+                catch { }
             }
 
         }

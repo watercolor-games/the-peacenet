@@ -49,11 +49,6 @@ namespace ShiftOS.WinForms
     public partial class WinformsDesktop : Form, IDesktop
     {
         /// <summary>
-        /// Occurs when window added.
-        /// </summary>
-        private static event Action<WindowBorder> windowAdded;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
         /// </summary>
         public WinformsDesktop()
@@ -274,14 +269,29 @@ namespace ShiftOS.WinForms
                         this.BackgroundImage = img;
                     }));
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
-                    desktoppanel.BackgroundImage = ((Bitmap)GetImage("desktoppanel"));
+                    desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
+
+                    var pnlimg = GetImage("desktoppanel");
+                    if (pnlimg != null)
+                    {
+                        var bmp = new Bitmap(pnlimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        pnlimg = bmp;
+                    }
+
+                    desktoppanel.BackgroundImage = pnlimg;
                     if (desktoppanel.BackgroundImage != null)
                     {
-                        ((Bitmap)desktoppanel.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
                         desktoppanel.BackColor = Color.Transparent;
                     }
-                    menuStrip1.BackgroundImage = GetImage("applauncher");
-                    if (menuStrip1.BackgroundImage != null) ((Bitmap)menuStrip1.BackgroundImage).MakeTransparent(Color.FromArgb(1, 0, 1));
+                    var appimg = GetImage("applauncher");
+                    if (appimg != null)
+                    {
+                        var bmp = new Bitmap(appimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        appimg = bmp;
+                    }
+                    menuStrip1.BackgroundImage = appimg;
                     lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
                     lbtime.Font = LoadedSkin.DesktopPanelClockFont;
                     if (desktoppanel.BackgroundImage == null)
@@ -297,7 +307,6 @@ namespace ShiftOS.WinForms
                     sysmenuholder.Size = LoadedSkin.AppLauncherHolderSize;
                     apps.Size = sysmenuholder.Size;
                     menuStrip1.Renderer = new ShiftOSMenuRenderer(new AppLauncherColorTable());
-                    desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
                     desktoppanel.BackgroundImageLayout = GetImageLayout("desktoppanel");
                     desktoppanel.Height = LoadedSkin.DesktopPanelHeight;
                     if (LoadedSkin.DesktopPanelPosition == 1)
@@ -561,6 +570,11 @@ namespace ShiftOS.WinForms
         private void btnnotifications_Click(object sender, EventArgs e)
         {
             AppearanceManager.SetupWindow(new Applications.Notifications());
+        }
+
+        private void desktoppanel_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
         }
     }
 

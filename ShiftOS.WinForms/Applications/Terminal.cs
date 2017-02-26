@@ -187,7 +187,6 @@ namespace ShiftOS.WinForms.Applications
 
 
         public static event TextSentEventHandler TextSent;
-        public event EventHandler OnComplete;
 
         public void ResetAllKeywords()
         {

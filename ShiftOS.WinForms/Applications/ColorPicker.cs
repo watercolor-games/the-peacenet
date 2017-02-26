@@ -1049,7 +1049,6 @@ namespace ShiftOS.WinForms.Applications
                 case 1:
                     pnlpink1.BackColor = Color.HotPink;
                     pnlpink1.Show();
-                    break;
                     pnlpink1.BackColor = Color.DeepPink;
                     pnlpink1.Show();
                     pnlpink2.BackColor = Color.HotPink;

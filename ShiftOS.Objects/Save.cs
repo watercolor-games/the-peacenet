@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -50,6 +50,8 @@ namespace ShiftOS.Objects
         public string SystemName { get; set; }
 
         private dynamic _settings = new SettingsObject();
+
+        public int ShiftnetSubscription { get; set; }
 
         public Guid ID { get; set; }
 
