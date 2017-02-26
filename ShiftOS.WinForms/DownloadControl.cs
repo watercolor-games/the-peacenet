@@ -58,7 +58,7 @@ namespace ShiftOS.WinForms
                             bytesTransferred += 256;
                             pgprogress.Value = bytesTransferred;
                             lbshiftneturl.Text = $@"{d.ShiftnetUrl}
-{bytesTransferred} B out of {d.Bytes.Length} B transferred at 256 B per second.
+{bytesTransferred} B out of {d.Bytes.Length} B transferred at {DownloadManager.GetDownloadSpeed()} B per second.
 To {d.Destination}";
                             pgprogress.Maximum = d.Bytes.Length;
                         }

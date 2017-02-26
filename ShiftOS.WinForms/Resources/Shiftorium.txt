@@ -8,7 +8,7 @@
 	},
 	{
 		Name: "AL Calculator",
-		Cost: 350,
+		Cost: 150,
 		Dependencies: "calculator;app_launcher",
 		Description: "Add an App Launcher Entry for the Calculator!"
 	},
@@ -68,7 +68,7 @@
 	},
 	{
 		Name: "AL Notifications",
-		Cost: 125,
+		Cost: 150,
 		Dependencies: "app_launcher",
 		Description: "Want to open the Notifications application from within the App Launcher? This upgrade is for you."
 	},
@@ -82,7 +82,7 @@
 	},
 	{
 		Name: "AL ShiftLetters",
-		Cost: 100,
+		Cost: 150,
 		Dependencies: "app_launcher;shiftletters",
 		Description: "This upgrade allows you to find ShiftLetters in your App Launcher."
 	},
@@ -160,7 +160,7 @@
 	},
 	{
 		Name: "AL MUD Control Centre",
-		Cost: 75,
+		Cost: 150,
 		Dependencies: "mud_fundamentals;app_launcher",
 		Description: "Want to access your MUD profile, legions, jobs and shops, but don't want to open your Terminal? This upgrade is for you!"
 	},
@@ -202,7 +202,7 @@
 	},
 	{
 		Name: "AL Skin Loader",
-		Cost: 125,
+		Cost: 150,
 		Description: "Buy this upgrade to add an entry for the Skin Loader to the App Launcher.",
 		Dependencies: "app_launcher;skinning"
 	},
@@ -226,7 +226,7 @@
 	},
 	{
 		Name: "App Launcher",
-		Cost: 10000,
+		Cost: 7500,
 		Description: "It may be expensive, but having an easy-access menu to all your apps is very valuable.",
 		Dependencies:"desktop;wm_unlimited_windows"
 	},
@@ -238,7 +238,7 @@
 	},
 	{
 		Name: "AL MUD Cracker",
-		Cost: 100,
+		Cost: 150,
 		Description: "Add a launcher item for the MUD cracker.",
 		Dependencies: "mud_cracker;app_launcher"
 	},
@@ -250,19 +250,19 @@
 	},
 	{
 		Name: "Shifter",
-		Cost: 20000,
+		Cost: 10000,
 		Description: "Tired of the green and black look that is ShiftOS's default skin? Use the Shifter to shift it your way.",
 		Dependencies: "desktop;wm_unlimited_windows",
 	},
 	{
 		Name: "Name Changer",
-		Cost: 10000,
+		Cost: 5000,
 		Description: "Are you not a linux person and want the terminal to be called Command Prompt? Well this app is for you!",
 		Dependencies: "shifter",
 	},
 	{
 		Name: "AL Name Changer",
-		Cost: 200,
+		Cost: 150,
 		Description: "Launch the Name Changer from the app launcher.",
 		Dependencies: "name_changer",
 	},
@@ -274,25 +274,25 @@
 	},
 	{
 		Name: "AL Shifter",
-		Cost: 500,
+		Cost: 150,
 		Description: "Launch the Shifter from the app launcher.",
 		Dependencies: "app_launcher;shifter"
 	},
 	{
 		Name: "AL Pong",
-		Cost: 100,
+		Cost: 150,
 		Description: "Launch Pong from the app launcher.",
 		Dependencies: "app_launcher"
 	},
 	{
 		Name: "AL Textpad",
-		Cost: 250,
+		Cost: 150,
 		Description: "Write, save and open text documents from the App Launcher.",
 		Dependencies:"app_launcher;textpad"
 	},
 	{
 		Name: "AL File Skimmer",
-		Cost: 200,
+		Cost: 150,
 		Description: "Open the File Skimmer from your App Launcher.",
 		Dependencies:"app_launcher;file_skimmer"
 	},
@@ -304,13 +304,13 @@
 	},
 	{
 		Name: "Desktop",
-		Cost: 10000,
+		Cost: 9000,
 		Description: "Use a fully customizable desktop in place of the terminal to control ShiftOS.",
 		Dependencies: "window_manager"
 	},
 	{
 		Name: "App Icons",
-		Cost: 100,
+		Cost: 400,
 		Description: "So you have a titlebar, well, let's add an icon to it to hopefully make it easier to tell which app is which.",
 		Dependencies: "wm_titlebar;skinning"
 	},
@@ -417,7 +417,7 @@
 	},
 	{
 		Name: "AL MUD Chat",
-		Cost: 125,
+		Cost: 150,
 		Description: "Adds an app launcher entry for the MUD chat application.",
 		Dependencies: "mud_fundamentals;app_launcher"
 	},
@@ -447,7 +447,7 @@
 	},
 	{
 		Name: "Pong Upgrade 2",
-		Cost: 10000,
+		Cost: 8000,
 		Description: "So you lost in pong, it must be sad to lose all the codepoints you've gained. With this upgrade you can save 1 percent of the loss, so at least you get something for losing!",
 		Dependencies: "mud_fundamentals;window_manager;pong_upgrade"
 	},
@@ -459,7 +459,7 @@
 	},
 	{
 		Name: "Audio Player AL",
-		Cost: 300,
+		Cost: 150,
 		Description: "Just another app launcher, making it easier to listen to your favorite songs!",
 		Dependencies: "desktop;wm_free_placement;wav_player"
 	},
@@ -468,43 +468,43 @@
 
 	{
 		Name: "Shift Titlebar",
-		Cost: 100,
+		Cost: 200,
 		Description: "Customize the Titlebar within the Shifter.",
 		Dependencies: "shifter;wm_titlebar"
 	},
 	{
 		Name: "Shift Title Text",
-		Cost: 100,
+		Cost: 200,
 		Description: "Title text looking boring? This upgrade lets you customize the font, color, and position of the Title Text.",
 		Dependencies: "shift_titlebar"
 	},
 	{
 		Name: "Shift Window Borders",
-		Cost: 100,
+		Cost: 200,
 		Description: "Want to customize the look of the ShiftOS window borders? Buy this upgrade and you can customize the color and thickness of the borders.",
 		Dependencies: "shifter"
 	},
 	{
 		Name: "Shift Desktop Panel",
-		Cost: 100,
+		Cost: 200,
 		Description: "Not liking your desktop panel the way it is? Buy this upgrade to allow you to change the color, height, and position of the desktop panel.",
 		Dependencies: "shifter;desktop"
 	},
 	{
 		Name: "Shift App Launcher",
-		Cost: 100,
+		Cost: 200,
 		Description: "You've made your desktop panel look very nice, but your app launcher looks kinda out of place. This upgrade will fix that, allowing you to change the position, size, and appearance of the app launcher button.",
 		Dependencies: "shift_desktop_panel;app_launcher"
 	},
 	{
 		Name: "Shift Panel Clock",
-		Cost: 100,
+		Cost: 200,
 		Dependencies: "shift_desktop_panel;desktop_clock_widget",
 		Description: "That clock is very simple - let's shift it! This upgrade allows you to customize the font and color of the panel clock."
 	},
 	{
 		Name: "Shift Title Buttons",
-		Cost: 100,
+		Cost: 200,
 		Dependencies: "close_button;minimize_button;maximize_button;shift_titlebar",
 		Description: "Those title buttons look very similar and primitive - with this upgrade you can change the size, position, and color of each button."
 	},
@@ -513,7 +513,7 @@
 
 	{
 		Name: "Skinning",
-		Cost: 50000,
+		Cost: 10000,
 		Description: "It may be expensive, but with this upgrade, you can break the limitations of using just solid colors and gradients for your skin and start using images!",
 		Dependencies: "shifter"
 	},
@@ -522,12 +522,12 @@
 	//ARTPAD
 	{
 		Name: "Artpad",
-		Cost: 25000,
+		Cost: 7500,
 		Description: "ArtPad is a very extensible tool that allows you to draw images within ShiftOS. Buy this upgrade to gain access to it through win.open{}!"
 	},
 	{
 		Name: "AL Artpad",
-		Cost: 250,
+		Cost: 150,
 		Description: "Add an App Launcher Entry for Artpad!",
 		Dependencies: "artpad;app_launcher"
 	},
@@ -575,25 +575,25 @@
 	},
 	{
 		Name: "Artpad Pixel Limit 4096",
-		Cost: 4800,
+		Cost: 2600,
 		Dependencies: "artpad_pixel_limit_1024",
 		Description: "Now we can do 1024-pixel images, but how about increasing the limit by 4 times yet again? That'll leave even more room for imagination and drawings!"
 	},
 	{
 		Name: "Artpad Pixel Limit 16384",
-		Cost: 19200,
+		Cost: 4800,
 		Dependencies: "artpad_pixel_limit_4096",
 		Description: "We're ever-so-slightly approaching limitless possibilities. With this upgrade, images in ArtPad will be able to have up to 16384 pixels. We can make desktop backgrounds for small monitors!"
 	},
 	{
 		Name: "Artpad Pixel Limit 65536",
-		Cost: 76800,
+		Cost: 7000,
 		Dependencies: "artpad_pixel_limit_16384",
 		Description: "Wow! This might be the last time we'll have to deal with pixel limits. It's amazing how far we've came since 2-pixel gradients. Now let's go even further."
 	},
 	{
 		Name: "Artpad Limitless Pixels",
-		Cost: 100000,
+		Cost: 12000,
 		Dependencies: "artpad_pixel_limit_65536",
 		Description: "We have a pretty high pixel limit, but with this upgrade, pixel limits are no more! With limitless pixels comes limitless creativity. Have fun!"
 	},
@@ -769,7 +769,7 @@
 	},
 	{
 		Name: "AL Shiftorium",
-		Cost: 250,
+		Cost: 150,
 		Dependencies: "shiftorium_gui;app_launcher",
 		Description: "Add an App Launcher Entry for the Shiftorium!"
 	},

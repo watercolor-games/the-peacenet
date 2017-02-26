@@ -104,7 +104,10 @@ namespace ShiftOS.WinForms.Applications
 </html>";
 
             string body = CommonMark.CommonMarkConverter.Convert(markdown);
-
+            for(int i = 0; i <= Encoding.UTF8.GetBytes(body).Length; i += DownloadManager.GetDownloadSpeed())
+            {
+                //halt the page load until 'download' finishes.
+            }
             html = html.Replace("<markdown/>", body);
             return html;
         }

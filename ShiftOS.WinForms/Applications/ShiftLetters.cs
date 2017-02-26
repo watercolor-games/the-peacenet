@@ -215,7 +215,7 @@ namespace ShiftOS.WinForms.Applications
                         if (!lblword.Text.Contains("_"))
                         {
                             int oldlives = lives;
-                            int cp = word.Length * oldlives;
+                            int cp = (word.Length * oldlives) * 5;
                             SaveSystem.TransferCodepointsFrom("shiftletters", cp);
                             StartGame();
                         }

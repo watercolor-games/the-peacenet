@@ -167,14 +167,33 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
+        /// <summary>
+        /// Gets a Shiftnet download speed in bytes based on the user's subscription.
+        /// </summary>
+        /// <returns>Download speed in bytes.</returns>
+        public static int GetDownloadSpeed()
+        {
+            switch (SaveSystem.CurrentSave.ShiftnetSubscription)
+            {
+                case 0:
+                    return 256/*B*/;
+                case 1:
+                    return 1024 * 1024/*KB*/;
+                case 2:
+                    return 1024 * 10240/*KB*/;
+                case 3:
+                    return 1024 * 1024 * 1024/*MB*/;
+            }
+            return 256;
+        }
+
         public static void StartDownload(Download down)
         {
             var t = new Thread(() =>
             {
-                int byteWrite = 256;
                 _downloads.Add(down);
                 DownloadStarted?.Invoke(down);
-                for (int i = 0; i < down.Bytes.Length; i += byteWrite)
+                for (int i = 0; i < down.Bytes.Length; i += GetDownloadSpeed())
                 {
                     Thread.Sleep(1000);
                     _downloads[_downloads.IndexOf(down)].Progress = (int)((float)(i / down.Bytes.Length) * 100);
@@ -196,5 +215,26 @@ namespace ShiftOS.WinForms.Applications
         public string Destination { get; set; }
         public byte[] Bytes { get; set; }
         public int Progress { get; set; }
+    }
+
+    [Namespace("dev")]
+    public static class DownloaderDebugCommands
+    {
+        [Command("setsubscription", description ="Use to set the current shiftnet subscription.", usage ="{value:int32}")]
+        [RequiresArgument("value")]
+        public static bool SetShiftnetSubscription(Dictionary<string, object> args)
+        {
+            int val = 0;
+            if(int.TryParse(args["value"].ToString(), out val) == true)
+            {
+                SaveSystem.CurrentSave.ShiftnetSubscription = val;
+                SaveSystem.SaveGame();
+            }
+            else
+            {
+                Console.WriteLine("Not a valid 32-bit integer.");
+            }
+            return true;
+        }
     }
 }
