@@ -49,8 +49,8 @@ namespace ShiftOS.WinForms.Applications
         List<String> shiftWordlist = new List<string> { "shiftos", "devx", "artpad", "shifter", "pong",
                 "shiftorium", "codepoints", "shiftletters", "shops", "mud", "notification", "namechanger",
                 "skinning", "skinloader", "calculator", "fileskimmer", "lua", "shiftnet", "terminal", "textpad"};
-        List<String> contributorsWordlist = new List<string> { "12padams", "carverh", "computelinux", "lempamo",
-                "wowmom98", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
+        List<String> contributorsWordlist = new List<string> { "philipadams", "carverh", "computelinux", "lempamo",
+                "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
 
         public ShiftLetters()
         {

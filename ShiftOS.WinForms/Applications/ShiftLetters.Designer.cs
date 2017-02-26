@@ -86,7 +86,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbllives.Name = "lbllives";
             this.lbllives.Size = new System.Drawing.Size(310, 13);
             this.lbllives.TabIndex = 3;
-            this.lbllives.Text = "To play, guess numbers and letters by typing in the box.";
+            this.lbllives.Text = "To play, guess letters by typing in the box.";
             this.lbllives.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnrestart
