@@ -794,4 +794,10 @@
 		Dependencies: "shiftsweeper",
 		Description: "ShiftSweeper getting too easy? Obviously, since you can only play Easy difficulty! However, with this Medium button, you can get a better challenge, and more codepoints!"
 	},
+	{
+		Name: "ShiftSweeper Hard",
+		Cost: 900,
+		Dependencies: "shiftsweeper_medium",
+		Description: "Is ShiftSweeper still too easy for you? Buy the Hard difficulty and you can try to find 99 mines! It may be extremely difficult, but the reward is massive!"
+	},
 ]

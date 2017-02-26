@@ -178,6 +178,12 @@
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ShiftSweeper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShiftSweeper.Designer.cs">
+      <DependentUpon>ShiftSweeper.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\ShopItemCreator.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -238,6 +244,11 @@
     </Compile>
     <Compile Include="Oobe.Designer.cs">
       <DependentUpon>Oobe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
@@ -322,6 +333,9 @@
     <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShiftSweeper.resx">
+      <DependentUpon>ShiftSweeper.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShopItemCreator.resx">
       <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </EmbeddedResource>
@@ -345,14 +359,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>
     </EmbeddedResource>
@@ -528,6 +537,10 @@
   <ItemGroup>
     <None Include="Resources\RegularDesktopGlyph.bmp" />
     <None Include="Resources\justthes.png" />
+    <None Include="Resources\SweeperClickFace.png" />
+    <None Include="Resources\SweeperLoseFace.png" />
+    <None Include="Resources\SweeperNormalFace.png" />
+    <None Include="Resources\SweeperWinFace.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
@@ -551,8 +564,10 @@
     <Content Include="SystemIcons\iconorcwrite.png" />
     <Content Include="SystemIcons\iconPong.png" />
     <Content Include="SystemIcons\iconShifter.png" />
+    <None Include="SystemIcons\iconShiftLetters.png" />
     <Content Include="SystemIcons\iconShiftnet.png" />
     <Content Include="SystemIcons\iconShiftorium.png" />
+    <None Include="SystemIcons\iconShiftSweeper.png" />
     <Content Include="SystemIcons\iconshutdown.png" />
     <Content Include="SystemIcons\iconSkinLoader.png" />
     <Content Include="SystemIcons\iconSkinShifter.png" />

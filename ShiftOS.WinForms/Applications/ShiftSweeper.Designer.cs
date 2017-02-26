@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.minefieldPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonE = new System.Windows.Forms.Button();
             this.buttonM = new System.Windows.Forms.Button();
             this.buttonH = new System.Windows.Forms.Button();
+            this.lblmines = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -40,24 +41,38 @@
             // 
             this.pictureBox1.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.SweeperNormalFace;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Location = new System.Drawing.Point(110, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(150, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // tableLayoutPanel1
+            // minefieldPanel
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 39);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(244, 215);
-            this.tableLayoutPanel1.TabIndex = 1;
+            this.minefieldPanel.ColumnCount = 9;
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.Location = new System.Drawing.Point(4, 40);
+            this.minefieldPanel.Name = "minefieldPanel";
+            this.minefieldPanel.RowCount = 9;
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.minefieldPanel.Size = new System.Drawing.Size(329, 215);
+            this.minefieldPanel.TabIndex = 1;
             // 
             // buttonE
             // 
@@ -67,10 +82,11 @@
             this.buttonE.TabIndex = 2;
             this.buttonE.Text = "Easy";
             this.buttonE.UseVisualStyleBackColor = true;
+            this.buttonE.Click += new System.EventHandler(this.buttonE_Click);
             // 
             // buttonM
             // 
-            this.buttonM.Location = new System.Drawing.Point(86, 261);
+            this.buttonM.Location = new System.Drawing.Point(129, 261);
             this.buttonM.Name = "buttonM";
             this.buttonM.Size = new System.Drawing.Size(75, 23);
             this.buttonM.TabIndex = 3;
@@ -79,35 +95,47 @@
             // 
             // buttonH
             // 
-            this.buttonH.Location = new System.Drawing.Point(168, 261);
+            this.buttonH.Location = new System.Drawing.Point(258, 261);
             this.buttonH.Name = "buttonH";
             this.buttonH.Size = new System.Drawing.Size(75, 23);
             this.buttonH.TabIndex = 4;
             this.buttonH.Text = "Hard";
             this.buttonH.UseVisualStyleBackColor = true;
             // 
+            // lblmines
+            // 
+            this.lblmines.AutoSize = true;
+            this.lblmines.Location = new System.Drawing.Point(188, 3);
+            this.lblmines.Name = "lblmines";
+            this.lblmines.Size = new System.Drawing.Size(47, 13);
+            this.lblmines.TabIndex = 5;
+            this.lblmines.Text = "Mines: 0";
+            // 
             // ShiftSweeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblmines);
             this.Controls.Add(this.buttonH);
             this.Controls.Add(this.buttonM);
             this.Controls.Add(this.buttonE);
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.minefieldPanel);
             this.Controls.Add(this.pictureBox1);
             this.Name = "ShiftSweeper";
-            this.Size = new System.Drawing.Size(275, 333);
+            this.Size = new System.Drawing.Size(366, 328);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel minefieldPanel;
         private System.Windows.Forms.Button buttonE;
         private System.Windows.Forms.Button buttonM;
         private System.Windows.Forms.Button buttonH;
+        private System.Windows.Forms.Label lblmines;
     }
 }
