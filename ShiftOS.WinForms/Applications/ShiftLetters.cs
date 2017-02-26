@@ -225,7 +225,12 @@ namespace ShiftOS.WinForms.Applications
                 {
                     guessedCharacters = guessedCharacters + charGuessed;
                     lives--;
-                    lbllives.Text = "You have: " + lives + " lives left!";
+                    if (lives == 1)
+                    {
+                        lbllives.Text = "You have 1 life left! Be careful...";
+                    } else {
+                        lbllives.Text = "You have " + lives + " lives left!";
+                    }
                     if (lives == 0)
                     {
                         tbguess.Visible = false;
