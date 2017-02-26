@@ -54,15 +54,10 @@ namespace ShiftOS.WinForms
         string rtext;
         string gtexttotype;
         int charcount;
-        int currentletter;
         int slashcount;
-        int conversationcount = 0;
         Label textgeninput;
-        bool needtoclose = false;
         public bool upgraded = false;
-        int hackeffect;
-        int percentcount;
-
+        
         private bool typing = false;
         
         public void TextType(string texttotype)
@@ -74,7 +69,6 @@ namespace ShiftOS.WinForms
             
             charcount = texttotype.Length;
             gtexttotype = texttotype;
-            currentletter = 0;
             slashcount = 1;
             foreach (var c in gtexttotype)
             {
