@@ -35,6 +35,8 @@
             this.buttonH = new System.Windows.Forms.Button();
             this.lblmines = new System.Windows.Forms.Label();
             this.lbltime = new System.Windows.Forms.Label();
+            this.lblinfo = new System.Windows.Forms.Label();
+            this.lblinfo2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -123,10 +125,30 @@
             this.lbltime.TabIndex = 6;
             this.lbltime.Text = "Time: 0";
             // 
+            // lblinfo
+            // 
+            this.lblinfo.AutoSize = true;
+            this.lblinfo.Location = new System.Drawing.Point(4, 4);
+            this.lblinfo.Name = "lblinfo";
+            this.lblinfo.Size = new System.Drawing.Size(129, 13);
+            this.lblinfo.TabIndex = 7;
+            this.lblinfo.Text = "Left Click to uncover tiles.";
+            // 
+            // lblinfo2
+            // 
+            this.lblinfo2.AutoSize = true;
+            this.lblinfo2.Location = new System.Drawing.Point(4, 22);
+            this.lblinfo2.Name = "lblinfo2";
+            this.lblinfo2.Size = new System.Drawing.Size(114, 13);
+            this.lblinfo2.TabIndex = 8;
+            this.lblinfo2.Text = "Right Click to flag tiles.";
+            // 
             // ShiftSweeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblinfo2);
+            this.Controls.Add(this.lblinfo);
             this.Controls.Add(this.lbltime);
             this.Controls.Add(this.lblmines);
             this.Controls.Add(this.buttonH);
@@ -151,5 +173,7 @@
         private System.Windows.Forms.Button buttonH;
         private System.Windows.Forms.Label lblmines;
         private System.Windows.Forms.Label lbltime;
+        private System.Windows.Forms.Label lblinfo;
+        private System.Windows.Forms.Label lblinfo2;
     }
 }

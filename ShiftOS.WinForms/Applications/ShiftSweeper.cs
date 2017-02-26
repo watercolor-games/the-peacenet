@@ -19,6 +19,7 @@ namespace ShiftOS.WinForms.Applications
     {
         private bool gameplayed = false;
         private int mineCount = 0;
+        private int origminecount;
         private int[,] minemap; //Represents status of tiles. 0-8 = how many mines surrounding. -1 = mine. -2 = flagged mine. -3 to -11 = flagged safe.
         private Timer ticking = new Timer();
         private int minetimer;
@@ -41,8 +42,26 @@ namespace ShiftOS.WinForms.Applications
 
         private void buttonE_Click(object sender, EventArgs e) { startGame(0); }
 
+        private void clearPreviousGame()
+        {
+            if (minemap != null) for (int x = 0; x < minefieldPanel.ColumnCount; x++)
+            {
+                for (int y = 0; y < minefieldPanel.RowCount; y++)
+                {
+                    minemap[x, y] = 0;
+
+                    if (minefieldPanel.GetControlFromPosition(x,y) != null)
+                    {
+                            minefieldPanel.Controls.Remove(minefieldPanel.GetControlFromPosition(x, y));
+                    }
+                }
+            }
+
+        }
+
         private void startGame(int d)
         {
+            clearPreviousGame();
             lbltime.Text = "Time: 0";
             minetimer = 0;
             ticking.Start();
@@ -69,6 +88,7 @@ namespace ShiftOS.WinForms.Applications
                 default:
                     throw new NullReferenceException();
             }
+            origminecount = mineCount;
             lblmines.Text = "Mines: " + mineCount.ToString();
             buttonE.Enabled = false;
             buttonM.Enabled = false;
@@ -155,23 +175,82 @@ namespace ShiftOS.WinForms.Applications
             Button bttnClick = sender as Button;
 
             if (bttnClick == null) return;
-
             if (e.Button == MouseButtons.Left | e.Button == MouseButtons.Middle) return;
+            if (!bttnClick.Enabled) return;
+
+            string[] split = bttnClick.Name.Split(new Char[] { ' ' });
+
+            int x = System.Convert.ToInt32(split[0]);
+            int y = System.Convert.ToInt32(split[1]);
+
+            if (minemap[x,y] < -1)
+            {
+                minemap[x, y] = (minemap[x, y] * -1) - 3;
+                bttnClick.BackgroundImage = Properties.Resources.SweeperTileBlock;
+                mineCount++;
+            }
+            else
+            {
+                minemap[x, y] = (minemap[x, y] * -1) - 3;
+                bttnClick.BackgroundImage = Properties.Resources.SweeperTileFlag;
+                mineCount--;
+            }
+
+            bool wrongflags = false;
+            if (mineCount == 0)
+            {
+                for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
+                {
+                    if (wrongflags) break;
+                    for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
+                    {
+                        if (wrongflags) break;
+                        if (minemap[xx,yy] == -1 | minemap[xx,yy] == -2) wrongflags = true;
+                    }
+                }
+                if (!wrongflags)
+                {
+                    ticking.Enabled = false;
+
+                    buttonE.Enabled = true;
+                    buttonM.Enabled = true;
+                    buttonH.Enabled = true;
+
+                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
+                    {
+                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
+                        {
+                            minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
+                        }
+                    }
+
+                    Int32 cp = 0;
+                    origminecount = origminecount * 10;
+                    if (minetimer < 31) cp = (origminecount * 3);
+                    if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+                    if (minetimer < 91) cp = (origminecount * 2);
+                    if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+                    if (minetimer > 120) cp = (origminecount * 1);
+                    SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
+                    pictureBox1.BackgroundImage = Properties.Resources.SweeperWinFace;
+                    //TODO add win
+                }
+            }
         }
 
         private void mauseHov(object sender, EventArgs e)
         {
-            pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
+            if (ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
         }
 
         private void mauseUp(object sender, MouseEventArgs e)
         {
-            pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
+            if (!ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
         }
 
         private void mouseDwn(object sender, EventArgs e)
         {
-            pictureBox1.BackgroundImage = Properties.Resources.SweeperClickFace;
+            if (!ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperClickFace;
         }
 
         private void bttnOnclick(object sender, EventArgs e)
@@ -196,6 +275,8 @@ namespace ShiftOS.WinForms.Applications
                 buttonE.Enabled = true;
                 buttonM.Enabled = true;
                 buttonH.Enabled = true;
+
+                pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
 
                 for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
                 {
@@ -229,8 +310,8 @@ namespace ShiftOS.WinForms.Applications
                         {
                             if (minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled && minemap[x+xx,y+yy] != -1 && minemap[x + xx, y + yy] != -2)
                             {
-                                minefieldPanel.GetControlFromPosition(x, y).Enabled = false;
-                                if (minemap[x, y] == 0)
+                                minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled = false;
+                                if (minemap[x + xx, y + yy] == 0)
                                 {
                                     removeBlank(x + xx, y + yy);
                                 }
