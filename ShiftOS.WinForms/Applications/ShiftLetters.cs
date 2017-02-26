@@ -92,14 +92,14 @@ namespace ShiftOS.WinForms.Applications
             };
             foreach(var w in shiftWordlist)
             {
-                if (!wordlist.Contains(w.ToLower())
+                if (!wordlist.Contains(w.ToLower()))
                 {
                     wordlist.Add(w.ToLower());
                 }
             }
             foreach(var w in contributorsWordlist)
             {
-                if (!wordlist.Contains(w.ToLower())
+                if (!wordlist.Contains(w.ToLower()))
                 {
                     wordlist.Add(w.ToLower());
                 }
