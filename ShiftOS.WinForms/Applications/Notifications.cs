@@ -32,7 +32,7 @@ namespace ShiftOS.WinForms.Applications
             fllist.Controls.Clear();
 
             bool showNoNotes = true;
-            foreach (var note in NotificationDaemon.GetAllFromFile())
+            foreach (var note in new List<Notification>(NotificationDaemon.GetAllFromFile()).OrderByDescending(n => n.Timestamp))
             {
                 if (note.Read == false)
                 {
