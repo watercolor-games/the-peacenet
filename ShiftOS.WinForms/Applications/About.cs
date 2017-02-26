@@ -27,7 +27,7 @@ namespace ShiftOS.WinForms.Applications
             lbshiftit.Top = label1.Top + label1.Height;
 
             lbaboutdesc.Text = $@"ShiftOS
-Copyright (c) 2017-{DateTime.Now.Year} Michael VanOverbeek and ShiftOS devs
+Copyright (c) 2015-{DateTime.Now.Year} Michael VanOverbeek and ShiftOS devs
 
 Engine version: Milestone 3, 1.0 Beta Series (Developer mode ON)
 Frontend version: 1.0 Beta 1.2
