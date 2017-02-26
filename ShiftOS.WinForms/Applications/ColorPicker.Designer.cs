@@ -354,7 +354,7 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgcontents.Location = new System.Drawing.Point(0, 0);
             this.pgcontents.Name = "pgcontents";
-            this.pgcontents.Size = new System.Drawing.Size(552, 657);
+            this.pgcontents.Size = new System.Drawing.Size(481, 608);
             this.pgcontents.TabIndex = 20;
             // 
             // pnlpinkcolours
@@ -382,7 +382,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpinkcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlpinkcolours.Location = new System.Drawing.Point(0, 521);
             this.pnlpinkcolours.Name = "pnlpinkcolours";
-            this.pnlpinkcolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlpinkcolours.Size = new System.Drawing.Size(481, 46);
             this.pnlpinkcolours.TabIndex = 11;
             this.pnlpinkcolours.Visible = false;
             // 
@@ -657,7 +657,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlredcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlredcolours.Location = new System.Drawing.Point(0, 475);
             this.pnlredcolours.Name = "pnlredcolours";
-            this.pnlredcolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlredcolours.Size = new System.Drawing.Size(481, 46);
             this.pnlredcolours.TabIndex = 10;
             this.pnlredcolours.Visible = false;
             // 
@@ -929,7 +929,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbrowncolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlbrowncolours.Location = new System.Drawing.Point(0, 429);
             this.pnlbrowncolours.Name = "pnlbrowncolours";
-            this.pnlbrowncolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlbrowncolours.Size = new System.Drawing.Size(481, 46);
             this.pnlbrowncolours.TabIndex = 8;
             this.pnlbrowncolours.Visible = false;
             // 
@@ -1201,7 +1201,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlorangecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlorangecolours.Location = new System.Drawing.Point(0, 383);
             this.pnlorangecolours.Name = "pnlorangecolours";
-            this.pnlorangecolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlorangecolours.Size = new System.Drawing.Size(481, 46);
             this.pnlorangecolours.TabIndex = 7;
             this.pnlorangecolours.Visible = false;
             // 
@@ -1473,7 +1473,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlyellowcolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlyellowcolours.Location = new System.Drawing.Point(0, 337);
             this.pnlyellowcolours.Name = "pnlyellowcolours";
-            this.pnlyellowcolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlyellowcolours.Size = new System.Drawing.Size(481, 46);
             this.pnlyellowcolours.TabIndex = 6;
             this.pnlyellowcolours.Visible = false;
             // 
@@ -1745,7 +1745,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgreencolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlgreencolours.Location = new System.Drawing.Point(0, 291);
             this.pnlgreencolours.Name = "pnlgreencolours";
-            this.pnlgreencolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlgreencolours.Size = new System.Drawing.Size(481, 46);
             this.pnlgreencolours.TabIndex = 5;
             this.pnlgreencolours.Visible = false;
             // 
@@ -2017,7 +2017,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbluecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlbluecolours.Location = new System.Drawing.Point(0, 245);
             this.pnlbluecolours.Name = "pnlbluecolours";
-            this.pnlbluecolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlbluecolours.Size = new System.Drawing.Size(481, 46);
             this.pnlbluecolours.TabIndex = 4;
             this.pnlbluecolours.Visible = false;
             // 
@@ -2289,7 +2289,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpurplecolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlpurplecolours.Location = new System.Drawing.Point(0, 199);
             this.pnlpurplecolours.Name = "pnlpurplecolours";
-            this.pnlpurplecolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlpurplecolours.Size = new System.Drawing.Size(481, 46);
             this.pnlpurplecolours.TabIndex = 3;
             this.pnlpurplecolours.Visible = false;
             // 
@@ -2562,7 +2562,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlgraycolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlgraycolours.Location = new System.Drawing.Point(0, 153);
             this.pnlgraycolours.Name = "pnlgraycolours";
-            this.pnlgraycolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlgraycolours.Size = new System.Drawing.Size(481, 46);
             this.pnlgraycolours.TabIndex = 2;
             this.pnlgraycolours.Visible = false;
             // 
@@ -2779,7 +2779,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlanycolours.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlanycolours.Location = new System.Drawing.Point(0, 107);
             this.pnlanycolours.Name = "pnlanycolours";
-            this.pnlanycolours.Size = new System.Drawing.Size(552, 46);
+            this.pnlanycolours.Size = new System.Drawing.Size(481, 46);
             this.pnlanycolours.TabIndex = 1;
             this.pnlanycolours.Visible = false;
             // 
@@ -2813,7 +2813,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtanysgreen.BackColor = System.Drawing.Color.White;
             this.txtanysgreen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtanysgreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtanysgreen.Location = new System.Drawing.Point(100, 22);
+            this.txtanysgreen.Location = new System.Drawing.Point(100, 23);
             this.txtanysgreen.Multiline = true;
             this.txtanysgreen.Name = "txtanysgreen";
             this.txtanysgreen.Size = new System.Drawing.Size(28, 15);
@@ -3046,7 +3046,7 @@ namespace ShiftOS.WinForms.Applications
             this.Panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.Panel1.Location = new System.Drawing.Point(0, 0);
             this.Panel1.Name = "Panel1";
-            this.Panel1.Size = new System.Drawing.Size(552, 107);
+            this.Panel1.Size = new System.Drawing.Size(481, 107);
             this.Panel1.TabIndex = 0;
             // 
             // lblnewcolourrgb
@@ -3074,17 +3074,18 @@ namespace ShiftOS.WinForms.Applications
             this.Label26.Name = "Label26";
             this.Label26.Size = new System.Drawing.Size(145, 18);
             this.Label26.TabIndex = 8;
-            this.Label26.Text = "New Colour";
+            this.Label26.Text = "New Color";
             // 
             // Label17
             // 
             this.Label17.AutoSize = true;
-            this.Label17.Location = new System.Drawing.Point(7, 87);
+            this.Label17.Location = new System.Drawing.Point(29, 87);
             this.Label17.Name = "Label17";
-            this.Label17.Size = new System.Drawing.Size(426, 13);
+            this.Label17.Size = new System.Drawing.Size(414, 13);
             this.Label17.TabIndex = 7;
-            this.Label17.Text = "Click the new colour above to confirm your colour choice or click the old colour " +
-    "to cancel";
+            this.Label17.Text = "Click the new color above to confirm your colour choice or click the old color to" +
+    " cancel";
+            this.Label17.Click += new System.EventHandler(this.Label17_Click);
             // 
             // lbloldcolourrgb
             // 
@@ -3113,8 +3114,9 @@ namespace ShiftOS.WinForms.Applications
             this.Label14.Name = "Label14";
             this.Label14.Size = new System.Drawing.Size(151, 18);
             this.Label14.TabIndex = 4;
-            this.Label14.Text = "Old Colour";
+            this.Label14.Text = "Old Color";
             this.Label14.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.Label14.Click += new System.EventHandler(this.Label14_Click);
             // 
             // pnlnewcolour
             // 
@@ -3133,11 +3135,11 @@ namespace ShiftOS.WinForms.Applications
             // lblobjecttocolour
             // 
             this.lblobjecttocolour.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblobjecttocolour.Location = new System.Drawing.Point(10, 5);
+            this.lblobjecttocolour.Location = new System.Drawing.Point(20, 6);
             this.lblobjecttocolour.Name = "lblobjecttocolour";
             this.lblobjecttocolour.Size = new System.Drawing.Size(423, 23);
             this.lblobjecttocolour.TabIndex = 1;
-            this.lblobjecttocolour.Text = "Close Button Colour";
+            this.lblobjecttocolour.Text = "Close Button Color";
             this.lblobjecttocolour.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // ColorPicker
@@ -3146,7 +3148,7 @@ namespace ShiftOS.WinForms.Applications
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pgcontents);
             this.Name = "ColorPicker";
-            this.Size = new System.Drawing.Size(552, 657);
+            this.Size = new System.Drawing.Size(481, 608);
             this.Load += new System.EventHandler(this.Color_Picker_Load);
             this.pgcontents.ResumeLayout(false);
             this.pnlpinkcolours.ResumeLayout(false);
