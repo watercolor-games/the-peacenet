@@ -778,11 +778,20 @@
        Cost: 2500,
        Dependencies: "shiftorium_gui",
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
-    }
+    },
+
+	// SHIFTSWEEPER
+
 	{
 		Name: "ShiftSweeper",
 		Cost: 800,
 		Dependencies: "app_launcher;shiftletters",
 		Description: "Getting bored with Pong and ShiftLetters? Try this BRAND NEW game called ShiftSweeper!"
+	},
+	{
+		Name: "ShiftSweeper Medium",
+		Cost: 900,
+		Dependencies: "shiftsweeper",
+		Description: "ShiftSweeper getting too easy? Obviously, since you can only play Easy difficulty! However, with this Medium button, you can get a better challenge, and more codepoints!"
 	},
 ]
