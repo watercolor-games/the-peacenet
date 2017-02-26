@@ -52,6 +52,47 @@ namespace ShiftOS.WinForms.Applications
         List<String> contributorsWordlist = new List<string> { "philipadams", "carverh", "computelinux", "lempamo",
                 "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
 
+        List<string> osWordlist = new List<string>
+        {
+            "windows",
+            "longhorn",
+            "memphis",
+            "neptune",
+            "vista",
+            "visopsys",
+            "ubuntu",
+            "linux",
+            "arch",
+            "debian",
+            "redhat",
+            "fedora",
+            "opensuse",
+            "kubuntu",
+            "lubuntu",
+            "xubuntu",
+            "mythbuntu",
+            "ubuntumate",
+            "zorin",
+            "lindows",
+            "msdos",
+            "freedos",
+            "freebsd",
+            "netbsd",
+            "pcbsd",
+            "android",
+            "ios",
+            "macos",
+            "mint",
+            "mikeos",
+            "raspbian",
+            "cosmos",
+            "chicago",
+            "vienna",
+            "whistler",
+            "windowsxp",
+            "windowsforworkgroups"
+        };
+
         public ShiftLetters()
         {
             InitializeComponent();
@@ -67,50 +108,52 @@ namespace ShiftOS.WinForms.Applications
             lblword.Visible = true;
             btnrestart.Visible = false;
 
-            var wordlist = new List<string>
+            bool isShiftOS = comboBox1.SelectedItem.ToString().ToLower() == "shiftos";
+            bool isContributors = comboBox1.SelectedItem.ToString().ToLower() == "contributors";
+            bool isOSes = comboBox1.SelectedItem.ToString().ToLower() == "operating systems";
+
+
+            var wordlist = new List<string>();
+            if (isOSes)
             {
-                "shiftos",
-                "devx",
-                "artpad",
-                "shifter",
-                "pong",
-                "shiftorium",
-                "codepoints",
-                "shiftletters",
-                "shops",
-                "mud",
-                "notification",
-                "namechanger",
-                "skinning",
-                "skinloader",
-                "calculator",
-                "fileskimmer",
-                "lua",
-                "shiftnet",
-                "terminal",
-                "textpad"
-            };
-            foreach(var w in shiftWordlist)
-            {
-                if (!wordlist.Contains(w.ToLower()))
-                {
-                    wordlist.Add(w.ToLower());
-                }
-            }
-            foreach(var w in contributorsWordlist)
-            {
-                if (!wordlist.Contains(w.ToLower()))
-                {
-                    wordlist.Add(w.ToLower());
-                }
-            }
-            //This can diversify the amount of ShiftOS-related words in the game.
-            foreach(var upg in Shiftorium.GetDefaults())
-            {
-                foreach(var w in upg.Name.Split(' '))
+                foreach (var w in osWordlist)
                 {
                     if (!wordlist.Contains(w.ToLower()))
+                    {
                         wordlist.Add(w.ToLower());
+                    }
+                }
+            }
+            if (isShiftOS)
+            {
+                foreach (var w in shiftWordlist)
+                {
+                    if (!wordlist.Contains(w.ToLower()))
+                    {
+                        wordlist.Add(w.ToLower());
+                    }
+                }
+            }
+            else if (isContributors)
+            {
+                foreach (var w in contributorsWordlist)
+                {
+                    if (!wordlist.Contains(w.ToLower()))
+                    {
+                        wordlist.Add(w.ToLower());
+                    }
+                }
+            }
+            if (isShiftOS)
+            {
+                //This can diversify the amount of ShiftOS-related words in the game.
+                foreach (var upg in Shiftorium.GetDefaults())
+                {
+                    foreach (var w in upg.Name.Split(' '))
+                    {
+                        if (!wordlist.Contains(w.ToLower()))
+                            wordlist.Add(w.ToLower());
+                    }
                 }
             }
             word = wordlist[rng.Next(wordlist.Count)];
@@ -132,6 +175,7 @@ namespace ShiftOS.WinForms.Applications
             tbguess.Visible = false;
             comboBox1.Items.Add("ShiftOS");
             if (ShiftoriumFrontend.UpgradeInstalled("sl_contributors_wordlist")) comboBox1.Items.Add("Contributors");
+            if (Shiftorium.UpgradeInstalled("sl_operating_systems_wordlist")) comboBox1.Items.Add("Operating Systems");
             btnrestart.Visible = true;
         }
 
@@ -170,15 +214,9 @@ namespace ShiftOS.WinForms.Applications
                         if (!lblword.Text.Contains("_"))
                         {
                             int oldlives = lives;
-                            tbguess.Visible = false;
-                            lives = 0;
-                            lbllives.Visible = true;
-                            btnrestart.Visible = true;
-                            btnrestart.Text = "Restart";
-                            comboBox1.Visible = true;
                             int cp = word.Length * oldlives;
-                            lbllives.Text = "You earned: " + cp + " codepoints!";
                             SaveSystem.TransferCodepointsFrom("shiftletters", cp);
+                            StartGame();
                         }
                     }
                 }
@@ -210,6 +248,11 @@ namespace ShiftOS.WinForms.Applications
             {
 
             }
+        }
+
+        private void lblword_TextChanged(object sender, EventArgs e)
+        {
+            lblword.Left = (this.Width - lblword.Width) / 2;
         }
     }
 }

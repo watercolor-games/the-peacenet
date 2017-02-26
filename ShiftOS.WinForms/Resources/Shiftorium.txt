@@ -7,6 +7,12 @@
 		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!"
 	},
 	{
+		Name: "SL Operating Systems Wordlist",
+		Cost: 500,
+		Dependencies: "shiftletters",
+		Description: "Know a lot about computer operating systems? This upgrade adds a wordlist to ShiftLetters, full of various Linux distros, Windows codenames and other OS names. All for the low price of 500 Codepoints! It's an incredible value but it's true! Upgrade today... except out of ShiftOS!"
+	},
+	{
 		Name: "AL Calculator",
 		Cost: 350,
 		Dependencies: "calculator;app_launcher",

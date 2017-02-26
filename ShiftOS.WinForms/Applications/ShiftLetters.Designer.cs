@@ -68,8 +68,10 @@ namespace ShiftOS.WinForms.Applications
             this.lblword.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblword.Size = new System.Drawing.Size(302, 22);
             this.lblword.TabIndex = 1;
+            this.lblword.Tag = "header3";
             this.lblword.Text = "Choose a wordlist from the box below.";
             this.lblword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblword.TextChanged += new System.EventHandler(this.lblword_TextChanged);
             // 
             // tbguess
             // 
