@@ -208,7 +208,9 @@ namespace ShiftOS.Engine
             }
             catch
             {
-                throw new ShiftoriumUpgradeLookupException(id);
+                return false;
+                Console.WriteLine("Upgrade " + id + "DNE.");
+                Console.WriteLine();
             }
 
         }
