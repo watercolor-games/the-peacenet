@@ -83,7 +83,21 @@ namespace ShiftOS.WinForms.Applications
                 "terminal",
                 "textpad"
             };
+            //This can diversify the amount of ShiftOS-related words in the game.
+            foreach(var upg in Shiftorium.GetDefaults())
+            {
+                foreach(var w in upg.Name.Split(' '))
+                {
+                    if (!wordlist.Contains(w.ToLower()))
+                        wordlist.Add(w.ToLower());
+                }
+            }
             word = wordlist[rng.Next(wordlist.Count)];
+            while(word == lastword)
+            {
+                word = wordlist[rng.Next(wordlist.Count)];
+            }
+            lastword = word; //to make the game not choose the same word twice or more in a row
             lbllives.Text = "You have 7 lives left!";
             lblword.Text = "";
             for (int i=0; i<word.Length; i++)
@@ -111,6 +125,8 @@ namespace ShiftOS.WinForms.Applications
         {
 
         }
+
+        string lastword = "";
 
         private void tbguess_TextChanged(object sender, EventArgs e)
         {
