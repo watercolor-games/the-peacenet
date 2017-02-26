@@ -69,10 +69,7 @@ namespace ShiftOS.WinForms.Applications
             prepareButtons();
         }
 
-        public void OnSkinLoad()
-        {
-            
-        }
+        public void OnSkinLoad() { }
 
         public bool OnUnload()
         {

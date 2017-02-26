@@ -722,6 +722,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconShiftLetters {
+            get {
+                object obj = ResourceManager.GetObject("iconShiftLetters", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconShiftnet {
             get {
                 object obj = ResourceManager.GetObject("iconShiftnet", resourceCulture);
@@ -742,9 +752,29 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconShiftSweeper {
+            get {
+                object obj = ResourceManager.GetObject("iconShiftSweeper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconshutdown {
             get {
                 object obj = ResourceManager.GetObject("iconshutdown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap iconshutdown1 {
+            get {
+                object obj = ResourceManager.GetObject("iconshutdown1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -792,19 +822,9 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IconTerminal {
+        internal static System.Drawing.Bitmap iconTerminal {
             get {
-                object obj = ResourceManager.GetObject("IconTerminal", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap iconTerminal1 {
-            get {
-                object obj = ResourceManager.GetObject("iconTerminal1", resourceCulture);
+                object obj = ResourceManager.GetObject("iconTerminal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -973,6 +993,46 @@ namespace ShiftOS.WinForms.Properties {
         internal static string strings_en {
             get {
                 return ResourceManager.GetString("strings_en", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SweeperClickFace {
+            get {
+                object obj = ResourceManager.GetObject("SweeperClickFace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SweeperLoseFace {
+            get {
+                object obj = ResourceManager.GetObject("SweeperLoseFace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SweeperNormalFace {
+            get {
+                object obj = ResourceManager.GetObject("SweeperNormalFace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SweeperWinFace {
+            get {
+                object obj = ResourceManager.GetObject("SweeperWinFace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
