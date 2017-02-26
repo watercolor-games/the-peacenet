@@ -46,6 +46,11 @@ namespace ShiftOS.WinForms.Applications
         string word = "";
         static Random rng = new Random();
         string guessedCharacters = "";
+        List<String> shiftWordlist = new List<string> { "shiftos", "devx", "artpad", "shifter", "pong",
+                "shiftorium", "codepoints", "shiftletters", "shops", "mud", "notification", "namechanger",
+                "skinning", "skinloader", "calculator", "fileskimmer", "lua", "shiftnet", "terminal", "textpad"};
+        List<String> contributorsWordlist = new List<string> { "philipadams", "carverh", "computelinux", "lempamo",
+                "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
 
         public ShiftLetters()
         {
@@ -56,10 +61,12 @@ namespace ShiftOS.WinForms.Applications
         {
             guessedCharacters = "";
             lives = 7;
+            comboBox1.Visible = false;
             tbguess.Visible = true;
             lbllives.Visible = true;
             lblword.Visible = true;
             btnrestart.Visible = false;
+
             var wordlist = new List<string>
             {
                 "shiftos",
@@ -83,6 +90,20 @@ namespace ShiftOS.WinForms.Applications
                 "terminal",
                 "textpad"
             };
+            foreach(var w in shiftWordlist)
+            {
+                if (!wordlist.Contains(w.ToLower())
+                {
+                    wordlist.Add(w.ToLower());
+                }
+            }
+            foreach(var w in contributorsWordlist)
+            {
+                if (!wordlist.Contains(w.ToLower())
+                {
+                    wordlist.Add(w.ToLower());
+                }
+            }
             //This can diversify the amount of ShiftOS-related words in the game.
             foreach(var upg in Shiftorium.GetDefaults())
             {
@@ -108,7 +129,10 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
-            StartGame();
+            tbguess.Visible = false;
+            comboBox1.Items.Add("ShiftOS");
+            if (ShiftoriumFrontend.UpgradeInstalled("sl_contributors_wordlist")) comboBox1.Items.Add("Contributors");
+            btnrestart.Visible = true;
         }
 
         public void OnUpgrade()
@@ -150,6 +174,8 @@ namespace ShiftOS.WinForms.Applications
                             lives = 0;
                             lbllives.Visible = true;
                             btnrestart.Visible = true;
+                            btnrestart.Text = "Restart";
+                            comboBox1.Visible = true;
                             int cp = word.Length * oldlives;
                             lbllives.Text = "You earned: " + cp + " codepoints!";
                             SaveSystem.TransferCodepointsFrom("shiftletters", cp);
@@ -166,6 +192,8 @@ namespace ShiftOS.WinForms.Applications
                         tbguess.Visible = false;
                         lbllives.Visible = false;
                         btnrestart.Visible = true;
+                        btnrestart.Text = "Restart";
+                        comboBox1.Visible = true;
                     }
                 }
             }
@@ -174,6 +202,14 @@ namespace ShiftOS.WinForms.Applications
         private void btnrestart_Click(object sender, EventArgs e)
         {
             StartGame();
+        }
+
+        private class NullWordlistException : Exception
+        {
+            public NullWordlistException(string message) : base("ShiftLetters tried to use a Null Wordlist.")
+            {
+
+            }
         }
     }
 }

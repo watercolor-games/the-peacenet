@@ -56,19 +56,20 @@ namespace ShiftOS.WinForms.Applications
             this.tbguess = new System.Windows.Forms.TextBox();
             this.lbllives = new System.Windows.Forms.Label();
             this.btnrestart = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // lblword
             // 
             this.lblword.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lblword.AutoSize = true;
-            this.lblword.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.lblword.Location = new System.Drawing.Point(116, 34);
+            this.lblword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
+            this.lblword.Location = new System.Drawing.Point(5, 41);
             this.lblword.Name = "lblword";
             this.lblword.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblword.Size = new System.Drawing.Size(89, 22);
+            this.lblword.Size = new System.Drawing.Size(302, 22);
             this.lblword.TabIndex = 1;
-            this.lblword.Text = "Loading...";
+            this.lblword.Text = "Choose a wordlist from the box below.";
+            this.lblword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tbguess
             // 
@@ -80,28 +81,39 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lbllives
             // 
-            this.lbllives.AutoSize = true;
-            this.lbllives.Location = new System.Drawing.Point(127, 190);
+            this.lbllives.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lbllives.Location = new System.Drawing.Point(9, 201);
             this.lbllives.Name = "lbllives";
-            this.lbllives.Size = new System.Drawing.Size(69, 13);
+            this.lbllives.Size = new System.Drawing.Size(310, 13);
             this.lbllives.TabIndex = 3;
-            this.lbllives.Text = "Still loading...";
+            this.lbllives.Text = "To play, guess letters by typing in the box.";
+            this.lbllives.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnrestart
             // 
-            this.btnrestart.Location = new System.Drawing.Point(130, 148);
+            this.btnrestart.Location = new System.Drawing.Point(121, 148);
             this.btnrestart.Name = "btnrestart";
             this.btnrestart.Size = new System.Drawing.Size(75, 23);
             this.btnrestart.TabIndex = 4;
-            this.btnrestart.Text = "Restart";
+            this.btnrestart.Text = "Play";
             this.btnrestart.UseVisualStyleBackColor = true;
             this.btnrestart.Visible = false;
             this.btnrestart.Click += new System.EventHandler(this.btnrestart_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(99, 81);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 5;
             // 
             // ShiftLetters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.btnrestart);
             this.Controls.Add(this.lbllives);
             this.Controls.Add(this.tbguess);
@@ -118,5 +130,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.TextBox tbguess;
         private System.Windows.Forms.Label lbllives;
         private System.Windows.Forms.Button btnrestart;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

@@ -70,6 +70,12 @@
     <Compile Include="Applications\Artpad.Designer.cs">
       <DependentUpon>Artpad.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\AudioPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\AudioPlayer.Designer.cs">
+      <DependentUpon>AudioPlayer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Calculator.cs">
       <SubType>UserControl</SubType>
     </Compile>
