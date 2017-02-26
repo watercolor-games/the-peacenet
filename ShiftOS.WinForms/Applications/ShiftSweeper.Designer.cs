@@ -34,6 +34,7 @@
             this.buttonM = new System.Windows.Forms.Button();
             this.buttonH = new System.Windows.Forms.Button();
             this.lblmines = new System.Windows.Forms.Label();
+            this.lbltime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,6 +93,7 @@
             this.buttonM.TabIndex = 3;
             this.buttonM.Text = "Medium";
             this.buttonM.UseVisualStyleBackColor = true;
+            this.buttonM.Click += new System.EventHandler(this.buttonM_Click);
             // 
             // buttonH
             // 
@@ -101,6 +103,7 @@
             this.buttonH.TabIndex = 4;
             this.buttonH.Text = "Hard";
             this.buttonH.UseVisualStyleBackColor = true;
+            this.buttonH.Click += new System.EventHandler(this.buttonH_Click);
             // 
             // lblmines
             // 
@@ -111,10 +114,20 @@
             this.lblmines.TabIndex = 5;
             this.lblmines.Text = "Mines: 0";
             // 
+            // lbltime
+            // 
+            this.lbltime.AutoSize = true;
+            this.lbltime.Location = new System.Drawing.Point(188, 22);
+            this.lbltime.Name = "lbltime";
+            this.lbltime.Size = new System.Drawing.Size(42, 13);
+            this.lbltime.TabIndex = 6;
+            this.lbltime.Text = "Time: 0";
+            // 
             // ShiftSweeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lbltime);
             this.Controls.Add(this.lblmines);
             this.Controls.Add(this.buttonH);
             this.Controls.Add(this.buttonM);
@@ -137,5 +150,6 @@
         private System.Windows.Forms.Button buttonM;
         private System.Windows.Forms.Button buttonH;
         private System.Windows.Forms.Label lblmines;
+        private System.Windows.Forms.Label lbltime;
     }
 }
