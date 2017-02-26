@@ -269,6 +269,7 @@ namespace ShiftOS.WinForms
                         this.BackgroundImage = img;
                     }));
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
+                    desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
 
                     var pnlimg = GetImage("desktoppanel");
                     if (pnlimg != null)
@@ -306,7 +307,6 @@ namespace ShiftOS.WinForms
                     sysmenuholder.Size = LoadedSkin.AppLauncherHolderSize;
                     apps.Size = sysmenuholder.Size;
                     menuStrip1.Renderer = new ShiftOSMenuRenderer(new AppLauncherColorTable());
-                    desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
                     desktoppanel.BackgroundImageLayout = GetImageLayout("desktoppanel");
                     desktoppanel.Height = LoadedSkin.DesktopPanelHeight;
                     if (LoadedSkin.DesktopPanelPosition == 1)
