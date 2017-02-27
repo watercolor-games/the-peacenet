@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -192,14 +192,14 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
-        private Button makeButton(int col, int row)
+        private PictureBox makeButton(int col, int row)
         {
-            Button bttn = new Button();
+            PictureBox bttn = new PictureBox();
 
             bttn.Text = "";
             bttn.Name = col.ToString() + " " + row.ToString();
             Controls.AddRange(new System.Windows.Forms.Control[] { bttn, });
-            bttn.Size = new System.Drawing.Size(minefieldPanel.Width / minefieldPanel.ColumnCount, (minefieldPanel.Height / minefieldPanel.RowCount) + 10);
+            bttn.Size = new System.Drawing.Size(minefieldPanel.Width / minefieldPanel.ColumnCount, minefieldPanel.Height / minefieldPanel.RowCount);
             bttn.Click += new System.EventHandler(bttnOnclick);
             bttn.BackgroundImage = Properties.Resources.SweeperTileBlock;
             bttn.BackgroundImageLayout = ImageLayout.Stretch;
@@ -211,9 +211,9 @@ namespace ShiftOS.WinForms.Applications
         {
             if (!ticking.Enabled) return;
 
-            Button bttnClick = sender as Button;
+            PictureBox bttnClick = sender as PictureBox;
 
-            if (bttnClick == null) return; //not a button.
+            if (bttnClick == null) return;
 
             string[] split = bttnClick.Name.Split(new Char[] { ' ' });
 
@@ -299,10 +299,10 @@ namespace ShiftOS.WinForms.Applications
                         Int32 cp = 0;
                         origminecount = origminecount * 10;
                         if (minetimer < 31) cp = (origminecount * 3);
-                        if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
-                        if (minetimer < 91) cp = (origminecount * 2);
-                        if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
-                        if (minetimer > 120) cp = (origminecount * 1);
+                        else if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+                        else if (minetimer < 91) cp = (origminecount * 2);
+                        else if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+                        else if (minetimer > 120) cp = (origminecount * 1);
                         SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
                         pictureBox1.Image = Properties.Resources.SweeperWinFace;
                     }
@@ -337,7 +337,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void trueform(int x, int y)
         {
-            Button bttn = (Button)minefieldPanel.GetControlFromPosition(x, y);
+            PictureBox bttn = (PictureBox)minefieldPanel.GetControlFromPosition(x, y);
             if (minemap[x,y] == 0) bttn.BackgroundImage = Properties.Resources.SweeperTile0;
             else if (minemap[x, y] == 1) bttn.BackgroundImage = Properties.Resources.SweeperTile1;
             else if (minemap[x, y] == 2) bttn.BackgroundImage = Properties.Resources.SweeperTile2;
