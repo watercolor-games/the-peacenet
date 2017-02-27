@@ -18,6 +18,7 @@ namespace ShiftOS.WinForms.Applications
     public partial class Snakey : UserControl, IShiftOSWindow
     {
         private int[,] snakemap;
+        private int snakedirection = 0; // 0 - Left, 1 - Down, 2 - Right, 3 - Up
 
         public Snakey()
         {
@@ -27,6 +28,31 @@ namespace ShiftOS.WinForms.Applications
         public void OnLoad()
         {
             makeGrid();
+        }
+
+        private void OnKeyPress(object sender, KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                case (char)Keys.Up:
+                    snakedirection = 3;
+                    break;
+
+                case (char)Keys.Down:
+                    snakedirection = 1;
+                    break;
+
+                case (char)Keys.Left:
+                    snakedirection = 0;
+                    break;
+
+                case (char)Keys.Right:
+                    snakedirection = 2;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private void makeGrid()
