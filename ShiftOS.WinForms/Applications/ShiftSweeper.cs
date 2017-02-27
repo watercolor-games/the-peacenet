@@ -18,6 +18,7 @@ namespace ShiftOS.WinForms.Applications
     public partial class ShiftSweeper : UserControl, IShiftOSWindow
     {
         private bool gameplayed = false;
+        private bool flagtime = false;
         private int mineCount = 0;
         private int origminecount;
         private int[,] minemap; //Represents status of tiles. 0-8 = how many mines surrounding. -1 = mine. -2 = flagged mine. -3 to -11 = flagged safe.
@@ -32,6 +33,13 @@ namespace ShiftOS.WinForms.Applications
             buttonM.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
             buttonH.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
             ticking.Interval = 1000;
+            ticking.Tick += Ticking_Tick;
+        }
+
+        private void Ticking_Tick(object sender, EventArgs e)
+        {
+            minetimer++;
+            lbltime.Text = "Time: " + minetimer.ToString();
         }
 
         public void OnSkinLoad() { }
@@ -61,6 +69,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void startGame(int d)
         {
+            pictureBox1.Image = Properties.Resources.SweeperNormalFace;
             clearPreviousGame();
             lbltime.Text = "Time: 0";
             minetimer = 0;
@@ -157,100 +166,12 @@ namespace ShiftOS.WinForms.Applications
             bttn.Text = "";
             bttn.Name = col.ToString() + " " + row.ToString();
             Controls.AddRange(new System.Windows.Forms.Control[] { bttn, });
-            bttn.Size = new System.Drawing.Size(minefieldPanel.Width / minefieldPanel.ColumnCount, minefieldPanel.Height / minefieldPanel.RowCount);
+            bttn.Size = new System.Drawing.Size(minefieldPanel.Width / minefieldPanel.ColumnCount, (minefieldPanel.Height / minefieldPanel.RowCount) + 10);
             bttn.Click += new System.EventHandler(bttnOnclick);
-            bttn.MouseDown += new MouseEventHandler(mouseDwn);
-            bttn.MouseUp += new MouseEventHandler(mauseUp);
-            bttn.MouseHover += new EventHandler(mauseHov);
             bttn.BackgroundImage = Properties.Resources.SweeperTileBlock;
-            bttn.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bttnOnRightClick);
+            bttn.BackgroundImageLayout = ImageLayout.Stretch;
 
             return bttn;
-        }
-
-        private void bttnOnRightClick(object sender, MouseEventArgs e)
-        {
-            if (!ticking.Enabled) return;
-
-            Button bttnClick = sender as Button;
-
-            if (bttnClick == null) return;
-            if (e.Button == MouseButtons.Left | e.Button == MouseButtons.Middle) return;
-            if (!bttnClick.Enabled) return;
-
-            string[] split = bttnClick.Name.Split(new Char[] { ' ' });
-
-            int x = System.Convert.ToInt32(split[0]);
-            int y = System.Convert.ToInt32(split[1]);
-
-            if (minemap[x,y] < -1)
-            {
-                minemap[x, y] = (minemap[x, y] * -1) - 3;
-                bttnClick.BackgroundImage = Properties.Resources.SweeperTileBlock;
-                mineCount++;
-            }
-            else
-            {
-                minemap[x, y] = (minemap[x, y] * -1) - 3;
-                bttnClick.BackgroundImage = Properties.Resources.SweeperTileFlag;
-                mineCount--;
-            }
-
-            bool wrongflags = false;
-            if (mineCount == 0)
-            {
-                for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
-                {
-                    if (wrongflags) break;
-                    for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
-                    {
-                        if (wrongflags) break;
-                        if (minemap[xx,yy] == -1 | minemap[xx,yy] == -2) wrongflags = true;
-                    }
-                }
-                if (!wrongflags)
-                {
-                    ticking.Enabled = false;
-
-                    buttonE.Enabled = true;
-                    buttonM.Enabled = true;
-                    buttonH.Enabled = true;
-
-                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
-                    {
-                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
-                        {
-                            minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
-                        }
-                    }
-
-                    Int32 cp = 0;
-                    origminecount = origminecount * 10;
-                    if (minetimer < 31) cp = (origminecount * 3);
-                    if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
-                    if (minetimer < 91) cp = (origminecount * 2);
-                    if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
-                    if (minetimer > 120) cp = (origminecount * 1);
-                    SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
-                    pictureBox1.BackgroundImage = Properties.Resources.SweeperWinFace;
-                    //TODO add win
-                }
-            }
-        }
-
-        private void mauseHov(object sender, EventArgs e)
-        {
-            if (ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
-        }
-
-        private void mauseUp(object sender, MouseEventArgs e)
-        {
-            if (!ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperNormalFace;
-        }
-
-        private void mouseDwn(object sender, EventArgs e)
-        {
-            if (!ticking.Enabled) pictureBox1.BackgroundImage = Properties.Resources.SweeperClickFace;
         }
 
         private void bttnOnclick(object sender, EventArgs e)
@@ -267,56 +188,114 @@ namespace ShiftOS.WinForms.Applications
             int y = System.Convert.ToInt32(split[1]);
 
 
-
-            if (minemap[x, y] == -1)
+            if (!flagtime)
             {
-                ticking.Enabled = false;
-
-                buttonE.Enabled = true;
-                buttonM.Enabled = true;
-                buttonH.Enabled = true;
-
-                pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
-
-                for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
+                if (minemap[x, y] == -1)
                 {
-                    for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
+                    ticking.Enabled = false;
+
+                    buttonE.Enabled = true;
+                    buttonM.Enabled = true;
+                    buttonH.Enabled = true;
+
+                    pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
+
+                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
                     {
-                        minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
-                        if (minemap[xx, yy] == -1)
+                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
                         {
-                            minefieldPanel.GetControlFromPosition(xx, yy).BackgroundImage = Properties.Resources.SweeperTileBomb;
+                            pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
+                            minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
+                            if (minemap[xx, yy] == -1)
+                            {
+                                minefieldPanel.GetControlFromPosition(xx, yy).BackgroundImage = Properties.Resources.SweeperTileBomb;
+                            }
+
+                        }
+                    }
+                    pictureBox1.Image = Properties.Resources.SweeperLoseFace;
+                }
+                else if (minemap[x, y] < -1) return;
+                else removeBlank(x, y);
+            }
+            else
+            {
+                if (!bttnClick.Enabled) return;
+
+                if (minemap[x, y] < -1)
+                {
+                    minemap[x, y] = (minemap[x, y] * -1) - 3;
+                    bttnClick.BackgroundImage = Properties.Resources.SweeperTileBlock;
+                    mineCount++;
+                }
+                else
+                {
+                    minemap[x, y] = (minemap[x, y] * -1) - 3;
+                    bttnClick.BackgroundImage = Properties.Resources.SweeperTileFlag;
+                    mineCount--;
+                }
+                lblmines.Text = "Mines: " + mineCount.ToString();
+                bool wrongflags = false;
+                if (mineCount == 0)
+                {
+                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
+                    {
+                        if (wrongflags) break;
+                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
+                        {
+                            if (wrongflags) break;
+                            if (minemap[xx, yy] < -2) wrongflags = true;
+                        }
+                    }
+                    if (!wrongflags)
+                    {
+                        ticking.Enabled = false;
+
+                        buttonE.Enabled = true;
+                        buttonM.Enabled = true;
+                        buttonH.Enabled = true;
+
+                        for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
+                        {
+                            for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
+                            {
+                                minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
+                            }
                         }
 
+                        Int32 cp = 0;
+                        origminecount = origminecount * 10;
+                        if (minetimer < 31) cp = (origminecount * 3);
+                        if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+                        if (minetimer < 91) cp = (origminecount * 2);
+                        if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+                        if (minetimer > 120) cp = (origminecount * 1);
+                        SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
+                        pictureBox1.Image = Properties.Resources.SweeperWinFace;
                     }
                 }
             }
-            else if (minemap[x, y] < -1) return;
-            else removeBlank(x, y);
         }
 
         private void removeBlank(int x, int y)
         {
-            if (!minefieldPanel.GetControlFromPosition(x, y).Enabled) return; 
-            else
+            minefieldPanel.GetControlFromPosition(x, y).Enabled = false;
+            trueform(x, y);
+            if (minemap[x, y] != 0) return;
+            for (int xx = -1; xx < 2; xx++)
             {
-                minefieldPanel.GetControlFromPosition(x, y).Enabled = false;
-                trueform(x, y);
-                for (int xx = -1; xx < 2; xx++)
+                for (int yy = -1; yy < 2; yy++)
                 {
-                    for (int yy = -1; yy < 2; yy++)
+                    if (x + xx >= 0 && y + yy >= 0 && x + xx < minefieldPanel.ColumnCount && y + yy < minefieldPanel.RowCount)
                     {
-                        if (x + xx >= 0 && y + yy >= 0 && x + xx < minefieldPanel.ColumnCount && y + yy < minefieldPanel.RowCount)
+                        if (minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled && minemap[x+xx,y+yy] != -1 && minemap[x + xx, y + yy] != -2)
                         {
-                            if (minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled && minemap[x+xx,y+yy] != -1 && minemap[x + xx, y + yy] != -2)
+                            minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled = false;
+                            trueform(x + xx, y + yy);
+                            if (minemap[x + xx, y + yy] == 0)
                             {
-                                minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled = false;
-                                if (minemap[x + xx, y + yy] == 0)
-                                {
-                                    removeBlank(x + xx, y + yy);
-                                }
+                                removeBlank(x + xx, y + yy);
                             }
-
                         }
                     }
                 }
@@ -340,5 +319,19 @@ namespace ShiftOS.WinForms.Applications
         private void buttonM_Click(object sender, EventArgs e) { startGame(1); }
 
         private void buttonH_Click(object sender, EventArgs e) { startGame(2); }
+
+        private void flagButton_Click(object sender, EventArgs e)
+        {
+            if (flagtime)
+            {
+                flagButton.Image = Properties.Resources.SweeperTileBlock;
+                flagtime = false;
+            }
+            else
+            {
+                flagButton.Image = Properties.Resources.SweeperTileFlag;
+                flagtime = true;
+            }
+        }
     }
 }

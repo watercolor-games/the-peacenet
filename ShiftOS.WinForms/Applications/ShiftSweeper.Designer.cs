@@ -37,14 +37,17 @@
             this.lbltime = new System.Windows.Forms.Label();
             this.lblinfo = new System.Windows.Forms.Label();
             this.lblinfo2 = new System.Windows.Forms.Label();
+            this.flagButton = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.flagButton)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.SweeperNormalFace;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Location = new System.Drawing.Point(150, 3);
+            this.pictureBox1.Image = global::ShiftOS.WinForms.Properties.Resources.SweeperNormalFace;
+            this.pictureBox1.Location = new System.Drawing.Point(222, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.TabIndex = 0;
@@ -74,12 +77,12 @@
             this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
             this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
             this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.Size = new System.Drawing.Size(329, 215);
+            this.minefieldPanel.Size = new System.Drawing.Size(471, 241);
             this.minefieldPanel.TabIndex = 1;
             // 
             // buttonE
             // 
-            this.buttonE.Location = new System.Drawing.Point(4, 261);
+            this.buttonE.Location = new System.Drawing.Point(4, 287);
             this.buttonE.Name = "buttonE";
             this.buttonE.Size = new System.Drawing.Size(75, 23);
             this.buttonE.TabIndex = 2;
@@ -89,7 +92,7 @@
             // 
             // buttonM
             // 
-            this.buttonM.Location = new System.Drawing.Point(129, 261);
+            this.buttonM.Location = new System.Drawing.Point(201, 287);
             this.buttonM.Name = "buttonM";
             this.buttonM.Size = new System.Drawing.Size(75, 23);
             this.buttonM.TabIndex = 3;
@@ -99,7 +102,7 @@
             // 
             // buttonH
             // 
-            this.buttonH.Location = new System.Drawing.Point(258, 261);
+            this.buttonH.Location = new System.Drawing.Point(400, 287);
             this.buttonH.Name = "buttonH";
             this.buttonH.Size = new System.Drawing.Size(75, 23);
             this.buttonH.TabIndex = 4;
@@ -110,7 +113,7 @@
             // lblmines
             // 
             this.lblmines.AutoSize = true;
-            this.lblmines.Location = new System.Drawing.Point(188, 3);
+            this.lblmines.Location = new System.Drawing.Point(272, 4);
             this.lblmines.Name = "lblmines";
             this.lblmines.Size = new System.Drawing.Size(47, 13);
             this.lblmines.TabIndex = 5;
@@ -119,7 +122,7 @@
             // lbltime
             // 
             this.lbltime.AutoSize = true;
-            this.lbltime.Location = new System.Drawing.Point(188, 22);
+            this.lbltime.Location = new System.Drawing.Point(272, 22);
             this.lbltime.Name = "lbltime";
             this.lbltime.Size = new System.Drawing.Size(42, 13);
             this.lbltime.TabIndex = 6;
@@ -130,23 +133,34 @@
             this.lblinfo.AutoSize = true;
             this.lblinfo.Location = new System.Drawing.Point(4, 4);
             this.lblinfo.Name = "lblinfo";
-            this.lblinfo.Size = new System.Drawing.Size(129, 13);
+            this.lblinfo.Size = new System.Drawing.Size(108, 13);
             this.lblinfo.TabIndex = 7;
-            this.lblinfo.Text = "Left Click to uncover tiles.";
+            this.lblinfo.Text = "Click to uncover tiles.";
             // 
             // lblinfo2
             // 
             this.lblinfo2.AutoSize = true;
             this.lblinfo2.Location = new System.Drawing.Point(4, 22);
             this.lblinfo2.Name = "lblinfo2";
-            this.lblinfo2.Size = new System.Drawing.Size(114, 13);
+            this.lblinfo2.Size = new System.Drawing.Size(128, 13);
             this.lblinfo2.TabIndex = 8;
-            this.lblinfo2.Text = "Right Click to flag tiles.";
+            this.lblinfo2.Text = "Right Button: Toggle Flag";
+            // 
+            // flagButton
+            // 
+            this.flagButton.Image = global::ShiftOS.WinForms.Properties.Resources.SweeperTileBlock;
+            this.flagButton.Location = new System.Drawing.Point(455, 15);
+            this.flagButton.Name = "flagButton";
+            this.flagButton.Size = new System.Drawing.Size(20, 20);
+            this.flagButton.TabIndex = 9;
+            this.flagButton.TabStop = false;
+            this.flagButton.Click += new System.EventHandler(this.flagButton_Click);
             // 
             // ShiftSweeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.flagButton);
             this.Controls.Add(this.lblinfo2);
             this.Controls.Add(this.lblinfo);
             this.Controls.Add(this.lbltime);
@@ -157,8 +171,9 @@
             this.Controls.Add(this.minefieldPanel);
             this.Controls.Add(this.pictureBox1);
             this.Name = "ShiftSweeper";
-            this.Size = new System.Drawing.Size(366, 328);
+            this.Size = new System.Drawing.Size(536, 358);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.flagButton)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -175,5 +190,6 @@
         private System.Windows.Forms.Label lbltime;
         private System.Windows.Forms.Label lblinfo;
         private System.Windows.Forms.Label lblinfo2;
+        private System.Windows.Forms.PictureBox flagButton;
     }
 }
