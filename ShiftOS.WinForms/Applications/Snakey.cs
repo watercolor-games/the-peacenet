@@ -34,7 +34,7 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void OnUpgrade()
