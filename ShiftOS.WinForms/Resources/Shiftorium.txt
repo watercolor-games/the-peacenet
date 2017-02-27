@@ -219,12 +219,6 @@
 		Dependencies: "textpad;file_skimmer",
 	},
 	{
-		Name: "TextPad Python Support",
-		Cost: 450,
-		Description: "Use TextPad to write Python scripts!",
-		Dependencies: "textpad;file_skimmer",	
-	},
-	{
 		Name: "App Launcher",
 		Cost: 7500,
 		Description: "It may be expensive, but having an easy-access menu to all your apps is very valuable.",
@@ -265,12 +259,6 @@
 		Cost: 150,
 		Description: "Launch the Name Changer from the app launcher.",
 		Dependencies: "name_changer",
-	},
-	{
-		Name: "{UPGRADE_DEVELOPMENT}",
-		Cost: 20000,
-		Description: "Dont buy this upgrade yet, it does nothing",
-		Dependencies: "",
 	},
 	{
 		Name: "AL Shifter",
@@ -461,7 +449,7 @@
 		Name: "Audio Player AL",
 		Cost: 150,
 		Description: "Just another app launcher, making it easier to listen to your favorite songs!",
-		Dependencies: "desktop;wm_free_placement;wav_player"
+		Dependencies: "desktop;wm_free_placement;audio_player"
 	},
 
 	//SHIFTER SUBCATEGORIES
@@ -785,8 +773,14 @@
 	{
 		Name: "ShiftSweeper",
 		Cost: 800,
-		Dependencies: "app_launcher;shiftletters",
+		Dependencies: "shiftletters",
 		Description: "Getting bored with Pong and ShiftLetters? Try this BRAND NEW game called ShiftSweeper!"
+	},
+	{
+		Name: "AL ShiftSweeper",
+		Cost: 100,
+		Dependencies: "app_launcher;shiftsweeper",
+		Description: "Play ShiftSweeper quickly with this dandy applauncher!"
 	},
 	{
 		Name: "ShiftSweeper Medium",

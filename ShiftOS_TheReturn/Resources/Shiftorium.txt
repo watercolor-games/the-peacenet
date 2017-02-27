@@ -60,28 +60,10 @@
 		Dependencies: "textpad;file_skimmer",
 	},
 	{
-		Name: "TextPad Python Support",
-		Cost: 450,
-		Description: "Use TextPad to write Python scripts!",
-		Dependencies: "textpad;file_skimmer",	
-	},
-	{
 		Name: "App Launcher",
 		Cost: 10000,
 		Description: "It may be expensive, but having an easy-access menu to all your apps is very valuable.",
 		Dependencies:"desktop;wm_unlimited_windows"
-	},
-	{
-		Name: "MUD Cracker",
-		Cost: 500,
-		Description: "An application for cracking the current multi-user domain's admin password.",
-		Dependencies: "mud_fundamentals"
-	},
-	{
-		Name: "AL MUD Cracker",
-		Cost: 100,
-		Description: "Add a launcher item for the MUD cracker.",
-		Dependencies: "mud_cracker;app_launcher"
 	},
 	{
 		Name: "Textpad",
@@ -273,18 +255,6 @@
 		Cost: 10000,
 		Description: "So you lost in pong, it must be sad to lose all the codepoints you've gained. With this upgrade you can save 1 percent of the loss, so at least you get something for losing!",
 		Dependencies: "mud_fundamentals;window_manager;pong_upgrade"
-	},
-	{
-		Name: "WAV Player",
-		Cost: 10000,
-		Description: "Want to listen to the greatest tunes? Well get this app asap!",
-		Dependencies: "desktop;wm_free_placement"
-	},
-	{
-		Name: "WAV Player AL",
-		Cost: 300,
-		Description: "Just another app launcher, making it easier to listen to your favorite songs!",
-		Dependencies: "desktop;wm_free_placement;wav_player"
 	},
 
 	//SHIFTER SUBCATEGORIES
