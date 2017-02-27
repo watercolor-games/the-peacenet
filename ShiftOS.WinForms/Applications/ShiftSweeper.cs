@@ -24,6 +24,7 @@ namespace ShiftOS.WinForms.Applications
         private int[,] minemap; //Represents status of tiles. 0-8 = how many mines surrounding. -1 = mine. -2 = flagged mine. -3 to -11 = flagged safe.
         private Timer ticking = new Timer();
         private int minetimer;
+        private TableLayoutPanel minefieldPanel;
 
         public ShiftSweeper() { InitializeComponent(); }
 
@@ -34,6 +35,9 @@ namespace ShiftOS.WinForms.Applications
             buttonH.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
             ticking.Interval = 1000;
             ticking.Tick += Ticking_Tick;
+            easyPanel.Visible = false;
+            mediumPanel.Visible = false;
+            hardPanel.Visible = false;
         }
 
         private void Ticking_Tick(object sender, EventArgs e)
@@ -74,21 +78,25 @@ namespace ShiftOS.WinForms.Applications
             lbltime.Text = "Time: 0";
             minetimer = 0;
             ticking.Start();
+            if (minefieldPanel != null) minefieldPanel.Visible = false;
             switch (d)
             {
                 case 0:
+                    minefieldPanel = easyPanel;
                     mineCount = 10;
                     minefieldPanel.ColumnCount = 9;
                     minefieldPanel.RowCount = 9;
                     break;
 
                 case 1:
+                    minefieldPanel = mediumPanel;
                     mineCount = 40;
                     minefieldPanel.ColumnCount = 16;
                     minefieldPanel.RowCount = 16;
                     break;
 
                 case 2:
+                    minefieldPanel = hardPanel;
                     mineCount = 99;
                     minefieldPanel.ColumnCount = 30;
                     minefieldPanel.RowCount = 16;
@@ -97,6 +105,7 @@ namespace ShiftOS.WinForms.Applications
                 default:
                     throw new NullReferenceException();
             }
+            minefieldPanel.Visible = true;
             origminecount = mineCount;
             lblmines.Text = "Mines: " + mineCount.ToString();
             buttonE.Enabled = false;

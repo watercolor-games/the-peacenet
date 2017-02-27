@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.minefieldPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.easyPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonE = new System.Windows.Forms.Button();
             this.buttonM = new System.Windows.Forms.Button();
             this.buttonH = new System.Windows.Forms.Button();
@@ -38,6 +38,8 @@
             this.lblinfo = new System.Windows.Forms.Label();
             this.lblinfo2 = new System.Windows.Forms.Label();
             this.flagButton = new System.Windows.Forms.PictureBox();
+            this.mediumPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.hardPanel = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.flagButton)).BeginInit();
             this.SuspendLayout();
@@ -47,42 +49,43 @@
             this.pictureBox1.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.SweeperNormalFace;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.Image = global::ShiftOS.WinForms.Properties.Resources.SweeperNormalFace;
-            this.pictureBox1.Location = new System.Drawing.Point(222, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(264, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // minefieldPanel
+            // easyPanel
             // 
-            this.minefieldPanel.ColumnCount = 9;
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.Location = new System.Drawing.Point(4, 40);
-            this.minefieldPanel.Name = "minefieldPanel";
-            this.minefieldPanel.RowCount = 9;
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.minefieldPanel.Size = new System.Drawing.Size(471, 241);
-            this.minefieldPanel.TabIndex = 1;
+            this.easyPanel.ColumnCount = 9;
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
+            this.easyPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.easyPanel.Location = new System.Drawing.Point(4, 40);
+            this.easyPanel.Name = "easyPanel";
+            this.easyPanel.RowCount = 9;
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11136F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11025F));
+            this.easyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11025F));
+            this.easyPanel.Size = new System.Drawing.Size(553, 308);
+            this.easyPanel.TabIndex = 1;
             // 
             // buttonE
             // 
-            this.buttonE.Location = new System.Drawing.Point(4, 287);
+            this.buttonE.Location = new System.Drawing.Point(4, 354);
             this.buttonE.Name = "buttonE";
             this.buttonE.Size = new System.Drawing.Size(75, 23);
             this.buttonE.TabIndex = 2;
@@ -92,7 +95,7 @@
             // 
             // buttonM
             // 
-            this.buttonM.Location = new System.Drawing.Point(201, 287);
+            this.buttonM.Location = new System.Drawing.Point(244, 354);
             this.buttonM.Name = "buttonM";
             this.buttonM.Size = new System.Drawing.Size(75, 23);
             this.buttonM.TabIndex = 3;
@@ -102,7 +105,7 @@
             // 
             // buttonH
             // 
-            this.buttonH.Location = new System.Drawing.Point(400, 287);
+            this.buttonH.Location = new System.Drawing.Point(482, 354);
             this.buttonH.Name = "buttonH";
             this.buttonH.Size = new System.Drawing.Size(75, 23);
             this.buttonH.TabIndex = 4;
@@ -113,7 +116,7 @@
             // lblmines
             // 
             this.lblmines.AutoSize = true;
-            this.lblmines.Location = new System.Drawing.Point(272, 4);
+            this.lblmines.Location = new System.Drawing.Point(317, 4);
             this.lblmines.Name = "lblmines";
             this.lblmines.Size = new System.Drawing.Size(47, 13);
             this.lblmines.TabIndex = 5;
@@ -122,7 +125,7 @@
             // lbltime
             // 
             this.lbltime.AutoSize = true;
-            this.lbltime.Location = new System.Drawing.Point(272, 22);
+            this.lbltime.Location = new System.Drawing.Point(317, 22);
             this.lbltime.Name = "lbltime";
             this.lbltime.Size = new System.Drawing.Size(42, 13);
             this.lbltime.TabIndex = 6;
@@ -149,17 +152,117 @@
             // flagButton
             // 
             this.flagButton.Image = global::ShiftOS.WinForms.Properties.Resources.SweeperTileBlock;
-            this.flagButton.Location = new System.Drawing.Point(455, 15);
+            this.flagButton.Location = new System.Drawing.Point(537, 14);
             this.flagButton.Name = "flagButton";
             this.flagButton.Size = new System.Drawing.Size(20, 20);
             this.flagButton.TabIndex = 9;
             this.flagButton.TabStop = false;
             this.flagButton.Click += new System.EventHandler(this.flagButton_Click);
             // 
+            // mediumPanel
+            // 
+            this.mediumPanel.ColumnCount = 16;
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249042F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.mediumPanel.Location = new System.Drawing.Point(4, 41);
+            this.mediumPanel.Name = "mediumPanel";
+            this.mediumPanel.RowCount = 16;
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249183F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.248558F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.248558F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.mediumPanel.Size = new System.Drawing.Size(553, 307);
+            this.mediumPanel.TabIndex = 2;
+            // 
+            // hardPanel
+            // 
+            this.hardPanel.ColumnCount = 30;
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249042F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.249044F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.hardPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.hardPanel.Location = new System.Drawing.Point(4, 40);
+            this.hardPanel.Name = "hardPanel";
+            this.hardPanel.RowCount = 16;
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249183F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.249182F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.248558F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.248558F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.251231F));
+            this.hardPanel.Size = new System.Drawing.Size(553, 308);
+            this.hardPanel.TabIndex = 3;
+            // 
             // ShiftSweeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.hardPanel);
+            this.Controls.Add(this.mediumPanel);
             this.Controls.Add(this.flagButton);
             this.Controls.Add(this.lblinfo2);
             this.Controls.Add(this.lblinfo);
@@ -168,10 +271,10 @@
             this.Controls.Add(this.buttonH);
             this.Controls.Add(this.buttonM);
             this.Controls.Add(this.buttonE);
-            this.Controls.Add(this.minefieldPanel);
+            this.Controls.Add(this.easyPanel);
             this.Controls.Add(this.pictureBox1);
             this.Name = "ShiftSweeper";
-            this.Size = new System.Drawing.Size(536, 358);
+            this.Size = new System.Drawing.Size(624, 426);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.flagButton)).EndInit();
             this.ResumeLayout(false);
@@ -182,7 +285,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TableLayoutPanel minefieldPanel;
+        private System.Windows.Forms.TableLayoutPanel easyPanel;
         private System.Windows.Forms.Button buttonE;
         private System.Windows.Forms.Button buttonM;
         private System.Windows.Forms.Button buttonH;
@@ -191,5 +294,7 @@
         private System.Windows.Forms.Label lblinfo;
         private System.Windows.Forms.Label lblinfo2;
         private System.Windows.Forms.PictureBox flagButton;
+        private System.Windows.Forms.TableLayoutPanel mediumPanel;
+        private System.Windows.Forms.TableLayoutPanel hardPanel;
     }
 }
