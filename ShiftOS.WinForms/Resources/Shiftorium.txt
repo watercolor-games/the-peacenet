@@ -7,12 +7,6 @@
 		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!"
 	},
 	{
-		Name: "SL Operating Systems Wordlist",
-		Cost: 500,
-		Dependencies: "shiftletters",
-		Description: "Know a lot about computer operating systems? This upgrade adds a wordlist to ShiftLetters, full of various Linux distros, Windows codenames and other OS names. All for the low price of 500 Codepoints! It's an incredible value but it's true! Upgrade today... except out of ShiftOS!"
-	},
-	{
 		Name: "AL Calculator",
 		Cost: 150,
 		Dependencies: "calculator;app_launcher",
@@ -97,6 +91,12 @@
 		Cost: 250,
 		Dependencies: "shiftletters",
 		Description: "This nice wordlist lets you find out the people who contributed to the development of ShiftOS!"
+	},
+	{
+		Name: "SL Operating Systems Wordlist",
+		Cost: 500,
+		Dependencies: "shiftletters",
+		Description: "Know a lot about computer operating systems? This upgrade adds a wordlist to ShiftLetters, full of various Linux distros, Windows codenames and other OS names. All for the low price of 500 Codepoints! It's an incredible value but it's true! Upgrade today... except out of ShiftOS!"
 	},
 	{
 		Name: "Panel Notifications",
@@ -778,6 +778,26 @@
        Cost: 2500,
        Dependencies: "shiftorium_gui",
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
-    }
-	
+    },
+
+	// SHIFTSWEEPER
+
+	{
+		Name: "ShiftSweeper",
+		Cost: 800,
+		Dependencies: "app_launcher;shiftletters",
+		Description: "Getting bored with Pong and ShiftLetters? Try this BRAND NEW game called ShiftSweeper!"
+	},
+	{
+		Name: "ShiftSweeper Medium",
+		Cost: 900,
+		Dependencies: "shiftsweeper",
+		Description: "ShiftSweeper getting too easy? Obviously, since you can only play Easy difficulty! However, with this Medium button, you can get a better challenge, and more codepoints!"
+	},
+	{
+		Name: "ShiftSweeper Hard",
+		Cost: 900,
+		Dependencies: "shiftsweeper_medium",
+		Description: "Is ShiftSweeper still too easy for you? Buy the Hard difficulty and you can try to find 99 mines! It may be extremely difficult, but the reward is massive!"
+	},
 ]
