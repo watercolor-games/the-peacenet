@@ -65,6 +65,17 @@ namespace ShiftOS.WinForms.Applications
                     }
                     catch { }
                 }
+                else if(msg.Name == "chatlog")
+                {
+                    try
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            rtbchat.AppendText(msg.Contents);
+                        }));
+                    }
+                    catch { }
+                }
             };
         }
 
@@ -87,6 +98,8 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            ServerManager.SendMessage("chat_getlog", JsonConvert.SerializeObject(new ShiftOS.Objects.ChatLogRequest(id, 50)));
+
             SendMessage("User has joined the chat.");
             RefreshUserInput();
         }
