@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -73,12 +73,14 @@ namespace ShiftOS.Server
                             {
                                 if (s.Author.Id != client.CurrentUser.Id)
                                 {
+                                    var msg = new ChatMessage(s.Author.Username, "discord_" + s.Channel.Name, (s as SocketUserMessage).Resolve(0), chatID);
                                     server.DispatchAll(new NetObject("chat_msgreceived", new ServerMessage
                                     {
                                         Name = "chat_msgreceived",
                                         GUID = "server",
-                                        Contents = JsonConvert.SerializeObject(new ChatMessage(s.Author.Username, "discord_" + s.Channel.Name, (s as SocketUserMessage).Resolve(0), chatID))
+                                        Contents = JsonConvert.SerializeObject(msg)
                                     }));
+                                    Log(chatID, $"[{msg.Username}@{msg.SystemName}] {msg.Message}");
                                 }
                             }
                         }
@@ -94,10 +96,11 @@ namespace ShiftOS.Server
                                 var dChan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID)) as ISocketMessageChannel;
                                 //Relay the message to Discord.
                                 dChan.SendMessageAsync($"**[{msg.Username}@{msg.SystemName}]** `<mud/{msg.Channel}>` {msg.Message}");
+                                //Relay it back to all MUD clients.
+                                RelayMessage(g, msg);
+                                Log(chatID, $"[{msg.Username}@{msg.SystemName}] {msg.Message}");
 
                             }
-                            //Relay it back to all MUD clients.
-                            RelayMessage(g, msg);
                         }
                     };
                     Reinitialized += () =>
@@ -115,6 +118,8 @@ namespace ShiftOS.Server
                         {
                             //Just relay it.
                             RelayMessage(g, msg);
+                            //...Then log it.
+                            Log(chatID, $"[{msg.Username}@{msg.SystemName}] {msg.Message}");
                         }
                     };
                     Reinitialized += () => { chatKilled = true; };
@@ -155,6 +160,62 @@ namespace ShiftOS.Server
         {
             var msg = contents as Dictionary<string, string>;
             MessageReceived?.Invoke(guid, new ChatMessage(msg["Username"], msg["SystemName"], msg["Message"], msg["Channel"]));
+
+        }
+
+        [MudRequest("chat_getlog", typeof(ChatLogRequest))]
+        public static void GetChatlog(string guid, ChatLogRequest req)
+        {
+            if (!Directory.Exists("chatlogs"))
+                Directory.CreateDirectory("chatlogs");
+
+            if(File.Exists("chatlogs/" + req.Channel + ".log"))
+            {
+                string[] log = File.ReadAllLines("chatlogs/" + req.Channel + ".log");
+                string seg = "";
+
+                if(req.Backtrack == 0 || log.Length < req.Backtrack)
+                {
+                    //send all of it.
+                    foreach(var ln in log)
+                    {
+                        seg += ln + Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    //send only a specific chunk.
+                    for(int i = log.Length - 1; i >= log.Length - req.Backtrack; i--)
+                    {
+                        seg += log[i] + Environment.NewLine;
+                    }
+                }
+
+                try
+                {
+                    server.DispatchTo(new Guid(guid), new NetObject("always watching, always listening, my eyes are everywhere, you cannot escape me", new ServerMessage
+                    {
+                        Name = "chatlog",
+                        Contents = seg,
+                        GUID = "server"
+                    }));
+                }
+                catch { }
+            }
+        }
+
+
+        public static void Log(string channel, string line)
+        {
+            if (!Directory.Exists("chatlogs"))
+                Directory.CreateDirectory("chatlogs");
+
+            List<string> lines = new List<string>();
+            if (File.Exists("chatlogs/" + channel + ".log"))
+                lines = new List<string>(File.ReadAllLines("chatlogs/" + channel + ".log"));
+
+            lines.Add(line);
+            File.WriteAllLines("chatlogs/" + channel + ".log", lines.ToArray());
 
         }
     }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -185,15 +185,18 @@ namespace ShiftOS.Server
             if (File.Exists("shops.json"))
                 foreach (var shop in JsonConvert.DeserializeObject<List<Shop>>(File.ReadAllText("shops.json")))
                 {
-                    if (shop.Owner == shopOwner)
+                    if (shop != null)
                     {
-                        server.DispatchTo(new Guid(guid), new NetObject("ruecuodaL", new ServerMessage
+                        if (shop.Owner == shopOwner)
                         {
-                            Name = "user_shop",
-                            GUID = "server",
-                            Contents = JsonConvert.SerializeObject(shop)
-                        }));
-                        return;
+                            server.DispatchTo(new Guid(guid), new NetObject("ruecuodaL", new ServerMessage
+                            {
+                                Name = "user_shop",
+                                GUID = "server",
+                                Contents = JsonConvert.SerializeObject(shop)
+                            }));
+                            return;
+                        }
                     }
                 }
 
