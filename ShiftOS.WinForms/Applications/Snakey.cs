@@ -17,6 +17,8 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconSnakey")]
     public partial class Snakey : UserControl, IShiftOSWindow
     {
+        private int[,] snakemap;
+
         public Snakey()
         {
             InitializeComponent();
@@ -24,22 +26,35 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
-            throw new NotImplementedException();
+            makeGrid();
         }
 
-        public void OnSkinLoad()
+        private void makeGrid()
         {
-            throw new NotImplementedException();
+            for (int x = 0; x < 10; x++)
+            {
+                for (int y = 0; y < 10; y++)
+                {
+                    tableLayoutPanel1.Controls.Add(newPicBox(x, y), x, y);
+                }
+            }
         }
 
-        public bool OnUnload()
+        private PictureBox newPicBox(int x, int y)
         {
-            return true;
+            PictureBox picBox = new PictureBox();
+
+            picBox.Size = new System.Drawing.Size(20, 20);
+            picBox.Image = Properties.Resources.SnakeyBG;
+            picBox.Name = "pb" + x.ToString() + "b" + y.ToString();
+
+            return picBox;
         }
 
-        public void OnUpgrade()
-        {
-            throw new NotImplementedException();
-        }
+        public void OnSkinLoad() { }
+
+        public bool OnUnload() { return true; }
+
+        public void OnUpgrade() { }
     }
 }

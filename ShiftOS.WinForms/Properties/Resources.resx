@@ -439,4 +439,34 @@
   <data name="SweeperTileFlag" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SweeperTileFlag.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SnakeyBG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyBG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyBody" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyBody.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyHeadD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyHeadD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyHeadL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyHeadL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyHeadR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyHeadR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyHeadU" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyHeadU.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyTailD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyTailD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyTailL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyTailL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyTailR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyTailR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnakeyTailU" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnakeyTailU.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
