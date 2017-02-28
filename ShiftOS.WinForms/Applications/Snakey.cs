@@ -40,9 +40,10 @@ namespace ShiftOS.WinForms.Applications
 
             for (int x = 0; x < 10; x++)
             {
-                if (head != null) break;
+                if (head != null) continue;
                 for (int y = 0; y < 10; y++)
                 {
+                    if (head != null) continue;
                     if (snakemap[x, y] == 2)
                     {
                         head = tableLayoutPanel1.GetControlFromPosition(x, y);
@@ -50,8 +51,6 @@ namespace ShiftOS.WinForms.Applications
                     }
                 }
             }
-
-            if (head == null) return;
 
             int headX = int.Parse(head.Name.Split('b')[1]); // NRE was here
             int headY = int.Parse(head.Name.Split('b')[2]);
@@ -86,7 +85,7 @@ namespace ShiftOS.WinForms.Applications
                     break;
             }
 
-            if (newHeadX > 9 | newHeadX < 0 | newHeadY > 9 | newHeadY < 0) return;
+            if (newHeadX > 9 || newHeadX < 0 || newHeadY > 9 || newHeadY < 0) return;
             snakemap[newHeadX, newHeadY] = 2;
             tableLayoutPanel1.GetControlFromPosition(newHeadX, newHeadY).BackgroundImage = headImg;
             snakemap[headX, headY] = 1;
@@ -97,23 +96,23 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
-        private void OnKeyPress(object sender, KeyPressEventArgs e)
+        private void OnKeyPress(object sender, PreviewKeyDownEventArgs e)
         {
-            switch (e.KeyChar)
+            switch (e.KeyCode)
             {
-                case (char)Keys.Up:
+                case Keys.Up:
                     snakedirection = 3;
                     break;
 
-                case (char)Keys.Down:
+                case Keys.Down:
                     snakedirection = 1;
                     break;
 
-                case (char)Keys.Left:
+                case Keys.Left:
                     snakedirection = 0;
                     break;
 
-                case (char)Keys.Right:
+                case Keys.Right:
                     snakedirection = 2;
                     break;
 
@@ -205,5 +204,7 @@ namespace ShiftOS.WinForms.Applications
 
             return -1;
         }
+
+        
     }
 }

@@ -90,6 +90,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Snakey";
             this.Size = new System.Drawing.Size(317, 329);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 
