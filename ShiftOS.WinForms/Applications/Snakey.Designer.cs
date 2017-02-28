@@ -61,6 +61,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(260, 260);
             this.tableLayoutPanel1.TabIndex = 2;
+            this.tableLayoutPanel1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnKeyDown);
             // 
             // button1
             // 
@@ -71,6 +72,7 @@
             this.button1.Text = "Play";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnKeyDown);
             // 
             // label1
             // 
@@ -89,8 +91,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Snakey";
-            this.Size = new System.Drawing.Size(317, 329);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnKeyPress);
+            this.Size = new System.Drawing.Size(306, 329);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnKeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

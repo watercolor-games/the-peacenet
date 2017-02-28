@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using System.Diagnostics;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -36,23 +37,23 @@ namespace ShiftOS.WinForms.Applications
 
         private void updateSnake(object sender, EventArgs e)
         {
-            Control head = null;
+            PictureBox head = null;
 
             for (int x = 0; x < 10; x++)
             {
-                if (head != null) continue;
+                if (head != null) break;
                 for (int y = 0; y < 10; y++)
                 {
-                    if (head != null) continue;
+                    if (head != null) break;
                     if (snakemap[x, y] == 2)
                     {
-                        head = tableLayoutPanel1.GetControlFromPosition(x, y);
+                        head = (PictureBox)tableLayoutPanel1.GetControlFromPosition(x, y);
                         break;
                     }
                 }
             }
 
-            int headX = int.Parse(head.Name.Split('b')[1]); // NRE was here
+            int headX = int.Parse(head.Name.Split('b')[1]);
             int headY = int.Parse(head.Name.Split('b')[2]);
 
             int newHeadX = headX;
@@ -87,16 +88,16 @@ namespace ShiftOS.WinForms.Applications
 
             if (newHeadX > 9 || newHeadX < 0 || newHeadY > 9 || newHeadY < 0) return;
             snakemap[newHeadX, newHeadY] = 2;
-            tableLayoutPanel1.GetControlFromPosition(newHeadX, newHeadY).BackgroundImage = headImg;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(newHeadX, newHeadY)).Image = headImg;
             snakemap[headX, headY] = 1;
-            tableLayoutPanel1.GetControlFromPosition(headX, headY).BackgroundImage = Properties.Resources.SnakeyBody;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(headX, headY)).Image = Properties.Resources.SnakeyBody;
             if (!extending)
             {
 
             }
         }
 
-        private void OnKeyPress(object sender, PreviewKeyDownEventArgs e)
+        private void OnKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -119,6 +120,7 @@ namespace ShiftOS.WinForms.Applications
                 default:
                     break;
             }
+            Debug.Print("Snake Direction Value: " + snakedirection.ToString());
         }
 
         private void makeGrid()
@@ -145,7 +147,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad() { }
 
-        public bool OnUnload() { return true; }
+        public bool OnUnload()
+        {
+            snakeupdater.Stop();
+            return true;
+        }
 
         public void OnUpgrade() { }
 
