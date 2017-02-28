@@ -59,9 +59,12 @@ namespace ShiftOS.WinForms
             this.sysmenuholder = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.apps = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnlscreensaver = new System.Windows.Forms.Panel();
+            this.pnlssicon = new System.Windows.Forms.Panel();
             this.desktoppanel.SuspendLayout();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.pnlscreensaver.SuspendLayout();
             this.SuspendLayout();
             // 
             // desktoppanel
@@ -144,12 +147,30 @@ namespace ShiftOS.WinForms
             this.apps.Tag = "applauncherbutton";
             this.apps.Text = "ShiftOS";
             // 
+            // pnlscreensaver
+            // 
+            this.pnlscreensaver.Controls.Add(this.pnlssicon);
+            this.pnlscreensaver.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlscreensaver.Location = new System.Drawing.Point(0, 24);
+            this.pnlscreensaver.Name = "pnlscreensaver";
+            this.pnlscreensaver.Size = new System.Drawing.Size(1296, 714);
+            this.pnlscreensaver.TabIndex = 1;
+            this.pnlscreensaver.Visible = false;
+            // 
+            // pnlssicon
+            // 
+            this.pnlssicon.Location = new System.Drawing.Point(303, 495);
+            this.pnlssicon.Name = "pnlssicon";
+            this.pnlssicon.Size = new System.Drawing.Size(200, 100);
+            this.pnlssicon.TabIndex = 0;
+            // 
             // WinformsDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1296, 738);
+            this.Controls.Add(this.pnlscreensaver);
             this.Controls.Add(this.desktoppanel);
             this.Font = new System.Drawing.Font("Consolas", 9F);
             this.ForeColor = System.Drawing.Color.LightGreen;
@@ -163,6 +184,7 @@ namespace ShiftOS.WinForms
             this.sysmenuholder.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.pnlscreensaver.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -176,6 +198,8 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.ToolStripMenuItem apps;
         private System.Windows.Forms.FlowLayoutPanel panelbuttonholder;
         private System.Windows.Forms.Button btnnotifications;
+        private System.Windows.Forms.Panel pnlscreensaver;
+        private System.Windows.Forms.Panel pnlssicon;
     }
 
 }

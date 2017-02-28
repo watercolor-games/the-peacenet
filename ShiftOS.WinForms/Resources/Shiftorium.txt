@@ -1,4 +1,19 @@
 [
+// SCREENSAVER
+	{
+		Name: "Screensavers",
+		Cost: 750,
+		Description: "Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.",
+		Dependencies: "desktop"
+	},
+	{
+		Name: "Shift Screensavers",
+		Cost: 100,
+		Description: "This Shifter upgrade will allow you to customize the screensaver.",
+		Dependencies: "screensavers;shifter"
+	},
+
+
 // CALCULATOR UPGRADES
 	{
 		Name: "Calculator",

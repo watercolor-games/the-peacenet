@@ -246,6 +246,21 @@ namespace ShiftOS.Engine {
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
+        [RequiresUpgrade("shift_screensaver")]
+        [ShifterMeta("System")]
+        [ShifterCategory("Screen saver")]
+        [ShifterName("Screen saver wait (milliseconds)")]
+        [ShifterDescription("How long do you have to stay idle before the screensaver activates?")]
+        public int ScreensaverWait = 300000;
+
+        [RequiresUpgrade("skinning;shift_screensaver")]
+        [ShifterMeta("System")]
+        [ShifterCategory("Screen saver")]
+        [ShifterName("Screen saver image")]
+        [ShifterDescription("What image should appear on the screen saver?")]
+        public byte[] ScreensaverImage = null;
+
+
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]

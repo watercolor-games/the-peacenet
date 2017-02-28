@@ -37,6 +37,7 @@ using ShiftOS.WinForms.Tools;
 using ShiftOS.WinForms.Applications;
 using Newtonsoft.Json;
 using ShiftOS.Engine.Scripting;
+using System.Threading;
 
 /// <summary>
 /// Winforms desktop.
@@ -48,6 +49,9 @@ namespace ShiftOS.WinForms
     /// </summary>
     public partial class WinformsDesktop : Form, IDesktop
     {
+        private bool InScreensaver = false;
+        private int millisecondsUntilScreensaver = 300000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
         /// </summary>
@@ -100,7 +104,7 @@ namespace ShiftOS.WinForms
                 if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
             };
-            var time = new Timer();
+            var time = new System.Windows.Forms.Timer();
             time.Interval = 100;
             this.KeyDown += (o, a) =>
             {
@@ -139,8 +143,85 @@ namespace ShiftOS.WinForms
             };
             time.Start();
 
+            var ssThread = new Thread(() =>
+            {
+                while(this.Visible == true)
+                {
+                    var mousePos = Cursor.Position;
+                    while(Cursor.Position == mousePos)
+                    {
+                        if(millisecondsUntilScreensaver <= 0)
+                        {
+                            ShowScreensaver();
+                            InScreensaver = true;
+                        }
+                        millisecondsUntilScreensaver--;
+                        Thread.Sleep(1);
+                    }
+                    millisecondsUntilScreensaver = 300000;
+                    InScreensaver = false;
+                    HideScreensaver();
+                }
+            });
+            ssThread.IsBackground = true;
+            ssThread.Start();
+
             this.DoubleBuffered = true;
         }
+
+        public void HideScreensaver()
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.TopMost = false;
+                pnlscreensaver.Hide();
+                Cursor.Show();
+                SetupDesktop();
+            }));
+        }
+
+        private void ShowScreensaver()
+        {
+            if (Shiftorium.UpgradeInstalled("screensavers"))
+            {
+                this.Invoke(new Action(() =>
+                {
+                    pnlscreensaver.Show();
+                    this.TopMost = true;
+                    pnlssicon.Show();
+                    pnlssicon.BackColor = Color.Green;
+                    pnlssicon.BackgroundImage = GetImage("screensaver");
+                    pnlssicon.BackgroundImageLayout = GetImageLayout("screensaver");
+
+                    if (pnlssicon.BackgroundImage != null)
+                    {
+                        pnlssicon.Size = pnlssicon.BackgroundImage.Size;
+                    }
+
+                    Cursor.Hide();
+
+                    var t = new Thread(() =>
+                    {
+                        var rnd = new Random();
+                        while (InScreensaver == true)
+                        {
+                            int x = rnd.Next(0, this.Width);
+                            int y = rnd.Next(0, this.Height);
+
+                            this.Invoke(new Action(() =>
+                            {
+                                pnlssicon.Location = new Point(x, y);
+                            }));
+
+                            Thread.Sleep(5000);
+                        }
+                    });
+                    t.IsBackground = true;
+                    t.Start();
+                }));
+            }
+        }
+
 
         /// <summary>
         /// Populates the panel buttons.
