@@ -208,9 +208,9 @@ namespace ShiftOS.Engine
             }
             catch
             {
-                return false;
                 Console.WriteLine("Upgrade " + id + "DNE.");
                 Console.WriteLine();
+                return false;
             }
 
         }

@@ -51,7 +51,9 @@ namespace ShiftOS.WinForms.Applications
                 }
             }
 
-            int headX = int.Parse(head.Name.Split('b')[1]);
+            if (head == null) return;
+
+            int headX = int.Parse(head.Name.Split('b')[1]); // NRE was here
             int headY = int.Parse(head.Name.Split('b')[2]);
 
             int newHeadX = headX;
@@ -157,14 +159,14 @@ namespace ShiftOS.WinForms.Applications
             }
             snakemap = new int[10, 10];
             snakemap[5, 5] = 2;
-            tableLayoutPanel1.GetControlFromPosition(5, 5).BackgroundImage = Properties.Resources.SnakeyHeadL;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(5, 5)).Image = Properties.Resources.SnakeyHeadL;
             for (int x = 6; x < 8; x++)
             {
                 snakemap[x, 5] = 1;
-                tableLayoutPanel1.GetControlFromPosition(x, 5).BackgroundImage = Properties.Resources.SnakeyBody;
+                ((PictureBox)tableLayoutPanel1.GetControlFromPosition(x, 5)).Image = Properties.Resources.SnakeyBody;
             }
             snakemap[8, 5] = 3;
-            tableLayoutPanel1.GetControlFromPosition(8, 5).BackgroundImage = Properties.Resources.SnakeyTailL;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(8, 5)).Image = Properties.Resources.SnakeyTailL;
             snakeupdater.Start();
         }
 
