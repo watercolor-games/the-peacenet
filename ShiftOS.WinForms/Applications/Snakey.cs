@@ -155,6 +155,7 @@ namespace ShiftOS.WinForms.Applications
                 clearGame();
                 makeGrid();
             }
+            snakemap = new int[10, 10];
             snakemap[5, 5] = 2;
             tableLayoutPanel1.GetControlFromPosition(5, 5).BackgroundImage = Properties.Resources.SnakeyHeadL;
             for (int x = 6; x < 8; x++)

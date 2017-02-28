@@ -134,7 +134,6 @@ namespace ShiftOS.WinForms.Applications
             buttonE.Enabled = false;
             buttonM.Enabled = false;
             buttonH.Enabled = false;
-            gameplayed = true;
             makegrid();
         }
 
