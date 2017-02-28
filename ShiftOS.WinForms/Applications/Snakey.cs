@@ -17,8 +17,10 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconSnakey")]
     public partial class Snakey : UserControl, IShiftOSWindow
     {
-        private int[,] snakemap;
+        private int[,] snakemap; // 0 - Nothing, 1 - Body, 2 - Head, 3 - Tail
         private int snakedirection = 0; // 0 - Left, 1 - Down, 2 - Right, 3 - Up
+        private Timer snakeupdater = new Timer();
+        private bool extending = false;
 
         public Snakey()
         {
@@ -27,7 +29,70 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            snakeupdater.Interval = 250;
+            snakeupdater.Tick += updateSnake;
             makeGrid();
+        }
+
+        private void updateSnake(object sender, EventArgs e)
+        {
+            Control head = null;
+
+            for (int x = 0; x < 10; x++)
+            {
+                if (head != null) break;
+                for (int y = 0; y < 10; y++)
+                {
+                    if (snakemap[x, y] == 2)
+                    {
+                        head = tableLayoutPanel1.GetControlFromPosition(x, y);
+                        break;
+                    }
+                }
+            }
+
+            int headX = int.Parse(head.Name.Split('b')[1]);
+            int headY = int.Parse(head.Name.Split('b')[2]);
+
+            int newHeadX = headX;
+            int newHeadY = headY;
+
+            Image headImg = null;
+            switch (snakedirection)
+            {
+                case 0:
+                    newHeadX = headX - 1;
+                    headImg = Properties.Resources.SnakeyHeadL;
+                    break;
+
+                case 1:
+                    newHeadY = headY + 1;
+                    headImg = Properties.Resources.SnakeyHeadD;
+                    break;
+
+                case 2:
+                    newHeadX = headX + 1;
+                    headImg = Properties.Resources.SnakeyHeadR;
+                    break;
+
+                case 3:
+                    newHeadY = headY - 1;
+                    headImg = Properties.Resources.SnakeyHeadU;
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (newHeadX > 9 | newHeadX < 0 | newHeadY > 9 | newHeadY < 0) return;
+            snakemap[newHeadX, newHeadY] = 2;
+            tableLayoutPanel1.GetControlFromPosition(newHeadX, newHeadY).BackgroundImage = headImg;
+            snakemap[headX, headY] = 1;
+            tableLayoutPanel1.GetControlFromPosition(headX, headY).BackgroundImage = Properties.Resources.SnakeyBody;
+            if (!extending)
+            {
+
+            }
         }
 
         private void OnKeyPress(object sender, KeyPressEventArgs e)
@@ -82,5 +147,60 @@ namespace ShiftOS.WinForms.Applications
         public bool OnUnload() { return true; }
 
         public void OnUpgrade() { }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (snakemap != null)
+            {
+                clearGame();
+                makeGrid();
+            }
+            snakemap[5, 5] = 2;
+            tableLayoutPanel1.GetControlFromPosition(5, 5).BackgroundImage = Properties.Resources.SnakeyHeadL;
+            for (int x = 6; x < 8; x++)
+            {
+                snakemap[x, 5] = 1;
+                tableLayoutPanel1.GetControlFromPosition(x, 5).BackgroundImage = Properties.Resources.SnakeyBody;
+            }
+            snakemap[8, 5] = 3;
+            tableLayoutPanel1.GetControlFromPosition(8, 5).BackgroundImage = Properties.Resources.SnakeyTailL;
+            snakeupdater.Start();
+        }
+
+        private void clearGame()
+        {
+            snakemap = null;
+            for (int x = 0; x < 10; x++)
+            {
+                for (int y = 0; y < 10; y++)
+                {
+                    tableLayoutPanel1.Controls.Remove(tableLayoutPanel1.GetControlFromPosition(x, y));
+                }
+            }
+        }
+
+        private int getTailDirection()
+        {
+            PictureBox tail = null;
+
+            for (int x = 0; x < 10; x++)
+            {
+                if (tail != null) break;
+                for (int y = 0; y < 10; y++)
+                {
+                    if (snakemap[x, y] == 3)
+                    {
+                        tail = (PictureBox)tableLayoutPanel1.GetControlFromPosition(x, y);
+                        break;
+                    }
+                }
+            }
+            if (tail.BackgroundImage == Properties.Resources.SnakeyTailL) return 0;
+            if (tail.BackgroundImage == Properties.Resources.SnakeyTailD) return 1;
+            if (tail.BackgroundImage == Properties.Resources.SnakeyTailR) return 2;
+            if (tail.BackgroundImage == Properties.Resources.SnakeyTailU) return 3;
+
+            return -1;
+        }
     }
 }
