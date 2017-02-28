@@ -87,6 +87,8 @@ namespace ShiftOS.WinForms.Applications
             }
 
             if (newHeadX > 9 || newHeadX < 0 || newHeadY > 9 || newHeadY < 0) return;
+
+            int newheadlocation = snakemap[newHeadX, newHeadY];
             snakemap[newHeadX, newHeadY] = 2;
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(newHeadX, newHeadY)).Image = headImg;
             snakemap[headX, headY] = 1;
@@ -95,6 +97,16 @@ namespace ShiftOS.WinForms.Applications
             {
 
             }
+            if (extending) extending = false;
+            if (newheadlocation == 1)
+            {
+                gameover();
+            }
+        }
+
+        private void gameover()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -141,6 +153,7 @@ namespace ShiftOS.WinForms.Applications
             picBox.Size = new System.Drawing.Size(20, 20);
             picBox.Image = Properties.Resources.SnakeyBG;
             picBox.Name = "pb" + x.ToString() + "b" + y.ToString();
+            picBox.Margin = new Padding(0);
 
             return picBox;
         }
@@ -172,7 +185,25 @@ namespace ShiftOS.WinForms.Applications
             }
             snakemap[8, 5] = 3;
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(8, 5)).Image = Properties.Resources.SnakeyTailL;
+            placefruit();
             snakeupdater.Start();
+        }
+
+        private void placefruit()
+        {
+            Random rnd1 = new Random();
+
+            while (true)
+            {
+                int fruitX = rnd1.Next(10);
+                int fruitY = rnd1.Next(10);
+
+                if (snakemap[fruitX, fruitY] == 0)
+                {
+                    snakemap[fruitX, fruitY] = 4;
+                    break;
+                }
+            }
         }
 
         private void clearGame()
@@ -210,7 +241,6 @@ namespace ShiftOS.WinForms.Applications
 
             return -1;
         }
-
-        
+    
     }
 }
