@@ -196,6 +196,12 @@
     <Compile Include="Applications\Skin Loader.Designer.cs">
       <DependentUpon>Skin Loader.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Snakey.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Snakey.Designer.cs">
+      <DependentUpon>Snakey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\TextPad.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -341,6 +347,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Skin Loader.resx">
       <DependentUpon>Skin Loader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Snakey.resx">
+      <DependentUpon>Snakey.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TextPad.resx">
       <DependentUpon>TextPad.cs</DependentUpon>
@@ -553,6 +562,16 @@
     <None Include="Resources\SweeperTile3.png" />
     <None Include="Resources\SweeperTile4.png" />
     <None Include="Resources\SweeperTileBomb.png" />
+    <None Include="Resources\SnakeyHeadU.png" />
+    <None Include="Resources\SnakeyTailD.png" />
+    <None Include="Resources\SnakeyTailL.png" />
+    <None Include="Resources\SnakeyTailR.png" />
+    <None Include="Resources\SnakeyTailU.png" />
+    <None Include="Resources\SnakeyBG.png" />
+    <None Include="Resources\SnakeyBody.png" />
+    <None Include="Resources\SnakeyHeadD.png" />
+    <None Include="Resources\SnakeyHeadL.png" />
+    <None Include="Resources\SnakeyHeadR.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

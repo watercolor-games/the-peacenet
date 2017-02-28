@@ -41,7 +41,6 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconShiftSweeper")]
     public partial class ShiftSweeper : UserControl, IShiftOSWindow
     {
-        private bool gameplayed = false;
         private bool flagtime = false;
         private int mineCount = 0;
         private int origminecount;

@@ -17,7 +17,7 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconSnakey")]
     public partial class Snakey : UserControl, IShiftOSWindow
     {
-        private int[,] snakemap; // 0 - Nothing, 1 - Body, 2 - Head, 3 - Tail
+        private int[,] snakemap = null; // 0 - Nothing, 1 - Body, 2 - Head, 3 - Tail
         private int snakedirection = 0; // 0 - Left, 1 - Down, 2 - Right, 3 - Up
         private Timer snakeupdater = new Timer();
         private bool extending = false;
