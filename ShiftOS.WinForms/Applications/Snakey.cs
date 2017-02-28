@@ -38,6 +38,7 @@ namespace ShiftOS.WinForms.Applications
         private void updateSnake(object sender, EventArgs e)
         {
             PictureBox head = null;
+            PictureBox tail = null;
 
             for (int x = 0; x < 10; x++)
             {
@@ -53,11 +54,31 @@ namespace ShiftOS.WinForms.Applications
                 }
             }
 
+            for (int x = 0; x < 10; x++)
+            {
+                if (tail != null) break;
+                for (int y = 0; y < 10; y++)
+                {
+                    if (tail != null) break;
+                    if (snakemap[x, y] == 3)
+                    {
+                        tail = (PictureBox)tableLayoutPanel1.GetControlFromPosition(x, y);
+                        break;
+                    }
+                }
+            }
+
             int headX = int.Parse(head.Name.Split('b')[1]);
             int headY = int.Parse(head.Name.Split('b')[2]);
 
             int newHeadX = headX;
             int newHeadY = headY;
+
+            int tailX = int.Parse(tail.Name.Split('b')[1]);
+            int tailY = int.Parse(tail.Name.Split('b')[2]);
+
+            int newTailX = tailX;
+            int newTailY = tailY;
 
             Image headImg = null;
             switch (snakedirection)
@@ -95,13 +116,44 @@ namespace ShiftOS.WinForms.Applications
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(headX, headY)).Image = Properties.Resources.SnakeyBody;
             if (!extending)
             {
+                Image tailImg = null;
+                switch (tailDirection())
+                {
+                    case 0:
+                        newTailX = tailX - 1;
+                        break;
 
+                    case 1:
+                        newTailY = tailY + 1;
+                        break;
+
+                    case 2:
+                        newTailX = tailX + 1;
+                        break;
+
+                    case 3:
+                        newTailY = tailY - 1;
+                        break;
+
+                    default:
+                        break;
+                }
+                switch (nextTailDirection(newTailX, newTailY))
+                {
+                    default:
+                        break;
+                }
             }
             if (extending) extending = false;
             if (newheadlocation == 1)
             {
                 gameover();
             }
+        }
+
+        private int nextTailDirection(int x, int y)
+        {
+            return -1;
         }
 
         private void gameover()
@@ -219,7 +271,7 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
-        private int getTailDirection()
+        private int tailDirection()
         {
             PictureBox tail = null;
 
