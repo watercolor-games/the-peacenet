@@ -201,6 +201,7 @@ namespace ShiftOS.WinForms.Applications
                 if (snakemap[fruitX, fruitY] == 0)
                 {
                     snakemap[fruitX, fruitY] = 4;
+                    ((PictureBox)tableLayoutPanel1.GetControlFromPosition(fruitX, fruitY)).Image = Properties.Resources.SnakeyFruit;
                     break;
                 }
             }
