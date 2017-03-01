@@ -19,8 +19,10 @@ namespace ShiftOS.WinForms.Applications
     public partial class Snakey : UserControl, IShiftOSWindow
     {
         private int[,] snakemap = null; // 0 - Nothing, 1 - Body, 2 - Head, 3 - Tail
+        private int[,] snakepartlist = null;
         private int snakedirection = 0; // 0 - Left, 1 - Down, 2 - Right, 3 - Up
         private Timer snakeupdater = new Timer();
+        private int snakelength = 0;
         private bool extending = false;
 
         public Snakey()
@@ -70,13 +72,11 @@ namespace ShiftOS.WinForms.Applications
 
             int headX = int.Parse(head.Name.Split('b')[1]);
             int headY = int.Parse(head.Name.Split('b')[2]);
-
             int newHeadX = headX;
             int newHeadY = headY;
 
             int tailX = int.Parse(tail.Name.Split('b')[1]);
             int tailY = int.Parse(tail.Name.Split('b')[2]);
-
             int newTailX = tailX;
             int newTailY = tailY;
 
@@ -116,6 +116,28 @@ namespace ShiftOS.WinForms.Applications
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(headX, headY)).Image = Properties.Resources.SnakeyBody;
             if (!extending)
             {
+                ((PictureBox)tableLayoutPanel1.GetControlFromPosition(tailX, tailY)).Image = Properties.Resources.SnakeyBG;
+                snakepartlist[newHeadX, newHeadY] = snakelength;
+                bool splassigned = false;
+                for (int s = snakelength; s > 0; s--)
+                {
+                    splassigned = false;
+                    for (int x = 0; x < 10; x++)
+                    {
+                        if (splassigned) break;
+                        for (int y = 0; y < 10; y++)
+                        {
+                            if (splassigned) break;
+                            if (x == newHeadX && y == newHeadY) continue;
+                            if (snakepartlist[x, y] == snakelength)
+                            {
+                                snakepartlist[x, y]--;
+                                splassigned = true;
+                                break;
+                            }
+                        }
+                    }
+                }
                 Image tailImg = null;
                 switch (tailDirection())
                 {
@@ -140,19 +162,50 @@ namespace ShiftOS.WinForms.Applications
                 }
                 switch (nextTailDirection(newTailX, newTailY))
                 {
+                    case 0:
+                        tailImg = Properties.Resources.SnakeyTailL;
+                        break;
+
+                    case 1:
+                        tailImg = Properties.Resources.SnakeyTailD;
+                        break;
+
+                    case 2:
+                        tailImg = Properties.Resources.SnakeyTailR;
+                        break;
+
+                    case 3:
+                        tailImg = Properties.Resources.SnakeyTailU;
+                        break;
+
                     default:
                         break;
                 }
+                ((PictureBox)tableLayoutPanel1.GetControlFromPosition(newTailX, newTailY)).Image = tailImg;
             }
-            if (extending) extending = false;
+            if (extending)
+            {
+                snakepartlist[newHeadX, newHeadY] = snakelength;
+                extending = false;
+            }
             if (newheadlocation == 1)
             {
                 gameover();
+            }
+            if (newheadlocation == 4)
+            {
+                extending = true;
+                snakelength++;
+                placefruit();
             }
         }
 
         private int nextTailDirection(int x, int y)
         {
+            if (snakepartlist[x - 1, y] == 2) return 0;
+            if (snakepartlist[x, y + 1] == 2) return 1;
+            if (snakepartlist[x + 1, y] == 2) return 2;
+            if (snakepartlist[x, y - 1] == 2) return 3;
             return -1;
         }
 
@@ -228,15 +281,20 @@ namespace ShiftOS.WinForms.Applications
                 makeGrid();
             }
             snakemap = new int[10, 10];
+            snakepartlist = new int[10, 10];
             snakemap[5, 5] = 2;
+            snakepartlist[5, 5] = 4;
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(5, 5)).Image = Properties.Resources.SnakeyHeadL;
-            for (int x = 6; x < 8; x++)
-            {
-                snakemap[x, 5] = 1;
-                ((PictureBox)tableLayoutPanel1.GetControlFromPosition(x, 5)).Image = Properties.Resources.SnakeyBody;
-            }
+            snakemap[6, 5] = 1;
+            snakepartlist[6, 5] = 3;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(6, 5)).Image = Properties.Resources.SnakeyBody;
+            snakemap[7, 5] = 1;
+            snakepartlist[7, 5] = 2;
+            ((PictureBox)tableLayoutPanel1.GetControlFromPosition(7, 5)).Image = Properties.Resources.SnakeyBody;
             snakemap[8, 5] = 3;
+            snakepartlist[8, 5] = 1;
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(8, 5)).Image = Properties.Resources.SnakeyTailL;
+            snakelength = 4;
             placefruit();
             snakeupdater.Start();
         }
