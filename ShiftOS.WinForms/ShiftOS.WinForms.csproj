@@ -572,6 +572,7 @@
     <None Include="Resources\SnakeyHeadD.png" />
     <None Include="Resources\SnakeyHeadL.png" />
     <None Include="Resources\SnakeyHeadR.png" />
+    <None Include="Resources\SnakeyFruit.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

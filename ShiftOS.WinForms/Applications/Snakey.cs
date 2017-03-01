@@ -116,7 +116,8 @@ namespace ShiftOS.WinForms.Applications
             ((PictureBox)tableLayoutPanel1.GetControlFromPosition(headX, headY)).Image = Properties.Resources.SnakeyBody;
             if (!extending)
             {
-                ((PictureBox)tableLayoutPanel1.GetControlFromPosition(tailX, tailY)).Image = Properties.Resources.SnakeyBG;
+                tail.Image = Properties.Resources.SnakeyBG; //mikey its here
+                tail.Refresh();
                 snakepartlist[newHeadX, newHeadY] = snakelength;
                 bool splassigned = false;
                 for (int s = snakelength; s > 0; s--)
