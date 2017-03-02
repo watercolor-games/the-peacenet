@@ -117,8 +117,10 @@ namespace ShiftOS.WinForms.Applications
             if (!extending)
             {
                 tail.Image = Properties.Resources.SnakeyBG; //mikey its here
-                tail.Refresh();
+                snakemap[tailX, tailY] = 0;
+                tableLayoutPanel1.Refresh();
                 snakepartlist[newHeadX, newHeadY] = snakelength;
+                bool[,] exemptlist = new bool[10, 10];
                 bool splassigned = false;
                 for (int s = snakelength; s > 0; s--)
                 {
@@ -129,10 +131,12 @@ namespace ShiftOS.WinForms.Applications
                         for (int y = 0; y < 10; y++)
                         {
                             if (splassigned) break;
+                            if (exemptlist[x, y]) continue;
                             if (x == newHeadX && y == newHeadY) continue;
                             if (snakepartlist[x, y] == snakelength)
                             {
                                 snakepartlist[x, y]--;
+                                exemptlist[x, y] = true;
                                 splassigned = true;
                                 break;
                             }
@@ -183,6 +187,7 @@ namespace ShiftOS.WinForms.Applications
                         break;
                 }
                 ((PictureBox)tableLayoutPanel1.GetControlFromPosition(newTailX, newTailY)).Image = tailImg;
+                snakemap[newTailX, newTailY] = 3;
             }
             if (extending)
             {
@@ -346,10 +351,10 @@ namespace ShiftOS.WinForms.Applications
                     }
                 }
             }
-            if (tail.BackgroundImage == Properties.Resources.SnakeyTailL) return 0;
-            if (tail.BackgroundImage == Properties.Resources.SnakeyTailD) return 1;
-            if (tail.BackgroundImage == Properties.Resources.SnakeyTailR) return 2;
-            if (tail.BackgroundImage == Properties.Resources.SnakeyTailU) return 3;
+            if (tail.Image == Properties.Resources.SnakeyTailL) return 0;
+            if (tail.Image == Properties.Resources.SnakeyTailD) return 1;
+            if (tail.Image == Properties.Resources.SnakeyTailR) return 2;
+            if (tail.Image == Properties.Resources.SnakeyTailU) return 3;
 
             return -1;
         }
