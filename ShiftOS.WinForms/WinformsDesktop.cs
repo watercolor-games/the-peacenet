@@ -171,14 +171,21 @@ namespace ShiftOS.WinForms
 
         public void HideScreensaver()
         {
-            this.Invoke(new Action(() =>
+            if (ResetDesktop == true)
             {
-                this.TopMost = false;
-                pnlscreensaver.Hide();
-                Cursor.Show();
-                SetupDesktop();
-            }));
+                this.Invoke(new Action(() =>
+                {
+                    this.TopMost = false;
+                    pnlscreensaver.Hide();
+                    Cursor.Show();
+                    SetupDesktop();
+                    ResetDesktop = false;
+
+                }));
+            }
         }
+
+        private bool ResetDesktop = false;
 
         private void ShowScreensaver()
         {
@@ -215,6 +222,7 @@ namespace ShiftOS.WinForms
 
                             Thread.Sleep(5000);
                         }
+                        ResetDesktop = true;
                     });
                     t.IsBackground = true;
                     t.Start();
