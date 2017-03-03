@@ -808,20 +808,5 @@
 		Cost: 900,
 		Dependencies: "shiftsweeper_medium",
 		Description: "Is ShiftSweeper still too easy for you? Buy the Hard difficulty and you can try to find 99 mines! It may be extremely difficult, but the reward is massive!"
-	},
-
-	// SNAKEY
-
-	{
-		Name: "Snakey",
-		Cost: 1100,
-		Dependencies: "shiftsweeper",
-		Description: "You want more games? Ok then! You can get Snakey, a game that people used to play on 'dumb phones', now coming to your 'smart' ShiftOS system for just 1100 codepoints!"
-	},
-	{
-		Name: "AL Snakey",
-		Cost: 200,
-		Dependencies: "app_launcher;snakey",
-		Description: "Play Snakey quickly with this dandy applauncher!"
-	},
+	}
 ]
