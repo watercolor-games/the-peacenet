@@ -205,8 +205,9 @@ namespace ShiftOS.WinForms.Applications
             return bttn;
         }
 
-        private void bttnOnclick(object sender, EventArgs e)
+        private void bttnOnclick(object sender, EventArgs ee)
         {
+            MouseEventArgs e = (MouseEventArgs)ee;
             if (!ticking.Enabled) return;
 
             PictureBox bttnClick = sender as PictureBox;
@@ -218,8 +219,9 @@ namespace ShiftOS.WinForms.Applications
             int x = System.Convert.ToInt32(split[0]);
             int y = System.Convert.ToInt32(split[1]);
 
+            
 
-            if (!flagtime)
+            if (!flagtime && e.Button == MouseButtons.Left)
             {
                 if (minemap[x, y] == -1)
                 {
@@ -249,7 +251,7 @@ namespace ShiftOS.WinForms.Applications
                 else if (minemap[x, y] < -1) return;
                 else removeBlank(x, y);
             }
-            else
+            else if(flagtime || e.Button == MouseButtons.Right)
             {
                 if (!bttnClick.Enabled) return;
 
@@ -363,6 +365,10 @@ namespace ShiftOS.WinForms.Applications
                 flagButton.Image = Properties.Resources.SweeperTileFlag;
                 flagtime = true;
             }
+        }
+
+        private void ShiftSweeper_Load(object sender, EventArgs e) {
+
         }
     }
 }

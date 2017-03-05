@@ -299,6 +299,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.pictureBox1);
             this.Name = "ShiftSweeper";
             this.Size = new System.Drawing.Size(596, 426);
+            this.Load += new System.EventHandler(this.ShiftSweeper_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.flagButton)).EndInit();
             this.ResumeLayout(false);
