@@ -46,6 +46,9 @@ namespace ShiftOS.WinForms.Applications {
         int currentGameWidth;
         int currentGameHeight;
 
+        private Timer ticking = new Timer();
+        private int minetimer;
+
         private static readonly Random random = new Random();
 
         Size tileSize;
@@ -75,10 +78,21 @@ namespace ShiftOS.WinForms.Applications {
             InitializeComponent();
         }
 
+        private void Ticking_Tick(object sender, EventArgs e) {
+            minetimer++;
+            lbltime.Text = "Time: " + minetimer.ToString();
+            /*lbltime.Text = Localization.Parse("{SHIFTSWEEPER_TIME}", new Dictionary<string, string>{
+                {"%time", minetimer.ToString()}
+            });*/
+        }
+
         public void OnLoad() {
             buttonEasy.Visible = true;
             buttonMedium.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
             buttonHard.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
+
+            ticking.Interval = 1000;
+            ticking.Tick += Ticking_Tick;
         }
 
         public void OnSkinLoad() {
@@ -93,6 +107,8 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public void startGame(int w, int h, int b) {
+            panelGameStatus.Image = Properties.Resources.SweeperNormalFace;
+
             if (gamePanel.RowCount > w || gamePanel.ColumnCount > h) {
                 for (int y = 0; y < gamePanel.ColumnCount; y++) {
                     for (int x = 0; x < gamePanel.RowCount; x++) {
@@ -128,6 +144,7 @@ namespace ShiftOS.WinForms.Applications {
             if (type == REMOVE) {
             } else {
                 tile.Text = buttonImages[type];
+                tile.MouseDown += new MouseEventHandler(tile_ClickDown);
                 tile.MouseUp += new MouseEventHandler(tile_Click);
 
                 tile.Size = tileSize;
@@ -145,6 +162,8 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         private void tile_Click(object sender, EventArgs ee) {
+            panelGameStatus.Image = Properties.Resources.SweeperNormalFace;
+
             MouseEventArgs e = (MouseEventArgs)ee;
             Control sen = (Control)sender;
             TableLayoutPanelCellPosition tilePos = gamePanel.GetPositionFromControl(sen);
@@ -156,6 +175,10 @@ namespace ShiftOS.WinForms.Applications {
             } else if (e.Button == MouseButtons.Middle) {
                 toggleTileQuestionMark(tilePos.Row, tilePos.Column);
             }
+        }
+
+        private void tile_ClickDown(object sender, EventArgs e) {
+            panelGameStatus.Image = Properties.Resources.SweeperClickFace;
         }
 
         private void createGameIfNotExists(int x, int y) {
@@ -225,6 +248,9 @@ namespace ShiftOS.WinForms.Applications {
                 if (x < w && y > 0) revealTile(x + 1, y - 1);
                 if (x > 0 && y < h) revealTile(x - 1, y + 1);
             }
+
+            if (bombs != 0) checkWinGame();
+            if (bombs == 9) loseGame();
         }
 
         private void toggleTileFlag(int x, int y) {
@@ -233,6 +259,8 @@ namespace ShiftOS.WinForms.Applications {
             } else if(currentGame[x, y] == FLAGGED) {
                 updateTile(x, y, UNDISCOVERED);
             }
+
+            checkWinGame();
         }
 
         private void toggleTileQuestionMark(int x, int y) {
@@ -241,10 +269,12 @@ namespace ShiftOS.WinForms.Applications {
             } else if (currentGame[x, y] == QUESTIONED) {
                 updateTile(x, y, UNDISCOVERED);
             }
+
+            checkWinGame();
         }
 
         private void buttonEasy_Click(object sender, EventArgs e) {
-            startGame(10, 10, 10);
+            startGame(9, 9, 10);
         }
 
         private void buttonMedium_Click(object sender, EventArgs e) {
@@ -253,6 +283,59 @@ namespace ShiftOS.WinForms.Applications {
 
         private void buttonHard_Click(object sender, EventArgs e) {
             startGame(12, 12, 12);
+        }
+
+        public void winGame() {
+            int cp = 0;
+            int origminecount = gameBombCount * 10;
+            if (minetimer < 31) cp = (origminecount * 3);
+            else if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+            else if (minetimer < 91) cp = (origminecount * 2);
+            else if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+            else if (minetimer > 120) cp = (origminecount * 1);
+            SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
+            panelGameStatus.Image = Properties.Resources.SweeperWinFace;
+            disableAllTiles(false);
+        }
+
+        public void loseGame() {
+            disableAllTiles(true);
+            panelGameStatus.Image = Properties.Resources.SweeperLoseFace;
+        }
+
+        public void disableAllTiles(bool showBombs) {
+            for (int yy = 0; yy < gamePanel.ColumnCount; yy++) {
+                for (int xx = 0; xx < gamePanel.RowCount; xx++) {
+                    gamePanel.GetControlFromPosition(xx, yy).Enabled = false;
+                    if (game[xx, yy] == 9 && showBombs) {
+                        gamePanel.GetControlFromPosition(xx, yy).BackgroundImage = Properties.Resources.SweeperTileBomb;
+                    }
+
+                }
+            }
+        }
+
+        public void checkWinGame() {
+            for(int y = 0; y < currentGameHeight; y++) {
+                for(int x = 0; x < currentGameWidth; x++) {
+                    int tile = currentGame[x, y];
+                    if(tile == UNDISCOVERED || tile == QUESTIONED) {
+                        return;
+                    }
+                    if(tile == FLAGGED) {
+                        if(game[x,y] != 9) {
+                            // looks like you flagged the wrong thing...
+                            return;
+                        }
+                    }
+                    if(tile == 9) {
+                        loseGame();
+                        return;
+                    }
+
+                }
+            }
+            winGame();
         }
 
         private void panelGameStatus_Click(object sender, EventArgs e) {
