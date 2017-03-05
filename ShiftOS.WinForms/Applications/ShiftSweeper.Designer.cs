@@ -155,9 +155,9 @@ namespace ShiftOS.WinForms.Applications
             this.lblinfo2.AutoSize = true;
             this.lblinfo2.Location = new System.Drawing.Point(4, 22);
             this.lblinfo2.Name = "lblinfo2";
-            this.lblinfo2.Size = new System.Drawing.Size(233, 13);
+            this.lblinfo2.Size = new System.Drawing.Size(231, 13);
             this.lblinfo2.TabIndex = 8;
-            this.lblinfo2.Text = "Click the button on the right to toggle flag mode.";
+            this.lblinfo2.Text = "Right click to flag, middle click to question mark";
             // 
             // ShiftSweeper
             // 

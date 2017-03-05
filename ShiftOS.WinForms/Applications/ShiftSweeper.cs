@@ -146,6 +146,8 @@ namespace ShiftOS.WinForms.Applications {
                 tile.Text = buttonImages[type];
                 tile.MouseDown += new MouseEventHandler(tile_ClickDown);
                 tile.MouseUp += new MouseEventHandler(tile_Click);
+                tile.FlatStyle = FlatStyle.Flat;
+                tile.FlatAppearance.BorderSize = (type == 0) ? 0 : 1;
 
                 tile.Size = tileSize;
 
@@ -182,17 +184,19 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         private void createGameIfNotExists(int x, int y) {
-            createGameIfNotExists();
-
-            /*int i = 0;
-            while (getBombCountInArea(x,y) != 0) {
-                i++;
-                if(i > 1000) {
-                    // alert HUH IT DOESN"T SEEM LIKE THE NUMBERS YOU USED ARE CORRECT ARE YOU SURE THAT"S POSSIBEL
-                    break;
-                }
+            if (!gameCreated) {
                 createGameIfNotExists();
-            }*/
+                int i = 0;
+
+                while (game[x, y] != 0 && i < 1000) {
+                    i++;
+                    createGameIfNotExists();
+                }
+
+                if(i > 999)
+                    Infobox.Show("Error", "Failed to generate game");
+                return;
+            }
         }
 
         private void createGameIfNotExists() {
@@ -201,6 +205,7 @@ namespace ShiftOS.WinForms.Applications {
                     game[random.Next(0, currentGameWidth), random.Next(0, currentGameHeight)] = 9;
                 }
                 gameCreated = true;
+                ticking.Start();
             }
         }
 
@@ -278,11 +283,11 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         private void buttonMedium_Click(object sender, EventArgs e) {
-            startGame(11, 11, 11);
+            startGame(16, 16, 40);
         }
 
         private void buttonHard_Click(object sender, EventArgs e) {
-            startGame(12, 12, 12);
+            startGame(30, 30, 99);
         }
 
         public void winGame() {
@@ -304,11 +309,14 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public void disableAllTiles(bool showBombs) {
-            for (int yy = 0; yy < gamePanel.ColumnCount; yy++) {
-                for (int xx = 0; xx < gamePanel.RowCount; xx++) {
-                    gamePanel.GetControlFromPosition(xx, yy).Enabled = false;
-                    if (game[xx, yy] == 9 && showBombs) {
-                        gamePanel.GetControlFromPosition(xx, yy).BackgroundImage = Properties.Resources.SweeperTileBomb;
+            ticking.Stop();
+            minetimer = 0;
+            for (int y = 0; y < currentGameHeight; y++) {
+                for (int x = 0; x < currentGameWidth; x++) {
+                    gamePanel.GetControlFromPosition(y, x).Visible = true;
+                    gamePanel.GetControlFromPosition(y,x).Enabled = false;
+                    if (game[x,y] == 9 && showBombs) {
+                        gamePanel.GetControlFromPosition(y,x).BackgroundImage = Properties.Resources.SweeperTileBomb;
                     }
 
                 }
