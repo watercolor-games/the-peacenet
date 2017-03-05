@@ -18,13 +18,13 @@ With Freebie Solutions from ShiftSoft, you'll be able to traverse the Shiftnet w
 	{
 		Company: "Plumb Corp.",
 		Name: "youConnect",
-		CostPerMonth: 4000,
-		DownloadSpeed: 262144
+		CostPerMonth: 6000,
+		DownloadSpeed: 1048576, //1 mb/s
 	},
 	{
 		Company: "theCorp",
 		Name: "theNet",
-		CostPerMonth: 2000,
-		DownloadSpeed: 1048576,
+		CostPerMonth: 3000,
+		DownloadSpeed: 786342, //768 kb/s
 	},
 ]
