@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientSave.cs" />
+    <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="Legion.cs" />
     <Compile Include="MudAttributes.cs" />

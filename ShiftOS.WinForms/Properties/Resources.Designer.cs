@@ -913,24 +913,52 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to [
+        ///	{
+        ///		Name: &quot;Freebie Solutions&quot;,
+        ///		DownloadSpeed: 256,
+        ///		CostPerMonth: 0,
+        ///		Description: &quot;The Shiftnet is a wonderful place full of apps, games, websites and skins for ShiftOS.
+        ///		
+        ///With Freebie Solutions from ShiftSoft, you&apos;ll be able to traverse the Shiftnet without any worry about monthly fees.&quot;,
+        ///		Company: &quot;ShiftSoft&quot;
+        ///	},
+        ///	{
+        ///		Company: &quot;&quot;
+        ///	},
+        ///	{
+        ///	
+        ///	},
+        ///	{
+        ///	
+        ///	},
+        ///].
+        /// </summary>
+        internal static string ShiftnetServices {
+            get {
+                return ResourceManager.GetString("ShiftnetServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///// SCREENSAVER
+        ///	{
+        ///		Name: &quot;Screensavers&quot;,
+        ///		Cost: 750,
+        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot;,
+        ///		Dependencies: &quot;desktop&quot;
+        ///	},
+        ///	{
+        ///		Name: &quot;Shift Screensavers&quot;,
+        ///		Cost: 100,
+        ///		Description: &quot;This Shifter upgrade will allow you to customize the screensaver.&quot;,
+        ///		Dependencies: &quot;screensavers;shifter&quot;
+        ///	},
+        ///
+        ///
         ///// CALCULATOR UPGRADES
         ///	{
-        ///		Name: &quot;Calculator&quot;,
-        ///		Cost: 1000,
-        ///		Dependencies: &quot;wm_free_placement;desktop&quot;,
-        ///		Description: &quot;Crazy math problems getting you down? Well, this calculator will take care of that!&quot;
-        ///	},
-        ///	{
-        ///		Name: &quot;AL Calculator&quot;,
-        ///		Cost: 150,
-        ///		Dependencies: &quot;calculator;app_launcher&quot;,
-        ///		Description: &quot;Add an App Launcher Entry for the Calculator!&quot;
-        ///	},
-        ///	{
-        ///		Name: &quot;Calc Equals Button&quot;,
-        ///		Cost: 600,
-        ///		Dependencies: &quot;calculator&quot;,
-        ///		Description: &quot;Right now, you can only type numbers, [rest of string was truncated]&quot;;.
+        ///		Name: &quot;Calcul [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {

@@ -565,6 +565,7 @@
     <None Include="Resources\SnakeyHeadL.png" />
     <None Include="Resources\SnakeyHeadR.png" />
     <None Include="Resources\SnakeyFruit.png" />
+    <None Include="Resources\ShiftnetServices.txt" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

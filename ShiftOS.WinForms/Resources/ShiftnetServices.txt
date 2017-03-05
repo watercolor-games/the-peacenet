@@ -1,0 +1,20 @@
+[
+	{
+		Name: "Freebie Solutions",
+		DownloadSpeed: 256,
+		CostPerMonth: 0,
+		Description: "The Shiftnet is a wonderful place full of apps, games, websites and skins for ShiftOS.
+		
+With Freebie Solutions from ShiftSoft, you'll be able to traverse the Shiftnet without any worry about monthly fees.",
+		Company: "ShiftSoft"
+	},
+	{
+		Company: ""
+	},
+	{
+	
+	},
+	{
+	
+	},
+]

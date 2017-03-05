@@ -187,6 +187,16 @@ namespace ShiftOS.WinForms.Applications
             return 256;
         }
 
+        public static IEnumerable<ShiftOS.Objects.EngineShiftnetSubscription> GetAllSubscriptions()
+        {
+            //For now we'll have them hard-coded into the client but in future they'll be in the MUD.
+
+            foreach(var sub in JsonConvert.DeserializeObject<ShiftOS.Objects.EngineShiftnetSubscription[]>(Properties.Resources.ShiftnetServices))
+            {
+                yield return sub;
+            }
+        }
+
         public static void StartDownload(Download down)
         {
             var t = new Thread(() =>
