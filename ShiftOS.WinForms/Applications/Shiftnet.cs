@@ -122,7 +122,52 @@ namespace ShiftOS.WinForms.Applications
             {
                 e.Cancel = true;
                 Future.Clear();
+                if (Url.StartsWith("runsyscmd/"))
+                {
+                    ProcessShiftnetCmd(Url.Replace("runsyscmd/", ""));
+                }
+
                 ShiftnetNavigate(Url.ToString());
+            }
+        }
+
+        public void ProcessShiftnetCmd(string cmd)
+        {
+            var args = cmd.Split('/');
+            switch (args[0])
+            {
+                case "setsnsub":
+                    for(int i = 0; i < DownloadManager.GetAllSubscriptions().Length; i++)
+                    {
+                        if(DownloadManager.GetAllSubscriptions()[i].Name == args[1])
+                        {
+                            var sub = DownloadManager.GetAllSubscriptions()[i];
+                            Infobox.PromptYesNo("Shiftnet", $"Are you sure you want to switch your system's Shiftnet subscription to {sub.Name} by {sub.Company}?{Environment.NewLine}{Environment.NewLine}Cost per month: {sub.CostPerMonth} CP{Environment.NewLine}Download speed: {sub.DownloadSpeed} bytes per second", new Action<bool>((answer) =>
+                            {
+                                if(answer == true)
+                                {
+                                    if(SaveSystem.CurrentSave.Codepoints >= sub.CostPerMonth)
+                                    {
+                                        //Initial fee gets deducted.
+                                        SaveSystem.CurrentSave.Codepoints -= sub.CostPerMonth;
+                                        //Then we set the subscription.
+                                        SaveSystem.CurrentSave.ShiftnetSubscription = i;
+                                        //Then we say that we have paid this month.
+                                        SaveSystem.CurrentSave.LastMonthPaid = DateTime.Now.Month;
+                                        //Then we send our save to the MUD.
+                                        SaveSystem.SaveGame();
+                                        
+                                    }
+                                    else
+                                    {
+                                        //User can't afford this subscription.
+                                        Infobox.Show("Shiftnet - Not enough Codepoints", $"You cannot afford to pay for this subscription at this time. You need {sub.CostPerMonth - SaveSystem.CurrentSave.Codepoints} more Codepoints.");
+                                    }
+                                }
+                            }));
+                        }
+                    }
+                    break;
             }
         }
 
