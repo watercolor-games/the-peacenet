@@ -65,6 +65,8 @@ namespace ShiftOS.Objects
             }
         }
 
+        public int LastMonthPaid { get; set; }
+
         public int CountUpgrades()
         {
             int count = 0;

@@ -26,5 +26,6 @@ With Freebie Solutions from ShiftSoft, you'll be able to traverse the Shiftnet w
 		Name: "theNet",
 		CostPerMonth: 3000,
 		DownloadSpeed: 786342, //768 kb/s
+		Description: "theNet is not *just* a Shiftnet service provider. It is theGateway to all of theShiftnet and your needs. It is also theValue service provider with theGreatest price and download speed."
 	},
 ]
