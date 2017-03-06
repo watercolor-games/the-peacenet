@@ -367,68 +367,79 @@ namespace ShiftOS.Engine
         [Command("help", "{COMMAND_HELP_USAGE}", "{COMMAND_HELP_DESCRIPTION}")]
         public static bool Help()
         {
-            var asm = Assembly.GetExecutingAssembly();
-
-            var types = asm.GetTypes();
-
-            foreach (var type in types)
+            foreach (var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
             {
-                if (Shiftorium.UpgradeAttributesUnlocked(type))
+                if (exec.EndsWith(".exe") || exec.EndsWith(".dll"))
                 {
-                    foreach (var a in type.GetCustomAttributes(false))
+                    try
                     {
-                        if (a is Namespace)
+                        var asm = Assembly.LoadFile(exec);
+
+                        var types = asm.GetTypes();
+
+                        foreach (var type in types)
                         {
-                            var ns = a as Namespace;
-
-                            if (!ns.hide)
+                            if (Shiftorium.UpgradeAttributesUnlocked(type))
                             {
-                                string descp = "{NAMESPACE_" + ns.name.ToUpper() + "_DESCRIPTION}";
-                                if (descp == Localization.Parse(descp))
-                                    descp = "";
-                                else
-                                    descp = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descp) : "";
-
-                                Console.WriteLine($"{{NAMESPACE}}{ns.name}" + descp);
-
-                                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                                foreach (var a in type.GetCustomAttributes(false))
                                 {
-                                    if (Shiftorium.UpgradeAttributesUnlocked(method))
+                                    if (a is Namespace)
                                     {
-                                        foreach (var ma in method.GetCustomAttributes(false))
+                                        var ns = a as Namespace;
+
+                                        if (!ns.hide)
                                         {
-                                            if (ma is Command)
+                                            string descp = "{NAMESPACE_" + ns.name.ToUpper() + "_DESCRIPTION}";
+                                            if (descp == Localization.Parse(descp))
+                                                descp = "";
+                                            else
+                                                descp = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descp) : "";
+
+                                            Console.WriteLine($"{{NAMESPACE}}{ns.name}" + descp);
+
+                                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                                             {
-                                                var cmd = ma as Command;
-
-                                                if (!cmd.hide)
+                                                if (Shiftorium.UpgradeAttributesUnlocked(method))
                                                 {
-                                                    string descriptionparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_DESCRIPTION}";
-                                                    string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                    if (descriptionparse == Localization.Parse(descriptionparse))
-                                                        descriptionparse = "";
-                                                    else
-                                                        descriptionparse = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descriptionparse) : "";
+                                                    foreach (var ma in method.GetCustomAttributes(false))
+                                                    {
+                                                        if (ma is Command)
+                                                        {
+                                                            var cmd = ma as Command;
 
-                                                    if (usageparse == Localization.Parse(usageparse))
-                                                        usageparse = "";
-                                                    else
-                                                        usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{SEPERATOR}" + usageparse, new Dictionary<string, string>() {
+                                                            if (!cmd.hide)
+                                                            {
+                                                                string descriptionparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_DESCRIPTION}";
+                                                                string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
+                                                                if (descriptionparse == Localization.Parse(descriptionparse))
+                                                                    descriptionparse = "";
+                                                                else
+                                                                    descriptionparse = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descriptionparse) : "";
+
+                                                                if (usageparse == Localization.Parse(usageparse))
+                                                                    usageparse = "";
+                                                                else
+                                                                    usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{SEPERATOR}" + usageparse, new Dictionary<string, string>() {
                                                             {"%ns", ns.name},
                                                             {"%cmd", cmd.name}
                                                         }) : "";
 
-                                                    Console.WriteLine($"{{COMMAND}}{ns.name}.{cmd.name}" + usageparse + descriptionparse);
+                                                                Console.WriteLine($"{{COMMAND}}{ns.name}.{cmd.name}" + usageparse + descriptionparse);
+                                                            }
+                                                        }
+                                                    }
                                                 }
+
                                             }
                                         }
-                                    }
 
+                                    }
                                 }
                             }
-
                         }
+
                     }
+                    catch { }
                 }
             }
 
