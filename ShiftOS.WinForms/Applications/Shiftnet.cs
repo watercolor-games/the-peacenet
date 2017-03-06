@@ -35,36 +35,33 @@ using ShiftOS.Engine;
 using Newtonsoft.Json;
 using static ShiftOS.Engine.SkinEngine;
 
-namespace ShiftOS.WinForms.Applications
-{
+namespace ShiftOS.WinForms.Applications {
     [Launcher("Shiftnet", false, null, "Networking")]
     [DefaultIcon("iconShiftnet")]
-    public partial class Shiftnet : UserControl, IShiftOSWindow
-    {
-        public Shiftnet()
-        {
+    public partial class Shiftnet : UserControl, IShiftOSWindow {
+        public Shiftnet() {
             InitializeComponent();
-            ServerManager.MessageReceived += (msg) =>
-            {
-                try
-                {
-                    if (msg.Name == "shiftnet_file")
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            wbcanvas.DocumentText = ConstructHtml(msg.Contents);
-                        }));
+            ServerManager.MessageReceived += (msg) => {
+                try {
+                    if (msg.Name == "shiftnet_file") {
+                        if (Objects.ShiftFS.Utils.FileExists("0:/md.txt")) {
+                            this.Invoke(new Action(() => {
+                                wbcanvas.DocumentText = ConstructHtml(Objects.ShiftFS.Utils.ReadAllText("0:/md.txt"));
+                            }));
+                        } else {
+                            this.Invoke(new Action(() =>
+                            {
+                                wbcanvas.DocumentText = ConstructHtml(msg.Contents);
+                            }));
+                        }
                     }
-                }
-                catch
-                {
+                } catch {
 
                 }
             };
         }
 
-        public string ConstructHtml(string markdown)
-        {
+        public string ConstructHtml(string markdown) {
             string html = $@"<html>
     <head>
         <style>
@@ -104,8 +101,7 @@ namespace ShiftOS.WinForms.Applications
 </html>";
 
             string body = CommonMark.CommonMarkConverter.Convert(markdown);
-            for(int i = 0; i <= Encoding.UTF8.GetBytes(body).Length; i += DownloadManager.GetDownloadSpeed())
-            {
+            for (int i = 0; i <= Encoding.UTF8.GetBytes(body).Length; i += DownloadManager.GetDownloadSpeed()) {
                 //halt the page load until 'download' finishes.
             }
             html = html.Replace("<markdown/>", body);
@@ -115,15 +111,12 @@ namespace ShiftOS.WinForms.Applications
         public string CurrentUrl { get; set; }
 
 
-        private void wbcanvas_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
+        private void wbcanvas_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             string Url = e.Url.ToString().Replace("http://", "");
-            if (CurrentUrl != Url.ToString() && !Url.ToString().StartsWith("about:"))
-            {
+            if (CurrentUrl != Url.ToString() && !Url.ToString().StartsWith("about:")) {
                 e.Cancel = true;
                 Future.Clear();
-                if (Url.StartsWith("runsyscmd/"))
-                {
+                if (Url.StartsWith("runsyscmd/")) {
                     ProcessShiftnetCmd(Url.Replace("runsyscmd/", ""));
                 }
 
@@ -131,23 +124,16 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
-        public void ProcessShiftnetCmd(string cmd)
-        {
+        public void ProcessShiftnetCmd(string cmd) {
             var args = cmd.Split('/');
-            switch (args[0])
-            {
+            switch (args[0]) {
                 case "setsnsub":
-                    for(int i = 0; i < DownloadManager.GetAllSubscriptions().Length; i++)
-                    {
-                        if(DownloadManager.GetAllSubscriptions()[i].Name == args[1])
-                        {
+                    for (int i = 0; i < DownloadManager.GetAllSubscriptions().Length; i++) {
+                        if (DownloadManager.GetAllSubscriptions()[i].Name == args[1]) {
                             var sub = DownloadManager.GetAllSubscriptions()[i];
-                            Infobox.PromptYesNo("Shiftnet", $"Are you sure you want to switch your system's Shiftnet subscription to {sub.Name} by {sub.Company}?{Environment.NewLine}{Environment.NewLine}Cost per month: {sub.CostPerMonth} CP{Environment.NewLine}Download speed: {sub.DownloadSpeed} bytes per second", new Action<bool>((answer) =>
-                            {
-                                if(answer == true)
-                                {
-                                    if(SaveSystem.CurrentSave.Codepoints >= sub.CostPerMonth)
-                                    {
+                            Infobox.PromptYesNo("Shiftnet", $"Are you sure you want to switch your system's Shiftnet subscription to {sub.Name} by {sub.Company}?{Environment.NewLine}{Environment.NewLine}Cost per month: {sub.CostPerMonth} CP{Environment.NewLine}Download speed: {sub.DownloadSpeed} bytes per second", new Action<bool>((answer) => {
+                                if (answer == true) {
+                                    if (SaveSystem.CurrentSave.Codepoints >= sub.CostPerMonth) {
                                         //Initial fee gets deducted.
                                         SaveSystem.CurrentSave.Codepoints -= sub.CostPerMonth;
                                         //Then we set the subscription.
@@ -156,10 +142,8 @@ namespace ShiftOS.WinForms.Applications
                                         SaveSystem.CurrentSave.LastMonthPaid = DateTime.Now.Month;
                                         //Then we send our save to the MUD.
                                         SaveSystem.SaveGame();
-                                        
-                                    }
-                                    else
-                                    {
+
+                                    } else {
                                         //User can't afford this subscription.
                                         Infobox.Show("Shiftnet - Not enough Codepoints", $"You cannot afford to pay for this subscription at this time. You need {sub.CostPerMonth - SaveSystem.CurrentSave.Codepoints} more Codepoints.");
                                     }
@@ -174,51 +158,39 @@ namespace ShiftOS.WinForms.Applications
         public Stack<string> History = new Stack<string>();
         public Stack<string> Future = new Stack<string>();
 
-        public void ShiftnetNavigate(string Url, bool pushHistory = true)
-        {
-            if (Url.EndsWith(".rnp") || !Url.Contains("."))
-            {
+        public void ShiftnetNavigate(string Url, bool pushHistory = true) {
+            if (Url.EndsWith(".rnp") || !Url.Contains(".")) {
                 if (!string.IsNullOrEmpty(CurrentUrl) && pushHistory)
                     History.Push(CurrentUrl);
                 CurrentUrl = Url;
-                ServerManager.SendMessage("shiftnet_get", JsonConvert.SerializeObject(new
-                {
+                ServerManager.SendMessage("shiftnet_get", JsonConvert.SerializeObject(new {
                     url = Url
                 }));
                 txturl.Text = Url;
 
-            }
-            else
-            {
+            } else {
                 ServerMessageReceived smr = null;
-                smr = (msg) =>
-                {
-                    if(msg.Name == "download_meta")
-                    {
+                smr = (msg) => {
+                    if (msg.Name == "download_meta") {
                         var bytes = JsonConvert.DeserializeObject<byte[]>(msg.Contents);
                         string destPath = null;
                         string ext = Url.Split('.')[Url.Split('.').Length - 1];
-                        this.Invoke(new Action(() =>
-                        {
-                            FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) =>
-                            {
+                        this.Invoke(new Action(() => {
+                            FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) => {
                                 destPath = file;
                             }));
                         }));
-                        while (string.IsNullOrEmpty(destPath))
-                        {
-                            
+                        while (string.IsNullOrEmpty(destPath)) {
+
                         }
-                        var d = new Download
-                        {
+                        var d = new Download {
                             ShiftnetUrl = Url,
                             Destination = destPath,
                             Bytes = bytes,
                             Progress = 0,
                         };
                         DownloadManager.StartDownload(d);
-                        this.Invoke(new Action(() =>
-                        {
+                        this.Invoke(new Action(() => {
                             AppearanceManager.SetupWindow(new Downloader());
                         }));
                         ServerManager.MessageReceived -= smr;
@@ -229,79 +201,60 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
-        public void OnLoad()
-        {
+        public void OnLoad() {
             ShiftnetNavigate("shiftnet/main");
         }
 
-        public void OnSkinLoad()
-        {
+        public void OnSkinLoad() {
             ShiftnetNavigate(CurrentUrl);
         }
 
-        public bool OnUnload()
-        {
+        public bool OnUnload() {
             return true;
         }
 
-        public void OnUpgrade()
-        {
+        public void OnUpgrade() {
         }
 
-        private void btnback_Click(object sender, EventArgs e)
-        {
-            try
-            {
+        private void btnback_Click(object sender, EventArgs e) {
+            try {
                 string hist = History.Pop();
-                if (!string.IsNullOrEmpty(hist))
-                {
+                if (!string.IsNullOrEmpty(hist)) {
                     Future.Push(hist);
                     ShiftnetNavigate(hist, false);
                 }
-            }
-            catch
-            {
+            } catch {
 
             }
         }
 
-        private void btnforward_Click(object sender, EventArgs e)
-        {
-            try
-            {
+        private void btnforward_Click(object sender, EventArgs e) {
+            try {
                 string fut = Future.Pop();
-                if (!string.IsNullOrEmpty(fut))
-                {
+                if (!string.IsNullOrEmpty(fut)) {
                     ShiftnetNavigate(fut);
                 }
-            }
-            catch
-            {
+            } catch {
 
             }
         }
 
-        private void btngo_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(txturl.Text))
-            {
+        private void btngo_Click(object sender, EventArgs e) {
+            if (!string.IsNullOrWhiteSpace(txturl.Text)) {
                 Future.Clear();
 
                 ShiftnetNavigate(txturl.Text);
             }
         }
 
-        private void txturl_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-            {
+        private void txturl_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) {
                 btngo_Click(sender, EventArgs.Empty);
                 e.SuppressKeyPress = true;
             }
         }
 
-        private void wbcanvas_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
+        private void wbcanvas_Navigated(object sender, WebBrowserNavigatedEventArgs e) {
         }
     }
 }
