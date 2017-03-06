@@ -185,6 +185,10 @@ namespace ShiftOS.Server
                             Console.WriteLine("Save not found.");
                         }
                     }
+                    else if(cmd.ToLower().StartsWith("broadcast "))
+                    {
+                        ChatBackend.Broadcast(cmd.Remove(0, 10));
+                    }
                     else if (cmd == "purge_all_bad_saves")
                     {
                         foreach(var f in Directory.GetFiles("saves"))

@@ -103,7 +103,21 @@ namespace ShiftOS.Server
                             }
                         }
                     };
-                    Reinitialized += () =>
+                    OnBroadcast += (msg) =>
+                    {
+                        if (chatKilled == false)
+                        {
+                            var cMsg = new ChatMessage("sys", "mud", msg, chatID);
+                            RelayMessageToAll(cMsg);
+                            Log(chatID, msg);
+                            //Get the Discord channel for this chat.
+                            var dChan = client.GetChannel(Convert.ToUInt64(chat.DiscordChannelID)) as ISocketMessageChannel;
+                            //Relay the message to Discord.
+                            dChan.SendMessageAsync($"{msg}");
+                            //Relay it back to all MUD clients.
+                            
+                        }
+                    }; Reinitialized += () =>
                     {
                         client.DisconnectAsync();
                         
@@ -122,9 +136,29 @@ namespace ShiftOS.Server
                             Log(chatID, $"[{msg.Username}@{msg.SystemName}] {msg.Message}");
                         }
                     };
+                    OnBroadcast += (msg) =>
+                    {
+                        if (chatKilled == false)
+                        {
+                            var cMsg = new ChatMessage("sys", "mud", msg, chatID);
+                            RelayMessageToAll(cMsg);
+                            Log(chatID, msg);
+                        }
+                    };
                     Reinitialized += () => { chatKilled = true; };
                 }
             }
+        }
+
+        internal static void RelayMessageToAll(ChatMessage msg)
+        {
+            server.DispatchAll(new NetObject("chat_msgreceived", new ServerMessage
+            {
+                Name = "chat_msgreceived",
+                GUID = "server",
+                Contents = JsonConvert.SerializeObject(msg)
+            }));
+
         }
 
         internal static void RelayMessage(string guid, ChatMessage msg)
@@ -161,6 +195,13 @@ namespace ShiftOS.Server
             var msg = contents as Dictionary<string, string>;
             MessageReceived?.Invoke(guid, new ChatMessage(msg["Username"], msg["SystemName"], msg["Message"], msg["Channel"]));
 
+        }
+
+        public static event Action<string> OnBroadcast;
+
+        public static void Broadcast(string text)
+        {
+            OnBroadcast?.Invoke("[Broadcast] " + text);
         }
 
         [MudRequest("chat_getlog", typeof(ChatLogRequest))]

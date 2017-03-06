@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -73,6 +73,12 @@ namespace ShiftOS.Server
 
                         if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
                         {
+                            if(save.ID == new Guid())
+                            {
+                                save.ID = Guid.NewGuid();
+                                WriteEncFile(savefile, JsonConvert.SerializeObject(save));
+                            }
+
 
                             Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {
