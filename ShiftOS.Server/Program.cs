@@ -167,6 +167,8 @@ namespace ShiftOS.Server
             var task = ChatBackend.StartDiscordBots();
             task.Wait();
 
+            RandomUserGenerator.StartThread();
+
             while (server.IsOnline)
             {
                 Console.Write("> ");
