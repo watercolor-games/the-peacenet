@@ -180,6 +180,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RandomUserGenerator.cs" />
     <Compile Include="RemoteTerminal.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="ShiftnetBackend.cs" />
