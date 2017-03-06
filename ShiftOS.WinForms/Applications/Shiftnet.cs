@@ -151,7 +151,7 @@ namespace ShiftOS.WinForms.Applications {
                             }));
                         }
                     }
-                    break;
+                    return;
             }
         }
 

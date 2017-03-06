@@ -138,6 +138,24 @@ namespace ShiftOS.WinForms
                     }
                 }
 
+                if(SaveSystem.CurrentSave != null)
+                {
+                    if(SaveSystem.CurrentSave.LastMonthPaid != DateTime.Now.Month)
+                    {
+                        if(SaveSystem.CurrentSave.Codepoints >= DownloadManager.GetAllSubscriptions()[SaveSystem.CurrentSave.ShiftnetSubscription].CostPerMonth)
+                        {
+                            SaveSystem.CurrentSave.Codepoints -= DownloadManager.GetAllSubscriptions()[SaveSystem.CurrentSave.ShiftnetSubscription].CostPerMonth;
+                            SaveSystem.CurrentSave.LastMonthPaid = DateTime.Now.Month;
+                        }
+                        else
+                        {
+                            SaveSystem.CurrentSave.ShiftnetSubscription = 0;
+                            SaveSystem.CurrentSave.LastMonthPaid = DateTime.Now.Month;
+                            Infobox.Show("Shiftnet", "You do not have enough Codepoints to pay for your Shiftnet subscription this month. You have been downgraded to the free plan.");
+                        }
+                    }
+                }
+
                 btnnotifications.Left = lbtime.Left - btnnotifications.Width - 2;
                 btnnotifications.Top = (desktoppanel.Height - btnnotifications.Height) / 2;
             };
