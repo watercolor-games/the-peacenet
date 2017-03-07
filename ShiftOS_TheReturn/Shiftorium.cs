@@ -210,9 +210,12 @@ namespace ShiftOS.Engine
                 if (SaveSystem.CurrentSave.StoriesExperienced == null)
                     SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
 
-                if (!SaveSystem.CurrentSave.StoriesExperienced.Contains(id))
-                    return SaveSystem.CurrentSave.Upgrades[id];
+                bool upgInstalled = false;
+                if(SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
+                    upgInstalled = SaveSystem.CurrentSave.Upgrades[id];
 
+                if(upgInstalled == false)
+                    return SaveSystem.CurrentSave.StoriesExperienced.Contains(id);
                 return true;
             }
             catch

@@ -155,6 +155,8 @@ namespace ShiftOS.Engine
 
         public static void FinishBootstrap()
         {
+            KernelWatchdog.Log("mud_handshake", "handshake successful: kernel watchdog access code is \"" + ServerManager.thisGuid.ToString() + "\"");
+
             ServerManager.MessageReceived += (msg) =>
             {
                 if (msg.Name == "mud_savefile")
@@ -313,7 +315,7 @@ namespace ShiftOS.Engine
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }
 
-        public static void TransferCodepointsFrom(string who, int amount)
+        public static void TransferCodepointsFrom(string who, long amount)
         {
             NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
             CurrentSave.Codepoints += amount;

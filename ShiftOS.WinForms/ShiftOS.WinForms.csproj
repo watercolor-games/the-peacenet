@@ -208,6 +208,12 @@
     <Compile Include="Applications\Terminal.Designer.cs">
       <DependentUpon>Terminal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\TutorialBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TutorialBox.Designer.cs">
+      <DependentUpon>TutorialBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Controls\ColorControl.cs">
@@ -349,6 +355,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Terminal.resx">
       <DependentUpon>Terminal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TutorialBox.resx">
+      <DependentUpon>TutorialBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>

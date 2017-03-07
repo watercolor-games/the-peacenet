@@ -52,7 +52,9 @@ namespace ShiftOS.WinForms.Controls
 
         public void Write(string text)
         {
+            this.HideSelection = true;
             this.AppendText(Localization.Parse(text));
+            this.HideSelection = false;
         }
 
         public void WriteLine(string text)

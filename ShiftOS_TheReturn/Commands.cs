@@ -164,7 +164,35 @@ namespace ShiftOS.Engine
             }
         }
 
+        [Command("reconnect")]
+        [RequiresUpgrade("hacker101_deadaccts")]
+        public static bool Reconnect()
+        {
+            Console.WriteLine("--reconnecting to multi-user domain...");
+            KernelWatchdog.MudConnected = true;
+            Console.WriteLine("--done.");
+            return true;
+        }
 
+        [Command("disconnect")]
+        [RequiresUpgrade("hacker101_deadaccts")]
+        public static bool Disconnect()
+        {
+            Console.WriteLine("--connection to multi-user domain severed...");
+            KernelWatchdog.MudConnected = false;
+            return true;
+        }
+
+        [Command("sendmsg")]
+        [KernelMode]
+        [RequiresUpgrade("hacker101_deadaccts")]
+        [RequiresArgument("header")]
+        [RequiresArgument("body")]
+        public static bool SendMessage(Dictionary<string, object> args)
+        {
+            ServerManager.SendMessage(args["header"].ToString(), args["body"].ToString());
+            return true;
+        }
     }
 
     [RequiresUpgrade("mud_fundamentals")]

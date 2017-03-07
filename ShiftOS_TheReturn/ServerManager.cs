@@ -126,6 +126,13 @@ namespace ShiftOS.Engine
                     thisGuid = new Guid(msg.Contents);
                     GUIDReceived?.Invoke(msg.Contents);
                 }
+                else if(msg.Name == "allusers")
+                {
+                    foreach(var acc in JsonConvert.DeserializeObject<string[]>(msg.Contents))
+                    {
+                        Console.WriteLine(acc);
+                    }
+                }
                 else if(msg.Name == "update_your_cp")
                 {
                     var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);

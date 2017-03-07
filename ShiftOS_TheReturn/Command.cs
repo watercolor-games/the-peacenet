@@ -30,6 +30,12 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Engine
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
+    public class KernelModeAttribute : Attribute
+    {
+
+    }
+
     public class Command : Attribute
     {
         public string name;

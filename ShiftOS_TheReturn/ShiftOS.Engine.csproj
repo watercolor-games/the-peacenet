@@ -107,6 +107,7 @@
     <Compile Include="FileSkimmerBackend.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />
+    <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="NotificationDaemon.cs" />
     <Compile Include="OutOfBoxExperience.cs" />
