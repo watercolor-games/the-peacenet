@@ -114,7 +114,7 @@ namespace ShiftOS.Server
                     sve.Codepoints = rnd.Next(startCP, maxAmt);
 
                     //FS treasure generation.
-
+                    /*
                     //create a ramdisk dir
                     var dir = new ShiftOS.Objects.ShiftFS.Directory();
                     //name the directory after the user
@@ -181,16 +181,19 @@ namespace ShiftOS.Server
                                 WriteAllBytes(kv.Value, File.ReadAllBytes(file));
                             }
                         }
-                    }
+                    }*/
 
                     //save the save file to disk.
                     File.WriteAllText("deadsaves/" + sve.Username + ".save", Newtonsoft.Json.JsonConvert.SerializeObject(sve, Newtonsoft.Json.Formatting.Indented));
                     //We don't care about the encryption algorithm because these saves can't be logged into as regular users.
 
+                    /*
                     //Now we export the mount.
                     string exportedMount = ExportMount(mountid);
                     //And save it to disk.
                     File.WriteAllText("deadsaves/" + sve.Username + ".mfs", exportedMount);
+                    */
+
 
                     Thread.Sleep((60 * 60) * 1000); //approx. 1 hour.
 

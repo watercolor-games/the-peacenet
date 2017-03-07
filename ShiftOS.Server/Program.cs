@@ -123,6 +123,27 @@ namespace ShiftOS.Server
 				Console.WriteLine("Client connected.");
 				server.DispatchTo(a.Guid, new NetObject("welcome", new ServerMessage { Name = "Welcome", Contents = a.Guid.ToString(), GUID = "Server" }));
 			};
+
+            server.OnClientDisconnected += (o, a) =>
+            {
+                Console.WriteLine("Client disconnected.");
+            };
+
+            server.OnClientRejected += (o, a) =>
+            {
+                Console.WriteLine("FUCK. Something HORRIBLE JUST HAPPENED.");
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                ChatBackend.Broadcast("**Automatic Broadcast:** The multi-user domain is restarting because of a crash.");
+#if DEBUG
+                ChatBackend.Broadcast("Crash summary: " + a.ExceptionObject.ToString());
+#endif
+                if(server.IsOnline == true)
+                    server.Stop();
+                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+            };
 				
 			server.OnReceived += (o, a) =>
 			{
