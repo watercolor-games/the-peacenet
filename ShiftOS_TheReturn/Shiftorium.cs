@@ -204,6 +204,9 @@ namespace ShiftOS.Engine
             }
             try
             {
+                if (SaveSystem.CurrentSave.StoriesExperienced.Contains(id))
+                    return true;
+
                 return SaveSystem.CurrentSave.Upgrades[id];
             }
             catch
