@@ -125,5 +125,91 @@ namespace ShiftOS.Server
             }
 
         }
+
+        [MudRequest("getusers", typeof(string))]
+        public static void GetAllUsers(string guid, string contents)
+        {
+            List<string> accs = new List<string>();
+            if(contents == "dead")
+            {
+                foreach(var sve in Directory.GetFiles("deadsaves"))
+                {
+                    if (sve.EndsWith(".save"))
+                    {
+                        var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(sve));
+                        accs.Add($"{save.Username}@{save.SystemName}");
+                    }
+
+                }
+            }
+            server.DispatchTo(new Guid(guid), new NetObject("h4xx0r", new ServerMessage
+            {
+                Name = "allusers",
+                GUID = "server",
+                Contents = JsonConvert.SerializeObject(accs)
+            }));
+        }
+
+        [MudRequest("mud_save_allow_dead", typeof(Save))]
+        public static void SaveDead(string guid, Save sve)
+        {
+            if(File.Exists("saves/" + sve.Username + ".save"))
+            {
+                WriteEncFile("saves/" + sve.Username + ".save", JsonConvert.SerializeObject(sve));
+            }
+            else if(File.Exists("deadsaves/" + sve.Username + ".save"))
+            {
+                File.WriteAllText("deadsaves/" + sve.Username + ".save", JsonConvert.SerializeObject(sve));
+            }
+        }
+
+        [MudRequest("get_user_data", typeof(Dictionary<string, string>))]
+        public static void GetUserData(string guid, Dictionary<string, string> contents)
+        {
+            string usr = contents["user"];
+            string sys = contents["sysname"];
+
+            foreach(var sve in Directory.GetFiles("deadsaves"))
+            {
+                if (sve.EndsWith(".save"))
+                {
+                    var saveFile = JsonConvert.DeserializeObject<Save>(File.ReadAllText(sve));
+                    if(saveFile.Username == usr && saveFile.SystemName == sys)
+                    {
+                        server.DispatchTo(new Guid(guid), new NetObject("1337", new ServerMessage
+                        {
+                            Name = "user_data",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(saveFile)
+                        }));
+                    }
+                    return;
+                }
+            }
+            foreach (var sve in Directory.GetFiles("saves"))
+            {
+                if (sve.EndsWith(".save"))
+                {
+                    var saveFile = JsonConvert.DeserializeObject<Save>(ReadEncFile(sve));
+                    if (saveFile.Username == usr && saveFile.SystemName == sys)
+                    {
+                        server.DispatchTo(new Guid(guid), new NetObject("1337", new ServerMessage
+                        {
+                            Name = "user_data",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(saveFile)
+                        }));
+                    }
+                    return;
+                }
+            }
+
+            server.DispatchTo(new Guid(guid), new NetObject("n07_50_1337", new ServerMessage
+            {
+                Name = "user_data_not_found",
+                GUID = "server"
+            }));
+
+        }
     }
 }
