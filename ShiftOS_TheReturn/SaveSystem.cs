@@ -110,7 +110,7 @@ namespace ShiftOS.Engine
                     ServerManager.GUIDReceived += (str) =>
                     {
                         guidReceived = true;
-                        Console.WriteLine("{CONNECTION_SUCCESSFUL}");
+                        Console.WriteLine("Connection successful.");
                     };
 
                     try

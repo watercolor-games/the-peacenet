@@ -238,6 +238,7 @@
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIFunctions.cs" />
+    <Compile Include="HackerCommands.cs" />
     <Compile Include="JobTasks.cs" />
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>

@@ -204,10 +204,16 @@ namespace ShiftOS.Engine
             }
             try
             {
-                if (SaveSystem.CurrentSave.StoriesExperienced.Contains(id))
-                    return true;
+                if (SaveSystem.CurrentSave == null)
+                    return false;
 
-                return SaveSystem.CurrentSave.Upgrades[id];
+                if (SaveSystem.CurrentSave.StoriesExperienced == null)
+                    SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
+
+                if (!SaveSystem.CurrentSave.StoriesExperienced.Contains(id))
+                    return SaveSystem.CurrentSave.Upgrades[id];
+
+                return true;
             }
             catch
             {
