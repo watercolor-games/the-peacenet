@@ -68,6 +68,7 @@ namespace ShiftOS.Objects
         }
 
         public int LastMonthPaid { get; set; }
+        public List<string> StoriesExperienced { get; set; }
 
         public int CountUpgrades()
         {
