@@ -386,12 +386,13 @@ namespace ShiftOS.WinForms
                     Console.WriteLine(pass);
                     Console.WriteLine();
                     Console.WriteLine("--password breached. Operation took " + sw.ElapsedMilliseconds + " milliseconds.");
+                    ServerManager.MessageReceived -= msgReceived;
                 }
                 else if(msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    ServerManager.MessageReceived -= msgReceived;
                 }
-                ServerManager.MessageReceived -= msgReceived;
             };
 
             Console.WriteLine("--beginning brute-force attack on " + usr + "@" + sys + "...");
@@ -440,13 +441,14 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
+                    ServerManager.MessageReceived -= msgReceived;
 
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    ServerManager.MessageReceived -= msgReceived;
                 }
-                ServerManager.MessageReceived -= msgReceived;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
@@ -508,12 +510,13 @@ namespace ShiftOS.WinForms
                         Console.WriteLine("--access denied.");
                     }
 
+                    ServerManager.MessageReceived -= msgReceived;
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    ServerManager.MessageReceived -= msgReceived;
                 }
-                ServerManager.MessageReceived -= msgReceived;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
