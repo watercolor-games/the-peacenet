@@ -119,6 +119,7 @@ namespace ShiftOS.Server
                     var dir = new ShiftOS.Objects.ShiftFS.Directory();
                     //name the directory after the user
                     dir.Name = sve.Username;
+                    dir.permissions = Objects.ShiftFS.Permissions.All;
                     //json the object and mount
                     string json = Newtonsoft.Json.JsonConvert.SerializeObject(dir);
                     //mount it to the MUD
@@ -219,7 +220,7 @@ namespace ShiftOS.Server
                     string sDir = dir.Replace("\\", "/");
                     if (sDir.Contains("shiftnet"))
                     {
-                        while (!sDir.StartsWith("shiftnet/"))
+                        while (!sDir.StartsWith("shiftnet"))
                         {
                             sDir = sDir.Remove(0, 1);
                         }
