@@ -214,12 +214,18 @@ namespace ShiftOS.Server
             targets = new Dictionary<string, string>();
             foreach(var dir in dirs)
             {
-                string sDir = dir.Replace("\\", "/");
-                while (!sDir.StartsWith("shiftnet/"))
+                if (!string.IsNullOrWhiteSpace(dir))
                 {
-                    sDir = sDir.Remove(0, 1);
+                    string sDir = dir.Replace("\\", "/");
+                    if (sDir.Contains("shiftnet"))
+                    {
+                        while (!sDir.StartsWith("shiftnet/"))
+                        {
+                            sDir = sDir.Remove(0, 1);
+                        }
+                        targets.Add(dir, output + "/" + sDir);
+                    }
                 }
-                targets.Add(dir, output + "/" + sDir);
             }
               
         }
