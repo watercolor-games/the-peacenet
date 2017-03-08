@@ -360,7 +360,7 @@ namespace ShiftOS.WinForms
         {
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
-
+            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking system thread...");
@@ -373,30 +373,28 @@ namespace ShiftOS.WinForms
                     var rnd = new Random();
                     var sw = new Stopwatch();
                     sw.Start();
-                    string pass = "";
-                    for(int i = 0; i < sve.Password.Length; i++)
+                    Thread.Sleep(2000);
+                    if(rnd.Next(0, 100) >= 75)
                     {
-                        char c = '\0';
-                        while (c != sve.Password[i])
-                            c = chars[rnd.Next(0, chars.Length)];
-                        pass += c;
-                        Thread.Sleep(rnd.Next(25,75));
+                        Console.WriteLine("--operation took too long - failed.");
+                        return;
                     }
                     sw.Stop();
-                    Console.WriteLine(pass);
+                    Console.WriteLine(sve.Password);
                     Console.WriteLine();
                     Console.WriteLine("--password breached. Operation took " + sw.ElapsedMilliseconds + " milliseconds.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                 }
                 else if(msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                 }
             };
 
             Console.WriteLine("--beginning brute-force attack on " + usr + "@" + sys + "...");
-            Thread.Sleep(500);
             ServerManager.MessageReceived += msgReceived;
 
             ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
@@ -404,6 +402,7 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            Thread.Sleep(500);
             return true;
         }
 
@@ -418,7 +417,7 @@ namespace ShiftOS.WinForms
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
-
+            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking multi-user domain response call...");
@@ -441,18 +440,19 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
 
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                 }
             };
 
             Console.WriteLine("--contacting multi-user domain...");
-            Thread.Sleep(500);
             ServerManager.MessageReceived += msgReceived;
 
             ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
@@ -460,6 +460,7 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            Thread.Sleep(500);
             return true;
         }
 
@@ -476,7 +477,7 @@ namespace ShiftOS.WinForms
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
             long amount = (long)args["amount"];
-
+            bool received = false;
             if(amount < 0)
             {
                 Console.WriteLine("--invalid codepoint amount - halting...");
@@ -509,12 +510,13 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
-
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                 }
             };
@@ -528,6 +530,8 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            Thread.Sleep(500);
+            
             return true;
         }
 
