@@ -50,7 +50,7 @@ namespace ShiftOS.WinForms.Applications
                 "shiftorium", "codepoints", "shiftletters", "shops", "mud", "notification", "namechanger",
                 "skinning", "skinloader", "calculator", "fileskimmer", "lua", "shiftnet", "terminal", "textpad"};
         List<String> contributorsWordlist = new List<string> { "philipadams", "carverh", "computelinux", "lempamo",
-                "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
+                "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox", "ashifter"};
 
         List<string> osWordlist = new List<string>
         {
@@ -90,7 +90,8 @@ namespace ShiftOS.WinForms.Applications
             "vienna",
             "whistler",
             "windowsxp",
-            "windowsforworkgroups"
+            "windowsforworkgroups",
+            "shiftos"
         };
 
         public ShiftLetters()

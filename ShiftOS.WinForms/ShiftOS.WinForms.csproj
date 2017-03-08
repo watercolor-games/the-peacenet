@@ -166,6 +166,12 @@
     <Compile Include="Applications\Shifter.Designer.cs">
       <DependentUpon>Shifter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ShiftLotto.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShiftLotto.Designer.cs">
+      <DependentUpon>ShiftLotto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Shiftnet.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -340,6 +346,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShiftLotto.resx">
+      <DependentUpon>ShiftLotto.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shiftnet.resx">
       <DependentUpon>Shiftnet.cs</DependentUpon>
