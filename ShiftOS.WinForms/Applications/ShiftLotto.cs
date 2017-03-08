@@ -35,6 +35,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications
 {
     [Launcher("ShiftLotto", true, "al_shiftlotto", "Games")]
+    [DefaultIcon("iconShiftLotto")]
     [RequiresUpgrade("shiftlotto")]
     [WinOpen("shiftlotto")]
     public partial class ShiftLotto : UserControl, IShiftOSWindow
