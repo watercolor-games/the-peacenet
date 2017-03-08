@@ -105,7 +105,7 @@
             // 
             this.cpUpDown.Location = new System.Drawing.Point(22, 138);
             this.cpUpDown.Maximum = new decimal(new int[] {
-            10000000,
+            10000,
             0,
             0,
             0});

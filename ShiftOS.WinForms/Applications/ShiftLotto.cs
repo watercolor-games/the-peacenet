@@ -76,41 +76,55 @@ namespace ShiftOS.WinForms.Applications
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Convert the NumericUpDown to Int
+            // Make codePoints and difficulty in this function
             int codePoints = Convert.ToInt32(Math.Round(cpUpDown.Value, 0));
             int difficulty = Convert.ToInt32(Math.Round(difUpDown.Value, 0));
 
-            // Create Random Ints
-            Random rnd = new Random();
-
-            // Set their highest possible number to Difficulty
-            int guessedNumber = rnd.Next(0, difficulty);
-            int winningNumber = rnd.Next(0, difficulty);
-
-            // Multiply CodePoints * Difficulty
-            int jackpot = codePoints * difficulty;
-
-            // Test the random ints
-            if (guessedNumber == winningNumber)
+            if (SaveSystem.CurrentSave.Codepoints <= 1)
             {
-                // If you win
-
-                // Add Codepoints
-                SaveSystem.TransferCodepointsFrom("shiftlotto", jackpot);
-
-                // Infobox
-                Infobox.Show("YOU WON!", "Good Job! " + jackpot.ToString() + " CP has been added to your account. ");
+                Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to use ShiftLotto!");
             }
             else
             {
-                // If you fail
+                if (SaveSystem.CurrentSave.Codepoints - (codePoints * difficulty) <= 0)
+                {
+                    Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to gamble this amount!");
+                }
+                else
+                {
+                    // Create Random Ints
+                    Random rnd = new Random();
 
-                // Remove Codepoints
-                SaveSystem.TransferCodepointsToVoid(jackpot);
+                    // Set their highest possible number to Difficulty
+                    int guessedNumber = rnd.Next(0, difficulty);
+                    int winningNumber = rnd.Next(0, difficulty);
 
-                // Infobox
-                Infobox.Show("YOU FAILED!", "Sorry! " + jackpot.ToString() + " CP has been removed from your account.");
-            }
+                    // Multiply CodePoints * Difficulty
+                    int jackpot = codePoints * difficulty;
+
+                    // Test the random ints
+                    if (guessedNumber == winningNumber)
+                    {
+                        // If you win
+
+                        // Add Codepoints
+                        SaveSystem.TransferCodepointsFrom("shiftlotto", jackpot);
+
+                        // Infobox
+                        Infobox.Show("YOU WON!", "Good Job! " + jackpot.ToString() + " CP has been added to your account. ");
+                    }
+                    else
+                    {
+                        // If you fail
+
+                        // Remove Codepoints
+                        SaveSystem.TransferCodepointsToVoid(jackpot);
+
+                        // Infobox
+                        Infobox.Show("YOU FAILED!", "Sorry! " + jackpot.ToString() + " CP has been removed from your account.");
+                    }
+                } 
+            } 
         }
     }
 }
