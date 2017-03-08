@@ -87,15 +87,14 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public void OnLoad() {
-            buttonEasy.Visible = true;
-            buttonMedium.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
-            buttonHard.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
+            OnUpgrade();
 
             ticking.Interval = 1000;
             ticking.Tick += Ticking_Tick;
         }
 
         public void OnSkinLoad() {
+
         }
 
         public bool OnUnload() {
@@ -103,7 +102,9 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public void OnUpgrade() {
-
+            buttonEasy.Visible = true;
+            buttonMedium.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
+            buttonHard.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
         }
 
         public void startGame(int w, int h, int b) {
