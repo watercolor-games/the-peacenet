@@ -184,6 +184,12 @@
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\FormatEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\FormatEditor.Designer.cs">
+      <DependentUpon>FormatEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\ShiftSweeper.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -349,6 +355,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\FormatEditor.resx">
+      <DependentUpon>FormatEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftSweeper.resx">
       <DependentUpon>ShiftSweeper.cs</DependentUpon>

@@ -69,7 +69,7 @@ namespace ShiftOS.Engine
                 {
                     int track = rnd.Next(0, _provider.Count);
                     byte[] mp3 = _provider.GetTrack(track);
-                    System.IO.File.WriteAllBytes("temp.mp3", mp3);
+                     System.IO.File.WriteAllBytes("temp.mp3", mp3);
                     _reader = new AudioFileReader("temp.mp3");
                     _out = new WaveOut();
                     _out.Init(_reader);

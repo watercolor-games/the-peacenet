@@ -266,6 +266,36 @@
 		Dependencies: "mud_cracker;app_launcher"
 	},
 	{
+		Name: "Format Editor",
+		Cost: 6000,
+		Description: "Allows you to change the format of commands.",
+		Dependencies: "shifter;name_changer"
+	},
+	{
+		Name: "Format Editor Optional Text",
+		Cost: 150,
+		Description: "Allows you to add an optional text to commands",
+		Dependencies: "format_editor"
+	},
+	{
+		Name: "Format Editor Regex",
+		Cost: 150,
+		Description: "Allows you to customize your commands with regexes.",
+		Dependencies: "format_editor_optional_text"
+	},
+	{
+		Name: "Format Editor Syntax Highligting",
+		Cost: 150,
+		Description: "Allows you to give color to commands as the user types them.",
+		Dependencies: "format_editor_regex"
+	},
+	{
+		Name: "AL Format Editor",
+		Cost: 150,
+		Description: "Add a launcher item for the Format Editor.",
+		Dependencies: "format_editor;app_launcher"
+	},
+	{
 		Name: "Textpad",
 		Cost: 2500,
 		Description: "\"Write, save and open a text document.\"",
