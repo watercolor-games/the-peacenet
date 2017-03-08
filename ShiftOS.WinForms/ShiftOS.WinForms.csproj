@@ -609,6 +609,7 @@
     <Content Include="SystemIcons\iconPong.png" />
     <Content Include="SystemIcons\iconShifter.png" />
     <None Include="SystemIcons\iconShiftLetters.png" />
+    <Content Include="SystemIcons\iconShiftLotto.png" />
     <Content Include="SystemIcons\iconShiftnet.png" />
     <Content Include="SystemIcons\iconShiftorium.png" />
     <None Include="SystemIcons\iconShiftSweeper.png" />
