@@ -52,12 +52,14 @@ namespace ShiftOS.WinForms.Controls
 
         public void Write(string text)
         {
-            this.Text += Localization.Parse(text);
+            this.HideSelection = true;
+            this.AppendText(Localization.Parse(text));
+            this.HideSelection = false;
         }
 
         public void WriteLine(string text)
         {
-            this.Text += Localization.Parse(text) + Environment.NewLine;
+            this.AppendText(Localization.Parse(text) + Environment.NewLine);
         }
     }
 }

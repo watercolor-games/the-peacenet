@@ -109,28 +109,35 @@ namespace ShiftOS.Engine
                     bool guidReceived = false;
                     ServerManager.GUIDReceived += (str) =>
                     {
+                        //Connection successful! Stop waiting!
                         guidReceived = true;
-                        Console.WriteLine("{CONNECTION_SUCCESSFUL}");
+                        Console.WriteLine("Connection successful.");
                     };
 
                     try
                     {
                         
                         ServerManager.Initiate("secondary4162.cloudapp.net", 13370);
-                        while(guidReceived == false)
+                        //This haults the client until the connection is successful.
+                        while (ServerManager.thisGuid == new Guid())
                         {
 
                         }
+                        Console.WriteLine("GUID received - bootstrapping complete.");
+                        FinishBootstrap();
                     }
                     catch (Exception ex)
                     {
+                        //No errors, this never gets called.
                         Console.WriteLine("{ERROR}: " + ex.Message);
                         Thread.Sleep(3000);
                         ServerManager.StartLANServer();
-                        while (guidReceived == false)
+                        while (ServerManager.thisGuid == new Guid())
                         {
 
                         }
+                        Console.WriteLine("GUID received - bootstrapping complete.");
+                        FinishBootstrap();
                     }
                 }
                 else
@@ -138,62 +145,71 @@ namespace ShiftOS.Engine
                     ServerManager.StartLANServer();
                 }
 
-                ServerManager.MessageReceived += (msg) =>
-                {
-                    if(msg.Name == "mud_savefile")
-                    {
-                        CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                    }
-                    else if(msg.Name == "mud_login_denied")
-                    {
-                        oobe.PromptForLogin();
-                    }
-                };
+                //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
 
-                ReadSave();
-
-                while(CurrentSave == null)
-                {
-
-                }
-
-                Shiftorium.Init();
-
-                while (CurrentSave.StoryPosition < 1)
-                {
-
-                }
-
-                Thread.Sleep(75);
-
-                Thread.Sleep(50);
-                Console.WriteLine("{SYSTEM_INITIATED}");
-
-                TerminalBackend.InStory = false;
-                TerminalBackend.PrefixEnabled = true;
-                Shiftorium.LogOrphanedUpgrades = true;
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-                {
-                    ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
-                }));
-                Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
-                if (CurrentSave.StoryPosition == 1)
-                {
-                    Desktop.InvokeOnWorkerThread(new Action(() =>
-                    {
-                        TutorialManager.StartTutorial();
-                        
-                    }));
-                    while(TutorialManager.IsInTutorial == true) { }
-                        GameReady?.Invoke();
-                }
-                else
-                {
-                    GameReady?.Invoke();
-                }
+                
             }));
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        public static void FinishBootstrap()
+        {
+            KernelWatchdog.Log("mud_handshake", "handshake successful: kernel watchdog access code is \"" + ServerManager.thisGuid.ToString() + "\"");
+
+            ServerManager.MessageReceived += (msg) =>
+            {
+                if (msg.Name == "mud_savefile")
+                {
+                    CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                }
+                else if (msg.Name == "mud_login_denied")
+                {
+                    oobe.PromptForLogin();
+                }
+            };
+
+            ReadSave();
+
+            while (CurrentSave == null)
+            {
+
+            }
+
+            Shiftorium.Init();
+
+            while (CurrentSave.StoryPosition < 1)
+            {
+
+            }
+
+            Thread.Sleep(75);
+
+            Thread.Sleep(50);
+            Console.WriteLine("{SYSTEM_INITIATED}");
+
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            Shiftorium.LogOrphanedUpgrades = true;
+            Desktop.InvokeOnWorkerThread(new Action(() =>
+            {
+                ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
+            }));
+            Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
+            if (CurrentSave.StoryPosition == 1)
+            {
+                Desktop.InvokeOnWorkerThread(new Action(() =>
+                {
+                    TutorialManager.StartTutorial();
+
+                }));
+                while (TutorialManager.IsInTutorial == true) { }
+                GameReady?.Invoke();
+            }
+            else
+            {
+                GameReady?.Invoke();
+            }
         }
 
         public delegate void EmptyEventHandler();
@@ -299,7 +315,7 @@ namespace ShiftOS.Engine
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }
 
-        public static void TransferCodepointsFrom(string who, int amount)
+        public static void TransferCodepointsFrom(string who, long amount)
         {
             NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
             CurrentSave.Codepoints += amount;

@@ -291,10 +291,13 @@ namespace ShiftOS.Objects.ShiftFS
         {
             string[] pathlist = path.Split('/');
             int vol = Convert.ToInt32(pathlist[0].Replace(":", ""));
+            if (Mounts[vol] == null)
+                Mounts[vol] = new Directory();
             var dir = Mounts[vol];
+
             for (int i = 1; i <= pathlist.Length - 1; i++)
             {
-                dir = dir.FindDirectoryByName(pathlist[i]);
+                dir = dir?.FindDirectoryByName(pathlist[i]);
             }
             return dir != null;
 

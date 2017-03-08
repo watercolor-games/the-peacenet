@@ -114,11 +114,12 @@ namespace ShiftOS.Server
                     sve.Codepoints = rnd.Next(startCP, maxAmt);
 
                     //FS treasure generation.
-
+                    /*
                     //create a ramdisk dir
                     var dir = new ShiftOS.Objects.ShiftFS.Directory();
                     //name the directory after the user
                     dir.Name = sve.Username;
+                    dir.permissions = Objects.ShiftFS.Permissions.All;
                     //json the object and mount
                     string json = Newtonsoft.Json.JsonConvert.SerializeObject(dir);
                     //mount it to the MUD
@@ -180,16 +181,19 @@ namespace ShiftOS.Server
                                 WriteAllBytes(kv.Value, File.ReadAllBytes(file));
                             }
                         }
-                    }
+                    }*/
 
                     //save the save file to disk.
                     File.WriteAllText("deadsaves/" + sve.Username + ".save", Newtonsoft.Json.JsonConvert.SerializeObject(sve, Newtonsoft.Json.Formatting.Indented));
                     //We don't care about the encryption algorithm because these saves can't be logged into as regular users.
 
+                    /*
                     //Now we export the mount.
                     string exportedMount = ExportMount(mountid);
                     //And save it to disk.
                     File.WriteAllText("deadsaves/" + sve.Username + ".mfs", exportedMount);
+                    */
+
 
                     Thread.Sleep((60 * 60) * 1000); //approx. 1 hour.
 
@@ -214,12 +218,18 @@ namespace ShiftOS.Server
             targets = new Dictionary<string, string>();
             foreach(var dir in dirs)
             {
-                string sDir = dir.Replace("\\", "/");
-                while (!sDir.StartsWith("shiftnet/"))
+                if (!string.IsNullOrWhiteSpace(dir))
                 {
-                    sDir = sDir.Remove(0, 1);
+                    string sDir = dir.Replace("\\", "/");
+                    if (sDir.Contains("shiftnet"))
+                    {
+                        while (!sDir.StartsWith("shiftnet"))
+                        {
+                            sDir = sDir.Remove(0, 1);
+                        }
+                        targets.Add(dir, output + "/" + sDir);
+                    }
                 }
-                targets.Add(dir, output + "/" + sDir);
             }
               
         }
