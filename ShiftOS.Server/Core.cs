@@ -127,6 +127,17 @@ namespace ShiftOS.Server
 
         }
 
+        [MudRequest("diag_log", typeof(string))]
+        public static void Diagnostic(string guid, string line)
+        {
+            List<string> lines = new List<string>();
+            if (File.Exists("diagnostics.log"))
+                lines = new List<string>(File.ReadAllLines("diagnostics.log"));
+
+            lines.Add(line);
+            File.WriteAllLines("diagnostics.log", lines.ToArray());
+        }
+
         [MudRequest("getusers", typeof(string))]
         public static void GetAllUsers(string guid, string contents)
         {
