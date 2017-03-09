@@ -377,6 +377,7 @@ namespace ShiftOS.WinForms
                     if(rnd.Next(0, 100) >= 75)
                     {
                         Console.WriteLine("--operation took too long - failed.");
+                        ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
                         return;
                     }
                     sw.Stop();
@@ -498,6 +499,7 @@ namespace ShiftOS.WinForms
                         if(amount > sve.Codepoints)
                         {
                             Console.WriteLine("--can't steal this many codepoints from user.");
+                            ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
                             return;
                         }
 
@@ -535,6 +537,57 @@ namespace ShiftOS.WinForms
             return true;
         }
 
+        [Command("purge_user")]
+        [KernelMode]
+        [RequiresArgument("pass")]
+        [RequiresArgument("user")]
+        [RequiresArgument("sys")]
+        [RequiresUpgrade("hacker101_deadaccts")]
+        public static bool PurgeUser(Dictionary<string, object> args)
+        {
+            string usr = args["user"].ToString();
+            string sys = args["sys"].ToString();
+            string pass = args["pass"].ToString();
+            ServerMessageReceived msgReceived = null;
+
+            Console.WriteLine("--hooking multi-user domain response call...");
+
+            msgReceived = (msg) =>
+            {
+                if (msg.Name == "user_data")
+                {
+                    var sve = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    if (sve.Password == pass)
+                    {
+                        ServerManager.SendMessage("delete_dead_save", JsonConvert.SerializeObject(sve));
+                        Console.WriteLine("<mud> User purged successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("--access denied.");
+                    }
+                    ServerManager.MessageReceived -= msgReceived;
+                }
+                else if (msg.Name == "user_data_not_found")
+                {
+                    Console.WriteLine("--access denied.");
+                    ServerManager.MessageReceived -= msgReceived;
+                }
+            };
+
+            Console.WriteLine("--contacting multi-user domain...");
+            Thread.Sleep(500);
+            ServerManager.MessageReceived += msgReceived;
+
+            ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
+            {
+                user = usr,
+                sysname = sys
+            }));
+            Thread.Sleep(500);
+
+            return true;
+        }
 
 
         [Command("brute_decrypt", true)]
