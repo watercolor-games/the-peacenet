@@ -386,12 +386,14 @@ namespace ShiftOS.WinForms
                     Console.WriteLine("--password breached. Operation took " + sw.ElapsedMilliseconds + " milliseconds.");
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
             };
 
@@ -443,6 +445,7 @@ namespace ShiftOS.WinForms
                     }
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
 
                 }
                 else if (msg.Name == "user_data_not_found")
@@ -450,6 +453,7 @@ namespace ShiftOS.WinForms
                     Console.WriteLine("--access denied.");
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
             };
 
@@ -514,12 +518,14 @@ namespace ShiftOS.WinForms
                     }
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
             };
 
@@ -573,6 +579,7 @@ namespace ShiftOS.WinForms
                     Console.WriteLine("--access denied.");
                     ServerManager.MessageReceived -= msgReceived;
                 }
+                TerminalBackend.PrintPrompt();
             };
 
             Console.WriteLine("--contacting multi-user domain...");
