@@ -283,7 +283,39 @@ namespace ShiftOS.Engine
             }
             return false;
         }
-        
+
+        public static void PrintPrompt()
+        {
+            ConsoleEx.Italic = false;
+            ConsoleEx.Underline = false;
+
+            ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+            ConsoleEx.Bold = true;
+            Console.Write(SaveSystem.CurrentSave.Username);
+            ConsoleEx.Bold = false;
+            ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+            Console.Write("@");
+            ConsoleEx.Italic = true;
+            ConsoleEx.Bold = true;
+            ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(SaveSystem.CurrentSave.SystemName);
+            ConsoleEx.Italic = false;
+            ConsoleEx.Bold = false;
+            ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+            Console.Write(":~");
+            Console.ForegroundColor = ConsoleColor.White;
+            ConsoleEx.Italic = true;
+            if (KernelWatchdog.InKernelMode == true)
+                Console.Write("#");
+            else
+                Console.Write("$");
+            ConsoleEx.Italic = false;
+            ConsoleEx.Bold = false;
+            ConsoleEx.ForegroundColor = ConsoleColor.White;
+            Console.Write(" ");
+        }
+
+
         static TerminalBackend()
         {
             ServerMessageReceived onMessageReceived = (msg) =>

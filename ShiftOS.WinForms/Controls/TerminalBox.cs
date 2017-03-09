@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -56,16 +57,31 @@ namespace ShiftOS.WinForms.Controls
         {
             this.HideSelection = true;
             this.Select(this.TextLength, 0);
+            this.SelectionFont = ConstructFont();
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text));
             this.HideSelection = false;
         }
 
+        private Font ConstructFont()
+        {
+            FontStyle fs = FontStyle.Regular;
+            if (ConsoleEx.Bold)
+                fs = fs | FontStyle.Bold;
+            if (ConsoleEx.Italic)
+                fs = fs | FontStyle.Italic;
+            if (ConsoleEx.Underline)
+                fs = fs | FontStyle.Underline;
+
+            return new Font(this.Font, fs);
+        }
+
         public void WriteLine(string text)
         {
             this.HideSelection = true;
             this.Select(this.TextLength, 0);
+            this.SelectionFont = ConstructFont();
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text) + Environment.NewLine);

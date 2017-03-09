@@ -134,7 +134,7 @@ namespace ShiftOS.WinForms.Applications
                         rtbterm.Text = "";
                         TerminalBackend.PrefixEnabled = true;
                         TerminalBackend.InStory = false;
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        TerminalBackend.PrintPrompt();
                         if (Shiftorium.UpgradeInstalled("wm_free_placement"))
                         {
                             this.ParentForm.Width = 640;
@@ -276,7 +276,7 @@ namespace ShiftOS.WinForms.Applications
                             }
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                                TerminalBackend.PrintPrompt();
                             }
                         }
                     }
