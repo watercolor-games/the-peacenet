@@ -26,9 +26,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Controls
 {
@@ -53,13 +55,21 @@ namespace ShiftOS.WinForms.Controls
         public void Write(string text)
         {
             this.HideSelection = true;
+            this.Select(this.TextLength, 0);
+            this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
+            this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text));
             this.HideSelection = false;
         }
 
         public void WriteLine(string text)
         {
+            this.HideSelection = true;
+            this.Select(this.TextLength, 0);
+            this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
+            this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text) + Environment.NewLine);
+            this.HideSelection = false;
         }
 
         bool quickCopying = false;

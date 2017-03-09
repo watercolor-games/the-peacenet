@@ -154,7 +154,9 @@ namespace ShiftOS.Engine
                 {
                     var ex = JsonConvert.DeserializeObject<Exception>(msg.Contents);
                     TerminalBackend.PrefixEnabled = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.WriteLine($@"{{MUD_ERROR}}: {ex.Message}");
+                    ConsoleEx.ForegroundColor = ConsoleColor.White;
                     TerminalBackend.PrefixEnabled = true;
                     Console.Write($"{SaveSystem.CurrentSave.Username}@{CurrentSave.SystemName}:~$ ");
                 }
