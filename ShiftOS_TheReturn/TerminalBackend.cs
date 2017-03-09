@@ -139,29 +139,29 @@ namespace ShiftOS.Engine
                     {
                         if (Shiftorium.UpgradeAttributesUnlocked(type))
                         {
-                            if (KernelWatchdog.IsSafe(type))
+                            foreach (var a in type.GetCustomAttributes(false))
                             {
-                                foreach (var a in type.GetCustomAttributes(false))
+                                if (a is Namespace)
                                 {
-                                    if (a is Namespace)
+                                    var ns = a as Namespace;
+                                    if (text.Split('.')[0] == ns.name)
                                     {
-                                        var ns = a as Namespace;
-                                        if (text.Split('.')[0] == ns.name)
+                                        if (KernelWatchdog.IsSafe(type))
                                         {
                                             foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                                             {
                                                 if (Shiftorium.UpgradeAttributesUnlocked(method))
                                                 {
-                                                    if (KernelWatchdog.IsSafe(method))
+                                                    if (CanRunRemotely(method, isRemote))
                                                     {
-                                                        if (CanRunRemotely(method, isRemote))
+                                                        foreach (var ma in method.GetCustomAttributes(false))
                                                         {
-                                                            foreach (var ma in method.GetCustomAttributes(false))
+                                                            if (ma is Command)
                                                             {
-                                                                if (ma is Command)
+                                                                var cmd = ma as Command;
+                                                                if (text.Split('.')[1] == cmd.name)
                                                                 {
-                                                                    var cmd = ma as Command;
-                                                                    if (text.Split('.')[1] == cmd.name)
+                                                                    if (KernelWatchdog.IsSafe(method))
                                                                     {
 
                                                                         var attr = method.GetCustomAttribute<CommandObsolete>();
@@ -245,23 +245,37 @@ namespace ShiftOS.Engine
                                                                             return (bool)method.Invoke(null, new object[] { });
                                                                         }
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        Console.WriteLine("<watchdog> You cannot run this command.");
+                                                                        KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
+                                                                        return true;
+                                                                    }
                                                                 }
+
+
                                                             }
                                                         }
-                                                        else
-                                                        {
-                                                            Console.WriteLine(text + " cannot be ran in a remote session");
-                                                            return true;
-                                                        }
                                                     }
-                                                    
+                                                    else
+                                                    {
+                                                        Console.WriteLine(text + " cannot be ran in a remote session");
+                                                        return true;
+                                                    }
                                                 }
+
                                             }
+
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("<watchdog> You cannot run this command.");
+                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
+                                            return true;
                                         }
                                     }
                                 }
                             }
-                            
                         }
                     }
                 }
