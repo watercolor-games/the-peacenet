@@ -63,6 +63,19 @@ namespace ShiftOS.Engine.Scripting
         public dynamic Lua = new DynamicLua.DynamicLua();
         public bool Running = true;
 
+        static LuaInterpreter()
+        {
+            ServerManager.MessageReceived += (msg) =>
+            {
+                if(msg.Name == "run")
+                {
+                    var cntnts = JsonConvert.DeserializeObject<dynamic>(msg.Contents);
+                    var interp = new LuaInterpreter();
+                    interp.Execute(cntnts.script.ToString());
+                }
+            };
+        }
+
         public static string CreateSft(string lua)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(lua);
