@@ -286,6 +286,7 @@ namespace ShiftOS.Engine
 
         public static void PrintPrompt()
         {
+            ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
             ConsoleEx.Italic = false;
             ConsoleEx.Underline = false;
 
@@ -311,7 +312,7 @@ namespace ShiftOS.Engine
                 Console.Write("$");
             ConsoleEx.Italic = false;
             ConsoleEx.Bold = false;
-            ConsoleEx.ForegroundColor = ConsoleColor.White;
+            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
             Console.Write(" ");
         }
 

@@ -43,6 +43,7 @@ using System.Collections;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -350,8 +351,8 @@ namespace ShiftOS.WinForms.Applications
             txt.Focus();
 
             txt.Font = LoadedSkin.TerminalFont;
-            txt.ForeColor = LoadedSkin.TerminalForeColor;
-            txt.BackColor = LoadedSkin.TerminalBackColor;
+            txt.ForeColor = ControlManager.ConvertColor(LoadedSkin.TerminalForeColorCC);
+            txt.BackColor = ControlManager.ConvertColor(LoadedSkin.TerminalBackColorCC);
 
         }
 
@@ -391,8 +392,7 @@ namespace ShiftOS.WinForms.Applications
                     rtbterm.Text = AppearanceManager.LastTerminalText;
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
-                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-
+                TerminalBackend.PrintPrompt();
             }
 
 
@@ -403,8 +403,8 @@ namespace ShiftOS.WinForms.Applications
             try
             {
                 rtbterm.Font = LoadedSkin.TerminalFont;
-                rtbterm.ForeColor = LoadedSkin.TerminalForeColor;
-                rtbterm.BackColor = LoadedSkin.TerminalBackColor;
+                rtbterm.ForeColor = ControlManager.ConvertColor(LoadedSkin.TerminalForeColorCC);
+                rtbterm.BackColor = ControlManager.ConvertColor(LoadedSkin.TerminalBackColorCC);
             }
             catch
             {

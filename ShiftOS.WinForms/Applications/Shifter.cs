@@ -446,6 +446,30 @@ namespace ShiftOS.WinForms.Applications
                     flbody.Controls.Add(color);
                     color.Show();
                 }
+                else if(c.Field.FieldType.IsEnum == true)
+                {
+                    var cBox = new ComboBox();
+                    cBox.Width = 150;
+                    ControlManager.SetupControl(cBox);
+
+                    foreach(var itm in Enum.GetNames(c.Field.FieldType))
+                    {
+                        cBox.Items.Add(itm);
+                    }
+
+                    cBox.Text = c.Field.GetValue(LoadedSkin).ToString();
+
+                    cBox.SelectedIndexChanged += (o, a) =>
+                    {
+                        c.Field.SetValue(LoadedSkin, Enum.Parse(c.Field.FieldType, cBox.Text));
+                    };
+
+                    labelHeight = cBox.Height;
+
+                    flbody.Controls.Add(cBox);
+                    cBox.Show();
+                    flbody.SetFlowBreak(cBox, true);
+                }
                 else if(c.Field.FieldType == typeof(int))
                 {
                     if (c.Field.HasShifterEnumMask())

@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 using Newtonsoft.Json;
 using static ShiftOS.Engine.SkinEngine;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
     [Launcher("Shiftnet", false, null, "Networking")]
@@ -62,6 +63,8 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public string ConstructHtml(string markdown) {
+            var TerminalForeColor = ControlManager.ConvertColor(SkinEngine.LoadedSkin.TerminalForeColorCC);
+            var TerminalBackColor = ControlManager.ConvertColor(SkinEngine.LoadedSkin.TerminalBackColorCC);
             string html = $@"<html>
     <head>
         <style>
@@ -90,8 +93,8 @@ namespace ShiftOS.WinForms.Applications {
             pre, code {{
                 font-family: ""{LoadedSkin.TerminalFont.Name}"";
                 font-size: {LoadedSkin.TerminalFont.SizeInPoints}pt;
-                color: rgb({LoadedSkin.TerminalForeColor.R}, {LoadedSkin.TerminalForeColor.G}, {LoadedSkin.TerminalForeColor.B});
-                background-color: rgb({LoadedSkin.TerminalBackColor.R}, {LoadedSkin.TerminalBackColor.G}, {LoadedSkin.TerminalBackColor.B});                
+                color: rgb({TerminalForeColor.R}, {TerminalForeColor.G}, {TerminalForeColor.B});
+                background-color: rgb({TerminalBackColor.R}, {TerminalBackColor.G}, {TerminalBackColor.B});                
             }}
         </style>
     </head>
