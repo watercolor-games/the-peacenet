@@ -354,6 +354,35 @@ end");
         }
     }
     
+    [Exposed("mud")]
+    public class MUDFunctions
+    {
+        public void sendDiagnostic(string src, string cat, object val)
+        {
+            ServerManager.SendMessage("diag_log", $"[{src}] <{cat}>: {val}");
+        }
+    }
+
+    [Exposed("userinfo")]
+    public class UserInfoFunctions
+    {
+        public string getUsername()
+        {
+            return SaveSystem.CurrentSave.Username;
+        }
+
+        public string getSysname()
+        {
+            return SaveSystem.CurrentSave.SystemName;
+        }
+
+        public string getEmail()
+        {
+            return getUsername() + "@" + getSysname();
+        }
+    }
+
+
     [Exposed("infobox")]
     public class InfoboxFunctions
     {
