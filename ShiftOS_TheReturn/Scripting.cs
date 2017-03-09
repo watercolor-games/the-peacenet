@@ -357,9 +357,9 @@ end");
     [Exposed("infobox")]
     public class InfoboxFunctions
     {
-        public void show(string title, string message)
+        public void show(string title, string message, Action callback = null)
         {
-            Infobox.Show(title, message);
+            Infobox.Show(title, message, callback);
         }
 
         public void question(string title, string message, Action<bool> callback)
