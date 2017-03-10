@@ -67,11 +67,14 @@ namespace ShiftOS.Engine.Scripting
         {
             ServerManager.MessageReceived += (msg) =>
             {
-                if(msg.Name == "run")
+                if (msg.Name == "run")
                 {
                     var cntnts = JsonConvert.DeserializeObject<dynamic>(msg.Contents);
                     var interp = new LuaInterpreter();
-                    interp.Execute(cntnts.script.ToString());
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        interp.Execute(cntnts.script.ToString());
+                    });
                 }
             };
         }

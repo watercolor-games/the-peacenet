@@ -668,5 +668,15 @@ namespace ShiftOS.WinForms
 
             return true;
         }
+
+        [Command("experience", description = "Marks a story plot as experienced without triggering the plot.", usage ="{id:}")]
+        [RequiresArgument("id")]
+        [RemoteLock]
+        public static bool Experience(Dictionary<string, object> args)
+        {
+            SaveSystem.CurrentSave.StoriesExperienced.Add(args["id"].ToString());
+            SaveSystem.SaveGame();
+            return true;
+        }
     }
 }

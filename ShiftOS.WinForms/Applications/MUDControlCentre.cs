@@ -38,6 +38,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [RequiresUpgrade("mud_fundamentals")]
     [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]

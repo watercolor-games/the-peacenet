@@ -38,6 +38,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
     [Launcher("Shiftnet", false, null, "Networking")]
+    [MultiplayerOnly]
     [DefaultIcon("iconShiftnet")]
     public partial class Shiftnet : UserControl, IShiftOSWindow {
         public Shiftnet() {

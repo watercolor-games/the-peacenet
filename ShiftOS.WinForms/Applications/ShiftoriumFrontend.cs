@@ -39,6 +39,7 @@ namespace ShiftOS.WinForms.Applications
 {
     [Launcher("Shiftorium", true, "al_shiftorium", "Utilities")]
     [RequiresUpgrade("shiftorium_gui")]
+    [MultiplayerOnly]
     [WinOpen("shiftorium")]
     [DefaultTitle("Shiftorium")]
     [DefaultIcon("iconShiftorium")]

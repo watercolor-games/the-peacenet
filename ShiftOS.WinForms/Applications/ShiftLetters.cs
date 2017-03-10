@@ -36,6 +36,7 @@ using System.Windows.Forms;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [Launcher("ShiftLetters", false, null, "Games")]
     [RequiresUpgrade("shiftletters")]
     [WinOpen("shiftletters")]

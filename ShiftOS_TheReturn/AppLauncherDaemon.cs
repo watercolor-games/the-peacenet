@@ -66,12 +66,24 @@ namespace ShiftOS.Engine
                                 {
                                     foreach (var attr in type.GetCustomAttributes(false))
                                     {
-                                        if (attr is LauncherAttribute)
+                                        bool isAllowed = true;
+                                        if(attr is MultiplayerOnlyAttribute)
                                         {
-                                            var launch = attr as LauncherAttribute;
-                                            if (launch.UpgradeInstalled)
+                                            if(KernelWatchdog.MudConnected == false)
                                             {
-                                                win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
+                                                isAllowed = false;
+
+                                            }
+                                        }
+                                        if (isAllowed == true)
+                                        {
+                                            if (attr is LauncherAttribute)
+                                            {
+                                                var launch = attr as LauncherAttribute;
+                                                if (launch.UpgradeInstalled)
+                                                {
+                                                    win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
+                                                }
                                             }
                                         }
                                     }

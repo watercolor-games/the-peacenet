@@ -41,6 +41,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [Launcher("Artpad", true, "al_artpad", "Graphics")]
     [RequiresUpgrade("artpad")]
     [WinOpen("artpad")]

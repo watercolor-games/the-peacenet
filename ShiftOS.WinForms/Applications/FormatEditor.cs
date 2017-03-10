@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
+    [MultiplayerOnly]
     [Launcher("FormatEditor", true, "al_format_editor", "Games")]
     [RequiresUpgrade("format_editor")]
     [WinOpen("formateditor")]
