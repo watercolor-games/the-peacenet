@@ -156,6 +156,8 @@ namespace ShiftOS.Engine
                 {
                     Console.WriteLine("{ERROR}: " + ex.Message);
                 }
+
+                TerminalBackend.PrefixEnabled = false;
                 return true;
             }
             catch (Exception ex)

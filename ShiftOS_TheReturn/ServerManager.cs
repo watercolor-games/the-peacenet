@@ -125,6 +125,8 @@ namespace ShiftOS.Engine
                 {
                     thisGuid = new Guid(msg.Contents);
                     GUIDReceived?.Invoke(msg.Contents);
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "allusers")
                 {

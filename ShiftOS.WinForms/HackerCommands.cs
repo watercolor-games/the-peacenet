@@ -158,8 +158,7 @@ namespace ShiftOS.WinForms
                     int tutPos = 0;
                     Action ondec = () =>
                     {
-                        if (tutPos == 2)
-                            tutPos++;
+                        tutPos++;
                     };
                     TerminalBackend.CommandProcessed += (o, a) =>
                     {
