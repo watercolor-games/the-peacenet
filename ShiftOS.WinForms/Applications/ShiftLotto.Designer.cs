@@ -129,7 +129,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.cpUpDown.Location = new System.Drawing.Point(22, 138);
             this.cpUpDown.Maximum = new decimal(new int[] {
-            10000,
+            1000000,
             0,
             0,
             0});
@@ -150,6 +150,11 @@ namespace ShiftOS.WinForms.Applications
             // difUpDown
             // 
             this.difUpDown.Location = new System.Drawing.Point(299, 138);
+            this.difUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.difUpDown.Minimum = new decimal(new int[] {
             10,
             0,
