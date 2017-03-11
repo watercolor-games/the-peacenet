@@ -61,5 +61,29 @@ namespace ShiftOS.WinForms.Controls
         {
             this.AppendText(Localization.Parse(text) + Environment.NewLine);
         }
+
+        bool quickCopying = false;
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            //if right-clicking, then we initiate a quick-copy.
+            if (e.Button == MouseButtons.Right)
+                quickCopying = true;
+            
+            //Override the mouse event so that it's a left-click at all times.
+            base.OnMouseDown(new MouseEventArgs(MouseButtons.Left, e.Clicks, e.X, e.Y, e.Delta));
+        }
+
+        protected override void OnMouseUp(MouseEventArgs mevent)
+        {
+            if(quickCopying == true)
+            {
+                if (!string.IsNullOrWhiteSpace(this.SelectedText))
+                {
+                    this.Copy();
+                }
+            }
+            base.OnMouseUp(mevent);
+        }
     }
 }
