@@ -292,6 +292,7 @@ namespace ShiftOS.Engine
 
             ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
             ConsoleEx.Bold = true;
+
             Console.Write(SaveSystem.CurrentSave.Username);
             ConsoleEx.Bold = false;
             ConsoleEx.ForegroundColor = ConsoleColor.Gray;
