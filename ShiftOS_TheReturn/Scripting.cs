@@ -69,12 +69,16 @@ namespace ShiftOS.Engine.Scripting
             {
                 if (msg.Name == "run")
                 {
+                    TerminalBackend.PrefixEnabled = false;
                     var cntnts = JsonConvert.DeserializeObject<dynamic>(msg.Contents);
                     var interp = new LuaInterpreter();
                     Desktop.InvokeOnWorkerThread(() =>
                     {
                         interp.Execute(cntnts.script.ToString());
+
                     });
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
                 }
             };
         }

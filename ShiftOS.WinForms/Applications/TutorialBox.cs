@@ -21,6 +21,8 @@ namespace ShiftOS.WinForms.Applications
             InitializeComponent();
             IsComplete = false;
             lbltuttext.Text = "";
+            lbltuttext.Padding = new Padding(15);
+            lbltuttext.Margin = lbltuttext.Padding;
         }
 
         bool stillTyping = false;
@@ -47,6 +49,7 @@ namespace ShiftOS.WinForms.Applications
                     }));
                     Thread.Sleep(75);
                 }
+                Thread.Sleep(5000);
                 stillTyping = false;
             }).Start();
         }

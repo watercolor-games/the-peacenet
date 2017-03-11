@@ -59,10 +59,25 @@ namespace ShiftOS.WinForms
     {
         private static void writeSlow(string text)
         {
-            Console.Write("[hacker101@undisclosed]: ");
-            Thread.Sleep(200);
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Bold = false;
+            ConsoleEx.Italic = false;
+            Console.Write("[");
+            ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+            ConsoleEx.Bold = true;
+            Console.Write("hacker101");
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Italic = true;
+            Console.Write("@");
+            ConsoleEx.ForegroundColor = ConsoleColor.White;
+            Console.Write("undisclosed");
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Bold = false;
+            ConsoleEx.Italic = false;
+            Console.Write("]: ");
+            Thread.Sleep(850);
             Console.WriteLine(text);
-            Thread.Sleep(1000);
+            Thread.Sleep(4000);
         }
 
         [Story("hacker101_deadaccts")]
@@ -121,9 +136,12 @@ namespace ShiftOS.WinForms
                 TerminalBackend.PrefixEnabled = true;
                 Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                 StartHackerTutorial();
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
             });
             t.IsBackground = true;
             t.Start();
+            TerminalBackend.PrefixEnabled = false;
         }
 
         internal static void StartHackerTutorial()
