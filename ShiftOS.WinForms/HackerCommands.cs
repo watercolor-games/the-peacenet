@@ -378,6 +378,8 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--operation took too long - failed.");
                         ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
+                        ServerManager.MessageReceived -= msgReceived;
+                        TerminalBackend.PrefixEnabled = true;
                         return;
                     }
                     sw.Stop();
@@ -395,6 +397,7 @@ namespace ShiftOS.WinForms
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--beginning brute-force attack on " + usr + "@" + sys + "...");
@@ -405,6 +408,7 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            TerminalBackend.PrefixEnabled = false;
             Thread.Sleep(500);
             return true;
         }
@@ -446,7 +450,7 @@ namespace ShiftOS.WinForms
                     received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
-
+                    
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
@@ -455,6 +459,7 @@ namespace ShiftOS.WinForms
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
@@ -466,6 +471,7 @@ namespace ShiftOS.WinForms
                 sysname = sys
             }));
             Thread.Sleep(500);
+            TerminalBackend.PrefixEnabled = false;
             return true;
         }
 
@@ -504,6 +510,7 @@ namespace ShiftOS.WinForms
                         {
                             Console.WriteLine("--can't steal this many codepoints from user.");
                             ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
+                            TerminalBackend.PrefixEnabled = true;
                             return;
                         }
 
@@ -527,6 +534,7 @@ namespace ShiftOS.WinForms
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
@@ -539,7 +547,7 @@ namespace ShiftOS.WinForms
                 sysname = sys
             }));
             Thread.Sleep(500);
-            
+            TerminalBackend.PrefixEnabled = false;
             return true;
         }
 
@@ -580,6 +588,7 @@ namespace ShiftOS.WinForms
                     ServerManager.MessageReceived -= msgReceived;
                 }
                 TerminalBackend.PrintPrompt();
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
@@ -592,7 +601,7 @@ namespace ShiftOS.WinForms
                 sysname = sys
             }));
             Thread.Sleep(500);
-
+            TerminalBackend.PrefixEnabled = false;
             return true;
         }
 
