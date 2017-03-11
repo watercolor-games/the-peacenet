@@ -351,6 +351,7 @@ namespace ShiftOS.WinForms
 
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-_";
 
+        [MultiplayerOnly]
         [Command("breach_user_password")]
         [KernelMode]
         [RequiresArgument("user")]
@@ -413,6 +414,8 @@ namespace ShiftOS.WinForms
             return true;
         }
 
+
+        [MultiplayerOnly]
         [Command("print_user_info")]
         [KernelMode]
         [RequiresArgument("pass")]
@@ -475,6 +478,7 @@ namespace ShiftOS.WinForms
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("steal_codepoints")]
         [KernelMode]
         [RequiresArgument("amount")]
@@ -551,6 +555,7 @@ namespace ShiftOS.WinForms
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("purge_user")]
         [KernelMode]
         [RequiresArgument("pass")]
@@ -646,6 +651,7 @@ namespace ShiftOS.WinForms
         }
     }
 
+    [MultiplayerOnly]
     [Namespace("storydev")]
     public static class StoryDevCommands
     {

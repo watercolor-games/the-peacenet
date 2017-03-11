@@ -148,128 +148,181 @@ namespace ShiftOS.Engine
                                     {
                                         if (KernelWatchdog.IsSafe(type))
                                         {
-                                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                                            if (KernelWatchdog.CanRunOffline(type))
                                             {
-                                                if (Shiftorium.UpgradeAttributesUnlocked(method))
+                                                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                                                 {
-                                                    if (CanRunRemotely(method, isRemote))
+                                                    if (Shiftorium.UpgradeAttributesUnlocked(method))
                                                     {
-                                                        foreach (var ma in method.GetCustomAttributes(false))
+                                                        if (CanRunRemotely(method, isRemote))
                                                         {
-                                                            if (ma is Command)
+                                                            foreach (var ma in method.GetCustomAttributes(false))
                                                             {
-                                                                var cmd = ma as Command;
-                                                                if (text.Split('.')[1] == cmd.name)
+                                                                if (ma is Command)
                                                                 {
-                                                                    if (KernelWatchdog.IsSafe(method))
+                                                                    var cmd = ma as Command;
+                                                                    if (text.Split('.')[1] == cmd.name)
                                                                     {
-
-                                                                        var attr = method.GetCustomAttribute<CommandObsolete>();
-
-                                                                        if (attr != null)
+                                                                        if (KernelWatchdog.IsSafe(method))
                                                                         {
-                                                                            string newcommand = attr.newcommand;
-                                                                            if (attr.warn)
+                                                                            if (KernelWatchdog.CanRunOffline(method))
                                                                             {
-                                                                                Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
+                                                                                var attr = method.GetCustomAttribute<CommandObsolete>();
+
+                                                                                if (attr != null)
+                                                                                {
+                                                                                    string newcommand = attr.newcommand;
+                                                                                    if (attr.warn)
+                                                                                    {
+                                                                                        Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
                                                                 {"%newcommand", newcommand}
                                                             }));
-                                                                            }
-                                                                            if (newcommand != "")
-                                                                            {
-                                                                                // redo the entire process running newcommand
+                                                                                    }
+                                                                                    if (newcommand != "")
+                                                                                    {
+                                                                                        // redo the entire process running newcommand
 
-                                                                                return RunClient(newcommand, args);
-                                                                            }
-                                                                        }
+                                                                                        return RunClient(newcommand, args);
+                                                                                    }
+                                                                                }
 
-                                                                        var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
+                                                                                var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
 
-                                                                        bool error = false;
-                                                                        bool providedusage = false;
+                                                                                bool error = false;
+                                                                                bool providedusage = false;
 
-                                                                        foreach (RequiresArgument argument in requiresArgs)
-                                                                        {
-                                                                            if (!args.ContainsKey(argument.argument))
-                                                                            {
-
-                                                                                if (!providedusage)
+                                                                                foreach (RequiresArgument argument in requiresArgs)
                                                                                 {
-                                                                                    string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                                    if (usageparse == Localization.Parse(usageparse))
-                                                                                        usageparse = "";
-                                                                                    else
-                                                                                        usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
+                                                                                    if (!args.ContainsKey(argument.argument))
+                                                                                    {
+
+                                                                                        if (!providedusage)
+                                                                                        {
+                                                                                            string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
+                                                                                            if (usageparse == Localization.Parse(usageparse))
+                                                                                                usageparse = "";
+                                                                                            else
+                                                                                                usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
                                                                         {"%ns", ns.name},
                                                                         {"%cmd", cmd.name}
                                                                     }) : "";
 
-                                                                                    Console.WriteLine(usageparse);
+                                                                                            Console.WriteLine(usageparse);
 
-                                                                                    providedusage = true;
-                                                                                }
+                                                                                            providedusage = true;
+                                                                                        }
 
-                                                                                if (Shiftorium.UpgradeInstalled("help_usage"))
-                                                                                {
-                                                                                    Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
+                                                                                        if (Shiftorium.UpgradeInstalled("help_usage"))
+                                                                                        {
+                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
                                                                     {"%argument", argument.argument}
                                                                 }));
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
+                                                                                        }
+
+                                                                                        error = true;
+                                                                                    }
                                                                                 }
 
-                                                                                error = true;
+                                                                                if (error)
+                                                                                {
+                                                                                    throw new Exception("{ERROR_COMMAND_WRONG}");
+                                                                                }
+
+                                                                                try
+                                                                                {
+                                                                                    return (bool)method.Invoke(null, new[] { args });
+                                                                                }
+                                                                                catch (TargetInvocationException e)
+                                                                                {
+                                                                                    Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
+                                                                                    Console.WriteLine(e.InnerException.Message);
+                                                                                    Console.WriteLine(e.InnerException.StackTrace);
+                                                                                    return true;
+                                                                                }
+                                                                                catch
+                                                                                {
+                                                                                    return (bool)method.Invoke(null, new object[] { });
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Console.Write("<");
+                                                                                ConsoleEx.Bold = true;
+                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                                                                Console.Write("session_mgr");
+                                                                                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                                                                ConsoleEx.Bold = false;
+                                                                                Console.Write(">");
+                                                                                ConsoleEx.Italic = true;
+                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
+                                                                                return true;
+
                                                                             }
                                                                         }
-
-                                                                        if (error)
+                                                                        else
                                                                         {
-                                                                            throw new Exception("{ERROR_COMMAND_WRONG}");
-                                                                        }
-
-                                                                        try
-                                                                        {
-                                                                            return (bool)method.Invoke(null, new[] { args });
-                                                                        }
-                                                                        catch (TargetInvocationException e)
-                                                                        {
-                                                                            Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
-                                                                            Console.WriteLine(e.InnerException.Message);
-                                                                            Console.WriteLine(e.InnerException.StackTrace);
+                                                                            Console.Write("<");
+                                                                            ConsoleEx.Bold = true;
+                                                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                                                            Console.Write("watchdog");
+                                                                            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                                                            ConsoleEx.Bold = false;
+                                                                            Console.Write(">");
+                                                                            ConsoleEx.Italic = true;
+                                                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                                                            Console.WriteLine(" You cannot run this command.");
+                                                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
                                                                             return true;
                                                                         }
-                                                                        catch
-                                                                        {
-                                                                            return (bool)method.Invoke(null, new object[] { });
-                                                                        }
                                                                     }
-                                                                    else
-                                                                    {
-                                                                        Console.WriteLine("<watchdog> You cannot run this command.");
-                                                                        KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
-                                                                        return true;
-                                                                    }
+
+
                                                                 }
-
-
                                                             }
                                                         }
+                                                        else
+                                                        {
+                                                            Console.WriteLine(text + " cannot be ran in a remote session");
+                                                            return true;
+                                                        }
                                                     }
-                                                    else
-                                                    {
-                                                        Console.WriteLine(text + " cannot be ran in a remote session");
-                                                        return true;
-                                                    }
+
                                                 }
+                                            }
+                                            else
+                                            {
+                                                Console.Write("<");
+                                                ConsoleEx.Bold = true;
+                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                                Console.Write("session_mgr");
+                                                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                                ConsoleEx.Bold = false;
+                                                Console.Write(">");
+                                                ConsoleEx.Italic = true;
+                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
+                                                return true;
 
                                             }
-
                                         }
                                         else
                                         {
-                                            Console.WriteLine("<watchdog> You cannot run this command.");
+
+                                            Console.Write("<");
+                                            ConsoleEx.Bold = true;
+                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                            Console.Write("watchdog");
+                                            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                            ConsoleEx.Bold = false;
+                                            Console.Write(">");
+                                            ConsoleEx.Italic = true;
+                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                            Console.WriteLine(" You cannot run this command.");
                                             KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
                                             return true;
                                         }

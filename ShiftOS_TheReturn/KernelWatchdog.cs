@@ -102,5 +102,31 @@ namespace ShiftOS.Engine
             InKernelMode = false;
             Console.WriteLine("<kernel> Kernel mode disabled.");
         }
+
+        internal static bool CanRunOffline(Type method)
+        {
+            if (MudConnected)
+                return true;
+
+            foreach (var attr in method.GetCustomAttributes(false))
+            {
+                if (attr is MultiplayerOnlyAttribute)
+                    return false;
+            }
+            return true;
+        }
+
+        internal static bool CanRunOffline(MethodInfo method)
+        {
+            if (MudConnected)
+                return true;
+
+            foreach(var attr in method.GetCustomAttributes(false))
+            {
+                if (attr is MultiplayerOnlyAttribute)
+                    return false;
+            }
+            return true;
+        }
     }
 }
