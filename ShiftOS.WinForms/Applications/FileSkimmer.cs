@@ -234,7 +234,7 @@ namespace ShiftOS.WinForms.Applications
                 case FileType.TextFile:
                     return Properties.Resources.fileicon2;
                 case FileType.CommandFormat:
-                    //return Properties.Resources.fileiconcf;
+                    return Properties.Resources.fileiconcf;
                 default:
                     return Properties.Resources.fileicon1;
             }
