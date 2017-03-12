@@ -61,8 +61,9 @@ namespace ShiftOS.WinForms.Applications
             this.btnAddColor = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.btnTest = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnApply = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // panelEditor
@@ -109,9 +110,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.btnAddCommand.Location = new System.Drawing.Point(4, 85);
             this.btnAddCommand.Name = "btnAddCommand";
-            this.btnAddCommand.Size = new System.Drawing.Size(75, 23);
+            this.btnAddCommand.Size = new System.Drawing.Size(85, 23);
             this.btnAddCommand.TabIndex = 5;
-            this.btnAddCommand.Text = "+ Command";
+            this.btnAddCommand.Text = "+ Namespace";
             this.btnAddCommand.UseVisualStyleBackColor = true;
             this.btnAddCommand.Click += new System.EventHandler(this.btnAddCommand_Click);
             // 
@@ -154,30 +155,43 @@ namespace ShiftOS.WinForms.Applications
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
-            // button1
+            // btnSave
             // 
-            this.button1.Location = new System.Drawing.Point(7, 161);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(47, 23);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSave.Location = new System.Drawing.Point(7, 161);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(47, 23);
+            this.btnSave.TabIndex = 13;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // button2
+            // btnLoad
             // 
-            this.button2.Location = new System.Drawing.Point(60, 161);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(47, 23);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "Save";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnLoad.Location = new System.Drawing.Point(60, 161);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(47, 23);
+            this.btnLoad.TabIndex = 14;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
+            // btnApply
+            // 
+            this.btnApply.Location = new System.Drawing.Point(113, 161);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(47, 23);
+            this.btnApply.TabIndex = 15;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // FormatEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnApply);
+            this.Controls.Add(this.btnLoad);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.btnAddColor);
@@ -204,7 +218,8 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btnAddColor;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button btnTest;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnApply;
     }
 }

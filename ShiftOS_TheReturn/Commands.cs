@@ -305,6 +305,7 @@ namespace ShiftOS.Engine
         [RequiresArgument("type")]
         public static bool MultArg(Dictionary<string, object> args)
         {
+            Console.WriteLine("Success! "+args.ToString());
             return true;
         }
 

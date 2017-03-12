@@ -42,9 +42,10 @@ namespace ShiftOS.WinForms.Applications {
     public partial class FormatEditor : UserControl, IShiftOSWindow {
 
         IList<CommandFormat> parts = new List<CommandFormat>();
+        CommandParser parser = new CommandParser();
         IList<Panel> editorBoxes = new List<Panel>();
 
-        string commandMode = "command";
+        string commandMode = "namespace";
         int avcount = 0;
 
         public FormatEditor() {
@@ -66,10 +67,15 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         private void addPart(CommandFormat part) {
-            parts.Add(part);
+            parser.AddPart(part);
+
+            addPart(part.Draw());
+        }
+
+        private void addPart(Control part) {
             Panel container = new Panel();
 
-            Control drawnPart = part.Draw();
+            Control drawnPart = part;
             container.Size = drawnPart.Size;
             container.Controls.Add(drawnPart);
 
@@ -103,6 +109,11 @@ namespace ShiftOS.WinForms.Applications {
 
         private void btnAddCommand_Click(object sender, EventArgs e) {
             switch (commandMode) {
+                case "namespace":
+                    addPart(new CommandFormatNamespace());
+                    commandMode = "command";
+                    btnAddCommand.Text = "+ Command";
+                    break;
                 case "command":
                     addPart(new CommandFormatCommand());
                     commandMode = "argument";
@@ -129,215 +140,46 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e) {
-            string command = "";
-            Dictionary<string,string> arguments = new Dictionary<string, string>();
+            var result = parser.ParseCommand(richTextBox1.Text);
 
-            string text = richTextBox1.Text;
-            int position = 0;
-
-            int commandPos;
-            int firstValuePos = -1;
-            int lastValuePos = -1;
-
-            for(int ii = 0; ii < parts.Count; ii++) {
-                CommandFormat part = parts[ii];
-                if (part is CommandFormatMarker) {
-                    if (part is CommandFormatCommand) {
-                        commandPos = ii;
-                    } else if (part is CommandFormatValue) {
-                        if (firstValuePos > -1)
-                            lastValuePos = ii;
-                        else
-                            firstValuePos = ii;
-                    }
-                }
-            }
-
-            int i = 0;
-            string currentArgument = "";
-            int help = -1;
-
-            while (position < text.Length) {
-
-                if (i >= parts.Count) {
-                    position = text.Length;
-                    command = "+FALSE+";
-                    i = 0;
-                }
-
-                CommandFormat part = parts[i];
-                string res = part.CheckValidity(text.Substring(position));
-
-                // ok so:
-
-                // example
-                // COMMAND text[ --] ARGUMENT VALUE text[ --] ARGUMENT VALUE
-                // COMMAND text[{] ARGUMENT text[=] VALUE text[, ] ARGUMENT text[=] VALUE text[}]
-
-                if (part is CommandFormatMarker) {
-                    if (part is CommandFormatCommand) {
-                        command = res;
-                        help = -1;
-                    } else if (part is CommandFormatArgument) {
-                        currentArgument = res;
-                        help = -1;
-                    } else if (part is CommandFormatValue) {
-                        arguments[currentArgument] = res;
-
-                        if(i == firstValuePos)
-                            help = lastValuePos;
-                        if (i == lastValuePos)
-                            help = firstValuePos;
-                    }
-                }
-
-                if(res == "+FALSE+") {
-                    if(help > -1) {
-                        i = help;
-                        if(i >= parts.Count) {
-                            position = text.Length;
-                            command = "+FALSE+";
-                        }
-                    }else {
-                        position = text.Length;
-                        command = "+FALSE+";
-                    }
-                    help = -1;
-                }else {
-                    position += res.Length;
-                }
-
-                i++;
-            }
-
-            if (command == "+FALSE+") {
+            if (result.Equals(default(KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>))) {
                 lblExampleCommand.Text = "Syntax Error";
             } else {
                 string argvs = "{";
 
-                foreach (KeyValuePair<string, string> entry in arguments) {
-                    argvs += entry.Key + "=" + entry.Value + ", ";
+                foreach (KeyValuePair<string, string> entry in result.Value) {
+                    argvs += entry.Key + "=\"" + entry.Value + "\", ";
                 }
 
                 argvs += "}";
 
-                lblExampleCommand.Text = command + argvs;
+                lblExampleCommand.Text = result.Key + argvs;
             }
         }
 
         private void btnTest_Click(object sender, EventArgs e) {
 
         }
-    }
 
-    interface CommandFormat {
-        string CheckValidity(string check);
-        Control Draw();
-    }
-    class CommandFormatText : CommandFormat {
-        protected string str;
-        TextBox textBox;
+        private void btnSave_Click(object sender, EventArgs e) {
+            CurrentCommandParser.parser = parser;
 
-        public CommandFormatText() {
+            FileSkimmerBackend.GetFile(new string[] { ".cf" }, FileOpenerStyle.Save, new Action<string>((result) => {
+                Objects.ShiftFS.Utils.WriteAllText(result, parser.Save());
+            }));
         }
 
-        public virtual string CheckValidity(string check) {
-            return check.StartsWith(str) ? str : "+FALSE+";
-        }
-
-        public Control Draw() {
-            textBox = new TextBox();
-            textBox.TextChanged += new EventHandler(TextChanged);
-            textBox.Location = new Point(0,0);
-
-            return textBox;
-        }
-
-        void TextChanged(object sender, EventArgs e) {
-            str = textBox.Text;
-        }
-    }
-
-    class CommandFormatOptionalText : CommandFormatText {
-        public override string CheckValidity(string check) {
-            return check.StartsWith(str) ? str : "";
-        }
-    }
-
-    class CommandFormatMarker : CommandFormat {
-        protected string str;
-        Button button;
-
-        public CommandFormatMarker() {
-        }
-
-        public virtual string CheckValidity(string check) {
-            string res = string.Empty;
-            string alphanumeric = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890"; // not using regex for performance reasons
-
-            foreach (char c in check) {
-                if (alphanumeric.IndexOf(c) > -1) {
-                    res += c;
-                } else {
-                    break;
+        private void btnLoad_Click(object sender, EventArgs e) {
+            FileSkimmerBackend.GetFile(new string[] { ".cf" }, FileOpenerStyle.Open, new Action<string>((result) => {
+                parser = CommandParser.Load(Objects.ShiftFS.Utils.ReadAllText(result));
+                foreach(CommandFormat part in parser.parts) {
+                    addPart(part.Draw());
                 }
-            }
-
-            return res;
+            }));
         }
 
-        public virtual Control Draw() {
-            button = new Button();
-            button.Location = new Point(0, 0);
-            button.Text = "Marker";
-
-            return button;
-        }
-    }
-
-    class CommandFormatCommand : CommandFormatMarker {
-        public override Control Draw() {
-            Button draw = (Button)base.Draw();
-            draw.Text = "Command";
-            return draw;
-        }
-    }
-
-    class CommandFormatArgument : CommandFormatMarker {
-        public override Control Draw() {
-            Button draw = (Button)base.Draw();
-            draw.Text = "Argument";
-            return draw;
-        }
-    }
-
-    class CommandFormatValue : CommandFormatMarker {
-        public override string CheckValidity(string cd) {
-            string res = string.Empty;
-            var check = "";
-
-            if (cd.StartsWith("\""))
-                check = cd.Substring(1);
-            bool done = false;
-
-            foreach (char c in check) {
-                Console.WriteLine(check);
-                if (c != '"') {
-                    res += c;
-                } else {
-                    done = true;
-                    res += "\"";
-                    break;
-                }
-            }
-
-            return done ? "\""+res : "+FALSE+";
-        }
-
-        public override Control Draw() {
-            Button draw = (Button)base.Draw();
-            draw.Text = "\"Value\"";
-            return draw;
+        private void btnApply_Click(object sender, EventArgs e) {
+            CurrentCommandParser.parser = parser;
         }
     }
 }
