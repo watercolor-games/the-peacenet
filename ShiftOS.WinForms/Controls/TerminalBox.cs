@@ -24,11 +24,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Controls
 {
@@ -53,13 +56,60 @@ namespace ShiftOS.WinForms.Controls
         public void Write(string text)
         {
             this.HideSelection = true;
+            this.Select(this.TextLength, 0);
+            this.SelectionFont = ConstructFont();
+            this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
+            this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text));
             this.HideSelection = false;
         }
 
+        private Font ConstructFont()
+        {
+            FontStyle fs = FontStyle.Regular;
+            if (ConsoleEx.Bold)
+                fs = fs | FontStyle.Bold;
+            if (ConsoleEx.Italic)
+                fs = fs | FontStyle.Italic;
+            if (ConsoleEx.Underline)
+                fs = fs | FontStyle.Underline;
+
+            return new Font(this.Font, fs);
+        }
+
         public void WriteLine(string text)
         {
+            this.HideSelection = true;
+            this.Select(this.TextLength, 0);
+            this.SelectionFont = ConstructFont();
+            this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
+            this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text) + Environment.NewLine);
+            this.HideSelection = false;
+        }
+
+        bool quickCopying = false;
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            //if right-clicking, then we initiate a quick-copy.
+            if (e.Button == MouseButtons.Right)
+                quickCopying = true;
+            
+            //Override the mouse event so that it's a left-click at all times.
+            base.OnMouseDown(new MouseEventArgs(MouseButtons.Left, e.Clicks, e.X, e.Y, e.Delta));
+        }
+
+        protected override void OnMouseUp(MouseEventArgs mevent)
+        {
+            if(quickCopying == true)
+            {
+                if (!string.IsNullOrWhiteSpace(this.SelectedText))
+                {
+                    this.Copy();
+                }
+            }
+            base.OnMouseUp(mevent);
         }
     }
 }

@@ -106,6 +106,24 @@ namespace ShiftOS.WinForms
                 return;
             }
 
+            foreach(var attr in form.GetType().GetCustomAttributes(true))
+            {
+                if(attr is MultiplayerOnlyAttribute)
+                {
+                    if(KernelWatchdog.MudConnected == false)
+                    {
+                        Infobox.PromptYesNo("Disconnected from MUD", "This application requires a connection to the MUD. Would you like to reconnect?", new Action<bool>((answer) =>
+                        {
+                            if(answer == true)
+                            {
+                                KernelWatchdog.MudConnected = true;
+                                SetupWindow(form);
+                            }
+                        }));
+                        return;
+                    }
+                }
+            }
 
             if (!Shiftorium.UpgradeAttributesUnlocked(form.GetType()))
             {

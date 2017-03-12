@@ -133,6 +133,7 @@ namespace ShiftOS.Engine
     [Namespace("mud")]
     public static class MUDCommands
     {
+        [MultiplayerOnly]
         [Command("status")]
         public static bool Status()
         {
@@ -155,6 +156,8 @@ namespace ShiftOS.Engine
                 {
                     Console.WriteLine("{ERROR}: " + ex.Message);
                 }
+
+                TerminalBackend.PrefixEnabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -174,6 +177,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("disconnect")]
         [RequiresUpgrade("hacker101_deadaccts")]
         public static bool Disconnect()
@@ -183,6 +187,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("sendmsg")]
         [KernelMode]
         [RequiresUpgrade("hacker101_deadaccts")]
@@ -193,48 +198,6 @@ namespace ShiftOS.Engine
             ServerManager.SendMessage(args["header"].ToString(), args["body"].ToString());
             return true;
         }
-    }
-
-    [RequiresUpgrade("mud_fundamentals")]
-    [Namespace("chat")]
-    public static class ChatCommands
-    {
-        [RequiresArgument("id")]
-        [RequiresArgument("name")]
-        [RequiresArgument("topic")]
-        [Command("create")]
-        public static bool CreateChat(Dictionary<string, object> args)
-        {
-            string id = "";
-            string topic = "";
-            string name = "";
-            int max_users = 0;
-
-            id = args["id"] as string;
-            name = args["topic"] as string;
-            topic = args["name"] as string;
-
-            bool valid = true;
-
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(topic))
-                valid = false;
-
-            if (valid)
-            {
-                ServerManager.SendMessage("chat_create", $@"{{
-    id: ""{id}"",
-    name: ""{name}"",
-    topic: ""{topic}"",
-    max_users: {max_users}
-}}");
-            }
-            else
-            {
-                Console.WriteLine("{CHAT_PLEASE_PROVIDE_VALID_CHANNEL_DATA}");
-            }
-            return true;
-        }
-
     }
 
     [TutorialLock]
@@ -266,6 +229,7 @@ namespace ShiftOS.Engine
         }
     }
     
+    [MultiplayerOnly]
     [Namespace("dev")]
     public static class ShiftOSDevCommands
     {
@@ -475,6 +439,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("save")]
         public static bool Save()
         {
@@ -482,6 +447,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("status")]
         public static bool Status()
         {
@@ -494,7 +460,7 @@ Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
         }
     }
 
-
+    [MultiplayerOnly]
     [Namespace("shiftorium")]
     public static class ShiftoriumCommands
     {

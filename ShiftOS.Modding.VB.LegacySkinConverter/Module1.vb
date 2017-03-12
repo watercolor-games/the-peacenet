@@ -206,7 +206,7 @@ Public Class SkinConverterCommands
         skn.Header2Font = New Font("Microsoft Sans Serif", 15, FontStyle.Regular)
         skn.Header3Font = New Font("Microsoft Sans Serif", 12.5, FontStyle.Regular)
 
-        skn.TerminalBackColor = Color.Black
+        skn.TerminalBackColorCC = ConsoleColor.Black
 
         Console.WriteLine(" ...done!")
         Console.WriteLine("Skin conversion complete.")

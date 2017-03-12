@@ -38,6 +38,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
 
+    [MultiplayerOnly]
     [Launcher("Name Changer", true, "al_name_changer", "Customization")]
     [RequiresUpgrade("name_changer")]
     [WinOpen("name_changer")]

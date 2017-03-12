@@ -125,6 +125,20 @@
 		Description: "Want to adjust the volume of ShiftOS's audio? This upgrade will let you."
 	},
 
+	//SHIFTLOTTO UPGRADES
+	{
+		Name: "ShiftLotto",
+		Cost: 200,
+		Dependencies: null,
+		Description: "Are you feeling lucky? Spend some money on this upgrade! If you have any left, go ahead and bet your money in ShiftLotto!"
+	},
+	{
+		Name: "AL ShiftLotto",
+		Cost: 150,
+		Dependencies: "app_launcher;shiftlotto",
+		Description: "This upgrade allows you to find ShiftLotto in your App Launcher."
+	},
+
 	// COLOR DEPTH AND DITHERING
 
 	{

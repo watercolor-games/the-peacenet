@@ -76,12 +76,16 @@ namespace ShiftOS.WinForms.Applications
             btnok.Click += (o, a) =>
             {
                 AppearanceManager.Close(this);
+                OpenCallback?.Invoke();
             };
 
         }
 
-        public void Open(string title, string msg)
+        private Action OpenCallback = null;
+
+        public void Open(string title, string msg, Action c = null)
         {
+            OpenCallback = c;
             new Dialog().OpenInternal(title, msg);
         }
 

@@ -63,6 +63,26 @@ namespace ShiftOS.Engine.Scripting
         public dynamic Lua = new DynamicLua.DynamicLua();
         public bool Running = true;
 
+        static LuaInterpreter()
+        {
+            ServerManager.MessageReceived += (msg) =>
+            {
+                if (msg.Name == "run")
+                {
+                    TerminalBackend.PrefixEnabled = false;
+                    var cntnts = JsonConvert.DeserializeObject<dynamic>(msg.Contents);
+                    var interp = new LuaInterpreter();
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        interp.Execute(cntnts.script.ToString());
+
+                    });
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
+                }
+            };
+        }
+
         public static string CreateSft(string lua)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(lua);
@@ -341,12 +361,41 @@ end");
         }
     }
     
+    [Exposed("mud")]
+    public class MUDFunctions
+    {
+        public void sendDiagnostic(string src, string cat, object val)
+        {
+            ServerManager.SendMessage("diag_log", $"[{src}] <{cat}>: {val}");
+        }
+    }
+
+    [Exposed("userinfo")]
+    public class UserInfoFunctions
+    {
+        public string getUsername()
+        {
+            return SaveSystem.CurrentSave.Username;
+        }
+
+        public string getSysname()
+        {
+            return SaveSystem.CurrentSave.SystemName;
+        }
+
+        public string getEmail()
+        {
+            return getUsername() + "@" + getSysname();
+        }
+    }
+
+
     [Exposed("infobox")]
     public class InfoboxFunctions
     {
-        public void show(string title, string message)
+        public void show(string title, string message, Action callback = null)
         {
-            Infobox.Show(title, message);
+            Infobox.Show(title, message, callback);
         }
 
         public void question(string title, string message, Action<bool> callback)

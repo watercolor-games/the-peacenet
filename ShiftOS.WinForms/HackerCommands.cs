@@ -59,10 +59,25 @@ namespace ShiftOS.WinForms
     {
         private static void writeSlow(string text)
         {
-            Console.Write("[hacker101@undisclosed]: ");
-            Thread.Sleep(200);
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Bold = false;
+            ConsoleEx.Italic = false;
+            Console.Write("[");
+            ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+            ConsoleEx.Bold = true;
+            Console.Write("hacker101");
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Italic = true;
+            Console.Write("@");
+            ConsoleEx.ForegroundColor = ConsoleColor.White;
+            Console.Write("undisclosed");
+            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+            ConsoleEx.Bold = false;
+            ConsoleEx.Italic = false;
+            Console.Write("]: ");
+            Thread.Sleep(850);
             Console.WriteLine(text);
-            Thread.Sleep(1000);
+            Thread.Sleep(4000);
         }
 
         [Story("hacker101_deadaccts")]
@@ -121,9 +136,12 @@ namespace ShiftOS.WinForms
                 TerminalBackend.PrefixEnabled = true;
                 Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                 StartHackerTutorial();
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
             });
             t.IsBackground = true;
             t.Start();
+            TerminalBackend.PrefixEnabled = false;
         }
 
         internal static void StartHackerTutorial()
@@ -140,8 +158,7 @@ namespace ShiftOS.WinForms
                     int tutPos = 0;
                     Action ondec = () =>
                     {
-                        if (tutPos == 2)
-                            tutPos++;
+                        tutPos++;
                     };
                     TerminalBackend.CommandProcessed += (o, a) =>
                     {
@@ -351,6 +368,7 @@ namespace ShiftOS.WinForms
 
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-_";
 
+        [MultiplayerOnly]
         [Command("breach_user_password")]
         [KernelMode]
         [RequiresArgument("user")]
@@ -360,7 +378,7 @@ namespace ShiftOS.WinForms
         {
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
-
+            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking system thread...");
@@ -373,30 +391,34 @@ namespace ShiftOS.WinForms
                     var rnd = new Random();
                     var sw = new Stopwatch();
                     sw.Start();
-                    string pass = "";
-                    for(int i = 0; i < sve.Password.Length; i++)
+                    Thread.Sleep(2000);
+                    if(rnd.Next(0, 100) >= 75)
                     {
-                        char c = '\0';
-                        while (c != sve.Password[i])
-                            c = chars[rnd.Next(0, chars.Length)];
-                        pass += c;
-                        Thread.Sleep(rnd.Next(25,75));
+                        Console.WriteLine("--operation took too long - failed.");
+                        ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
+                        ServerManager.MessageReceived -= msgReceived;
+                        TerminalBackend.PrefixEnabled = true;
+                        return;
                     }
                     sw.Stop();
-                    Console.WriteLine(pass);
+                    Console.WriteLine(sve.Password);
                     Console.WriteLine();
                     Console.WriteLine("--password breached. Operation took " + sw.ElapsedMilliseconds + " milliseconds.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--beginning brute-force attack on " + usr + "@" + sys + "...");
-            Thread.Sleep(500);
             ServerManager.MessageReceived += msgReceived;
 
             ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
@@ -404,9 +426,13 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            TerminalBackend.PrefixEnabled = false;
+            Thread.Sleep(500);
             return true;
         }
 
+
+        [MultiplayerOnly]
         [Command("print_user_info")]
         [KernelMode]
         [RequiresArgument("pass")]
@@ -418,7 +444,7 @@ namespace ShiftOS.WinForms
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
-
+            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking multi-user domain response call...");
@@ -441,18 +467,22 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
-
+                    TerminalBackend.PrintPrompt();
+                    
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
-            Thread.Sleep(500);
             ServerManager.MessageReceived += msgReceived;
 
             ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
@@ -460,9 +490,12 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            Thread.Sleep(500);
+            TerminalBackend.PrefixEnabled = false;
             return true;
         }
 
+        [MultiplayerOnly]
         [Command("steal_codepoints")]
         [KernelMode]
         [RequiresArgument("amount")]
@@ -476,7 +509,7 @@ namespace ShiftOS.WinForms
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
             long amount = (long)args["amount"];
-
+            bool received = false;
             if(amount < 0)
             {
                 Console.WriteLine("--invalid codepoint amount - halting...");
@@ -497,6 +530,8 @@ namespace ShiftOS.WinForms
                         if(amount > sve.Codepoints)
                         {
                             Console.WriteLine("--can't steal this many codepoints from user.");
+                            ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
+                            TerminalBackend.PrefixEnabled = true;
                             return;
                         }
 
@@ -509,14 +544,18 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
-
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
+                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
+                    TerminalBackend.PrintPrompt();
                 }
+                TerminalBackend.PrefixEnabled = true;
             };
 
             Console.WriteLine("--contacting multi-user domain...");
@@ -528,9 +567,65 @@ namespace ShiftOS.WinForms
                 user = usr,
                 sysname = sys
             }));
+            Thread.Sleep(500);
+            TerminalBackend.PrefixEnabled = false;
             return true;
         }
 
+        [MultiplayerOnly]
+        [Command("purge_user")]
+        [KernelMode]
+        [RequiresArgument("pass")]
+        [RequiresArgument("user")]
+        [RequiresArgument("sys")]
+        [RequiresUpgrade("hacker101_deadaccts")]
+        public static bool PurgeUser(Dictionary<string, object> args)
+        {
+            string usr = args["user"].ToString();
+            string sys = args["sys"].ToString();
+            string pass = args["pass"].ToString();
+            ServerMessageReceived msgReceived = null;
+
+            Console.WriteLine("--hooking multi-user domain response call...");
+
+            msgReceived = (msg) =>
+            {
+                if (msg.Name == "user_data")
+                {
+                    var sve = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    if (sve.Password == pass)
+                    {
+                        ServerManager.SendMessage("delete_dead_save", JsonConvert.SerializeObject(sve));
+                        Console.WriteLine("<mud> User purged successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("--access denied.");
+                    }
+                    ServerManager.MessageReceived -= msgReceived;
+                }
+                else if (msg.Name == "user_data_not_found")
+                {
+                    Console.WriteLine("--access denied.");
+                    ServerManager.MessageReceived -= msgReceived;
+                }
+                TerminalBackend.PrintPrompt();
+                TerminalBackend.PrefixEnabled = true;
+            };
+
+            Console.WriteLine("--contacting multi-user domain...");
+            Thread.Sleep(500);
+            ServerManager.MessageReceived += msgReceived;
+
+            ServerManager.SendMessage("get_user_data", JsonConvert.SerializeObject(new
+            {
+                user = usr,
+                sysname = sys
+            }));
+            Thread.Sleep(500);
+            TerminalBackend.PrefixEnabled = false;
+            return true;
+        }
 
 
         [Command("brute_decrypt", true)]
@@ -573,6 +668,7 @@ namespace ShiftOS.WinForms
         }
     }
 
+    [MultiplayerOnly]
     [Namespace("storydev")]
     public static class StoryDevCommands
     {
@@ -602,6 +698,16 @@ namespace ShiftOS.WinForms
                 Console.WriteLine("Story ID not found.");
             }
 
+            return true;
+        }
+
+        [Command("experience", description = "Marks a story plot as experienced without triggering the plot.", usage ="{id:}")]
+        [RequiresArgument("id")]
+        [RemoteLock]
+        public static bool Experience(Dictionary<string, object> args)
+        {
+            SaveSystem.CurrentSave.StoriesExperienced.Add(args["id"].ToString());
+            SaveSystem.SaveGame();
             return true;
         }
     }

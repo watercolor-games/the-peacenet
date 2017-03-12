@@ -37,6 +37,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [DefaultTitle("Choose graphic")] [DefaultIcon("icongraphicpicker")]
     public partial class GraphicPicker : UserControl, IShiftOSWindow
     {

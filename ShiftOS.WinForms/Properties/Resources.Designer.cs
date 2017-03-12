@@ -732,6 +732,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconShiftLotto {
+            get {
+                object obj = ResourceManager.GetObject("iconShiftLotto", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconShiftnet {
             get {
                 object obj = ResourceManager.GetObject("iconShiftnet", resourceCulture);
@@ -923,15 +933,11 @@ namespace ShiftOS.WinForms.Properties {
         ///		Company: &quot;ShiftSoft&quot;
         ///	},
         ///	{
-        ///		Company: &quot;&quot;
-        ///	},
-        ///	{
-        ///	
-        ///	},
-        ///	{
-        ///	
-        ///	},
-        ///].
+        ///		Company: &quot;Shiftcast&quot;,
+        ///		Name: &quot;NetXtreme Hyper Edition&quot;,
+        ///		CostPerMonth: 1500,
+        ///		DownloadSpeed: 524288, //512 kb/s
+        ///		Description: &quot;It&apos;s time to supercharge your Shif [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ShiftnetServices {
             get {

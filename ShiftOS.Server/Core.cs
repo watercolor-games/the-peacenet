@@ -96,10 +96,11 @@ namespace ShiftOS.Server
                     {
                         Name = "run",
                         GUID = "Server",
-                        Contents = $@"{{
-    script:""{File.ReadAllText($"scripts/{user}/{script}.lua").Replace("\"", "\\\"")}"",
-							args:""{sArgs}""
-							}}"
+                        Contents = JsonConvert.SerializeObject(new
+                        {
+                            script = File.ReadAllText($"scripts/{user}/{script}.lua"),
+                            args = sArgs
+                        })
                     }));
                 }
                 else
@@ -115,7 +116,7 @@ namespace ShiftOS.Server
                     {
                         Name = "Error",
                         GUID = "Server",
-                        Contents = JsonConvert.SerializeObject(new MudException("Command parse error"))
+                        Contents = JsonConvert.SerializeObject(new MudException("<script_runner> Script not found or script error detected."))
                     }));
                 }
                 catch
@@ -124,6 +125,17 @@ namespace ShiftOS.Server
                 }
             }
 
+        }
+
+        [MudRequest("diag_log", typeof(string))]
+        public static void Diagnostic(string guid, string line)
+        {
+            List<string> lines = new List<string>();
+            if (File.Exists("diagnostics.log"))
+                lines = new List<string>(File.ReadAllLines("diagnostics.log"));
+
+            lines.Add(line);
+            File.WriteAllLines("diagnostics.log", lines.ToArray());
         }
 
         [MudRequest("getusers", typeof(string))]
@@ -182,8 +194,8 @@ namespace ShiftOS.Server
                             GUID = "server",
                             Contents = JsonConvert.SerializeObject(saveFile)
                         }));
+                        return;
                     }
-                    return;
                 }
             }
             foreach (var sve in Directory.GetFiles("saves"))
@@ -199,8 +211,8 @@ namespace ShiftOS.Server
                             GUID = "server",
                             Contents = JsonConvert.SerializeObject(saveFile)
                         }));
+                        return;
                     }
-                    return;
                 }
             }
 

@@ -152,6 +152,48 @@ namespace ShiftOS.WinForms.Tools
             }
         }
 
+        internal static Color ConvertColor(ConsoleColor cCol)
+        {
+            switch (cCol)
+            {
+                case ConsoleColor.Black:
+                    return Color.Black;
+                case ConsoleColor.Gray:
+                    return Color.Gray;
+                case ConsoleColor.DarkGray:
+                    return Color.DarkGray;
+                case ConsoleColor.Blue:
+                    return Color.Blue;
+                case ConsoleColor.Cyan:
+                    return Color.Cyan;
+                case ConsoleColor.DarkBlue:
+                    return Color.DarkBlue;
+                case ConsoleColor.DarkCyan:
+                    return Color.DarkCyan;
+                case ConsoleColor.DarkGreen:
+                    return Color.DarkGreen;
+                case ConsoleColor.DarkMagenta:
+                    return Color.DarkMagenta;
+                case ConsoleColor.DarkRed:
+                    return Color.DarkRed;
+                case ConsoleColor.DarkYellow:
+                    return Color.YellowGreen;
+                case ConsoleColor.Yellow:
+                    return Color.Yellow;
+                case ConsoleColor.Green:
+                    return Color.Green;
+                case ConsoleColor.Magenta:
+                    return Color.Magenta;
+                case ConsoleColor.Red:
+                    return Color.Red;
+                case ConsoleColor.White:
+                    return Color.White;
+                default:
+                    return Color.Black;
+            }
+
+        }
+
         public static void SetCursor(Control ctrl)
         {
 #if STUPID

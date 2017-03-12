@@ -37,6 +37,7 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [Launcher("Pong", true, "al_pong", "Games")]
     [WinOpen("pong")]
     [DefaultIcon("iconPong")]

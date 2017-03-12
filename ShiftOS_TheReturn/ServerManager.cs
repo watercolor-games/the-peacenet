@@ -125,6 +125,8 @@ namespace ShiftOS.Engine
                 {
                     thisGuid = new Guid(msg.Contents);
                     GUIDReceived?.Invoke(msg.Contents);
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "allusers")
                 {
@@ -132,6 +134,7 @@ namespace ShiftOS.Engine
                     {
                         Console.WriteLine(acc);
                     }
+                    TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "update_your_cp")
                 {
@@ -154,9 +157,15 @@ namespace ShiftOS.Engine
                 {
                     var ex = JsonConvert.DeserializeObject<Exception>(msg.Contents);
                     TerminalBackend.PrefixEnabled = true;
-                    Console.WriteLine($@"{{MUD_ERROR}}: {ex.Message}");
+                    ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                    ConsoleEx.Bold = true;
+                    Console.Write($@"{{MUD_ERROR}}: ");
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.Italic = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine(ex.Message);
                     TerminalBackend.PrefixEnabled = true;
-                    Console.Write($"{SaveSystem.CurrentSave.Username}@{CurrentSave.SystemName}:~$ ");
+                    TerminalBackend.PrintPrompt();
                 }
                 else
                 {

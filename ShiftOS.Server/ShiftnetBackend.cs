@@ -43,37 +43,49 @@ namespace ShiftOS.Server
             string url = contents as string;
             if (!url.StartsWith("shiftnet/"))
             {
-                server.DispatchTo(new Guid(guid), new NetObject("shiftnet_got", new ServerMessage
+                try
                 {
-                    Name = "shiftnet_file",
-                    GUID = "server",
-                    Contents = (File.Exists("badrequest.md") == true) ? File.ReadAllText("badrequest.md") : @"# Bad request.
+
+                    server.DispatchTo(new Guid(guid), new NetObject("shiftnet_got", new ServerMessage
+                    {
+                        Name = "shiftnet_file",
+                        GUID = "server",
+                        Contents = (File.Exists("badrequest.md") == true) ? File.ReadAllText("badrequest.md") : @"# Bad request.
 
 You have sent a bad request to the multi-user domain. Please try again."
-                }));
+                    }));
+                }
+                catch { }
                 return;
             }
 
             if (File.Exists(url))
             {
-                server.DispatchTo(new Guid(guid), new NetObject("download", new ServerMessage
+                try
                 {
-                    Name = "download_meta",
-                    GUID = "server",
-                    Contents = JsonConvert.SerializeObject(File.ReadAllBytes(url))
-                }));
+                    server.DispatchTo(new Guid(guid), new NetObject("download", new ServerMessage
+                    {
+                        Name = "download_meta",
+                        GUID = "server",
+                        Contents = JsonConvert.SerializeObject(File.ReadAllBytes(url))
+                    }));
+                }
+                catch { }
             }
             else
             {
-                server.DispatchTo(new Guid(guid), new NetObject("shiftnet_got", new ServerMessage
+                try
                 {
-                    Name = "shiftnet_file",
-                    GUID = "server",
-                    Contents = (File.Exists("notfound.md") == true) ? File.ReadAllText("notfound.md") : @"# Not found.
+                    server.DispatchTo(new Guid(guid), new NetObject("shiftnet_got", new ServerMessage
+                    {
+                        Name = "shiftnet_file",
+                        GUID = "server",
+                        Contents = (File.Exists("notfound.md") == true) ? File.ReadAllText("notfound.md") : @"# Not found.
 
 The page you requested at was not found on this multi-user domain."
-                }));
-
+                    }));
+                }
+                catch { }
             }
 
         }

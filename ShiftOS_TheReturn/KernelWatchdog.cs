@@ -25,8 +25,44 @@ namespace ShiftOS.Engine
             }
         }
 
+        private static bool _mudConnected = true;
+
         public static bool InKernelMode { get; private set; }
-        public static bool MudConnected { get; set; }
+        public static bool MudConnected
+        {
+            get
+            {
+                return _mudConnected;
+            }
+            set
+            {
+                if(value == false)
+                {
+                    foreach(var win in AppearanceManager.OpenForms)
+                    {
+                        foreach(var attr in win.ParentWindow.GetType().GetCustomAttributes(true))
+                        {
+                            if(attr is MultiplayerOnlyAttribute)
+                            {
+                                ConsoleEx.Bold = true;
+                                ConsoleEx.Underline = false;
+                                ConsoleEx.Italic = true;
+                                ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("Error:");
+                                ConsoleEx.Bold = false;
+                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                Console.WriteLine("Cannot disconnect from multi-user domain because an app that depends on it is open.");
+                                TerminalBackend.PrintPrompt();
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                _mudConnected = value;
+                Desktop.PopulateAppLauncher();
+            }
+        }
 
         public static bool IsSafe(Type type)
         {
@@ -65,6 +101,32 @@ namespace ShiftOS.Engine
         {
             InKernelMode = false;
             Console.WriteLine("<kernel> Kernel mode disabled.");
+        }
+
+        internal static bool CanRunOffline(Type method)
+        {
+            if (MudConnected)
+                return true;
+
+            foreach (var attr in method.GetCustomAttributes(false))
+            {
+                if (attr is MultiplayerOnlyAttribute)
+                    return false;
+            }
+            return true;
+        }
+
+        internal static bool CanRunOffline(MethodInfo method)
+        {
+            if (MudConnected)
+                return true;
+
+            foreach(var attr in method.GetCustomAttributes(false))
+            {
+                if (attr is MultiplayerOnlyAttribute)
+                    return false;
+            }
+            return true;
         }
     }
 }

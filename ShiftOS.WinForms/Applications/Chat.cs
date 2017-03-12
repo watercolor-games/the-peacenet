@@ -36,6 +36,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat(string chatId)

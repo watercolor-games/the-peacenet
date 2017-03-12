@@ -865,12 +865,12 @@ namespace ShiftOS.Engine {
         [ShifterMeta("System")]
         [ShifterCategory("General")]
         [ShifterName("Terminal text color")]
-        public Color TerminalForeColor = DefaultForeground;
+        public ConsoleColor TerminalForeColorCC = ConsoleColor.White;
 
         [ShifterMeta("System")]
         [ShifterCategory("General")]
         [ShifterName("Terminal background color")]
-        public Color TerminalBackColor = DesktopBG;
+        public ConsoleColor TerminalBackColorCC = ConsoleColor.Black;
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("Desktop Panel")]
