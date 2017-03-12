@@ -594,6 +594,7 @@
     <None Include="Resources\SnakeyHeadR.png" />
     <None Include="Resources\SnakeyFruit.png" />
     <None Include="Resources\ShiftnetServices.txt" />
+    <Content Include="Resources\fileiconcf.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
@@ -607,6 +608,7 @@
     <Content Include="SystemIcons\iconFileSaver.fw.png" />
     <Content Include="SystemIcons\iconFileSkimmer.png" />
     <Content Include="SystemIcons\iconfloodgate.png" />
+    <Content Include="SystemIcons\iconFormatEditor.png" />
     <Content Include="SystemIcons\icongraphicpicker.png" />
     <Content Include="SystemIcons\iconIconManager.png" />
     <Content Include="SystemIcons\iconInfoBox.fw.png" />
