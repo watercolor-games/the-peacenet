@@ -70,6 +70,12 @@ namespace ShiftOS.WinForms.Applications {
             {9, "9" }
         };
 
+        Dictionary<int, Bitmap> buttonImagess = new Dictionary<int, Bitmap>(){
+            {-2, Properties.Resources.SweeperTileFlag }
+        };
+
+        // Properties.Resources.SweeperTileBomb
+
         const int QUESTIONED = -3;
         const int FLAGGED = -2;
         const int UNDISCOVERED = -1;
@@ -145,7 +151,8 @@ namespace ShiftOS.WinForms.Applications {
 
             if (type == REMOVE) {
             } else {
-                tile.Text = buttonImages[type];
+                tile.Text = buttonImages.ContainsKey(type) ? buttonImages[type] : "";
+                tile.BackgroundImage = buttonImagess.ContainsKey(type) ? buttonImagess[type] : tile.BackgroundImage;
                 tile.MouseDown += new MouseEventHandler(tile_ClickDown);
                 tile.MouseUp += new MouseEventHandler(tile_Click);
                 tile.FlatStyle = FlatStyle.Flat;
