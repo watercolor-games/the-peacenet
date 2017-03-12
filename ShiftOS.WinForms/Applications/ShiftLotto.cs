@@ -82,7 +82,7 @@ namespace ShiftOS.WinForms.Applications
             int codePoints = Convert.ToInt32(Math.Round(cpUpDown.Value, 0));
             int difficulty = Convert.ToInt32(Math.Round(difUpDown.Value, 0));
 
-            if (SaveSystem.CurrentSave.Codepoints <= 1)
+            if (SaveSystem.CurrentSave.Codepoints <= 9)
             {
                 Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to use ShiftLotto!");
             }
@@ -121,6 +121,8 @@ namespace ShiftOS.WinForms.Applications
 
                         // Remove Codepoints
                         SaveSystem.TransferCodepointsToVoid(jackpot);
+
+                        
 
                         // Infobox
                         Infobox.Show("YOU FAILED!", "Sorry! " + jackpot.ToString() + " CP has been removed from your account.");
