@@ -9,7 +9,7 @@ The official, open-source, C# revamp of ShiftOS.
 We are licensed under the MIT license. A simple description is:
 
 1. Don't steal our code and call it yours
-2. If you fork us, leave any copyright statements and license info at the top of all .cs files. You can use the InsertLicense executable to insert the statement into any code files missing the copyright statement.
+2. Leave copyright statements and license info at the top of all .cs files. `InsertLicense.exe` can be used to add the license to any files missing it.
 
 
 ### Using our code for your own front-end project
