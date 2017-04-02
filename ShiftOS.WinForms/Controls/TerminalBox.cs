@@ -47,6 +47,14 @@ namespace ShiftOS.WinForms.Controls
             catch { }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing == true)
+                if(AppearanceManager.ConsoleOut == this)
+                AppearanceManager.ConsoleOut = null;
+            base.Dispose(disposing);
+        }
+
         protected override void OnClick(EventArgs e)
         {
             base.OnClick(e);

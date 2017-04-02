@@ -58,7 +58,7 @@ namespace ShiftOS.Engine
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl.SelectBottom();
+                UnderlyingControl?.SelectBottom();
                 
             }));
         }
@@ -76,7 +76,7 @@ namespace ShiftOS.Engine
             {
                 Desktop.InvokeOnWorkerThread(new Action(() =>
                 {
-                    UnderlyingControl.Write(value.ToString());
+                    UnderlyingControl?.Write(value.ToString());
                     select();
                 }));
             }
@@ -96,7 +96,7 @@ namespace ShiftOS.Engine
 
                 Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl.WriteLine(value);
+                UnderlyingControl?.WriteLine(value);
                 select();
             }));
             }
@@ -120,7 +120,7 @@ namespace ShiftOS.Engine
 
                 Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl.Write(value.ToString());
+                UnderlyingControl?.Write(value.ToString());
                 select();
             }));
             }

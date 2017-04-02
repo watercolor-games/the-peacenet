@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-//#define NOSOUND
+#define NOSOUND
 
 using System;
 using System.Collections.Generic;

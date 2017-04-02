@@ -36,6 +36,24 @@ namespace ShiftOS.WinForms
 {
     internal class WinformsWindowManager : WindowManager
     {
+        public int DesktopHeight
+        {
+            get
+            {
+                return Desktop.Size.Height - ((Shiftorium.UpgradeInstalled("desktop_panel") == true) ? SkinEngine.LoadedSkin.DesktopPanelHeight : 0);
+            }
+        }
+
+        public int TopLocation
+        {
+            get
+            {
+                if (!Shiftorium.UpgradeInstalled("desktop_panel"))
+                    return 0;
+                return ((SkinEngine.LoadedSkin.DesktopPanelPosition == 0) ? SkinEngine.LoadedSkin.DesktopPanelHeight : 0);
+            }
+        }
+
         public override void Close(IShiftOSWindow win)
         {
             (win as UserControl).Close();
@@ -160,9 +178,11 @@ namespace ShiftOS.WinForms
                     {
                         List<WindowBorder> formstoclose = new List<WindowBorder>();
 
-                        foreach (WindowBorder frm in AppearanceManager.OpenForms)
+                        for (int i = 0; i < maxWindows && i < AppearanceManager.OpenForms.Count; i++)
                         {
-                            formstoclose.Add(frm);
+                            var frm = AppearanceManager.OpenForms[i] as WindowBorder;
+                            if(!frm.IsDialog)
+                                formstoclose.Add(frm);
 
                         }
 
@@ -177,7 +197,85 @@ namespace ShiftOS.WinForms
 
             var wb = new WindowBorder(form as UserControl);
 
-            ControlManager.SetupWindows();
+            SetupWindows();
+        }
+
+        public void SetupWindows()
+        {
+            var windows = new List<WindowBorder>();
+            foreach(var win in AppearanceManager.OpenForms)
+            {
+                if (win is WindowBorder)
+                    if ((win as WindowBorder).IsDialog == false)
+                        windows.Add(win as WindowBorder);
+            }
+
+            if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                return;
+
+            else if (windows.Count == 4)
+            {
+                var w1 = windows[0];
+                var w2 = windows[1];
+                var w3 = windows[2];
+                var w4 = windows[3];
+                w1.Location = new Point(0, TopLocation);
+                w1.Width = Desktop.Size.Width / 2;
+                w1.Height = DesktopHeight / 2;
+                w2.Left = w1.Width;
+                w2.Width = w1.Width;
+                w2.Height = w1.Height;
+                w2.Top = w1.Top;
+                w3.Top = w2.Height;
+                w3.Height = w1.Height;
+                w3.Left = 0;
+                w3.Width = w1.Width;
+                w4.Width = w3.Width;
+                w4.Top = w3.Top;
+                w4.Left = w3.Width;
+                w4.Height = w3.Height;
+            }
+            else if(windows.Count == 3)
+            {
+                var w1 = windows[0];
+                var w2 = windows[1];
+                var w3 = windows[2];
+                w1.Location = new Point(0, TopLocation);
+                w1.Width = Desktop.Size.Width / 2;
+                w1.Height = DesktopHeight / 2;
+                w2.Left = w1.Width;
+                w2.Width = w1.Width;
+                w2.Height = w1.Height;
+                w2.Top = w1.Top;
+                w3.Top = w2.Height;
+                w3.Height = w1.Height;
+                w3.Left = 0;
+                w3.Width = w1.Width + w2.Width;
+            }
+            else if (windows.Count == 2)
+            {
+                var w1 = windows[0];
+                var w2 = windows[1];
+
+                w1.Location = new Point(0, TopLocation);
+                w1.Width = Desktop.Size.Width / 2;
+                w1.Height = DesktopHeight;
+                w2.Left = w1.Width;
+                w2.Width = w1.Width;
+                w2.Height = w1.Height;
+                w2.Top = w1.Top;
+
+            }
+            else if(windows.Count == 1)
+            {
+                var win = windows.FirstOrDefault();
+                if(win != null)
+                {
+                    win.Size = new Size(Desktop.Size.Width, DesktopHeight);
+                    win.Location = new Point(0, this.TopLocation);
+                }
+            }
+
         }
     }
 }

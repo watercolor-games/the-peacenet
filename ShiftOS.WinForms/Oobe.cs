@@ -419,7 +419,7 @@ namespace ShiftOS.WinForms
                 Clear();
                 textgeninput = lblhackwords;
                 Clear();
-                
+
                 this.Invoke(new Action(() =>
                 {
                     textgeninput.Font = SkinEngine.LoadedSkin.TerminalFont;
@@ -450,7 +450,7 @@ namespace ShiftOS.WinForms
                 TextType("In ShiftOS, the Terminal is your main control centre for the operating system. You can see system status, check Codepoints, open other programs, buy upgrades, and more.");
                 Thread.Sleep(500);
                 TextType("Go ahead and type 'sos.help' to see a list of commands.");
-                while(TutorialProgress == 0)
+                while (TutorialProgress == 0)
                 {
 
                 }
@@ -459,7 +459,7 @@ namespace ShiftOS.WinForms
                 TextType("You can run any command, by typing in their Namespace, followed by a period (.), followed by their Command Name.");
                 Thread.Sleep(500);
                 TextType("Go ahead and run the 'status' command within the 'sos' namespace to see what the command does.");
-                while(TutorialProgress == 1)
+                while (TutorialProgress == 1)
                 {
 
                 }
@@ -476,7 +476,7 @@ namespace ShiftOS.WinForms
                 TextType("You can easily get upgrades using the Shiftorium - a repository of approved ShiftOS upgrades.");
                 Thread.Sleep(500);
                 TextType("To start using the Shiftorium, simply type 'shiftorium.list' to see available upgrades.");
-                while(TutorialProgress == 2)
+                while (TutorialProgress == 2)
                 {
 
                 }
@@ -500,17 +500,17 @@ namespace ShiftOS.WinForms
                 TextType("If you want to escape a backslash inside a string, simply type two backslashes instead of one - for example key:\"Back\\\\slash.\"");
                 Thread.Sleep(500);
                 TextType("shiftorium.info requires an upgrade argument, which is a string type. Go ahead and give shiftorium.info's upgrade argument the 'mud_fundamentals' upgrade's ID.");
-                while(TutorialProgress == 3)
+                while (TutorialProgress == 3)
                 {
 
-                } 
+                }
                 TextType("As you can see, mud_fundamentals is very useful. In fact, a lot of useful upgrades depend on it. You should buy it!");
                 Thread.Sleep(500);
                 TextType("shiftorium.info already gave you a command that will let you buy the upgrade - go ahead and run that command!");
                 while (!Shiftorium.UpgradeInstalled("mud_fundamentals"))
                 {
 
-                } 
+                }
                 TextType("Hooray! You now have the MUD Fundamentals upgrade.");
                 Thread.Sleep(500);
                 TextType("You can also earn more Codepoints by playing Pong. To open Pong, you can use the win.open command.");
@@ -518,20 +518,20 @@ namespace ShiftOS.WinForms
                 TextType("If you run win.open without arguments, you can see a list of applications that you can open.");
                 Thread.Sleep(500);
                 TextType("Just run win.open without arguments, and this tutorial will be completed!");
-                while(TutorialProgress == 4)
+                while (TutorialProgress == 4)
                 {
 
                 }
                 TextType("This concludes the ShiftOS beginners' guide brought to you by the multi-user domain. Stay safe in a connected world.");
                 Thread.Sleep(2000);
-                this.Invoke(new Action(() =>
+                Desktop.InvokeOnWorkerThread(() =>
                 {
                     OnComplete?.Invoke(this, EventArgs.Empty);
-                    this.Close();
                     SaveSystem.CurrentSave.StoryPosition = 2;
                     SaveSystem.SaveGame();
                     AppearanceManager.SetupWindow(new Applications.Terminal());
-                }));
+                });
+
             });
             t.IsBackground = true;
             t.Start();
