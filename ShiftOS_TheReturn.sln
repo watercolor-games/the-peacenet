@@ -19,8 +19,6 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ShiftOS.Modding.VB.LegacySk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModLauncher", "ModLauncher\ModLauncher.csproj", "{AEACB7B5-E8FC-4569-BBD3-5053A694D6EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Server.WebAdmin", "ShiftOS.Server.WebAdmin\ShiftOS.Server.WebAdmin.csproj", "{B29FDD06-E6FE-40A2-8258-283728CED81A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen", "Gwen\Gwen.csproj", "{ADDA2F43-96C0-497F-8216-29C67ABC9806}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.OpenTK", "Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj", "{41650C82-D630-4E5C-845A-F1513C8FDC99}"
@@ -63,10 +61,6 @@ Global
 		{AEACB7B5-E8FC-4569-BBD3-5053A694D6EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEACB7B5-E8FC-4569-BBD3-5053A694D6EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEACB7B5-E8FC-4569-BBD3-5053A694D6EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B29FDD06-E6FE-40A2-8258-283728CED81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B29FDD06-E6FE-40A2-8258-283728CED81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B29FDD06-E6FE-40A2-8258-283728CED81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B29FDD06-E6FE-40A2-8258-283728CED81A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Release|Any CPU.ActiveCfg = Release|Any CPU
