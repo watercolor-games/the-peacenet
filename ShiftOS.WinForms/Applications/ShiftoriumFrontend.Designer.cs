@@ -56,7 +56,7 @@ namespace ShiftOS.WinForms.Applications
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbcodepoints = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lbupgradedesc = new System.Windows.Forms.Label();
             this.pnlupgradeactions = new System.Windows.Forms.Panel();
@@ -93,29 +93,16 @@ namespace ShiftOS.WinForms.Applications
             this.panel2.Size = new System.Drawing.Size(376, 427);
             this.panel2.TabIndex = 1;
             // 
-            // label2
+            // lbcodepoints
             // 
-            if (ShiftoriumFrontend.UpgradeInstalled("shiftorium_gui_codepoints_display"))
-            {
-                this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-                this.label2.AutoSize = true;
-                this.label2.Location = new System.Drawing.Point(128, 357);
-                this.label2.Name = "label2";
-                this.label2.Size = new System.Drawing.Size(135, 13);
-                this.label2.TabIndex = 3;
-                this.label2.Text = "You have: %cp Codepoints";
-                this.label2.Click += new System.EventHandler(this.label2_Click);
-            } else
-            {
-                this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-                this.label2.AutoSize = true;
-                this.label2.Location = new System.Drawing.Point(128, 357);
-                this.label2.Name = "label2";
-                this.label2.Size = new System.Drawing.Size(1, 1);
-                this.label2.TabIndex = 3;
-                this.label2.Text = "";
-                this.label2.Click += new System.EventHandler(this.label2_Click);
-            }
+                this.lbcodepoints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+                this.lbcodepoints.AutoSize = true;
+                this.lbcodepoints.Location = new System.Drawing.Point(128, 357);
+                this.lbcodepoints.Name = "lbcodepoints";
+                this.lbcodepoints.Size = new System.Drawing.Size(135, 13);
+                this.lbcodepoints.TabIndex = 3;
+                this.lbcodepoints.Text = "You have: %cp Codepoints";
+                this.lbcodepoints.Click += new System.EventHandler(this.lbcodepoints_Click);
             // 
             // lbupgradedesc
             // 
@@ -165,7 +152,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnllist
             // 
-            this.pnllist.Controls.Add(this.label2);
+            this.pnllist.Controls.Add(this.lbcodepoints);
             this.pnllist.Controls.Add(this.label1);
             this.pnllist.Controls.Add(this.pgupgradeprogress);
             this.pnllist.Controls.Add(this.lbupgrades);
@@ -255,7 +242,7 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btnbuy;
         private ShiftedProgressBar pgupgradeprogress;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbcodepoints;
         private System.Windows.Forms.Label label3;
     }
 }

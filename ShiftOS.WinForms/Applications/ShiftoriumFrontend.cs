@@ -51,7 +51,12 @@ namespace ShiftOS.WinForms.Applications
 
         public ShiftoriumFrontend()
         {
-
+            cp_update = new System.Windows.Forms.Timer();
+            cp_update.Tick += (o, a) =>
+            {
+                lbcodepoints.Text = $"You have {SaveSystem.CurrentSave.Codepoints} Codepoints."; 
+            };
+            cp_update.Interval = 100;
             InitializeComponent();
             PopulateShiftorium();
             lbupgrades.SelectedIndexChanged += (o, a) =>
@@ -88,8 +93,7 @@ namespace ShiftOS.WinForms.Applications
             lbupgrades.Items.Clear();
             upgrades.Clear();
             Timer();
-            label2.Text = "You have: " + SaveSystem.CurrentSave.Codepoints.ToString() + " Codepoints";
-
+            
             foreach (var upg in backend.GetAvailable())
             {
                 String name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
@@ -162,6 +166,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            cp_update.Start();
         }
 
         public void OnSkinLoad()
@@ -169,17 +174,21 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        Timer cp_update = new System.Windows.Forms.Timer();
+
         public bool OnUnload()
         {
+            cp_update.Stop();
+            cp_update = null;
             return true;
         }
 
         public void OnUpgrade()
         {
-
+            lbcodepoints.Visible = Shiftorium.UpgradeInstalled("shiftorium_gui_codepoints_display");
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void lbcodepoints_Click(object sender, EventArgs e)
         {
 
         }
