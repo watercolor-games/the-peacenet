@@ -457,12 +457,6 @@
 		Dependencies: "clock;desktop"
 	},
 	{
-		Name: "AL MUD Chat",
-		Cost: 150,
-		Description: "Adds an app launcher entry for the MUD chat application.",
-		Dependencies: "mud_fundamentals;app_launcher"
-	},
-	{
 		Name: "App Launcher Categories",
 		Cost: 1000,
 		Dependencies: "app_launcher",
