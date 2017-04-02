@@ -254,12 +254,6 @@
 		Dependencies:"desktop;wm_unlimited_windows"
 	},
 	{
-		Name: "MUD Cracker",
-		Cost: 500,
-		Description: "An application for cracking the current multi-user domain's admin password.",
-		Dependencies: "mud_fundamentals"
-	},
-	{
 		Name: "AL MUD Cracker",
 		Cost: 150,
 		Description: "Add a launcher item for the MUD cracker.",
