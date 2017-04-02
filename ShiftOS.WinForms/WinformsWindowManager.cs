@@ -197,6 +197,13 @@ namespace ShiftOS.WinForms
 
             var wb = new WindowBorder(form as UserControl);
 
+            FormClosedEventHandler onClose = (o,a)=> { };
+            onClose = (o, a) =>
+            {
+                SetupWindows();
+                wb.FormClosed -= onClose;
+            };
+            wb.FormClosed += onClose;
             SetupWindows();
         }
 

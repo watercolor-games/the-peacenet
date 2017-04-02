@@ -124,7 +124,6 @@ namespace ShiftOS.WinForms
 
                 }
             };
-
             this.Width = LoadedSkin.LeftBorderWidth + _parentWindow.Width + LoadedSkin.RightBorderWidth;
             this.Height = LoadedSkin.TitlebarHeight + _parentWindow.Height + LoadedSkin.BottomBorderWidth;
 
@@ -133,6 +132,13 @@ namespace ShiftOS.WinForms
             this._parentWindow.Show();
             ControlManager.SetupControls(this._parentWindow);
 
+            ParentWindow.OnSkinLoad();
+            ParentWindow.OnUpgrade();
+            Shiftorium.Installed += () =>
+            {
+                Setup();
+                ParentWindow.OnUpgrade();
+            };
 
             Desktop.ShowWindow(this);
 
