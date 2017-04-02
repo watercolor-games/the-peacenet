@@ -51,9 +51,11 @@ namespace ShiftOS.Engine
 
         public static Guid thisGuid { get; private set; }
         private static NetObjectClient client { get; set; }
+        private static bool UserDisconnect = false;
 
         public static void Disconnect()
         {
+            UserDisconnect = true;
             if (client != null)
             {
                 client.Disconnect();
@@ -117,7 +119,23 @@ namespace ShiftOS.Engine
         public static void Initiate(string mud_address, int port)
         {
             client = new NetObjectClient();
-
+            client.OnDisconnected += (o, a) =>
+            {
+                if (!UserDisconnect)
+                {
+                    TerminalBackend.PrefixEnabled = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                    ConsoleEx.Bold = true;
+                    Console.Write($@"Disconnected from MUD: ");
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.Italic = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine("You have been disconnected from the multi-user domain for an unknown reason. Your save data is preserved within the kernel and you will be reconnected shortly.");
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
+                    Initiate(mud_address, port);
+                }
+            };
             client.OnReceived += (o, a) =>
             {
                 var msg = a.Data.Object as ServerMessage;

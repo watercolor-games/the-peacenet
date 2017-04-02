@@ -40,7 +40,7 @@ namespace ShiftOS.WinForms
         {
             get
             {
-                return Desktop.Size.Height - ((Shiftorium.UpgradeInstalled("desktop_panel") == true) ? SkinEngine.LoadedSkin.DesktopPanelHeight : 0);
+                return Desktop.Size.Height - ((Shiftorium.UpgradeInstalled("desktop") == true) ? SkinEngine.LoadedSkin.DesktopPanelHeight : 0);
             }
         }
 
@@ -48,7 +48,7 @@ namespace ShiftOS.WinForms
         {
             get
             {
-                if (!Shiftorium.UpgradeInstalled("desktop_panel"))
+                if (!Shiftorium.UpgradeInstalled("desktop"))
                     return 0;
                 return ((SkinEngine.LoadedSkin.DesktopPanelPosition == 0) ? SkinEngine.LoadedSkin.DesktopPanelHeight : 0);
             }
@@ -62,6 +62,14 @@ namespace ShiftOS.WinForms
         public override void InvokeAction(Action act)
         {
             Desktop.InvokeOnWorkerThread(act);
+        }
+
+        public WinformsWindowManager()
+        {
+            Shiftorium.Installed += () =>
+            {
+                SetupWindows();
+            };
         }
 
         public override void Maximize(IWindowBorder form)
