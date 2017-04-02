@@ -383,7 +383,7 @@
 		Name: "Useful Panel Buttons",
 		Cost: 250,
 		Description: "Minimize and restore windows by clicking their Panel Button!",
-		Dependencies: "desktop"
+		Dependencies: "desktop;wm_panel_buttons"
 	},
 	{
 		Name: "Maximize Command",
