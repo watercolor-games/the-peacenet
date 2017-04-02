@@ -1,5 +1,0 @@
-<h3>No users found.</h3>
-
-<p>Your multi-user domain is newly-created. Before you can use the admin panel, you must create a ShiftOS user to act as the administrator of the MUD.</p>
-
-{user_create_form}

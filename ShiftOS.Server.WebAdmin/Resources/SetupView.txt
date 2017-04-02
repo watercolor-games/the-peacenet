@@ -1,5 +1,0 @@
-<h1>Initial setup</h1>
-
-<p>This multi-user domain contains some users, however none of them are administrators. Please choose your user to make it an admin.</p>
-
-{savelist}
