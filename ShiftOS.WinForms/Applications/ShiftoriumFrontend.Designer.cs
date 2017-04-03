@@ -180,8 +180,6 @@ namespace ShiftOS.WinForms.Applications
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(137, 13);
             this.label3.TabIndex = 2;
-            int upgradepercent = (pgupgradeprogress.Value / 100) * 100;
-            this.label3.Text = upgradepercent.ToString();
             // 
             // pgupgradeprogress
             // 

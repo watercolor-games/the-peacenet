@@ -153,9 +153,28 @@ namespace ShiftOS.WinForms.Applications
 
         private void btnbuy_Click(object sender, EventArgs e)
         {
+            long cpCost = 0;
             backend.Silent = true;
-            backend.Buy(upgrades[lbupgrades.SelectedItem.ToString()].ID, upgrades[lbupgrades.SelectedItem.ToString()].Cost);
-            backend.Silent = false;
+            Dictionary<string, int> UpgradesToBuy = new Dictionary<string, int>(); 
+            foreach (var itm in lbupgrades.SelectedItems)
+            {
+                cpCost += upgrades[itm.ToString()].Cost;
+                UpgradesToBuy.Add(upgrades[itm.ToString()].ID, upgrades[itm.ToString()].Cost);
+            }
+            if (SaveSystem.CurrentSave.Codepoints < cpCost)
+            {
+                Infobox.Show("Insufficient Codepoints", $"You do not have enough Codepoints to perform this action. You need {cpCost - SaveSystem.CurrentSave.Codepoints} more.");
+                
+            }
+            else
+            {
+                foreach(var upg in UpgradesToBuy)
+                {
+                    backend.Buy(upg.Key, upg.Value);
+                }
+            }
+
+                backend.Silent = false;
             PopulateShiftorium();
             btnbuy.Hide();
         }
@@ -185,6 +204,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            lbupgrades.SelectionMode = (UpgradeInstalled("shiftorium_gui_bulk_buy") == true) ? SelectionMode.MultiExtended : SelectionMode.One;
             lbcodepoints.Visible = Shiftorium.UpgradeInstalled("shiftorium_gui_codepoints_display");
         }
 
