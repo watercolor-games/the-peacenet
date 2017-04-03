@@ -535,7 +535,7 @@ Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
                     {
                         Console.WriteLine($@"Information for {upgrade}:
 
-{upg.Name} - {upg.Cost} Codepoints
+{upg.Category}: {upg.Name} - {upg.Cost} Codepoints
 ------------------------------------------------------
 
 {upg.Description}
@@ -553,15 +553,66 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                 return false;
             }
         }
+
+        [Command("categories")]
+        public static bool ListCategories()
+        {
+            foreach(var cat in Shiftorium.GetCategories())
+            {
+                Console.WriteLine($"{cat} - {Shiftorium.GetAvailable().Where(x=>x.Category==cat).Count()} upgrades");
+            }
+            return true;
+        }
+
         [Command("list")]
-        public static bool ListAll()
+        public static bool ListAll(Dictionary<string, object> args)
         {
             try
             {
+                bool showOnlyInCategory = false;
+
+                string cat = "Other";
+
+                if (args.ContainsKey("cat"))
+                {
+                    showOnlyInCategory = true;
+                    cat = args["cat"].ToString();
+                }
+
                 Dictionary<string, int> upgrades = new Dictionary<string, int>();
                 int maxLength = 5;
 
-                foreach (var upg in Shiftorium.GetAvailable())
+                IEnumerable<ShiftoriumUpgrade> upglist = Shiftorium.GetAvailable();
+                if (showOnlyInCategory)
+                {
+                    if (Shiftorium.IsCategoryEmptied(cat))
+                    {
+                        ConsoleEx.Bold = true;
+                        ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Shiftorium Query Error");
+                        Console.WriteLine();
+                        ConsoleEx.Bold = false;
+                        ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                        Console.WriteLine("Either there are no upgrades in the category \"" + cat + "\" or the category was not found.");
+                        return true;
+                    }
+                    upglist = Shiftorium.GetAvailable().Where(x => x.Category == cat);
+                }
+
+
+                if(upglist.Count() == 0)
+                {
+                    ConsoleEx.Bold = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No upgrades available!");
+                    Console.WriteLine();
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("You have installed all available upgrades for your system. Please check back later for more.");
+                    return true;
+
+                }
+                foreach (var upg in upglist)
                 {
                     if (upg.ID.Length > maxLength)
                     {

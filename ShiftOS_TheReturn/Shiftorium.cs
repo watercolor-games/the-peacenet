@@ -41,6 +41,27 @@ namespace ShiftOS.Engine
         /// </summary>
         public static bool Silent = false;
 
+        /// <summary>
+        /// Gets all Shiftorium categories.
+        /// </summary>
+        /// <param name="onlyAvailable">Should we look in the "available" upgrade list (i.e, what the user can buy right now), or the full upgrade list?</param>
+        /// <returns>All Shiftorium categories from the list, in a <see cref="System.String[]"/>. </returns>
+        public static string[] GetCategories(bool onlyAvailable = true)
+        {
+            List<string> cats = new List<string>();
+            IEnumerable < ShiftoriumUpgrade > upgrades = GetDefaults();
+            if (onlyAvailable)
+                upgrades = new List<ShiftoriumUpgrade>(GetAvailable());
+
+            foreach(var upg in upgrades)
+            {
+                if (!cats.Contains(upg.Category))
+                    cats.Add(upg.Category);
+            }
+
+            return cats.ToArray();
+        }
+
         public static void InvokeUpgradeInstalled()
         {
             Installed?.Invoke();
@@ -288,6 +309,8 @@ namespace ShiftOS.Engine
 
         public string ID { get; private set; }
     }
+
+    
 
     public class ShiftoriumUpgrade
     {
