@@ -67,91 +67,6 @@ namespace ShiftOS.WinForms.Tools
         }
 
 
-        public static void SetupWindows()
-        {
-            if (SaveSystem.CurrentSave != null)
-            {
-                int screen_height_start = 0;
-                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
-                {
-                }
-                else if (Shiftorium.UpgradeInstalled("wm_4_windows"))
-                {
-                    int screen_width_half = Screen.PrimaryScreen.Bounds.Width / 2;
-                    int screen_height_half = (Screen.PrimaryScreen.Bounds.Height - screen_height_start) / 2;
-
-                    for (int i = 0; i < OpenForms.Count; i++)
-                    {
-                        var frm = OpenForms[i] as WindowBorder;
-
-                        switch (i)
-                        {
-                            case 0:
-                                frm.Location = new System.Drawing.Point(0, screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 1) ? screen_width_half : screen_width_half * 2, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-
-                                break;
-                            case 1:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-                                break;
-                            case 2:
-                                frm.Location = new System.Drawing.Point(0, screen_height_half + screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 3) ? screen_width_half : screen_width_half * 2, screen_height_half);
-                                break;
-                            case 3:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_half + screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-                                break;
-                        }
-                    }
-
-                }
-                else if (Shiftorium.UpgradeInstalled("window_manager"))
-                {
-                    int screen_width_half = Screen.PrimaryScreen.Bounds.Width / 2;
-                    int screen_height = (Screen.PrimaryScreen.Bounds.Height) - screen_height_start;
-
-
-
-                    for (int i = 0; i < OpenForms.Count; i++)
-                    {
-
-
-                        var frm = OpenForms[i] as WindowBorder;
-                        switch (i)
-                        {
-                            case 0:
-                                frm.Location = new System.Drawing.Point(0, screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 1) ? screen_width_half : screen_width_half * 2, screen_height);
-                                break;
-                            case 1:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, screen_height);
-                                break;
-                        }
-                        OpenForms[i] = frm;
-                    }
-                }
-                else
-                {
-                    var frm = OpenForms[0] as WindowBorder;
-                    frm.Location = new Point(0, 0);
-                    frm.Size = Desktop.Size;
-                    OpenForms[0] = frm;
-
-                }
-            }
-            else
-            {
-                var frm = OpenForms[0] as WindowBorder;
-                frm.Location = new Point(0, 0);
-                frm.Size = Desktop.Size;
-                OpenForms[0] = frm;
-
-            }
-        }
-
         internal static Color ConvertColor(ConsoleColor cCol)
         {
             switch (cCol)
@@ -214,9 +129,22 @@ namespace ShiftOS.WinForms.Tools
 #endif
         }
 
+        /// <summary>
+        /// Centers the control along its parent.
+        /// </summary>
+        /// <param name="ctrl">The control to center (this is an extension method - you can call it on a control as though it was a method in that control)</param>
+        public static void CenterParent(this Control ctrl)
+        {
+            ctrl.Location = new Point(
+                    (ctrl.Parent.Width - ctrl.Width) / 2,
+                    (ctrl.Parent.Height - ctrl.Height) / 2
+                );
+        }
+
         public static void SetupControl(Control ctrl)
         {
             SuspendDrawing(ctrl);
+            ctrl.SuspendLayout();
             SetCursor(ctrl);
             if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
             {
@@ -270,13 +198,7 @@ namespace ShiftOS.WinForms.Tools
                         a.SuppressKeyPress = true;
 
 
-                        if (SaveSystem.CurrentSave != null)
-                        {
-                            if (Shiftorium.UpgradeInstalled("window_manager"))
-                            {
-                                Engine.AppearanceManager.SetupWindow(new Applications.Terminal());
-                            }
-                        }
+                        Engine.AppearanceManager.SetupWindow(new Applications.Terminal());
                     }
 
                     ShiftOS.Engine.Scripting.LuaInterpreter.RaiseEvent("on_key_down", a);
@@ -293,6 +215,7 @@ namespace ShiftOS.WinForms.Tools
             }
 
             MakeDoubleBuffered(ctrl);
+            ctrl.ResumeLayout();
             ResumeDrawing(ctrl);
         }
 

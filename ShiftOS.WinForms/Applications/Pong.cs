@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -83,6 +84,26 @@ namespace ShiftOS.WinForms.Applications
             paddleHuman.Location = new Point(paddleHuman.Location.X, (loc.Y) - (paddleHuman.Height / 2));
         }
 
+        private void CenterPanels()
+        {
+            pnlfinalstats.CenterParent();
+            pnlgamestats.CenterParent();
+            pnlhighscore.CenterParent();
+            pnlintro.CenterParent();
+            pnllose.CenterParent();
+            lblcountdown.CenterParent();
+            lblbeatai.Left = (this.Width - lblbeatai.Width) / 2;
+            SetupStats();
+        }
+
+        public void SetupStats()
+        {
+            lblstatsX.Location = new Point(5, this.Height - lblstatsX.Height - 5);
+            lblstatsY.Location = new Point(this.Width - lblstatsY.Width - 5, this.Height - lblstatsY.Height - 5);
+            lblstatscodepoints.Top = this.Height - lblstatscodepoints.Height - 5;
+            lblstatscodepoints.Left = (this.Width - lblstatscodepoints.Width) / 2;
+        }
+        
 
         // ERROR: Handles clauses are not supported in C#
         private void gameTimer_Tick(object sender, EventArgs e)
@@ -102,7 +123,7 @@ namespace ShiftOS.WinForms.Applications
 
                 //Set the computer player to move according to the ball's position.
                 if (aiShouldIsbeEnabled)
-                    if (ball.Location.X > 500 - xVel * 10 && xVel > 0)
+                    if (ball.Location.X > (this.Width - (this.Width / 3)) - xVel * 10 && xVel > 0)
                     {
                         if (ball.Location.Y > paddleComputer.Location.Y + 50)
                         {
@@ -116,12 +137,12 @@ namespace ShiftOS.WinForms.Applications
                     }
                     else
                     {
-                        //used to be me.location.y
+                        //used to be me.location.y - except it's fucking C# and this comment is misleading as fuck. OH WAIT! I didn't write it! And none of the current devs did either! - Michael
                         if (paddleComputer.Location.Y > this.Size.Height / 2 - paddleComputer.Height + casualposition)
                         {
                             paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y - computerspeed);
                         }
-                        //used to be me.location.y
+                        //Rylan is hot. Used to be //used to be me.location.y
                         if (paddleComputer.Location.Y < this.Size.Height / 2 - paddleComputer.Height + casualposition)
                         {
                             paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y + computerspeed);
@@ -269,6 +290,7 @@ namespace ShiftOS.WinForms.Applications
                 }
                 lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
             }
+            SetupStats();
         }
 
         public void SendHighscores()
@@ -652,10 +674,17 @@ namespace ShiftOS.WinForms.Applications
             pnlhighscore.Hide();
             pnlgamestats.Hide();
             pnlfinalstats.Hide();
+            CenterPanels();
+            lblbeatai.Hide();
         }
 
         public void OnSkinLoad()
         {
+            CenterPanels();
+            this.SizeChanged += (o, a) =>
+            {
+                CenterPanels();
+            };
         }
 
         public bool OnUnload()
@@ -665,6 +694,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            CenterPanels();
         }
 
         private void button2_Click(object sender, EventArgs e)

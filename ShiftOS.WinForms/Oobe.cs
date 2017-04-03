@@ -64,7 +64,10 @@ namespace ShiftOS.WinForms
         {
             while(typing == true)
             {
+                //JESUS CHRIST PAST MICHAEL.
 
+                //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                Thread.Sleep(100);
             }
             
             charcount = texttotype.Length;
@@ -452,6 +455,10 @@ namespace ShiftOS.WinForms
                 TextType("Go ahead and type 'sos.help' to see a list of commands.");
                 while (TutorialProgress == 0)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("As you can see, sos.help gives you a list of all commands in the system.");
@@ -461,6 +468,10 @@ namespace ShiftOS.WinForms
                 TextType("Go ahead and run the 'status' command within the 'sos' namespace to see what the command does.");
                 while (TutorialProgress == 1)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("Brilliant. The sos.status command will tell you how many Codepoints you have, as well as how many upgrades you have installed and how many are available.");
@@ -478,6 +489,10 @@ namespace ShiftOS.WinForms
                 TextType("To start using the Shiftorium, simply type 'shiftorium.list' to see available upgrades.");
                 while (TutorialProgress == 2)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 Clear();
@@ -502,13 +517,21 @@ namespace ShiftOS.WinForms
                 TextType("shiftorium.info requires an upgrade argument, which is a string type. Go ahead and give shiftorium.info's upgrade argument the 'mud_fundamentals' upgrade's ID.");
                 while (TutorialProgress == 3)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("As you can see, mud_fundamentals is very useful. In fact, a lot of useful upgrades depend on it. You should buy it!");
                 Thread.Sleep(500);
                 TextType("shiftorium.info already gave you a command that will let you buy the upgrade - go ahead and run that command!");
                 while (!Shiftorium.UpgradeInstalled("mud_fundamentals"))
-                {
+                {                //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
+
 
                 }
                 TextType("Hooray! You now have the MUD Fundamentals upgrade.");
@@ -520,6 +543,10 @@ namespace ShiftOS.WinForms
                 TextType("Just run win.open without arguments, and this tutorial will be completed!");
                 while (TutorialProgress == 4)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("This concludes the ShiftOS beginners' guide brought to you by the multi-user domain. Stay safe in a connected world.");
@@ -528,6 +555,7 @@ namespace ShiftOS.WinForms
                 {
                     OnComplete?.Invoke(this, EventArgs.Empty);
                     SaveSystem.CurrentSave.StoryPosition = 2;
+                    this.Close();
                     SaveSystem.SaveGame();
                     AppearanceManager.SetupWindow(new Applications.Terminal());
                 });

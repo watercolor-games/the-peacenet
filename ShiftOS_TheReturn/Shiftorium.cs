@@ -46,6 +46,23 @@ namespace ShiftOS.Engine
             Installed?.Invoke();
         }
 
+        public static string GetCategory(string id)
+        {
+            var upg = GetDefaults().FirstOrDefault(x => x.ID == id);
+            if (upg == null)
+                return "Other";
+            return (upg.Category == null) ? "Other" : upg.Category;
+        }
+
+        public static IEnumerable<ShiftoriumUpgrade> GetAllInCategory(string cat)
+        {
+            return GetDefaults().Where(x => x.Category == cat);
+        }
+
+        public static bool IsCategoryEmptied(string cat)
+        {
+            return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => x.Installed == false) == null;
+        }
 
         public static bool Buy(string id, int cost)
         {
@@ -278,8 +295,15 @@ namespace ShiftOS.Engine
         public string Description { get; set; }
         public int Cost { get; set; }
         public string ID { get { return (this.Id != null ? this.Id : (Name.ToLower().Replace(" ", "_"))); } }
-        public string Id { get; }
-
+        public string Id { get; set; }
+        public string Category { get; set; }
+        public bool Installed
+        {
+            get
+            {
+                return Shiftorium.UpgradeInstalled(ID);
+            }
+        }
         public string Dependencies { get; set; }
     }
 }

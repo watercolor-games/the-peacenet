@@ -664,10 +664,17 @@ namespace ShiftOS.WinForms
         /// <param name="act">Act.</param>
         public void InvokeOnWorkerThread(Action act)
         {
-            this.Invoke(new Action(()=>
+            try
             {
-                act?.Invoke();
-            }));
+                this.Invoke(new Action(() =>
+                {
+                    act?.Invoke();
+                }));
+            }
+            catch
+            {
+
+            }
         }
 
         public void OpenAppLauncher(Point loc)

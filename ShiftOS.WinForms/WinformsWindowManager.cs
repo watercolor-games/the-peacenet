@@ -184,20 +184,21 @@ namespace ShiftOS.WinForms
 
                     if (maxWindows > 0)
                     {
-                        List<WindowBorder> formstoclose = new List<WindowBorder>();
-
-                        for (int i = 0; i < maxWindows && i < AppearanceManager.OpenForms.Count; i++)
+                        var windows = new List<WindowBorder>();
+                        foreach(var WB in AppearanceManager.OpenForms)
                         {
-                            var frm = AppearanceManager.OpenForms[i] as WindowBorder;
-                            if(!frm.IsDialog)
-                                formstoclose.Add(frm);
-
+                            if (WB is WindowBorder)
+                                windows.Add(WB as WindowBorder);
                         }
+
+                        List<WindowBorder> formstoclose = new List<WindowBorder>(windows.Where(x => x.IsDialog == false).ToArray());
 
                         while (formstoclose.Count > maxWindows - 1)
                         {
-                            formstoclose[0].Close();
+                            this.Close(formstoclose[0].ParentWindow);
+                            AppearanceManager.OpenForms.Remove(formstoclose[0]);
                             formstoclose.RemoveAt(0);
+                            
                         }
                     }
                 }
