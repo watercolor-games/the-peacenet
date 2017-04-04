@@ -45,7 +45,7 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconShiftorium")]
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow
     {
-
+        public int CategoryId = 0;
         public static System.Timers.Timer timer100;
 
 
@@ -90,15 +90,45 @@ namespace ShiftOS.WinForms.Applications
 
         public void PopulateShiftorium()
         {
-            lbupgrades.Items.Clear();
-            upgrades.Clear();
-            Timer();
-            
-            foreach (var upg in backend.GetAvailable())
+            try
             {
-                String name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
-                upgrades.Add(name, upg);
-                lbupgrades.Items.Add(name);
+                lbnoupgrades.Hide();
+                lbupgrades.Items.Clear();
+                upgrades.Clear();
+                Timer();
+
+                foreach (var upg in backend.GetAvailable().Where(x => x.Category == backend.GetCategories()[CategoryId]))
+                {
+                    String name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
+                    upgrades.Add(name, upg);
+                    lbupgrades.Items.Add(name);
+                }
+
+                if (lbupgrades.Items.Count == 0)
+                {
+                    lbnoupgrades.Show();
+                    lbnoupgrades.Location = new Point(
+                        (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                        (lbupgrades.Height - lbnoupgrades.Height) / 2
+                        );
+
+                }
+                else
+                {
+                    lbnoupgrades.Hide();
+                }
+                lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
+                btncat_back.Visible = (CategoryId > 0);
+                btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
+            }
+            catch
+            {
+                lbnoupgrades.Show();
+                lbnoupgrades.Location = new Point(
+                    (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                    (lbupgrades.Height - lbnoupgrades.Height) / 2
+                    );
+
             }
         }
 
@@ -186,6 +216,7 @@ namespace ShiftOS.WinForms.Applications
         public void OnLoad()
         {
             cp_update.Start();
+            lbnoupgrades.Hide();
         }
 
         public void OnSkinLoad()
@@ -220,6 +251,24 @@ namespace ShiftOS.WinForms.Applications
             //timer100.Elapsed += ???;
             timer100.AutoReset = true;
             timer100.Enabled = true;
+        }
+
+        private void btncat_back_Click(object sender, EventArgs e)
+        {
+            if(CategoryId > 0)
+            {
+                CategoryId--;
+                PopulateShiftorium();
+            }
+        }
+
+        private void btncat_forward_Click(object sender, EventArgs e)
+        {
+            if(CategoryId < backend.GetCategories().Length - 1)
+            {
+                CategoryId++;
+                PopulateShiftorium();
+            }
         }
     }
 }
