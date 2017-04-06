@@ -240,4 +240,5 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{DIALOG_NAME}":"Dialog",
 	"{COLOR_PICKER_NAME}":"Color Picker",
 	"{CHAT_NAME}":"Chat",
+	"{NOTIFICATIONS}":"Notifications",
 }

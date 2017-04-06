@@ -65,7 +65,7 @@ namespace ShiftOS.WinForms
                 //Soon this will pop a balloon note.
                 this.Invoke(new Action(() =>
                 {
-                    btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
                 }));
             };
 
@@ -74,7 +74,7 @@ namespace ShiftOS.WinForms
                 //Soon this will pop a balloon note.
                 this.Invoke(new Action(() =>
                 {
-                    btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
                 }));
             };
 
@@ -100,7 +100,7 @@ namespace ShiftOS.WinForms
                     this.Invoke(new Action(() => SetupDesktop()));
                 this.Invoke(new Action(() =>
                 {
-                    btnnotifications.Text = "Notifications (" + NotificationDaemon.GetUnreadCount().ToString() + ")";
+                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
                 }));
             };
             Shiftorium.Installed += () =>
