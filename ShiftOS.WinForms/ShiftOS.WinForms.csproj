@@ -258,12 +258,6 @@
     <Compile Include="GUIFunctions.cs" />
     <Compile Include="HackerCommands.cs" />
     <Compile Include="JobTasks.cs" />
-    <Compile Include="LanguageSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LanguageSelector.Designer.cs">
-      <DependentUpon>LanguageSelector.cs</DependentUpon>
-    </Compile>
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -388,9 +382,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FakeSetupScreen.resx">
       <DependentUpon>FakeSetupScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSelector.resx">
-      <DependentUpon>LanguageSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>

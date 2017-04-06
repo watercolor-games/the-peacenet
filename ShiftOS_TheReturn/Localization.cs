@@ -67,6 +67,12 @@ namespace ShiftOS.Engine
                 var path = "english.local";
                 Utils.WriteAllText(Paths.GetPath(path), lines);
             }
+            else if (SaveSystem.CurrentSave == null)
+            {
+                var lines = Properties.Resources.strings_en;
+                var path = "english.local";
+                Utils.WriteAllText(Paths.GetPath(path), lines);
+            }
             else
             {
                 _provider.WriteTranscript();

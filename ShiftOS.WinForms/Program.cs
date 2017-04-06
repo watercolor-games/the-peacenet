@@ -58,14 +58,6 @@ namespace ShiftOS.WinForms
                 Environment.Exit(0);
             };
 
-            var langselect = new LanguageSelector();
-            langselect.ShowDialog();
-
-            while (!langselect.rdy)
-            {
-                
-            };
-
             TutorialManager.RegisterTutorial(new Oobe());
 
             TerminalBackend.TerminalRequested += () =>

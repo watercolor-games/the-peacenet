@@ -42,13 +42,20 @@ namespace ShiftOS.WinForms
 
         public string GetCurrentTranscript()
         {
-            switch (SaveSystem.CurrentSave.Language)
+            try
             {
-                case "deutsch - in beta":
-                    return Properties.Resources.strings_de;
-                default:
-                    return getDefault();
-                    
+                switch (SaveSystem.CurrentSave.Language)
+                {
+                    case "deutsch":
+                        return Properties.Resources.strings_de;
+                    default:
+                        return getDefault();
+
+                }
+            }
+            catch (NullReferenceException)
+            {
+                return getDefault();
             }
         }
 
@@ -56,7 +63,7 @@ namespace ShiftOS.WinForms
         {
             switch (SaveSystem.CurrentSave.Language)
             {
-                case "deutsch - in beta":
+                case "deutsch":
                     return Paths.GetPath("deutsch.local");
                 default:
                     return Paths.GetPath("english.local");
