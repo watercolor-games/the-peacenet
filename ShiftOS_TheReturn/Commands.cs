@@ -357,6 +357,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [Command("lang", "{COMMAND_SOS_LANG_USAGE}", "{COMMAND_SOS_LANG_DESCRIPTION}")]
         [RequiresArgument("language")]
         public static bool SetLanguage(Dictionary<string, object> userArgs)
         {
