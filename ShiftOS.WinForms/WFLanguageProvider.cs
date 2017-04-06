@@ -52,6 +52,18 @@ namespace ShiftOS.WinForms
             }
         }
 
+        public string GetLanguagePath()
+        {
+            switch (SaveSystem.CurrentSave.Language)
+            {
+                case "deutsch - in beta":
+                    return Paths.GetPath("deutsch.local");
+                default:
+                    return Paths.GetPath("english.local");
+
+            }
+        }
+
         public List<string> GetJSONTranscripts()
         {
             var strings = new List<string>();
@@ -63,6 +75,11 @@ namespace ShiftOS.WinForms
         public void WriteDefaultTranscript()
         {
             Utils.WriteAllText(Paths.GetPath("english.local"), getDefault());
+        }
+
+        public void WriteTranscript()
+        {
+            Utils.WriteAllText(GetLanguagePath(), GetCurrentTranscript());
         }
 
         private string getDefault()

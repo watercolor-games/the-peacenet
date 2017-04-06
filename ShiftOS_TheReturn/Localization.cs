@@ -37,6 +37,7 @@ namespace ShiftOS.Engine
     {
         List<string> GetJSONTranscripts();
         void WriteDefaultTranscript();
+        void WriteTranscript();
         string GetCurrentTranscript();
         string[] GetAllLanguages();
     }
@@ -44,6 +45,7 @@ namespace ShiftOS.Engine
     public static class Localization
     {
         private static ILanguageProvider _provider = null;
+        private static string _languageid = null;
 
         public static string[] GetAllLanguages()
         {
@@ -67,7 +69,7 @@ namespace ShiftOS.Engine
             }
             else
             {
-                _provider.WriteDefaultTranscript();
+                _provider.WriteTranscript();
             }
         }
 
@@ -196,6 +198,16 @@ namespace ShiftOS.Engine
         public static void RegisterProvider(ILanguageProvider p)
         {
             _provider = p;
+        }
+
+        public static void SetLanguageID(string id)
+        {
+            _languageid = id;
+        }
+
+        public static string GetLanguageID()
+        {
+            return _languageid;
         }
     }
 }

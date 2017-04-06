@@ -70,7 +70,7 @@ namespace ShiftOS.Engine
                 root.permissions = Permissions.All;
                 System.IO.File.WriteAllText(Paths.SaveFile, JsonConvert.SerializeObject(root));
             }
-
+            CurrentSave.Language = Localization.GetLanguageID();
 
             if (Utils.Mounts.Count == 0)
                 Utils.Mount(System.IO.File.ReadAllText(Paths.SaveFile));
