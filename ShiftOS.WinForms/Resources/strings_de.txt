@@ -150,7 +150,7 @@ Wenn eine Systemdatei von dem Virenscanner erkannt wird, wird sie ersetzt.",
 	"{ERROR_COMMAND_WRONG}":  "Check your syntax and try again",
 	"{LOGIN_EXP}": "Login as the admin of the multi user domain.",
 	
-	"{USAGE}":  "Usage: ",
+	"{USAGE}":  "Verwendung: ",
 	
 	"{NAMESPACE_SOS_DESCRIPTION}":"The ShiftOS Namespace",
 	"{COMMAND_HELP_USAGE}":"%ns.%cmd{[topic:]}",
@@ -219,7 +219,7 @@ Wenn eine Systemdatei von dem Virenscanner erkannt wird, wird sie ersetzt.",
 	"{OBSOLETE_SYS_SHUTDOWN}":"sys.shutdown is obsolete",
 	"{PY_EXCEPTION}":"There was an error running python code.",
 	"{LUA_ERROR}":"There was an error running lua code.",
-	"{LANGUAGE_CHANGED}":"The language has been changed. Please restart ShiftOS for changes to take full effect.",
+	"{LANGUAGE_CHANGED}":"Die Sprache wurde geändert. Bitte ändern Sie ShiftOS neu, damit Änderungen voll wirksam werden.",
 
 	"{TERMINAL_NAME}":"Terminal",
 	"{ARTPAD_NAME}":"Artpad",
@@ -240,5 +240,5 @@ Wenn eine Systemdatei von dem Virenscanner erkannt wird, wird sie ersetzt.",
 	"{DIALOG_NAME}":"Dialog",
 	"{COLOR_PICKER_NAME}":"Color Picker",
 	"{CHAT_NAME}":"Chat",
-	"{GERMAN_SECRET}":"guten tag polen ist anschluss"
+	"{GERMAN_SECRET}":"guten tag polen ist anschluss",
 }
