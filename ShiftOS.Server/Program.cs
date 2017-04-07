@@ -121,8 +121,15 @@ namespace ShiftOS.Server
 			server.OnClientAccepted += (o, a) =>
 			{
 				Console.WriteLine("Client connected.");
-				server.DispatchTo(a.Guid, new NetObject("welcome", new ServerMessage { Name = "Welcome", Contents = a.Guid.ToString(), GUID = "Server" }));
-			};
+                try
+                {
+                    server.DispatchTo(a.Guid, new NetObject("welcome", new ServerMessage { Name = "Welcome", Contents = a.Guid.ToString(), GUID = "Server" }));
+                }
+                catch
+                {
+                    Console.WriteLine("Oh, you don't have time to finish the handshake? Fine. Get off.");
+                }
+            };
 
             server.OnClientDisconnected += (o, a) =>
             {
@@ -185,8 +192,11 @@ namespace ShiftOS.Server
                 Console.WriteLine("Server stopping.");
 
 			};
+            
+            /*
             var task = ChatBackend.StartDiscordBots();
             task.Wait();
+            */
 
             RandomUserGenerator.StartThread();
 

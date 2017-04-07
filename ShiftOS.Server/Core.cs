@@ -127,6 +127,13 @@ namespace ShiftOS.Server
 
         }
 
+        [MudRequest("delete_dead_save", typeof(Save))]
+        public static void DeleteSave(string guid, Save save)
+        {
+            if (File.Exists("deadsaves/" + save.Username + ".save"))
+                File.Delete("deadsaves/" + save.Username + ".save");
+        }
+
         [MudRequest("diag_log", typeof(string))]
         public static void Diagnostic(string guid, string line)
         {
