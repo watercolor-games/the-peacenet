@@ -102,7 +102,6 @@ namespace ShiftOS.WinForms
         }
     }
 
-
     public class WinformsFSFrontend : IFileSkimmer
     {
 
