@@ -945,6 +945,16 @@
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
     },
 
+    //UPDATE MANAGER
+	{
+		Name: "AL Update Manager",
+		Cost: 150,
+		Description: "Want to get the latest features of ShiftOS, right from your App Launcher? This upgrade is for you!",
+		Dependencies: "app_launcher",
+		Category: "GUI"
+	},
+
+
 	// SHIFTSWEEPER
 
 	{

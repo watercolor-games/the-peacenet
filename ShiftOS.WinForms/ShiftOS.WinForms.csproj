@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -226,6 +227,12 @@
     <Compile Include="Applications\TutorialBox.Designer.cs">
       <DependentUpon>TutorialBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\UpdateManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\UpdateManager.Designer.cs">
+      <DependentUpon>UpdateManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Controls\ColorControl.cs">
@@ -376,6 +383,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TutorialBox.resx">
       <DependentUpon>TutorialBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\UpdateManager.resx">
+      <DependentUpon>UpdateManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
