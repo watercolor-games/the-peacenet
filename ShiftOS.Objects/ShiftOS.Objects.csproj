@@ -55,6 +55,7 @@
     <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="Shop.cs" />
+    <Compile Include="Unite\Download.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

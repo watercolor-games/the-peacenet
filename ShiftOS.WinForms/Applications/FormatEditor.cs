@@ -35,9 +35,10 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
     [MultiplayerOnly]
-    [Launcher("FormatEditor", true, "al_format_editor", "Games")]
+    [Launcher("Format Editor", true, "al_format_editor", "Customization")]
     [RequiresUpgrade("format_editor")]
     [WinOpen("formateditor")]
+    [DefaultTitle("Format Editor")]
     [DefaultIcon("iconFormatEditor")]
 
     public partial class FormatEditor : UserControl, IShiftOSWindow {
