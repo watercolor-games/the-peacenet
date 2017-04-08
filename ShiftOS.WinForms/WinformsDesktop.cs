@@ -775,6 +775,10 @@ namespace ShiftOS.WinForms
         {
             if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
             {
+                lbalstatus.Text = $@"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}
+{SaveSystem.CurrentSave.Codepoints} Codepoints
+{Shiftorium.GetAvailable().Length} available, {SaveSystem.CurrentSave.CountUpgrades()} installed.";
+
                 flapps.Controls.Clear();
                 apps.DropDown.Hide();
                 pnladvancedal.Location = new Point(0, (LoadedSkin.DesktopPanelPosition == 0) ? desktoppanel.Height : this.Height - pnladvancedal.Height - desktoppanel.Height);
