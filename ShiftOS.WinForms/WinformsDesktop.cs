@@ -459,6 +459,8 @@ namespace ShiftOS.WinForms
             return itm;
         }
 
+        public Dictionary<string, List<LauncherItem>> LauncherItemList = new Dictionary<string, List<LauncherItem>>();
+
         /// <summary>
         /// Populates the app launcher.
         /// </summary>
@@ -472,6 +474,9 @@ namespace ShiftOS.WinForms
 
                 Dictionary<string, List<ToolStripMenuItem>> sortedItems = new Dictionary<string, List<ToolStripMenuItem>>();
 
+                flcategories.Controls.Clear();
+
+                LauncherItemList.Clear();
 
 
                 foreach (var kv in items)
@@ -495,11 +500,13 @@ namespace ShiftOS.WinForms
                     if (sortedItems.ContainsKey(kv.DisplayData.Category))
                     {
                         sortedItems[kv.DisplayData.Category].Add(item);
+                        LauncherItemList[kv.DisplayData.Category].Add(kv);
                     }
                     else
                     {
                         sortedItems.Add(kv.DisplayData.Category, new List<ToolStripMenuItem>());
                         sortedItems[kv.DisplayData.Category].Add(item);
+                        LauncherItemList.Add(kv.DisplayData.Category, new List<LauncherItem> { kv });
                     }
                 }
 
@@ -513,6 +520,22 @@ namespace ShiftOS.WinForms
                             foreach (var subItem in kv.Value)
                             {
                                 cat.DropDownItems.Add(subItem);
+                            }
+                            if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
+                            {
+                                var catbtn = new Button();
+                                catbtn.FlatStyle = FlatStyle.Flat;
+                                catbtn.FlatAppearance.BorderSize = 0;
+                                catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
+                                catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
+                                catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                                catbtn.TextAlign = ContentAlignment.MiddleLeft;
+                                catbtn.Text = kv.Key;
+                                catbtn.Width = flcategories.Width;
+                                catbtn.Height = 24;
+                                flcategories.Controls.Add(catbtn);
+                                catbtn.Show();
+                                catbtn.Click += (o, a) => SetupAdvancedCategory(catbtn.Text);
                             }
                         }
 
@@ -545,6 +568,47 @@ namespace ShiftOS.WinForms
             LuaInterpreter.RaiseEvent("on_al_populate", items);
         }
 
+        public void SetupAdvancedCategory(string cat)
+        {
+            flapps.Controls.Clear();
+
+            foreach(var app in LauncherItemList[cat])
+            {
+                var catbtn = new Button();
+                catbtn.FlatStyle = FlatStyle.Flat;
+                catbtn.FlatAppearance.BorderSize = 0;
+                catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
+                catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
+                catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                catbtn.TextAlign = ContentAlignment.MiddleLeft;
+                catbtn.Text = (app is LuaLauncherItem) ? app.DisplayData.Name : NameChangerBackend.GetNameRaw(app.LaunchType);
+                catbtn.Width = flapps.Width;
+                catbtn.Height = 24;
+                catbtn.ImageAlign = ContentAlignment.MiddleLeft;
+                catbtn.Image = (app.LaunchType == null) ? null : SkinEngine.GetIcon(app.LaunchType.Name);
+
+                flapps.Controls.Add(catbtn);
+                catbtn.Show();
+                catbtn.Click += (o, a) =>
+                {
+                    pnladvancedal.Hide();
+                    if(app is LuaLauncherItem)
+                    {
+                        var interp = new LuaInterpreter();
+                        interp.ExecuteFile((app as LuaLauncherItem).LaunchPath);
+                    }
+                    else
+                    {
+                        IShiftOSWindow win = Activator.CreateInstance(app.LaunchType) as IShiftOSWindow;
+                        AppearanceManager.SetupWindow(win);
+                    }
+
+
+
+                };
+
+            }
+        }
 
         /// <summary>
         /// Desktops the load.
@@ -701,6 +765,27 @@ namespace ShiftOS.WinForms
         private void desktoppanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+        }
+
+        private void lbtime_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void apps_Click(object sender, EventArgs e)
+        {
+            if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
+            {
+                flapps.Controls.Clear();
+                apps.DropDown.Hide();
+                pnladvancedal.Location = new Point(0, (LoadedSkin.DesktopPanelPosition == 0) ? desktoppanel.Height : this.Height - pnladvancedal.Height - desktoppanel.Height);
+                pnladvancedal.Visible = !pnladvancedal.Visible;
+            }
+
+        }
+
+        private void btnshutdown_Click(object sender, EventArgs e)
+        {
+            TerminalBackend.InvokeCommand("sos.shutdown");
         }
     }
 

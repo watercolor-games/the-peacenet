@@ -945,6 +945,15 @@
        Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
     },
 
+	//ADVANCED APP LAUNCHER
+	{
+		Name: "Advanced App Launcher",
+		Cost: 10000,
+		Description: "The app launcher can categorize items and is quite clean, but let's make it even more advanced by adding more than just a traditional menu as the app launcher.",
+		Dependencies: "app_launcher_categories",
+		Category: "GUI"
+	},
+
     //UPDATE MANAGER
 	{
 		Name: "AL Update Manager",

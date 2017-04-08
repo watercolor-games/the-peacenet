@@ -30,9 +30,9 @@
         {
             this.lbupdatetitle = new System.Windows.Forms.Label();
             this.pnlupdatebar = new System.Windows.Forms.Panel();
-            this.btnclose = new System.Windows.Forms.Button();
-            this.btnaction = new System.Windows.Forms.Button();
             this.pgdownload = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
+            this.btnaction = new System.Windows.Forms.Button();
+            this.btnclose = new System.Windows.Forms.Button();
             this.wbstatus = new System.Windows.Forms.WebBrowser();
             this.pnlupdatebar.SuspendLayout();
             this.SuspendLayout();
@@ -60,26 +60,6 @@
             this.pnlupdatebar.Size = new System.Drawing.Size(597, 33);
             this.pnlupdatebar.TabIndex = 1;
             // 
-            // btnclose
-            // 
-            this.btnclose.Location = new System.Drawing.Point(4, 4);
-            this.btnclose.Name = "btnclose";
-            this.btnclose.Size = new System.Drawing.Size(75, 23);
-            this.btnclose.TabIndex = 0;
-            this.btnclose.Text = "{CLOSE}";
-            this.btnclose.UseVisualStyleBackColor = true;
-            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
-            // 
-            // btnaction
-            // 
-            this.btnaction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnaction.Location = new System.Drawing.Point(519, 4);
-            this.btnaction.Name = "btnaction";
-            this.btnaction.Size = new System.Drawing.Size(75, 23);
-            this.btnaction.TabIndex = 1;
-            this.btnaction.Text = "Update";
-            this.btnaction.UseVisualStyleBackColor = true;
-            // 
             // pgdownload
             // 
             this.pgdownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -93,6 +73,26 @@
             this.pgdownload.TabIndex = 2;
             this.pgdownload.Text = "Updating...";
             this.pgdownload.Value = 0;
+            // 
+            // btnaction
+            // 
+            this.btnaction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnaction.Location = new System.Drawing.Point(519, 4);
+            this.btnaction.Name = "btnaction";
+            this.btnaction.Size = new System.Drawing.Size(75, 23);
+            this.btnaction.TabIndex = 1;
+            this.btnaction.Text = "Update";
+            this.btnaction.UseVisualStyleBackColor = true;
+            // 
+            // btnclose
+            // 
+            this.btnclose.Location = new System.Drawing.Point(4, 4);
+            this.btnclose.Name = "btnclose";
+            this.btnclose.Size = new System.Drawing.Size(75, 23);
+            this.btnclose.TabIndex = 0;
+            this.btnclose.Text = "{CLOSE}";
+            this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
             // 
             // wbstatus
             // 

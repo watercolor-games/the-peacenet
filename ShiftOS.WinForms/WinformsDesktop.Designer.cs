@@ -61,10 +61,20 @@ namespace ShiftOS.WinForms
             this.apps = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlscreensaver = new System.Windows.Forms.Panel();
             this.pnlssicon = new System.Windows.Forms.Panel();
+            this.pnladvancedal = new System.Windows.Forms.Panel();
+            this.pnlalsystemactions = new System.Windows.Forms.Panel();
+            this.btnshutdown = new System.Windows.Forms.Button();
+            this.pnlstatus = new System.Windows.Forms.Panel();
+            this.lbalstatus = new System.Windows.Forms.Label();
+            this.flcategories = new System.Windows.Forms.FlowLayoutPanel();
+            this.flapps = new System.Windows.Forms.FlowLayoutPanel();
             this.desktoppanel.SuspendLayout();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.pnlscreensaver.SuspendLayout();
+            this.pnladvancedal.SuspendLayout();
+            this.pnlalsystemactions.SuspendLayout();
+            this.pnlstatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // desktoppanel
@@ -108,6 +118,7 @@ namespace ShiftOS.WinForms
             this.lbtime.TabIndex = 0;
             this.lbtime.Text = "label1";
             this.lbtime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbtime.Click += new System.EventHandler(this.lbtime_Click);
             // 
             // panelbuttonholder
             // 
@@ -146,6 +157,7 @@ namespace ShiftOS.WinForms
             this.apps.Size = new System.Drawing.Size(58, 20);
             this.apps.Tag = "applauncherbutton";
             this.apps.Text = "ShiftOS";
+            this.apps.Click += new System.EventHandler(this.apps_Click);
             // 
             // pnlscreensaver
             // 
@@ -164,12 +176,83 @@ namespace ShiftOS.WinForms
             this.pnlssicon.Size = new System.Drawing.Size(200, 100);
             this.pnlssicon.TabIndex = 0;
             // 
+            // pnladvancedal
+            // 
+            this.pnladvancedal.Controls.Add(this.flapps);
+            this.pnladvancedal.Controls.Add(this.flcategories);
+            this.pnladvancedal.Controls.Add(this.pnlalsystemactions);
+            this.pnladvancedal.Controls.Add(this.pnlstatus);
+            this.pnladvancedal.Location = new System.Drawing.Point(0, 24);
+            this.pnladvancedal.Name = "pnladvancedal";
+            this.pnladvancedal.Size = new System.Drawing.Size(433, 417);
+            this.pnladvancedal.TabIndex = 1;
+            this.pnladvancedal.Visible = false;
+            // 
+            // pnlalsystemactions
+            // 
+            this.pnlalsystemactions.Controls.Add(this.btnshutdown);
+            this.pnlalsystemactions.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlalsystemactions.Location = new System.Drawing.Point(0, 386);
+            this.pnlalsystemactions.Name = "pnlalsystemactions";
+            this.pnlalsystemactions.Size = new System.Drawing.Size(433, 31);
+            this.pnlalsystemactions.TabIndex = 1;
+            // 
+            // btnshutdown
+            // 
+            this.btnshutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnshutdown.AutoSize = true;
+            this.btnshutdown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnshutdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnshutdown.Location = new System.Drawing.Point(355, 3);
+            this.btnshutdown.Name = "btnshutdown";
+            this.btnshutdown.Size = new System.Drawing.Size(75, 26);
+            this.btnshutdown.TabIndex = 0;
+            this.btnshutdown.Text = "Shutdown";
+            this.btnshutdown.UseVisualStyleBackColor = true;
+            this.btnshutdown.Click += new System.EventHandler(this.btnshutdown_Click);
+            // 
+            // pnlstatus
+            // 
+            this.pnlstatus.Controls.Add(this.lbalstatus);
+            this.pnlstatus.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlstatus.Location = new System.Drawing.Point(0, 0);
+            this.pnlstatus.Name = "pnlstatus";
+            this.pnlstatus.Size = new System.Drawing.Size(433, 58);
+            this.pnlstatus.TabIndex = 0;
+            // 
+            // lbalstatus
+            // 
+            this.lbalstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbalstatus.Location = new System.Drawing.Point(0, 0);
+            this.lbalstatus.Name = "lbalstatus";
+            this.lbalstatus.Size = new System.Drawing.Size(433, 58);
+            this.lbalstatus.TabIndex = 0;
+            this.lbalstatus.Text = "michael@system\r\n0 Codepoints\r\n0 installed, 0 available";
+            this.lbalstatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // flcategories
+            // 
+            this.flcategories.Dock = System.Windows.Forms.DockStyle.Left;
+            this.flcategories.Location = new System.Drawing.Point(0, 58);
+            this.flcategories.Name = "flcategories";
+            this.flcategories.Size = new System.Drawing.Size(221, 328);
+            this.flcategories.TabIndex = 2;
+            // 
+            // flapps
+            // 
+            this.flapps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flapps.Location = new System.Drawing.Point(221, 58);
+            this.flapps.Name = "flapps";
+            this.flapps.Size = new System.Drawing.Size(212, 328);
+            this.flapps.TabIndex = 3;
+            // 
             // WinformsDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1296, 738);
+            this.Controls.Add(this.pnladvancedal);
             this.Controls.Add(this.pnlscreensaver);
             this.Controls.Add(this.desktoppanel);
             this.Font = new System.Drawing.Font("Consolas", 9F);
@@ -185,6 +268,10 @@ namespace ShiftOS.WinForms
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.pnlscreensaver.ResumeLayout(false);
+            this.pnladvancedal.ResumeLayout(false);
+            this.pnlalsystemactions.ResumeLayout(false);
+            this.pnlalsystemactions.PerformLayout();
+            this.pnlstatus.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -200,6 +287,13 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.Button btnnotifications;
         private System.Windows.Forms.Panel pnlscreensaver;
         private System.Windows.Forms.Panel pnlssicon;
+        private System.Windows.Forms.Panel pnladvancedal;
+        private System.Windows.Forms.Panel pnlalsystemactions;
+        private System.Windows.Forms.Button btnshutdown;
+        private System.Windows.Forms.Panel pnlstatus;
+        private System.Windows.Forms.Label lbalstatus;
+        private System.Windows.Forms.FlowLayoutPanel flapps;
+        private System.Windows.Forms.FlowLayoutPanel flcategories;
     }
 
 }
