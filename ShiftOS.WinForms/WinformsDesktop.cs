@@ -468,6 +468,17 @@ namespace ShiftOS.WinForms
         /// <param name="items">Items.</param>
         public void PopulateAppLauncher(LauncherItem[] items)
         {
+            if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
+            {
+                ControlManager.SetupControls(pnladvancedal);
+                pnladvancedal.Visible = false;
+                flapps.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                flcategories.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                pnlalsystemactions.BackColor = LoadedSkin.DesktopPanelColor;
+                lbalstatus.BackColor = LoadedSkin.DesktopPanelColor;
+            }
+
+
             if (DesktopFunctions.ShowDefaultElements == true)
             {
                 apps.DropDownItems.Clear();
