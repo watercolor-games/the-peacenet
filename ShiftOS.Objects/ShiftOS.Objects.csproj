@@ -52,6 +52,7 @@
     <Compile Include="MudAttributes.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reputation.cs" />
     <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="Shop.cs" />

@@ -47,6 +47,17 @@ namespace ShiftOS.Objects
 
         public bool IsPatreon { get; set; }
 
+        public UserClass Class { get; set; }
+        public double RawReputation { get; set; }
+
+        public Reputation Reputation
+        {
+            get
+            {
+                return (Reputation)((int)Math.Round(RawReputation));
+            }
+        }
+
         public string Password { get; set; }
         public bool PasswordHashed { get; set; }
         public string SystemName { get; set; }

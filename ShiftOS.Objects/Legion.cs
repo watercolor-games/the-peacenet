@@ -58,6 +58,16 @@ namespace ShiftOS.Objects
         public Dictionary<string, LegionRole> Roles { get; set; }
         public Dictionary<LegionRole, string> RoleNames { get; set; }
 
-        //Just adding a birbb in here
+        public UserClass Class { get; set; }
+        public double RawReputation { get; set; }
+
+        public Reputation Reputation
+        {
+            get
+            {
+                return (Reputation)((int)Math.Round(RawReputation));
+            }
+        }
+
     }
 }
