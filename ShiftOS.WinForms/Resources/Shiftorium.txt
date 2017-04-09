@@ -220,7 +220,7 @@
 	{
 		Name: "AL MUD Control Centre",
 		Cost: 150,
-		Dependencies: "mud_fundamentals;app_launcher",
+		Dependencies: "mud_control_centre;app_launcher",
 		Category: "Device Drivers",
 		Description: "Want to access your MUD profile, legions, jobs and shops, but don't want to open your Terminal? This upgrade is for you!"
 	},

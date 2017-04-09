@@ -58,6 +58,23 @@ namespace ShiftOS.WinForms
         public WinformsDesktop()
         {
             InitializeComponent();
+            Shiftorium.Installed += () =>
+            {
+                //Only if the DevX Legions story hasn't been experienced yet.
+                if (!Shiftorium.UpgradeInstalled("devx_legions"))
+                {
+                    //Check for shiftnet story experience
+                    if (Shiftorium.UpgradeInstalled("shiftnet"))
+                    {
+                        //Check for saturation of the "GUI" upgrade set
+                        if (Shiftorium.IsCategoryEmptied("GUI"))
+                        {
+                            //Start the MUD Control Centre story.
+                            Story.Start("devx_legions");
+                        }
+                    }
+                }
+            };
             this.TopMost = false;
 
             NotificationDaemon.NotificationMade += (note) =>
