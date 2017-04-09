@@ -480,11 +480,15 @@ namespace ShiftOS.Engine
         [Command("status")]
         public static bool Status()
         {
-            Console.WriteLine($@"ShiftOS version {Assembly.GetExecutingAssembly().GetName().Version.ToString()}
+            string status = $@"ShiftOS version {Assembly.GetExecutingAssembly().GetName().Version.ToString()}
 
 Codepoints:       {SaveSystem.CurrentSave.Codepoints}
 Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
-                  {Shiftorium.GetAvailable().Length} available");
+                  {Shiftorium.GetAvailable().Length} available";
+
+            if (Shiftorium.UpgradeInstalled("mud_control_centre"))
+                status += Environment.NewLine + $"Reputation:       {SaveSystem.CurrentSave.RawReputation} ({SaveSystem.CurrentSave.Reputation})";
+            Console.WriteLine(status);
             return true;
         }
     }

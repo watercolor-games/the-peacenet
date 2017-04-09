@@ -569,6 +569,8 @@ System version: {SaveSystem.CurrentSave.MajorVersion}.{SaveSystem.CurrentSave.Mi
 
 Shared scripts: {scripts}
 
+Reputation: {SaveSystem.CurrentSave.RawReputation} ({SaveSystem.CurrentSave.Reputation})
+
 Current legions: {legionname}";
         }
 
@@ -640,6 +642,11 @@ Current legions: {legionname}";
             ServerManager.SendMessage("legion_get_all", "");
         }
 
+        public void ShowLegionSelector()
+        {
+            ServerManager.SendMessage("legion_get_all", "");
+        }
+
         private void btnjoinlegion_Click(object sender, EventArgs e)
         {
             string shortname = lblegiontitle.Text.Split(']')[0].Remove(0, 1);
@@ -648,7 +655,11 @@ Current legions: {legionname}";
 
             SaveSystem.SaveGame();
             ServerManager.SendMessage("user_get_legion", JsonConvert.SerializeObject(SaveSystem.CurrentSave));
+            LegionChanged?.Invoke();
+
         }
+
+        public event Action LegionChanged;
 
         private void btnleavelegion_Click(object sender, EventArgs e)
         {

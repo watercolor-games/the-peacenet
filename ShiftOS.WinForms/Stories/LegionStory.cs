@@ -122,6 +122,39 @@ namespace ShiftOS.WinForms.Stories
                 waiting = true;
                 while (waiting == true)
                     Thread.Sleep(25);
+                WriteLine($"Your class has been selected. You are a(n) {SaveSystem.CurrentSave.Class}.");
+                WriteLine("On this screen, you can see a detailed view of your status within the digital society.");
+                WriteLine("You'll see this screen everytime you start the MUD Control Centre.");
+                WriteLine("Like the sos.status command, it shows your Codepoints, the upgrades you've bought and the upgrades available, but it also shows your reputation, legion, shops, and various other details.");
+                WriteLine("Right now, you are not in any legions. This is about to change.");
+                WriteLine("I will open the Legion Selector for you. The best legions will be shown at the top of the list.");
+                WriteLine("Pay attention to their Perdominent Class and their Collective Reputation values. These values will indicate how morally correct the legion is, and may affect your personal reputation.");
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    mud.ShowLegionSelector();
+                    mud.LegionChanged += () =>
+                    {
+                        waiting = false;
+                    };
+                });
+                waiting = true;
+                while (waiting == true)
+                    Thread.Sleep(25);
+                WriteLine($"So, you've joined the [{SaveSystem.CurrentSave.CurrentLegions[0]}] legion.");
+                WriteLine("Now you can see a more detailed view of the legion - who's inside, how many Codepoints the legion has, and you can also join their private chat.");
+                WriteLine("It's up to you what you do next. Get acquianted with your new team. I've gotta go work on something.");
+                WriteLine("I will contact you as you become more well-known.");
+                WriteLine("OH, one more thing.");
+                WriteLine("You're probably wondering about your reputation. Well, right now you have a Neutral reputation.");
+                WriteLine("This means, of course, that people don't have an opinion on you. They don't really know you exist.");
+                WriteLine("As you start performing large-scale operations within the digital society, your reputation will raise or lower gradually depending on how morally correct that action was.");
+                WriteLine("For example, if you start performing criminal actions, your reputation will start to drop, and people will start to distrust you.");
+                WriteLine("And if your rep drops too far, the MUD Safety Task Force, and other safety activists may start going after you and trying to take you off the MUD.");
+                WriteLine("However, if you perform morally-correct actions, your reputation will rise, and more people will trust you with more sensitive data and operations.");
+                WriteLine("Be careful though, if you have too high of a reputation, lower-rep groups will try to attack you.");
+                WriteLine("And, I'd be careful of Investigators. If they suspect anything bad about you, they'll do whatever they can to prove you guilty and dramatically decrease your reputation.");
+                WriteLine("Anyways, I've got some other sentiences I need to... have a little...word...with. Keep on shifting.");
+                WriteLine("--user has disconnected from your system.--", false);
                 TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.PrintPrompt();
             });
