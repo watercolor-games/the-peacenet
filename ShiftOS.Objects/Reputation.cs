@@ -11,7 +11,7 @@ namespace ShiftOS.Objects
         Saint = 5,
         Moral = 4,
         Trustworthy = 3,
-        WellKnown = 2
+        WellKnown = 2,
         Respected = 1,
         Neutral = 0,
         Disrespected = -1,
