@@ -64,7 +64,6 @@ namespace ShiftOS.WinForms.Controls
         public void Write(string text)
         {
             this.HideSelection = true;
-            this.Select(this.TextLength, 0);
             this.SelectionFont = ConstructFont();
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);

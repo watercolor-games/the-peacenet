@@ -131,6 +131,12 @@
     <Compile Include="Applications\GraphicPicker.Designer.cs">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Installer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Installer.Designer.cs">
+      <DependentUpon>Installer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\ShiftLetters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -279,6 +285,7 @@
     <Compile Include="ScriptingTestFunctions.cs" />
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
+    <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />
@@ -335,6 +342,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\GraphicPicker.resx">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Installer.resx">
+      <DependentUpon>Installer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftLetters.resx">
       <DependentUpon>ShiftLetters.cs</DependentUpon>

@@ -39,7 +39,7 @@ using ShiftOS.WinForms.Tools;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [RequiresUpgrade("mud_fundamentals")]
+    [RequiresUpgrade("mud_control_centre")]
     [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]
     [DefaultIcon("iconSysinfo")]
@@ -176,6 +176,42 @@ namespace ShiftOS.WinForms.Applications
                 catch { }
             };
         }
+
+
+
+        internal void ShowClasses()
+        {
+            var descriptions = new Dictionary<UserClass, string> {
+
+            { UserClass.Skinner, "Skinners, otherwise known as \"Shifters\" due to their excessive use of the Shifter application, like to customize ShiftOS to look like other operating systems or even have an entirely different UI. They gain heaps of codepoints from it, and like to sell their skins for even more Codepoints." },
+        { UserClass.Hacker, "Hackers are notorious for taking down large groups and individuals of which have many useful documents and Codepoints on their system. Hackers enjoy the rush of typing malicious commands into their terminals and seeing how they affect their target." },
+            { UserClass.Investigator, "Much like hackers, investigators are skilled with a terminal and breaching systems, but they don't do it directly for monetary gain. They will search a target's system for any files and clues that may lead to them being guilty of a crime within the digital society. Unlike Hackers, Investigators mostly have higher reputations in society, and go after those with lower reputations."},
+            { UserClass.Explorer,  "Explorers like to venture the vast regions of the multi-user domain and Shiftnet looking for secrets, hidden tools and software, and finding the hidden truths behind their screen. Explorers don't always know how to hack, but if it involves finding a secret about ShiftOS, they will do it. They typically do not have malicious intent."},
+                { UserClass.SafetyActivist, "Safety Activists are skilled with exploitation and hacking, but they only go after the worst there is in the multi-user domain. Crime rings, large hacker groups, you name it. Their primary goal is keeping the multi-user domain safe." },
+                { UserClass.PenetrationTester, "Penetration testers go hand-in-hand with Safety Activists. They go after the good guys, but rather than attacking them, they alert them that an exploit was found in their service and that this exploit should be fixed. They are a gray subject though - you never know if you are dealing with a genuine pen-tester or a hacker skilled with social engineering. Be careful." },
+                { UserClass.Collector, "Collectors go well with Explorers - however, Collectors are the ones who open shops. They like to find rare objects and sell them for Codepoints." },
+                {UserClass.Programmer, "Programmers are the ones who write applications and services for ShiftOS and the multi-user domain. Depending on the code that they write, they can be seen as either morally wrong sentiences or morally correct sentiences, it's up to their decisions." },
+
+            };
+
+            lbclasses.Items.Clear();
+            lbclasses.SelectedIndexChanged += (o, a) =>
+            {
+                newClass = (UserClass)Enum.Parse(typeof(UserClass), lbclasses.SelectedItem.ToString());
+                lbclassdesc.Text = descriptions[newClass];
+                lbclasstitle.Text = newClass.ToString();
+            };
+            foreach (var kv in descriptions)
+            {
+                lbclasses.Items.Add(kv.Key.ToString());
+
+            }
+            menuStrip1.Hide();
+            pnlclasses.Show();
+            pnlclasses.BringToFront();
+        }
+
+        UserClass newClass = UserClass.None;
 
         public void ListAllChats(Channel[] channels)
         {
@@ -889,6 +925,22 @@ Current legions: {legionname}";
                     });
                 }
             });
+        }
+
+        public event Action ClassChanged;
+
+        private void btnchooseclass_Click(object sender, EventArgs e)
+        {
+            if(newClass != UserClass.None)
+            {
+                SaveSystem.CurrentSave.Class = newClass;
+                SaveSystem.SaveGame();
+                ClassChanged?.Invoke();
+                menuStrip1.Show();
+                pnlclasses.SendToBack();
+                this.SetupSystemStatus();
+                return;
+            }
         }
     }
 }
