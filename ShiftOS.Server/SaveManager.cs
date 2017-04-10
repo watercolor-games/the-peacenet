@@ -43,7 +43,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (!args.ContainsKey("username"))
                 throw new MudException("No 'username' argument supplied.");
-
+            args["username"] = args["username"].ToString().ToLower();
             foreach(var savefile in Directory.GetFiles("saves"))
             {
                 var save = ReadSave(savefile);
@@ -64,6 +64,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["password"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 foreach (var savefile in Directory.GetFiles("saves"))
                 {
                     try
@@ -122,6 +123,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["password"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 foreach (var savefile in Directory.GetFiles("saves"))
                 {
                     try
@@ -162,7 +164,7 @@ namespace ShiftOS.Server
         public static void SaveGame(string guid, object contents)
         {
             var sav = contents as Save;
-
+            sav.Username = sav.Username.ToLower();
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
 
@@ -181,7 +183,7 @@ namespace ShiftOS.Server
         public static void DeleteSave(string guid, object contents)
         {
             var cSave = contents as ClientSave;
-
+            cSave.Username = cSave.Username.ToLower();
             foreach(var saveFile in Directory.GetFiles("saves"))
             {
                 try
@@ -204,6 +206,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["amount"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 long cpAmount = (long)args["amount"];
 
@@ -236,6 +239,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["password"] != null && args["amount"] != null && args["yourusername"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 string passw = args["password"] as string;
                 int cpAmount = (int)args["amount"];
