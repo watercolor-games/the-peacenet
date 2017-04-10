@@ -160,7 +160,28 @@
 		Category: "GUI",
 		Description: "This upgrade allows you to find ShiftLotto in your App Launcher."
 	},
-
+	//STORY-DRIVEN AL UPGRADES
+	{
+		Name: "AL Shiftnet",
+		Cost: 150,
+		Dependencies: "app_launcher;victortran_shiftnet",
+		Category: "GUI",
+		Description: "This upgrade puts a Shiftnet entry into your app launcher - you know, for those times when you just feel like surfing the net."
+	},
+	{
+		Name: "AL Installer",
+		Cost: 150,
+		Dependencies: "installer;app_launcher",
+		Category: "GUI",
+		Description: "Got a new .stp file and want to set it up, from your App Launcher? This upgrade is for you! It adds an AL entry for the Installer."
+	},
+	{
+		Name: "AL Downloader",
+		Cost: 150,
+		Dependencies: "app_launcher;downloader",
+		Category: "GUI",
+		Description: "The Downloader is an easy, central way to check all your downloads' progress. This upgrade adds an app launcher entry for it."
+	},
 	// COLOR DEPTH AND DITHERING
 
 	{

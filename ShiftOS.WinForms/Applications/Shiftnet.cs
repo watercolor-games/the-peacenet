@@ -44,8 +44,11 @@ namespace ShiftOS.WinForms.Applications
     //
     //READ THE DAMN SHIFTOS CODING GUIDELINES.
 
-    [Launcher("Shiftnet", false, null, "Networking")]
+    [Launcher("Shiftnet", true, "al_shiftnet", "Networking")]
     [MultiplayerOnly]
+    [DefaultTitle("Shiftnet")]
+    [WinOpen("shiftnet")]
+    [RequiresUpgrade("victortran_shiftnet")]
     [DefaultIcon("iconShiftnet")]
     public partial class Shiftnet : UserControl, IShiftOSWindow
     {

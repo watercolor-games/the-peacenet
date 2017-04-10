@@ -74,6 +74,17 @@ namespace ShiftOS.WinForms
                         }
                     }
                 }
+
+                if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
+                {
+                    if (SaveSystem.CurrentSave.Codepoints >= 50000)
+                    {
+                        if (Shiftorium.IsCategoryEmptied("Applications"))
+                        {
+                            Story.Start("victortran_shiftnet");
+                        }
+                    }
+                }
             };
             this.TopMost = false;
 

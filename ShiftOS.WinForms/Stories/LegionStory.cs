@@ -10,6 +10,72 @@ namespace ShiftOS.WinForms.Stories
 {
     public static class LegionStory
     {
+        private static string CharacterName = "DevX";
+        private static string SysName = "mud";
+
+        [Story("victortran_shiftnet")]
+        public static void ShiftnetStoryFeaturingTheBlueSmileyFaceHolyFuckThisFunctionNameIsLong()
+        {
+            CharacterName = "victor_tran";
+            SysName = "theos";
+            bool waiting = false;
+            var installer = new Applications.Installer();
+            installer.InstallCompleted += () =>
+            {
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    AppearanceManager.Close(installer);
+                });
+                waiting = false;
+            };
+
+            if (!terminalOpen())
+            {
+                var term = new Applications.Terminal();
+                AppearanceManager.SetupWindow(term);
+            }
+
+            var t = new Thread(() =>
+            {
+                WriteLine("victortran@theos - user connecting to your system.", false);
+                Thread.Sleep(2000);
+                WriteLine("Hey there - yes, I am not just a sentient being. I am indeed Victor Tran.");
+                WriteLine("I am the creator of a Linux desktop environment called theShell.");
+                WriteLine("I'm in the middle of working on a ShiftOS version of it.");
+                WriteLine("However, before I start, I feel I need to show you something.");
+                WriteLine("You have a lot of ShiftOS applications, and you can earn lots of Codepoints - and you already have lots.");
+                WriteLine("Well, you'd be a perfect candidate for me to install the Shiftnet Client on your system.");
+                WriteLine("I'll begin the installation right now.");
+                //Set up an Installer.
+                waiting = true;
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    Story.Start("installer");
+                    AppearanceManager.SetupWindow(installer);
+                    installer.InitiateInstall(new ShiftnetInstallation());
+                });
+                while (waiting == true)
+                    Thread.Sleep(25);
+
+                WriteLine("All installed! Once I disconnect, type win.open to see a list of your new apps.");
+                WriteLine("The Shiftnet is a vast network of websites only accessible through ShiftOS.");
+                WriteLine("Think of it as the DarkNet, but much darker, and much more secretive.");
+                WriteLine("There are lots of apps, games, skins and utilities on the Shiftnet.");
+                WriteLine("There are also lots of companies offering many services.");
+                WriteLine("I'd stay on the shiftnet/ cluster though, others may be dangerous.");
+                WriteLine("I'd also stick to the sites listed on shiftnet/shiftsoft/ping - that site is regularly updated with the most safe Shiftnet sites.");
+                WriteLine("Anyways, it was nice meeting you, hopefully someday you'll give theShell a try.");
+
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
+            });
+            t.IsBackground = true;
+            t.Start();
+
+            TerminalBackend.PrefixEnabled = false;
+
+        }
+
         private static void WriteLine(string text, bool showCharacterName=true)
         {
             Console.WriteLine();
@@ -17,11 +83,11 @@ namespace ShiftOS.WinForms.Stories
             {
                 ConsoleEx.Bold = true;
                 ConsoleEx.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.Write("DevX");
+                Console.Write(CharacterName);
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write("@");
                 ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("mud: ");
+                Console.Write(SysName + ": ");
             }
             ConsoleEx.ForegroundColor = ConsoleColor.Gray;
             ConsoleEx.Bold = false;
@@ -56,6 +122,8 @@ namespace ShiftOS.WinForms.Stories
         [Story("devx_legions")]
         public static void DevXLegionStory()
         {
+            CharacterName = "DevX";
+            SysName = "mud";
             bool waiting = false;
             //Used for DevX dialogue.
             //Used for legion selection.
@@ -196,6 +264,69 @@ namespace ShiftOS.WinForms.Stories
                 Story.Start("mud_control_centre");
                 SaveSystem.SaveGame();
                 SetProgress(100);
+            }
+        }
+
+        /// <summary>
+        /// Stub: Used for story-driven Shiftorium dependency "installer".
+        /// </summary>
+        [Story("installer")]
+        public static void InstallerPlaceholder()
+        {
+
+        }
+
+        /// <summary>
+        /// Stub: Used for story-driven Shiftorium dependency: "downloader"
+        /// </summary>
+        [Story("downloader")]
+        public static void DownloaderPlaceholder()
+        {
+
+        }
+
+        public class ShiftnetInstallation : Applications.Installation
+        {
+            protected override void Run()
+            {
+                SetStatus("Preparing to install dependency: installer_user_agent");
+                SetProgress(0);
+                Thread.Sleep(5000);
+                for(int i = 0; i < 100; i++)
+                {
+                    SetStatus("Installing installer_user_agent");
+                    SetProgress(i);
+                    Thread.Sleep(50);
+                }
+                SetProgress(0);
+                SetStatus("Preparing to install dependency: downloader");
+                Thread.Sleep(3500);
+                for(int i = 0; i < 100; i++)
+                {
+                    SetStatus("Installing dependency: downloader");
+                    SetProgress(i);
+                    Thread.Sleep(100);
+                }
+                Story.Start("downloader");
+                SetProgress(0);
+                SetStatus("Dependencies installed.");
+                Thread.Sleep(2000);
+                SetStatus("Installing Shiftnet.");
+                Thread.Sleep(3000);
+                for(int i = 0; i < 100; i++)
+                {
+                    SetProgress(i);
+                    string dots = "";
+                    if ((i % 2) == 0)
+                        dots = ".";
+                    if ((i % 3) == 0)
+                        dots = "..";
+                    if ((i % 4) == 0)
+                        dots = "...";
+                    SetStatus($"Installing Shiftnet{dots}");
+                    Thread.Sleep(100);
+                }
+
             }
         }
     }

@@ -11,6 +11,11 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [WinOpen("installer")]
+    [RequiresUpgrade("installer")]
+    [MultiplayerOnly]
+    [DefaultTitle("Installer")]
+    [Launcher("Installer", true, "al_installer", "Utilities")]
     public partial class Installer : UserControl, IShiftOSWindow
     {
         public Installer()
