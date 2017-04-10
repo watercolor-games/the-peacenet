@@ -143,10 +143,6 @@ namespace ShiftOS.Server
 
             AppDomain.CurrentDomain.UnhandledException += (o, a) =>
             {
-                ChatBackend.Broadcast("**Automatic Broadcast:** The multi-user domain is restarting because of a crash.");
-#if DEBUG
-                ChatBackend.Broadcast("Crash summary: " + a.ExceptionObject.ToString());
-#endif
                 if(server.IsOnline == true)
                     server.Stop();
                 System.Diagnostics.Process.Start("ShiftOS.Server.exe");
@@ -217,10 +213,6 @@ namespace ShiftOS.Server
                         {
                             Console.WriteLine("Save not found.");
                         }
-                    }
-                    else if(cmd.ToLower().StartsWith("broadcast "))
-                    {
-                        ChatBackend.Broadcast(cmd.Remove(0, 10));
                     }
                     else if (cmd == "purge_all_bad_saves")
                     {
