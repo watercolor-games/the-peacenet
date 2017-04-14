@@ -146,7 +146,6 @@ namespace ShiftOS.WinForms.Tools
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                SuspendDrawing(ctrl);
                 ctrl.SuspendLayout();
             }));
             if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
@@ -247,7 +246,6 @@ namespace ShiftOS.WinForms.Tools
 
                 MakeDoubleBuffered(ctrl);
                 ctrl.ResumeLayout();
-                ResumeDrawing(ctrl);
             });
             ControlSetup?.Invoke(ctrl);
         }
