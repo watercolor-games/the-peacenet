@@ -129,7 +129,6 @@ namespace ShiftOS.WinForms
 
             this.pnlcontents.Controls.Add(this._parentWindow);
             this._parentWindow.Dock = DockStyle.Fill;
-            this._parentWindow.Show();
             ControlManager.SetupControls(this._parentWindow);
 
             ParentWindow.OnSkinLoad();
@@ -139,9 +138,40 @@ namespace ShiftOS.WinForms
                 Setup();
                 ParentWindow.OnUpgrade();
             };
+            Setup();
+            this._parentWindow.TextChanged += (o, a) =>
+            {
+                Setup();
+                Desktop.ResetPanelButtons();
 
-            Desktop.ShowWindow(this);
+            };
 
+            this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
+            this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+
+            if (!this.IsDialog)
+            {
+                Engine.AppearanceManager.OpenForms.Add(this);
+            }
+
+            SaveSystem.GameReady += () =>
+            {
+                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                {
+                    AppearanceManager.Invoke(new Action(() =>
+                    {
+                        this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
+                        this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+
+                    }));
+                }
+                AppearanceManager.Invoke(new Action(() =>
+                {
+                    Setup();
+                }));
+            };
+
+            ParentWindow.OnLoad();
         }
 
         /// <summary>
@@ -178,46 +208,7 @@ namespace ShiftOS.WinForms
         public void WindowBorder_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
-
-            this._parentWindow.TextChanged += (o, a) =>
-            {
-                Setup();
-                Desktop.ResetPanelButtons();
-
-            };
-
-            this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
-            this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
-
-            if (!this.IsDialog)
-            {
-                Engine.AppearanceManager.OpenForms.Add(this);
-            }
-
-            SaveSystem.GameReady += () =>
-            {
-                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
-                {
-                    AppearanceManager.Invoke(new Action(() =>
-                    {
-                        this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
-                        this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
-
-                    }));
-                }
-                AppearanceManager.Invoke(new Action(() =>
-                {
-                    Setup();
-                }));
-            };
-
-            ControlManager.SetupControls(this);
-
-            Setup();
-
-            var sWin = (IShiftOSWindow)ParentWindow;
-
-            sWin.OnLoad();
+            this._parentWindow.Show();
         }
 
         /// <summary>

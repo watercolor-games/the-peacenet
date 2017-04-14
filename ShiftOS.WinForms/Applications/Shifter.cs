@@ -47,6 +47,193 @@ namespace ShiftOS.WinForms.Applications
             PopulateShifter();
         }
 
+        [ShifterMeta("Windows")]
+        public void SetupWindowPreview()
+        {
+            pnlwindow.BringToFront();
+            WBSetup();
+        }
+
+        [ShifterMeta("Menus")]
+        public void SetupMenusPreview()
+        {
+            SetupWindowPreview();
+        }
+
+        [ShifterMeta("System")]
+        public void SetupSystemPreview()
+        {
+            SetupWindowPreview();
+        }
+
+        /// <summary>
+        /// Setup this instance.
+        /// </summary>
+        public void WBSetup()
+        {
+            this.lbtitletext.Text = "Window Preview";
+
+            if (SaveSystem.CurrentSave != null)
+            {
+                this.pnltitle.Visible = Shiftorium.UpgradeInstalled("wm_titlebar");
+                this.pnlclose.Visible = Shiftorium.UpgradeInstalled("close_button");
+                this.pnlminimize.Visible = Shiftorium.UpgradeInstalled("minimize_button");
+                this.pnlmaximize.Visible =Shiftorium.UpgradeInstalled("maximize_button");
+                WBSetupSkin();
+            }
+            else
+            {
+                this.pnltitle.Visible = false;
+                this.pnlclose.Visible = false;
+                this.pnlminimize.Visible = false;
+                this.pnlmaximize.Visible = false;
+
+            }
+        }
+
+        public Image GetImage(string id)
+        {
+            var type = typeof(ShiftOS.Engine.Skin);
+            foreach(var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                foreach(var attrib in field.GetCustomAttributes(false))
+                {
+                    if(attrib is ImageAttribute)
+                    {
+                        var img = attrib as ImageAttribute;
+                        if(img.Name == id)
+                        {
+                            return SkinEngine.ImageFromBinary((byte[])field.GetValue(LoadedSkin));
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public ImageLayout GetImageLayout(string img)
+        {
+            if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
+            {
+                return LoadedSkin.SkinImageLayouts[img];
+            }
+            else
+            {
+                LoadedSkin.SkinImageLayouts.Add(img, ImageLayout.Tile);
+                return ImageLayout.Tile;
+            }
+
+        }
+
+        /// <summary>
+        /// Setups the skin.
+        /// </summary>
+        /// <returns>The skin.</returns>
+        public void WBSetupSkin()
+        {
+            this.DoubleBuffered = true;
+            var renderer = new ShiftOSMenuRenderer(LoadedSkin);
+            mspreview.Renderer = renderer;
+            tspreview.Renderer = renderer;
+            pnltitle.Height = LoadedSkin.TitlebarHeight;
+            pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
+            pnltitle.BackgroundImage = GetImage("titlebar");
+            pnltitleleft.Visible = LoadedSkin.ShowTitleCorners;
+            pnltitleright.Visible = LoadedSkin.ShowTitleCorners;
+            pnltitleleft.BackColor = LoadedSkin.TitleLeftCornerBackground;
+            pnltitleright.BackColor = LoadedSkin.TitleRightCornerBackground;
+            pnltitleleft.Width = LoadedSkin.TitleLeftCornerWidth;
+            pnltitleright.Width = LoadedSkin.TitleRightCornerWidth;
+            pnltitleleft.BackgroundImage = GetImage("titleleft");
+            pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleft");
+            pnltitleright.BackgroundImage = GetImage("titleright");
+            pnltitleright.BackgroundImageLayout = GetImageLayout("titleright");
+            pnltitle.BackgroundImageLayout = GetImageLayout("titlebar"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
+
+            lbtitletext.BackColor = (pnltitle.BackgroundImage != null) ? Color.Transparent : LoadedSkin.TitleBackgroundColor;
+            lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
+            lbtitletext.Font = LoadedSkin.TitleFont;
+
+            pnlleft.BackColor = LoadedSkin.BorderLeftBackground;
+            pnlleft.BackgroundImage = GetImage("leftborder");
+            pnlleft.BackgroundImageLayout = GetImageLayout("leftborder");
+            pnlleft.Width = LoadedSkin.LeftBorderWidth;
+            pnlright.BackColor = LoadedSkin.BorderRightBackground;
+            pnlright.BackgroundImage = GetImage("rightborder");
+            pnlright.BackgroundImageLayout = GetImageLayout("rightborder");
+            pnlright.Width = LoadedSkin.RightBorderWidth;
+
+            pnlbottom.BackColor = LoadedSkin.BorderBottomBackground;
+            pnlbottom.BackgroundImage = GetImage("bottomborder");
+            pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborder");
+            pnlbottom.Height = LoadedSkin.BottomBorderWidth;
+
+            pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
+            pnlbottomr.BackgroundImage = GetImage("bottomrborder");
+            pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
+            pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
+            pnlbottoml.BackgroundImage = GetImage("bottomlborder");
+            pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+
+            lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
+            lbtitletext.Font = LoadedSkin.TitleFont;
+            pnlclose.BackColor = LoadedSkin.CloseButtonColor;
+            pnlclose.BackgroundImage = GetImage("closebutton");
+            pnlclose.BackgroundImageLayout = GetImageLayout("closebutton");
+            pnlminimize.BackColor = LoadedSkin.MinimizeButtonColor;
+            pnlminimize.BackgroundImage = GetImage("minimizebutton");
+            pnlminimize.BackgroundImageLayout = GetImageLayout("minimizebutton");
+            pnlmaximize.BackColor = LoadedSkin.MaximizeButtonColor;
+            pnlmaximize.BackgroundImage = GetImage("maximizebutton");
+            pnlmaximize.BackgroundImageLayout = GetImageLayout("maximizebutton");
+
+            pnlclose.Size = LoadedSkin.CloseButtonSize;
+            pnlminimize.Size = LoadedSkin.MinimizeButtonSize;
+            pnlmaximize.Size = LoadedSkin.MaximizeButtonSize;
+            pnlclose.Location = FromRight(LoadedSkin.CloseButtonFromSide);
+            pnlminimize.Location = FromRight(LoadedSkin.MinimizeButtonFromSide);
+            pnlmaximize.Location = FromRight(LoadedSkin.MaximizeButtonFromSide);
+            pnlclose.Left -= pnlclose.Width;
+            pnlmaximize.Left -= pnlmaximize.Width;
+            pnlminimize.Left -= pnlminimize.Width;
+
+            switch (LoadedSkin.TitleTextCentered)
+            {
+                case false:
+                    lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                            LoadedSkin.TitleTextLeft.Y);
+                    break;
+                default:
+                    lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                    lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                    break;
+            }
+
+            if (Shiftorium.UpgradeInstalled("app_icons"))
+            {
+                pnlicon.Show();
+                pnlicon.Size = new Size(16, 16);
+                pnlicon.BackColor = Color.Transparent;
+                pnlicon.BackgroundImageLayout = ImageLayout.Stretch;
+                pnlicon.Location = LoadedSkin.TitlebarIconFromSide;
+            }
+            else
+            {
+                pnlicon.Hide();
+            }
+        }
+
+        /// <summary>
+        /// Froms the right.
+        /// </summary>
+        /// <returns>The right.</returns>
+        /// <param name="input">Input.</param>
+        public Point FromRight(Point input)
+        {
+            return new Point(pnltitle.Width - input.X, input.Y);
+        }
+
+
         public int CodepointValue = 0;
         public List<ShifterSetting> settings = new List<ShifterSetting>();
         public Skin LoadedSkin = null;
@@ -123,6 +310,21 @@ namespace ShiftOS.WinForms.Applications
                 btn.FlatStyle = FlatStyle.Flat;
                 btn.Click += (o, a) =>
                 {
+                    foreach(var mth in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        foreach(var attrib in mth.GetCustomAttributes(false))
+                        {
+                            if(attrib is ShifterMetaAttribute)
+                            {
+                                var meta = attrib as ShifterMetaAttribute;
+                                if(meta.Meta == btn.Text)
+                                {
+                                    mth?.Invoke(this, null);
+                                }
+                            }
+                        }
+                    }
+
                     PopulateSubcategories(c);
                 };
 
@@ -161,6 +363,21 @@ namespace ShiftOS.WinForms.Applications
 
                 flcategory.Controls.Add(btn);
                 btn.Show();
+            }
+        }
+
+        public void InvokeSetup(string cat)
+        {
+            foreach(var mth in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            {
+                foreach(var attr in mth.GetCustomAttributes(false))
+                {
+                    if(attr is ShifterMetaAttribute)
+                    {
+                        if ((attr as ShifterMetaAttribute).Meta == cat)
+                            mth.Invoke(this, null);
+                    }
+                }
             }
         }
 
@@ -233,6 +450,7 @@ namespace ShiftOS.WinForms.Applications
                             width.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).X.ToString();
                             height.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).Y.ToString();
                         }
+                        InvokeSetup(cat);
                     };
 
                     width.TextChanged += tc;
@@ -247,7 +465,12 @@ namespace ShiftOS.WinForms.Applications
                     labelHeight = str.Height;
                     str.Text = c.Field.GetValue(LoadedSkin).ToString();
                     flbody.SetFlowBreak(str, true);
-                    str.TextChanged += (o, a) => { c.Field.SetValue(LoadedSkin, str.Text); CodepointValue += 100; };
+                    str.TextChanged += (o, a) =>
+                    {
+                        c.Field.SetValue(LoadedSkin, str.Text); CodepointValue += 100;
+
+                        InvokeSetup(cat);
+                    };
                     flbody.Controls.Add(str);
                     str.Show();
                 }
@@ -271,6 +494,8 @@ namespace ShiftOS.WinForms.Applications
                             color.BackgroundImageLayout = layout;
                             LoadedSkin.SkinImageLayouts[c.Field.GetImageName()] = layout;
                             CodepointValue += 700;
+                            InvokeSetup(cat);
+
                         })));
                     };
                     flbody.Controls.Add(color);
@@ -316,6 +541,8 @@ namespace ShiftOS.WinForms.Applications
                             width.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Width.ToString();
                             height.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Height.ToString();
                         }
+                        InvokeSetup(cat);
+
                     };
 
                     width.TextChanged += tc;
@@ -331,6 +558,8 @@ namespace ShiftOS.WinForms.Applications
                     {
                         c.Field.SetValue(LoadedSkin, check.Checked);
                         CodepointValue += 50;
+                        InvokeSetup(cat);
+
                     };
                     flbody.SetFlowBreak(check, true);
 
@@ -377,6 +606,8 @@ namespace ShiftOS.WinForms.Applications
 
                         c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
                         CodepointValue += 100;
+                        InvokeSetup(cat);
+
                     };
 
                     style.SelectedIndexChanged += (o, a) =>
@@ -387,6 +618,8 @@ namespace ShiftOS.WinForms.Applications
 
                         c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
                         CodepointValue += 50;
+                        InvokeSetup(cat);
+
                     };
 
                     size.TextChanged += (o, a) =>
@@ -404,6 +637,8 @@ namespace ShiftOS.WinForms.Applications
                             size.Text = ((Font)c.Field.GetValue(LoadedSkin)).Size.ToString();
                         }
                         CodepointValue += 50;
+                        InvokeSetup(cat);
+
                     };
 
                     flbody.Controls.Add(name);
@@ -434,6 +669,8 @@ namespace ShiftOS.WinForms.Applications
                         {
                             color.BackColor = col;
                             CodepointValue += 300;
+                            InvokeSetup(cat);
+
                         })));
                     };
                     flbody.SetFlowBreak(color, true);
@@ -457,6 +694,8 @@ namespace ShiftOS.WinForms.Applications
                     cBox.SelectedIndexChanged += (o, a) =>
                     {
                         c.Field.SetValue(LoadedSkin, Enum.Parse(c.Field.FieldType, cBox.Text));
+                        InvokeSetup(cat);
+
                     };
 
                     labelHeight = cBox.Height;
@@ -482,6 +721,8 @@ namespace ShiftOS.WinForms.Applications
                         {
                             c.Field.SetValue(LoadedSkin, name.SelectedIndex);
                             CodepointValue += 75;
+                            InvokeSetup(cat);
+
                         };
                         labelHeight = name.Height;
                         flbody.Controls.Add(name);
@@ -517,6 +758,8 @@ namespace ShiftOS.WinForms.Applications
                             {
                                 width.Text = ((int)c.Field.GetValue(this.LoadedSkin)).ToString();
                             }
+                            InvokeSetup(cat);
+
                         };
 
                         width.TextChanged += tc;

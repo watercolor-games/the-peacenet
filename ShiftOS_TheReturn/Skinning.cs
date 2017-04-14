@@ -64,10 +64,14 @@ namespace ShiftOS.Engine {
 
 
     public static class SkinEngine {
-        public static ImageLayout GetImageLayout(string img) {
-            if (LoadedSkin.SkinImageLayouts.ContainsKey(img)) {
+        public static ImageLayout GetImageLayout(string img)
+        {
+            if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
+            {
                 return LoadedSkin.SkinImageLayouts[img];
-            } else {
+            }
+            else
+            {
                 LoadedSkin.SkinImageLayouts.Add(img, ImageLayout.Tile);
                 return ImageLayout.Tile;
             }

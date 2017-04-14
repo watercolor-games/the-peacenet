@@ -120,8 +120,7 @@ namespace ShiftOS.WinForms
             var wb = new WindowBorder(form as UserControl);
             wb.IsDialog = true;
 
-
-            wb.Show();
+            Desktop.ShowWindow(wb);
         }
 
         public override void SetupWindow(IShiftOSWindow form)
@@ -213,6 +212,7 @@ namespace ShiftOS.WinForms
                 wb.FormClosed -= onClose;
             };
             wb.FormClosed += onClose;
+            Desktop.ShowWindow(wb);
             SetupWindows();
         }
 
