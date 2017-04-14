@@ -817,6 +817,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            pnlintro.BringToFront();
         }
 
         public void OnSkinLoad()

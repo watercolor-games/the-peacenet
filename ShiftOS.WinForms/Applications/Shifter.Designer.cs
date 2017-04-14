@@ -92,6 +92,9 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            this.pnlintro = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.pnlpreview.SuspendLayout();
             this.pnlwindow.SuspendLayout();
@@ -102,6 +105,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlcategoryholder.SuspendLayout();
             this.mspreview.SuspendLayout();
             this.tspreview.SuspendLayout();
+            this.pnlintro.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -117,6 +121,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnlpreview
             // 
+            this.pnlpreview.Controls.Add(this.pnlintro);
             this.pnlpreview.Controls.Add(this.pnlwindow);
             this.pnlpreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlpreview.Location = new System.Drawing.Point(136, 0);
@@ -464,6 +469,37 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 25);
             // 
+            // pnlintro
+            // 
+            this.pnlintro.Controls.Add(this.label2);
+            this.pnlintro.Controls.Add(this.label1);
+            this.pnlintro.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlintro.Location = new System.Drawing.Point(0, 0);
+            this.pnlintro.Name = "pnlintro";
+            this.pnlintro.Size = new System.Drawing.Size(757, 286);
+            this.pnlintro.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(757, 54);
+            this.label1.TabIndex = 0;
+            this.label1.Tag = "header2";
+            this.label1.Text = "Welcome to the Shifter!";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(0, 54);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(757, 232);
+            this.label2.TabIndex = 1;
+            this.label2.Text = resources.GetString("label2.Text");
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Shifter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -486,6 +522,7 @@ namespace ShiftOS.WinForms.Applications
             this.mspreview.PerformLayout();
             this.tspreview.ResumeLayout(false);
             this.tspreview.PerformLayout();
+            this.pnlintro.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -531,5 +568,8 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.Panel pnlintro;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }
