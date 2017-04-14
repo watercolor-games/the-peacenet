@@ -47,6 +47,164 @@ namespace ShiftOS.WinForms.Applications
             PopulateShifter();
         }
 
+        [ShifterMeta("Desktop")]
+        public void ResetDesktop()
+        {
+            pnldesktoppreview.BringToFront();
+            pnldesktoppreview.Tag = "keepbg";
+            SetupDesktop();
+        }
+
+        /// <summary>
+        /// Populates the panel buttons.
+        /// </summary>
+        /// <returns>The panel buttons.</returns>
+        public void PopulatePanelButtons()
+        {
+            if (DesktopFunctions.ShowDefaultElements == true)
+            {
+                panelbuttonholder.Controls.Clear();
+                if (Shiftorium.IsInitiated == true)
+                {
+                    if (Shiftorium.UpgradeInstalled("wm_panel_buttons"))
+                    {
+
+                        var pnlbtn = new Panel();
+                        pnlbtn.Margin = new Padding(2, LoadedSkin.PanelButtonFromTop, 0, 0);
+                        pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
+                        pnlbtn.BackgroundImage = GetImage("panelbutton");
+                        pnlbtn.BackgroundImageLayout = GetImageLayout("panelbutton");
+
+                        var pnlbtntext = new Label();
+                        pnlbtntext.Text = "Panel Button Text";
+                        pnlbtntext.AutoSize = true;
+                        pnlbtntext.Location = LoadedSkin.PanelButtonFromLeft;
+                        pnlbtntext.ForeColor = LoadedSkin.PanelButtonTextColor;
+                        pnlbtntext.BackColor = Color.Transparent;
+
+                        pnlbtn.BackColor = LoadedSkin.PanelButtonColor;
+                        if (pnlbtn.BackgroundImage != null)
+                        {
+                            pnlbtntext.BackColor = Color.Transparent;
+                        }
+                        pnlbtn.Size = LoadedSkin.PanelButtonSize;
+                        pnlbtn.Tag = "keepbg";
+                        pnlbtntext.Tag = "keepbg";
+                        pnlbtn.Controls.Add(pnlbtntext);
+                        this.panelbuttonholder.Controls.Add(pnlbtn);
+                        pnlbtn.Show();
+                        pnlbtntext.Show();
+
+                        pnlbtntext.Font = LoadedSkin.PanelButtonFont;
+
+
+
+
+                    }
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Setups the desktop.
+        /// </summary>
+        /// <returns>The desktop.</returns>
+        public void SetupDesktop()
+        {
+            if (DesktopFunctions.ShowDefaultElements == true)
+            {
+                desktoppanel.BackColor = Color.Green;
+
+                //upgrades
+
+                if (Shiftorium.IsInitiated == true)
+                {
+                    desktoppanel.Visible = Shiftorium.UpgradeInstalled("desktop");
+                    lbtime.Visible = Shiftorium.UpgradeInstalled("desktop_clock_widget");
+
+                    //skinning
+                    lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
+
+                    panelbuttonholder.Top = 0;
+                    panelbuttonholder.Left = LoadedSkin.PanelButtonHolderFromLeft;
+                    panelbuttonholder.Height = desktoppanel.Height;
+                    panelbuttonholder.BackColor = Color.Transparent;
+                    panelbuttonholder.Margin = new Padding(0, 0, 0, 0);
+
+                    sysmenuholder.Visible = Shiftorium.UpgradeInstalled("app_launcher");
+
+                    //The Color Picker can give us transparent colors - which Windows Forms fucking despises when dealing with form backgrounds.
+                    //To compensate, we must recreate the desktop color and make the alpha channel '255'.
+                    pnldesktoppreview.BackColor = Color.FromArgb(LoadedSkin.DesktopColor.R, LoadedSkin.DesktopColor.G, LoadedSkin.DesktopColor.B);
+                    //Not doing this will cause an ArgumentException.
+
+                    DitheringEngine.DitherImage(SkinEngine.GetImage("desktopbackground"), new Action<Image>((img) =>
+                    {
+                        pnldesktoppreview.BackgroundImage = img;
+                    }));
+                    pnldesktoppreview.BackgroundImageLayout = GetImageLayout("desktopbackground");
+                    desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
+
+                    var pnlimg = GetImage("desktoppanel");
+                    if (pnlimg != null)
+                    {
+                        var bmp = new Bitmap(pnlimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        pnlimg = bmp;
+                    }
+
+                    desktoppanel.BackgroundImage = pnlimg;
+                    if (desktoppanel.BackgroundImage != null)
+                    {
+                        desktoppanel.BackColor = Color.Transparent;
+                    }
+                    var appimg = GetImage("applauncher");
+                    if (appimg != null)
+                    {
+                        var bmp = new Bitmap(appimg);
+                        bmp.MakeTransparent(Color.FromArgb(1, 0, 1));
+                        appimg = bmp;
+                    }
+                    menuStrip1.BackgroundImage = appimg;
+                    lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
+                    lbtime.Font = LoadedSkin.DesktopPanelClockFont;
+                    if (desktoppanel.BackgroundImage == null)
+                    {
+                        lbtime.BackColor = LoadedSkin.DesktopPanelClockBackgroundColor;
+                    }
+                    else
+                    {
+                        lbtime.BackColor = Color.Transparent;
+                    }
+                    apps.Text = LoadedSkin.AppLauncherText;
+                    sysmenuholder.Location = LoadedSkin.AppLauncherFromLeft;
+                    sysmenuholder.Size = LoadedSkin.AppLauncherHolderSize;
+                    apps.Size = sysmenuholder.Size;
+                    menuStrip1.Renderer = new ShiftOSMenuRenderer(new AppLauncherColorTable(LoadedSkin));
+                    desktoppanel.BackgroundImageLayout = GetImageLayout("desktoppanel");
+                    desktoppanel.Height = LoadedSkin.DesktopPanelHeight;
+                    if (LoadedSkin.DesktopPanelPosition == 1)
+                    {
+                        desktoppanel.Dock = DockStyle.Bottom;
+                    }
+                    else
+                    {
+                        desktoppanel.Dock = DockStyle.Top;
+                    }
+                }
+            }
+            else
+            {
+                desktoppanel.Hide();
+            }
+
+            PopulatePanelButtons();
+        }
+
+
+
+
         [ShifterMeta("Windows")]
         public void SetupWindowPreview()
         {

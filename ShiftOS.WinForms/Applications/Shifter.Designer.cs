@@ -95,6 +95,29 @@ namespace ShiftOS.WinForms.Applications
             this.pnlintro = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.pnldesktoppreview = new System.Windows.Forms.Panel();
+            this.pnlscreensaver = new System.Windows.Forms.Panel();
+            this.pnlssicon = new System.Windows.Forms.Panel();
+            this.desktoppanel = new System.Windows.Forms.Panel();
+            this.lbtime = new System.Windows.Forms.Label();
+            this.panelbuttonholder = new System.Windows.Forms.FlowLayoutPanel();
+            this.sysmenuholder = new System.Windows.Forms.Panel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.apps = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnladvancedal = new System.Windows.Forms.Panel();
+            this.flapps = new System.Windows.Forms.FlowLayoutPanel();
+            this.flcategories = new System.Windows.Forms.FlowLayoutPanel();
+            this.pnlalsystemactions = new System.Windows.Forms.Panel();
+            this.btnshutdown = new System.Windows.Forms.Button();
+            this.pnlstatus = new System.Windows.Forms.Panel();
+            this.lbalstatus = new System.Windows.Forms.Label();
+            this.item1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.item2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.item3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.item4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.item5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shutdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.separatorToolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.panel1.SuspendLayout();
             this.pnlpreview.SuspendLayout();
             this.pnlwindow.SuspendLayout();
@@ -106,6 +129,14 @@ namespace ShiftOS.WinForms.Applications
             this.mspreview.SuspendLayout();
             this.tspreview.SuspendLayout();
             this.pnlintro.SuspendLayout();
+            this.pnldesktoppreview.SuspendLayout();
+            this.pnlscreensaver.SuspendLayout();
+            this.desktoppanel.SuspendLayout();
+            this.sysmenuholder.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.pnladvancedal.SuspendLayout();
+            this.pnlalsystemactions.SuspendLayout();
+            this.pnlstatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -121,6 +152,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnlpreview
             // 
+            this.pnlpreview.Controls.Add(this.pnldesktoppreview);
             this.pnlpreview.Controls.Add(this.pnlintro);
             this.pnlpreview.Controls.Add(this.pnlwindow);
             this.pnlpreview.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -500,6 +532,214 @@ namespace ShiftOS.WinForms.Applications
             this.label2.Text = resources.GetString("label2.Text");
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // pnldesktoppreview
+            // 
+            this.pnldesktoppreview.Controls.Add(this.pnlscreensaver);
+            this.pnldesktoppreview.Controls.Add(this.desktoppanel);
+            this.pnldesktoppreview.Controls.Add(this.pnladvancedal);
+            this.pnldesktoppreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnldesktoppreview.Location = new System.Drawing.Point(0, 0);
+            this.pnldesktoppreview.Name = "pnldesktoppreview";
+            this.pnldesktoppreview.Size = new System.Drawing.Size(757, 286);
+            this.pnldesktoppreview.TabIndex = 2;
+            // 
+            // pnlscreensaver
+            // 
+            this.pnlscreensaver.Controls.Add(this.pnlssicon);
+            this.pnlscreensaver.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlscreensaver.Location = new System.Drawing.Point(0, 24);
+            this.pnlscreensaver.Name = "pnlscreensaver";
+            this.pnlscreensaver.Size = new System.Drawing.Size(757, 262);
+            this.pnlscreensaver.TabIndex = 3;
+            this.pnlscreensaver.Visible = false;
+            // 
+            // pnlssicon
+            // 
+            this.pnlssicon.Location = new System.Drawing.Point(303, 495);
+            this.pnlssicon.Name = "pnlssicon";
+            this.pnlssicon.Size = new System.Drawing.Size(200, 100);
+            this.pnlssicon.TabIndex = 0;
+            // 
+            // desktoppanel
+            // 
+            this.desktoppanel.BackColor = System.Drawing.Color.Green;
+            this.desktoppanel.Controls.Add(this.lbtime);
+            this.desktoppanel.Controls.Add(this.panelbuttonholder);
+            this.desktoppanel.Controls.Add(this.sysmenuholder);
+            this.desktoppanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.desktoppanel.Location = new System.Drawing.Point(0, 0);
+            this.desktoppanel.Name = "desktoppanel";
+            this.desktoppanel.Size = new System.Drawing.Size(757, 24);
+            this.desktoppanel.TabIndex = 2;
+            // 
+            // lbtime
+            // 
+            this.lbtime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbtime.AutoSize = true;
+            this.lbtime.Location = new System.Drawing.Point(-536, 0);
+            this.lbtime.Name = "lbtime";
+            this.lbtime.Size = new System.Drawing.Size(35, 13);
+            this.lbtime.TabIndex = 0;
+            this.lbtime.Text = "label1";
+            this.lbtime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // panelbuttonholder
+            // 
+            this.panelbuttonholder.AutoSize = true;
+            this.panelbuttonholder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelbuttonholder.Location = new System.Drawing.Point(107, -77);
+            this.panelbuttonholder.Name = "panelbuttonholder";
+            this.panelbuttonholder.Size = new System.Drawing.Size(0, 0);
+            this.panelbuttonholder.TabIndex = 2;
+            // 
+            // sysmenuholder
+            // 
+            this.sysmenuholder.Controls.Add(this.menuStrip1);
+            this.sysmenuholder.Location = new System.Drawing.Point(12, 5);
+            this.sysmenuholder.Name = "sysmenuholder";
+            this.sysmenuholder.Size = new System.Drawing.Size(68, 24);
+            this.sysmenuholder.TabIndex = 1;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.apps});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(0);
+            this.menuStrip1.Size = new System.Drawing.Size(68, 24);
+            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // apps
+            // 
+            this.apps.AutoSize = false;
+            this.apps.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.item1ToolStripMenuItem,
+            this.item2ToolStripMenuItem,
+            this.item3ToolStripMenuItem,
+            this.item4ToolStripMenuItem,
+            this.item5ToolStripMenuItem,
+            this.separatorToolStripMenuItem1,
+            this.shutdownToolStripMenuItem});
+            this.apps.Name = "apps";
+            this.apps.Padding = new System.Windows.Forms.Padding(0);
+            this.apps.Size = new System.Drawing.Size(58, 20);
+            this.apps.Tag = "applauncherbutton";
+            this.apps.Text = "ShiftOS";
+            // 
+            // pnladvancedal
+            // 
+            this.pnladvancedal.Controls.Add(this.flapps);
+            this.pnladvancedal.Controls.Add(this.flcategories);
+            this.pnladvancedal.Controls.Add(this.pnlalsystemactions);
+            this.pnladvancedal.Controls.Add(this.pnlstatus);
+            this.pnladvancedal.Location = new System.Drawing.Point(0, -53);
+            this.pnladvancedal.Name = "pnladvancedal";
+            this.pnladvancedal.Size = new System.Drawing.Size(433, 417);
+            this.pnladvancedal.TabIndex = 4;
+            this.pnladvancedal.Visible = false;
+            // 
+            // flapps
+            // 
+            this.flapps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flapps.Location = new System.Drawing.Point(221, 58);
+            this.flapps.Name = "flapps";
+            this.flapps.Size = new System.Drawing.Size(212, 328);
+            this.flapps.TabIndex = 3;
+            // 
+            // flcategories
+            // 
+            this.flcategories.Dock = System.Windows.Forms.DockStyle.Left;
+            this.flcategories.Location = new System.Drawing.Point(0, 58);
+            this.flcategories.Name = "flcategories";
+            this.flcategories.Size = new System.Drawing.Size(221, 328);
+            this.flcategories.TabIndex = 2;
+            // 
+            // pnlalsystemactions
+            // 
+            this.pnlalsystemactions.Controls.Add(this.btnshutdown);
+            this.pnlalsystemactions.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlalsystemactions.Location = new System.Drawing.Point(0, 386);
+            this.pnlalsystemactions.Name = "pnlalsystemactions";
+            this.pnlalsystemactions.Size = new System.Drawing.Size(433, 31);
+            this.pnlalsystemactions.TabIndex = 1;
+            // 
+            // btnshutdown
+            // 
+            this.btnshutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnshutdown.AutoSize = true;
+            this.btnshutdown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnshutdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnshutdown.Location = new System.Drawing.Point(363, 3);
+            this.btnshutdown.Name = "btnshutdown";
+            this.btnshutdown.Size = new System.Drawing.Size(67, 25);
+            this.btnshutdown.TabIndex = 0;
+            this.btnshutdown.Text = "Shutdown";
+            this.btnshutdown.UseVisualStyleBackColor = true;
+            // 
+            // pnlstatus
+            // 
+            this.pnlstatus.Controls.Add(this.lbalstatus);
+            this.pnlstatus.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlstatus.Location = new System.Drawing.Point(0, 0);
+            this.pnlstatus.Name = "pnlstatus";
+            this.pnlstatus.Size = new System.Drawing.Size(433, 58);
+            this.pnlstatus.TabIndex = 0;
+            // 
+            // lbalstatus
+            // 
+            this.lbalstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbalstatus.Location = new System.Drawing.Point(0, 0);
+            this.lbalstatus.Name = "lbalstatus";
+            this.lbalstatus.Size = new System.Drawing.Size(433, 58);
+            this.lbalstatus.TabIndex = 0;
+            this.lbalstatus.Text = "michael@system\r\n0 Codepoints\r\n0 installed, 0 available";
+            this.lbalstatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // item1ToolStripMenuItem
+            // 
+            this.item1ToolStripMenuItem.Name = "item1ToolStripMenuItem";
+            this.item1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item1ToolStripMenuItem.Text = "Item 1";
+            // 
+            // item2ToolStripMenuItem
+            // 
+            this.item2ToolStripMenuItem.Name = "item2ToolStripMenuItem";
+            this.item2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item2ToolStripMenuItem.Text = "Item 2";
+            // 
+            // item3ToolStripMenuItem
+            // 
+            this.item3ToolStripMenuItem.Name = "item3ToolStripMenuItem";
+            this.item3ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item3ToolStripMenuItem.Text = "Item 3";
+            // 
+            // item4ToolStripMenuItem
+            // 
+            this.item4ToolStripMenuItem.Name = "item4ToolStripMenuItem";
+            this.item4ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item4ToolStripMenuItem.Text = "Item 4";
+            // 
+            // item5ToolStripMenuItem
+            // 
+            this.item5ToolStripMenuItem.Name = "item5ToolStripMenuItem";
+            this.item5ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item5ToolStripMenuItem.Text = "Item 5";
+            // 
+            // shutdownToolStripMenuItem
+            // 
+            this.shutdownToolStripMenuItem.Name = "shutdownToolStripMenuItem";
+            this.shutdownToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.shutdownToolStripMenuItem.Text = "Shutdown";
+            // 
+            // separatorToolStripMenuItem1
+            // 
+            this.separatorToolStripMenuItem1.Name = "separatorToolStripMenuItem1";
+            this.separatorToolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            // 
             // Shifter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -523,6 +763,18 @@ namespace ShiftOS.WinForms.Applications
             this.tspreview.ResumeLayout(false);
             this.tspreview.PerformLayout();
             this.pnlintro.ResumeLayout(false);
+            this.pnldesktoppreview.ResumeLayout(false);
+            this.pnlscreensaver.ResumeLayout(false);
+            this.desktoppanel.ResumeLayout(false);
+            this.desktoppanel.PerformLayout();
+            this.sysmenuholder.ResumeLayout(false);
+            this.sysmenuholder.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.pnladvancedal.ResumeLayout(false);
+            this.pnlalsystemactions.ResumeLayout(false);
+            this.pnlalsystemactions.PerformLayout();
+            this.pnlstatus.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -571,5 +823,28 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Panel pnlintro;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel pnldesktoppreview;
+        private System.Windows.Forms.Panel pnlscreensaver;
+        private System.Windows.Forms.Panel pnlssicon;
+        private System.Windows.Forms.Panel desktoppanel;
+        private System.Windows.Forms.Label lbtime;
+        private System.Windows.Forms.FlowLayoutPanel panelbuttonholder;
+        private System.Windows.Forms.Panel sysmenuholder;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem apps;
+        private System.Windows.Forms.Panel pnladvancedal;
+        private System.Windows.Forms.FlowLayoutPanel flapps;
+        private System.Windows.Forms.FlowLayoutPanel flcategories;
+        private System.Windows.Forms.Panel pnlalsystemactions;
+        private System.Windows.Forms.Button btnshutdown;
+        private System.Windows.Forms.Panel pnlstatus;
+        private System.Windows.Forms.Label lbalstatus;
+        private System.Windows.Forms.ToolStripMenuItem item1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem item2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem item3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem item4ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem item5ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator separatorToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem shutdownToolStripMenuItem;
     }
 }

@@ -364,13 +364,17 @@ namespace ShiftOS.WinForms.Tools
             return SkinEngine.GetImage(id);
         }
 
-        public Skin LoadedSkin
+        public AppLauncherColorTable()
         {
-            get
-            {
-                return SkinEngine.LoadedSkin;
-            }
+            LoadedSkin = SkinEngine.LoadedSkin;
         }
+
+        public AppLauncherColorTable(Skin skn)
+        {
+            LoadedSkin = skn;
+        }
+
+        public Skin LoadedSkin { get; private set; }
 
         public override Color ButtonSelectedHighlight
         {

@@ -277,7 +277,7 @@ namespace ShiftOS.WinForms.Tools
             {
                 for (int i = 0; i < frm.Controls.Count; i++)
                 {
-                    SetupControls(frm.Controls[i], false);
+                        SetupControls(frm.Controls[i], false);
                 }
 
             };

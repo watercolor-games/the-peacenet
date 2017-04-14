@@ -129,6 +129,7 @@ namespace ShiftOS.WinForms
 
             this.pnlcontents.Controls.Add(this._parentWindow);
             this._parentWindow.Dock = DockStyle.Fill;
+            this._parentWindow.Show();
             ControlManager.SetupControls(this._parentWindow);
 
             ParentWindow.OnSkinLoad();
@@ -208,7 +209,6 @@ namespace ShiftOS.WinForms
             this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
             ParentWindow.OnLoad();
-            this._parentWindow.Show();
         }
 
         /// <summary>

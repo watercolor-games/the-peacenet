@@ -34,6 +34,7 @@ using System.Threading;
 using ShiftOS;
 using static ShiftOS.Engine.SaveSystem;
 using Newtonsoft.Json;
+using System.Net.Sockets;
 
 namespace ShiftOS.Engine
 {
@@ -191,8 +192,15 @@ namespace ShiftOS.Engine
                 }
             };
 
-            client.Connect(mud_address, port);
-
+            try
+            {
+                client.Connect(mud_address, port);
+            }
+            catch(SocketException ex)
+            {
+                System.Diagnostics.Debug.Print(ex.ToString());
+                Initiate(mud_address, port);
+            }
         }
 
         public static void SendMessage(string name, string contents)
