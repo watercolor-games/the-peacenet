@@ -118,5 +118,10 @@ namespace ShiftOS.WinForms.Controls
             }
             base.OnMouseUp(mevent);
         }
+
+        public TerminalBox() : base()
+        {
+            this.Tag = "keepbg keepfg keepfont";
+        }
     }
 }

@@ -146,8 +146,6 @@ namespace ShiftOS.WinForms
 
             };
 
-            this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
-            this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
 
             if (!this.IsDialog)
             {
@@ -171,7 +169,6 @@ namespace ShiftOS.WinForms
                 }));
             };
 
-            ParentWindow.OnLoad();
         }
 
         /// <summary>
@@ -208,6 +205,9 @@ namespace ShiftOS.WinForms
         public void WindowBorder_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
+            this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
+            this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+            ParentWindow.OnLoad();
             this._parentWindow.Show();
         }
 

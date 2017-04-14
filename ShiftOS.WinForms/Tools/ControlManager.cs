@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
@@ -143,9 +144,11 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControl(Control ctrl)
         {
-            SuspendDrawing(ctrl);
-            ctrl.SuspendLayout();
-            SetCursor(ctrl);
+            Desktop.InvokeOnWorkerThread(new Action(() =>
+            {
+                SuspendDrawing(ctrl);
+                ctrl.SuspendLayout();
+            }));
             if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
             {
                 string tag = "";
@@ -160,32 +163,52 @@ namespace ShiftOS.WinForms.Tools
                 {
                     if (ctrl.BackColor != Control.DefaultBackColor)
                     {
-                        ctrl.BackColor = SkinEngine.LoadedSkin.ControlColor;
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            ctrl.BackColor = SkinEngine.LoadedSkin.ControlColor;
+                        });
                     }
                 }
 
-                ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
-
-                ctrl.Font = SkinEngine.LoadedSkin.MainFont;
-
-                if (tag.Contains("header1"))
+                if (!tag.Contains("keepfont"))
                 {
-                    ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
-                }
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
+                        ctrl.Font = SkinEngine.LoadedSkin.MainFont;
+                    });
+                    if (tag.Contains("header1"))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
+                        });
+                    }
 
-                if (tag.Contains("header2"))
-                {
-                    ctrl.Font = SkinEngine.LoadedSkin.Header2Font;
-                }
+                    if (tag.Contains("header2"))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            ctrl.Font = SkinEngine.LoadedSkin.Header2Font;
+                        });
+                    }
 
-                if (tag.Contains("header3"))
-                {
-                    ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
-                }
+                    if (tag.Contains("header3"))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
 
+                            ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
+                        });
+                    }
+                }
                 try
                 {
-                    ctrl.Text = Localization.Parse(ctrl.Text);
+                    string ctrlText = Localization.Parse(ctrl.Text);
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        ctrl.Text = ctrlText;
+                    });
                 }
                 catch
                 {
@@ -206,18 +229,30 @@ namespace ShiftOS.WinForms.Tools
                 };
                 if (ctrl is Button)
                 {
-                    (ctrl as Button).FlatStyle = FlatStyle.Flat;
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        (ctrl as Button).FlatStyle = FlatStyle.Flat;
+                    });
                 }
                 else if (ctrl is WindowBorder)
                 {
-                    (ctrl as WindowBorder).Setup();
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        (ctrl as WindowBorder).Setup();
+                    });
                 }
             }
+            Desktop.InvokeOnWorkerThread(() =>
+            {
 
-            MakeDoubleBuffered(ctrl);
-            ctrl.ResumeLayout();
-            ResumeDrawing(ctrl);
+                MakeDoubleBuffered(ctrl);
+                ctrl.ResumeLayout();
+                ResumeDrawing(ctrl);
+            });
+            ControlSetup?.Invoke(ctrl);
         }
+
+        public static event Action<Control> ControlSetup;
 
         public static void MakeDoubleBuffered(Control c)
         {
@@ -234,13 +269,28 @@ namespace ShiftOS.WinForms.Tools
 
         }
 
-        public static void SetupControls(Control frm)
+        public static void SetupControls(Control frm, bool runInThread = true)
         {
             SetupControl(frm);
 
-            for (int i = 0; i < frm.Controls.Count; i++)
+            ThreadStart ts = () =>
             {
-                SetupControls(frm.Controls[i]);
+                for (int i = 0; i < frm.Controls.Count; i++)
+                {
+                    SetupControls(frm.Controls[i], false);
+                }
+
+            };
+
+            if (runInThread == true)
+            {
+                var t = new Thread(ts);
+                t.IsBackground = true;
+                t.Start();
+            }
+            else
+            {
+                ts?.Invoke();
             }
         }
 
