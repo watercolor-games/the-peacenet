@@ -167,6 +167,7 @@ namespace ShiftOS.WinForms.Applications
                 {
                     ball.Location = new Point(ball.Location.X, 0);
                     yVel = -yVel;
+                    ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
                 }
 
                 // Check for bottom wall.
@@ -174,12 +175,13 @@ namespace ShiftOS.WinForms.Applications
                 {
                     ball.Location = new Point(ball.Location.X, pgcontents.Height - ball.Size.Height);
                     yVel = -yVel;
+                    ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
                 }
 
                 // Check for player paddle.
                 if (ball.Bounds.IntersectsWith(paddleHuman.Bounds))
                 {
-                    ball.Location = new Point(paddleHuman.Location.X + ball.Size.Width, ball.Location.Y);
+                    ball.Location = new Point(paddleHuman.Location.X + ball.Size.Width + 1, ball.Location.Y);
                     //randomly increase x or y speed of ball
                     switch (rand.Next(1, 3))
                     {
@@ -194,14 +196,17 @@ namespace ShiftOS.WinForms.Applications
                             break;
                     }
                     xVel = -xVel;
+                    ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+
                 }
 
                 // Check for computer paddle.
                 if (ball.Bounds.IntersectsWith(paddleComputer.Bounds))
                 {
-                    ball.Location = new Point(paddleComputer.Location.X - paddleComputer.Size.Width + 1, ball.Location.Y);
+                    ball.Location = new Point(paddleComputer.Location.X - paddleComputer.Size.Width - 1, ball.Location.Y);
                     xveldec = xveldec + incrementx;
                     xVel = -xVel;
+                    ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.writesound);
                 }
 
                 // Check for left wall.
@@ -288,6 +293,7 @@ namespace ShiftOS.WinForms.Applications
                     gameTimer.Stop();
                     SendHighscores();
                 }
+
                 lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
             }
             SetupStats();
@@ -508,15 +514,18 @@ namespace ShiftOS.WinForms.Applications
                     case 1:
                         lblcountdown.Text = "1";
                         countdown = countdown - 1;
+                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
                         break;
                     case 2:
                         lblcountdown.Text = "2";
                         countdown = countdown - 1;
+                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
                         break;
                     case 3:
                         lblcountdown.Text = "3";
                         countdown = countdown - 1;
                         lblcountdown.Show();
+                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
                         break;
                 }
             

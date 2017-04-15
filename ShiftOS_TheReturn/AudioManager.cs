@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -62,20 +63,29 @@ namespace ShiftOS.Engine
 
         public static void Play(string file)
         {
-            new Thread(() =>
+            try
             {
-                try
-                {
-                    _reader = new AudioFileReader(file);
-                    _out = new WaveOut();
-                    _out.Init(_reader);
-                    _out.Volume = _provider.Volume;
-                    _out.Play();
-                }
-                catch { }
-            }).Start();
+                _reader = new AudioFileReader(file);
+                _out = new WaveOut();
+                _out.Init(_reader);
+                _out.Volume = _provider.Volume;
+                _out.Play();
+            }
+            catch { }
         }
 
+        public static void PlayStream(Stream str)
+        {
+            var bytes = new byte[str.Length];
+            str.Read(bytes, 0, bytes.Length);
+            ShiftOS.Engine.AudioManager.Stop();
+            if (File.Exists("snd.wav"))
+                File.Delete("snd.wav");
+            File.WriteAllBytes("snd.wav", bytes);
+
+            ShiftOS.Engine.AudioManager.Play("snd.wav");
+
+        }
 
         internal static void Kill()
         {

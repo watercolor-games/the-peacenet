@@ -174,7 +174,7 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgcontents.Location = new System.Drawing.Point(0, 0);
             this.pgcontents.Name = "pgcontents";
-            this.pgcontents.Size = new System.Drawing.Size(1867, 819);
+            this.pgcontents.Size = new System.Drawing.Size(912, 504);
             this.pgcontents.TabIndex = 20;
             this.pgcontents.Paint += new System.Windows.Forms.PaintEventHandler(this.pgcontents_Paint);
             this.pgcontents.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pongMain_MouseMove);
@@ -617,7 +617,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.paddleComputer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.paddleComputer.BackColor = System.Drawing.Color.Black;
-            this.paddleComputer.Location = new System.Drawing.Point(1833, 134);
+            this.paddleComputer.Location = new System.Drawing.Point(878, 134);
             this.paddleComputer.MaximumSize = new System.Drawing.Size(20, 150);
             this.paddleComputer.Name = "paddleComputer";
             this.paddleComputer.Size = new System.Drawing.Size(20, 100);
@@ -629,7 +629,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbllevelandtime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbllevelandtime.Location = new System.Drawing.Point(0, 0);
             this.lbllevelandtime.Name = "lbllevelandtime";
-            this.lbllevelandtime.Size = new System.Drawing.Size(1867, 22);
+            this.lbllevelandtime.Size = new System.Drawing.Size(912, 22);
             this.lbllevelandtime.TabIndex = 4;
             this.lbllevelandtime.Tag = "header1";
             this.lbllevelandtime.Text = "Level: 1 - 58 Seconds Left";
@@ -641,7 +641,7 @@ namespace ShiftOS.WinForms.Applications
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblstatscodepoints.AutoSize = true;
             this.lblstatscodepoints.Font = new System.Drawing.Font("Georgia", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblstatscodepoints.Location = new System.Drawing.Point(239, 775);
+            this.lblstatscodepoints.Location = new System.Drawing.Point(239, 460);
             this.lblstatscodepoints.Name = "lblstatscodepoints";
             this.lblstatscodepoints.Size = new System.Drawing.Size(116, 23);
             this.lblstatscodepoints.TabIndex = 12;
@@ -654,7 +654,7 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatsY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblstatsY.AutoSize = true;
             this.lblstatsY.Font = new System.Drawing.Font("Georgia", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblstatsY.Location = new System.Drawing.Point(1395, 775);
+            this.lblstatsY.Location = new System.Drawing.Point(440, 460);
             this.lblstatsY.Name = "lblstatsY";
             this.lblstatsY.Size = new System.Drawing.Size(76, 23);
             this.lblstatsY.TabIndex = 11;
@@ -667,7 +667,7 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatsX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblstatsX.AutoSize = true;
             this.lblstatsX.Font = new System.Drawing.Font("Georgia", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblstatsX.Location = new System.Drawing.Point(3, 775);
+            this.lblstatsX.Location = new System.Drawing.Point(3, 460);
             this.lblstatsX.Name = "lblstatsX";
             this.lblstatsX.Size = new System.Drawing.Size(83, 23);
             this.lblstatsX.TabIndex = 5;
@@ -683,7 +683,7 @@ namespace ShiftOS.WinForms.Applications
             this.Controls.Add(this.pgcontents);
             this.DoubleBuffered = true;
             this.Name = "Pong";
-            this.Size = new System.Drawing.Size(1867, 819);
+            this.Size = new System.Drawing.Size(912, 504);
             this.Load += new System.EventHandler(this.Pong_Load);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pongMain_MouseMove);
             this.pgcontents.ResumeLayout(false);

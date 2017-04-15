@@ -52,15 +52,7 @@ namespace ShiftOS.WinForms.Applications
         public void OnLoad()
         {
             AppearanceManager.SetWindowTitle(this, this.Title);
-            var str = Properties.Resources.infobox;
-            var bytes = new byte[str.Length];
-            str.Read(bytes, 0, bytes.Length);
-            ShiftOS.Engine.AudioManager.Stop();
-            if (File.Exists("snd.wav"))
-                File.Delete("snd.wav");
-            File.WriteAllBytes("snd.wav", bytes);
-
-            ShiftOS.Engine.AudioManager.Play("snd.wav");
+            ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.infobox);
         }
 
         public void OnSkinLoad()
