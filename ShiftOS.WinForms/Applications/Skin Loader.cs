@@ -47,10 +47,18 @@ namespace ShiftOS.WinForms.Applications
         public Skin_Loader()
         {
             InitializeComponent();
-
+            SetupControls(pnlborder);
+            SetupControls(pnldesktop);
             LoadedSkin = JsonConvert.DeserializeObject<Skin>(JsonConvert.SerializeObject(SkinEngine.LoadedSkin));
             this.Load += (o, a) => { SetupUI(); };
             
+        }
+
+        public void SetupControls(Control ctrl)
+        {
+            ctrl.Tag = "keepbg keepfg keepfont";
+            foreach (Control c in ctrl.Controls)
+                SetupControls(c);
         }
 
         public Skin LoadedSkin { get; set; }
@@ -318,6 +326,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad()
         {
+            SetupUI();
         }
 
         public bool OnUnload()
@@ -327,6 +336,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            SetupUI();
         }
     }
 }
