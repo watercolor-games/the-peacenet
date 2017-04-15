@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Text;
@@ -44,15 +45,22 @@ namespace ShiftOS.WinForms.Applications
         public Dialog()
         {
             InitializeComponent();
-            }
+        }
 
         public string Title { get; private set; }
 
         public void OnLoad()
         {
             AppearanceManager.SetWindowTitle(this, this.Title);
-            //NOT EVEn THIS WORKS
-            new Computer().Audio.Play(Properties.Resources.infobox, Microsoft.VisualBasic.AudioPlayMode.Background);
+            var str = Properties.Resources.infobox;
+            var bytes = new byte[str.Length];
+            str.Read(bytes, 0, bytes.Length);
+            ShiftOS.Engine.AudioManager.Stop();
+            if (File.Exists("snd.wav"))
+                File.Delete("snd.wav");
+            File.WriteAllBytes("snd.wav", bytes);
+
+            ShiftOS.Engine.AudioManager.Play("snd.wav");
         }
 
         public void OnSkinLoad()

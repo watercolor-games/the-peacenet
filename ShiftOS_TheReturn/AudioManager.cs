@@ -42,51 +42,16 @@ namespace ShiftOS.Engine
         private static IAudioProvider _provider = null;
         private static bool _running = true;
 
+        public static void Stop()
+        {
+            _out?.Stop();
+            _reader?.Dispose();
+            _out?.Dispose();
+        }
+
         public static void Init(IAudioProvider _p)
         {
-#if !NOSOUND
             _provider = _p;
-            AppearanceManager.OnExit += () =>
-            {
-                _running = false;
-                _out?.Stop();
-                _reader?.Dispose();
-                _out?.Dispose();
-                System.IO.File.Delete("temp.mp3");
-            };
-            var t = new Thread(() =>
-            {
-                SaveSystem.GameReady += () =>
-                {
-                    while(_out == null)
-                    {
-
-                    }
-                    _out.Volume = _provider.Volume;
-                };
-                Random rnd = new Random();
-                while(_running == true)
-                {
-                    int track = rnd.Next(0, _provider.Count);
-                    byte[] mp3 = _provider.GetTrack(track);
-                     System.IO.File.WriteAllBytes("temp.mp3", mp3);
-                    _reader = new AudioFileReader("temp.mp3");
-                    _out = new WaveOut();
-                    _out.Init(_reader);
-                    _out.Volume = _provider.Volume;
-
-                    _out.Play();
-                    while(_out.PlaybackState == PlaybackState.Playing)
-                    {
-                        Thread.Sleep(5000); //even when the player isn't playing, this will give a good delay between songs.
-                    }
-                    _reader.Dispose();
-                    _out.Dispose();
-                }
-            });
-            t.IsBackground = true;
-            t.Start();
-#endif
         }
 
         public static void SetVolume(float volume)
@@ -94,6 +59,23 @@ namespace ShiftOS.Engine
             _provider.Volume = volume; //persist between songs
             _out.Volume = volume;
         }
+
+        public static void Play(string file)
+        {
+            new Thread(() =>
+            {
+                try
+                {
+                    _reader = new AudioFileReader(file);
+                    _out = new WaveOut();
+                    _out.Init(_reader);
+                    _out.Volume = _provider.Volume;
+                    _out.Play();
+                }
+                catch { }
+            }).Start();
+        }
+
 
         internal static void Kill()
         {
