@@ -28,9 +28,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.Devices;
 using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
@@ -42,13 +44,15 @@ namespace ShiftOS.WinForms.Applications
         public Dialog()
         {
             InitializeComponent();
-        }
+            }
 
         public string Title { get; private set; }
 
         public void OnLoad()
         {
             AppearanceManager.SetWindowTitle(this, this.Title);
+            //NOT EVEn THIS WORKS
+            new Computer().Audio.Play(Properties.Resources.infobox, Microsoft.VisualBasic.AudioPlayMode.Background);
         }
 
         public void OnSkinLoad()
@@ -67,8 +71,8 @@ namespace ShiftOS.WinForms.Applications
 
         internal void OpenInternal(string title, string msg)
         {
-            AppearanceManager.SetupWindow(this);
             Title = title;
+            AppearanceManager.SetupWindow(this);
             lbmessage.Text = msg;
             txtinput.Hide();
             flyesno.Hide();
@@ -91,8 +95,8 @@ namespace ShiftOS.WinForms.Applications
 
         public void PromptTextInternal(string title, string message, Action<string> callback)
         {
-            AppearanceManager.SetupWindow(this);
             Title = title;
+            AppearanceManager.SetupWindow(this);
             lbmessage.Text = message;
             txtinput.Show();
             flyesno.Hide();
@@ -127,8 +131,8 @@ namespace ShiftOS.WinForms.Applications
 
         public void PromptYesNoInternal(string title, string message, Action<bool> callback)
         {
-            AppearanceManager.SetupWindow(this);
             Title = title;
+            AppearanceManager.SetupWindow(this);
             lbmessage.Text = message;
             txtinput.Hide();
             flyesno.Show();

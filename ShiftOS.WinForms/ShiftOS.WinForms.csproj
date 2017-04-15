@@ -37,6 +37,7 @@
       <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -291,6 +292,7 @@
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
+    <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="Window.cs">
       <SubType>UserControl</SubType>
@@ -614,7 +616,12 @@
     <None Include="Resources\SnakeyHeadR.png" />
     <None Include="Resources\SnakeyFruit.png" />
     <None Include="Resources\ShiftnetServices.txt" />
+    <None Include="Resources\3beepvirus.wav" />
+    <None Include="Resources\dial-up-modem-02.wav" />
     <Content Include="Resources\fileiconcf.bmp" />
+    <None Include="Resources\infobox.wav" />
+    <None Include="Resources\typesound.wav" />
+    <None Include="Resources\writesound.wav" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

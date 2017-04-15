@@ -378,7 +378,6 @@ namespace ShiftOS.WinForms
         {
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
-            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking system thread...");
@@ -404,14 +403,12 @@ namespace ShiftOS.WinForms
                     Console.WriteLine(sve.Password);
                     Console.WriteLine();
                     Console.WriteLine("--password breached. Operation took " + sw.ElapsedMilliseconds + " milliseconds.");
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
                 else if(msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
@@ -444,7 +441,6 @@ namespace ShiftOS.WinForms
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
-            bool received = false;
             ServerMessageReceived msgReceived = null;
 
             Console.WriteLine("--hooking multi-user domain response call...");
@@ -467,7 +463,6 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                     
@@ -475,7 +470,6 @@ namespace ShiftOS.WinForms
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
@@ -509,7 +503,6 @@ namespace ShiftOS.WinForms
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
             long amount = (long)args["amount"];
-            bool received = false;
             if(amount < 0)
             {
                 Console.WriteLine("--invalid codepoint amount - halting...");
@@ -544,14 +537,12 @@ namespace ShiftOS.WinForms
                     {
                         Console.WriteLine("--access denied.");
                     }
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }
                 else if (msg.Name == "user_data_not_found")
                 {
                     Console.WriteLine("--access denied.");
-                    received = true;
                     ServerManager.MessageReceived -= msgReceived;
                     TerminalBackend.PrintPrompt();
                 }

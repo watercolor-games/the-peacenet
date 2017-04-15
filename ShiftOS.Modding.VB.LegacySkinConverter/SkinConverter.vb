@@ -33,7 +33,7 @@ Public Class SkinConverter
 
     End Sub
 
-    Public Sub OnLoad() Implements IShiftOSWindow.OnLoad
+    Public Sub OnSOSLoad() Implements IShiftOSWindow.OnLoad
 
     End Sub
 
