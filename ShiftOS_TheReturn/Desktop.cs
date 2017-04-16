@@ -37,6 +37,10 @@ using static ShiftOS.Engine.SkinEngine;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Denotes that this class is launchable from the App Launcher.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class LauncherAttribute : Attribute
     {
         /// <summary>
@@ -54,10 +58,29 @@ namespace ShiftOS.Engine
             ID = upgradeID;
         }
 
+        /// <summary>
+        /// Gets or sets the name of the launcher item
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether this entry requires a Shiftorium upgrade.
+        /// </summary>
         public bool RequiresUpgrade { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ID of the required upgrade.
+        /// </summary>
         public string ID { get; set; }
+
+        /// <summary>
+        /// Gets or sets this item's category.
+        /// </summary>
         public string Category { get; private set; }
+
+        /// <summary>
+        /// Gets whether or not the required upgrade is installed.
+        /// </summary>
         public bool UpgradeInstalled
         {
             get
@@ -70,36 +93,110 @@ namespace ShiftOS.Engine
         }
     }
 
-
+    /// <summary>
+    /// Provides core functionality for a typical ShiftOS desktop.
+    /// </summary>
     public interface IDesktop
     {
+        /// <summary>
+        /// Gets the name of the desktop.
+        /// </summary>
         string DesktopName { get; }
         
+
+        /// <summary>
+        /// Performs most of the skinning and layout handling for the desktop.
+        /// </summary>
         void SetupDesktop();
 
+        /// <summary>
+        /// Hides the currently-opened app launcher menu.
+        /// </summary>
         void HideAppLauncher();
 
+
+        /// <summary>
+        /// Populates the app launcher menu.
+        /// </summary>
+        /// <param name="items">All items to be placed in the menu.</param>
         void PopulateAppLauncher(LauncherItem[] items);
+
+        /// <summary>
+        /// Handles desktop-specific routines for showing ShiftOS windows.
+        /// </summary>
+        /// <param name="border">The calling window.</param>
         void ShowWindow(IWindowBorder border);
+
+        /// <summary>
+        /// Handles desktop-specific routines for closing ShiftOS windows.
+        /// </summary>
+        /// <param name="border">The calling window.</param>
         void KillWindow(IWindowBorder border);
+
+        /// <summary>
+        /// Populates the panel button list with all open windows.
+        /// </summary>
         void PopulatePanelButtons();
+
+        /// <summary>
+        /// Performs desktop-specific routines for minimizing a window.
+        /// </summary>
+        /// <param name="brdr">The calling window.</param>
         void MinimizeWindow(IWindowBorder brdr);
+
+
+        /// <summary>
+        /// Performs desktop-specific routines for maximizing a window.
+        /// </summary>
+        /// <param name="brdr">The calling window.</param>
         void MaximizeWindow(IWindowBorder brdr);
+
+
+        /// <summary>
+        /// Performs desktop-specific routines for restoring a window to its default state.
+        /// </summary>
+        /// <param name="brdr">The calling window.</param>
         void RestoreWindow(IWindowBorder brdr);
+
+        /// <summary>
+        /// Invokes an action on the UI thread.
+        /// </summary>
+        /// <param name="act">The action to invoke.</param>
         void InvokeOnWorkerThread(Action act);
+
+        /// <summary>
+        /// Calculates the screen size of the desktop.
+        /// </summary>
+        /// <returns>The desktop's screen size.</returns>
         Size GetSize();
 
+        /// <summary>
+        /// Opens the app launcher at a specific point.
+        /// </summary>
+        /// <param name="loc">Where the app launcher should be opened.</param>
         void OpenAppLauncher(Point loc);
 
+        /// <summary>
+        /// Opens the desktop.
+        /// </summary>
         void Show();
+
+        /// <summary>
+        /// Closes the desktop.
+        /// </summary>
         void Close();
     }
 
     public static class Desktop
     {
+        /// <summary>
+        /// The underlying desktop object.
+        /// </summary>
         private static IDesktop _desktop = null;
 
-        public static Size Size { get
+        public static Size Size
+        {
+            get
             {
                 return _desktop.GetSize();
             }

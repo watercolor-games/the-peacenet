@@ -260,13 +260,6 @@
 		Description: "With the free placement upgrade, you can place windows of any size anywhere on the desktop, which means theoretically you could add kernel coherence between ShiftOS and another GUI-based operating system and run their applications inside ShiftOS. This upgrade unlocks that.",
 	},
 	{
-		Name: "Pong Increased Paddle Size",
-		Cost: 1000,
-		Dependencies: "pong_upgrade",
-		Category: "Enhancements",
-		Description: "Having trouble keeping that darn ball in front of you? Well, with this upgrade, your paddle increases in height.... slightly.",
-	},
-	{
 		Name: "WM 4 Windows",
 		Cost: 150,
 		Description: "Display up to 4 simultaneous windows on-screen in a 2x2 grid.",

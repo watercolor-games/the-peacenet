@@ -321,7 +321,6 @@ namespace ShiftOS.WinForms.Applications {
 
             if (SaveSystem.CurrentSave != null) {
                 if (!ShiftoriumFrontend.UpgradeInstalled("window_manager")) {
-                    rtbterm.Text = AppearanceManager.LastTerminalText;
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
                 TerminalBackend.PrintPrompt();

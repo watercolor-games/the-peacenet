@@ -125,12 +125,6 @@ namespace ShiftOS.WinForms
 
         public override void SetupWindow(IShiftOSWindow form)
         {
-            if (!AppearanceManager.CanOpenWindow(form))
-            {
-                Infobox.Show("{MULTIPLAYER_ONLY}", "{MULTIPLAYER_ONLY_EXP}");
-                return;
-            }
-
             foreach(var attr in form.GetType().GetCustomAttributes(true))
             {
                 if(attr is MultiplayerOnlyAttribute)

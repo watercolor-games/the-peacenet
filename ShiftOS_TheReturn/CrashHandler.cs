@@ -97,7 +97,6 @@ namespace ShiftOS.Engine
         {
             if(SaveSystem.CurrentSave != null)
                 TerminalBackend.InvokeCommand("sos.save");
-            AudioManager.Kill();
             ServerManager.Disconnect();
 
             while (Application.OpenForms.Count > 0)

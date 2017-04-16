@@ -115,11 +115,12 @@ namespace ShiftOS.WinForms.Applications
                 paddleHuman.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
 
                 //Check if paddle upgrade has been bought and change paddles accordingly
-                if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
-                {
-                    paddleHuman.Height = 150;
-                    paddleComputer.Height = 150;
-                }
+                //if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
+                //{
+                 //   paddleHuman.Height = 150;
+                  //  paddleComputer.Height = 150;
+                //}
+                //I don't know the point of this but I'm fucking 86ing it. - Michael
 
                 //Set the computer player to move according to the ball's position.
                 if (aiShouldIsbeEnabled)
