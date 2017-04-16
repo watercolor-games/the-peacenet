@@ -257,6 +257,13 @@
     <Compile Include="Controls\TerminalBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DesktopWidgetAttribute.cs" />
+    <Compile Include="DesktopWidgets\Clock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\Clock.Designer.cs">
+      <DependentUpon>Clock.cs</DependentUpon>
+    </Compile>
     <Compile Include="DownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -271,6 +278,7 @@
     </Compile>
     <Compile Include="GUIFunctions.cs" />
     <Compile Include="HackerCommands.cs" />
+    <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
@@ -294,6 +302,7 @@
     <Compile Include="TrailerCommands.cs" />
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
+    <Compile Include="WidgetManager.cs" />
     <Compile Include="Window.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -398,6 +407,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\UpdateManager.resx">
       <DependentUpon>UpdateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\Clock.resx">
+      <DependentUpon>Clock.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>

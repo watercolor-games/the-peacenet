@@ -49,6 +49,9 @@ namespace ShiftOS.WinForms
     /// </summary>
     public partial class WinformsDesktop : Form, IDesktop
     {
+        public List<IDesktopWidget> Widgets = new List<IDesktopWidget>();
+
+
         private bool InScreensaver = false;
         private int millisecondsUntilScreensaver = 300000;
 
@@ -65,6 +68,11 @@ namespace ShiftOS.WinForms
             SetupControl(desktoppanel);
             Shiftorium.Installed += () =>
             {
+                foreach(var widget in Widgets)
+                {
+                    widget.OnUpgrade();
+                }
+
                 //Only if the DevX Legions story hasn't been experienced yet.
                 if (!Shiftorium.UpgradeInstalled("devx_legions"))
                 {
@@ -161,6 +169,11 @@ namespace ShiftOS.WinForms
             };
             SkinEngine.SkinLoaded += () =>
             {
+                foreach (var widget in Widgets)
+                {
+                    widget.OnSkinLoad();
+                }
+
                 SetupDesktop();
             };
             time.Tick += (o, a) =>
@@ -429,6 +442,34 @@ namespace ShiftOS.WinForms
                         desktoppanel.Dock = DockStyle.Top;
                     }
                 }
+
+                pnlwidgetlayer.Show();
+                pnlwidgetlayer.BringToFront();
+
+                if (Shiftorium.UpgradeInstalled("desktop_widgets"))
+                {
+                    Widgets.Clear();
+                    foreach(var widget in WidgetManager.GetAllWidgetTypes())
+                    {
+                        UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
+                        pnlwidgetlayer.Controls.Add(w);
+                        Widgets.Add(w as IDesktopWidget);
+                    }
+                }
+
+                foreach (var widget in Widgets)
+                {
+                    if (Shiftorium.UpgradeInstalled("desktop_widgets"))
+                    {
+                        widget.Setup();
+                        widget.Show();
+                    }
+                    else
+                    {
+                        widget.Hide();
+                    }
+                }
+
             }
             else
             {
@@ -851,6 +892,7 @@ namespace ShiftOS.WinForms
                 apps.DropDown.Hide();
                 pnladvancedal.Location = new Point(0, (LoadedSkin.DesktopPanelPosition == 0) ? desktoppanel.Height : this.Height - pnladvancedal.Height - desktoppanel.Height);
                 pnladvancedal.Visible = !pnladvancedal.Visible;
+                pnladvancedal.BringToFront();
             }
 
         }

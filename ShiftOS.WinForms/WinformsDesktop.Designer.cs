@@ -60,14 +60,15 @@ namespace ShiftOS.WinForms
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.apps = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlscreensaver = new System.Windows.Forms.Panel();
+            this.pnlwidgetlayer = new System.Windows.Forms.Panel();
             this.pnlssicon = new System.Windows.Forms.Panel();
             this.pnladvancedal = new System.Windows.Forms.Panel();
+            this.flapps = new System.Windows.Forms.FlowLayoutPanel();
+            this.flcategories = new System.Windows.Forms.FlowLayoutPanel();
             this.pnlalsystemactions = new System.Windows.Forms.Panel();
             this.btnshutdown = new System.Windows.Forms.Button();
             this.pnlstatus = new System.Windows.Forms.Panel();
             this.lbalstatus = new System.Windows.Forms.Label();
-            this.flcategories = new System.Windows.Forms.FlowLayoutPanel();
-            this.flapps = new System.Windows.Forms.FlowLayoutPanel();
             this.desktoppanel.SuspendLayout();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -169,6 +170,15 @@ namespace ShiftOS.WinForms
             this.pnlscreensaver.TabIndex = 1;
             this.pnlscreensaver.Visible = false;
             // 
+            // pnlwidgetlayer
+            // 
+            this.pnlwidgetlayer.BackColor = System.Drawing.Color.Transparent;
+            this.pnlwidgetlayer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlwidgetlayer.Location = new System.Drawing.Point(0, 24);
+            this.pnlwidgetlayer.Name = "pnlwidgetlayer";
+            this.pnlwidgetlayer.Size = new System.Drawing.Size(1296, 714);
+            this.pnlwidgetlayer.TabIndex = 1;
+            // 
             // pnlssicon
             // 
             this.pnlssicon.Location = new System.Drawing.Point(303, 495);
@@ -187,6 +197,22 @@ namespace ShiftOS.WinForms
             this.pnladvancedal.Size = new System.Drawing.Size(433, 417);
             this.pnladvancedal.TabIndex = 1;
             this.pnladvancedal.Visible = false;
+            // 
+            // flapps
+            // 
+            this.flapps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flapps.Location = new System.Drawing.Point(221, 58);
+            this.flapps.Name = "flapps";
+            this.flapps.Size = new System.Drawing.Size(212, 328);
+            this.flapps.TabIndex = 3;
+            // 
+            // flcategories
+            // 
+            this.flcategories.Dock = System.Windows.Forms.DockStyle.Left;
+            this.flcategories.Location = new System.Drawing.Point(0, 58);
+            this.flcategories.Name = "flcategories";
+            this.flcategories.Size = new System.Drawing.Size(221, 328);
+            this.flcategories.TabIndex = 2;
             // 
             // pnlalsystemactions
             // 
@@ -230,28 +256,13 @@ namespace ShiftOS.WinForms
             this.lbalstatus.Text = "michael@system\r\n0 Codepoints\r\n0 installed, 0 available";
             this.lbalstatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // flcategories
-            // 
-            this.flcategories.Dock = System.Windows.Forms.DockStyle.Left;
-            this.flcategories.Location = new System.Drawing.Point(0, 58);
-            this.flcategories.Name = "flcategories";
-            this.flcategories.Size = new System.Drawing.Size(221, 328);
-            this.flcategories.TabIndex = 2;
-            // 
-            // flapps
-            // 
-            this.flapps.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flapps.Location = new System.Drawing.Point(221, 58);
-            this.flapps.Name = "flapps";
-            this.flapps.Size = new System.Drawing.Size(212, 328);
-            this.flapps.TabIndex = 3;
-            // 
             // WinformsDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1296, 738);
+            this.Controls.Add(this.pnlwidgetlayer);
             this.Controls.Add(this.pnladvancedal);
             this.Controls.Add(this.pnlscreensaver);
             this.Controls.Add(this.desktoppanel);
@@ -294,6 +305,7 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.Label lbalstatus;
         private System.Windows.Forms.FlowLayoutPanel flapps;
         private System.Windows.Forms.FlowLayoutPanel flcategories;
+        private System.Windows.Forms.Panel pnlwidgetlayer;
     }
 
 }
