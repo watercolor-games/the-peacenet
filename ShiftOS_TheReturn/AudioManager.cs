@@ -43,6 +43,9 @@ namespace ShiftOS.Engine
         private static IAudioProvider _provider = null;
         private static bool _running = true;
 
+        /// <summary>
+        /// Stops the current sound if one is playing and disposes of the sound.
+        /// </summary>
         public static void Stop()
         {
             _out?.Stop();
@@ -50,17 +53,32 @@ namespace ShiftOS.Engine
             _out?.Dispose();
         }
 
+        /// <summary>
+        /// Initiates this engine module using an <see cref="IAudioProvider"/> as a backend for selecting background soundtrack as well as the volume level for the sound.
+        /// </summary>
+        /// <param name="_p">A background soundtrack and volume provider.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="_p"/> is null.</exception> 
         public static void Init(IAudioProvider _p)
         {
+            if (_p == null)
+                throw new ArgumentNullException("_p");
             _provider = _p;
         }
 
+        /// <summary>
+        /// Sets the volume of the audio system.
+        /// </summary>
+        /// <param name="volume">The volume to use, from 0 to 1.</param>
         public static void SetVolume(float volume)
         {
             _provider.Volume = volume; //persist between songs
             _out.Volume = volume;
         }
 
+        /// <summary>
+        /// Plays a specified sound file.
+        /// </summary>
+        /// <param name="file">The file to play.</param>
         public static void Play(string file)
         {
             try
@@ -74,6 +92,10 @@ namespace ShiftOS.Engine
             catch { }
         }
 
+        /// <summary>
+        /// Writes the data in the specified <see cref="Stream"/> to a file, and plays it as a sound file. 
+        /// </summary>
+        /// <param name="str">The stream to read from.</param>
         public static void PlayStream(Stream str)
         {
             var bytes = new byte[str.Length];
@@ -85,14 +107,6 @@ namespace ShiftOS.Engine
 
             ShiftOS.Engine.AudioManager.Play("snd.wav");
 
-        }
-
-        internal static void Kill()
-        {
-            _running = false;
-            _out.Stop();
-            _out.Dispose();
-            _reader.Dispose();
         }
     }
 
