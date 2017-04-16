@@ -58,6 +58,11 @@ namespace ShiftOS.WinForms
         public WinformsDesktop()
         {
             InitializeComponent();
+            this.Click += (o, a) =>
+            {
+                HideAppLauncher();
+            };
+            SetupControl(desktoppanel);
             Shiftorium.Installed += () =>
             {
                 //Only if the DevX Legions story hasn't been experienced yet.
@@ -284,6 +289,7 @@ namespace ShiftOS.WinForms
                                             form.BringToFront();
                                             focused = form;
                                         }
+                                        HideAppLauncher();
                                     };
 
                                     var pnlbtn = new Panel();
@@ -824,6 +830,13 @@ namespace ShiftOS.WinForms
 
         private void lbtime_Click(object sender, EventArgs e)
         {
+        }
+
+        public void SetupControl(Control ctrl)
+        {
+            foreach (Control c in ctrl.Controls)
+                SetupControl(c);
+            ctrl.Click += (o, a) => HideAppLauncher();
         }
 
         private void apps_Click(object sender, EventArgs e)
