@@ -452,7 +452,11 @@ namespace ShiftOS.WinForms
                     foreach(var widget in WidgetManager.GetAllWidgetTypes())
                     {
                         UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
+
+                        w.Location = WidgetManager.LoadLocation(w.GetType());
+
                         pnlwidgetlayer.Controls.Add(w);
+                        MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
                     }
                 }
@@ -479,6 +483,48 @@ namespace ShiftOS.WinForms
             LuaInterpreter.RaiseEvent("on_desktop_skin", this);
 
             PopulatePanelButtons();
+        }
+
+        public void MakeWidgetMovable(Control w, Control startCtrl = null)
+        {
+            if (startCtrl == null)
+                startCtrl = w;
+
+            bool moving = false;
+
+            w.MouseDown += (o, a) =>
+            {
+                moving = true;
+            };
+
+            w.MouseMove += (o, a) =>
+            {
+                if (moving == true)
+                {
+                    var mPos = Cursor.Position;
+                    int mY = mPos.Y - desktoppanel.Height;
+                    int mX = mPos.X;
+
+                    int ctrlHeight = startCtrl.Height / 2;
+                    int ctrlWidth = startCtrl.Width / 2;
+
+                    startCtrl.Location = new Point(
+                            mX - ctrlWidth,
+                            mY - ctrlHeight
+                        );
+
+                }
+            };
+
+            w.MouseUp += (o, a) =>
+            {
+                moving = false;
+                WidgetManager.SaveLocation(startCtrl.GetType(), w.Location);
+            };
+
+            foreach (Control c in w.Controls)
+                MakeWidgetMovable(c, startCtrl);
+
         }
 
         public ToolStripMenuItem GetALCategoryWithName(string text)

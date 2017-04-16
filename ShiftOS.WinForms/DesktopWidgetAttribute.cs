@@ -17,5 +17,10 @@ namespace ShiftOS.WinForms
             Name = n;
             Description = desc;
         }
+
+        public override string ToString()
+        {
+            return this.Name + "_" + Description;
+        }
     }
 }

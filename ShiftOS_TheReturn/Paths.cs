@@ -61,6 +61,7 @@ namespace ShiftOS.Engine
             AddPath("data", "user.dat");
             AddPath("data", "notifications.dat");
             AddPath("data", "skin");
+            AddPath("skin", "widgets.dat");
             AddPath("system", "programs");
             AddPath("system", "kernel.sft");
             AddPath("system", "conf.sft");
