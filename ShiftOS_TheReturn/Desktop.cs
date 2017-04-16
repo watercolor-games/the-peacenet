@@ -76,6 +76,9 @@ namespace ShiftOS.Engine
         string DesktopName { get; }
         
         void SetupDesktop();
+
+        void HideAppLauncher();
+
         void PopulateAppLauncher(LauncherItem[] items);
         void ShowWindow(IWindowBorder border);
         void KillWindow(IWindowBorder border);
@@ -160,6 +163,11 @@ namespace ShiftOS.Engine
         public static void OpenAppLauncher(Point loc)
         {
             _desktop.OpenAppLauncher(loc);
+        }
+
+        public static void HideAppLauncher()
+        {
+            _desktop.HideAppLauncher();
         }
     }
     // sorry i almost killed everything :P

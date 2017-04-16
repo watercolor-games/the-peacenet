@@ -35,7 +35,8 @@ using static ShiftOS.Engine.SaveSystem;
 using ShiftOS.Objects.ShiftFS;
 using System.Reflection;
 using ShiftOS.Engine.Scripting;
-namespace ShiftOS.Engine {
+namespace ShiftOS.Engine
+{
 
     [Exposed("skinning")]
     public class SkinFunctions
@@ -43,7 +44,7 @@ namespace ShiftOS.Engine {
         public void loadSkin()
         {
             SkinEngine.LoadSkin();
-        }    
+        }
 
         public dynamic getSkin()
         {
@@ -63,7 +64,8 @@ namespace ShiftOS.Engine {
     }
 
 
-    public static class SkinEngine {
+    public static class SkinEngine
+    {
         public static ImageLayout GetImageLayout(string img)
         {
             if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
@@ -77,14 +79,19 @@ namespace ShiftOS.Engine {
             }
         }
 
-        public static System.Drawing.Image GetImage(string img) {
+        public static System.Drawing.Image GetImage(string img)
+        {
             var type = typeof(Skin);
 
-            foreach (var field in type.GetFields()) {
-                foreach (var attr in field.GetCustomAttributes(false)) {
-                    if (attr is ImageAttribute) {
+            foreach (var field in type.GetFields())
+            {
+                foreach (var attr in field.GetCustomAttributes(false))
+                {
+                    if (attr is ImageAttribute)
+                    {
                         var iattr = attr as ImageAttribute;
-                        if (iattr.Name == img) {
+                        if (iattr.Name == img)
+                        {
                             byte[] image = (byte[])field.GetValue(LoadedSkin);
                             return ImageFromBinary(image);
                         }
@@ -100,7 +107,8 @@ namespace ShiftOS.Engine {
             _iconProber = prober;
         }
 
-        public static Image ImageFromBinary(byte[] image) {
+        public static Image ImageFromBinary(byte[] image)
+        {
             if (image == null)
                 return null;
             Image img = (Bitmap)((new ImageConverter()).ConvertFrom(image));
@@ -121,32 +129,40 @@ namespace ShiftOS.Engine {
             }
         }
 
-        public static void Init() {
-            Application.ApplicationExit += (o, a) => {
+        public static void Init()
+        {
+            Application.ApplicationExit += (o, a) =>
+            {
                 SaveSkin();
             };
 
-            if (!Utils.FileExists(Paths.GetPath("skin.json"))) {
+            if (!Utils.FileExists(Paths.GetPath("skin.json")))
+            {
                 LoadedSkin = new ShiftOS.Engine.Skin();
                 SaveSkin();
-            } else {
+            }
+            else
+            {
                 LoadSkin();
             }
-            if (SaveSystem.CurrentSave != null) {
+            if (SaveSystem.CurrentSave != null)
+            {
                 SkinLoaded?.Invoke();
             }
         }
 
         public static event EmptyEventHandler SkinLoaded;
 
-        public static void LoadSkin() {
+        public static void LoadSkin()
+        {
             LoadedSkin = JsonConvert.DeserializeObject<Skin>(Utils.ReadAllText(Paths.GetPath("skin.json")));
             SkinLoaded?.Invoke();
             Desktop.ResetPanelButtons();
             Desktop.PopulateAppLauncher();
         }
 
-        public static void SaveSkin() {
+        public static void SaveSkin()
+        {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
         }
 
@@ -160,20 +176,20 @@ namespace ShiftOS.Engine {
             }
             else
             {
-                foreach(var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                foreach (var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
                 {
-                    if(f.EndsWith(".exe") || f.EndsWith(".dll"))
+                    if (f.EndsWith(".exe") || f.EndsWith(".dll"))
                     {
                         try
                         {
                             var asm = Assembly.LoadFile(f);
-                            foreach(var type in asm.GetTypes())
+                            foreach (var type in asm.GetTypes())
                             {
-                                if(type.Name == id)
+                                if (type.Name == id)
                                 {
-                                    foreach(var attr in type.GetCustomAttributes(true))
+                                    foreach (var attr in type.GetCustomAttributes(true))
                                     {
-                                        if(attr is DefaultIconAttribute)
+                                        if (attr is DefaultIconAttribute)
                                         {
                                             return _iconProber.GetIcon(attr as DefaultIconAttribute);
                                         }
@@ -202,7 +218,7 @@ namespace ShiftOS.Engine {
                     return Image.FromStream(sr);
                 }
             }
-             
+
         }
     }
 
@@ -221,7 +237,8 @@ namespace ShiftOS.Engine {
         public string ID { get; private set; }
     }
 
-    public class Skin {
+    public class Skin
+    {
         //borrowing from the discourse theme for the default skin
         private static readonly Color DefaultBackground = Color.FromArgb(0, 0x44, 0x00);
         private static readonly Color DefaultForeground = Color.FromArgb(0xDD, 0xDD, 0xDD);
@@ -278,8 +295,8 @@ namespace ShiftOS.Engine {
         [ShifterName("System Font")]
         [ShifterDescription("The font style used by the system.")]
         public Font MainFont = SysFont;
-        
-        [ShifterEnumMask(new[] { "Right", "Left"})]
+
+        [ShifterEnumMask(new[] { "Right", "Left" })]
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
         [ShifterName("Title button position")]
@@ -1068,25 +1085,126 @@ namespace ShiftOS.Engine {
         [ShifterName("App icon from side")]
         [ShifterDescription("How far from the side should the icon be?")]
         [RequiresUpgrade("shift_titlebar;app_icons")]
-        public Point TitlebarIconFromSide = new Point(4,4);
+        public Point TitlebarIconFromSide = new Point(4, 4);
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Status Panel Font")]
+        [ShifterDescription("The font used by the status panel in the Advanced App Launcher.")]
+        public Font ALStatusPanelFont = SysFont;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Status Panel Text Color")]
+        [ShifterDescription("The text color for the AL status panel.")]
+        public Color ALStatusPanelTextColor = Skin.DefaultForeground;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Status Panel Background")]
+        [ShifterDescription("The status panel's background color.")]
+        public Color ALStatusPanelBackColor = TitleBG;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Status Panel Text Alignment")]
+        [ShifterDescription("What part of the panel should the status text stick to?")]
+        public ContentAlignment ALStatusPanelAlignment = ContentAlignment.MiddleCenter;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("skinning;shift_advanced_app_launcher")]
+        [ShifterName("Status Panel Background Image")]
+        [ShifterDescription("Use an image for the App Launcher Status Panel")]
+        [Image("al_bg_status")]
+        public byte[] ALStatusPanelBG = null;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterEnumMask(new[] { "Button, bottom panel", "Button, top panel", "Category Item" })]
+        [ShifterName("Shutdown Button position")]
+        [ShifterDescription("Change the position and layout of the App Launcher Shutdown button.")]
+        public int ShutdownButtonStyle = 0;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Shutdown Button from side")]
+        [ShifterDescription("The location relative to the side of the system panel that the shutdown button should reside from.")]
+        public Point ShutdownButtonFromSide = new Point(2, 2);
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Align shutdown button to left?")]
+        [ShifterDescription("Should the location of the shutdown button be calculated relative to the left of the system panel?")]
+        public bool ShutdownOnLeft = false;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Shutdown Button Font")]
+        [ShifterDescription("The font of the Shutdown Button")]
+        public Font ShutdownFont = SysFont;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("Shutdown Text Color")]
+        [ShifterDescription("The foreground color of the Shutdown button")]
+        public Color ShutdownForeColor = DefaultForeground;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("System Panel background color")]
+        [ShifterDescription("The background color of the App Launcher System Panel.")]
+        public Color SystemPanelBackground = TitleBG;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("skinning;shift_advanced_app_launcher")]
+        [ShifterName("System Panel Background Image")]
+        [ShifterDescription("The background image of the System Panel.")]
+        [Image("al_bg_system")]
+        public byte[] SystemPanelBG = null;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("App Launcher Item Font")]
+        [ShifterDescription("Select the font to use for the items in the App Launcher.")]
+        public Font AdvALItemFont = SysFont2;
     }
 
-    public class ShifterHiddenAttribute : Attribute {
+    public class ShifterHiddenAttribute : Attribute
+    {
 
     }
 
-    public class ShifterFlagAttribute : Attribute {
-        public ShifterFlagAttribute(string flag, bool expected) {
+    public class ShifterFlagAttribute : Attribute
+    {
+        public ShifterFlagAttribute(string flag, bool expected)
+        {
             Expected = expected;
             Flag = flag;
         }
 
         public bool Expected { get; set; }
         public string Flag { get; set; }
-        public bool IsTrue(Skin skn) {
-            foreach (var f in skn.GetType().GetFields()) {
-                if (f.Name == Flag) {
-                    if (f.FieldType == typeof(bool)) {
+        public bool IsTrue(Skin skn)
+        {
+            foreach (var f in skn.GetType().GetFields())
+            {
+                if (f.Name == Flag)
+                {
+                    if (f.FieldType == typeof(bool))
+                    {
                         return (bool)f.GetValue(skn) == Expected;
                     }
                 }
@@ -1095,12 +1213,14 @@ namespace ShiftOS.Engine {
         }
     }
 
-    public class ImageAttribute : Attribute {
+    public class ImageAttribute : Attribute
+    {
         /// <summary>
         /// Attribute a byte array within the Skin object with this attribute and the engine and Shifter will see it as an image and you'll be able to grab the image by calling SkinEngine.GetImage() passing the name you input here.
         /// </summary>
         /// <param name="name">The name you want to reference this image as in the code.</param>
-        public ImageAttribute(string name) {
+        public ImageAttribute(string name)
+        {
             Name = name;
         }
 
@@ -1108,8 +1228,10 @@ namespace ShiftOS.Engine {
     }
 
 
-    public class ShifterEnumMaskAttribute : Attribute {
-        public ShifterEnumMaskAttribute(string[] items) {
+    public class ShifterEnumMaskAttribute : Attribute
+    {
+        public ShifterEnumMaskAttribute(string[] items)
+        {
             Items = items;
         }
 
@@ -1118,34 +1240,42 @@ namespace ShiftOS.Engine {
 
 
 
-    public class ShifterNameAttribute : Attribute {
-        public ShifterNameAttribute(string name) {
+    public class ShifterNameAttribute : Attribute
+    {
+        public ShifterNameAttribute(string name)
+        {
             Name = name;
         }
 
         public string Name { get; set; }
     }
 
-    public class ShifterDescriptionAttribute : Attribute {
-        public ShifterDescriptionAttribute(string description) {
+    public class ShifterDescriptionAttribute : Attribute
+    {
+        public ShifterDescriptionAttribute(string description)
+        {
             Description = description;
         }
 
         public string Description { get; set; }
     }
 
-    public class ShifterCategoryAttribute : Attribute {
+    public class ShifterCategoryAttribute : Attribute
+    {
 
-        public ShifterCategoryAttribute(string category) {
+        public ShifterCategoryAttribute(string category)
+        {
             Category = category;
         }
 
         public string Category { get; set; }
     }
 
-    public class ShifterMetaAttribute : Attribute {
+    public class ShifterMetaAttribute : Attribute
+    {
 
-        public ShifterMetaAttribute(string meta) {
+        public ShifterMetaAttribute(string meta)
+        {
             Meta = meta;
         }
 

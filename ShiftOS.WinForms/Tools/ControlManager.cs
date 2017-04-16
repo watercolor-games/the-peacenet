@@ -270,7 +270,10 @@ namespace ShiftOS.WinForms.Tools
         public static void SetupControls(Control frm, bool runInThread = true)
         {
             SetupControl(frm);
-
+            frm.Click += (o, a) =>
+            {
+                Desktop.HideAppLauncher();
+            };
             ThreadStart ts = () =>
             {
                 for (int i = 0; i < frm.Controls.Count; i++)

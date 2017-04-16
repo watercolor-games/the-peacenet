@@ -198,6 +198,13 @@
 		Dependencies: "color_depth_dithering"
 	},
 	{
+		Name: "Shift Advanced App Launcher",
+		Cost: 150,
+		Description: "So you got yourself one of those fancy Advanced App Launchers. Well, it ain't so advanced if it can't be customized! This upgrade will add some settings to the Shifter so you can customize the Advanced App Launcher and its behaviour.",
+		Dependencies: "advanced_app_launcher;shifter",
+		Category: "Customization"
+	},
+	{
 		Name: "Color Depth 2 bits",
 		Cost: 2000,
 		Category: "Device Drivers",

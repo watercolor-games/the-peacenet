@@ -92,6 +92,16 @@ namespace ShiftOS.WinForms
             lbtitletext.Text = title;
         }
 
+        public void SetupControls(Control ctrl)
+        {
+            foreach (Control c in ctrl.Controls)
+                SetupControls(c);
+            ctrl.Click += (o, a) =>
+            {
+                Desktop.HideAppLauncher();
+            };
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WindowBorder"/> class.
         /// </summary>
@@ -126,6 +136,8 @@ namespace ShiftOS.WinForms
             };
             this.Width = LoadedSkin.LeftBorderWidth + _parentWindow.Width + LoadedSkin.RightBorderWidth;
             this.Height = LoadedSkin.TitlebarHeight + _parentWindow.Height + LoadedSkin.BottomBorderWidth;
+
+            SetupControls(this);
 
             this.pnlcontents.Controls.Add(this._parentWindow);
             this._parentWindow.Dock = DockStyle.Fill;

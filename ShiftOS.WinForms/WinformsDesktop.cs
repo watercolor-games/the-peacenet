@@ -244,45 +244,6 @@ namespace ShiftOS.WinForms
 
         private void ShowScreensaver()
         {
-            if (Shiftorium.UpgradeInstalled("screensavers"))
-            {
-                this.Invoke(new Action(() =>
-                {
-                    pnlscreensaver.Show();
-                    this.TopMost = true;
-                    pnlssicon.Show();
-                    pnlssicon.BackColor = Color.Green;
-                    pnlssicon.BackgroundImage = GetImage("screensaver");
-                    pnlssicon.BackgroundImageLayout = GetImageLayout("screensaver");
-
-                    if (pnlssicon.BackgroundImage != null)
-                    {
-                        pnlssicon.Size = pnlssicon.BackgroundImage.Size;
-                    }
-
-                    Cursor.Hide();
-
-                    var t = new Thread(() =>
-                    {
-                        var rnd = new Random();
-                        while (InScreensaver == true)
-                        {
-                            int x = rnd.Next(0, this.Width);
-                            int y = rnd.Next(0, this.Height);
-
-                            this.Invoke(new Action(() =>
-                            {
-                                pnlssicon.Location = new Point(x, y);
-                            }));
-
-                            Thread.Sleep(5000);
-                        }
-                        ResetDesktop = true;
-                    });
-                    t.IsBackground = true;
-                    t.Start();
-                }));
-            }
         }
 
 
@@ -498,12 +459,47 @@ namespace ShiftOS.WinForms
         {
             if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
             {
-                ControlManager.SetupControls(pnladvancedal);
                 pnladvancedal.Visible = false;
                 flapps.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
                 flcategories.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
-                pnlalsystemactions.BackColor = LoadedSkin.DesktopPanelColor;
-                lbalstatus.BackColor = LoadedSkin.DesktopPanelColor;
+                pnlalsystemactions.BackColor = LoadedSkin.SystemPanelBackground;
+                lbalstatus.BackColor = LoadedSkin.ALStatusPanelBackColor;
+                //Fonts
+                lbalstatus.Font = LoadedSkin.ALStatusPanelFont;
+                btnshutdown.Font = LoadedSkin.ShutdownFont;
+
+                //Upgrades
+                btnshutdown.Visible = Shiftorium.UpgradeInstalled("al_shutdown");
+
+                //Alignments and positions.
+                lbalstatus.TextAlign = LoadedSkin.ALStatusPanelAlignment;
+                if (LoadedSkin.ShutdownButtonStyle == 2)
+                    btnshutdown.Hide();
+                else if (LoadedSkin.ShutdownButtonStyle == 1)
+                {
+                    btnshutdown.Parent = pnlstatus;
+                    btnshutdown.BringToFront();
+                }
+                else
+                    btnshutdown.Parent = pnlalsystemactions;
+                if (LoadedSkin.ShutdownOnLeft)
+                {
+                    btnshutdown.Location = LoadedSkin.ShutdownButtonFromSide;
+                }
+                else
+                {
+                    btnshutdown.Left = (btnshutdown.Parent.Width - btnshutdown.Width) - LoadedSkin.ShutdownButtonFromSide.X;
+                    btnshutdown.Top = LoadedSkin.ShutdownButtonFromSide.Y;
+                }
+
+                //Images
+                 lbalstatus.BackgroundImage = GetImage("al_bg_status");
+                lbalstatus.BackgroundImageLayout = GetImageLayout("al_bg_status");
+
+                pnlalsystemactions.BackgroundImage = GetImage("al_bg_system");
+                pnlalsystemactions.BackgroundImageLayout = GetImageLayout("al_bg_system");
+                if (pnlalsystemactions.BackgroundImage != null)
+                    btnshutdown.BackColor = Color.Transparent;
             }
 
 
@@ -563,6 +559,7 @@ namespace ShiftOS.WinForms
                             if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
                             {
                                 var catbtn = new Button();
+                                catbtn.Font = LoadedSkin.AdvALItemFont;
                                 catbtn.FlatStyle = FlatStyle.Flat;
                                 catbtn.FlatAppearance.BorderSize = 0;
                                 catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
@@ -600,7 +597,25 @@ namespace ShiftOS.WinForms
                             TerminalBackend.InvokeCommand("sos.shutdown");
                         };
                         apps.DropDownItems.Add(item);
-
+                        if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
+                        {
+                            if (LoadedSkin.ShutdownButtonStyle == 2) {
+                                var catbtn = new Button();
+                                catbtn.Font = LoadedSkin.AdvALItemFont;
+                                catbtn.FlatStyle = FlatStyle.Flat;
+                                catbtn.FlatAppearance.BorderSize = 0;
+                                catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
+                                catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
+                                catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                                catbtn.TextAlign = ContentAlignment.MiddleLeft;
+                                catbtn.Text = "Shutdown";
+                                catbtn.Width = flcategories.Width;
+                                catbtn.Height = 24;
+                                flcategories.Controls.Add(catbtn);
+                                catbtn.Show();
+                                catbtn.Click += (o, a) => TerminalBackend.InvokeCommand("sos.shutdown");
+                            }
+                        }
                     }
                 }
             }
@@ -614,6 +629,7 @@ namespace ShiftOS.WinForms
             foreach(var app in LauncherItemList[cat])
             {
                 var catbtn = new Button();
+                catbtn.Font = LoadedSkin.AdvALItemFont;
                 catbtn.FlatStyle = FlatStyle.Flat;
                 catbtn.FlatAppearance.BorderSize = 0;
                 catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
@@ -622,8 +638,8 @@ namespace ShiftOS.WinForms
                 catbtn.TextAlign = ContentAlignment.MiddleLeft;
                 catbtn.Text = (app is LuaLauncherItem) ? app.DisplayData.Name : NameChangerBackend.GetNameRaw(app.LaunchType);
                 catbtn.Width = flapps.Width;
+                catbtn.ImageAlign = ContentAlignment.MiddleRight;
                 catbtn.Height = 24;
-                catbtn.ImageAlign = ContentAlignment.MiddleLeft;
                 catbtn.Image = (app.LaunchType == null) ? null : SkinEngine.GetIcon(app.LaunchType.Name);
 
                 flapps.Controls.Add(catbtn);
@@ -829,6 +845,14 @@ namespace ShiftOS.WinForms
         private void btnshutdown_Click(object sender, EventArgs e)
         {
             TerminalBackend.InvokeCommand("sos.shutdown");
+        }
+
+        public void HideAppLauncher()
+        {
+            this.Invoke(new Action(() =>
+            {
+                pnladvancedal.Hide();
+            }));
         }
     }
 
