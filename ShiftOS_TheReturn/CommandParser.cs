@@ -10,52 +10,83 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ShiftOS.Engine {
-    public static class CurrentCommandParser {
+namespace ShiftOS.Engine
+{
+    /// <summary>
+    /// Static abstraction layer for the current command parser
+    /// </summary>
+    public static class CurrentCommandParser
+    {
+        /// <summary>
+        /// The current parser
+        /// </summary>
         public static CommandParser parser;
     }
 
-    public class CommandParser {
+    /// <summary>
+    /// Provides functionality for parsing a Terminal command string
+    /// </summary>
+    public sealed class CommandParser
+    {
         public IList<CommandFormat> parts = new List<CommandFormat>();
 
-        public void AddPart(CommandFormat part) {
+        /// <summary>
+        /// Adds a command format to the parser
+        /// </summary>
+        /// <param name="part">The format to add</param>
+        public void AddPart(CommandFormat part)
+        {
             parts.Add(part);
         }
 
-        public void ImportPart(IList<CommandFormat> parts) {
+        /// <summary>
+        /// Imports the command parser formats from a list.
+        /// </summary>
+        /// <param name="parts">The list of formats.</param>
+        public void ImportPart(IList<CommandFormat> parts)
+        {
             this.parts = parts;
         }
 
-        public string Save() {
-            JArray data = new JArray();
-            foreach(CommandFormat part in parts) {
-                CFValue val = new CFValue(part);
-                JObject obj = new JObject();
-                obj["type"] = new JValue(val.type);
-                obj["text"] = new JValue(val.text);
-                data.Add(obj);
-            }
-
-            return data.ToString();
+        /// <summary>
+        /// Saves the parser to a JSON string.
+        /// </summary>
+        /// <returns></returns>
+        public string Save()
+        {
+            return JsonConvert.SerializeObject(parts, Formatting.Indented);
         }
 
-        public static CommandParser Load(string val) {
+        /// <summary>
+        /// Loads a new <see cref="CommandParser"/> from a file. 
+        /// </summary>
+        /// <param name="val">The file to load</param>
+        /// <returns>The parser constructed from the file</returns>
+        public static CommandParser Load(string val)
+        {
             CommandParser parser = new CommandParser();
             JArray data = JArray.Parse(val);
 
-            IList<CFValue> values = data.Select(obj => new CFValue (
+            IList<CFValue> values = data.Select(obj => new CFValue(
                 (string)obj["type"],
                 (string)obj["text"]
             )).ToList();
 
-            foreach(CFValue value in values) {
+            foreach (CFValue value in values)
+            {
                 parser.AddPart(value.GetCommandFormat());
             }
 
             return parser;
         }
 
-        public KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>> ParseCommand(string cdd) {
+        /// <summary>
+        /// Parses a command string.
+        /// </summary>
+        /// <param name="cdd">The command string to parse.</param>
+        /// <returns>The parsed command, ready to be invoked.</returns>
+        public KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>> ParseCommand(string cdd)
+        {
             string command = "";
             string ns = "";
             Dictionary<string, string> arguments = new Dictionary<string, string>();
@@ -69,12 +100,17 @@ namespace ShiftOS.Engine {
 
             string syntaxError = "";
 
-            for (int ii = 0; ii < parts.Count; ii++) {
+            for (int ii = 0; ii < parts.Count; ii++)
+            {
                 CommandFormat part = parts[ii];
-                if (part is CommandFormatMarker) {
-                    if (part is CommandFormatCommand) {
+                if (part is CommandFormatMarker)
+                {
+                    if (part is CommandFormatCommand)
+                    {
                         commandPos = ii;
-                    } else if (part is CommandFormatValue) {
+                    }
+                    else if (part is CommandFormatValue)
+                    {
                         if (firstValuePos > -1)
                             lastValuePos = ii;
                         else
@@ -87,9 +123,11 @@ namespace ShiftOS.Engine {
             string currentArgument = "";
             int help = -1;
 
-            while (position < text.Length) {
+            while (position < text.Length)
+            {
 
-                if (i >= parts.Count) {
+                if (i >= parts.Count)
+                {
                     position = text.Length;
                     command = "+FALSE+";
                     i = 0;
@@ -104,17 +142,25 @@ namespace ShiftOS.Engine {
                 // COMMAND text[ --] ARGUMENT VALUE text[ --] ARGUMENT VALUE
                 // COMMAND text[{] ARGUMENT text[=] VALUE text[, ] ARGUMENT text[=] VALUE text[}]
 
-                if (part is CommandFormatMarker) {
-                    if (part is CommandFormatNamespace) {
+                if (part is CommandFormatMarker)
+                {
+                    if (part is CommandFormatNamespace)
+                    {
                         ns = res;
                         help = -1;
-                    }else if (part is CommandFormatCommand) {
+                    }
+                    else if (part is CommandFormatCommand)
+                    {
                         command = res;
                         help = -1;
-                    } else if (part is CommandFormatArgument) {
+                    }
+                    else if (part is CommandFormatArgument)
+                    {
                         currentArgument = res;
                         help = -1;
-                    } else if (part is CommandFormatValue) {
+                    }
+                    else if (part is CommandFormatValue)
+                    {
                         arguments[currentArgument] = string.Join("", res.Split('"'));
 
                         if (i == firstValuePos)
@@ -124,30 +170,40 @@ namespace ShiftOS.Engine {
                     }
                 }
 
-                if (res == "+FALSE+") {
-                    if (help > -1) {
+                if (res == "+FALSE+")
+                {
+                    if (help > -1)
+                    {
                         i = help;
-                        if (i >= parts.Count) {
+                        if (i >= parts.Count)
+                        {
                             position = text.Length;
                             command = "+FALSE+";
                         }
-                    } else {
+                    }
+                    else
+                    {
                         position = text.Length;
                         syntaxError = "Syntax Error";
                         command = "+FALSE+";
                     }
                     help = -1;
-                } else {
+                }
+                else
+                {
                     position += res.Length;
                 }
 
                 i++;
             }
 
-            if (command == "+FALSE+") {
+            if (command == "+FALSE+")
+            {
                 //lblExampleCommand.Text = "Syntax Error";
                 return new KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>();
-            } else {
+            }
+            else
+            {
                 /*string argvs = "{";
 
                 foreach (KeyValuePair<string, string> entry in arguments) {
@@ -157,47 +213,68 @@ namespace ShiftOS.Engine {
                 argvs += "}";
 
                 lblExampleCommand.Text = command + argvs;*/
-                return new KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>> (new KeyValuePair<string, string>(ns, command), arguments);
+                return new KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>(new KeyValuePair<string, string>(ns, command), arguments);
             }
         }
     }
 
-    public class CFValue {
+    public class CFValue
+    {
         public string type { get; set; }
+
         public string text { get; set; }
 
-        public CFValue(string type, string text) {
+        public CFValue(string type, string text)
+        {
             this.type = type;
             this.text = text;
         }
 
-        public CFValue(CommandFormat format) {
+        public CFValue(CommandFormat format)
+        {
             type = "";
             text = "";
-            if(format is CommandFormatText) {
-                text = ((CommandFormatText) format).str;
-                if(format is CommandFormatOptionalText) {
+            if (format is CommandFormatText)
+            {
+                text = ((CommandFormatText)format).str;
+                if (format is CommandFormatOptionalText)
+                {
                     type = "optionalText";
-                }else if (format is CommandFormatRegex) {
+                }
+                else if (format is CommandFormatRegex)
+                {
                     type = "regexText";
-                }else {
+                }
+                else
+                {
                     type = "text";
                 }
-            }else if (format is CommandFormatMarker) {
-                if (format is CommandFormatNamespace) {
+            }
+            else if (format is CommandFormatMarker)
+            {
+                if (format is CommandFormatNamespace)
+                {
                     type = "namespace";
-                } else if (format is CommandFormatCommand) {
+                }
+                else if (format is CommandFormatCommand)
+                {
                     type = "command";
-                } else if (format is CommandFormatArgument) {
+                }
+                else if (format is CommandFormatArgument)
+                {
                     type = "argument";
-                } else if (format is CommandFormatValue) {
+                }
+                else if (format is CommandFormatValue)
+                {
                     type = "value";
                 }
             }
         }
 
-        public CommandFormat GetCommandFormat() { // TODO update with better code
-            switch (type) {
+        public CommandFormat GetCommandFormat()
+        { // TODO update with better code
+            switch (type)
+            {
                 case "text":
                     return new CommandFormatText(text);
                 case "optionalText":
@@ -220,27 +297,33 @@ namespace ShiftOS.Engine {
     }
 
 
-    public interface CommandFormat {
+    public interface CommandFormat
+    {
         string CheckValidity(string check);
         Control Draw();
     }
-    public class CommandFormatText : CommandFormat {
+    public class CommandFormatText : CommandFormat
+    {
         public string str = "";
         TextBox textBox;
 
-        public CommandFormatText() {
+        public CommandFormatText()
+        {
 
         }
 
-        public CommandFormatText(string str) {
+        public CommandFormatText(string str)
+        {
             this.str = str;
         }
 
-        public virtual string CheckValidity(string check) {
+        public virtual string CheckValidity(string check)
+        {
             return check.StartsWith(str) ? str : "+FALSE+";
         }
 
-        public Control Draw() {
+        public Control Draw()
+        {
             textBox = new TextBox();
             textBox.TextChanged += new EventHandler(TextChanged);
             textBox.Location = new Point(0, 0);
@@ -249,49 +332,65 @@ namespace ShiftOS.Engine {
             return textBox;
         }
 
-        void TextChanged(object sender, EventArgs e) {
+        void TextChanged(object sender, EventArgs e)
+        {
             str = textBox.Text;
         }
     }
 
-    public class CommandFormatOptionalText : CommandFormatText {
-        public CommandFormatOptionalText() : base() {
+    public class CommandFormatOptionalText : CommandFormatText
+    {
+        public CommandFormatOptionalText() : base()
+        {
         }
-        public CommandFormatOptionalText(string str) : base(str) {
+        public CommandFormatOptionalText(string str) : base(str)
+        {
         }
 
-        public override string CheckValidity(string check) {
+        public override string CheckValidity(string check)
+        {
             return check.StartsWith(str) ? str : "";
         }
     }
 
-    public class CommandFormatRegex : CommandFormatText {
-        public CommandFormatRegex() : base() {
+    public class CommandFormatRegex : CommandFormatText
+    {
+        public CommandFormatRegex() : base()
+        {
         }
-        public CommandFormatRegex(string str) : base(str) {
+        public CommandFormatRegex(string str) : base(str)
+        {
         }
 
-        public override string CheckValidity(string check) {
+        public override string CheckValidity(string check)
+        {
             Match match = (new Regex("^" + str)).Match(check);
             return match.Success ? match.Value : "+FALSE+";
         }
     }
 
-    public class CommandFormatMarker : CommandFormat {
+    public class CommandFormatMarker : CommandFormat
+    {
         protected string str;
         Button button;
 
-        public CommandFormatMarker() {
+        public CommandFormatMarker()
+        {
         }
 
-        public virtual string CheckValidity(string check) {
+        public virtual string CheckValidity(string check)
+        {
             string res = string.Empty;
             string alphanumeric = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm"; // not using regex for performance reasons
 
-            foreach (char c in check) {
-                if (alphanumeric.IndexOf(c) > -1) {
+            foreach (char c in check)
+            {
+                if (alphanumeric.IndexOf(c) > -1)
+                {
                     res += c;
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }
@@ -299,7 +398,8 @@ namespace ShiftOS.Engine {
             return res;
         }
 
-        public virtual Control Draw() {
+        public virtual Control Draw()
+        {
             button = new Button();
             button.Location = new Point(0, 0);
             button.Text = "Marker";
@@ -308,56 +408,72 @@ namespace ShiftOS.Engine {
         }
     }
 
-    public class CommandFormatCommand : CommandFormatMarker {
-        public override Control Draw() {
+    public class CommandFormatCommand : CommandFormatMarker
+    {
+        public override Control Draw()
+        {
             Button draw = (Button)base.Draw();
             draw.Text = "Command";
             return draw;
         }
     }
 
-    public class CommandFormatNamespace : CommandFormatMarker {
-        public override Control Draw() {
+    public class CommandFormatNamespace : CommandFormatMarker
+    {
+        public override Control Draw()
+        {
             Button draw = (Button)base.Draw();
             draw.Text = "Namespace";
             return draw;
         }
     }
 
-    public class CommandFormatArgument : CommandFormatMarker {
-        public override Control Draw() {
+    public class CommandFormatArgument : CommandFormatMarker
+    {
+        public override Control Draw()
+        {
             Button draw = (Button)base.Draw();
             draw.Text = "Argument";
             return draw;
         }
     }
 
-    public class CommandFormatValue : CommandFormatMarker {
-        public override string CheckValidity(string cd) {
+    public class CommandFormatValue : CommandFormatMarker
+    {
+        public override string CheckValidity(string cd)
+        {
             string res = string.Empty;
             var check = "";
             bool done = false;
 
-            if (cd.StartsWith("\"")) {
+            if (cd.StartsWith("\""))
+            {
                 check = cd.Substring(1);
 
-                foreach (char c in check) {
-                    if (c != '"') {
+                foreach (char c in check)
+                {
+                    if (c != '"')
+                    {
                         res += c;
-                    } else {
+                    }
+                    else
+                    {
                         done = true;
                         res = "\"" + res + "\"";
                         break;
                     }
                 }
-            } else{
+            }
+            else
+            {
                 res = base.CheckValidity(cd);
                 done = true;
             }
             return done ? res : "+FALSE+";
         }
 
-        public override Control Draw() {
+        public override Control Draw()
+        {
             Button draw = (Button)base.Draw();
             draw.Text = "\"Value\"";
             return draw;
