@@ -164,6 +164,8 @@ namespace ShiftOS.Server
         public static void SaveGame(string guid, object contents)
         {
             var sav = contents as Save;
+            if (string.IsNullOrWhiteSpace(sav.Username))
+                return;
             sav.Username = sav.Username.ToLower();
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
