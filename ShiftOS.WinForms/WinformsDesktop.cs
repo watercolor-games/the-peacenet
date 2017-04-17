@@ -664,6 +664,15 @@ namespace ShiftOS.WinForms
                                 catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
                                 catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
                                 catbtn.TextAlign = ContentAlignment.MiddleLeft;
+                                catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                                catbtn.MouseEnter += (o, a) =>
+                                {
+                                    catbtn.ForeColor = LoadedSkin.Menu_SelectedTextColor;
+                                };
+                                catbtn.MouseLeave += (o, a) =>
+                                {
+                                    catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                                };
                                 catbtn.Text = kv.Key;
                                 catbtn.Width = flcategories.Width;
                                 catbtn.Height = 24;
@@ -705,6 +714,16 @@ namespace ShiftOS.WinForms
                                 catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
                                 catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
                                 catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                                catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                                catbtn.MouseEnter += (o, a) =>
+                                {
+                                    catbtn.ForeColor = LoadedSkin.Menu_SelectedTextColor;
+                                };
+                                catbtn.MouseLeave += (o, a) =>
+                                {
+                                    catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                                };
+
                                 catbtn.TextAlign = ContentAlignment.MiddleLeft;
                                 catbtn.Text = "Shutdown";
                                 catbtn.Width = flcategories.Width;
@@ -733,6 +752,15 @@ namespace ShiftOS.WinForms
                 catbtn.FlatAppearance.MouseOverBackColor = LoadedSkin.Menu_MenuItemSelected;
                 catbtn.FlatAppearance.MouseDownBackColor = LoadedSkin.Menu_MenuItemPressedGradientBegin;
                 catbtn.BackColor = LoadedSkin.Menu_ToolStripDropDownBackground;
+                catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                catbtn.MouseEnter += (o, a) =>
+                {
+                    catbtn.ForeColor = LoadedSkin.Menu_SelectedTextColor;
+                };
+                catbtn.MouseLeave += (o, a) =>
+                {
+                    catbtn.ForeColor = LoadedSkin.Menu_TextColor;
+                };
                 catbtn.TextAlign = ContentAlignment.MiddleLeft;
                 catbtn.Text = (app is LuaLauncherItem) ? app.DisplayData.Name : NameChangerBackend.GetNameRaw(app.LaunchType);
                 catbtn.Width = flapps.Width;
