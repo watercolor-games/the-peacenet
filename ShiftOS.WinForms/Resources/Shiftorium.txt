@@ -99,13 +99,6 @@
 		Description: "Wanna start all over with a new equation? With this CE (Clear Everything) button, you get rid of not only the numbers in the number field, but also the equation!"
 	},
 	{
-		Name: "MUD Fundamentals",
-		Cost: 50,
-		Description: "Some basic commands for the terminal that'll help you out in the multi-user domain.",
-		Category: "Kernel & System",
-		Dependencies: null
-	},
-	{
 		Name: "AL Notifications",
 		Cost: 150,
 		Dependencies: "app_launcher",

@@ -121,7 +121,7 @@ namespace ShiftOS.Server
         public static void CheckUserExists(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
-            if (args["username"] != null && args["password"] != null)
+            if (args["username"] != null)
             {
                 args["username"] = args["username"].ToString().ToLower();
                 foreach (var savefile in Directory.GetFiles("saves"))
@@ -131,7 +131,7 @@ namespace ShiftOS.Server
                         var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
 
-                        if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                        if (save.Username == args["username"].ToString())
                         {
                             server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {

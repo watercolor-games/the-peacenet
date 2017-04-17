@@ -120,7 +120,7 @@ namespace ShiftOS.Engine
                         //This haults the client until the connection is successful.
                         while (ServerManager.thisGuid == new Guid())
                         {
-
+                            Thread.Sleep(10);
                         }
                         Console.WriteLine("GUID received - bootstrapping complete.");
                         FinishBootstrap();
@@ -133,7 +133,7 @@ namespace ShiftOS.Engine
                         ServerManager.StartLANServer();
                         while (ServerManager.thisGuid == new Guid())
                         {
-
+                            Thread.Sleep(10);
                         }
                         Console.WriteLine("GUID received - bootstrapping complete.");
                         FinishBootstrap();
@@ -172,7 +172,7 @@ namespace ShiftOS.Engine
 
             while (CurrentSave == null)
             {
-
+                Thread.Sleep(10);
             }
 
             Localization.SetupTHETRUEDefaultLocals();
@@ -181,7 +181,7 @@ namespace ShiftOS.Engine
 
             while (CurrentSave.StoryPosition < 1)
             {
-
+                Thread.Sleep(10);
             }
 
             Thread.Sleep(75);

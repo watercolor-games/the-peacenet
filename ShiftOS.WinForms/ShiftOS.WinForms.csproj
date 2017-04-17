@@ -286,6 +286,7 @@
     <Compile Include="Oobe.Designer.cs">
       <DependentUpon>Oobe.cs</DependentUpon>
     </Compile>
+    <Compile Include="OobeStory.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

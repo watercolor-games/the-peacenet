@@ -64,12 +64,12 @@ namespace ShiftOS.WinForms
             {
                 AppearanceManager.SetupWindow(new Applications.Terminal());
             };
-            AppearanceManager.Initiate(new WinformsWindowManager());
-            OutOfBoxExperience.Init(new Oobe());
             Infobox.Init(new Dialog());
             FileSkimmerBackend.Init(new WinformsFSFrontend());
             var desk = new WinformsDesktop();
             Desktop.Init(desk);
+            OutOfBoxExperience.Init(new Oobe());
+            AppearanceManager.Initiate(new WinformsWindowManager());
             Application.Run(desk);
         }
     }

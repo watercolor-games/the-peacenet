@@ -68,7 +68,7 @@ namespace ShiftOS.Engine
                             }
                         }
                     }
-                    catch { }
+                    catch (Exception ex) { throw ex; }
                 }
             }
 #if DEBUG

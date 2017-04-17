@@ -56,7 +56,6 @@ namespace ShiftOS.WinForms.Applications {
 
         public static string latestCommmand = "";
 
-
         public static bool IsInRemoteSystem = false;
         public static string RemoteGuid = "";
 
@@ -371,5 +370,9 @@ namespace ShiftOS.WinForms.Applications {
 
         }
 
+        internal void ClearText()
+        {
+            rtbterm.Text = "";
+        }
     }
 }

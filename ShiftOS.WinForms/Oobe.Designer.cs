@@ -82,14 +82,14 @@ namespace ShiftOS.WinForms
             // 
             // lblhackwords
             // 
-            this.lblhackwords.AutoSize = true;
             this.lblhackwords.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblhackwords.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblhackwords.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.lblhackwords.Location = new System.Drawing.Point(0, 0);
             this.lblhackwords.Name = "lblhackwords";
-            this.lblhackwords.Size = new System.Drawing.Size(127, 18);
+            this.lblhackwords.Size = new System.Drawing.Size(653, 457);
             this.lblhackwords.TabIndex = 1;
+            this.lblhackwords.Tag = "header2";
             this.lblhackwords.Text = "Hijack in progress";
             // 
             // hackeffecttimer
