@@ -193,12 +193,14 @@ namespace ShiftOS.WinForms
             Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
             Console.WriteLine("Connection successful, system spinning up...");
             Thread.Sleep(200);
+            UsernameWait:
             Console.WriteLine("No users associated with this system. Please enter a username.");
             Console.WriteLine(" - If the username is registered as a digital being, you will be prompted for your password. Else, you will be prompted to create a new account.");
             while(position == 1)
             {
                 Thread.Sleep(10);
             }
+            bool goBack = false;
             int incorrectChances = 2;
             Console.WriteLine("Checking sentience records...");
             ServerManager.MessageReceived += (msg) =>
@@ -239,13 +241,14 @@ namespace ShiftOS.WinForms
                             {
                                 Console.WriteLine("Access denied.");
                                 position = 2;
+                                goBack = true;
                             }
                         }
                     }
                 }
             };
             ServerManager.SendMessage("mud_checkuserexists", JsonConvert.SerializeObject(new { username = SaveSystem.CurrentSave.Username }));
-            while(position == 2)
+            while (position == 2)
             {
                 Thread.Sleep(10);
             }
@@ -253,22 +256,33 @@ namespace ShiftOS.WinForms
             {
                 Thread.Sleep(10);
             }
+            if (goBack)
+                goto UsernameWait;
             Console.WriteLine("Sentience linkup successful.");
             Console.WriteLine("We will bring you to your system in 5 seconds.");
             Thread.Sleep(5000);
             Desktop.InvokeOnWorkerThread(() =>
             {
-                var lst = new List<Form>();
-                foreach (Form frm in Application.OpenForms)
-                    lst.Add(frm);
-                lst.ForEach((frm) =>
+                SaveSystem.CurrentSave.StoryPosition = 3;
+                SaveSystem.SaveGame();
+                while (!Shiftorium.IsInitiated)
                 {
-                    if (!(frm is WinformsDesktop))
-                        frm.Close();
-                });
-                TerminalBackend.PrefixEnabled = true;
-
-                AppearanceManager.SetupWindow(new Applications.Terminal());
+                    Thread.Sleep(10);
+                }
+                if (!Shiftorium.UpgradeInstalled("desktop"))
+                {
+                    term.ClearText();
+                    TerminalBackend.PrintPrompt();
+                    Console.Write("sos.status");
+                    TerminalBackend.InvokeCommand("sos.status");
+                    TerminalBackend.PrintPrompt();
+                    Console.Write("sos.help");
+                    TerminalBackend.InvokeCommand("sos.help");
+                }
+                else
+                {
+                    AppearanceManager.Close(term);
+                }
             });
         }
         private static bool isValid(string text, string chars)
