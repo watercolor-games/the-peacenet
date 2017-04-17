@@ -449,13 +449,14 @@ namespace ShiftOS.WinForms
                 if (Shiftorium.UpgradeInstalled("desktop_widgets"))
                 {
                     Widgets.Clear();
+                    pnlwidgetlayer.Controls.Clear();
                     foreach(var widget in WidgetManager.GetAllWidgetTypes())
                     {
                         UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
 
                         w.Location = WidgetManager.LoadLocation(w.GetType());
 
-                        pnlwidgetlayer.Controls.Add(w);
+                        //pnlwidgetlayer.Controls.Add(w);
                         MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
                     }
@@ -559,6 +560,7 @@ namespace ShiftOS.WinForms
                 lbalstatus.BackColor = LoadedSkin.ALStatusPanelBackColor;
                 //Fonts
                 lbalstatus.Font = LoadedSkin.ALStatusPanelFont;
+                lbalstatus.ForeColor = LoadedSkin.ALStatusPanelTextColor;
                 btnshutdown.Font = LoadedSkin.ShutdownFont;
 
                 //Upgrades
@@ -593,6 +595,9 @@ namespace ShiftOS.WinForms
                 pnlalsystemactions.BackgroundImageLayout = GetImageLayout("al_bg_system");
                 if (pnlalsystemactions.BackgroundImage != null)
                     btnshutdown.BackColor = Color.Transparent;
+
+                btnshutdown.Font = LoadedSkin.ShutdownFont;
+                btnshutdown.ForeColor = LoadedSkin.ShutdownForeColor;
             }
 
 
