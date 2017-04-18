@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,22 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms
 {
+    [Namespace("test")]
     public class OobeStory
     {
+        [Command("test")]
+        [RequiresArgument("num")]
+        public static bool TestThingy(Dictionary<string, object> args)
+        {
+            long num = Convert.ToInt64(args["num"].ToString());
+            string hex = num.ToString("X");
+            string bin = Convert.ToString(num, 2);
+            Console.WriteLine("Hex: " + hex);
+            Console.WriteLine("Bin: " + bin);
+            return true;
+        }
+
+
         [Story("mud_fundamentals")]
         public static void DoStory()
         {
@@ -271,17 +286,16 @@ namespace ShiftOS.WinForms
                 }
                 if (!Shiftorium.UpgradeInstalled("desktop"))
                 {
-                    term.ClearText();
-                    TerminalBackend.PrintPrompt();
-                    Console.Write("sos.status");
-                    TerminalBackend.InvokeCommand("sos.status");
-                    TerminalBackend.PrintPrompt();
-                    Console.Write("sos.help");
-                    TerminalBackend.InvokeCommand("sos.help");
-                }
-                else
-                {
-                    AppearanceManager.Close(term);
+                    SaveSystem.GameReady += () =>
+                    {
+                        term.ClearText();
+                        TerminalBackend.PrintPrompt();
+                        Console.Write("sos.status");
+                        TerminalBackend.InvokeCommand("sos.status");
+                        TerminalBackend.PrintPrompt();
+                        Console.Write("sos.help");
+                        TerminalBackend.InvokeCommand("sos.help");
+                    };
                 }
             });
         }
