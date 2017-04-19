@@ -456,7 +456,7 @@ namespace ShiftOS.WinForms
 
                         w.Location = WidgetManager.LoadLocation(w.GetType());
 
-                        //pnlwidgetlayer.Controls.Add(w);
+                        pnlwidgetlayer.Controls.Add(w);
                         MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
                     }
