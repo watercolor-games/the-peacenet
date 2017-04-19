@@ -218,7 +218,7 @@ namespace ShiftOS.WinForms
             bool goBack = false;
             int incorrectChances = 2;
             Console.WriteLine("Checking sentience records...");
-            ServerManager.MessageReceived += (msg) =>
+            ServerMessageReceived smr = (msg) =>
             {
                 if (position == 2)
                 {
@@ -262,6 +262,7 @@ namespace ShiftOS.WinForms
                     }
                 }
             };
+            ServerManager.MessageReceived += smr;
             ServerManager.SendMessage("mud_checkuserexists", JsonConvert.SerializeObject(new { username = SaveSystem.CurrentSave.Username }));
             while (position == 2)
             {
@@ -272,7 +273,10 @@ namespace ShiftOS.WinForms
                 Thread.Sleep(10);
             }
             if (goBack)
+            {
+                ServerManager.MessageReceived -= smr;
                 goto UsernameWait;
+            }
             Console.WriteLine("Sentience linkup successful.");
             Console.WriteLine("We will bring you to your system in 5 seconds.");
             Thread.Sleep(5000);
