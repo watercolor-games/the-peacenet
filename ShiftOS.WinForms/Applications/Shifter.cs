@@ -832,7 +832,7 @@ namespace ShiftOS.WinForms.Applications
                         })));
                     };
                     flbody.SetFlowBreak(color, true);
-
+                    color.Tag = "keepbg";
                     flbody.Controls.Add(color);
                     color.Show();
                 }
