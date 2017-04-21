@@ -132,6 +132,7 @@ namespace ShiftOS.Engine
             mount.Name = "Shared";
             Utils.Mount(JsonConvert.SerializeObject(mount));
             ScanForDirectories(SharedFolder, 1);
+            //This event-based system allows us to sync the ramdisk from ShiftOS to the host OS.
             Utils.DirectoryCreated += (dir) =>
             {
                 if (dir.StartsWith("1:/"))
@@ -171,7 +172,17 @@ namespace ShiftOS.Engine
                 }
             };
 
-
+            //This thread will sync the ramdisk from the host OS to ShiftOS.
+            var t = new Thread(() =>
+            {
+                while (!SaveSystem.ShuttingDown)
+                {
+                    Thread.Sleep(15000);
+                    ScanForDirectories(SharedFolder, 1);
+                }
+            });
+            t.IsBackground = true;
+            t.Start();
         }
 
 
@@ -186,7 +197,8 @@ namespace ShiftOS.Engine
             foreach (var directory in System.IO.Directory.GetDirectories(folder))
             {
                 string mfsDir = directory.Replace(SharedFolder, $"{mount}:").Replace("\\", "/");
-                CreateDirectory(mfsDir);
+                if(!DirectoryExists(mfsDir))
+                    CreateDirectory(mfsDir);
                 ScanForDirectories(directory, mount);
             }
         }
