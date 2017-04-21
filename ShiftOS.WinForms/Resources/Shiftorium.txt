@@ -78,6 +78,34 @@
 		Description: "You can add numbers together, but it must be tiring to add the same number over and over. This multiplication button will make it easier for you!"
 	},
 	{
+		Name: "FS Copy",
+		Cost: 75,
+		Dependencies: "file_skimmer",
+		Description: "It is cool to be able to browse your files, but what if you need a new copy of a file? This upgrade adds a button to the File Skimmer that allows you to copy single files to new locations.",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Move",
+		Cost: 75,
+		Dependencies: "file_skimmer",
+		Description: "Want to move files from one place to another? This upgrade adds a button to the File Skimmer that does just that!",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Copy Folder",
+		Cost: 100,
+		Dependencies: "fs_copy",
+		Description: "You can copy single files, but what if you have a lot of files in a folder that you need to get copied over? This upgrade adds the ability to copy a folder to a new location in the File Skimmer.",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Move Folder",
+		Cost: 100,
+		Dependencies: "fs_move",
+		Description: "Being able to move single files is great, but it takes time to move all the files in a folder to a new location. This upgrade will cut down on that time!",
+		Category: "Enhancements"
+	},
+	{
 		Name: "Calc Divide Button",
 		Cost: 800,
 		Dependencies: "calc_multiply_button",

@@ -173,6 +173,11 @@ namespace ShiftOS.Objects.ShiftFS
             t.Start();
         }
 
+        public static event Action<string> DirectoryCreated;
+        public static event Action<string> DirectoryDeleted;
+        public static event Action<string> FileWritten;
+        public static event Action<string> FileDeleted;
+
 
         public static void CreateDirectory(string path)
         {
@@ -190,6 +195,7 @@ namespace ShiftOS.Objects.ShiftFS
                     Name = pathlist[pathlist.Length - 1],
                     permissions = CurrentUser,
                 });
+                DirectoryCreated?.Invoke(path);
             }
             else
             {
@@ -231,7 +237,7 @@ namespace ShiftOS.Objects.ShiftFS
                 var f = dir.FindFileByName(pathlist[pathlist.Length - 1]);
                 f.Data = Encoding.UTF8.GetBytes(contents);
             }
-
+            FileWritten?.Invoke(path);
         }
 
 
@@ -248,10 +254,12 @@ namespace ShiftOS.Objects.ShiftFS
             if (FileExists(path))
             {
                 dir.RemoveFile(pathlist[pathlist.Length - 1]);
+                FileDeleted?.Invoke(path);
             }
             else
             {
                 dir.RemoveDirectory(pathlist[pathlist.Length - 1]);
+                DirectoryDeleted?.Invoke(path);
             }
 
         }
@@ -276,7 +284,7 @@ namespace ShiftOS.Objects.ShiftFS
                 var f = dir.FindFileByName(pathlist[pathlist.Length - 1]);
                 f.Data = contents;
             }
-
+            FileWritten?.Invoke(path);
         }
 
 

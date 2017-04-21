@@ -259,6 +259,9 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            moveToolStripMenuItem.Visible = false;
+            copyToolStripMenuItem.Visible = false;
+
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -282,6 +285,44 @@ namespace ShiftOS.WinForms.Applications
                     Infobox.Show("New folder", "You can't create a folder with no name!");
                 }
             });
+        }
+
+        private void lvitems_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (currentdir != "__system")
+                {
+                    var itm = lvitems.SelectedItems[0];
+                    if (itm.Tag.ToString() != "__..")
+                    {
+                        if (DirectoryExists(currentdir + "/" + itm.Tag.ToString()))
+                        {
+                            moveToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_move_folder");
+                            copyToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_copy_folder");
+                        }
+                        else if (FileExists(currentdir + "/" + itm.Tag.ToString()))
+                        {
+                            moveToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_move");
+                            copyToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_copy");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                moveToolStripMenuItem.Visible = false;
+                copyToolStripMenuItem.Visible = false;
+            }
+        }
+
+        private void lvitems_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if(lvitems.SelectedItems.Count == 0)
+            {
+                moveToolStripMenuItem.Visible = false;
+                copyToolStripMenuItem.Visible = false;
+            }
         }
     }
 

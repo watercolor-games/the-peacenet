@@ -40,7 +40,6 @@ namespace ShiftOS.Engine
         public static void Init()
         {
             Locations = new Dictionary<string, string>();
-            Locations.Add("classic", "C:\\ShiftOS");
             Locations.Add("root", "0:");
 
             AddPath("root", "system");
@@ -133,6 +132,46 @@ namespace ShiftOS.Engine
             mount.Name = "Shared";
             Utils.Mount(JsonConvert.SerializeObject(mount));
             ScanForDirectories(SharedFolder, 1);
+            Utils.DirectoryCreated += (dir) =>
+            {
+                if (dir.StartsWith("1:/"))
+                {
+                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                    if (!System.IO.Directory.Exists(real))
+                        System.IO.Directory.CreateDirectory(real);
+                }
+            };
+
+            Utils.DirectoryDeleted += (dir) =>
+            {
+                if (dir.StartsWith("1:/"))
+                {
+                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                    if (System.IO.Directory.Exists(real))
+                        System.IO.Directory.Delete(real, true);
+                }
+            };
+
+            Utils.FileWritten += (dir) =>
+            {
+                if (dir.StartsWith("1:/"))
+                {
+                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                    System.IO.File.WriteAllBytes(real, ReadAllBytes(dir));
+                }
+            };
+
+            Utils.FileDeleted += (dir) =>
+            {
+                if (dir.StartsWith("1:/"))
+                {
+                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                    if (System.IO.File.Exists(real))
+                        System.IO.File.Delete(real);
+                }
+            };
+
+
         }
 
 

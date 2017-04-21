@@ -295,6 +295,7 @@
     <Compile Include="ScriptingTestFunctions.cs" />
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
+    <Compile Include="SkinCommands.cs" />
     <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
