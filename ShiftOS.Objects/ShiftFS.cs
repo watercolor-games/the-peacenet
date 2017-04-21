@@ -401,6 +401,63 @@ namespace ShiftOS.Objects.ShiftFS
             return paths.ToArray();
         }
 
+        /// <summary>
+        /// Copies a file or directory from one path to another, deleting the original.
+        /// </summary>
+        /// <param name="path">THe input path, must be a valid directory or file.</param>
+        /// <param name="target">The output path.</param>
+        public static void Move(string path, string target)
+        {
+            if (FileExists(path))
+            {
+                WriteAllBytes(target, ReadAllBytes(path));
+                Delete(path);
+            }
+            else if (DirectoryExists(path))
+            {
+                if (!DirectoryExists(target))
+                    CreateDirectory(target);
+                foreach (var file in GetFiles(path))
+                {
+                    var name = GetFileInfo(file).Name;
+                    Copy(file, target + "/" + name);
+                }
+                foreach (var dir in GetDirectories(path))
+                {
+                    string name = GetDirectoryInfo(dir).Name;
+                    Copy(dir, target + "/" + name);
+                }
+                Delete(path);
+            }
+        }
+
+
+        /// <summary>
+        /// Copies a file or directory from one path to another.
+        /// </summary>
+        /// <param name="path">The input path, must be a valid directory or file.</param>
+        /// <param name="target">The output path.</param>
+        public static void Copy(string path, string target)
+        {
+            if (FileExists(path))
+                WriteAllBytes(target, ReadAllBytes(path));
+            else if (DirectoryExists(path))
+            {
+                if (!DirectoryExists(target))
+                    CreateDirectory(target);
+                foreach(var file in GetFiles(path))
+                {
+                    var name = GetFileInfo(file).Name;
+                    Copy(file, target + "/" + name);
+                }
+                foreach(var dir in GetDirectories(path))
+                {
+                    string name = GetDirectoryInfo(dir).Name;
+                    Copy(dir, target + "/" + name);
+                }
+            }
+        }
+
         public static string[] GetFiles(string path)
         {
             string[] pathlist = path.Split('/');

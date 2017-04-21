@@ -324,6 +324,69 @@ namespace ShiftOS.WinForms.Applications
                 copyToolStripMenuItem.Visible = false;
             }
         }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = currentdir + "/" + lvitems.SelectedItems[0].Tag.ToString();
+                if (DirectoryExists(path))
+                {
+                    FileSkimmerBackend.GetFile(new[] { "Directory" }, FileOpenerStyle.Save, (newPath) =>
+                     {
+                         Copy(path, newPath);
+                         ResetList();
+                     });
+                }
+                else if (FileExists(path))
+                {
+                    string[] psplit = path.Split('.');
+                    string ext = "." + psplit[psplit.Length - 1];
+                    FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, (newPath) =>
+                    {
+                        Copy(path, newPath);
+                        ResetList();
+                    });
+
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void moveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = currentdir + "/" + lvitems.SelectedItems[0].Tag.ToString();
+                if (DirectoryExists(path))
+                {
+                    FileSkimmerBackend.GetFile(new[] { "Directory" }, FileOpenerStyle.Save, (newPath) =>
+                    {
+                        Utils.Move(path, newPath);
+                        ResetList();
+                    });
+                }
+                else if (FileExists(path))
+                {
+                    string[] psplit = path.Split('.');
+                    string ext = psplit[psplit.Length - 1];
+                    FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, (newPath) =>
+                    {
+                        Utils.Move(path, newPath);
+                        ResetList();
+                    });
+
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
     }
 
    
