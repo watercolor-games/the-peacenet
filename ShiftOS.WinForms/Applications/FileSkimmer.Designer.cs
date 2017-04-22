@@ -128,6 +128,7 @@ namespace ShiftOS.WinForms.Applications
             this.connectToRemoteServerToolStripMenuItem.Name = "connectToRemoteServerToolStripMenuItem";
             this.connectToRemoteServerToolStripMenuItem.Size = new System.Drawing.Size(153, 20);
             this.connectToRemoteServerToolStripMenuItem.Text = "Connect to remote server";
+            this.connectToRemoteServerToolStripMenuItem.Visible = false;
             // 
             // copyToolStripMenuItem
             // 
