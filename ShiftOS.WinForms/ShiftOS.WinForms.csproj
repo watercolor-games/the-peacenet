@@ -270,11 +270,11 @@
     <Compile Include="DesktopWidgets\Clock.Designer.cs">
       <DependentUpon>Clock.cs</DependentUpon>
     </Compile>
-    <Compile Include="DesktopWidgets\CommandRunner.cs">
+    <Compile Include="DesktopWidgets\TerminalWidget.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DesktopWidgets\CommandRunner.Designer.cs">
-      <DependentUpon>CommandRunner.cs</DependentUpon>
+    <Compile Include="DesktopWidgets\TerminalWidget.Designer.cs">
+      <DependentUpon>TerminalWidget.cs</DependentUpon>
     </Compile>
     <Compile Include="DesktopWidgets\UpgradePercentage.cs">
       <SubType>UserControl</SubType>
@@ -433,6 +433,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\Clock.resx">
       <DependentUpon>Clock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\TerminalWidget.resx">
+      <DependentUpon>TerminalWidget.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\UpgradePercentage.resx">
       <DependentUpon>UpgradePercentage.cs</DependentUpon>

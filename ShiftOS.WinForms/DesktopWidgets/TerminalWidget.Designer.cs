@@ -1,6 +1,6 @@
 ﻿namespace ShiftOS.WinForms.DesktopWidgets
 {
-    partial class CommandRunner
+    partial class TerminalWidget
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,8 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // TerminalWidget
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "TerminalWidget";
+            this.Size = new System.Drawing.Size(185, 133);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
