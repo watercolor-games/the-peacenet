@@ -88,7 +88,6 @@ namespace ShiftOS.WinForms.Applications
                 ImageAsBinary = Utils.ReadAllBytes(file);
                 System.IO.File.WriteAllBytes("temp_bin.bmp", ImageAsBinary);
                 Image = SkinEngine.ImageFromBinary(ImageAsBinary);
-                Image.Save("temp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                 Setup();
             })));
         }
