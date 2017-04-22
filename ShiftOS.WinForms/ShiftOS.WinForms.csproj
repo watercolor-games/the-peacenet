@@ -270,6 +270,12 @@
     <Compile Include="DesktopWidgets\Clock.Designer.cs">
       <DependentUpon>Clock.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopWidgets\CommandRunner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\CommandRunner.Designer.cs">
+      <DependentUpon>CommandRunner.cs</DependentUpon>
+    </Compile>
     <Compile Include="DesktopWidgets\UpgradePercentage.cs">
       <SubType>UserControl</SubType>
     </Compile>
