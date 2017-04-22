@@ -1115,6 +1115,42 @@ namespace ShiftOS.Engine
         [ShifterDescription("What part of the panel should the status text stick to?")]
         public ContentAlignment ALStatusPanelAlignment = ContentAlignment.MiddleCenter;
 
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("AL System Status Height")]
+        [ShifterDescription("Set the height of the top system status bar in the App Launcher.")]
+        public int ALSystemStatusHeight = 50;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("AL Size")]
+        [ShifterDescription("Set the size of the App Launcher's container")]
+        public Size AALSize = new Size(425, 500);
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("AL Category View Width")]
+        [ShifterDescription("Set the width of the left Category Listing on the app launcher.")]
+        public int AALCategoryViewWidth = 237;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("AL Item List Width")]
+        [ShifterDescription("Set the width of the item list in the app launcher.")]
+        public int AALItemViewWidth = 237;
+
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("App Launcher")]
+        [RequiresUpgrade("shift_advanced_app_launcher")]
+        [ShifterName("AL System Actions Height")]
+        [ShifterDescription("Set the height of the bottom system actions bar in the App Launcher.")]
+        public int ALSystemActionHeight = 30;
+
         [ShifterMeta("Desktop")]
         [ShifterCategory("App Launcher")]
         [RequiresUpgrade("skinning;shift_advanced_app_launcher")]

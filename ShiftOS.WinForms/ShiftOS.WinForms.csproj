@@ -264,6 +264,12 @@
     <Compile Include="DesktopWidgets\Clock.Designer.cs">
       <DependentUpon>Clock.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopWidgets\UpgradePercentage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\UpgradePercentage.Designer.cs">
+      <DependentUpon>UpgradePercentage.cs</DependentUpon>
+    </Compile>
     <Compile Include="DownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -412,6 +418,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\Clock.resx">
       <DependentUpon>Clock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\UpgradePercentage.resx">
+      <DependentUpon>UpgradePercentage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>

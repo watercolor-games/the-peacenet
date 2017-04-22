@@ -604,6 +604,14 @@ namespace ShiftOS.WinForms
 
                 btnshutdown.Font = LoadedSkin.ShutdownFont;
                 btnshutdown.ForeColor = LoadedSkin.ShutdownForeColor;
+
+                pnladvancedal.Size = LoadedSkin.AALSize;
+
+                pnlalsystemactions.Height = LoadedSkin.ALSystemActionHeight;
+                pnlstatus.Height = LoadedSkin.ALSystemStatusHeight;
+
+                flcategories.Width = LoadedSkin.AALCategoryViewWidth;
+                this.flapps.Width = LoadedSkin.AALItemViewWidth;
             }
 
 
