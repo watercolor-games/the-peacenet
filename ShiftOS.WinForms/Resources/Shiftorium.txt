@@ -271,6 +271,20 @@
 		Dependencies: "color_depth_8_bits"
 	},
 	{
+		Name: "FS Delete",
+		Cost: 75,
+		Description: "Got some files that you want to get rid of? This upgrade adds a button to the File Skimmer for doing just that.",
+		Dependencies: "file_skimmer",
+		Category: "Enhancements",
+	},
+	{
+		Name: "FS Recursive Delete",
+		Cost: 100,
+		Description: "Deleting files is great, but what if you have an entire folder you need to get rid of? This upgrade allows the deletion of folders and all files and folders inside them. Just, don't delete your system folder!",
+		Dependencies: "fs_delete",
+		Category: "Enhancements"
+	},
+	{
 		Name: "Color Depth 24 Bits",
 		Cost: 24000,
 		Description: "Having actual color is nice for our images as we can truly see detail in our images - but if we had a third byte, each channel could have up to 256 values - adding up to almost 17 million different colors! Our eyes can't even distinguish that many.",

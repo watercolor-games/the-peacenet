@@ -135,41 +135,57 @@ namespace ShiftOS.Engine
             //This event-based system allows us to sync the ramdisk from ShiftOS to the host OS.
             Utils.DirectoryCreated += (dir) =>
             {
-                if (dir.StartsWith("1:/"))
+                try
                 {
-                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
-                    if (!System.IO.Directory.Exists(real))
-                        System.IO.Directory.CreateDirectory(real);
+                    if (dir.StartsWith("1:/"))
+                    {
+                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        if (!System.IO.Directory.Exists(real))
+                            System.IO.Directory.CreateDirectory(real);
+                    }
                 }
+                catch { }
             };
 
             Utils.DirectoryDeleted += (dir) =>
             {
-                if (dir.StartsWith("1:/"))
+                try
                 {
-                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
-                    if (System.IO.Directory.Exists(real))
-                        System.IO.Directory.Delete(real, true);
+                    if (dir.StartsWith("1:/"))
+                    {
+                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        if (System.IO.Directory.Exists(real))
+                            System.IO.Directory.Delete(real, true);
+                    }
                 }
+                catch { }
             };
 
             Utils.FileWritten += (dir) =>
             {
-                if (dir.StartsWith("1:/"))
+                try
                 {
-                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
-                    System.IO.File.WriteAllBytes(real, ReadAllBytes(dir));
+                    if (dir.StartsWith("1:/"))
+                    {
+                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        System.IO.File.WriteAllBytes(real, ReadAllBytes(dir));
+                    }
                 }
+                catch { }
             };
 
             Utils.FileDeleted += (dir) =>
             {
-                if (dir.StartsWith("1:/"))
+                try
                 {
-                    string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
-                    if (System.IO.File.Exists(real))
-                        System.IO.File.Delete(real);
+                    if (dir.StartsWith("1:/"))
+                    {
+                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        if (System.IO.File.Exists(real))
+                            System.IO.File.Delete(real);
+                    }
                 }
+                catch { }
             };
 
             //This thread will sync the ramdisk from the host OS to ShiftOS.

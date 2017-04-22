@@ -261,7 +261,7 @@ namespace ShiftOS.WinForms.Applications
         {
             moveToolStripMenuItem.Visible = false;
             copyToolStripMenuItem.Visible = false;
-
+            deleteToolStripMenuItem.Visible = false;
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -298,11 +298,13 @@ namespace ShiftOS.WinForms.Applications
                     {
                         if (DirectoryExists(currentdir + "/" + itm.Tag.ToString()))
                         {
+                            deleteToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_recursive_delete");
                             moveToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_move_folder");
                             copyToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_copy_folder");
                         }
                         else if (FileExists(currentdir + "/" + itm.Tag.ToString()))
                         {
+                            deleteToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_delete");
                             moveToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_move");
                             copyToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("fs_copy");
                         }
@@ -322,6 +324,7 @@ namespace ShiftOS.WinForms.Applications
             {
                 moveToolStripMenuItem.Visible = false;
                 copyToolStripMenuItem.Visible = false;
+                deleteToolStripMenuItem.Visible = false;
             }
         }
 
@@ -386,6 +389,22 @@ namespace ShiftOS.WinForms.Applications
 
             }
 
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Infobox.PromptYesNo("Delete file", "Are you sure you want to delete " + lvitems.SelectedItems[0].Text + "?", (result) =>
+                {
+                    if (result == true)
+                    {
+                        Delete(currentdir + "/" + lvitems.SelectedItems[0].Tag.ToString());
+                        ResetList();
+                    }
+                });
+            }
+            catch { }
         }
     }
 

@@ -61,6 +61,7 @@ namespace ShiftOS.WinForms
         public WinformsDesktop()
         {
             InitializeComponent();
+            ControlManager.MakeDoubleBuffered(pnlwidgetlayer);
             this.Click += (o, a) =>
             {
                 HideAppLauncher();
@@ -455,7 +456,7 @@ namespace ShiftOS.WinForms
                         UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
 
                         w.Location = WidgetManager.LoadLocation(w.GetType());
-
+                        w.Top -= desktoppanel.Height;
                         pnlwidgetlayer.Controls.Add(w);
                         MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
@@ -466,6 +467,8 @@ namespace ShiftOS.WinForms
                 {
                     if (Shiftorium.UpgradeInstalled("desktop_widgets"))
                     {
+                        widget.OnSkinLoad();
+                        widget.OnUpgrade();
                         widget.Setup();
                         widget.Show();
                     }
@@ -474,6 +477,9 @@ namespace ShiftOS.WinForms
                         widget.Hide();
                     }
                 }
+                pnlwidgetlayer.Show();
+                pnlwidgetlayer.BringToFront();
+
 
             }
             else
@@ -520,7 +526,7 @@ namespace ShiftOS.WinForms
             w.MouseUp += (o, a) =>
             {
                 moving = false;
-                WidgetManager.SaveLocation(startCtrl.GetType(), w.Location);
+                WidgetManager.SaveLocation(startCtrl.GetType(), startCtrl.Location);
             };
 
             foreach (Control c in w.Controls)
