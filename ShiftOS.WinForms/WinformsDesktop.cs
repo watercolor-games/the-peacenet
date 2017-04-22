@@ -456,7 +456,6 @@ namespace ShiftOS.WinForms
                         UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
 
                         w.Location = WidgetManager.LoadLocation(w.GetType());
-                        w.Top -= desktoppanel.Height;
                         pnlwidgetlayer.Controls.Add(w);
                         MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
