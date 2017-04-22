@@ -455,21 +455,28 @@ namespace ShiftOS.WinForms
                     {
                         UserControl w = (UserControl)Activator.CreateInstance(widget.Value, null);
 
-                        w.Location = WidgetManager.LoadLocation(w.GetType());
+                        w.Location = WidgetManager.LoadDetails(w.GetType()).Location;
                         pnlwidgetlayer.Controls.Add(w);
                         MakeWidgetMovable(w);
                         Widgets.Add(w as IDesktopWidget);
                     }
                 }
 
+                int lastHeight = 5;
                 foreach (var widget in Widgets)
                 {
-                    if (Shiftorium.UpgradeInstalled("desktop_widgets"))
+                    if (WidgetManager.LoadDetails(widget.GetType()).IsVisible && Shiftorium.UpgradeInstalled("desktop_widgets"))
                     {
                         widget.OnSkinLoad();
+                        
                         widget.OnUpgrade();
                         widget.Setup();
                         widget.Show();
+                        if (widget.Location.X == -1 && widget.Location.Y == -1)
+                        {
+                            widget.Location = new Point(5, lastHeight);
+                            lastHeight += (widget.Location.Y + widget.Size.Height) + 5;
+                        }
                     }
                     else
                     {
@@ -525,7 +532,9 @@ namespace ShiftOS.WinForms
             w.MouseUp += (o, a) =>
             {
                 moving = false;
-                WidgetManager.SaveLocation(startCtrl.GetType(), startCtrl.Location);
+                var details = WidgetManager.LoadDetails(startCtrl.GetType());
+                details.Location = startCtrl.Location;
+                WidgetManager.SaveDetails(startCtrl.GetType(), details);
             };
 
             foreach (Control c in w.Controls)

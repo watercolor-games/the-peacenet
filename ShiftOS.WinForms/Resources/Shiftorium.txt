@@ -271,6 +271,13 @@
 		Dependencies: "color_depth_8_bits"
 	},
 	{
+		Name: "AL Widget Manager",
+		Cost: 125,
+		Description: "Desktop Widgets are a huge advancement in ShiftOS technology, allowing access to system information, and quick control of your system, without even opening a window. However, we still need to be able to modify each widget. This upgrade adds an App Launcher entry for the Desktop Widget Manager.",
+		Description: "app_launcher;desktop_widgets",
+		Category: "GUI"
+	},
+	{
 		Name: "FS Delete",
 		Cost: 75,
 		Description: "Got some files that you want to get rid of? This upgrade adds a button to the File Skimmer for doing just that.",

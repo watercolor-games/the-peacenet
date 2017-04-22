@@ -48,13 +48,13 @@ namespace ShiftOS.WinForms
             return types;
         }
 
-        internal static void SaveLocation(Type type, Point location)
+        internal static void SaveDetails(Type type, WidgetDetails location)
         {
-            var dict = new Dictionary<string, Point>();
+            var dict = new Dictionary<string, WidgetDetails>();
             var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is DesktopWidgetAttribute) as DesktopWidgetAttribute;
             try
             {
-                dict = JsonConvert.DeserializeObject<Dictionary<string, Point>>(Utils.ReadAllText(Paths.GetPath("widgets.dat")));
+                dict = JsonConvert.DeserializeObject<Dictionary<string, WidgetDetails>>(Utils.ReadAllText(Paths.GetPath("widgets.dat")));
 
                 dict[attrib.ToString()] = location;
             }
@@ -69,25 +69,46 @@ namespace ShiftOS.WinForms
 
         }
 
-        internal static Point LoadLocation(Type type)
+        internal static WidgetDetails LoadDetails(Type type)
         {
-            var dict = new Dictionary<string, Point>();
+            var dict = new Dictionary<string, WidgetDetails>();
             var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is DesktopWidgetAttribute) as DesktopWidgetAttribute;
             try
             {
-                dict = JsonConvert.DeserializeObject<Dictionary<string, Point>>(Utils.ReadAllText(Paths.GetPath("widgets.dat")));
+                dict = JsonConvert.DeserializeObject<Dictionary<string, WidgetDetails>>(Utils.ReadAllText(Paths.GetPath("widgets.dat")));
 
                 return dict[attrib.ToString()];
 
             }
             catch
             {
-                return new Point(-1, -1);
+                var details = new WinForms.WidgetDetails
+                {
+                    Location = new Point(-1, -1),
+                    IsVisible = false
+                };
+                if (dict.ContainsKey(attrib.ToString()))
+                    dict[attrib.ToString()] = details;
+                else
+                    dict.Add(attrib.ToString(), details);
+                Utils.WriteAllText(Paths.GetPath("widgets.dat"), JsonConvert.SerializeObject(dict));
+                return details;
             }
             finally
             {
             }
 
         }
+    }
+
+    public class WidgetDetails
+    {
+        public WidgetDetails()
+        {
+            IsVisible = true;
+        }
+
+        public Point Location { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

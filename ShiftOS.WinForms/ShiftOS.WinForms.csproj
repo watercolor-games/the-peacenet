@@ -240,6 +240,12 @@
     <Compile Include="Applications\UpdateManager.Designer.cs">
       <DependentUpon>UpdateManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\WidgetManagerFrontend.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\WidgetManagerFrontend.Designer.cs">
+      <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
+    </Compile>
     <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Controls\ColorControl.cs">
@@ -415,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\UpdateManager.resx">
       <DependentUpon>UpdateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\WidgetManagerFrontend.resx">
+      <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\Clock.resx">
       <DependentUpon>Clock.cs</DependentUpon>
