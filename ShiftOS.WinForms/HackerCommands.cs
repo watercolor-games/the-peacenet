@@ -259,7 +259,7 @@ namespace ShiftOS.WinForms
                     }
                     onCompleteDecrypt += ondec;
                     tut.SetObjective("This script isn't the most agile script ever, but it'll get the job done.");
-                    tutPos = 3;
+                    tutPos = 3; // For some reason, it refuses to go to part 3.
                     while(tutPos == 2)
                     {
 
