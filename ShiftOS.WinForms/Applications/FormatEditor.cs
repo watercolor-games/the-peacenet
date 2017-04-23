@@ -36,7 +36,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications {
     [MultiplayerOnly]
     [Launcher("Format Editor", true, "al_format_editor", "Customization")]
-    [AppscapeEntry("Format Editor", "Edit the syntax of your Terminal to be however you like.", 750, "file_skimmer", "Customization")]
+    [AppscapeEntry("Format Editor", "Edit the syntax of your Terminal to be however you like.", 740, 750, "file_skimmer", "Customization")]
     [WinOpen("formateditor")]
     [DefaultTitle("Format Editor")]
     [DefaultIcon("iconFormatEditor")]
