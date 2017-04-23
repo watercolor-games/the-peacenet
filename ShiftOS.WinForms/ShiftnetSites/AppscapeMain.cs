@@ -37,7 +37,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public string[] GetCategories()
         {
-            var upgrades = Shiftorium.GetDefaults().Where(x => x.Dependencies.Contains("appscape_"));
+            var upgrades = Shiftorium.GetDefaults().Where(x => (x.Dependencies == null) ? false : x.Dependencies.Contains("appscape_"));
             List<string> cats = new List<string>();
             cats.Add("All");
             try
