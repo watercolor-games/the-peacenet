@@ -223,7 +223,7 @@ namespace ShiftOS.Engine
 
         public static event EmptyEventHandler GameReady;
 
-        public static void TransferCodepointsToVoid(int amount)
+        public static void TransferCodepointsToVoid(long amount)
         {
             CurrentSave.Codepoints -= amount;
             NotificationDaemon.AddNotification(NotificationType.CodepointsSent, amount);

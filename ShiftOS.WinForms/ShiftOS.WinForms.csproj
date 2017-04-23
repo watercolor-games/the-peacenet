@@ -317,6 +317,18 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScriptingTestFunctions.cs" />
+    <Compile Include="ShiftnetSites\AppscapeMain.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\AppscapeMain.Designer.cs">
+      <DependentUpon>AppscapeMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\MainHomepage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\MainHomepage.Designer.cs">
+      <DependentUpon>MainHomepage.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
@@ -462,6 +474,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\AppscapeMain.resx">
+      <DependentUpon>AppscapeMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
+      <DependentUpon>MainHomepage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>

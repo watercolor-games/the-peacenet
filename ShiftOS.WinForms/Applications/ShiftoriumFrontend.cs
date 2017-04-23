@@ -185,7 +185,7 @@ namespace ShiftOS.WinForms.Applications
         {
             long cpCost = 0;
             backend.Silent = true;
-            Dictionary<string, int> UpgradesToBuy = new Dictionary<string, int>(); 
+            Dictionary<string, long> UpgradesToBuy = new Dictionary<string, long>(); 
             foreach (var itm in lbupgrades.SelectedItems)
             {
                 cpCost += upgrades[itm.ToString()].Cost;

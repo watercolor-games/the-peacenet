@@ -36,11 +36,10 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications {
     [MultiplayerOnly]
     [Launcher("Format Editor", true, "al_format_editor", "Customization")]
-    [RequiresUpgrade("format_editor")]
+    [AppscapeEntry("Format Editor", "Edit the syntax of your Terminal to be however you like.", 750, "file_skimmer", "Customization")]
     [WinOpen("formateditor")]
     [DefaultTitle("Format Editor")]
     [DefaultIcon("iconFormatEditor")]
-
     public partial class FormatEditor : UserControl, IShiftOSWindow {
 
         IList<CommandFormat> parts = new List<CommandFormat>();

@@ -612,7 +612,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                     cat = args["cat"].ToString();
                 }
 
-                Dictionary<string, int> upgrades = new Dictionary<string, int>();
+                Dictionary<string, long> upgrades = new Dictionary<string, long>();
                 int maxLength = 5;
 
                 IEnumerable<ShiftoriumUpgrade> upglist = Shiftorium.GetAvailable();

@@ -134,18 +134,16 @@ namespace ShiftOS.WinForms
 
                 }
             };
-            this.Width = LoadedSkin.LeftBorderWidth + _parentWindow.Width + LoadedSkin.RightBorderWidth;
-            this.Height = LoadedSkin.TitlebarHeight + _parentWindow.Height + LoadedSkin.BottomBorderWidth;
-
-            SetupControls(this);
-
+            
+            
             this.pnlcontents.Controls.Add(this._parentWindow);
             this._parentWindow.Dock = DockStyle.Fill;
             this._parentWindow.Show();
+            SetupControls(this);
+            this.Width = LoadedSkin.LeftBorderWidth + this.Width + LoadedSkin.RightBorderWidth;
+            this.Height = LoadedSkin.TitlebarHeight + this.Height + LoadedSkin.BottomBorderWidth;
             ControlManager.SetupControls(this._parentWindow);
 
-            ParentWindow.OnSkinLoad();
-            ParentWindow.OnUpgrade();
             Shiftorium.Installed += () =>
             {
                 Setup();
@@ -221,6 +219,9 @@ namespace ShiftOS.WinForms
             this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
             ParentWindow.OnLoad();
+            ParentWindow.OnSkinLoad();
+            ParentWindow.OnUpgrade();
+
         }
 
         /// <summary>

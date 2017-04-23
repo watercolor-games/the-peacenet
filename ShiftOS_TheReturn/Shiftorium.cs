@@ -85,7 +85,7 @@ namespace ShiftOS.Engine
             return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => x.Installed == false) == null;
         }
 
-        public static bool Buy(string id, int cost)
+        public static bool Buy(string id, long cost)
         {
             if(SaveSystem.CurrentSave.Codepoints >= cost)
             {
@@ -188,7 +188,7 @@ namespace ShiftOS.Engine
 
         }
 
-        public static int GetCPValue(string id)
+        public static long GetCPValue(string id)
         {
             foreach(var upg in GetDefaults())
             {
@@ -316,7 +316,7 @@ namespace ShiftOS.Engine
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Cost { get; set; }
+        public long Cost { get; set; }
         public string ID { get { return (this.Id != null ? this.Id : (Name.ToLower().Replace(" ", "_"))); } }
         public string Id { get; set; }
         public string Category { get; set; }

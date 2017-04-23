@@ -34,6 +34,7 @@ using static ShiftOS.Objects.ShiftFS.Utils;
 using ShiftOS.WinForms.Applications;
 using ShiftOS.WinForms.Tools;
 using System.Reflection;
+using System.IO;
 
 namespace ShiftOS.WinForms
 {
@@ -98,7 +99,37 @@ namespace ShiftOS.WinForms
     {
         public List<ShiftoriumUpgrade> GetDefaults()
         {
-            return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+            var defaultList = JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+
+            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exe);
+                        foreach(var type in asm.GetTypes())
+                        {
+                            var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                            if(attrib != null)
+                            {
+                                var upgrade = new ShiftoriumUpgrade
+                                {
+                                    Id = attrib.Name.ToLower().Replace(" ", "_"),
+                                    Name = attrib.Name,
+                                    Description = attrib.Description,
+                                    Cost = attrib.Cost,
+                                    Category = attrib.Category,
+                                    Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
+                                };
+                                defaultList.Add(upgrade);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return defaultList;
         }
     }
 

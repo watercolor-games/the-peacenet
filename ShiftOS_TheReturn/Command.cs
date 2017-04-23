@@ -104,7 +104,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Gets whether the dependent upgrade(s) are installed.
         /// </summary>
-        public bool Installed
+        public virtual bool Installed
         {
             get
             {

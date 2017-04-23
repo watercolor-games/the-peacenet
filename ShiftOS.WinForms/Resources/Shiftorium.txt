@@ -369,13 +369,6 @@
 		Dependencies:"desktop;wm_unlimited_windows"
 	},
 	{
-		Name: "Format Editor",
-		Cost: 6000,
-		Description: "Allows you to change the format of commands.",
-		Category: "Applications",
-		Dependencies: "shifter;name_changer"
-	},
-	{
 		Name: "Format Editor Optional Text",
 		Cost: 150,
 		Description: "Allows you to add an optional text to commands",
