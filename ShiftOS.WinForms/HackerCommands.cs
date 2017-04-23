@@ -38,6 +38,7 @@ namespace ShiftOS.WinForms
             {
                 KernelWatchdog.Log("warn", "User has breached the kernel.");
                 KernelWatchdog.EnterKernelMode();
+                TerminalBackend.PrintPrompt();
             }
             return true;
         }
@@ -258,6 +259,7 @@ namespace ShiftOS.WinForms
                     }
                     onCompleteDecrypt += ondec;
                     tut.SetObjective("This script isn't the most agile script ever, but it'll get the job done.");
+                    tutPos = 3;
                     while(tutPos == 2)
                     {
 
