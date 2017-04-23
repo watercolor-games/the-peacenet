@@ -270,6 +270,12 @@
     <Compile Include="DesktopWidgets\Clock.Designer.cs">
       <DependentUpon>Clock.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopWidgets\CodepointsWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\CodepointsWidget.Designer.cs">
+      <DependentUpon>CodepointsWidget.cs</DependentUpon>
+    </Compile>
     <Compile Include="DesktopWidgets\TerminalWidget.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -433,6 +439,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\Clock.resx">
       <DependentUpon>Clock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\CodepointsWidget.resx">
+      <DependentUpon>CodepointsWidget.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\TerminalWidget.resx">
       <DependentUpon>TerminalWidget.cs</DependentUpon>

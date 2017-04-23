@@ -475,7 +475,7 @@ namespace ShiftOS.WinForms
                         if (widget.Location.X == -1 && widget.Location.Y == -1)
                         {
                             widget.Location = new Point(5, lastHeight);
-                            lastHeight += (widget.Location.Y + widget.Size.Height) + 5;
+                            lastHeight += widget.Size.Height + 5;
                         }
                     }
                     else
