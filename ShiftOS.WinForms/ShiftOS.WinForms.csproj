@@ -323,6 +323,12 @@
     <Compile Include="ShiftnetSites\AppscapeMain.Designer.cs">
       <DependentUpon>AppscapeMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\DesktopWidgetWebsite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\DesktopWidgetWebsite.Designer.cs">
+      <DependentUpon>DesktopWidgetWebsite.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\MainHomepage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -477,6 +483,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\AppscapeMain.resx">
       <DependentUpon>AppscapeMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\DesktopWidgetWebsite.resx">
+      <DependentUpon>DesktopWidgetWebsite.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
