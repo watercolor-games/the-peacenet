@@ -250,6 +250,12 @@ namespace ShiftOS.WinForms.Applications
             };
             txt.KeyDown += (o, a) =>
             {
+                if (a.Control == true || a.Alt == true)
+                {
+                    a.SuppressKeyPress = true;
+                    return;
+                }
+
                 if (a.KeyCode == Keys.Enter)
                 {
                     try
