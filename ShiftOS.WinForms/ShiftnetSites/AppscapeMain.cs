@@ -336,22 +336,28 @@ namespace ShiftOS.WinForms.ShiftnetSites
             int i = 0;
             while (i <= Size)
             {
-                SetProgress((i / Size) * 100);
-                i++;
-                Thread.Sleep(100);
+                double progress = ((i / Size) * 100);
+
+                SetProgress((int)progress);
+
+                i += Applications.DownloadManager.GetDownloadSpeed();
+                Thread.Sleep(1000);
             }
             SetProgress(0);
             SetStatus("Installing...");
             i = 0;
             while (i <= Size)
             {
-                SetProgress((i / Size) * 100);
-                i++;
-                Thread.Sleep(50);
+                double progress = ((i / Size) * 100);
+
+                SetProgress((int)progress);
+
+                i+=1024;
+                Thread.Sleep(1000);
             }
-            Shiftorium.Buy(ShiftoriumId, 0);
             Desktop.InvokeOnWorkerThread(() =>
             {
+                Shiftorium.Buy(ShiftoriumId, 0);
                 Infobox.Show("Install complete!", "The installation of " + Name + " has completed.");
                 SaveSystem.SaveGame();
             });

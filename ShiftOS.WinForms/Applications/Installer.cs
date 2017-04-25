@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -29,21 +30,21 @@ namespace ShiftOS.WinForms.Applications
             pnlselectfile.Hide();
             install.ProgressReported += (p) =>
             {
-                this.Invoke(new Action(() =>
+                Desktop.InvokeOnWorkerThread(new Action(() =>
                 {
                     pginstall.Value = p;
                 }));
             };
             install.StatusReported += (s) =>
             {
-                this.Invoke(new Action(() =>
+                Desktop.InvokeOnWorkerThread(new Action(() =>
                 {
                     lbprogress.Text = s;
                 }));
             };
             install.InstallCompleted += () =>
             {
-                this.Invoke(new Action(() =>
+                Desktop.InvokeOnWorkerThread(new Action(() =>
                 {
                     lbtitle.Text = "Select file";
                     pnlselectfile.Show();
@@ -51,6 +52,10 @@ namespace ShiftOS.WinForms.Applications
                 isInstalling = false;
                 InstallCompleted?.Invoke();
             };
+            while (!this.Visible)
+            {
+                
+            }
             isInstalling = true;
             install.Install();
         }
