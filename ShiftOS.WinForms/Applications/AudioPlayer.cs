@@ -58,7 +58,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad()
         {
-            
+            pgplaytime.Width = flcontrols.Width - btnplay.Width - 25;
         }
 
         public bool OnUnload()
@@ -151,17 +151,14 @@ namespace ShiftOS.WinForms.Applications
             pgplaytime.Maximum = (int)mp3.Length;
             new Thread(() =>
             {
-                while(o.PlaybackState == NAudio.Wave.PlaybackState.Playing || o.PlaybackState == NAudio.Wave.PlaybackState.Paused)
+                while (o.PlaybackState == NAudio.Wave.PlaybackState.Playing || o.PlaybackState == NAudio.Wave.PlaybackState.Paused)
                 {
                     long time = mp3.Position;
-                    if(time != mp3.Position)
+                    this.Invoke(new Action(() =>
                     {
-                        time = mp3.Position;
-                        this.Invoke(new Action(() =>
-                        {
-                            pgplaytime.Value = (int)time;
-                        }));
-                    }
+                        pgplaytime.Value = (int)time;
+                    }));
+                    Thread.Sleep(50);
                 }
             }).Start();
         }
