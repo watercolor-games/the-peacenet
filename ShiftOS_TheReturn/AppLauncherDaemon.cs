@@ -77,9 +77,9 @@ namespace ShiftOS.Engine
                             {
                                 if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
                                 {
+                                    bool isAllowed = true;
                                     foreach (var attr in type.GetCustomAttributes(false))
                                     {
-                                        bool isAllowed = true;
                                         if(attr is MultiplayerOnlyAttribute)
                                         {
                                             if(KernelWatchdog.MudConnected == false)
@@ -92,10 +92,13 @@ namespace ShiftOS.Engine
                                         {
                                             if (attr is LauncherAttribute)
                                             {
-                                                var launch = attr as LauncherAttribute;
-                                                if (launch.UpgradeInstalled)
+                                                if (Shiftorium.UpgradeAttributesUnlocked(type))
                                                 {
-                                                    win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
+                                                    var launch = attr as LauncherAttribute;
+                                                    if (launch.UpgradeInstalled)
+                                                    {
+                                                        win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
+                                                    }
                                                 }
                                             }
                                         }
