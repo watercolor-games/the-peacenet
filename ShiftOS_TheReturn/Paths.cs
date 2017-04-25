@@ -208,7 +208,8 @@ namespace ShiftOS.Engine
             foreach (var file in System.IO.Directory.GetFiles(folder))
             {
                 string mfsDir = file.Replace(SharedFolder, $"{mount}:").Replace("\\", "/");
-                WriteAllBytes(mfsDir, System.IO.File.ReadAllBytes(file));
+                if (!FileExists(mfsDir))
+                    WriteAllBytes(mfsDir, System.IO.File.ReadAllBytes(file));
             }
             foreach (var directory in System.IO.Directory.GetDirectories(folder))
             {

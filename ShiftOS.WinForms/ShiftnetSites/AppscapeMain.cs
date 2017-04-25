@@ -79,6 +79,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
                 var fl = new FlowLayoutPanel();
                 fl.Dock = DockStyle.Fill;
                 pnlappslist.Controls.Add(fl);
+                fl.AutoScroll = true;
                 fl.Show();
                 foreach(var upg in upgrades)
                 {
@@ -148,6 +149,20 @@ namespace ShiftOS.WinForms.ShiftnetSites
             }
         }
 
+        public bool DependenciesInstalled(ShiftoriumUpgrade upg)
+        {
+            string[] split = upg.Dependencies.Split(';');
+            foreach(var u in split)
+            {
+                if (!u.StartsWith("appscape_handled"))
+                {
+                    if (!Shiftorium.UpgradeInstalled(u))
+                        return false;
+                }
+            }
+            return true;
+        }
+
         public void ViewMoreInfo(ShiftoriumUpgrade upg)
         {
             lbtitle.Text = upg.Name;
@@ -178,11 +193,11 @@ namespace ShiftOS.WinForms.ShiftnetSites
             if (cp_value.Text != "Already Purchased.")
             {
                 var more_info = new Button();
-                more_info.Text = "More info";
+                more_info.Text = "Buy";
                 more_info.Click += (o, a) =>
                 {
                     //Detect if dependencies are installed.
-                    if (Shiftorium.DependenciesInstalled(upg))
+                    if (DependenciesInstalled(upg))
                     {
                         //Detect sufficient codepoints
                         if (SaveSystem.CurrentSave.Codepoints >= upg.Cost)
@@ -210,6 +225,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
                                                             var installation = new AppscapeInstallation(upg.Name, attrib.DownloadSize, upg.ID);
                                                             AppearanceManager.SetupWindow(installer);
                                                             installer.InitiateInstall(installation);
+                                                            return;
                                                         }
                                                     }
                                                 }
@@ -237,6 +253,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
                 more_info.Left = cp_display.Width - more_info.Width - 5;
                 cp_display.Controls.Add(more_info);
                 more_info.Show();
+                ControlManager.SetupControls(pnlappslist);
             }
 
             var desc = new Label();
@@ -311,38 +328,33 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public string ShiftoriumId { get; private set; }
         public int Size { get; private set; }
-        public string Name { get; private set; }
-
+        
         protected override void Run()
         {
             this.SetStatus("Downloading...");
             SetProgress(0);
-            new Thread(() =>
+            int i = 0;
+            while (i <= Size)
             {
-                int i = 0;
-                while (i <= Size)
-                {
-                    SetProgress((i / Size) * 100);
-                    i++;
-                    Thread.Sleep(100);
-                }
-                SetProgress(0);
-                SetStatus("Installing...");
-                i = 0;
-                while (i <= Size)
-                {
-                    SetProgress((i / Size) * 100);
-                    i++;
-                    Thread.Sleep(50);
-                }
-                Shiftorium.Buy(ShiftoriumId, 0);
-                Desktop.InvokeOnWorkerThread(() =>
-                {
-                    Infobox.Show("Install complete!", "The installation of " + Name + " has completed.");
-                    SaveSystem.SaveGame();
-                });
-            })
-            { IsBackground = true }.Start();
+                SetProgress((i / Size) * 100);
+                i++;
+                Thread.Sleep(100);
+            }
+            SetProgress(0);
+            SetStatus("Installing...");
+            i = 0;
+            while (i <= Size)
+            {
+                SetProgress((i / Size) * 100);
+                i++;
+                Thread.Sleep(50);
+            }
+            Shiftorium.Buy(ShiftoriumId, 0);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                Infobox.Show("Install complete!", "The installation of " + Name + " has completed.");
+                SaveSystem.SaveGame();
+            });
         }
     }
 }

@@ -244,6 +244,12 @@
     <Compile Include="Applications\UpdateManager.Designer.cs">
       <DependentUpon>UpdateManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\VideoPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\VideoPlayer.Designer.cs">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\WidgetManagerFrontend.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -458,6 +464,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\UpdateManager.resx">
       <DependentUpon>UpdateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\VideoPlayer.resx">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\WidgetManagerFrontend.resx">
       <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
