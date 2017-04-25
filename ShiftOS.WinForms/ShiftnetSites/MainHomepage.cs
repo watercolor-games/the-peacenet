@@ -73,6 +73,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
                                                 flfundamentals.Controls.Add(link);
                                                 flfundamentals.SetFlowBreak(link, true);
                                                 link.Show();
+                                                link.LinkColor = Color.White;
                                             }
                                         }
                                     }
@@ -87,3 +88,5 @@ namespace ShiftOS.WinForms.ShiftnetSites
         }
     }
 }
+
+//I COMMITTED MYSELF, RYLAN!

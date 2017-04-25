@@ -70,6 +70,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\AddressBook.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\AddressBook.Designer.cs">
+      <DependentUpon>AddressBook.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Artpad.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -380,6 +386,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\AddressBook.resx">
+      <DependentUpon>AddressBook.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Artpad.resx">
       <DependentUpon>Artpad.cs</DependentUpon>
