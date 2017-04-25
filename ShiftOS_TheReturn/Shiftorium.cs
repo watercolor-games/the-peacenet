@@ -248,6 +248,16 @@ namespace ShiftOS.Engine
                 if (SaveSystem.CurrentSave.StoriesExperienced == null)
                     SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
 
+                if (id.Contains(';'))
+                {
+                    foreach(var u in id.Split(';'))
+                    {
+                        if (UpgradeInstalled(u) == false)
+                            return false;
+                    }
+                    return true;
+                }
+
                 bool upgInstalled = false;
                 if(SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
                     upgInstalled = SaveSystem.CurrentSave.Upgrades[id];

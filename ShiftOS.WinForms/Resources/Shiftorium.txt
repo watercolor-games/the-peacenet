@@ -634,13 +634,6 @@
 		Dependencies: "mud_fundamentals;window_manager;pong_upgrade"
 	},
 	{
-		Name: "Audio Player",
-		Cost: 10000,
-		Description: "Want to listen to the greatest tunes? Well get this app asap!",
-		Category: "Applications",
-		Dependencies: "desktop;wm_free_placement"
-	},
-	{
 		Name: "Audio Player AL",
 		Cost: 150,
 		Description: "Just another app launcher, making it easier to listen to your favorite songs!",

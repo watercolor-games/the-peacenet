@@ -354,7 +354,7 @@ namespace ShiftOS.WinForms
     /// </summary>
     public class AppscapeEntryAttribute : RequiresUpgradeAttribute
     {
-        public AppscapeEntryAttribute(string name, string description, int downloadSize, long cost, string dependencies = "", string category = "Misc") : base((string.IsNullOrWhiteSpace(dependencies)) ? name.ToLower().Replace(" ", "_") : name.ToLower().Replace(" ", "_") + dependencies)
+        public AppscapeEntryAttribute(string name, string description, int downloadSize, long cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
         {
             Name = name;
             Description = description;
