@@ -64,6 +64,7 @@ namespace ShiftOS.WinForms.Applications
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.shuffleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.wpaudio)).BeginInit();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -150,6 +151,9 @@ namespace ShiftOS.WinForms.Applications
             this.pgplaytime.Tag = "keepbg";
             this.pgplaytime.Text = "shiftedProgressBar1";
             this.pgplaytime.Value = 0;
+            this.pgplaytime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.startScrub);
+            this.pgplaytime.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pgplaytime_MouseMove);
+            this.pgplaytime.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pgplaytime_MouseUp);
             // 
             // menuStrip1
             // 
@@ -158,7 +162,8 @@ namespace ShiftOS.WinForms.Applications
             this.addSongToolStripMenuItem,
             this.clearToolStripMenuItem,
             this.shuffleToolStripMenuItem,
-            this.removeToolStripMenuItem});
+            this.removeToolStripMenuItem,
+            this.loopToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(798, 24);
@@ -192,6 +197,13 @@ namespace ShiftOS.WinForms.Applications
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
+            // 
+            // loopToolStripMenuItem
+            // 
+            this.loopToolStripMenuItem.CheckOnClick = true;
+            this.loopToolStripMenuItem.Name = "loopToolStripMenuItem";
+            this.loopToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.loopToolStripMenuItem.Text = "Loop";
             // 
             // AudioPlayer
             // 
@@ -229,5 +241,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.FlowLayoutPanel flcontrols;
         private System.Windows.Forms.Button btnplay;
         private Controls.ShiftedProgressBar pgplaytime;
+        private System.Windows.Forms.ToolStripMenuItem loopToolStripMenuItem;
     }
 }

@@ -160,6 +160,23 @@ namespace ShiftOS.WinForms.Applications
                     }));
                     Thread.Sleep(50);
                 }
+                if (o.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
+                {
+                    if (lbtracks.SelectedIndex < lbtracks.Items.Count - 1)
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            lbtracks.SelectedIndex++;
+                        }));
+                    }
+                    else if(loopToolStripMenuItem.Checked == true)
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            lbtracks.SelectedIndex = 0;
+                        }));
+                    }
+                }
             }).Start();
         }
 
@@ -170,6 +187,41 @@ namespace ShiftOS.WinForms.Applications
                 Play(lbtracks.SelectedItem.ToString());
             }
             catch { }
+        }
+
+        bool scrubbing = false;
+
+        private void startScrub(object sender, MouseEventArgs e)
+        {
+            scrubbing = true;
+        }
+
+        static public double linear(double x, double x0, double x1, double y0, double y1)
+        {
+            if ((x1 - x0) == 0)
+            {
+                return (y0 + y1) / 2;
+            }
+            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+        }
+
+        private void pgplaytime_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (mp3 != null)
+                try
+                {
+                    if (scrubbing)
+                    {
+                        long s_pos = (long)linear(e.X, 0, pgplaytime.Width, 0, (double)mp3.Length);
+                        mp3.Position = s_pos;
+                    }
+                }
+                catch { }
+        }
+
+        private void pgplaytime_MouseUp(object sender, MouseEventArgs e)
+        {
+            scrubbing = false;
         }
     }
 
