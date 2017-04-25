@@ -411,20 +411,6 @@
 		Dependencies: "desktop;wm_unlimited_windows",
 	},
 	{
-		Name: "Name Changer",
-		Cost: 5000,
-		Description: "Are you not a linux person and want the terminal to be called Command Prompt? Well this app is for you!",
-		Category: "Applications",
-		Dependencies: "shifter",
-	},
-	{
-		Name: "AL Name Changer",
-		Cost: 150,
-		Description: "Launch the Name Changer from the app launcher.",
-		Category: "GUI",
-		Dependencies: "name_changer",
-	},
-	{
 		Name: "AL Shifter",
 		Cost: 150,
 		Description: "Launch the Shifter from the app launcher.",
