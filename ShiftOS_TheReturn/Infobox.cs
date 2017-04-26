@@ -59,21 +59,30 @@ namespace ShiftOS.Engine
         {
             title = Localization.Parse(title);
             message = Localization.Parse(message);
-            _infobox.Open(title, message, callback);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                _infobox.Open(title, message, callback);
+            });
         }
-        
+
         public static void PromptText(string title, string message, Action<string> callback)
         {
             title = Localization.Parse(title);
             message = Localization.Parse(message);
-            _infobox.PromptText(title, message, callback);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                _infobox.PromptText(title, message, callback);
+            });
         }
 
         public static void PromptYesNo(string title, string message, Action<bool> callback)
         {
             title = Localization.Parse(title);
             message = Localization.Parse(message);
-            _infobox.PromptYesNo(title, message, callback);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                _infobox.PromptYesNo(title, message, callback);
+            });
         }
 
         /// <summary>

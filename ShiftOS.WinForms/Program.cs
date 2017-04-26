@@ -103,15 +103,15 @@ namespace ShiftOS.WinForms
 
             foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
             {
-                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
                 {
                     try
                     {
                         var asm = Assembly.LoadFile(exe);
-                        foreach(var type in asm.GetTypes())
+                        foreach (var type in asm.GetTypes())
                         {
                             var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
-                            if(attrib != null)
+                            if (attrib != null)
                             {
                                 var upgrade = new ShiftoriumUpgrade
                                 {
@@ -124,7 +124,27 @@ namespace ShiftOS.WinForms
                                 };
                                 defaultList.Add(upgrade);
                             }
+
+                            var sattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is StpContents) as StpContents;
+                            if (sattrib != null)
+                            {
+                                var upgrade = new ShiftoriumUpgrade
+                                {
+                                    Id = sattrib.Upgrade,
+                                    Name = sattrib.Name,
+                                    Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
+                                    Cost = 0,
+                                    Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
+                                    Dependencies = "dummy_nodisplay"
+                                };
+                                defaultList.Add(upgrade);
+                            }
+
                         }
+
+
+
+
                     }
                     catch { }
                 }

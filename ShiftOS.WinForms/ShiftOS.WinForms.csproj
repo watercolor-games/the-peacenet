@@ -724,6 +724,7 @@
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />
     <None Include="Resources\writesound.wav" />
+    <None Include="Resources\SuperDesk screenshot.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

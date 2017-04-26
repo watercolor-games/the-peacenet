@@ -994,20 +994,22 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to [
+        ///	//TEMPORARY
+        ///	{
+        ///		Name: &quot;Desktop Widgets&quot;,
+        ///		Cost: 0,
+        ///		Description: &quot;Temporary upgrade. Will be replaced by either a Shiftnet app or a story element.&quot;,
+        ///		Dependencies: &quot;advanced_app_launcher;wm_free_placement&quot;,
+        ///		Category: &quot;Work-in-progress&quot;
+        ///	},
+        ///
+        ///
+        ///
         ///// SCREENSAVER
         ///	{
         ///		Name: &quot;Screensavers&quot;,
         ///		Cost: 750,
-        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot;,
-        ///		Dependencies: &quot;desktop&quot;,
-        ///		Category: &quot;Enhancements&quot;,
-        ///	},
-        ///	{
-        ///		Name: &quot;Shift Screensavers&quot;,
-        ///		Cost: 100,
-        ///		Description: &quot;This Shifter upgrade will allow you to customize the screensaver.&quot;,
-        ///		Dependencies: &quot;screensavers;shifter&quot;,
-        ///		Category: &quot;Customiz [rest of string was truncated]&quot;;.
+        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {
@@ -1180,6 +1182,16 @@ namespace ShiftOS.WinForms.Properties {
         internal static string strings_en {
             get {
                 return ResourceManager.GetString("strings_en", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SuperDesk_screenshot {
+            get {
+                object obj = ResourceManager.GetObject("SuperDesk screenshot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

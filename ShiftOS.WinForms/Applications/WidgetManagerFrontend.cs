@@ -17,7 +17,7 @@ namespace ShiftOS.WinForms.Applications
     [WinOpen("desktop_widgets")]
     [Launcher("Widget Manager", true, "al_widget_manager", "Customization")]
     [DefaultTitle("Widget Manager")]
-    [RequiresUpgrade("desktop_widgets")]
+    [StpContents("Desktop Widgets", "SuperDesk Inc.", "desktop;wm_free_placement;shifter")]
     public partial class WidgetManagerFrontend : UserControl, IShiftOSWindow
     {
         public WidgetManagerFrontend()

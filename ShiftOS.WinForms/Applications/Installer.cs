@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
 using System.Threading;
+using static ShiftOS.Objects.ShiftFS.Utils;
+using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -28,6 +30,9 @@ namespace ShiftOS.WinForms.Applications
         public void InitiateInstall(Installation install)
         {
             pnlselectfile.Hide();
+            pginstall.Show();
+            lbprogress.Show();
+            lbtitle.Text = install.Name;
             install.ProgressReported += (p) =>
             {
                 Desktop.InvokeOnWorkerThread(new Action(() =>
@@ -62,6 +67,9 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            btnstart.Hide();
+            pginstall.Hide();
+            lbprogress.Hide();
         }
 
         private bool isInstalling = false;
@@ -88,6 +96,28 @@ namespace ShiftOS.WinForms.Applications
             }
         }
         public event Action InstallCompleted;
+
+        private void btnbrowse_Click(object sender, EventArgs e)
+        {
+            FileSkimmerBackend.GetFile(new[] { ".stp" }, FileOpenerStyle.Open, (file) =>
+            {
+                txtfilepath.Text = file;
+                btnstart.Show();
+            });
+        }
+
+        private void btnstart_Click(object sender, EventArgs e)
+        {
+            if (FileExists(txtfilepath.Text))
+            {
+                var install = new StpInstallation(txtfilepath.Text);
+                InitiateInstall(install);
+            }
+            else
+            {
+                Infobox.Show("File not found.", "The file you requested was not found on the system.");
+            }
+        }
     }
 
     public abstract class Installation
@@ -154,7 +184,76 @@ namespace ShiftOS.WinForms.Applications
         protected abstract void Run();
     }
 
+    public class StpInstallation : Installation
+    {
+        public StpInstallation(string stpfile) : base()
+        {
+            if (!FileExists(stpfile))
+                throw new System.IO.FileNotFoundException("An attempt to install a ShiftOS setup package failed because the package was not found.", stpfile);
+            string json = ReadAllText(stpfile);
+            var contents = JsonConvert.DeserializeObject<StpContents>(json);
+            this.Name = contents.Name;
+            Contents = contents;
+        }
 
+        public StpContents Contents { get; set; }
 
+        protected override void Run()
+        {
+            if (Shiftorium.UpgradeInstalled(Contents.Upgrade))
+            {
+                Infobox.Show("Installation failed.", "This package has already been installed.");
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Contents.Dependencies))
+            {
+                SetStatus("Checking Shiftorium for dependencies...");
+                string[] dependencies = Contents.Dependencies.Split(';');
+                for (int i = 0; i < dependencies.Length; i++)
+                {
+                    if (Shiftorium.UpgradeInstalled(dependencies[i]))
+                    {
+                        double percent = (i / dependencies.Length) * 100;
+                        SetProgress((int)percent);
+                    }
+                    else
+                    {
+                        var upg = Shiftorium.GetDefaults().FirstOrDefault(x => x.Id == dependencies[i]);
+                        Infobox.Show("Missing dependency!", $"You are missing the following Shiftorium Upgrade: {upg.Name}\r\n\r\nThe installation cannot continue.");
+                        return;
+                    }
+                    Thread.Sleep(250);
+                }
+            }
+            SetStatus("Installing...");
+            SetProgress(0);
+            for(int i = 0; i < 100; i++)
+            {
+                SetProgress(i);
+                Thread.Sleep(50);
+            }
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                Shiftorium.Buy(Contents.Upgrade, 0);
+                Infobox.Show("Install complete.", "The installation has completed successfully.");
+                SaveSystem.SaveGame();
+            });
+        }
+    }
+
+    public class StpContents : RequiresUpgradeAttribute
+    {
+        public StpContents(string name, string author, string dependencies = "") : base(name.ToLower().Replace(" ", "_"))
+        {
+            Name = name;
+            Author = author;
+            Dependencies = dependencies;
+        }
+
+        public string Name { get; set; }
+        public string Author { get; set; }
+        public string Dependencies { get; set; }
+    }
 
 }

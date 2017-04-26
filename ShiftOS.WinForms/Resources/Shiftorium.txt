@@ -1,15 +1,4 @@
 [
-	//TEMPORARY
-	{
-		Name: "Desktop Widgets",
-		Cost: 0,
-		Description: "Temporary upgrade. Will be replaced by either a Shiftnet app or a story element.",
-		Dependencies: "advanced_app_launcher;wm_free_placement",
-		Category: "Work-in-progress"
-	},
-
-
-
 // SCREENSAVER
 	{
 		Name: "Screensavers",

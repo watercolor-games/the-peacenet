@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using ShiftOS.WinForms.Tools;
+using ShiftOS.WinForms.Applications;
+using Newtonsoft.Json;
+using static ShiftOS.Objects.ShiftFS.Utils;
 
 namespace ShiftOS.WinForms.ShiftnetSites
 {
@@ -18,11 +22,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
         public DesktopWidgetWebsite()
         {
             InitializeComponent();
-            this.Click += (o, a) =>
-            {
-                GoToUrl?.Invoke("shiftnet/main");
-                Infobox.Show("Haha!", "You thought this would do something else. But no!");
-            };
+            
         }
 
         public event Action GoBack;
@@ -30,6 +30,34 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public void OnSkinLoad()
         {
+            ControlManager.SetupControls(this);
+            this.pictureBox1.Left = (this.Width - pictureBox1.Width) / 2;
+            ControlManager.ControlSetup += (ctrl) =>
+            {
+                try
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        lbwhatissuperdesk.Left = (this.Width - lbwhatissuperdesk.Width) / 2;
+                        lbthisissuperdesk.Top = lbwhatissuperdesk.Top + lbwhatissuperdesk.Height + 10;
+                        lbthisissuperdesk.Left = (this.Width - lbthisissuperdesk.Width) / 2;
+
+                        lbgetthepackage.Top = lbthisissuperdesk.Top + lbthisissuperdesk.Height + 10;
+                        lbgetthepackage.Left = (this.Width - lbgetthepackage.Width) / 2;
+
+                        lbpackagedesc.Top = lbgetthepackage.Top + lbgetthepackage.Height + 10;
+                        lbpackagedesc.Left = (this.Width - lbpackagedesc.Width) / 2;
+
+                        lnkdownload.Top = lbpackagedesc.Top + lbpackagedesc.Height + 10;
+                        lnkdownload.Left = (this.Width - lnkdownload.Width) / 2;
+
+                        lnkdownload.LinkColor = lbpackagedesc.ForeColor;
+                    }));
+                }
+                catch
+                {
+                }
+            };
         }
 
         public void OnUpgrade()
@@ -38,7 +66,27 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public void Setup()
         {
+            this.HorizontalScroll.Maximum = 0;
+            this.AutoScroll = false;
+            this.VerticalScroll.Visible = false;
+            this.AutoScroll = true;
 
+        }
+
+        private void lnkdownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var attrib = typeof(Applications.WidgetManagerFrontend).GetCustomAttributes(false).FirstOrDefault(x => x is StpContents) as StpContents;
+            if(attrib != null)
+            {
+                FileSkimmerBackend.GetFile(new[] { ".stp" }, FileOpenerStyle.Save, (file) =>
+                 {
+                     WriteAllText(file, JsonConvert.SerializeObject(attrib));
+                 });
+            }
+            else
+            {
+                Infobox.Show("Service not available.", "The Shiftnet service you requested is not available.");
+            }
         }
     }
 }
