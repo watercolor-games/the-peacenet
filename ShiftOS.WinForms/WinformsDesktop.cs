@@ -61,6 +61,10 @@ namespace ShiftOS.WinForms
         public WinformsDesktop()
         {
             InitializeComponent();
+            pnlwidgetlayer.Click += (o, a) =>
+            {
+                HideAppLauncher();
+            };
             ControlManager.MakeDoubleBuffered(pnlwidgetlayer);
             this.Click += (o, a) =>
             {
@@ -507,6 +511,7 @@ namespace ShiftOS.WinForms
 
             w.MouseDown += (o, a) =>
             {
+                HideAppLauncher();
                 moving = true;
             };
 
