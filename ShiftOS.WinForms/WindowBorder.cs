@@ -257,6 +257,7 @@ namespace ShiftOS.WinForms
         {
             this.DoubleBuffered = true;
             this.TransparencyKey = LoadedSkin.SystemKey;
+            pnlcontents.BackColor = this.TransparencyKey;
             pnltitle.Height = LoadedSkin.TitlebarHeight;
             pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
             pnltitle.BackgroundImage = GetImage("titlebar");
@@ -504,7 +505,9 @@ namespace ShiftOS.WinForms
         private void pnlright_MouseDown(object sender, MouseEventArgs e)
         {
             if (Shiftorium.UpgradeInstalled("resizable_windows"))
+            {
                 resizing = true;
+            }
         }
 
         private void pnlright_MouseMove(object sender, MouseEventArgs e)
@@ -518,6 +521,7 @@ namespace ShiftOS.WinForms
         private void pnlright_MouseUp(object sender, MouseEventArgs e)
         {
             resizing = false;
+            pnlcontents.Show();
         }
 
         private void pnlleft_MouseMove(object sender, MouseEventArgs e)

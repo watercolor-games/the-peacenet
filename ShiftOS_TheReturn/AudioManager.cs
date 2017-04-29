@@ -87,6 +87,7 @@ namespace ShiftOS.Engine
                 _out.Init(_reader);
                 _out.Volume = _provider.Volume;
                 _out.Play();
+                _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
             }
             catch { }
         }
@@ -107,6 +108,8 @@ namespace ShiftOS.Engine
             ShiftOS.Engine.AudioManager.Play("snd.wav");
 
         }
+
+        public static event Action PlayCompleted;
     }
 
     public interface IAudioProvider

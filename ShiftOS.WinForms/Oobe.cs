@@ -261,7 +261,10 @@ You must join the digital society, rise up the ranks, and save us.
                     {
                         Utils.Delete(Paths.GetPath("user.dat"));
                     }
-                    Application.Restart();
+                    string json = Utils.ExportMount(0);
+                    System.IO.File.WriteAllText(Paths.SaveFile, json);
+                    System.Diagnostics.Process.Start(Application.ExecutablePath);
+                    Environment.Exit(0);
                 }
             });
             
