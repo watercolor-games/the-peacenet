@@ -309,7 +309,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
                     SetupCategory(cat);
                 };
                 ControlManager.SetupControl(btn);
-                btn.Width = flcategories.Width - 2;
+                btn.Width = flcategories.Width - 10;
                 flcategories.Controls.Add(btn);
                 btn.Show();
             }
