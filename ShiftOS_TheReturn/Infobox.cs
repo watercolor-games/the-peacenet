@@ -65,13 +65,13 @@ namespace ShiftOS.Engine
             });
         }
 
-        public static void PromptText(string title, string message, Action<string> callback)
+        public static void PromptText(string title, string message, Action<string> callback, bool isPassword = false)
         {
             title = Localization.Parse(title);
             message = Localization.Parse(message);
             Desktop.InvokeOnWorkerThread(() =>
             {
-                _infobox.PromptText(title, message, callback);
+                _infobox.PromptText(title, message, callback, isPassword);
             });
         }
 
@@ -99,7 +99,7 @@ namespace ShiftOS.Engine
     public interface IInfobox
     {
         void Open(string title, string msg, Action callback = null);
-        void PromptText(string title, string message, Action<string> callback);
+        void PromptText(string title, string message, Action<string> callback, bool isPassword);
         void PromptYesNo(string title, string message, Action<bool> callback);
     }
 }

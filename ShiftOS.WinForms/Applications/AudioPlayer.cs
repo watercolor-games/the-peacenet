@@ -162,20 +162,17 @@ namespace ShiftOS.WinForms.Applications
                 }
                 if (o.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
                 {
-                    if (lbtracks.SelectedIndex < lbtracks.Items.Count - 1)
+                    this.Invoke(new Action(() =>
                     {
-                        this.Invoke(new Action(() =>
+                        if (lbtracks.SelectedIndex < lbtracks.Items.Count - 1)
                         {
                             lbtracks.SelectedIndex++;
-                        }));
-                    }
-                    else if(loopToolStripMenuItem.Checked == true)
-                    {
-                        this.Invoke(new Action(() =>
+                        }
+                        else if (loopToolStripMenuItem.Checked == true)
                         {
                             lbtracks.SelectedIndex = 0;
-                        }));
-                    }
+                        }
+                    }));
                 }
             }).Start();
         }

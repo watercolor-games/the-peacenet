@@ -120,4 +120,11 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="txtbody.Text" xml:space="preserve">
+    <value>The Address Book helps you keep track of all your contacts within the digital society, whether they be friends, enemies, or whatnot.
+
+On the left, we have made a list of all your contacts. You can click on one to view full details on the contact.
+
+To add a contact, simply click "Add Contact", and to remove one, click "Remove". Some contacts may not be removed as they are integral to the progression of your adventures within the digital society.</value>
+  </data>
 </root>

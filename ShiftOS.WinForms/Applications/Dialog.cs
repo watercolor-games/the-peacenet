@@ -72,7 +72,7 @@ namespace ShiftOS.WinForms.Applications
         internal void OpenInternal(string title, string msg)
         {
             Title = title;
-            AppearanceManager.SetupWindow(this);
+            AppearanceManager.SetupDialog(this);
             lbmessage.Text = msg;
             txtinput.Hide();
             flyesno.Hide();
@@ -93,11 +93,12 @@ namespace ShiftOS.WinForms.Applications
             new Dialog().OpenInternal(title, msg);
         }
 
-        public void PromptTextInternal(string title, string message, Action<string> callback)
+        public void PromptTextInternal(string title, string message, Action<string> callback, bool isPassword)
         {
             Title = title;
-            AppearanceManager.SetupWindow(this);
+            AppearanceManager.SetupDialog(this);
             lbmessage.Text = message;
+            txtinput.UseSystemPasswordChar = isPassword;
             txtinput.Show();
             flyesno.Hide();
             btnok.Show();
@@ -117,9 +118,9 @@ namespace ShiftOS.WinForms.Applications
             };
         }
 
-        public void PromptText(string title, string message, Action<string> callback)
+        public void PromptText(string title, string message, Action<string> callback, bool isPassword)
         {
-            new Dialog().PromptTextInternal(title, message, callback);
+            new Dialog().PromptTextInternal(title, message, callback, isPassword);
         }
 
         public void PromptYesNo(string title, string message, Action<bool> callback)
@@ -132,7 +133,7 @@ namespace ShiftOS.WinForms.Applications
         public void PromptYesNoInternal(string title, string message, Action<bool> callback)
         {
             Title = title;
-            AppearanceManager.SetupWindow(this);
+            AppearanceManager.SetupDialog(this);
             lbmessage.Text = message;
             txtinput.Hide();
             flyesno.Show();

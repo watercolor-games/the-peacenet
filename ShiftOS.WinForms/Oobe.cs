@@ -221,18 +221,50 @@ You must join the digital society, rise up the ranks, and save us.
 
         public void PromptForLogin()
         {
-            this.Show();
-            this.TopMost = true;
-            lblHijack.Text = "";
-            textgeninput = lblhackwords;
-
-            var fsw = new FakeSetupScreen(this, 10);
-            fsw.Show();
-            fsw.TopMost = true;
-            fsw.DoneLoggingIn += () =>
+            ServerMessageReceived MessageReceived = null;
+            MessageReceived = (msg) =>
             {
-                this.Close();
+                if(msg.Name == "mud_savefile")
+                {
+                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    SaveSystem.SaveGame();
+                    Application.Restart();
+                }
+                else if(msg.Name == "mud_notfound")
+                {
+                    ServerManager.MessageReceived -= MessageReceived;
+                    
+                    PromptForLogin();
+                }
             };
+            ServerManager.MessageReceived += MessageReceived;
+            Infobox.PromptYesNo("Login", "You are missing a digital society authentication link. Would you like to generate a new link with an existing account? Choosing \"No\" will restart the session in the out-of-box experience.", (result)=>
+            {
+                if (result == true)
+                {
+                    Infobox.PromptText("Login", "Please enter your digital society username.", (uname) =>
+                    {
+                        Infobox.PromptText("Login", "Please enter your password.", (pword) =>
+                        {
+                            ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                            {
+                                username = uname,
+                                password = pword
+                            }));
+                        }, true);
+                    });
+                }
+                else
+                {
+                    //restart in OOBE
+                    if (Objects.ShiftFS.Utils.FileExists(Paths.GetPath("user.dat")))
+                    {
+                        Utils.Delete(Paths.GetPath("user.dat"));
+                    }
+                    Application.Restart();
+                }
+            });
+            
         }
 
         public void StartTrailer()

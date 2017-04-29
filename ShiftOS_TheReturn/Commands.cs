@@ -247,7 +247,10 @@ namespace ShiftOS.Engine
         {
             try
             {
-                SaveSystem.CurrentSave.Upgrades[args["upgrade"] as string] = false;
+                SaveSystem.CurrentSave.Upgrades[args["upgrade"].ToString()] = false;
+                SaveSystem.SaveGame();
+                Desktop.PopulateAppLauncher();
+                Desktop.CurrentDesktop.SetupDesktop();
             }
             catch
             {

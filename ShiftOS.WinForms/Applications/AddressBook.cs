@@ -27,12 +27,20 @@ namespace ShiftOS.WinForms.Applications
         string data_dir = Paths.GetPath("data") + "/address_book";
         public void OnLoad()
         {
+            removeToolStripMenuItem.Visible = false;
             if (!DirectoryExists(data_dir))
                 CreateDirectory(data_dir);
             tvcontacts.Nodes.RemoveByKey("userdefined");
             var userDefined = new TreeNode();
             userDefined.Name = "userdefined";
             userDefined.Text = "User-defined";
+            tvcontacts.Click += (o, a) =>
+            {
+                if (tvcontacts.SelectedNode == userDefined)
+                {
+                    removeToolStripMenuItem.Visible = false;
+                }
+            };
             foreach(var f in GetFiles(data_dir))
             {
                 try
@@ -42,12 +50,28 @@ namespace ShiftOS.WinForms.Applications
                     node.Text = contact.UserName + "@" + contact.SystemName;
                     node.Tag = contact;
                     userDefined.Nodes.Add(node);
+                    tvcontacts.Click += (o, a) =>
+                    {
+                        if(tvcontacts.SelectedNode == node)
+                        {
+                            lbtitle.Text = contact.Name;
+                            txtbody.Text = $@"Username: {contact.UserName}
+System Name: {contact.SystemName}
+
+Description:
+{contact.Description}";
+                            removeToolStripMenuItem.Visible = true;
+                            SelectedContact = contact;
+                        }
+                    };
                 }
                 catch { }
             }
             tvcontacts.Nodes.Add(userDefined);
             userDefined.Expand();
         }
+
+        public Contact SelectedContact = null;
 
         public void OnSkinLoad()
         {
@@ -109,6 +133,30 @@ namespace ShiftOS.WinForms.Applications
                     Infobox.Show("Add Contact", "Name cannot be empty.");
                 }
             });
+        }
+
+        private void AddressBook_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(SelectedContact != null)
+            {
+                string file = data_dir + "/" + SelectedContact.Name;
+                if (FileExists(file))
+                {
+                    Infobox.PromptYesNo("Remove contact", $"Are you sure you want to remove {SelectedContact.Name} from your Address Book?", (result) =>
+                    {
+                        if (result == true)
+                        {
+                            Delete(file);
+                            OnLoad();
+                        }
+                    });
+                }
+            }
         }
     }
 
