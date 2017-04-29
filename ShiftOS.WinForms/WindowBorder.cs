@@ -293,9 +293,11 @@ namespace ShiftOS.WinForms
             pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
             pnlbottomr.BackgroundImage = GetImage("bottomrborder");
             pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
+            pnlbottomr.Width = pnlright.Width;
             pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
             pnlbottoml.BackgroundImage = GetImage("bottomlborder");
             pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+            pnlbottoml.Width = pnlleft.Width;
 
             lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
             lbtitletext.Font = LoadedSkin.TitleFont;
@@ -495,6 +497,64 @@ namespace ShiftOS.WinForms
 		/// <param name="e">E.</param>
         private void lbtitletext_MouseMove(object sender, MouseEventArgs e) {
             pnltitle_MouseMove(sender, e);
+        }
+
+        bool resizing = false;
+
+        private void pnlright_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (Shiftorium.UpgradeInstalled("resizable_windows"))
+                resizing = true;
+        }
+
+        private void pnlright_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Width += e.X;
+            }
+        }
+
+        private void pnlright_MouseUp(object sender, MouseEventArgs e)
+        {
+            resizing = false;
+        }
+
+        private void pnlleft_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Left += e.X;
+                this.Width -= e.X;
+            }
+        }
+
+        private void pnlbottom_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Height += e.Y;
+            }
+        }
+
+        private void pnlbottomr_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Width += e.X;
+                this.Height += e.Y;
+            }
+        }
+
+        private void pnlbottoml_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (resizing == true)
+            {
+                this.Width -= e.X;
+                this.Height += e.Y;
+                this.Left += e.X;
+            }
+
         }
     }
 }

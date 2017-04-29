@@ -10,11 +10,12 @@ namespace ShiftOS.WinForms
     [Namespace("test")]
     public static class TestCommandsForUpgrades
     {
-        [ShiftoriumUpgrade("Test Command", 50, "This is a simple test command", null, "Test")]
         [Command("simpletest")]
         public static bool Simple()
         {
             return true;
         }
     }
+
+   
 }

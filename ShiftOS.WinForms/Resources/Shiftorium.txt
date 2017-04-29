@@ -14,7 +14,13 @@
 		Dependencies: "screensavers;shifter",
 		Category: "Customization"
 	},
-
+	{
+		Name: "Resizable Windows",
+		Cost: 250,
+		Dependencies: "draggable_windows",
+		Description: "We can drag windows around, which is nice, but what if you want to give a window more working space? This upgrade allows you to resize windows.",
+		Category: "Enhancements"
+	},
 
 // CALCULATOR UPGRADES
 	{
