@@ -280,6 +280,7 @@ namespace ShiftOS.Engine
 
         private static IShiftoriumProvider _provider = null;
 
+        [Obsolete("Please annotate your provider with a [ShiftoriumProvider] attribute instead. This function doesn't do anything.")]
         public static void RegisterProvider(IShiftoriumProvider p)
         {
             _provider = p;
@@ -289,18 +290,6 @@ namespace ShiftOS.Engine
         public static List<ShiftoriumUpgrade> GetDefaults()
         {
             List<ShiftoriumUpgrade> list = new List<ShiftoriumUpgrade>();
-            try
-            {
-                list = _provider.GetDefaults();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Couldn't get the upgrade definition list from the provider.");
-                Console.WriteLine("This might be able to help:");
-                Console.WriteLine(ex);
-                list = JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
-            }
-
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
             foreach(var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
             {
@@ -311,10 +300,20 @@ namespace ShiftOS.Engine
                         var asm = Assembly.LoadFile(file);
                         foreach (var type in asm.GetTypes())
                         {
+                            if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
+                            {
+                                if(type.GetCustomAttributes().FirstOrDefault(x=> x is ShiftoriumProviderAttribute) != null)
+                                {
+                                    var _p = Activator.CreateInstance(type, null) as IShiftoriumProvider;
+                                    list.AddRange(_p.GetDefaults());
+                                }
+                            }
+
+
                             ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                             if (attrib != null)
                             {
-                                if (list.FirstOrDefault(x => x.Id == attrib.Upgrade) != null)
+                                if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
                                     throw new ShiftoriumConflictException(attrib.Upgrade);
                                 list.Add(new ShiftoriumUpgrade
                                 {
@@ -332,7 +331,7 @@ namespace ShiftOS.Engine
                                 attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                                 if (attrib != null)
                                 {
-                                    if (list.FirstOrDefault(x => x.Id == attrib.Upgrade) != null)
+                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
                                         throw new ShiftoriumConflictException(attrib.Upgrade);
                                     list.Add(new ShiftoriumUpgrade
                                     {
@@ -352,7 +351,7 @@ namespace ShiftOS.Engine
                                 attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                                 if (attrib != null)
                                 {
-                                    if (list.FirstOrDefault(x => x.Id == attrib.Upgrade) != null)
+                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
                                         throw new ShiftoriumConflictException(attrib.Upgrade);
                                     list.Add(new ShiftoriumUpgrade
                                     {
@@ -372,7 +371,7 @@ namespace ShiftOS.Engine
                                 attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                                 if (attrib != null)
                                 {
-                                    if (list.FirstOrDefault(x => x.Id == attrib.Upgrade) != null)
+                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
                                         throw new ShiftoriumConflictException(attrib.Upgrade);
                                     list.Add(new ShiftoriumUpgrade
                                     {
@@ -391,6 +390,14 @@ namespace ShiftOS.Engine
                     }
                     catch { }
                 }
+            }
+
+
+
+            foreach(var item in list)
+            {
+                if (list.Where(x => x.ID == item.ID).Count() > 1)
+                    throw new ShiftoriumConflictException(item.Id);
             }
             return list;
         }
@@ -459,5 +466,10 @@ namespace ShiftOS.Engine
         {
 
         }
+    }
+
+    public class ShiftoriumProviderAttribute : Attribute
+    {
+
     }
 }

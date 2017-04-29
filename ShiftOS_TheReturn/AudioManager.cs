@@ -41,8 +41,7 @@ namespace ShiftOS.Engine
         private static WaveOut _out = null;
         private static AudioFileReader _reader = null;
         private static IAudioProvider _provider = null;
-        private static bool _running = true;
-
+        
         /// <summary>
         /// Stops the current sound if one is playing and disposes of the sound.
         /// </summary>

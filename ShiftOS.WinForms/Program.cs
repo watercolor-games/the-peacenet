@@ -53,7 +53,6 @@ namespace ShiftOS.WinForms
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
             ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
             Localization.RegisterProvider(new WFLanguageProvider());
-            Shiftorium.RegisterProvider(new WinformsShiftoriumProvider());
             AppearanceManager.OnExit += () =>
             {
                 Environment.Exit(0);
@@ -95,6 +94,7 @@ namespace ShiftOS.WinForms
         }
     }
 
+    [ShiftoriumProvider]
     internal class WinformsShiftoriumProvider : IShiftoriumProvider
     {
         public List<ShiftoriumUpgrade> GetDefaults()
