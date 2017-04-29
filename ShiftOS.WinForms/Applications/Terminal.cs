@@ -405,7 +405,6 @@ namespace ShiftOS.WinForms.Applications
                     RemoteGuid = "";
                 }
             };
-
         }
 
         private void Terminal_FormClosing(object sender, FormClosingEventArgs e)
@@ -425,10 +424,13 @@ namespace ShiftOS.WinForms.Applications
                 {
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
-                TerminalBackend.PrintPrompt();
             }
 
-
+            new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                TerminalBackend.PrintPrompt();
+            }).Start();
         }
 
         public void OnSkinLoad()

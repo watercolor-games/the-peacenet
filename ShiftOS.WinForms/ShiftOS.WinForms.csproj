@@ -355,6 +355,7 @@
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
     <Compile Include="Stories\LegionStory.cs" />
+    <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />

@@ -445,7 +445,11 @@ namespace ShiftOS.Engine
     {
         public ShiftoriumUpgradeAttribute(string name, long cost, string desc, string dependencies, string category) : base(name.ToLower().Replace(" ", "_"))
         {
-
+            Name = name;
+            Description = desc;
+            Dependencies = dependencies;
+            Cost = cost;
+            Category = category;
         }
 
         public string Name { get; private set; }
