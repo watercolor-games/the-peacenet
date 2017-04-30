@@ -298,14 +298,7 @@ namespace ShiftOS.Engine
                 Console.Write("{SE_SAVING}... ");
             if (SaveSystem.CurrentSave != null)
             {
-                string username = CurrentSave.Username;
-                string password = CurrentSave.Password;
-
-                    Utils.WriteAllText(Paths.GetPath("user.dat"), $@"{{
-    username: ""{username}"",
-    password: ""{password}""
-}}");
-                
+                Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);                
                 ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
             }
             if (!Shiftorium.Silent)

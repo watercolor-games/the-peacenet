@@ -263,6 +263,22 @@ You must join the digital society, rise up the ranks, and save us.
                     {
                         var signupDialog = new UniteSignupDialog((token) =>
                         {
+                            ServerMessageReceived smr = null;
+                            smr = (msg) =>
+                            {
+                                ServerManager.MessageReceived -= smr;
+                                if (msg.Name == "mud_savefile")
+                                {
+                                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                    SaveSystem.SaveGame();
+                                }
+                                else
+                                {
+                                    LinkSaveFile(token);
+                                }
+                            };
+                            ServerManager.MessageReceived += smr;
+                            ServerManager.SendMessage("mud_token_login", token);
 
                         });
                         AppearanceManager.SetupDialog(signupDialog);

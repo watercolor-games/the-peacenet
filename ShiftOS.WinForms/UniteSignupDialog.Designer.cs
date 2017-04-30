@@ -40,17 +40,20 @@
             this.txtdisplay = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.txtsysname = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnlogin
             // 
             this.btnlogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnlogin.Location = new System.Drawing.Point(462, 407);
+            this.btnlogin.Location = new System.Drawing.Point(462, 479);
             this.btnlogin.Name = "btnlogin";
             this.btnlogin.Size = new System.Drawing.Size(75, 23);
             this.btnlogin.TabIndex = 11;
             this.btnlogin.Text = "Submit";
             this.btnlogin.UseVisualStyleBackColor = true;
+            this.btnlogin.Click += new System.EventHandler(this.btnlogin_Click);
             // 
             // txtpassword
             // 
@@ -94,10 +97,10 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 36);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.Size = new System.Drawing.Size(120, 13);
             this.label1.TabIndex = 6;
             this.label1.Tag = "header2";
-            this.label1.Text = "Login to ShiftOS";
+            this.label1.Text = "Create ShiftOS Account";
             // 
             // txtconfirm
             // 
@@ -141,16 +144,36 @@
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.Location = new System.Drawing.Point(20, 251);
+            this.label6.Location = new System.Drawing.Point(20, 267);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(517, 153);
+            this.label6.Size = new System.Drawing.Size(517, 209);
             this.label6.TabIndex = 16;
             this.label6.Text = resources.GetString("label6.Text");
+            // 
+            // txtsysname
+            // 
+            this.txtsysname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtsysname.Location = new System.Drawing.Point(113, 223);
+            this.txtsysname.Name = "txtsysname";
+            this.txtsysname.Size = new System.Drawing.Size(424, 20);
+            this.txtsysname.TabIndex = 18;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(17, 226);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(73, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "System name:";
             // 
             // UniteSignupDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.txtsysname);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtdisplay);
             this.Controls.Add(this.label5);
@@ -163,7 +186,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "UniteSignupDialog";
-            this.Size = new System.Drawing.Size(555, 447);
+            this.Size = new System.Drawing.Size(555, 519);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,5 +205,7 @@
         private System.Windows.Forms.TextBox txtdisplay;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtsysname;
+        private System.Windows.Forms.Label label7;
     }
 }
