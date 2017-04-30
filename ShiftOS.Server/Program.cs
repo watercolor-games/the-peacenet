@@ -86,7 +86,18 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
-            
+            System.Timers.Timer tmr = new System.Timers.Timer(5000);
+            tmr.Elapsed += (o, a) =>
+            {
+                if (server.IsOnline)
+                {
+                    server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+                    {
+                        Name = "heartbeat",
+                        GUID = "server"
+                    }));
+                }
+            };
 			if (!Directory.Exists("saves"))
 			{
 				Directory.CreateDirectory("saves");
@@ -106,11 +117,13 @@ namespace ShiftOS.Server
 			{
 				Console.WriteLine($"Server started on address {server.Address}, port {server.Port}.");
 				ServerStarted?.Invoke(server.Address.ToString());
-			};
+                tmr.Start();
+            };
 
 			server.OnStopped += (o, a) =>
 			{
 				Console.WriteLine("WARNING! Server stopped.");
+                tmr.Stop();
 			};
 
 			server.OnError += (o, a) =>
