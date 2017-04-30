@@ -70,6 +70,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\TriWrite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriWrite.Designer.cs">
+      <DependentUpon>TriWrite.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\AddressBook.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -387,6 +393,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriWrite.resx">
+      <DependentUpon>TriWrite.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\AddressBook.resx">
       <DependentUpon>AddressBook.cs</DependentUpon>
