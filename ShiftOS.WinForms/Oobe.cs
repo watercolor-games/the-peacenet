@@ -36,6 +36,7 @@ using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
 using ShiftOS.Objects.ShiftFS;
+using ShiftOS.Unite;
 using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms
@@ -219,55 +220,93 @@ You must join the digital society, rise up the ranks, and save us.
             t.Start();
         }
 
+        public void PerformUniteLogin()
+        {
+
+        }
+
         public void PromptForLogin()
         {
-            ServerMessageReceived MessageReceived = null;
-            MessageReceived = (msg) =>
+            Infobox.Show("Login", "Since the last time you've played ShiftOS, some changes have been made to the login system. You must now login using your website credentials.", () =>
             {
-                if(msg.Name == "mud_savefile")
+                Infobox.PromptYesNo("Website account", "Do you have an account at http://getshiftos.ml?", (hasAccount) =>
                 {
-                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                    SaveSystem.SaveGame();
-                    Application.Restart();
-                }
-                else if(msg.Name == "mud_notfound")
-                {
-                    ServerManager.MessageReceived -= MessageReceived;
-                    
-                    PromptForLogin();
-                }
-            };
-            ServerManager.MessageReceived += MessageReceived;
-            Infobox.PromptYesNo("Login", "You are missing a digital society authentication link. Would you like to generate a new link with an existing account? Choosing \"No\" will restart the session in the out-of-box experience.", (result)=>
-            {
-                if (result == true)
-                {
-                    Infobox.PromptText("Login", "Please enter your digital society username.", (uname) =>
+                    if(hasAccount == true)
                     {
-                        Infobox.PromptText("Login", "Please enter your password.", (pword) =>
+                        var loginDialog = new UniteLoginDialog((success)=>
                         {
-                            ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                            string token = success;
+                            var uClient = new UniteClient("http://getshiftos.ml", token);
+                            Infobox.Show("Welcome to ShiftOS.", $"Hello, {uClient.GetDisplayName()}! We've signed you into your account. We'll now try to link your ShiftOS account with your save file.", () =>
                             {
-                                username = uname,
-                                password = pword
-                            }));
-                        }, true);
-                    });
-                }
-                else
-                {
-                    //restart in OOBE
-                    if (Objects.ShiftFS.Utils.FileExists(Paths.GetPath("user.dat")))
-                    {
-                        Utils.Delete(Paths.GetPath("user.dat"));
+                                ServerMessageReceived smr = null;
+                                smr = (msg) =>
+                                {
+                                    ServerManager.MessageReceived -= smr;
+                                    if (msg.Name == "mud_savefile")
+                                    {
+                                        SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                        SaveSystem.SaveGame();
+                                    }
+                                    else
+                                    {
+                                        LinkSaveFile(token);
+                                    }
+                                };
+                                ServerManager.MessageReceived += smr;
+                                ServerManager.SendMessage("mud_token_login", token);
+                            });
+                        });
+                        AppearanceManager.SetupDialog(loginDialog);
                     }
-                    string json = Utils.ExportMount(0);
-                    System.IO.File.WriteAllText(Paths.SaveFile, json);
-                    System.Diagnostics.Process.Start(Application.ExecutablePath);
-                    Environment.Exit(0);
-                }
+                });
             });
-            
+        }
+
+        public void LinkSaveFile(string token)
+        {
+            Infobox.PromptText("Enter username", "Please enter the username you used for your save file before these changes.", (cuname) =>
+            {
+                Infobox.PromptText("Enter password", "Now, please enter the corresponding password.", (cpass) =>
+                {
+                    ServerMessageReceived nsmr = null;
+                    nsmr = (nmsg) =>
+                    {
+                        ServerManager.MessageReceived -= nsmr;
+                        if (nmsg.Name == "mud_savefile")
+                        {
+                            var save = JsonConvert.DeserializeObject<Save>(nmsg.Contents);
+                            save.UniteAuthToken = token;
+                            Infobox.Show("That'll do it.", "Your save has been linked up! Next time you log into the ShiftOS site, your Codepoints should show on your profile. There's just a few more things we have to do.", () =>
+                            {
+                                SaveSystem.CurrentSave = save;
+                                SaveSystem.SaveGame();
+                            });
+                        }
+                        else
+                        {
+                            Infobox.Show("Uh oh.", "We couldn't find a save file with those values. Please try again", () =>
+                            {
+                                LinkSaveFile(token);
+                            });
+                        }
+                    };
+                    ServerManager.MessageReceived += nsmr;
+                    ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                    {
+                        username = cuname,
+                        password = cpass
+                    }));
+                }, true);
+            });
+        }
+
+        public void ForceReboot()
+        {
+            string json = Utils.ExportMount(0);
+            System.IO.File.WriteAllText(Paths.SaveFile, json);
+            System.Diagnostics.Process.Start(Application.ExecutablePath);
+            Environment.Exit(0);
         }
 
         public void StartTrailer()

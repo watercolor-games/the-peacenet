@@ -266,12 +266,9 @@ namespace ShiftOS.Engine
             {
                 if (Utils.FileExists(Paths.GetPath("user.dat")))
                 {
-                    var userdat = JsonConvert.DeserializeObject<ClientSave>(Utils.ReadAllText(Paths.GetPath("user.dat")));
+                    string token = Utils.ReadAllText(Paths.GetPath("user.dat"));
 
-                    ServerManager.SendMessage("mud_login", $@"{{
-    username: ""{userdat.Username}"",
-    password: ""{userdat.Password}""
-}}");
+                    ServerManager.SendMessage("mud_token_login", token);
                 }
                 else
                 {

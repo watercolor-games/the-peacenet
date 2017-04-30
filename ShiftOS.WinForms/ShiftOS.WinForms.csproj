@@ -367,6 +367,12 @@
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
+    <Compile Include="UniteLoginDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteLoginDialog.Designer.cs">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />
@@ -524,6 +530,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteLoginDialog.resx">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>
