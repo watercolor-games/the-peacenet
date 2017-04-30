@@ -259,45 +259,81 @@ You must join the digital society, rise up the ranks, and save us.
                         });
                         AppearanceManager.SetupDialog(loginDialog);
                     }
+                    else
+                    {
+                        var signupDialog = new UniteSignupDialog((token) =>
+                        {
+
+                        });
+                        AppearanceManager.SetupDialog(signupDialog);
+                    }
                 });
             });
         }
 
         public void LinkSaveFile(string token)
         {
-            Infobox.PromptText("Enter username", "Please enter the username you used for your save file before these changes.", (cuname) =>
+            if (Utils.FileExists(Paths.GetPath("user.dat")))
             {
-                Infobox.PromptText("Enter password", "Now, please enter the corresponding password.", (cpass) =>
+                try
                 {
-                    ServerMessageReceived nsmr = null;
-                    nsmr = (nmsg) =>
+                    var details = JsonConvert.DeserializeObject<ClientSave>(Utils.ReadAllText(Paths.GetPath("user.dat")));
+                    ServerMessageReceived smr = null;
+                    bool msgreceived = false;
+                    bool found = false;
+                    smr = (msg) =>
                     {
-                        ServerManager.MessageReceived -= nsmr;
-                        if (nmsg.Name == "mud_savefile")
+                        if (msg.Name == "mud_savefile")
                         {
-                            var save = JsonConvert.DeserializeObject<Save>(nmsg.Contents);
+                            var save = JsonConvert.DeserializeObject<Save>(msg.Contents);
                             save.UniteAuthToken = token;
-                            Infobox.Show("That'll do it.", "Your save has been linked up! Next time you log into the ShiftOS site, your Codepoints should show on your profile. There's just a few more things we have to do.", () =>
+                            Infobox.Show("Migration complete.", "We have migrated your old save file to the new system successfully. You can still log in using the old system on old builds of ShiftOS.", () =>
                             {
                                 SaveSystem.CurrentSave = save;
                                 SaveSystem.SaveGame();
+                                found = true;
+                                msgreceived = true;
                             });
                         }
                         else
                         {
-                            Infobox.Show("Uh oh.", "We couldn't find a save file with those values. Please try again", () =>
-                            {
-                                LinkSaveFile(token);
-                            });
+                            found = false;
+                            msgreceived = true;
                         }
+                        ServerManager.MessageReceived -= smr;
                     };
-                    ServerManager.MessageReceived += nsmr;
+                    ServerManager.MessageReceived += smr;
                     ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
                     {
-                        username = cuname,
-                        password = cpass
+                        username = details.Username,
+                        password = details.Password
                     }));
-                }, true);
+                    while (msgreceived == false)
+                        Thread.Sleep(10);
+                    if (found)
+                        return;
+                }
+                catch
+                {
+                    
+                }
+            }
+
+            var client = new UniteClient("http://getshiftos.ml", token);
+            var sve = new Save();
+            sve.Username = client.GetEmail();
+            sve.Password = Guid.NewGuid().ToString();
+            sve.SystemName = client.GetSysName();
+            sve.UniteAuthToken = token;
+            sve.Codepoints = 0;
+            sve.Upgrades = new Dictionary<string, bool>();
+            sve.ID = Guid.NewGuid();
+            Infobox.Show("Welcome to ShiftOS.", "Welcome to ShiftOS, " + client.GetDisplayName() + ". We have created a save file for you. Now, go on and Shift It Your Way.", () =>
+            {
+                sve.StoryPosition = 8675309;
+                SaveSystem.CurrentSave = sve;
+                SaveSystem.SaveGame();
+
             });
         }
 

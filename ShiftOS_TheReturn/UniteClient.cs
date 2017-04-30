@@ -15,7 +15,7 @@ namespace ShiftOS.Unite
         public UniteClient(string baseurl, string usertoken)
         {
             BaseURL = baseurl;
-            Token = Token;
+            Token = usertoken;
         }
 
         internal string MakeCall(string url)
@@ -32,6 +32,21 @@ namespace ShiftOS.Unite
                     }
                 }
             }
+        }
+
+        public string GetEmail()
+        {
+            return MakeCall("/API/GetEmail");
+        }
+
+        public string GetSysName()
+        {
+            return MakeCall("/API/GetSysName");
+        }
+
+        public void SetSysName(string value)
+        {
+            MakeCall("/API/SetSysName/" + value);
         }
 
         public string GetDisplayName()

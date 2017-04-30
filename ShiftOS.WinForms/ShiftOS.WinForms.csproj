@@ -373,6 +373,12 @@
     <Compile Include="UniteLoginDialog.Designer.cs">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UniteSignupDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteSignupDialog.Designer.cs">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />
@@ -533,6 +539,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UniteLoginDialog.resx">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteSignupDialog.resx">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>
