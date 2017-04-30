@@ -32,6 +32,7 @@ using System.IO;
 using Newtonsoft.Json;
 using NetSockets;
 using static ShiftOS.Server.Program;
+using System.Net;
 
 namespace ShiftOS.Server
 {
@@ -172,6 +173,9 @@ namespace ShiftOS.Server
 
             try
             {
+
+                
+
                 Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_saved",
@@ -179,6 +183,19 @@ namespace ShiftOS.Server
                 }));
             }
             catch { }
+
+            try
+            {
+                //Update the shiftos website with the user's codepoints.
+                if (!string.IsNullOrWhiteSpace(sav.UniteAuthToken))
+                {
+                    var wreq = WebRequest.Create("http://getshiftos.ml/API/SetCodepoints/" + sav.Codepoints.ToString());
+                    wreq.Headers.Add("Authentication: Token " + sav.UniteAuthToken);
+                    wreq.GetResponse();
+                }
+            }
+            catch { }
+
         }
 
         [MudRequest("delete_save", typeof(ClientSave))]

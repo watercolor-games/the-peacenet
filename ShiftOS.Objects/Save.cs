@@ -45,6 +45,8 @@ namespace ShiftOS.Objects
         public int MinorVersion { get; set; }
         public int Revision { get; set; }
 
+        public string UniteAuthToken { get; set; }
+
         public bool IsPatreon { get; set; }
 
         public UserClass Class { get; set; }
