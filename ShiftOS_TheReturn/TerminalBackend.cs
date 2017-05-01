@@ -395,7 +395,7 @@ namespace ShiftOS.Engine
         }
         public static void PrintPrompt()
         {
-            if (SaveSystem.CurrentSave != null)
+            if (SaveSystem.CurrentSave != null && CurrentUser != null)
             {
                 ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
                 ConsoleEx.Italic = false;
