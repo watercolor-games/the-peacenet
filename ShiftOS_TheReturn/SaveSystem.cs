@@ -159,17 +159,23 @@ namespace ShiftOS.Engine
         {
             KernelWatchdog.Log("mud_handshake", "handshake successful: kernel watchdog access code is \"" + ServerManager.thisGuid.ToString() + "\"");
 
-            ServerManager.MessageReceived += (msg) =>
+            ServerMessageReceived savehandshake = null;
+
+            savehandshake = (msg) =>
             {
                 if (msg.Name == "mud_savefile")
                 {
                     CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    ServerManager.MessageReceived -= savehandshake;
                 }
                 else if (msg.Name == "mud_login_denied")
                 {
                     oobe.PromptForLogin();
+                    ServerManager.MessageReceived -= savehandshake;
                 }
             };
+            ServerManager.MessageReceived += savehandshake;
+
 
             ReadSave();
 
