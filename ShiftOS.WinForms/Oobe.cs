@@ -326,7 +326,7 @@ You must join the digital society, rise up the ranks, and save us.
                     }));
                     while (msgreceived == false)
                         Thread.Sleep(10);
-                    if (found)
+                    if (found == true)
                         return;
                 }
                 catch
