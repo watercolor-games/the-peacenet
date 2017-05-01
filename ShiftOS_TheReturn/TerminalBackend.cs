@@ -32,21 +32,26 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using static ShiftOS.Engine.SaveSystem;
 
-namespace ShiftOS.Engine {
-    public static class TerminalBackend {
+namespace ShiftOS.Engine
+{
+    public static class TerminalBackend
+    {
         public static event Action<string, string> CommandProcessed;
 
         public static bool Elevated { get; set; }
 
-        public static Dictionary<string, string> GetArgs(ref string text) {
+        public static Dictionary<string, string> GetArgs(ref string text)
+        {
             bool shouldParse = false;
             int argStart = 0;
-            if (text.Contains("{")) {
+            if (text.Contains("{"))
+            {
                 shouldParse = true;
                 argStart = text.IndexOf('{');
             }
 
-            if (shouldParse == false) {
+            if (shouldParse == false)
+            {
                 string replacement = Regex.Replace(text, @"\t|\n|\r", "");
                 text = replacement + "{}";
                 shouldParse = true;
@@ -61,15 +66,18 @@ namespace ShiftOS.Engine {
 
         public static string LastCommand = "";
 
-        public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false) {
-            try {
+        public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false)
+        {
+            try
+            {
                 if (string.IsNullOrWhiteSpace(ns))
                     return;
 
 
                 bool commandWasClient = RunClient(ns, command, arguments, isRemote);
 
-                if (!commandWasClient && !string.IsNullOrWhiteSpace(ns)) {
+                if (!commandWasClient && !string.IsNullOrWhiteSpace(ns))
+                {
                     PrefixEnabled = false;
 
                     ServerManager.SendMessage("script", $@"{{
@@ -80,23 +88,29 @@ namespace ShiftOS.Engine {
                 }
 
                 CommandProcessed?.Invoke(ns + "." + command, JsonConvert.SerializeObject(arguments));
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine($"Command parse error: {ex.Message}"); // This shouldn't ever be called now
                 PrefixEnabled = true;
 
             }
         }
 
-        public static string GetSentArgs(Dictionary<string, string> argss) {
+        public static string GetSentArgs(Dictionary<string, string> argss)
+        {
             Dictionary<string, object> args = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, string> arg in argss) {
+            foreach (KeyValuePair<string, string> arg in argss)
+            {
                 args[arg.Key] = arg.Value;
             }
             return JsonConvert.SerializeObject(args);
         }
 
-        public static void InvokeCommand(string text, bool isRemote = false) {
-            try {
+        public static void InvokeCommand(string text, bool isRemote = false)
+        {
+            try
+            {
                 if (string.IsNullOrWhiteSpace(text))
                     return;
 
@@ -104,7 +118,8 @@ namespace ShiftOS.Engine {
 
                 bool commandWasClient = RunClient(text, args, isRemote);
 
-                if (!commandWasClient) {
+                if (!commandWasClient)
+                {
                     PrefixEnabled = false;
 
                     ServerManager.SendMessage("script", $@"{{
@@ -114,7 +129,9 @@ namespace ShiftOS.Engine {
 }}");
                 }
                 CommandProcessed?.Invoke(text, GetSentArgs(args));
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine($"Command parse error: {ex.Message}");
                 PrefixEnabled = true;
 
@@ -129,15 +146,18 @@ namespace ShiftOS.Engine {
 
         public static event EmptyEventHandler TerminalRequested;
 
-        internal static void OpenTerminal() {
+        internal static void OpenTerminal()
+        {
             TerminalRequested?.Invoke();
         }
 
-        public static bool CanRunRemotely(MethodInfo mth, bool isRemote) {
+        public static bool CanRunRemotely(MethodInfo mth, bool isRemote)
+        {
             if (!isRemote)
                 return true;
 
-            foreach (var attr in mth.GetCustomAttributes(false)) {
+            foreach (var attr in mth.GetCustomAttributes(false))
+            {
                 if (attr is RemoteLockAttribute)
                     return false;
             }
@@ -145,26 +165,32 @@ namespace ShiftOS.Engine {
             return true;
         }
 
-        public static bool RunClient(string ns, string cmd, Dictionary<string, string> args, bool isRemote = false) {
+        public static bool RunClient(string ns, string cmd, Dictionary<string, string> args, bool isRemote = false)
+        {
             return RunClient(ns + "." + cmd, args, isRemote);
         }
 
 
-        public static bool RunClient(string text, Dictionary<string, string> argss, bool isRemote = false) {
+        public static bool RunClient(string text, Dictionary<string, string> argss, bool isRemote = false)
+        {
             Dictionary<string, object> args = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, string> arg in argss) {
+            foreach (KeyValuePair<string, string> arg in argss)
+            {
                 args[arg.Key] = arg.Value;
             }
             return RunClient(text, args, isRemote);
         }
 
-        public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false) {
+        public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false)
+        {
             latestCommmand = text;
 
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
 
-            foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory)) {
-                try {
+            foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                try
+                {
                     var asm = Assembly.LoadFile(asmExec);
 
                     var types = asm.GetTypes();
@@ -315,7 +341,9 @@ namespace ShiftOS.Engine {
 
                                                                 }
                                                             }
-                                                        } else {
+                                                        }
+                                                        else
+                                                        {
                                                             Console.WriteLine(text + " cannot be ran in a remote session");
                                                             return true;
                                                         }
@@ -360,7 +388,8 @@ namespace ShiftOS.Engine {
                             }
                         }
                     }
-                } catch { }
+                }
+                catch { }
             }
             return false;
         }
@@ -375,7 +404,7 @@ namespace ShiftOS.Engine {
                 ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
                 ConsoleEx.Bold = true;
 
-                Console.Write(SaveSystem.CurrentSave.Username);
+                Console.Write(SaveSystem.CurrentUser.Username);
                 ConsoleEx.Bold = false;
                 ConsoleEx.ForegroundColor = ConsoleColor.Gray;
                 Console.Write("@");
@@ -410,26 +439,34 @@ namespace ShiftOS.Engine {
                     string text3 = "";
                     string text4 = msg.Contents;
 
-                    if (TerminalBackend.PrefixEnabled) {
+                    if (TerminalBackend.PrefixEnabled)
+                    {
                         text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                     }
                     IsForwardingConsoleWrites = true;
-                    if (TerminalBackend.InStory == false) {
+                    if (TerminalBackend.InStory == false)
+                    {
                         TerminalBackend.InvokeCommand(text3, true);
                     }
-                    if (TerminalBackend.PrefixEnabled) {
+                    if (TerminalBackend.PrefixEnabled)
+                    {
                         Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                     }
                     IsForwardingConsoleWrites = false;
-                } else if (msg.Name == "pleasewrite") {
+                }
+                else if (msg.Name == "pleasewrite")
+                {
                     Console.Write(msg.Contents);
-                } else if (msg.Name == "handshake_from") {
+                }
+                else if (msg.Name == "handshake_from")
+                {
                     var a = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                     string uName = a["username"] as string;
                     string pass = a["password"] as string;
                     string sys = a["sysname"] as string;
                     string guid = msg.GUID;
-                    if (SaveSystem.CurrentSave.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys) {
+                    if (SaveSystem.CurrentSave.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
+                    {
                         ForwardGUID = guid;
                         ServerManager.SendMessage("trm_handshake_accept", $@"{{
     guid: ""{ServerManager.thisGuid}"",
@@ -449,6 +486,13 @@ namespace ShiftOS.Engine {
 
         public static bool IsForwardingConsoleWrites { get; internal set; }
         public static string ForwardGUID { get; internal set; }
+
+        public static event TextSentEventHandler TextSent;
+
+        public static void SendText(string text)
+        {
+            TextSent?.Invoke(text);
+        }
 
     }
 }

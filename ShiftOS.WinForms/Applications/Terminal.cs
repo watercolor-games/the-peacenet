@@ -283,6 +283,7 @@ namespace ShiftOS.WinForms.Applications
                             }
                             TerminalBackend.LastCommand = text3;
                             TextSent?.Invoke(text4);
+                            TerminalBackend.SendText(text4);
                             if (TerminalBackend.InStory == false)
                             {
                                 if (text3 == "stop theme")

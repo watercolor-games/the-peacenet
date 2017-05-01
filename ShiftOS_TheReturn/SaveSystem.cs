@@ -50,6 +50,9 @@ namespace ShiftOS.Engine
     {
         public static bool ShuttingDown = false;
 
+        public static ClientSave CurrentUser { get; set; }
+
+
         public static Save CurrentSave { get; set; }
 
         /// <summary>
@@ -189,28 +192,96 @@ namespace ShiftOS.Engine
             Thread.Sleep(50);
             Console.WriteLine("{SYSTEM_INITIATED}");
 
+            
+
+            if(CurrentSave.Users.Count == 0)
+            {
+                CurrentSave.Users.Add(new ClientSave
+                {
+                    Username = "root",
+                    Password = "",
+                    Permissions = UserPermissions.Root
+                });
+                Console.WriteLine("No users found. Creating new user with username \"root\", with no password.");
+            }
             TerminalBackend.InStory = false;
+
+            TerminalBackend.PrefixEnabled = false;
+
+            Login:
+            string username = "";
+            int progress = 0;
+            bool goback = false;
+            TextSentEventHandler ev = null;
+            ev = (text) =>
+            {
+                if (progress == 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        if (CurrentSave.Users.FirstOrDefault(x => x.Username == text) == null)
+                        {
+                            Console.WriteLine("User not found.");
+                            goback = true;
+                            progress++;
+                            TerminalBackend.TextSent -= ev;
+                            return;
+                        }
+                        username = text;
+                        progress++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Username not provided.");
+                        TerminalBackend.TextSent -= ev;
+                        goback = true;
+                        progress++;
+                    }
+                }
+                else if (progress == 1)
+                {
+                    var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
+                    if (user.Password == text)
+                    {
+                        Console.WriteLine("Welcome to ShiftOS.");
+                        CurrentUser = user;
+                        Thread.Sleep(2000);
+                        progress++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Access denied.");
+                        goback = true;
+                        progress++;
+                    }
+                    TerminalBackend.TextSent -= ev;
+                }
+            };
+            TerminalBackend.TextSent += ev;
+            Console.WriteLine(CurrentSave.SystemName + " login:");
+            while(progress == 0)
+            {
+                Thread.Sleep(10);
+            }
+            if (goback)
+                goto Login;
+            Console.WriteLine("password:");
+            while (progress == 1)
+                Thread.Sleep(10);
+            if (goback)
+                goto Login;
+
+
             TerminalBackend.PrefixEnabled = true;
             Shiftorium.LogOrphanedUpgrades = true;
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
                 ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
             }));
-            Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
-            if (CurrentSave.StoryPosition == 1)
-            {
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-                {
-                    TutorialManager.StartTutorial();
 
-                }));
-                while (TutorialManager.IsInTutorial == true) { }
-                GameReady?.Invoke();
-            }
-            else
-            {
-                GameReady?.Invoke();
-            }
+
+            Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
+            GameReady?.Invoke();
         }
 
         public delegate void EmptyEventHandler();
