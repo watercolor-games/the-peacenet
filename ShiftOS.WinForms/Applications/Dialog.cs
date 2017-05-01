@@ -85,8 +85,6 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
-        private Action OpenCallback = null;
-
         public void Open(string title, string msg, Action c = null)
         {
             new Dialog().OpenInternal(title, msg, c);

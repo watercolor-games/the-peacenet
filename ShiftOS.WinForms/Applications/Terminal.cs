@@ -197,7 +197,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void ResetAllKeywords()
         {
-            string primary = SaveSystem.CurrentSave.Username + " ";
+            string primary = SaveSystem.CurrentUser.Username + " ";
             string secondary = "shiftos ";
 
 
@@ -279,7 +279,7 @@ namespace ShiftOS.WinForms.Applications
                         {
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                                text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                             }
                             TerminalBackend.LastCommand = text3;
                             TextSent?.Invoke(text4);
@@ -327,7 +327,7 @@ namespace ShiftOS.WinForms.Applications
                     {
                         var tostring3 = txt.Lines[txt.Lines.Length - 1];
                         var tostringlen = tostring3.Length + 1;
-                        var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var workaround = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                         var derp = workaround.Length + 1;
                         if (tostringlen != derp)
                         {
@@ -347,7 +347,7 @@ namespace ShiftOS.WinForms.Applications
                 {
                     var getstring = txt.Lines[txt.Lines.Length - 1];
                     var stringlen = getstring.Length + 1;
-                    var header = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                     var headerlen = header.Length + 1;
                     var selstart = txt.SelectionStart;
                     var remstrlen = txt.TextLength - stringlen;
@@ -365,7 +365,7 @@ namespace ShiftOS.WinForms.Applications
                 else if (a.KeyCode == Keys.Up)
                 {
                     var tostring3 = txt.Lines[txt.Lines.Length - 1];
-                    if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
+                    if (tostring3 == $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                         Console.Write(TerminalBackend.LastCommand);
                     a.SuppressKeyPress = true;
 
@@ -465,7 +465,7 @@ namespace ShiftOS.WinForms.Applications
 
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                Console.Write($"{SaveSystem.CurrentSave.Username}@shiftos:~$ ");
+                                Console.Write($"{SaveSystem.CurrentUser.Username}@shiftos:~$ ");
                             }
                         }
                         catch (Exception ex)

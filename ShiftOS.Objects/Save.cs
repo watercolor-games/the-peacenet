@@ -34,7 +34,11 @@ namespace ShiftOS.Objects
     //Better to store this stuff server-side so we can do some neat stuff with hacking...
     public class Save
     {
+
+        [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
+
+
         public long Codepoints { get; set; }
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }

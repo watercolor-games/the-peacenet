@@ -296,8 +296,6 @@ namespace ShiftOS.Server
         /// <param name="msg">Message.</param>
         public static void Interpret(ServerMessage msg)
 		{
-			Dictionary<string, object> args = null;
-
 			try
 			{
 				Console.WriteLine($@"[{DateTime.Now}] Message received from {msg.GUID}: {msg.Name}");
@@ -325,8 +323,7 @@ namespace ShiftOS.Server
                                                     try
                                                     {
                                                         object contents = null;
-                                                        bool throwOnNull = false;
-
+                                                        
 
                                                         if (mAttrib.ExpectedType == typeof(int))
                                                         {
@@ -354,7 +351,6 @@ namespace ShiftOS.Server
                                                         }
                                                         else if (mAttrib.ExpectedType == typeof(bool))
                                                         {
-                                                            throwOnNull = true;
                                                             if (msg.Contents.ToLower() == "true")
                                                             {
                                                                 contents = true;
@@ -371,7 +367,6 @@ namespace ShiftOS.Server
                                                         }
                                                         else if (mAttrib.ExpectedType == null)
                                                         {
-                                                            throwOnNull = false;
                                                         }
                                                         else if(mAttrib.ExpectedType == typeof(string))
                                                         {
