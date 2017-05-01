@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddressBook));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TriWrite));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.addContactToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,8 +36,14 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtbody = new System.Windows.Forms.Label();
             this.lbtitle = new System.Windows.Forms.Label();
+            this.txtcontents = new System.Windows.Forms.TextBox();
+            this.menuStrip2 = new System.Windows.Forms.MenuStrip();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.menuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -51,9 +57,20 @@
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // addContactToolStripMenuItem
+            // 
+            this.addContactToolStripMenuItem.Name = "addContactToolStripMenuItem";
+            this.addContactToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
+            // 
+            // removeToolStripMenuItem
+            // 
+            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
+            // 
             // tvcontacts
             // 
             this.tvcontacts.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tvcontacts.LineColor = System.Drawing.Color.Empty;
             this.tvcontacts.Location = new System.Drawing.Point(0, 24);
             this.tvcontacts.Name = "tvcontacts";
             this.tvcontacts.Size = new System.Drawing.Size(224, 551);
@@ -71,8 +88,8 @@
             // 
             // txtbody
             // 
-            this.txtbody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtbody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbody.Location = new System.Drawing.Point(7, 54);
             this.txtbody.Name = "txtbody";
@@ -85,10 +102,66 @@
             this.lbtitle.AutoSize = true;
             this.lbtitle.Location = new System.Drawing.Point(7, 4);
             this.lbtitle.Name = "lbtitle";
-            this.lbtitle.Size = new System.Drawing.Size(73, 13);
+            this.lbtitle.Size = new System.Drawing.Size(44, 13);
             this.lbtitle.TabIndex = 0;
             this.lbtitle.Tag = "header1";
             this.lbtitle.Text = "TriWrite";
+            // 
+            // txtcontents
+            // 
+            this.txtcontents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtcontents.Location = new System.Drawing.Point(-61, 53);
+            this.txtcontents.Multiline = true;
+            this.txtcontents.Name = "txtcontents";
+            this.txtcontents.Size = new System.Drawing.Size(588, 460);
+            this.txtcontents.TabIndex = 1;
+            this.txtcontents.TabStop = false;
+            // 
+            // menuStrip2
+            // 
+            this.menuStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
+            this.openToolStripMenuItem,
+            this.saveToolStripMenuItem});
+            this.menuStrip2.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip2.Name = "menuStrip2";
+            this.menuStrip2.Size = new System.Drawing.Size(648, 24);
+            this.menuStrip2.TabIndex = 2;
+            this.menuStrip2.Text = "menuStrip2";
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.newToolStripMenuItem.Text = "New";
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.openToolStripMenuItem.Text = "Open";
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.saveToolStripMenuItem.Text = "Save";
+            // 
+            // TriWrite
+            // 
+            this.Controls.Add(this.menuStrip2);
+            this.Controls.Add(this.txtcontents);
+            this.Name = "TriWrite";
+            this.Size = new System.Drawing.Size(527, 513);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.menuStrip2.ResumeLayout(false);
+            this.menuStrip2.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -101,5 +174,10 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label txtbody;
         private System.Windows.Forms.Label lbtitle;
+        private System.Windows.Forms.TextBox txtcontents;
+        private System.Windows.Forms.MenuStrip menuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
     }
 }
