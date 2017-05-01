@@ -205,7 +205,11 @@ namespace ShiftOS.WinForms
             while (position == 0)
                 Thread.Sleep(10);
             Console.WriteLine("Connecting to the multi-user domain as " + SaveSystem.CurrentSave.SystemName + "...");
+            bool connected = false;
+            Engine.AudioManager.PlayCompleted += () => { connected = true; };
             Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
+            while (connected == false)
+                Thread.Sleep(10);
             Console.WriteLine("Connection successful, system spinning up...");
             Thread.Sleep(200);
             UsernameWait:
@@ -299,6 +303,8 @@ namespace ShiftOS.WinForms
                         TerminalBackend.PrintPrompt();
                         Console.Write("sos.help");
                         TerminalBackend.InvokeCommand("sos.help");
+                        Thread.Sleep(1000);
+                        TerminalBackend.PrintPrompt();
                     };
                 }
             });
