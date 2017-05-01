@@ -248,7 +248,7 @@ You must join the digital society, rise up the ranks, and save us.
                                         SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
                                         SaveSystem.SaveGame();
                                     }
-                                    else
+                                    else if(msg.Name=="mud_login_denied")
                                     {
                                         LinkSaveFile(token);
                                     }
@@ -272,7 +272,7 @@ You must join the digital society, rise up the ranks, and save us.
                                     SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
                                     SaveSystem.SaveGame();
                                 }
-                                else
+                                else if (msg.Name == "mud_login_denied")
                                 {
                                     LinkSaveFile(token);
                                 }
@@ -311,7 +311,7 @@ You must join the digital society, rise up the ranks, and save us.
                                 msgreceived = true;
                             });
                         }
-                        else
+                        else if (msg.Name == "mud_login_denied")
                         {
                             found = false;
                             msgreceived = true;
