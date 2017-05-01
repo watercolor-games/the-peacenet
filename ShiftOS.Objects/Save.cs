@@ -98,7 +98,7 @@ namespace ShiftOS.Objects
             return count;
         }
 
-        public List<ClientSave> Users = new List<ClientSave>();
+        public List<ClientSave> Users { get; set; }
     }
 
     public class SettingsObject : DynamicObject
