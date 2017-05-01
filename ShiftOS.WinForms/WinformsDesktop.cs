@@ -52,7 +52,6 @@ namespace ShiftOS.WinForms
         public List<IDesktopWidget> Widgets = new List<IDesktopWidget>();
 
 
-        private bool InScreensaver = false;
         private int millisecondsUntilScreensaver = 300000;
 
         /// <summary>
@@ -231,13 +230,11 @@ namespace ShiftOS.WinForms
                         if(millisecondsUntilScreensaver <= 0)
                         {
                             ShowScreensaver();
-                            InScreensaver = true;
                         }
                         millisecondsUntilScreensaver--;
                         Thread.Sleep(1);
                     }
                     millisecondsUntilScreensaver = 300000;
-                    InScreensaver = false;
                     HideScreensaver();
                 }
             });
@@ -990,7 +987,7 @@ namespace ShiftOS.WinForms
         {
             if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
             {
-                lbalstatus.Text = $@"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}
+                lbalstatus.Text = $@"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}
 {SaveSystem.CurrentSave.Codepoints} Codepoints
 {Shiftorium.GetAvailable().Length} available, {SaveSystem.CurrentSave.CountUpgrades()} installed.";
 

@@ -98,8 +98,6 @@ namespace ShiftOS.Engine
             int firstValuePos = -1;
             int lastValuePos = -1;
 
-            string syntaxError = "";
-
             for (int ii = 0; ii < parts.Count; ii++)
             {
                 CommandFormat part = parts[ii];
@@ -184,7 +182,6 @@ namespace ShiftOS.Engine
                     else
                     {
                         position = text.Length;
-                        syntaxError = "Syntax Error";
                         command = "+FALSE+";
                     }
                     help = -1;

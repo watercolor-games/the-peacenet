@@ -32,6 +32,7 @@ using System.IO;
 using Newtonsoft.Json;
 using NetSockets;
 using static ShiftOS.Server.Program;
+using System.Net;
 
 namespace ShiftOS.Server
 {
@@ -172,9 +173,66 @@ namespace ShiftOS.Server
 
             try
             {
+
+                
+
                 Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_saved",
+                    GUID = "server"
+                }));
+            }
+            catch { }
+
+            try
+            {
+                //Update the shiftos website with the user's codepoints.
+                if (!string.IsNullOrWhiteSpace(sav.UniteAuthToken))
+                {
+                    var wreq = WebRequest.Create("http://getshiftos.ml/API/SetCodepoints/" + sav.Codepoints.ToString());
+                    wreq.Headers.Add("Authentication: Token " + sav.UniteAuthToken);
+                    wreq.GetResponse();
+                }
+            }
+            catch { }
+
+        }
+
+        [MudRequest("mud_token_login", typeof(string))]
+        public static void TokenLogin(string guid, string token)
+        {
+            foreach (var savefile in Directory.GetFiles("saves"))
+            {
+                try
+                {
+                    var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
+
+
+                    if (save.UniteAuthToken==token)
+                    {
+                        if (save.ID == new Guid())
+                        {
+                            save.ID = Guid.NewGuid();
+                            WriteEncFile(savefile, JsonConvert.SerializeObject(save));
+                        }
+
+
+                        Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
+                        {
+                            Name = "mud_savefile",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(save)
+                        }));
+                        return;
+                    }
+                }
+                catch { }
+            }
+            try
+            {
+                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_login_denied",
                     GUID = "server"
                 }));
             }

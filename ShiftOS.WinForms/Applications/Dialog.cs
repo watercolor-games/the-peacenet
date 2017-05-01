@@ -69,7 +69,7 @@ namespace ShiftOS.WinForms.Applications
         {
         }
 
-        internal void OpenInternal(string title, string msg)
+        internal void OpenInternal(string title, string msg, Action c)
         {
             Title = title;
             AppearanceManager.SetupDialog(this);
@@ -80,17 +80,14 @@ namespace ShiftOS.WinForms.Applications
             btnok.Click += (o, a) =>
             {
                 AppearanceManager.Close(this);
-                OpenCallback?.Invoke();
+                c?.Invoke();
             };
 
         }
 
-        private Action OpenCallback = null;
-
         public void Open(string title, string msg, Action c = null)
         {
-            OpenCallback = c;
-            new Dialog().OpenInternal(title, msg);
+            new Dialog().OpenInternal(title, msg, c);
         }
 
         public void PromptTextInternal(string title, string message, Action<string> callback, bool isPassword)

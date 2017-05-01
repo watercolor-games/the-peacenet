@@ -70,6 +70,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\TriWrite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriWrite.Designer.cs">
+      <DependentUpon>TriWrite.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\AddressBook.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -310,12 +316,6 @@
     <Compile Include="DownloadControl.Designer.cs">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FakeSetupScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FakeSetupScreen.Designer.cs">
-      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUIFunctions.cs" />
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
@@ -361,6 +361,18 @@
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
+    <Compile Include="UniteLoginDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteLoginDialog.Designer.cs">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UniteSignupDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteSignupDialog.Designer.cs">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />
@@ -387,6 +399,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriWrite.resx">
+      <DependentUpon>TriWrite.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\AddressBook.resx">
       <DependentUpon>AddressBook.cs</DependentUpon>
@@ -496,9 +511,6 @@
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FakeSetupScreen.resx">
-      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
     </EmbeddedResource>
@@ -515,6 +527,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteLoginDialog.resx">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteSignupDialog.resx">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>

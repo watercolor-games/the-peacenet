@@ -73,7 +73,7 @@ namespace ShiftOS.Engine
                 TerminalBackend.IsForwardingConsoleWrites = forwarding;
                 TerminalBackend.ForwardGUID = (forwarding == true) ? fGuid : null;
                 string resultFriendly = (result == true) ? "yes" : "no";
-                Console.WriteLine($"{SaveSystem.CurrentSave.Username} says {resultFriendly}.");
+                Console.WriteLine($"{SaveSystem.CurrentUser.Username} says {resultFriendly}.");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };
             Desktop.InvokeOnWorkerThread(new Action(() =>

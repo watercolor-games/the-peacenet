@@ -36,6 +36,7 @@ using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
 using ShiftOS.Objects.ShiftFS;
+using ShiftOS.Unite;
 using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms
@@ -184,90 +185,148 @@ You must join the digital society, rise up the ranks, and save us.
 
         public void ShowSaveTransfer(Save save)
         {
-            this.Show();
-            var fSetup = new FakeSetupScreen(this, 7);
+            //Stub.
+        }
 
-            var t = new Thread(() =>
-            {
-                textgeninput = lblhackwords;
-                Clear();
-                TextType("Welcome back to ShiftOS.");
-                Thread.Sleep(500);
-                TextType("Since your last time inside ShiftOS, the operating system has changed. Your user account is no longer stored on your local system.");
-                Thread.Sleep(500);
-                this.Invoke(new Action(() =>
-                {
-                    //UPS is drunky heaven over here... it's a liquor store, I think... - Drunk Michael
-                    fSetup.UserReregistered += (u, p, s) =>
-                    {
-                        save.Username = u;
-                        save.Password = p;
-                        save.SystemName = s;
-                        SaveSystem.CurrentSave = save;
-                        SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
-                        Shiftorium.Init();
+        public void PerformUniteLogin()
+        {
 
-                        SaveSystem.SaveGame();
-                        if(Utils.FileExists(Paths.SaveFileInner))
-                            Utils.Delete(Paths.SaveFileInner);
-                        this.Close();
-                    };
-                    fSetup.Show();
-                }));
-            });
-            t.IsBackground = true;
-            t.Start();
         }
 
         public void PromptForLogin()
         {
-            ServerMessageReceived MessageReceived = null;
-            MessageReceived = (msg) =>
+            Infobox.Show("Login", "Since the last time you've played ShiftOS, some changes have been made to the login system. You must now login using your website credentials.", () =>
             {
-                if(msg.Name == "mud_savefile")
+                Infobox.PromptYesNo("Website account", "Do you have an account at http://getshiftos.ml?", (hasAccount) =>
                 {
-                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                    SaveSystem.SaveGame();
-                    Application.Restart();
-                }
-                else if(msg.Name == "mud_notfound")
-                {
-                    ServerManager.MessageReceived -= MessageReceived;
-                    
-                    PromptForLogin();
-                }
-            };
-            ServerManager.MessageReceived += MessageReceived;
-            Infobox.PromptYesNo("Login", "You are missing a digital society authentication link. Would you like to generate a new link with an existing account? Choosing \"No\" will restart the session in the out-of-box experience.", (result)=>
-            {
-                if (result == true)
-                {
-                    Infobox.PromptText("Login", "Please enter your digital society username.", (uname) =>
+                    if(hasAccount == true)
                     {
-                        Infobox.PromptText("Login", "Please enter your password.", (pword) =>
+                        var loginDialog = new UniteLoginDialog((success)=>
                         {
-                            ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                            string token = success;
+                            var uClient = new UniteClient("http://getshiftos.ml", token);
+                            Infobox.Show("Welcome to ShiftOS.", $"Hello, {uClient.GetDisplayName()}! We've signed you into your account. We'll now try to link your ShiftOS account with your save file.", () =>
                             {
-                                username = uname,
-                                password = pword
-                            }));
-                        }, true);
-                    });
-                }
-                else
-                {
-                    //restart in OOBE
-                    if (Objects.ShiftFS.Utils.FileExists(Paths.GetPath("user.dat")))
-                    {
-                        Utils.Delete(Paths.GetPath("user.dat"));
+                                ServerMessageReceived smr = null;
+                                smr = (msg) =>
+                                {
+                                    ServerManager.MessageReceived -= smr;
+                                    if (msg.Name == "mud_savefile")
+                                    {
+                                        SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                        SaveSystem.SaveGame();
+                                    }
+                                    else if(msg.Name=="mud_login_denied")
+                                    {
+                                        LinkSaveFile(token);
+                                    }
+                                };
+                                ServerManager.MessageReceived += smr;
+                                ServerManager.SendMessage("mud_token_login", token);
+                            });
+                        });
+                        AppearanceManager.SetupDialog(loginDialog);
                     }
-                    string json = Utils.ExportMount(0);
-                    System.IO.File.WriteAllText(Paths.SaveFile, json);
-                    System.Diagnostics.Process.Start(Application.ExecutablePath);
-                    Environment.Exit(0);
-                }
+                    else
+                    {
+                        var signupDialog = new UniteSignupDialog((token) =>
+                        {
+                            ServerMessageReceived smr = null;
+                            smr = (msg) =>
+                            {
+                                ServerManager.MessageReceived -= smr;
+                                if (msg.Name == "mud_savefile")
+                                {
+                                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                    SaveSystem.SaveGame();
+                                }
+                                else if (msg.Name == "mud_login_denied")
+                                {
+                                    LinkSaveFile(token);
+                                }
+                            };
+                            ServerManager.MessageReceived += smr;
+                            ServerManager.SendMessage("mud_token_login", token);
+
+                        });
+                        AppearanceManager.SetupDialog(signupDialog);
+                    }
+                });
             });
-            
+        }
+
+        public void LinkSaveFile(string token)
+        {
+            if (Utils.FileExists(Paths.GetPath("user.dat")))
+            {
+                try
+                {
+                    var details = JsonConvert.DeserializeObject<ClientSave>(Utils.ReadAllText(Paths.GetPath("user.dat")));
+                    ServerMessageReceived smr = null;
+                    bool msgreceived = false;
+                    bool found = false;
+                    smr = (msg) =>
+                    {
+                        if (msg.Name == "mud_savefile")
+                        {
+                            var save = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                            save.UniteAuthToken = token;
+                            Infobox.Show("Migration complete.", "We have migrated your old save file to the new system successfully. You can still log in using the old system on old builds of ShiftOS.", () =>
+                            {
+                                SaveSystem.CurrentSave = save;
+                                SaveSystem.SaveGame();
+                                found = true;
+                                msgreceived = true;
+                            });
+                        }
+                        else if (msg.Name == "mud_login_denied")
+                        {
+                            found = false;
+                            msgreceived = true;
+                        }
+                        ServerManager.MessageReceived -= smr;
+                    };
+                    ServerManager.MessageReceived += smr;
+                    ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                    {
+                        username = details.Username,
+                        password = details.Password
+                    }));
+                    while (msgreceived == false)
+                        Thread.Sleep(10);
+                    if (found == true)
+                        return;
+                }
+                catch
+                {
+                    
+                }
+            }
+
+            var client = new UniteClient("http://getshiftos.ml", token);
+            var sve = new Save();
+            sve.Username = client.GetEmail();
+            sve.Password = Guid.NewGuid().ToString();
+            sve.SystemName = client.GetSysName();
+            sve.UniteAuthToken = token;
+            sve.Codepoints = 0;
+            sve.Upgrades = new Dictionary<string, bool>();
+            sve.ID = Guid.NewGuid();
+            Infobox.Show("Welcome to ShiftOS.", "Welcome to ShiftOS, " + client.GetDisplayName() + ". We have created a save file for you. Now, go on and Shift It Your Way.", () =>
+            {
+                sve.StoryPosition = 8675309;
+                SaveSystem.CurrentSave = sve;
+                SaveSystem.SaveGame();
+
+            });
+        }
+
+        public void ForceReboot()
+        {
+            string json = Utils.ExportMount(0);
+            System.IO.File.WriteAllText(Paths.SaveFile, json);
+            System.Diagnostics.Process.Start(Application.ExecutablePath);
+            Environment.Exit(0);
         }
 
         public void StartTrailer()
