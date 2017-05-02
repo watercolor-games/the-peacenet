@@ -10,6 +10,16 @@ namespace ShiftOS.Engine
     [Namespace("unite")]
     public static class UniteTestCommands
     {
+        [Command("setdisplayname")]
+        [RequiresArgument("name")]
+        public static bool SetDisplayName(Dictionary<string, object> args)
+        {
+            string dname = args["name"].ToString();
+            var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
+            unite.SetDisplayName(dname);
+            return true;
+        }
+
         [Command("login")]
         [RequiresArgument("username")]
         [RequiresArgument("password")]
