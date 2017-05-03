@@ -157,8 +157,8 @@
             // 
             // TriWrite
             // 
-            this.Controls.Add(this.menuStrip3);
             this.Controls.Add(this.txtcontents);
+            this.Controls.Add(this.menuStrip3);
             this.Controls.Add(this.menuStrip2);
             this.Name = "TriWrite";
             this.Size = new System.Drawing.Size(527, 513);

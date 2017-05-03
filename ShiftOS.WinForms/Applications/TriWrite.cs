@@ -31,7 +31,10 @@ namespace ShiftOS.WinForms.Applications
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var txt = new List<string>();
+            txt.Add(".txt");
 
+            AppearanceManager.SetupDialog(new FileDialog(txt.ToArray(), FileOpenerStyle.Open, new Action<string>((file) => this.LoadFile(file))));
         }
 
         public void LoadFile(string file)
@@ -46,7 +49,10 @@ namespace ShiftOS.WinForms.Applications
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var txt = new List<string>();
+            txt.Add(".txt");
 
+            AppearanceManager.SetupDialog(new FileDialog(txt.ToArray(), FileOpenerStyle.Save, new Action<string>((file) => this.SaveFile(file))));
         }
 
         public void OnLoad()
