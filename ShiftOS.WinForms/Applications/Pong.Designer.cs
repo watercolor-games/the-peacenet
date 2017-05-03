@@ -80,7 +80,7 @@ namespace ShiftOS.WinForms.Applications
             this.tmrstoryline = new System.Windows.Forms.Timer(this.components);
             this.pgcontents = new ShiftOS.WinForms.Controls.Canvas();
             this.pnlhighscore = new System.Windows.Forms.Panel();
-            this.lbhighscore = new System.Windows.Forms.ListBox();
+            this.lbhighscore = new System.Windows.Forms.ListView();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.button2 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
@@ -193,11 +193,8 @@ namespace ShiftOS.WinForms.Applications
             // lbhighscore
             // 
             this.lbhighscore.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbhighscore.FormattingEnabled = true;
             this.lbhighscore.Location = new System.Drawing.Point(0, 36);
-            this.lbhighscore.MultiColumn = true;
             this.lbhighscore.Name = "lbhighscore";
-            this.lbhighscore.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.lbhighscore.Size = new System.Drawing.Size(539, 246);
             this.lbhighscore.TabIndex = 1;
             // 
@@ -745,7 +742,7 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Label Label8;
         internal System.Windows.Forms.Timer tmrstoryline;
         private System.Windows.Forms.Panel pnlhighscore;
-        private System.Windows.Forms.ListBox lbhighscore;
+        private System.Windows.Forms.ListView lbhighscore;
         private System.Windows.Forms.Label label10;
         internal Canvas pgcontents;
         internal Canvas ball;

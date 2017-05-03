@@ -29,6 +29,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -310,15 +311,9 @@ namespace ShiftOS.WinForms.Applications
             SetupStats();
         }
 
+        [Obsolete("This method does nothing. Use UniteClient for highscore queries.")]
         public void SendHighscores()
         {
-            var highscore = new PongHighscore
-            {
-                UserName = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}",
-                HighestLevel = level,
-                HighestCodepoints = totalreward
-            };
-            ServerManager.SendMessage("pong_sethighscore", JsonConvert.SerializeObject(highscore));
         }
 
         // ERROR: Handles clauses are not supported in C#
@@ -614,24 +609,50 @@ namespace ShiftOS.WinForms.Applications
         public void SetupHighScores()
         {
             lbhighscore.Items.Clear();
-            ServerManager.MessageReceived += (msg) =>
+            lbhighscore.View = View.Details;
+            lbhighscore.FullRowSelect = true;
+            lbhighscore.Columns.Clear();
+            var n = new ColumnHeader();
+            n.Text = "Player";
+            n.Width = lbhighscore.Width / 3;
+            var l = new ColumnHeader();
+            l.Text = "Level";
+            l.Width = n.Width;
+            var c = new ColumnHeader();
+            c.Text = "Codepoints";
+            c.Width = n.Width;
+            lbhighscore.Columns.Add(n);
+            lbhighscore.Columns.Add(l);
+            lbhighscore.Columns.Add(c);
+
+            var t = new Thread(() =>
             {
-                if(msg.Name == "pong_highscores")
+                try
                 {
-                    var hs = JsonConvert.DeserializeObject<List<PongHighscore>>(msg.Contents);
 
-                    var orderedhs = hs.OrderByDescending(i => i.HighestLevel);
-
-                    foreach(var score in orderedhs)
+                    var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
+                    var hs = unite.GetPongHighscores();
+                    foreach (var score in hs.Highscores)
                     {
+                        string username = unite.GetDisplayNameId(score.UserId);
                         this.Invoke(new Action(() =>
                         {
-                            lbhighscore.Items.Add($"{score.UserName}\t\t\t{score.HighestLevel}\t\t{score.HighestCodepoints} CP");
+                            var name_item = new ListViewItem();
+                            name_item.Text = username;
+                            lbhighscore.Items.Add(name_item);
+                            name_item.SubItems.Add(score.Level.ToString());
+                            name_item.SubItems.Add(score.CodepointsCashout.ToString());
                         }));
                     }
                 }
-            };
-            ServerManager.SendMessage("pong_gethighscores", null);
+                catch
+                {
+                    Infobox.Show("Service unavailable.", "The Pong Highscore service is unavailable at this time.");
+                    this.Invoke(new Action(pnlgamestats.BringToFront));
+                    return;
+                }
+            });
+            t.Start();
             pnlhighscore.Show();
         }
 

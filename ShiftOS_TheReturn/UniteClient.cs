@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ShiftOS.Unite
 {
@@ -11,6 +12,16 @@ namespace ShiftOS.Unite
     {
         public string Token { get; private set; }
         public string BaseURL { get; private set; }
+
+        public string GetDisplayNameId(string id)
+        {
+            return MakeCall("/API/GetDisplayName/" + id);
+        }
+
+        public PongHighscoreModel GetPongHighscores()
+        {
+            return JsonConvert.DeserializeObject<PongHighscoreModel>(MakeCall("/API/GetPongHighscores"));
+        }
 
         public UniteClient(string baseurl, string usertoken)
         {
@@ -99,5 +110,18 @@ namespace ShiftOS.Unite
         {
             MakeCall("/API/SetCodepoints/" + value.ToString());
         }
+    }
+
+    public class PongHighscoreModel
+    {
+        public int Pages { get; set; }
+        public PongHighscore[] Highscores { get; set; }
+    }
+
+    public class PongHighscore
+    {
+        public string UserId { get; set; }
+        public int Level { get; set; }
+        public long CodepointsCashout { get; set; }
     }
 }
