@@ -66,41 +66,54 @@ namespace ShiftOS.Engine
 
         public static bool IsSafe(Type type)
         {
-            if (InKernelMode == true)
+            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
                 return true;
 
             foreach (var attrib in type.GetCustomAttributes(false))
             {
                 if (attrib is KernelModeAttribute)
+                {
+                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
+                        return true;
                     return false;
+                }
             }
             return true;
         }
 
         public static bool IsSafe(MethodInfo type)
         {
-            if (InKernelMode == true)
+            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
                 return true;
 
             foreach (var attrib in type.GetCustomAttributes(false))
             {
                 if (attrib is KernelModeAttribute)
+                {
+                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
+                        return true;
                     return false;
+                }
             }
             return true;
         }
 
+        static string regularUsername = "";
+
 
         public static void EnterKernelMode()
         {
-            InKernelMode = true;
-            Console.WriteLine("<kernel> Watchdog deactivated, system-level access granted.");
+            regularUsername = SaveSystem.CurrentUser.Username;
+            SaveSystem.CurrentUser = SaveSystem.Users.FirstOrDefault(x => x.Username == "root");
+
         }
 
         public static void LeaveKernelMode()
         {
-            InKernelMode = false;
-            Console.WriteLine("<kernel> Kernel mode disabled.");
+            var user = SaveSystem.Users.FirstOrDefault(x => x.Username == regularUsername);
+            if (user == null)
+                throw new Exception("User not in root mode.");
+            SaveSystem.CurrentUser = user;
         }
 
         internal static bool CanRunOffline(Type method)

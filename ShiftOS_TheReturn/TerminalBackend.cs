@@ -323,6 +323,23 @@ namespace ShiftOS.Engine
                                                                         }
                                                                         else
                                                                         {
+                                                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
+                                                                            {
+                                                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
+                                                                                {
+                                                                                    if (pass == SaveSystem.CurrentUser.Password)
+                                                                                    {
+                                                                                        KernelWatchdog.EnterKernelMode();
+                                                                                        RunClient(text, args, isRemote);
+                                                                                        KernelWatchdog.LeaveKernelMode();
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
+                                                                                    }
+                                                                                }, true);
+                                                                                return true;
+                                                                            }
                                                                             Console.Write("<");
                                                                             ConsoleEx.Bold = true;
                                                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
@@ -332,25 +349,27 @@ namespace ShiftOS.Engine
                                                                             Console.Write(">");
                                                                             ConsoleEx.Italic = true;
                                                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                                            Console.WriteLine(" You cannot run this command.");
+                                                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
                                                                             KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
                                                                             return true;
                                                                         }
                                                                     }
-
-
                                                                 }
+
+
                                                             }
                                                         }
-                                                        else
-                                                        {
-                                                            Console.WriteLine(text + " cannot be ran in a remote session");
-                                                            return true;
-                                                        }
                                                     }
-
+                                                    else
+                                                    {
+                                                        Console.WriteLine(text + " cannot be ran in a remote session");
+                                                        return true;
+                                                    }
                                                 }
+
                                             }
+
+
                                             else
                                             {
                                                 Console.Write("<");
@@ -366,10 +385,27 @@ namespace ShiftOS.Engine
                                                 return true;
 
                                             }
+
                                         }
                                         else
                                         {
-
+                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
+                                            {
+                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
+                                                {
+                                                    if (pass == SaveSystem.CurrentUser.Password)
+                                                    {
+                                                        KernelWatchdog.EnterKernelMode();
+                                                        RunClient(text, args, isRemote);
+                                                        KernelWatchdog.LeaveKernelMode();
+                                                    }
+                                                    else
+                                                    {
+                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
+                                                    }
+                                                }, true);
+                                                return true;
+                                            }
                                             Console.Write("<");
                                             ConsoleEx.Bold = true;
                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
@@ -379,7 +415,7 @@ namespace ShiftOS.Engine
                                             Console.Write(">");
                                             ConsoleEx.Italic = true;
                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                            Console.WriteLine(" You cannot run this command.");
+                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
                                             KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
                                             return true;
                                         }

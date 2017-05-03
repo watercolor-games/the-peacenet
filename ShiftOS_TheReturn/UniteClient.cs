@@ -34,6 +34,26 @@ namespace ShiftOS.Unite
             }
         }
 
+        public int GetPongCP()
+        {
+            return Convert.ToInt32(MakeCall("/API/GetPongCP"));
+        }
+
+        public int GetPongLevel()
+        {
+            return Convert.ToInt32(MakeCall("/API/GetPongLevel"));
+        }
+
+        public void SetPongLevel(int value)
+        {
+            MakeCall("/API/SetPongLevel/" + value.ToString());
+        }
+
+        public void SetPongCP(int value)
+        {
+            MakeCall("/API/SetPongCP/" + value.ToString());
+        }
+
         public string GetEmail()
         {
             return MakeCall("/API/GetEmail");

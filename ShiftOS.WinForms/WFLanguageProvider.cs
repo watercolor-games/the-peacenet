@@ -44,14 +44,7 @@ namespace ShiftOS.WinForms
         {
             try
             {
-                switch (SaveSystem.CurrentSave.Language)
-                {
-                    case "deutsch":
-                        return Properties.Resources.strings_de;
-                    default:
                         return getDefault();
-
-                }
             }
             catch (NullReferenceException)
             {

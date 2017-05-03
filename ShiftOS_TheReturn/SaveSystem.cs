@@ -198,7 +198,10 @@ namespace ShiftOS.Engine
             Thread.Sleep(50);
             Console.WriteLine("{SYSTEM_INITIATED}");
 
-            
+
+            if (CurrentSave.Users == null)
+                CurrentSave.Users = new List<ClientSave>();
+
 
             if(CurrentSave.Users.Count == 0)
             {
@@ -294,8 +297,10 @@ namespace ShiftOS.Engine
 
         public static List<ClientSave> Users
         {
-            get;
-            private set;
+            get
+            {
+                return CurrentSave.Users;
+            }
         }
 
         public static event EmptyEventHandler GameReady;

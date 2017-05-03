@@ -111,7 +111,7 @@ namespace ShiftOS.WinForms
             ConsoleEx.Bold = false;
             ConsoleEx.BackgroundColor = ConsoleColor.Black;
             Console.Write("Formatting: [");
-            int formatProgress = 0;
+            int formatProgress = 3;
             while (formatProgress <= 100)
             {
                 if (formatProgress % 3 == 0)

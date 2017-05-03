@@ -285,6 +285,16 @@ namespace ShiftOS.WinForms.Applications
                 {
                     secondsleft = 60;
                     level = level + 1;
+                    if (SaveSystem.CurrentSave.UniteAuthToken != null)
+                    {
+                        try
+                        {
+                            var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
+                            if (unite.GetPongLevel() < level)
+                                unite.SetPongLevel(level);
+                        }
+                        catch { }
+                    }
                     generatenextlevel();
                     pnlgamestats.Show();
                     pnlgamestats.BringToFront();
@@ -544,6 +554,14 @@ namespace ShiftOS.WinForms.Applications
             lblfinalcomputerreward.Text = beatairewardtotal.ToString();
             lblfinalcodepoints.Text = totalreward + Localization.Parse(" {CODEPOINTS_SHORT}");
             SaveSystem.TransferCodepointsFrom("pong", totalreward);
+            if (!string.IsNullOrWhiteSpace(SaveSystem.CurrentSave.UniteAuthToken))
+            {
+                var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
+                if (unite.GetPongCP() < totalreward)
+                {
+                    unite.SetPongCP(totalreward);
+                }
+            }
         }
 
         private void newgame()

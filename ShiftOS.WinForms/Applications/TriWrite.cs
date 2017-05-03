@@ -1,15 +1,14 @@
-﻿using System;
+﻿using ShiftOS.Objects.ShiftFS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
-using static ShiftOS.Objects.ShiftFS.Utils;
-using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -20,9 +19,44 @@ namespace ShiftOS.WinForms.Applications
     public partial class TriWrite : UserControl, IShiftOSWindow
     {
 
+        public TriWrite()
+        {
+            InitializeComponent();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            txtcontents.Text = "";
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var txt = new List<string>();
+            txt.Add(".txt");
+
+            AppearanceManager.SetupDialog(new FileDialog(txt.ToArray(), FileOpenerStyle.Open, new Action<string>((file) => this.LoadFile(file))));
+        }
+
+        public void LoadFile(string file)
+        {
+            txtcontents.Text = Utils.ReadAllText(file);
+        }
+
+        public void SaveFile(string file)
+        {
+            Utils.WriteAllText(file, txtcontents.Text);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var txt = new List<string>();
+            txt.Add(".txt");
+
+            AppearanceManager.SetupDialog(new FileDialog(txt.ToArray(), FileOpenerStyle.Save, new Action<string>((file) => this.SaveFile(file))));
+        }
+
         public void OnLoad()
         {
-
         }
 
         public void OnSkinLoad()

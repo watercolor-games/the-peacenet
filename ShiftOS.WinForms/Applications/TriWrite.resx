@@ -127,4 +127,10 @@ On the left, we have made a list of all your contacts. You can click on one to v
 
 To add a contact, simply click "Add Contact", and to remove one, click "Remove". Some contacts may not be removed as they are integral to the progression of your adventures within the digital society.</value>
   </data>
+  <metadata name="menuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>132, 17</value>
+  </metadata>
+  <metadata name="menuStrip3.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>247, 17</value>
+  </metadata>
 </root>
