@@ -125,6 +125,14 @@ namespace ShiftOS.WinForms.Applications
 
         private string currentdir = "";
 
+        public void pinDirectory(string path)
+        {
+            int amountsCalled = -1;
+            amountsCalled = amountsCalled + 1;
+            pinnedItems.Nodes.Add(path);
+            pinnedItems.Nodes[amountsCalled].Nodes.Add("test");
+        }
+
         public void ChangeDirectory(string path)
         {
             currentdir = path;
@@ -406,7 +414,29 @@ namespace ShiftOS.WinForms.Applications
             }
             catch { }
         }
-    }
 
-   
+        private void pinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Infobox.PromptYesNo("Pin folder", "Are you sure you want to pin \"" + lvitems.SelectedItems[0].Text + "\"?", (result) =>
+                {
+                    if (result == true)
+                    {
+                        if (currentdir != "__system")
+                        {
+                            pinDirectory(currentdir + "/" + lvitems.SelectedItems[0].Text);
+                            ResetList();
+                        }
+                        else
+                        {
+                            Infobox.Show("Cannot Pin", "You cannot pin a system drive.");
+                        }
+                            
+                    }
+                });
+            }
+            catch { }
+        }
+    }
 }
