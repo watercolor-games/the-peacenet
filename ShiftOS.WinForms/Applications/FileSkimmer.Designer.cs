@@ -54,6 +54,7 @@ namespace ShiftOS.WinForms.Applications
         {
             this.lvitems = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pinnedItems = new System.Windows.Forms.TreeView();
             this.lbcurrentfolder = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,16 +62,17 @@ namespace ShiftOS.WinForms.Applications
             this.connectToRemoteServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvitems
             // 
-            this.lvitems.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvitems.Location = new System.Drawing.Point(0, 0);
+            this.lvitems.Dock = System.Windows.Forms.DockStyle.Right;
+            this.lvitems.Location = new System.Drawing.Point(120, 0);
             this.lvitems.Name = "lvitems";
-            this.lvitems.Size = new System.Drawing.Size(634, 332);
+            this.lvitems.Size = new System.Drawing.Size(514, 332);
             this.lvitems.TabIndex = 0;
             this.lvitems.UseCompatibleStateImageBehavior = false;
             this.lvitems.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvitems_ItemSelectionChanged);
@@ -79,6 +81,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.pinnedItems);
             this.panel1.Controls.Add(this.lvitems);
             this.panel1.Controls.Add(this.lbcurrentfolder);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -86,6 +89,14 @@ namespace ShiftOS.WinForms.Applications
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(634, 345);
             this.panel1.TabIndex = 1;
+            // 
+            // pinnedItems
+            // 
+            this.pinnedItems.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pinnedItems.Location = new System.Drawing.Point(0, 0);
+            this.pinnedItems.Name = "pinnedItems";
+            this.pinnedItems.Size = new System.Drawing.Size(114, 332);
+            this.pinnedItems.TabIndex = 3;
             // 
             // lbcurrentfolder
             // 
@@ -103,7 +114,8 @@ namespace ShiftOS.WinForms.Applications
             this.deleteToolStripMenuItem,
             this.connectToRemoteServerToolStripMenuItem,
             this.copyToolStripMenuItem,
-            this.moveToolStripMenuItem});
+            this.moveToolStripMenuItem,
+            this.pinToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(634, 24);
@@ -145,6 +157,13 @@ namespace ShiftOS.WinForms.Applications
             this.moveToolStripMenuItem.Text = "Move";
             this.moveToolStripMenuItem.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
             // 
+            // pinToolStripMenuItem
+            // 
+            this.pinToolStripMenuItem.Name = "pinToolStripMenuItem";
+            this.pinToolStripMenuItem.Size = new System.Drawing.Size(36, 20);
+            this.pinToolStripMenuItem.Text = "Pin";
+            this.pinToolStripMenuItem.Click += new System.EventHandler(this.pinToolStripMenuItem_Click);
+            // 
             // FileSkimmer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,5 +192,7 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ToolStripMenuItem connectToRemoteServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pinToolStripMenuItem;
+        private System.Windows.Forms.TreeView pinnedItems;
     }
 }
