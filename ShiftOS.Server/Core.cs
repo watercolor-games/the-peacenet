@@ -38,6 +38,37 @@ namespace ShiftOS.Server
 {
     public static class Core
     {
+        [MudRequest("mud_forward", typeof(ServerMessage))]
+        public static void ForwardMessage(string guid, ServerMessage message)
+        {
+            if (message.GUID == "all")
+            {
+                Server.Program.server.DispatchAll(new NetObject("forward", new ServerMessage
+                {
+                    Name = "forward",
+                    GUID = "Server",
+                    Contents = JsonConvert.SerializeObject(message)
+                }));
+            }
+            else
+            {
+                try
+                {
+                    Server.Program.server.DispatchTo(new Guid(message.GUID), new NetObject("forward", new ServerMessage
+                    {
+                        Name = "forward",
+                        GUID = "Server",
+                        Contents = JsonConvert.SerializeObject(message)
+                    }));
+                }
+                catch
+                {
+
+                }
+            }
+        }
+    
+
         [MudRequest("getguid_reply", typeof(string))]
         public static void GuidBounce(string guid, object contents)
         {
