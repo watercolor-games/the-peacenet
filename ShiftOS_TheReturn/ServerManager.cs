@@ -172,6 +172,10 @@ namespace ShiftOS.Engine
                 {
                     Console.WriteLine(msg.Contents);
                 }
+                else if(msg.Name == "forward")
+                {
+                    MessageReceived?.Invoke(JsonConvert.DeserializeObject<ServerMessage>(msg.Contents));
+                }
                 else if (msg.Name == "Error")
                 {
                     var ex = JsonConvert.DeserializeObject<Exception>(msg.Contents);
@@ -239,6 +243,16 @@ namespace ShiftOS.Engine
 
         public static event ServerMessageReceived MessageReceived;
 
+        public static void Forward(string targetGUID, string v, string message)
+        {
+            var smsg = new ServerMessage
+            {
+                GUID = targetGUID,
+                Name = v,
+                Contents = message
+            };
+            ServerManager.SendMessage("mud_forward", JsonConvert.SerializeObject(smsg));
+        }
     }
 
     public delegate void ServerMessageReceived(ServerMessage msg);

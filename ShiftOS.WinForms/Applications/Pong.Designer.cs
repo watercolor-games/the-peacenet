@@ -124,6 +124,7 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatscodepoints = new System.Windows.Forms.Label();
             this.lblstatsY = new System.Windows.Forms.Label();
             this.lblstatsX = new System.Windows.Forms.Label();
+            this.btnmatchmake = new System.Windows.Forms.Button();
             this.pgcontents.SuspendLayout();
             this.pnlhighscore.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -157,11 +158,11 @@ namespace ShiftOS.WinForms.Applications
             // pgcontents
             // 
             this.pgcontents.BackColor = System.Drawing.Color.White;
+            this.pgcontents.Controls.Add(this.pnlintro);
             this.pgcontents.Controls.Add(this.pnlhighscore);
             this.pgcontents.Controls.Add(this.pnlgamestats);
             this.pgcontents.Controls.Add(this.pnlfinalstats);
             this.pgcontents.Controls.Add(this.pnllose);
-            this.pgcontents.Controls.Add(this.pnlintro);
             this.pgcontents.Controls.Add(this.lblbeatai);
             this.pgcontents.Controls.Add(this.lblcountdown);
             this.pgcontents.Controls.Add(this.ball);
@@ -197,6 +198,7 @@ namespace ShiftOS.WinForms.Applications
             this.lbhighscore.Name = "lbhighscore";
             this.lbhighscore.Size = new System.Drawing.Size(539, 246);
             this.lbhighscore.TabIndex = 1;
+            this.lbhighscore.UseCompatibleStateImageBehavior = false;
             // 
             // flowLayoutPanel1
             // 
@@ -525,10 +527,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnlintro
             // 
+            this.pnlintro.Controls.Add(this.btnmatchmake);
             this.pnlintro.Controls.Add(this.Label6);
             this.pnlintro.Controls.Add(this.btnstartgame);
             this.pnlintro.Controls.Add(this.Label8);
-            this.pnlintro.Location = new System.Drawing.Point(1139, 41);
+            this.pnlintro.Location = new System.Drawing.Point(0, 0);
             this.pnlintro.Name = "pnlintro";
             this.pnlintro.Size = new System.Drawing.Size(595, 303);
             this.pnlintro.TabIndex = 13;
@@ -539,7 +542,7 @@ namespace ShiftOS.WinForms.Applications
             this.Label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label6.Location = new System.Drawing.Point(3, 39);
             this.Label6.Name = "Label6";
-            this.Label6.Size = new System.Drawing.Size(589, 227);
+            this.Label6.Size = new System.Drawing.Size(589, 159);
             this.Label6.TabIndex = 15;
             this.Label6.Text = "{PONG_DESC}";
             this.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -548,7 +551,7 @@ namespace ShiftOS.WinForms.Applications
             // btnstartgame
             // 
             this.btnstartgame.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnstartgame.Location = new System.Drawing.Point(186, 273);
+            this.btnstartgame.Location = new System.Drawing.Point(188, 215);
             this.btnstartgame.Name = "btnstartgame";
             this.btnstartgame.Size = new System.Drawing.Size(242, 28);
             this.btnstartgame.TabIndex = 15;
@@ -672,6 +675,17 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatsX.Text = "Xspeed: ";
             this.lblstatsX.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btnmatchmake
+            // 
+            this.btnmatchmake.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnmatchmake.Location = new System.Drawing.Point(188, 253);
+            this.btnmatchmake.Name = "btnmatchmake";
+            this.btnmatchmake.Size = new System.Drawing.Size(242, 28);
+            this.btnmatchmake.TabIndex = 16;
+            this.btnmatchmake.Text = "Or, play against another Shifter!";
+            this.btnmatchmake.UseVisualStyleBackColor = true;
+            this.btnmatchmake.Click += new System.EventHandler(this.btnmatchmake_Click);
+            // 
             // Pong
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -750,5 +764,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Label label12;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button button2;
+        internal System.Windows.Forms.Button btnmatchmake;
     }
 }
