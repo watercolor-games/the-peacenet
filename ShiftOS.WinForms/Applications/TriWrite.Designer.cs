@@ -118,7 +118,6 @@
             // 
             // menuStrip2
             // 
-            this.menuStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
@@ -149,8 +148,8 @@
             // 
             // TriWrite
             // 
-            this.Controls.Add(this.menuStrip2);
             this.Controls.Add(this.txtcontents);
+            this.Controls.Add(this.menuStrip2);
             this.Name = "TriWrite";
             this.Size = new System.Drawing.Size(527, 513);
             this.menuStrip1.ResumeLayout(false);
