@@ -70,7 +70,6 @@
             // tvcontacts
             // 
             this.tvcontacts.Dock = System.Windows.Forms.DockStyle.Left;
-            this.tvcontacts.LineColor = System.Drawing.Color.Empty;
             this.tvcontacts.Location = new System.Drawing.Point(0, 24);
             this.tvcontacts.Name = "tvcontacts";
             this.tvcontacts.Size = new System.Drawing.Size(224, 551);
@@ -110,10 +109,10 @@
             // txtcontents
             // 
             this.txtcontents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtcontents.Location = new System.Drawing.Point(-61, 53);
+            this.txtcontents.Location = new System.Drawing.Point(0, 53);
             this.txtcontents.Multiline = true;
             this.txtcontents.Name = "txtcontents";
-            this.txtcontents.Size = new System.Drawing.Size(588, 460);
+            this.txtcontents.Size = new System.Drawing.Size(527, 460);
             this.txtcontents.TabIndex = 1;
             this.txtcontents.TabStop = false;
             // 
@@ -126,7 +125,7 @@
             this.saveToolStripMenuItem});
             this.menuStrip2.Location = new System.Drawing.Point(0, 0);
             this.menuStrip2.Name = "menuStrip2";
-            this.menuStrip2.Size = new System.Drawing.Size(648, 24);
+            this.menuStrip2.Size = new System.Drawing.Size(527, 24);
             this.menuStrip2.TabIndex = 2;
             this.menuStrip2.Text = "menuStrip2";
             // 
