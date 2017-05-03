@@ -41,6 +41,7 @@
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip3 = new System.Windows.Forms.MenuStrip();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.menuStrip2.SuspendLayout();
@@ -146,8 +147,17 @@
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
             this.saveToolStripMenuItem.Text = "Save";
             // 
+            // menuStrip3
+            // 
+            this.menuStrip3.Location = new System.Drawing.Point(0, 30);
+            this.menuStrip3.Name = "menuStrip3";
+            this.menuStrip3.Size = new System.Drawing.Size(527, 24);
+            this.menuStrip3.TabIndex = 3;
+            this.menuStrip3.Text = "menuStrip3";
+            // 
             // TriWrite
             // 
+            this.Controls.Add(this.menuStrip3);
             this.Controls.Add(this.txtcontents);
             this.Controls.Add(this.menuStrip2);
             this.Name = "TriWrite";
@@ -177,5 +187,6 @@
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip3;
     }
 }
