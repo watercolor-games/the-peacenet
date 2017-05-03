@@ -154,6 +154,7 @@ namespace ShiftOS.WinForms.Tools
 
                 try
                 {
+                    if(ctrl.Tag != null)
                     tag = ctrl.Tag.ToString();
                 }
                 catch { }

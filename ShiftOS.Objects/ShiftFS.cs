@@ -230,7 +230,11 @@ namespace ShiftOS.Objects.ShiftFS
 
             if (!FileExists(path))
             {
-                dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false, Permissions.All));
+                try
+                {
+                    dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false, Permissions.All));
+                }
+                catch { }
             }
             else
             {
