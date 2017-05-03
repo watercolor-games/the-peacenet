@@ -313,7 +313,15 @@ namespace ShiftOS.WinForms.Applications
         {
             AppearanceManager.SetupDialog(new FileDialog(new[] { ".skn" }, FileOpenerStyle.Open, new Action<string>((filename) =>
             {
-                LoadedSkin = JsonConvert.DeserializeObject<Skin>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(filename));
+                try
+                {
+                    LoadedSkin = JsonConvert.DeserializeObject<Skin>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(filename));
+                }
+                catch
+                {
+                    Infobox.Show("Invalid Skin", "This skin is not compatible with this version of ShiftOS.");
+                }
+                
                 SetupUI();
             })));
         }
