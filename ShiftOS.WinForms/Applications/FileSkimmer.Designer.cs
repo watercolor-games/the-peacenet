@@ -69,10 +69,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lvitems
             // 
-            this.lvitems.Dock = System.Windows.Forms.DockStyle.Right;
-            this.lvitems.Location = new System.Drawing.Point(120, 0);
+            this.lvitems.Location = new System.Drawing.Point(135, 0);
             this.lvitems.Name = "lvitems";
-            this.lvitems.Size = new System.Drawing.Size(514, 332);
+            this.lvitems.Size = new System.Drawing.Size(499, 332);
             this.lvitems.TabIndex = 0;
             this.lvitems.UseCompatibleStateImageBehavior = false;
             this.lvitems.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvitems_ItemSelectionChanged);
@@ -81,8 +80,8 @@ namespace ShiftOS.WinForms.Applications
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.pinnedItems);
             this.panel1.Controls.Add(this.lvitems);
+            this.panel1.Controls.Add(this.pinnedItems);
             this.panel1.Controls.Add(this.lbcurrentfolder);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 24);
@@ -92,10 +91,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pinnedItems
             // 
-            this.pinnedItems.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pinnedItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pinnedItems.Location = new System.Drawing.Point(0, 0);
             this.pinnedItems.Name = "pinnedItems";
-            this.pinnedItems.Size = new System.Drawing.Size(114, 332);
+            this.pinnedItems.Size = new System.Drawing.Size(634, 332);
             this.pinnedItems.TabIndex = 3;
             // 
             // lbcurrentfolder
