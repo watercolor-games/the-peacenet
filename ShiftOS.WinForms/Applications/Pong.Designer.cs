@@ -193,6 +193,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlmultiplayerhandshake.Name = "pnlmultiplayerhandshake";
             this.pnlmultiplayerhandshake.Size = new System.Drawing.Size(396, 231);
             this.pnlmultiplayerhandshake.TabIndex = 15;
+            this.pnlmultiplayerhandshake.Visible = false;
             // 
             // lvotherplayers
             // 

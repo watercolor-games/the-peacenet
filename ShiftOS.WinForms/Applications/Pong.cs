@@ -374,6 +374,14 @@ namespace ShiftOS.WinForms.Applications
                 LeaderX = pt.X;
                 LeaderY = pt.Y;
             }
+            else if(msg.Name == "pong_mp_left")
+            {
+                this.Invoke(new Action(() =>
+                {
+                    AppearanceManager.Close(this);
+                }));
+                Infobox.Show("Opponent has closed Pong.", "The opponent has closed Pong, therefore the connection between you two has dropped.");
+            }
             else if (msg.Name == "pong_mp_youlose")
             {
                 LoseMP();
@@ -408,6 +416,7 @@ namespace ShiftOS.WinForms.Applications
             else if (msg.Name == "pong_handshake_chosen")
             {
                 IsLeader = false;
+                LeaveMatchmake();
                 OpponentGUID = msg.Contents;
                 YouGUID = ServerManager.thisGuid.ToString();
                 SendFollowerGUID();
@@ -984,6 +993,7 @@ namespace ShiftOS.WinForms.Applications
             pnlfinalstats.Hide();
             CenterPanels();
             lblbeatai.Hide();
+            ServerManager.MessageReceived += this.ServerMessageReceivedHandler;
         }
 
         public void OnSkinLoad()
@@ -997,6 +1007,14 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            if(IsMultiplayerSession == true)
+            {
+                if(!string.IsNullOrWhiteSpace(OpponentGUID))
+                    ServerManager.Forward(OpponentGUID, "pong_mp_left", null);
+            }
+            LeaveMatchmake();
+            ServerManager.MessageReceived -= this.ServerMessageReceivedHandler;
+
             return true;
         }
 
