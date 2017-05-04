@@ -384,7 +384,7 @@ namespace ShiftOS.WinForms.Applications
             }
             else if (msg.Name == "pong_mp_youlose")
             {
-                LoseMP();
+                this.Invoke(new Action(LoseMP));
             }
             else if (msg.Name == "pong_mp_setopponenty")
             {
@@ -433,19 +433,28 @@ namespace ShiftOS.WinForms.Applications
             }
             else if (msg.Name == "pong_mp_youwin")
             {
-                Win();
+                this.Invoke(new Action(Win));
             }
         }
 
         public void ListMatchmakes()
         {
             lvotherplayers.Items.Clear();
+            var c = new ColumnHeader();
+            c.Width = lvotherplayers.Width;
+            c.Text = "Player";
+            lvotherplayers.Columns.Clear();
+            lvotherplayers.Columns.Add(c);
+
             lvotherplayers.FullRowSelect = true;
             foreach (var itm in PossibleMatchmakes)
             {
-                var l = new ListViewItem();
-                l.Text = itm;
-                lvotherplayers.Items.Add(l);
+                if (itm != YouGUID)
+                {
+                    var l = new ListViewItem();
+                    l.Text = itm;
+                    lvotherplayers.Items.Add(l);
+                }
             }
 
             if (PossibleMatchmakes.Count > 0)
