@@ -198,6 +198,52 @@ namespace ShiftOS.Engine
             Thread.Sleep(50);
             Console.WriteLine("{SYSTEM_INITIATED}");
 
+            Sysname:
+            bool waitingForNewSysName = false;
+            bool gobacktosysname = false;
+
+            if (string.IsNullOrWhiteSpace(CurrentSave.SystemName))
+            {
+                Infobox.PromptText("Enter a system name", "Your system does not have a name. All systems within the digital society must have a name. Please enter one.", (name)=>
+                {
+                    if (string.IsNullOrWhiteSpace(name))
+                        Infobox.Show("Invalid name", "Please enter a valid name.", () =>
+                        {
+                            gobacktosysname = true;
+                            waitingForNewSysName = false;
+                        });
+                    else if (name.Length < 5)
+                        Infobox.Show("Value too small.", "Your system name must have at least 5 characters in it.", () =>
+                        {
+                            gobacktosysname = true;
+                            waitingForNewSysName = false;
+                        });
+                    else
+                    {
+                        CurrentSave.SystemName = name;
+                        if (!string.IsNullOrWhiteSpace(CurrentSave.UniteAuthToken))
+                        {
+                            var unite = new Unite.UniteClient("http://getshiftos.ml", CurrentSave.UniteAuthToken);
+                            unite.SetSysName(name);
+                        }
+                        SaveSystem.SaveGame();
+                        gobacktosysname = false;
+                        waitingForNewSysName = false;
+                    }
+                });
+
+
+            }
+
+            while (waitingForNewSysName)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (gobacktosysname)
+            {
+                goto Sysname;
+            }
 
             if (CurrentSave.Users == null)
                 CurrentSave.Users = new List<ClientSave>();
