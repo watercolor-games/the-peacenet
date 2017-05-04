@@ -79,6 +79,14 @@ namespace ShiftOS.WinForms.Applications
             this.tmrcountdown = new System.Windows.Forms.Timer(this.components);
             this.tmrstoryline = new System.Windows.Forms.Timer(this.components);
             this.pgcontents = new ShiftOS.WinForms.Controls.Canvas();
+            this.pnlmultiplayerhandshake = new System.Windows.Forms.Panel();
+            this.lvotherplayers = new System.Windows.Forms.ListView();
+            this.lbmpstatus = new System.Windows.Forms.Label();
+            this.pnlintro = new System.Windows.Forms.Panel();
+            this.btnmatchmake = new System.Windows.Forms.Button();
+            this.Label6 = new System.Windows.Forms.Label();
+            this.btnstartgame = new System.Windows.Forms.Button();
+            this.Label8 = new System.Windows.Forms.Label();
             this.pnlhighscore = new System.Windows.Forms.Panel();
             this.lbhighscore = new System.Windows.Forms.ListView();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -111,10 +119,6 @@ namespace ShiftOS.WinForms.Applications
             this.btnlosetryagain = new System.Windows.Forms.Button();
             this.Label5 = new System.Windows.Forms.Label();
             this.Label1 = new System.Windows.Forms.Label();
-            this.pnlintro = new System.Windows.Forms.Panel();
-            this.Label6 = new System.Windows.Forms.Label();
-            this.btnstartgame = new System.Windows.Forms.Button();
-            this.Label8 = new System.Windows.Forms.Label();
             this.lblbeatai = new System.Windows.Forms.Label();
             this.lblcountdown = new System.Windows.Forms.Label();
             this.ball = new ShiftOS.WinForms.Controls.Canvas();
@@ -124,14 +128,14 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatscodepoints = new System.Windows.Forms.Label();
             this.lblstatsY = new System.Windows.Forms.Label();
             this.lblstatsX = new System.Windows.Forms.Label();
-            this.btnmatchmake = new System.Windows.Forms.Button();
             this.pgcontents.SuspendLayout();
+            this.pnlmultiplayerhandshake.SuspendLayout();
+            this.pnlintro.SuspendLayout();
             this.pnlhighscore.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.pnlgamestats.SuspendLayout();
             this.pnlfinalstats.SuspendLayout();
             this.pnllose.SuspendLayout();
-            this.pnlintro.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.paddleHuman)).BeginInit();
             this.SuspendLayout();
             // 
@@ -158,6 +162,7 @@ namespace ShiftOS.WinForms.Applications
             // pgcontents
             // 
             this.pgcontents.BackColor = System.Drawing.Color.White;
+            this.pgcontents.Controls.Add(this.pnlmultiplayerhandshake);
             this.pgcontents.Controls.Add(this.pnlintro);
             this.pgcontents.Controls.Add(this.pnlhighscore);
             this.pgcontents.Controls.Add(this.pnlgamestats);
@@ -179,6 +184,95 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.TabIndex = 20;
             this.pgcontents.Paint += new System.Windows.Forms.PaintEventHandler(this.pgcontents_Paint);
             this.pgcontents.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pongMain_MouseMove);
+            // 
+            // pnlmultiplayerhandshake
+            // 
+            this.pnlmultiplayerhandshake.Controls.Add(this.lvotherplayers);
+            this.pnlmultiplayerhandshake.Controls.Add(this.lbmpstatus);
+            this.pnlmultiplayerhandshake.Location = new System.Drawing.Point(446, 88);
+            this.pnlmultiplayerhandshake.Name = "pnlmultiplayerhandshake";
+            this.pnlmultiplayerhandshake.Size = new System.Drawing.Size(396, 231);
+            this.pnlmultiplayerhandshake.TabIndex = 15;
+            // 
+            // lvotherplayers
+            // 
+            this.lvotherplayers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvotherplayers.Location = new System.Drawing.Point(0, 45);
+            this.lvotherplayers.MultiSelect = false;
+            this.lvotherplayers.Name = "lvotherplayers";
+            this.lvotherplayers.Size = new System.Drawing.Size(396, 186);
+            this.lvotherplayers.TabIndex = 1;
+            this.lvotherplayers.UseCompatibleStateImageBehavior = false;
+            this.lvotherplayers.View = System.Windows.Forms.View.Details;
+            this.lvotherplayers.DoubleClick += new System.EventHandler(this.lvotherplayers_DoubleClick);
+            // 
+            // lbmpstatus
+            // 
+            this.lbmpstatus.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbmpstatus.Location = new System.Drawing.Point(0, 0);
+            this.lbmpstatus.Name = "lbmpstatus";
+            this.lbmpstatus.Size = new System.Drawing.Size(396, 45);
+            this.lbmpstatus.TabIndex = 0;
+            this.lbmpstatus.Tag = "header2";
+            this.lbmpstatus.Text = "Waiting for other players...";
+            this.lbmpstatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pnlintro
+            // 
+            this.pnlintro.Controls.Add(this.btnmatchmake);
+            this.pnlintro.Controls.Add(this.Label6);
+            this.pnlintro.Controls.Add(this.btnstartgame);
+            this.pnlintro.Controls.Add(this.Label8);
+            this.pnlintro.Location = new System.Drawing.Point(0, 0);
+            this.pnlintro.Name = "pnlintro";
+            this.pnlintro.Size = new System.Drawing.Size(595, 303);
+            this.pnlintro.TabIndex = 13;
+            this.pnlintro.Tag = "header2";
+            // 
+            // btnmatchmake
+            // 
+            this.btnmatchmake.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnmatchmake.Location = new System.Drawing.Point(188, 253);
+            this.btnmatchmake.Name = "btnmatchmake";
+            this.btnmatchmake.Size = new System.Drawing.Size(242, 28);
+            this.btnmatchmake.TabIndex = 16;
+            this.btnmatchmake.Text = "Or, play against another Shifter!";
+            this.btnmatchmake.UseVisualStyleBackColor = true;
+            this.btnmatchmake.Click += new System.EventHandler(this.btnmatchmake_Click);
+            // 
+            // Label6
+            // 
+            this.Label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Label6.Location = new System.Drawing.Point(3, 39);
+            this.Label6.Name = "Label6";
+            this.Label6.Size = new System.Drawing.Size(589, 159);
+            this.Label6.TabIndex = 15;
+            this.Label6.Text = "{PONG_DESC}";
+            this.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Label6.Click += new System.EventHandler(this.Label6_Click);
+            // 
+            // btnstartgame
+            // 
+            this.btnstartgame.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnstartgame.Location = new System.Drawing.Point(188, 215);
+            this.btnstartgame.Name = "btnstartgame";
+            this.btnstartgame.Size = new System.Drawing.Size(242, 28);
+            this.btnstartgame.TabIndex = 15;
+            this.btnstartgame.Text = "{PLAY}";
+            this.btnstartgame.UseVisualStyleBackColor = true;
+            this.btnstartgame.Click += new System.EventHandler(this.btnstartgame_Click);
+            // 
+            // Label8
+            // 
+            this.Label8.AutoSize = true;
+            this.Label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Label8.ForeColor = System.Drawing.Color.Black;
+            this.Label8.Location = new System.Drawing.Point(250, 5);
+            this.Label8.Name = "Label8";
+            this.Label8.Size = new System.Drawing.Size(280, 31);
+            this.Label8.TabIndex = 14;
+            this.Label8.Text = "{PONG_WELCOME}";
+            this.Label8.Click += new System.EventHandler(this.Label8_Click);
             // 
             // pnlhighscore
             // 
@@ -525,52 +619,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label1.Text = "You lose!";
             this.Label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // pnlintro
-            // 
-            this.pnlintro.Controls.Add(this.btnmatchmake);
-            this.pnlintro.Controls.Add(this.Label6);
-            this.pnlintro.Controls.Add(this.btnstartgame);
-            this.pnlintro.Controls.Add(this.Label8);
-            this.pnlintro.Location = new System.Drawing.Point(0, 0);
-            this.pnlintro.Name = "pnlintro";
-            this.pnlintro.Size = new System.Drawing.Size(595, 303);
-            this.pnlintro.TabIndex = 13;
-            this.pnlintro.Tag = "header2";
-            // 
-            // Label6
-            // 
-            this.Label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label6.Location = new System.Drawing.Point(3, 39);
-            this.Label6.Name = "Label6";
-            this.Label6.Size = new System.Drawing.Size(589, 159);
-            this.Label6.TabIndex = 15;
-            this.Label6.Text = "{PONG_DESC}";
-            this.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Label6.Click += new System.EventHandler(this.Label6_Click);
-            // 
-            // btnstartgame
-            // 
-            this.btnstartgame.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnstartgame.Location = new System.Drawing.Point(188, 215);
-            this.btnstartgame.Name = "btnstartgame";
-            this.btnstartgame.Size = new System.Drawing.Size(242, 28);
-            this.btnstartgame.TabIndex = 15;
-            this.btnstartgame.Text = "{PLAY}";
-            this.btnstartgame.UseVisualStyleBackColor = true;
-            this.btnstartgame.Click += new System.EventHandler(this.btnstartgame_Click);
-            // 
-            // Label8
-            // 
-            this.Label8.AutoSize = true;
-            this.Label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label8.ForeColor = System.Drawing.Color.Black;
-            this.Label8.Location = new System.Drawing.Point(250, 5);
-            this.Label8.Name = "Label8";
-            this.Label8.Size = new System.Drawing.Size(280, 31);
-            this.Label8.TabIndex = 14;
-            this.Label8.Text = "{PONG_WELCOME}";
-            this.Label8.Click += new System.EventHandler(this.Label8_Click);
-            // 
             // lblbeatai
             // 
             this.lblbeatai.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -675,17 +723,6 @@ namespace ShiftOS.WinForms.Applications
             this.lblstatsX.Text = "Xspeed: ";
             this.lblstatsX.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btnmatchmake
-            // 
-            this.btnmatchmake.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnmatchmake.Location = new System.Drawing.Point(188, 253);
-            this.btnmatchmake.Name = "btnmatchmake";
-            this.btnmatchmake.Size = new System.Drawing.Size(242, 28);
-            this.btnmatchmake.TabIndex = 16;
-            this.btnmatchmake.Text = "Or, play against another Shifter!";
-            this.btnmatchmake.UseVisualStyleBackColor = true;
-            this.btnmatchmake.Click += new System.EventHandler(this.btnmatchmake_Click);
-            // 
             // Pong
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -699,6 +736,9 @@ namespace ShiftOS.WinForms.Applications
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pongMain_MouseMove);
             this.pgcontents.ResumeLayout(false);
             this.pgcontents.PerformLayout();
+            this.pnlmultiplayerhandshake.ResumeLayout(false);
+            this.pnlintro.ResumeLayout(false);
+            this.pnlintro.PerformLayout();
             this.pnlhighscore.ResumeLayout(false);
             this.pnlhighscore.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -708,8 +748,6 @@ namespace ShiftOS.WinForms.Applications
             this.pnlfinalstats.ResumeLayout(false);
             this.pnlfinalstats.PerformLayout();
             this.pnllose.ResumeLayout(false);
-            this.pnlintro.ResumeLayout(false);
-            this.pnlintro.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.paddleHuman)).EndInit();
             this.ResumeLayout(false);
 
@@ -765,5 +803,8 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button button2;
         internal System.Windows.Forms.Button btnmatchmake;
+        private System.Windows.Forms.Panel pnlmultiplayerhandshake;
+        private System.Windows.Forms.ListView lvotherplayers;
+        private System.Windows.Forms.Label lbmpstatus;
     }
 }

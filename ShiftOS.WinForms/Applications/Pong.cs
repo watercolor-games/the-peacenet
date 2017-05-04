@@ -368,50 +368,84 @@ namespace ShiftOS.WinForms.Applications
 
         public void ServerMessageReceivedHandler(ServerMessage msg)
         {
-            if(msg.Name == "pong_mp_setballpos")
+            if (msg.Name == "pong_mp_setballpos")
             {
                 var pt = JsonConvert.DeserializeObject<Point>(msg.Contents);
                 LeaderX = pt.X;
                 LeaderY = pt.Y;
             }
-            else if(msg.Name == "pong_mp_youlose")
+            else if (msg.Name == "pong_mp_youlose")
             {
                 LoseMP();
             }
-            else if(msg.Name == "pong_mp_setopponenty")
+            else if (msg.Name == "pong_mp_setopponenty")
             {
                 int y = Convert.ToInt32(msg.Contents);
                 OpponentY = y;
             }
-            else if(msg.Name == "pong_handshake_matchmake")
+            else if (msg.Name == "pong_handshake_matchmake")
             {
-                PossibleMatchmakes.Add(msg.Contents);
+                if (!PossibleMatchmakes.Contains(msg.Contents))
+                    PossibleMatchmakes.Add(msg.Contents);
+                this.Invoke(new Action(ListMatchmakes));
             }
-            else if(msg.Name == "pong_handshake_complete")
+            else if (msg.Name == "pong_handshake_resendid")
             {
+                ServerManager.Forward("all", "pong_handshake_matchmake", YouGUID);
+            }
+            else if (msg.Name == "pong_handshake_complete")
+            {
+                IsLeader = true;
+
+                OpponentGUID = msg.Contents;
                 LeaveMatchmake();
-                StartLevel();
+                this.Invoke(new Action(() =>
+                {
+                    pnlmultiplayerhandshake.Hide();
+                    StartLevel();
+                }));
             }
-            else if(msg.Name == "pong_handshake_giveleaderid")
+            else if (msg.Name == "pong_handshake_chosen")
             {
                 IsLeader = false;
                 OpponentGUID = msg.Contents;
                 YouGUID = ServerManager.thisGuid.ToString();
                 SendFollowerGUID();
+                this.Invoke(new Action(() =>
+                {
+                    pnlmultiplayerhandshake.Hide();
+                }));
             }
-            else if(msg.Name == "pong_handshake_left")
+            else if (msg.Name == "pong_handshake_left")
             {
                 if (this.PossibleMatchmakes.Contains(msg.Contents))
                     this.PossibleMatchmakes.Remove(msg.Contents);
+                this.Invoke(new Action(ListMatchmakes));
             }
-            else if(msg.Name == "pong_handshake_setfollowerguid")
-            {
-                IsLeader = false;
-                OpponentGUID = msg.Contents;
-            }
-            else if(msg.Name == "pong_mp_youwin")
+            else if (msg.Name == "pong_mp_youwin")
             {
                 Win();
+            }
+        }
+
+        public void ListMatchmakes()
+        {
+            lvotherplayers.Items.Clear();
+            lvotherplayers.FullRowSelect = true;
+            foreach (var itm in PossibleMatchmakes)
+            {
+                var l = new ListViewItem();
+                l.Text = itm;
+                lvotherplayers.Items.Add(l);
+            }
+
+            if (PossibleMatchmakes.Count > 0)
+            {
+                lbmpstatus.Text = "Select a player.";
+            }
+            else
+            {
+                lbmpstatus.Text = "Waiting for players...";
             }
         }
 
@@ -432,9 +466,9 @@ namespace ShiftOS.WinForms.Applications
 
         List<string> PossibleMatchmakes = new List<string>();
 
-        public void SendLeaderGUID()
+        public void SendLeaderGUID(string target)
         {
-            ServerManager.Forward(OpponentGUID, "pong_handshake_giveleaderid", YouGUID);
+            ServerManager.Forward(target, "pong_handshake_chosen", YouGUID);
         }
 
 
@@ -443,12 +477,23 @@ namespace ShiftOS.WinForms.Applications
             IsMultiplayerSession = true;
             YouGUID = ServerManager.thisGuid.ToString();
             ServerManager.SendMessage("pong_handshake_matchmake", YouGUID);
+            StartMatchmake();
+        }
+
+        public void StartMatchmake()
+        {
+            pnlmultiplayerhandshake.Show();
+            pnlmultiplayerhandshake.CenterParent();
+            pnlmultiplayerhandshake.BringToFront();
+
+            ServerManager.Forward("all", "pong_handshake_resendid", null);
+
         }
 
 
         public void SendFollowerGUID()
         {
-            ServerManager.Forward(OpponentGUID, "pong_handshake_setfollowerguid", YouGUID);
+            ServerManager.Forward(OpponentGUID, "pong_handshake_complete", YouGUID);
         }
 
         public void LoseMP()
@@ -972,6 +1017,14 @@ namespace ShiftOS.WinForms.Applications
             lblbeatai.Text = "Beat the other player to earn Codepoints.";
             lblcountdown.Text = "Waiting for another player...";
             lblcountdown.Left = (this.Width - lblcountdown.Width) / 2;
+        }
+
+        private void lvotherplayers_DoubleClick(object sender, EventArgs e)
+        {
+            if(lvotherplayers.SelectedItems.Count > 0)
+            {
+                SendLeaderGUID(lvotherplayers.SelectedItems[0].Text);
+            }
         }
     }
 }
