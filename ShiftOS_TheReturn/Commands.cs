@@ -283,7 +283,7 @@ namespace ShiftOS.Engine
             if (args.ContainsKey("amount"))
                 try
                 {
-                    int codepointsToAdd = Convert.ToInt32(args["amount"].ToString());
+                    Int64 codepointsToAdd = Convert.ToInt64(args["amount"].ToString());
                     SaveSystem.TransferCodepointsFrom("dev", codepointsToAdd);
                     return true;
                 }
