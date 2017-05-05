@@ -53,7 +53,68 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [Command("set_acl")]
+        [RequiresArgument("user")]
+        [RequiresArgument("val")]
+        public static bool SetUserPermission(Dictionary<string, object> args)
+        {
+            int permission = 0;
+            string username = args["user"].ToString();
+            try 
+            {
+                permission = Convert.ToInt32(args["val"].ToString());
+            }
+            catch
+            {
+                Console.WriteLine("Error: Permission value must be an integer.");
+                return true;
+            }
 
+            if(SaveSystem.CurrentSave.Users.FirstOrDefault(x=>x.Username==username) == null)
+            {
+                Console.WriteLine("Error: User not found.");
+                return true;
+            }
+
+            UserPermissions uperm = UserPermissions.Guest;
+
+            switch (permission)
+            {
+                case 0:
+                    uperm = UserPermissions.Guest;
+                    break;
+                case 1:
+                    uperm = UserPermissions.User;
+                    break;
+                case 2:
+                    uperm = UserPermissions.Admin;
+                    break;
+                case 3:
+                    uperm = UserPermissions.Root;
+                    break;
+                default:
+                    Console.WriteLine("Permission value must be between 0 and 4.");
+                    return true;
+            }
+
+            //Permissions are backwards... oops...
+            if(uperm < SaveSystem.CurrentUser.Permissions)
+            {
+                Console.WriteLine("Error: Cannot set user permissions to values greater than your own!");
+                return true;
+            }
+
+            var oldperm = SaveSystem.Users.FirstOrDefault(x => x.Username == username).Permissions;
+            if (SaveSystem.CurrentUser.Permissions > oldperm)
+            {
+                Console.WriteLine("Error: Can't set the permission of this user. They have more rights than you.");
+                return true;
+            }
+
+            SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == username).Permissions = uperm;
+            Console.WriteLine("User permissions updated.");
+            return true;
+        }
 
     }
 
