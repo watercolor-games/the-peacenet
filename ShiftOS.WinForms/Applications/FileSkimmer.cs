@@ -34,7 +34,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using static ShiftOS.Objects.ShiftFS.Utils;
-using Newtonsoft.Json;
 using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
@@ -423,14 +422,14 @@ namespace ShiftOS.WinForms.Applications
                 {
                     if (result == true)
                     {
-                        if (currentdir != "__system")
+                        if (currentdir != "__system" && lvitems.SelectedItems[0].Text != "Up one")
                         {
                             pinDirectory(currentdir + "/" + lvitems.SelectedItems[0].Text);
                             ResetList();
                         }
                         else
                         {
-                            Infobox.Show("Cannot Pin", "You cannot pin a system drive.");
+                            Infobox.Show("Cannot Pin", "You can only pin files or folders.");
                         }
                             
                     }
