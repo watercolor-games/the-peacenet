@@ -70,7 +70,7 @@ namespace ShiftOS.Engine
             {
                 var root = new ShiftOS.Objects.ShiftFS.Directory();
                 root.Name = "System";
-                root.permissions = Permissions.All;
+                root.permissions = UserPermissions.Guest;
                 System.IO.File.WriteAllText(Paths.SaveFile, JsonConvert.SerializeObject(root));
             }
 

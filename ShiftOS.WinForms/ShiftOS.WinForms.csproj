@@ -298,6 +298,12 @@
     <Compile Include="DesktopWidgets\CodepointsWidget.Designer.cs">
       <DependentUpon>CodepointsWidget.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.Designer.cs">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
+    </Compile>
     <Compile Include="DesktopWidgets\TerminalWidget.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -501,6 +507,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\CodepointsWidget.resx">
       <DependentUpon>CodepointsWidget.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\HeartbeatWidget.resx">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\TerminalWidget.resx">
       <DependentUpon>TerminalWidget.cs</DependentUpon>

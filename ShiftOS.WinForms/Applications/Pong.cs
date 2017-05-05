@@ -123,7 +123,7 @@ namespace ShiftOS.WinForms.Applications
 
         int OpponentY = 0;
 
-        bool IsLeader = false;
+        bool IsLeader = true;
 
         int LeaderX = 0;
         int LeaderY = 0;
@@ -368,74 +368,123 @@ namespace ShiftOS.WinForms.Applications
 
         public void ServerMessageReceivedHandler(ServerMessage msg)
         {
-            if (msg.Name == "pong_mp_setballpos")
+            if (IsMultiplayerSession)
             {
-                var pt = JsonConvert.DeserializeObject<Point>(msg.Contents);
-                LeaderX = pt.X;
-                LeaderY = pt.Y;
-            }
-            else if(msg.Name == "pong_mp_left")
-            {
-                this.Invoke(new Action(() =>
+                if (msg.Name == "pong_mp_setballpos")
                 {
-                    AppearanceManager.Close(this);
-                }));
-                Infobox.Show("Opponent has closed Pong.", "The opponent has closed Pong, therefore the connection between you two has dropped.");
-            }
-            else if (msg.Name == "pong_mp_youlose")
-            {
-                this.Invoke(new Action(LoseMP));
-            }
-            else if (msg.Name == "pong_mp_setopponenty")
-            {
-                int y = Convert.ToInt32(msg.Contents);
-                OpponentY = y;
-            }
-            else if (msg.Name == "pong_handshake_matchmake")
-            {
-                if (!PossibleMatchmakes.Contains(msg.Contents))
-                    PossibleMatchmakes.Add(msg.Contents);
-                this.Invoke(new Action(ListMatchmakes));
-            }
-            else if (msg.Name == "pong_handshake_resendid")
-            {
-                ServerManager.Forward("all", "pong_handshake_matchmake", YouGUID);
-            }
-            else if (msg.Name == "pong_handshake_complete")
-            {
-                IsLeader = true;
+                    var pt = JsonConvert.DeserializeObject<Point>(msg.Contents);
+                    LeaderX = pt.X;
+                    LeaderY = pt.Y;
+                }
+                else if (msg.Name == "pong_mp_left")
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        AppearanceManager.Close(this);
+                    }));
+                    Infobox.Show("Opponent has closed Pong.", "The opponent has closed Pong, therefore the connection between you two has dropped.");
+                }
+                else if (msg.Name == "pong_mp_youlose")
+                {
+                    this.Invoke(new Action(LoseMP));
+                }
+                else if (msg.Name == "pong_mp_setopponenty")
+                {
+                    int y = Convert.ToInt32(msg.Contents);
+                    OpponentY = y;
+                }
+                else if (msg.Name == "pong_handshake_matchmake")
+                {
+                    if (!PossibleMatchmakes.Contains(msg.Contents))
+                        PossibleMatchmakes.Add(msg.Contents);
+                    this.Invoke(new Action(ListMatchmakes));
+                }
+                else if (msg.Name == "pong_handshake_resendid")
+                {
+                    ServerManager.Forward("all", "pong_handshake_matchmake", YouGUID);
+                }
+                else if (msg.Name == "pong_handshake_complete")
+                {
+                    IsLeader = true;
 
-                OpponentGUID = msg.Contents;
-                LeaveMatchmake();
-                this.Invoke(new Action(() =>
+                    OpponentGUID = msg.Contents;
+                    LeaveMatchmake();
+                    this.Invoke(new Action(() =>
+                    {
+                        pnlmultiplayerhandshake.Hide();
+                        StartLevel();
+                    }));
+                }
+                else if(msg.Name == "pong_mp_levelcompleted")
                 {
-                    pnlmultiplayerhandshake.Hide();
-                    StartLevel();
-                }));
-            }
-            else if (msg.Name == "pong_handshake_chosen")
-            {
-                IsLeader = false;
-                LeaveMatchmake();
-                OpponentGUID = msg.Contents;
-                YouGUID = ServerManager.thisGuid.ToString();
-                SendFollowerGUID();
-                this.Invoke(new Action(() =>
+                    level = Convert.ToInt32(msg.Contents) + 1;
+                    this.Invoke(new Action(CompleteLevel));
+                }
+                else if (msg.Name == "pong_handshake_chosen")
                 {
-                    pnlmultiplayerhandshake.Hide();
-                }));
-            }
-            else if (msg.Name == "pong_handshake_left")
-            {
-                if (this.PossibleMatchmakes.Contains(msg.Contents))
-                    this.PossibleMatchmakes.Remove(msg.Contents);
-                this.Invoke(new Action(ListMatchmakes));
-            }
-            else if (msg.Name == "pong_mp_youwin")
-            {
-                this.Invoke(new Action(Win));
+                    IsLeader = false;
+                    LeaveMatchmake();
+                    OpponentGUID = msg.Contents;
+                    YouGUID = ServerManager.thisGuid.ToString();
+                    //Start the timers.
+                    counter.Start();
+                    SendFollowerGUID();
+                    this.Invoke(new Action(() =>
+                    {
+                        pnlmultiplayerhandshake.Hide();
+                    }));
+                }
+                else if(msg.Name == "pong_mp_cashedout")
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        btncashout_Click(this, EventArgs.Empty);
+                    }));
+                    Infobox.Show("Cashed out.", "The other player has cashed out their Codepoints. Therefore, we have automatically cashed yours out.");
+                }
+                else if(msg.Name == "pong_mp_startlevel")
+                {
+                    OpponentAgrees = true;
+                    if(YouAgree == false)
+                    {
+                        Infobox.PromptYesNo("Play another level?", "The opponent wants to play another level. Would you like to as well?", (answer)=>
+                        {
+                            YouAgree = answer;
+                            ServerManager.Forward(OpponentGUID, "pong_mp_level_callback", YouAgree.ToString());
+                        });
+                    }
+                }
+                else if(msg.Name == "pong_mp_level_callback")
+                {
+                    bool agreed = bool.Parse(msg.Contents);
+                    OpponentAgrees = agreed;
+                    if (OpponentAgrees)
+                    {
+                        if (IsLeader)
+                        {
+                            //this.Invoke(new Action(()))
+                        }
+                    }
+                }
+                else if (msg.Name == "pong_handshake_left")
+                {
+                    if (this.PossibleMatchmakes.Contains(msg.Contents))
+                        this.PossibleMatchmakes.Remove(msg.Contents);
+                    this.Invoke(new Action(ListMatchmakes));
+                }
+                else if(msg.Name == "pong_mp_clockupdate")
+                {
+                    secondsleft = Convert.ToInt32(msg.Contents);
+                }
+                else if (msg.Name == "pong_mp_youwin")
+                {
+                    this.Invoke(new Action(Win));
+                }
             }
         }
+
+        bool OpponentAgrees = false;
+        bool YouAgree = false;
 
         public void ListMatchmakes()
         {
@@ -543,37 +592,50 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        public void CompleteLevel()
+        {
+            if (SaveSystem.CurrentSave.UniteAuthToken != null)
+            {
+                try
+                {
+                    var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
+                    if (unite.GetPongLevel() < level)
+                        unite.SetPongLevel(level);
+                }
+                catch { }
+            }
+            //Only set these stats if the user is the leader.
+            if (IsLeader)
+            {
+                secondsleft = 60;
+                level = level + 1;
+                generatenextlevel();
+            }
+
+            pnlgamestats.Show();
+            pnlgamestats.BringToFront();
+            pnlgamestats.Location = new Point((pgcontents.Width / 2) - (pnlgamestats.Width / 2), (pgcontents.Height / 2) - (pnlgamestats.Height / 2));
+
+            counter.Stop();
+            gameTimer.Stop();
+
+        }
+
         // ERROR: Handles clauses are not supported in C#
         private void counter_Tick(object sender, EventArgs e)
         {
-            if (this.Left < Screen.PrimaryScreen.Bounds.Width)
+            if (IsLeader)
             {
-                secondsleft = secondsleft - 1;
-                if (secondsleft == 1)
+                if (this.Left < Screen.PrimaryScreen.Bounds.Width)
                 {
-                    secondsleft = 60;
-                    level = level + 1;
-                    if (SaveSystem.CurrentSave.UniteAuthToken != null)
+                    secondsleft = secondsleft - 1;
+                    if (secondsleft == 1)
                     {
-                        try
-                        {
-                            var unite = new ShiftOS.Unite.UniteClient("http://getshiftos.ml", SaveSystem.CurrentSave.UniteAuthToken);
-                            if (unite.GetPongLevel() < level)
-                                unite.SetPongLevel(level);
-                        }
-                        catch { }
+                        CompleteLevel();
                     }
-                    generatenextlevel();
-                    pnlgamestats.Show();
-                    pnlgamestats.BringToFront();
-                    pnlgamestats.Location = new Point((pgcontents.Width / 2) - (pnlgamestats.Width / 2), (pgcontents.Height / 2) - (pnlgamestats.Height / 2));
 
-                    counter.Stop();
-                    gameTimer.Stop();
-                    SendHighscores();
+                    lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
                 }
-
-                lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
             }
             SetupStats();
         }
@@ -824,6 +886,19 @@ namespace ShiftOS.WinForms.Applications
                     unite.SetPongCP(totalreward);
                 }
             }
+            if (IsMultiplayerSession)
+            {
+                ServerManager.Forward(OpponentGUID, "pong_mp_cashedout", null);
+                StopMultiplayerSession();
+            }
+        }
+
+        public void StopMultiplayerSession()
+        {
+            IsMultiplayerSession = false;
+            IsLeader = true;
+            OpponentGUID = "";
+            YouGUID = "";
         }
 
         private void newgame()
