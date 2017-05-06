@@ -55,7 +55,7 @@ namespace ShiftOS.Engine
         private static NetObjectClient client { get; set; }
         private static bool UserDisconnect = false;
 
-        public static TimeSpan DigitalSocietyPing
+        public static long DigitalSocietyPing
         {
             get;
             private set;
@@ -148,7 +148,7 @@ namespace ShiftOS.Engine
             {
                 if (PingTimer.IsRunning)
                 {
-                    DigitalSocietyPing = PingTimer.Elapsed;
+                    DigitalSocietyPing = PingTimer.ElapsedMilliseconds;
                     PingTimer.Reset();
                 }
                 var msg = a.Data.Object as ServerMessage;

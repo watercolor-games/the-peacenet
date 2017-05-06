@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
@@ -90,46 +91,68 @@ namespace ShiftOS.WinForms.Applications
 
         public void PopulateShiftorium()
         {
-            try
+            var t = new Thread(() =>
             {
-                lbnoupgrades.Hide();
-                lbupgrades.Items.Clear();
-                upgrades.Clear();
-                Timer();
-
-                foreach (var upg in backend.GetAvailable().Where(x => x.Category == backend.GetCategories()[CategoryId]))
+                try
                 {
-                    String name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
-                    upgrades.Add(name, upg);
-                    lbupgrades.Items.Add(name);
-                }
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lbnoupgrades.Hide();
+                        lbupgrades.Items.Clear();
+                        upgrades.Clear();
+                        Timer();
+                    });
 
-                if (lbupgrades.Items.Count == 0)
+                    foreach (var upg in backend.GetAvailable().Where(x => x.Category == backend.GetCategories()[CategoryId]))
+                    {
+                        string name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
+                        upgrades.Add(name, upg);
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbupgrades.Items.Add(name);
+                        });
+                    }
+
+                    if (lbupgrades.Items.Count == 0)
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbnoupgrades.Show();
+                            lbnoupgrades.Location = new Point(
+                                (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                                lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
+                                );
+                        });
+                    }
+                    else
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbnoupgrades.Hide();
+                        });
+                    }
+
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
+                        btncat_back.Visible = (CategoryId > 0);
+                        btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
+                    });
+                }
+                catch
                 {
-                    lbnoupgrades.Show();
-                    lbnoupgrades.Location = new Point(
-                        (lbupgrades.Width - lbnoupgrades.Width) / 2,
-                        (lbupgrades.Height - lbnoupgrades.Height) / 2
-                        );
-
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lbnoupgrades.Show();
+                        lbnoupgrades.Location = new Point(
+                            (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                            lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
+                            );
+                    });
                 }
-                else
-                {
-                    lbnoupgrades.Hide();
-                }
-                lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
-                btncat_back.Visible = (CategoryId > 0);
-                btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
-            }
-            catch
-            {
-                lbnoupgrades.Show();
-                lbnoupgrades.Location = new Point(
-                    (lbupgrades.Width - lbnoupgrades.Width) / 2,
-                    (lbupgrades.Height - lbnoupgrades.Height) / 2
-                    );
-
-            }
+            });
+            t.IsBackground = true;
+            t.Start();
         }
 
         public static bool UpgradeInstalled(string upg)
@@ -200,7 +223,17 @@ namespace ShiftOS.WinForms.Applications
             {
                 foreach(var upg in UpgradesToBuy)
                 {
-                    backend.Buy(upg.Key, upg.Value);
+                    SaveSystem.CurrentSave.Codepoints -= upg.Value;
+                    if (SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.Key))
+                    {
+                        SaveSystem.CurrentSave.Upgrades[upg.Key] = true;
+                    }
+                    else
+                    {
+                        SaveSystem.CurrentSave.Upgrades.Add(upg.Key, true);
+                    }
+                    SaveSystem.SaveGame();
+                    backend.InvokeUpgradeInstalled();
                 }
             }
 
@@ -224,7 +257,7 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
-        Timer cp_update = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer cp_update = new System.Windows.Forms.Timer();
 
         public bool OnUnload()
         {
@@ -248,6 +281,7 @@ namespace ShiftOS.WinForms.Applications
         {
             timer100 = new System.Timers.Timer();
             timer100.Interval = 2000;
+            //CLARIFICATION: What is this supposed to do? - Michael
             //timer100.Elapsed += ???;
             timer100.AutoReset = true;
             timer100.Enabled = true;

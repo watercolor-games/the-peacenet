@@ -276,6 +276,17 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [Command("restart")]
+        public static bool Restart()
+        {
+            SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
+            SaveSystem.CurrentSave.Codepoints = 0;
+            SaveSystem.CurrentSave.StoriesExperienced.Clear();
+            SaveSystem.CurrentSave.StoriesExperienced.Add("mud_fundamentals");
+            SaveSystem.SaveGame();
+            Shiftorium.InvokeUpgradeInstalled();
+            return true;
+        }
 
         [Command("freecp")]
         public static bool FreeCodepoints(Dictionary<string, object> args)
@@ -283,8 +294,8 @@ namespace ShiftOS.Engine
             if (args.ContainsKey("amount"))
                 try
                 {
-                    Int64 codepointsToAdd = Convert.ToInt64(args["amount"].ToString());
-                    SaveSystem.TransferCodepointsFrom("dev", codepointsToAdd);
+                    long codepointsToAdd = Convert.ToInt64(args["amount"].ToString());
+                    SaveSystem.CurrentSave.Codepoints += codepointsToAdd;
                     return true;
                 }
                 catch (Exception ex)
@@ -293,7 +304,7 @@ namespace ShiftOS.Engine
                     return true;
                 }
 
-            SaveSystem.TransferCodepointsFrom("dev", 1000);
+            SaveSystem.CurrentSave.Codepoints += 1000;
             return true;
         }
 

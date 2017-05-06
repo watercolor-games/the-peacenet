@@ -24,13 +24,13 @@ namespace ShiftOS.WinForms.DesktopWidgets
                 if(ts != ServerManager.DigitalSocietyPing)
                 {
                     ts = ServerManager.DigitalSocietyPing;
-                    lbheartbeat.Text = "Server ping: " + ts.ToString();
+                    lbheartbeat.Text = "Server ping: " + ts.ToString() + " MS";
                 }
             };
         }
 
         //Fun fact. I misspelled this as "TimeSpam."
-        TimeSpan ts;
+        long ts = 0;
 
         public void OnSkinLoad()
         {
