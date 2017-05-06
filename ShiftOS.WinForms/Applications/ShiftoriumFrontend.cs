@@ -311,5 +311,10 @@ namespace ShiftOS.WinForms.Applications
                 PopulateShiftorium();
             }
         }
+
+        private void lblcategorytext_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
