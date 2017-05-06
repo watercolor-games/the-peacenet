@@ -216,7 +216,7 @@ namespace ShiftOS.Engine
 
             if (string.IsNullOrWhiteSpace(CurrentSave.SystemName))
             {
-                Infobox.PromptText("Enter a system name", "Your system does not have a name. All systems within the digital society must have a name. Please enter one.", (name)=>
+                Infobox.PromptText("Enter a system name", "Your system does not have a name. All systems within the digital society must have a name. Please enter one.", (name) =>
                 {
                     if (string.IsNullOrWhiteSpace(name))
                         Infobox.Show("Invalid name", "Please enter a valid name.", () =>
@@ -261,7 +261,7 @@ namespace ShiftOS.Engine
                 CurrentSave.Users = new List<ClientSave>();
 
 
-            if(CurrentSave.Users.Count == 0)
+            if (CurrentSave.Users.Count == 0)
             {
                 CurrentSave.Users.Add(new ClientSave
                 {
@@ -305,13 +305,9 @@ namespace ShiftOS.Engine
                 {
                     if (progress == 0)
                     {
-<<<<<<< HEAD
                         string loginstr = CurrentSave.SystemName + " login: ";
                         string getuser = text.Remove(0, loginstr.Length);
                         if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
-=======
-                        if (!string.IsNullOrWhiteSpace(text))
->>>>>>> origin/master
                         {
                             if (CurrentSave.Users.FirstOrDefault(x => x.Username == text) == null)
                             {
@@ -331,11 +327,8 @@ namespace ShiftOS.Engine
                             goback = true;
                             progress++;
                         }
-<<<<<<< HEAD
                         username = getuser;
                         progress++;
-=======
->>>>>>> origin/master
                     }
                     else if (progress == 1)
                     {
@@ -357,57 +350,20 @@ namespace ShiftOS.Engine
                     }
                 };
                 TerminalBackend.TextSent += ev;
-                Console.WriteLine(CurrentSave.SystemName + " login:");
+
+                Console.Write(CurrentSave.SystemName + " login: ");
                 while (progress == 0)
                 {
-<<<<<<< HEAD
-                    string passwordstr = "password: ";
-                    string getpass = text.Remove(0, passwordstr.Length);
-                    var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
-                    if (user.Password == getpass)
-                    {
-                        Console.WriteLine("Welcome to ShiftOS.");
-                        CurrentUser = user;
-                        Thread.Sleep(2000);
-                        progress++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Access denied.");
-                        goback = true;
-                        progress++;
-                    }
-                    TerminalBackend.TextSent -= ev;
-                }
-            };
-            TerminalBackend.TextSent += ev;
-
-            Console.Write(CurrentSave.SystemName + " login: ");
-            while(progress == 0)
-            {
-                Thread.Sleep(10);
-            }
-            if (goback)
-                goto Login;
-            Console.Write("password: ");
-            while (progress == 1)
-                Thread.Sleep(10);
-            if (goback)
-                goto Login;
-
-
-=======
                     Thread.Sleep(10);
                 }
                 if (goback)
                     goto Login;
-                Console.WriteLine("password:");
+                Console.Write("password: ");
                 while (progress == 1)
                     Thread.Sleep(10);
                 if (goback)
                     goto Login;
             }
->>>>>>> origin/master
             TerminalBackend.PrefixEnabled = true;
             Shiftorium.LogOrphanedUpgrades = true;
             Desktop.InvokeOnWorkerThread(new Action(() =>
