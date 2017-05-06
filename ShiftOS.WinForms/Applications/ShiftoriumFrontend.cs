@@ -134,9 +134,16 @@ namespace ShiftOS.WinForms.Applications
 
                     Desktop.InvokeOnWorkerThread(() =>
                     {
-                        lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
-                        btncat_back.Visible = (CategoryId > 0);
-                        btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
+                        try
+                        {
+                            lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
+                            btncat_back.Visible = (CategoryId > 0);
+                            btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
+                        }
+                        catch
+                        {
+
+                        }
                     });
                 }
                 catch
