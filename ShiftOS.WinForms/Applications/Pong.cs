@@ -1095,8 +1095,8 @@ namespace ShiftOS.WinForms.Applications
             {
                 if(!string.IsNullOrWhiteSpace(OpponentGUID))
                     ServerManager.Forward(OpponentGUID, "pong_mp_left", null);
+                LeaveMatchmake();
             }
-            LeaveMatchmake();
             ServerManager.MessageReceived -= this.ServerMessageReceivedHandler;
 
             return true;

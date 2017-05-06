@@ -53,6 +53,9 @@ namespace ShiftOS.Engine
             return true;
         }
 
+
+
+
         [Command("set_acl")]
         [RequiresArgument("user")]
         [RequiresArgument("val")]
@@ -122,7 +125,31 @@ namespace ShiftOS.Engine
     [RequiresUpgrade("mud_fundamentals")]
     public static class UserManagementCommands
     {
+        [Command("login", description = "Log in as another user.")]
+        [RequiresArgument("user")]
+        [RequiresArgument("pass")]
+        public static bool Login(Dictionary<string, object> args)
+        {
+            string user = args["user"].ToString();
+            string pass = args["pass"].ToString();
 
+            var usr = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == user);
+            if(usr==null)
+            {
+                Console.WriteLine("Error: No such user.");
+                return true;
+            }
+
+            if (usr.Password != pass)
+            {
+                Console.WriteLine("Access denied.");
+                return true;
+            }
+
+            SaveSystem.CurrentUser = usr;
+            Console.WriteLine("Access granted.");
+            return true;
+        }
 
         [Command("setpass", description ="Allows you to set your password to a new value.", usage ="old:,new:")]
         [RequiresArgument("old")]
