@@ -981,6 +981,10 @@ namespace ShiftOS.WinForms.Applications
                     var hs = unite.GetPongHighscores();
                     foreach (var score in hs.Highscores)
                     {
+                        if(this.ParentForm.Visible == false)
+                        {
+                            Thread.CurrentThread.Abort();
+                        }
                         string username = unite.GetDisplayNameId(score.UserId);
                         this.Invoke(new Action(() =>
                         {
@@ -994,8 +998,15 @@ namespace ShiftOS.WinForms.Applications
                 }
                 catch
                 {
-                    Infobox.Show("Service unavailable.", "The Pong Highscore service is unavailable at this time.");
-                    this.Invoke(new Action(pnlgamestats.BringToFront));
+                    try
+                    {
+                        if (this.ParentForm.Visible == true)
+                        {
+                            Infobox.Show("Service unavailable.", "The Pong Highscore service is unavailable at this time.");
+                            this.Invoke(new Action(pnlgamestats.BringToFront));
+                        }
+                    }
+                    catch { } //JUST. ABORT. THE. FUCKING. THREAD.
                     return;
                 }
             });
