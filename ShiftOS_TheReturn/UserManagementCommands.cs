@@ -47,6 +47,11 @@ namespace ShiftOS.Engine
             }
 
             var user = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == name);
+            if(user.Username != SaveSystem.CurrentUser.Username)
+            {
+                Console.WriteLine("Error: Cannot remove yourself.");
+                return true;
+            }
             SaveSystem.CurrentSave.Users.Remove(user);
             Console.WriteLine($"Removing user \"{name}\" from system...");
             SaveSystem.SaveGame();
@@ -119,6 +124,26 @@ namespace ShiftOS.Engine
             return true;
         }
 
+
+        [Command("users", description = "Get a list of all users on the system.")]
+        public static bool GetUsers()
+        {
+            foreach (var u in SaveSystem.CurrentSave.Users)
+            {
+                if (u.Username == SaveSystem.CurrentUser.Username)
+                {
+                    ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+                    ConsoleEx.Bold = true;
+                }
+                else
+                {
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    ConsoleEx.Bold = false;
+                }
+                Console.WriteLine(u.Username);
+            }
+            return true;
+        }
     }
 
     [Namespace("user")]
