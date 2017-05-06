@@ -275,40 +275,92 @@ namespace ShiftOS.Engine
 
             TerminalBackend.PrefixEnabled = false;
 
-            Login:
-            string username = "";
-            int progress = 0;
-            bool goback = false;
-            TextSentEventHandler ev = null;
-            ev = (text) =>
+            if (LoginManager.ShouldUseGUILogin)
             {
-                if (progress == 0)
+                Action<ClientSave> Completed = null;
+                Completed += (user) =>
                 {
-                    if (!string.IsNullOrWhiteSpace(text))
+                    CurrentUser = user;
+                    LoginManager.LoginComplete -= Completed;
+                };
+                LoginManager.LoginComplete += Completed;
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    LoginManager.PromptForLogin();
+                });
+                while (CurrentUser == null)
+                {
+                    Thread.Sleep(10);
+                }
+            }
+            else
+            {
+
+                Login:
+                string username = "";
+                int progress = 0;
+                bool goback = false;
+                TextSentEventHandler ev = null;
+                ev = (text) =>
+                {
+                    if (progress == 0)
                     {
+<<<<<<< HEAD
                         string loginstr = CurrentSave.SystemName + " login: ";
                         string getuser = text.Remove(0, loginstr.Length);
                         if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
+=======
+                        if (!string.IsNullOrWhiteSpace(text))
+>>>>>>> origin/master
                         {
-                            Console.WriteLine("User not found.");
+                            if (CurrentSave.Users.FirstOrDefault(x => x.Username == text) == null)
+                            {
+                                Console.WriteLine("User not found.");
+                                goback = true;
+                                progress++;
+                                TerminalBackend.TextSent -= ev;
+                                return;
+                            }
+                            username = text;
+                            progress++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Username not provided.");
+                            TerminalBackend.TextSent -= ev;
                             goback = true;
                             progress++;
-                            TerminalBackend.TextSent -= ev;
-                            return;
                         }
+<<<<<<< HEAD
                         username = getuser;
                         progress++;
+=======
+>>>>>>> origin/master
                     }
-                    else
+                    else if (progress == 1)
                     {
-                        Console.WriteLine("Username not provided.");
+                        var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
+                        if (user.Password == text)
+                        {
+                            Console.WriteLine("Welcome to ShiftOS.");
+                            CurrentUser = user;
+                            Thread.Sleep(2000);
+                            progress++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Access denied.");
+                            goback = true;
+                            progress++;
+                        }
                         TerminalBackend.TextSent -= ev;
-                        goback = true;
-                        progress++;
                     }
-                }
-                else if (progress == 1)
+                };
+                TerminalBackend.TextSent += ev;
+                Console.WriteLine(CurrentSave.SystemName + " login:");
+                while (progress == 0)
                 {
+<<<<<<< HEAD
                     string passwordstr = "password: ";
                     string getpass = text.Remove(0, passwordstr.Length);
                     var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
@@ -344,6 +396,18 @@ namespace ShiftOS.Engine
                 goto Login;
 
 
+=======
+                    Thread.Sleep(10);
+                }
+                if (goback)
+                    goto Login;
+                Console.WriteLine("password:");
+                while (progress == 1)
+                    Thread.Sleep(10);
+                if (goback)
+                    goto Login;
+            }
+>>>>>>> origin/master
             TerminalBackend.PrefixEnabled = true;
             Shiftorium.LogOrphanedUpgrades = true;
             Desktop.InvokeOnWorkerThread(new Action(() =>

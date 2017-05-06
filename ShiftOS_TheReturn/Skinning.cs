@@ -267,6 +267,22 @@ namespace ShiftOS.Engine
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
+        [ShifterMeta("System")]
+        [ShifterCategory("Login Screen")]
+        [RequiresUpgrade("gui_based_login_screen")]
+        [ShifterName("Login Screen Background Color")]
+        [ShifterDescription("Change the background color of the login screen.")]
+        public Color LoginScreenColor = Skin.DesktopBG;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Login Screen")]
+        [RequiresUpgrade("skinning;gui_based_login_screen")]
+        [ShifterName("Login Screen Background Image")]
+        [ShifterDescription("Set an image as your login screen!")]
+        [Image("login")]
+        public byte[] LoginScreenBG = null;
+
+
         [RequiresUpgrade("shift_screensaver")]
         [ShifterMeta("System")]
         [ShifterCategory("Screen saver")]
