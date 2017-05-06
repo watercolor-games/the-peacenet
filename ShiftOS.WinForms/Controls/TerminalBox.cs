@@ -243,7 +243,7 @@ namespace ShiftOS.WinForms.Controls
 
                         break;
                     default:
-                        Engine.AudioManager.PlayStream(Properties.Resources.typesound);
+                        //Engine.AudioManager.PlayStream(Properties.Resources.typesound); // infernal beeping noise only enable for the trailers
                         break;
             }
         }
