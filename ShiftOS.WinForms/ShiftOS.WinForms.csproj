@@ -323,6 +323,12 @@
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIFunctions.cs" />
+    <Compile Include="GUILogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUILogin.Designer.cs">
+      <DependentUpon>GUILogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
@@ -519,6 +525,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUILogin.resx">
+      <DependentUpon>GUILogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
