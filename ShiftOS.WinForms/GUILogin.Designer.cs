@@ -52,7 +52,7 @@
             // 
             this.btnlogin.AutoSize = true;
             this.btnlogin.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnlogin.Location = new System.Drawing.Point(129, 184);
+            this.btnlogin.Location = new System.Drawing.Point(159, 163);
             this.btnlogin.Name = "btnlogin";
             this.btnlogin.Size = new System.Drawing.Size(43, 23);
             this.btnlogin.TabIndex = 2;
@@ -64,19 +64,19 @@
             // 
             this.txtpassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtpassword.Location = new System.Drawing.Point(24, 157);
+            this.txtpassword.Location = new System.Drawing.Point(69, 115);
             this.txtpassword.Name = "txtpassword";
-            this.txtpassword.Size = new System.Drawing.Size(301, 20);
+            this.txtpassword.Size = new System.Drawing.Size(300, 20);
             this.txtpassword.TabIndex = 1;
             this.txtpassword.UseSystemPasswordChar = true;
             // 
             // txtusername
             // 
-            this.txtusername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtusername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtusername.Location = new System.Drawing.Point(24, 131);
+            this.txtusername.Location = new System.Drawing.Point(3, 14);
             this.txtusername.Name = "txtusername";
-            this.txtusername.Size = new System.Drawing.Size(301, 20);
+            this.txtusername.Size = new System.Drawing.Size(300, 20);
             this.txtusername.TabIndex = 0;
             // 
             // lblogintitle

@@ -44,6 +44,11 @@ namespace ShiftOS.WinForms
             ControlManager.SetupControls(pnlloginform);
             ControlManager.SetupControl(btnshutdown);
             pnlloginform.CenterParent();
+            txtusername.CenterParent();
+            txtusername.Location = new System.Drawing.Point(txtusername.Location.X, 77);
+            txtpassword.CenterParent();
+            btnlogin.CenterParent();
+            btnlogin.Location = new System.Drawing.Point(btnlogin.Location.X, 143);
             this.BackColor = SkinEngine.LoadedSkin.LoginScreenColor;
             this.BackgroundImage = SkinEngine.GetImage("login");
             this.BackgroundImageLayout = SkinEngine.GetImageLayout("login");
