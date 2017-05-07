@@ -307,9 +307,9 @@ namespace ShiftOS.Engine
                     {
                         string loginstr = CurrentSave.SystemName + " login: ";
                         string getuser = text.Remove(0, loginstr.Length);
-                        if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
+                        if (!string.IsNullOrWhiteSpace(getuser))
                         {
-                            if (CurrentSave.Users.FirstOrDefault(x => x.Username == text) == null)
+                            if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
                             {
                                 Console.WriteLine("User not found.");
                                 goback = true;
@@ -317,7 +317,7 @@ namespace ShiftOS.Engine
                                 TerminalBackend.TextSent -= ev;
                                 return;
                             }
-                            username = text;
+                            username = getuser;
                             progress++;
                         }
                         else
@@ -327,13 +327,13 @@ namespace ShiftOS.Engine
                             goback = true;
                             progress++;
                         }
-                        username = getuser;
-                        progress++;
                     }
                     else if (progress == 1)
                     {
+                        string passwordstr = "password: ";
+                        string getpass = text.Remove(0, passwordstr.Length);
                         var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
-                        if (user.Password == text)
+                        if (user.Password == getpass)
                         {
                             Console.WriteLine("Welcome to ShiftOS.");
                             CurrentUser = user;
