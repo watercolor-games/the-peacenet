@@ -21,7 +21,7 @@ namespace ShiftOS.WinForms.Applications
 
         public TriWrite()
         {
-            InitializeComponent();
+            InitializeComponent(); //From the library of babel: "FIRST COMMIT FROM A MAC WOOOO TURIANS ARE COOL"
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
