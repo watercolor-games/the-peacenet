@@ -629,7 +629,7 @@ namespace ShiftOS.WinForms.Applications
                 if (this.Left < Screen.PrimaryScreen.Bounds.Width)
                 {
                     secondsleft = secondsleft - 1;
-                    if (secondsleft == 1)
+                    if (secondsleft == 0)
                     {
                         CompleteLevel();
                     }
