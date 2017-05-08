@@ -141,11 +141,9 @@ namespace ShiftOS.WinForms
             Console.WriteLine();
             Console.WriteLine("Next, let's get user information.");
             Console.WriteLine();
-            Desktop.InvokeOnWorkerThread(() =>
-            {
-                ShiftOS.Engine.OutOfBoxExperience.PromptForLogin();
-            });
+            ShiftOS.Engine.OutOfBoxExperience.PromptForLogin();
         }
+
         private static bool isValid(string text, string chars)
         {
             foreach(var c in text)

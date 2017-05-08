@@ -316,7 +316,9 @@ You must join the digital society, rise up the ranks, and save us.
             {
                 sve.StoryPosition = 8675309;
                 SaveSystem.CurrentSave = sve;
+                Shiftorium.Silent = true;
                 SaveSystem.SaveGame();
+                Shiftorium.Silent = false;
 
             });
         }
