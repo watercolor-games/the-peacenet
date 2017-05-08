@@ -312,6 +312,8 @@ You must join the digital society, rise up the ranks, and save us.
             sve.Codepoints = 0;
             sve.Upgrades = new Dictionary<string, bool>();
             sve.ID = Guid.NewGuid();
+            sve.StoriesExperienced = new List<string>();
+            sve.StoriesExperienced.Add("mud_fundamentals");
             Infobox.Show("Welcome to ShiftOS.", "Welcome to ShiftOS, " + client.GetDisplayName() + ". We have created a save file for you. Now, go on and Shift It Your Way.", () =>
             {
                 sve.StoryPosition = 8675309;
