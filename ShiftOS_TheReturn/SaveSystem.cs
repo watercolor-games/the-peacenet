@@ -131,7 +131,7 @@ namespace ShiftOS.Engine
                     try
                     {
                         
-                        ServerManager.Initiate("secondary4162.cloudapp.net", 13370);
+                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
                         //This haults the client until the connection is successful.
                         while (ServerManager.thisGuid == new Guid())
                         {

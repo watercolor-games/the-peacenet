@@ -189,7 +189,7 @@ namespace ShiftOS.Server
                 //Update the shiftos website with the user's codepoints.
                 if (!string.IsNullOrWhiteSpace(sav.UniteAuthToken))
                 {
-                    var wreq = WebRequest.Create("http://getshiftos.ml/API/SetCodepoints/" + sav.Codepoints.ToString());
+                    var wreq = WebRequest.Create(UserConfig.Get().UniteUrl + "/API/SetCodepoints/" + sav.Codepoints.ToString());
                     wreq.Headers.Add("Authentication: Token " + sav.UniteAuthToken);
                     wreq.GetResponse();
                 }

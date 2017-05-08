@@ -58,6 +58,7 @@
     <Compile Include="Shop.cs" />
     <Compile Include="Unite\Download.cs" />
     <Compile Include="Unite\ReleaseQuery.cs" />
+    <Compile Include="UserConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -5,13 +5,20 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ShiftOS.Objects;
 
 namespace ShiftOS.Unite
 {
     public class UniteClient
     {
         public string Token { get; private set; }
-        public string BaseURL { get; private set; }
+        public string BaseURL
+        {
+            get
+            {
+                return UserConfig.Get().UniteUrl;
+            }
+        }
 
         public string GetDisplayNameId(string id)
         {
@@ -25,7 +32,8 @@ namespace ShiftOS.Unite
 
         public UniteClient(string baseurl, string usertoken)
         {
-            BaseURL = baseurl;
+            //Handled by the servers.json file
+            //BaseURL = baseurl;
             Token = usertoken;
         }
 

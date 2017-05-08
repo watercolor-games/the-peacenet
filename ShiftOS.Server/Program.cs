@@ -86,6 +86,7 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
+            UserConfig.Get();
             System.Timers.Timer tmr = new System.Timers.Timer(5000);
             tmr.Elapsed += (o, a) =>
             {
