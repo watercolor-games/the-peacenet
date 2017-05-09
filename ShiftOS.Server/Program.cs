@@ -86,6 +86,12 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
+            Thread.Sleep(2000);
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+                Environment.Exit(0);
+            };
             System.Timers.Timer tmr = new System.Timers.Timer(5000);
             tmr.Elapsed += (o, a) =>
             {
