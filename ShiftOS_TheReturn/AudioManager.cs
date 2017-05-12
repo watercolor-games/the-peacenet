@@ -47,9 +47,12 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void Stop()
         {
-            _out?.Stop();
-            _reader?.Dispose();
-            _out?.Dispose();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                _out?.Stop();
+                _reader?.Dispose();
+                _out?.Dispose();
+            });
         }
 
         /// <summary>

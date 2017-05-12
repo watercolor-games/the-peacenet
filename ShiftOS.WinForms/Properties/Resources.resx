@@ -122,7 +122,7 @@
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAJKjAACSowAAAAEAAQoPAgAAAJKjAAACUklGRoqjAABXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAAkqMAAJKjAACSowAAAAEAAQoPAgAAAJKjAAACUklGRoqjAABXQVZFZm10IBAAAAAB
         AAEARKwAAIhYAQACABAAZGF0YWajAAABAP7/AgD9/wMA/f8DAPz/BAD8/wQA/f8BAP//AAABAAAA//8C
         AP3/BAD9/wIAAAD//wIA//8BAAAAAAABAP//AQAAAAEAAAACAP7/AQABAAAAAQAAAAEAAAACAP7/AwD+
         /wIAAAD//wIA/v8DAP7/AwD9/wMA//8AAAIA/f8DAAAA//8BAAAA/v8CAP////8CAPz/BAD8/wMA/f8A
@@ -838,7 +838,7 @@
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAEwYAABMGAAAAAEAAQoPAgAAAEwYAAACUklGRkQYAABXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAATBgAAEwYAABMGAAAAAEAAQoPAgAAAEwYAAACUklGRkQYAABXQVZFZm10IBAAAAAB
         AAEARKwAAIhYAQACABAAZGF0YSAYAAD/X5Vil2TRZUJmF2ZLZadjS2FqXt9aj1awUVtMc0b4PyQ57DFS
         KmUiSxoDEo4JEQGO+Bzwweee35zX9c+pyK7BGLsYtZqvlqoipneiW5/YnBCbFZq3mfOZEJvknD6fSqIg
         poaqcK/rtAq7i8FvyMrPgNdo347n7e9h+N8AXwnPERoaQSIlKrcx+zjmP0lGKUykUYJWs1pKXlJhpWMl
@@ -964,7 +964,7 @@
     <value>..\Resources\SweeperNormalFace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="strings_en" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\strings_en.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\strings_en.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="SweeperTile5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SweeperTile5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -974,7 +974,7 @@
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAPwBHgD8AR4AAAEAAQoPAgAAAPwBHgACUklGRvQBHgBXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAA/AEeAPwBHgD8AR4AAAEAAQoPAgAAAPwBHgACUklGRvQBHgBXQVZFZm10IBAAAAAB
         AAIAgLsAAADuAgAEABAATElTVBQAAABJTkZPSUFSVAgAAABQaGlsaXAAAGRhdGG0AR4A//8CAAwA5v8a
         APT/8P8sAMf/OADX/xoA5v8bAPL/8/8aAOb/DQAOANb/KgDk/w4AAQDh/zwAt/9HAMj/GwACAPH/DgDy
         /w0AAQDy/xwA1f8sAO//5v84ALn/OQDk//7/AwD+/xAA4v8dANX/LADw//T/GgDl/w4AAADx/x4A4f8R
@@ -33831,7 +33831,7 @@
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAPBWAADwVgAAAAEAAQoPAgAAAPBWAAACUklGRuhWAABXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAA8FYAAPBWAADwVgAAAAEAAQoPAgAAAPBWAAACUklGRuhWAABXQVZFZm10IBAAAAAB
         AAEARKwAAIhYAQACABAAZGF0YcRWAAAAAGQL6gtkDL8MEA3kDLUMaAwUDKULKwuYCvcJQAl4CJ0Hrwaw
         BaAEfgNQAg4Bwf9p/v/8mfsn+rD4OPe59T/0wPJH8dPvYu7+7JzrTeoG6dLnreaX5Z/kruPl4jHinOEk
         4cTgh+Bl4GLgguDC4B7hpeFC4g3j7uP35B/mZufO6FXq9eu67ZHviPGT87L15/cr+oL84f5QAcMDPwa9
@@ -34456,7 +34456,7 @@
         AAEAAAD/////AQAAAAAAAAAEAQAAABZTeXN0ZW0uSU8uTWVtb3J5U3RyZWFtCgAAAAdfYnVmZmVyB19v
         cmlnaW4JX3Bvc2l0aW9uB19sZW5ndGgJX2NhcGFjaXR5C19leHBhbmRhYmxlCV93cml0YWJsZQpfZXhw
         b3NhYmxlB19pc09wZW4dTWFyc2hhbEJ5UmVmT2JqZWN0K19faWRlbnRpdHkHAAAAAAAAAAACAggICAgB
-        AQEBCQIAAAAAAAAAAAAAAIwWAACMFgAAAAEAAQoPAgAAAIwWAAACUklGRoQWAABXQVZFZm10IBAAAAAB
+        AQEBCQIAAAAAAAAAjBYAAIwWAACMFgAAAAEAAQoPAgAAAIwWAAACUklGRoQWAABXQVZFZm10IBAAAAAB
         AAEARKwAAIhYAQACABAAZGF0YWAWAAAAAKYLIxdYIhQtQjexQFBJ81CUVwddTmFLZP9lXmZqZSRjl1/J
         WtFUu02mRao84jJzKHsdJRKPBub6TO/q4+XYZM6FxG67ObMCrOel8aA9ncuar5nimWybQZ5eoq+nKa6t
         tTC+hcec0U3cbefr8on+MQq6FfQgxSsFNo8/R0gRUMpWblzSYAFk2WVlZpxlfmMbYHJboVWsTrdG1D0l
@@ -34572,5 +34572,32 @@
   </data>
   <data name="SuperDesk screenshot" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SuperDesk screenshot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Ambient1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient1.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient2.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient3.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient4.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient5.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient6.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient7.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient8.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Ambient9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ambient9.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

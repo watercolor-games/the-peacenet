@@ -70,6 +70,96 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient1 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient2 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient3 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient4 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient4", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient5 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient5", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient6 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient6", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient7 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient7", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient8 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient8", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient9 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient9", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ArtPadcirclerubber {
@@ -994,22 +1084,18 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to [
-        ///	//TEMPORARY
-        ///	{
-        ///		Name: &quot;Desktop Widgets&quot;,
-        ///		Cost: 0,
-        ///		Description: &quot;Temporary upgrade. Will be replaced by either a Shiftnet app or a story element.&quot;,
-        ///		Dependencies: &quot;advanced_app_launcher;wm_free_placement&quot;,
-        ///		Category: &quot;Work-in-progress&quot;
-        ///	},
-        ///
-        ///
-        ///
         ///// SCREENSAVER
         ///	{
         ///		Name: &quot;Screensavers&quot;,
         ///		Cost: 750,
-        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot; [rest of string was truncated]&quot;;.
+        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot;,
+        ///		Dependencies: &quot;desktop&quot;,
+        ///		Category: &quot;Enhancements&quot;,
+        ///	},
+        ///	{
+        ///		Name: &quot;GUI Based Login Screen&quot;,
+        ///		Cost: 500,
+        ///		Description: &quot;Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, w [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {

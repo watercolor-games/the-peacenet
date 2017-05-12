@@ -52,6 +52,9 @@ namespace ShiftOS.Engine
 
         public static ClientSave CurrentUser { get; set; }
 
+        public static bool Ready = false;
+
+        public static event Action PreDigitalSocietyConnection;
 
         public static Save CurrentSave { get; set; }
 
@@ -117,6 +120,18 @@ namespace ShiftOS.Engine
                 Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
 
                 Console.WriteLine("[inetd] Connecting to network...");
+
+                Ready = false;
+
+                if (PreDigitalSocietyConnection != null)
+                {
+                    PreDigitalSocietyConnection?.Invoke();
+
+                    while (!Ready)
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
 
                 if (defaultConf.ConnectToMud == true)
                 {

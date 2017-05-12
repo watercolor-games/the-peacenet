@@ -213,211 +213,201 @@ namespace ShiftOS.Engine
                                                 {
                                                     if (Shiftorium.UpgradeAttributesUnlocked(method))
                                                     {
-                                                        if (CanRunRemotely(method, isRemote))
+                                                        foreach (var ma in method.GetCustomAttributes(false))
                                                         {
-                                                            foreach (var ma in method.GetCustomAttributes(false))
+                                                            if (ma is Command)
                                                             {
-                                                                if (ma is Command)
+                                                                var cmd = ma as Command;
+                                                                if (text.Split('.')[1] == cmd.name)
                                                                 {
-                                                                    var cmd = ma as Command;
-                                                                    if (text.Split('.')[1] == cmd.name)
+                                                                    if (KernelWatchdog.IsSafe(method))
                                                                     {
-                                                                        if (KernelWatchdog.IsSafe(method))
+                                                                        if (KernelWatchdog.CanRunOffline(method))
                                                                         {
-                                                                            if (KernelWatchdog.CanRunOffline(method))
-                                                                            {
-                                                                                var attr = method.GetCustomAttribute<CommandObsolete>();
+                                                                            var attr = method.GetCustomAttribute<CommandObsolete>();
 
-                                                                                if (attr != null)
+                                                                            if (attr != null)
+                                                                            {
+                                                                                string newcommand = attr.newcommand;
+                                                                                if (attr.warn)
                                                                                 {
-                                                                                    string newcommand = attr.newcommand;
-                                                                                    if (attr.warn)
-                                                                                    {
-                                                                                        Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
+                                                                                    Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
                                                                 {"%newcommand", newcommand}
                                                             }));
-                                                                                    }
-                                                                                    if (newcommand != "")
-                                                                                    {
-                                                                                        // redo the entire process running newcommand
-
-                                                                                        return RunClient(newcommand, args);
-                                                                                    }
                                                                                 }
-
-                                                                                var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
-                                                                                bool error = false;
-                                                                                bool providedusage = false;
-
-                                                                                foreach (RequiresArgument argument in requiresArgs)
+                                                                                if (newcommand != "")
                                                                                 {
-                                                                                    if (!args.ContainsKey(argument.argument))
-                                                                                    {
+                                                                                    // redo the entire process running newcommand
 
-                                                                                        if (!providedusage)
-                                                                                        {
-                                                                                            string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                                            if (usageparse == Localization.Parse(usageparse))
-                                                                                                usageparse = "";
-                                                                                            else
-                                                                                                usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
+                                                                                    return RunClient(newcommand, args);
+                                                                                }
+                                                                            }
+
+                                                                            var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
+                                                                            bool error = false;
+                                                                            bool providedusage = false;
+
+                                                                            foreach (RequiresArgument argument in requiresArgs)
+                                                                            {
+                                                                                if (!args.ContainsKey(argument.argument))
+                                                                                {
+
+                                                                                    if (!providedusage)
+                                                                                    {
+                                                                                        string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
+                                                                                        if (usageparse == Localization.Parse(usageparse))
+                                                                                            usageparse = "";
+                                                                                        else
+                                                                                            usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
                                                                         {"%ns", ns.name},
                                                                         {"%cmd", cmd.name}
                                                                     }) : "";
 
-                                                                                            Console.WriteLine(usageparse);
+                                                                                        Console.WriteLine(usageparse);
 
-                                                                                            providedusage = true;
-                                                                                        }
-                                                                                        if (Shiftorium.UpgradeInstalled("help_usage"))
-                                                                                        {
-                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
+                                                                                        providedusage = true;
+                                                                                    }
+                                                                                    if (Shiftorium.UpgradeInstalled("help_usage"))
+                                                                                    {
+                                                                                        Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
                                                                     {"%argument", argument.argument}
                                                                 }));
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
-                                                                                        }
-
-                                                                                        error = true;
                                                                                     }
-                                                                                }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
+                                                                                    }
 
-                                                                                if (error)
-                                                                                {
-                                                                                    throw new Exception("{ERROR_COMMAND_WRONG}");
-                                                                                }
-
-                                                                                try
-                                                                                {
-                                                                                    return (bool)method.Invoke(null, new[] { args });
-                                                                                }
-                                                                                catch (TargetInvocationException e)
-                                                                                {
-                                                                                    Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
-                                                                                    Console.WriteLine(e.InnerException.Message);
-                                                                                    Console.WriteLine(e.InnerException.StackTrace);
-                                                                                    return true;
-                                                                                }
-                                                                                catch
-                                                                                {
-                                                                                    return (bool)method.Invoke(null, new object[] { });
+                                                                                    error = true;
                                                                                 }
                                                                             }
-                                                                            else
-                                                                            {
-                                                                                Console.Write("<");
-                                                                                ConsoleEx.Bold = true;
-                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                                                Console.Write("session_mgr");
-                                                                                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                                                                ConsoleEx.Bold = false;
-                                                                                Console.Write(">");
-                                                                                ConsoleEx.Italic = true;
-                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
-                                                                                return true;
 
+                                                                            if (error)
+                                                                            {
+                                                                                throw new Exception("{ERROR_COMMAND_WRONG}");
+                                                                            }
+
+                                                                            try
+                                                                            {
+                                                                                return (bool)method.Invoke(null, new[] { args });
+                                                                            }
+                                                                            catch (TargetInvocationException e)
+                                                                            {
+                                                                                Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
+                                                                                Console.WriteLine(e.InnerException.Message);
+                                                                                Console.WriteLine(e.InnerException.StackTrace);
+                                                                                return true;
+                                                                            }
+                                                                            catch
+                                                                            {
+                                                                                return (bool)method.Invoke(null, new object[] { });
                                                                             }
                                                                         }
                                                                         else
                                                                         {
-                                                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
-                                                                            {
-                                                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
-                                                                                {
-                                                                                    if (pass == SaveSystem.CurrentUser.Password)
-                                                                                    {
-                                                                                        KernelWatchdog.EnterKernelMode();
-                                                                                        RunClient(text, args, isRemote);
-                                                                                        KernelWatchdog.LeaveKernelMode();
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
-                                                                                    }
-                                                                                }, true);
-                                                                                return true;
-                                                                            }
                                                                             Console.Write("<");
                                                                             ConsoleEx.Bold = true;
                                                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                                            Console.Write("watchdog");
+                                                                            Console.Write("session_mgr");
                                                                             ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
                                                                             ConsoleEx.Bold = false;
                                                                             Console.Write(">");
                                                                             ConsoleEx.Italic = true;
                                                                             ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
-                                                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
+                                                                            Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
                                                                             return true;
+
                                                                         }
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
+                                                                        {
+                                                                            Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
+                                                                            {
+                                                                                if (pass == SaveSystem.CurrentUser.Password)
+                                                                                {
+                                                                                    KernelWatchdog.EnterKernelMode();
+                                                                                    RunClient(text, args, isRemote);
+                                                                                    KernelWatchdog.LeaveKernelMode();
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Infobox.Show("Access denied.", "You did not type in the correct password.");
+                                                                                }
+                                                                            }, true);
+                                                                            return true;
+                                                                        }
+                                                                        Console.Write("<");
+                                                                        ConsoleEx.Bold = true;
+                                                                        ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                                                        Console.Write("watchdog");
+                                                                        ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                                                        ConsoleEx.Bold = false;
+                                                                        Console.Write(">");
+                                                                        ConsoleEx.Italic = true;
+                                                                        ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                                                        Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
+                                                                        KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
+                                                                        return true;
+                                                                    }
                                                                 }
-
-
                                                             }
+
+
                                                         }
                                                     }
+
                                                     else
                                                     {
-                                                        Console.WriteLine(text + " cannot be ran in a remote session");
+                                                        Console.Write("<");
+                                                        ConsoleEx.Bold = true;
+                                                        ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
+                                                        Console.Write("session_mgr");
+                                                        ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                                                        ConsoleEx.Bold = false;
+                                                        Console.Write(">");
+                                                        ConsoleEx.Italic = true;
+                                                        ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
+                                                        Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
                                                         return true;
+
                                                     }
+
                                                 }
-
-                                            }
-
-
+                                            } 
                                             else
                                             {
+                                                if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
+                                                {
+                                                    Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
+                                                    {
+                                                        if (pass == SaveSystem.CurrentUser.Password)
+                                                        {
+                                                            KernelWatchdog.EnterKernelMode();
+                                                            RunClient(text, args, isRemote);
+                                                            KernelWatchdog.LeaveKernelMode();
+                                                        }
+                                                        else
+                                                        {
+                                                            Infobox.Show("Access denied.", "You did not type in the correct password.");
+                                                        }
+                                                    }, true);
+                                                    return true;
+                                                }
                                                 Console.Write("<");
                                                 ConsoleEx.Bold = true;
                                                 ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                Console.Write("session_mgr");
+                                                Console.Write("watchdog");
                                                 ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
                                                 ConsoleEx.Bold = false;
                                                 Console.Write(">");
                                                 ConsoleEx.Italic = true;
                                                 ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
-                                                return true;
-
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
-                                            {
-                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
-                                                {
-                                                    if (pass == SaveSystem.CurrentUser.Password)
-                                                    {
-                                                        KernelWatchdog.EnterKernelMode();
-                                                        RunClient(text, args, isRemote);
-                                                        KernelWatchdog.LeaveKernelMode();
-                                                    }
-                                                    else
-                                                    {
-                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
-                                                    }
-                                                }, true);
+                                                Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
+                                                KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
                                                 return true;
                                             }
-                                            Console.Write("<");
-                                            ConsoleEx.Bold = true;
-                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                            Console.Write("watchdog");
-                                            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                            ConsoleEx.Bold = false;
-                                            Console.Write(">");
-                                            ConsoleEx.Italic = true;
-                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
-                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
-                                            return true;
                                         }
                                     }
                                 }
@@ -429,6 +419,7 @@ namespace ShiftOS.Engine
             }
             return false;
         }
+
         public static void PrintPrompt()
         {
             if (SaveSystem.CurrentSave != null && CurrentUser != null)

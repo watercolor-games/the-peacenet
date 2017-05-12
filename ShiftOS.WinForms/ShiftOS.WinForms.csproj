@@ -757,6 +757,15 @@
     <None Include="Resources\ShiftnetServices.txt" />
     <None Include="Resources\3beepvirus.wav" />
     <None Include="Resources\dial-up-modem-02.wav" />
+    <None Include="Resources\Ambient1.mp3" />
+    <None Include="Resources\Ambient2.mp3" />
+    <None Include="Resources\Ambient3.mp3" />
+    <None Include="Resources\Ambient4.mp3" />
+    <None Include="Resources\Ambient5.mp3" />
+    <None Include="Resources\Ambient6.mp3" />
+    <None Include="Resources\Ambient7.mp3" />
+    <None Include="Resources\Ambient8.mp3" />
+    <None Include="Resources\Ambient9.mp3" />
     <Content Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />

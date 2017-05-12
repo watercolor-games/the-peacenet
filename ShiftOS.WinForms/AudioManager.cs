@@ -24,8 +24,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShiftOS.WinForms
@@ -36,6 +38,66 @@ namespace ShiftOS.WinForms
         public static void Test()
         {
             
+        }
+
+        internal static byte[] GetRandomSong()
+        {
+            var r = new Random().Next(1, 10);
+            switch (r)
+            {
+                case 1:
+                    return Properties.Resources.Ambient1;
+                case 2:
+                    return Properties.Resources.Ambient2;
+                case 3:
+                    return Properties.Resources.Ambient3;
+                case 4:
+                    return Properties.Resources.Ambient4;
+                case 5:
+                    return Properties.Resources.Ambient5;
+                case 6:
+                    return Properties.Resources.Ambient6;
+                case 7:
+                    return Properties.Resources.Ambient7;
+                case 8:
+                    return Properties.Resources.Ambient8;
+                default:
+                    return Properties.Resources.Ambient9;
+
+            }
+        }
+
+        internal static void StartAmbientLoop()
+        {
+            var athread = new Thread(() =>
+            {
+                MemoryStream str = null;
+                NAudio.Wave.Mp3FileReader mp3 = null;
+                NAudio.Wave.WaveOut o = null;
+                while (!Engine.SaveSystem.ShuttingDown)
+                {
+                    str = new MemoryStream(GetRandomSong());
+                    mp3 = new NAudio.Wave.Mp3FileReader(str);
+                    o = new NAudio.Wave.WaveOut();
+                    o.Init(mp3);
+                    bool c = false;
+                    o.Play();
+                    o.PlaybackStopped += (s, a) =>
+                    {
+                        c = true;
+                    };
+                    while (!c)
+                        Thread.Sleep(10);
+                    str.Dispose();
+                    o.Dispose();
+                    mp3.Dispose();
+                }
+                str?.Dispose();
+                o?.Dispose();
+                mp3?.Dispose();
+            });
+            athread.IsBackground = true;
+            athread.Start();
         }
     }
 }

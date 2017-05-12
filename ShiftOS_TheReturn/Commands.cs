@@ -366,7 +366,6 @@ namespace ShiftOS.Engine
         public static bool Shutdown()
         {
             TerminalBackend.InvokeCommand("sos.save");
-            SaveSystem.ShuttingDown = true;
             AppearanceManager.Exit();
             return true;
         }

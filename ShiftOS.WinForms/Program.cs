@@ -49,6 +49,19 @@ namespace ShiftOS.WinForms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
+            SaveSystem.PreDigitalSocietyConnection += () =>
+            {
+                Action completed = null;
+                completed = () =>
+                {
+                    SaveSystem.Ready = true;
+                    Engine.AudioManager.PlayCompleted -= completed;
+                    AudioManager.StartAmbientLoop();
+                };
+                Engine.AudioManager.PlayCompleted += completed;
+                Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
+
+            };
             LoginManager.Init(new GUILoginFrontend());
             CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
