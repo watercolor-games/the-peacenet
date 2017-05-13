@@ -49,6 +49,7 @@ namespace ShiftOS.WinForms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
+            SkinEngine.SetPostProcessor(new DitheringSkinPostProcessor());
             SaveSystem.PreDigitalSocietyConnection += () =>
             {
                 Action completed = null;

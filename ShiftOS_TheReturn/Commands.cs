@@ -233,6 +233,23 @@ namespace ShiftOS.Engine
     [Namespace("dev")]
     public static class ShiftOSDevCommands
     {
+        [Command("buy")]
+        public static bool UnlockUpgrade(Dictionary<string, object> args)
+        {
+            string upg = args["id"].ToString();
+            try
+            {
+                SaveSystem.CurrentSave.Upgrades[upg] = true;
+                Shiftorium.InvokeUpgradeInstalled();
+                SaveSystem.SaveGame();
+            }
+            catch
+            {
+                Console.WriteLine("Upgrade not found.");
+            }
+            return true;
+        }
+
         [Command("rock", description = "A little surprise for unstable builds...")]
         public static bool ThrowASandwichingRock()
         {

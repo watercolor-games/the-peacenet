@@ -66,6 +66,13 @@ namespace ShiftOS.Engine
 
     public static class SkinEngine
     {
+        private static ISkinPostProcessor processor = null;
+
+        public static void SetPostProcessor(ISkinPostProcessor _processor)
+        {
+            processor = _processor;
+        }
+
         public static ImageLayout GetImageLayout(string img)
         {
             if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
@@ -93,6 +100,8 @@ namespace ShiftOS.Engine
                         if (iattr.Name == img)
                         {
                             byte[] image = (byte[])field.GetValue(LoadedSkin);
+                            if (processor != null)
+                                image = processor.ProcessImage(image);
                             return ImageFromBinary(image);
                         }
                     }
@@ -1321,6 +1330,16 @@ namespace ShiftOS.Engine
         }
 
         public string Category { get; set; }
+    }
+
+    public interface ISkinPostProcessor
+    {
+        /// <summary>
+        /// Perform algorithmic operations at the bit level on a ShiftOS skin image.
+        /// </summary>
+        /// <param name="original">The image, as loaded by the engine, as a 32-bit ARGB byte array.</param>
+        /// <returns>The processed image.</returns>
+        byte[] ProcessImage(byte[] original);
     }
 
     public class ShifterMetaAttribute : Attribute

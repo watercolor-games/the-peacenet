@@ -139,10 +139,7 @@ namespace ShiftOS.WinForms.Applications
                     pnldesktoppreview.BackColor = Color.FromArgb(LoadedSkin.DesktopColor.R, LoadedSkin.DesktopColor.G, LoadedSkin.DesktopColor.B);
                     //Not doing this will cause an ArgumentException.
 
-                    DitheringEngine.DitherImage(SkinEngine.GetImage("desktopbackground"), new Action<Image>((img) =>
-                    {
-                        pnldesktoppreview.BackgroundImage = img;
-                    }));
+                    pnldesktoppreview.BackgroundImage = SkinEngine.GetImage("desktopbackground");
                     pnldesktoppreview.BackgroundImageLayout = GetImageLayout("desktopbackground");
                     desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
 

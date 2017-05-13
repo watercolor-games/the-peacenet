@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Threading;
 using ShiftOS.Engine;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace ShiftOS.WinForms.Tools
 {
@@ -101,7 +102,7 @@ namespace ShiftOS.WinForms.Tools
             }
         }
 
-        public static void DitherColor(Color source, int width, int height, Action<Image> result)
+        public static Image DitherColor(Color source, int width, int height)
         {
             var bmp = new Bitmap(width + 1, height + 1);
             var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
@@ -115,7 +116,7 @@ namespace ShiftOS.WinForms.Tools
             }
             Marshal.Copy(rgb, 0, data.Scan0, rgb.Length);
             bmp.UnlockBits(data);
-            DitherImage(bmp, result);
+            return DitherImage(bmp);
 
         }
 
@@ -226,15 +227,8 @@ namespace ShiftOS.WinForms.Tools
 #endif
 
 #if FLOYDSTEINBERG
-        public static void DitherImage(Image source, Action<Image> result)
+        public static Image DitherImage(Image source)
         {
-            if (source == null)
-            {
-                result?.Invoke(source);
-                return;
-            }
-
-
             var bmp = new Bitmap(source.Width, source.Height);
             var sourceBmp = (Bitmap)source;
             var sourceLck = sourceBmp.LockBits(new Rectangle(0, 0, sourceBmp.Width, sourceBmp.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
@@ -267,119 +261,78 @@ namespace ShiftOS.WinForms.Tools
             bool color_depth_floydsteinberg = Shiftorium.UpgradeInstalled("color_depth_floyd-steinberg_dithering");
             bool dithering = Shiftorium.UpgradeInstalled("color_depth_dithering");
 
-            for (int y = 0; y < (destLck.Height); y++)
+            if (!sixteenBits)
             {
-                for (int x = 0; x < (Math.Abs(destLck.Stride)); x += 3)
+                if (dithering == true)
                 {
-                    int i = getIndexFromXY(x, y, width);
-                    byte red = sourceArr[i];
-                    byte green = sourceArr[i + 1];
-                    byte blue = sourceArr[i + 2];
-
-                    Color oldc = Color.FromArgb(red, green, blue);
-                    Color newc;
-
-                    if (sixteenBits)
+                    if (false == true)
                     {
-                        newc = GetColor(oldc);
+
                     }
                     else
                     {
-                        int gray = ((oldc.R + oldc.G + oldc.B) / 3);
-
-                        byte newgray = 0;
-
-                        if (dithering && !color_depth_floydsteinberg)
-                            gray += error_r;
-
-
-
-                        if (eightBits)
+                        int error = 0;
+                        for (int i = 0; i < destArr.Length; i += 3)
                         {
-                            newgray = (byte)gray;
-                            error_r = 0;
-                        }
-                        else if(sixBits)
-                        {
-                            newgray = (byte)(linear(gray, 0, 0xFF, 0, 0x3F) * 3);
-                            error_r = newgray - gray;
-                        }
-                        else if (fourBits)
-                        {
-                            newgray = (byte)(linear(gray, 0, 0xFF, 0, 0xF) * 0xF);
-                            error_r = newgray - gray;
-                        }
-                        else if (twoBits)
-                        {
-                            if (gray >= 191)
-                                newgray = 0xFF;
-                            else if (gray >= 127)
-                                newgray = Color.LightGray.R;
-                            else if (gray >= 64)
-                                newgray = Color.DarkGray.R;
-                            else
-                                newgray = 0x00;
-                            error_r = newgray - gray;
-                        }
-                        else
-                        {
-                            if (gray >= 127)
-                                newgray = 0xFF;
-                            else
-                                newgray = 0x00;
-                            error_r = newgray - gray;
-                        }
-                        newc = Color.FromArgb(newgray, newgray, newgray);
-                    }
+                            byte r = sourceArr[i];
+                            byte g = sourceArr[i + 1];
+                            byte b = sourceArr[i + 2];
 
-                    int nextIndex = getIndexFromXY(x + 3, y, width);
-                    int nextRow = getIndexFromXY(x, y + 1, width);
-                    int nextIndexOnNextRow = getIndexFromXY(x + 3, y + 1, width);
-                    int prevIndexOnNextRow = getIndexFromXY(x - 3, y + 1, width);
-
-                    grays[i] = newc.R;
-                    grays[i + 1] = newc.G;
-                    grays[i + 2] = newc.B;
-
-                    if (dithering)
-                    {
-                        if (color_depth_floydsteinberg)
-                        {
-                            if (x + 3 < width)
+                            int gray = (((r + g + b) / 3) + error);
+                            int newgray = gray;
+                            if (!eightBits)
                             {
-                                sourceArr[nextIndex] += (byte)((error_r * 7) / 16);
-                                sourceArr[nextIndex + 1] += (byte)((error_r * 7) / 16);
-                                sourceArr[nextIndex + 2] += (byte)((error_r * 7) / 16);
+                                if (sixBits)
+                                {
+                                    newgray = gray >> 2;
+                                }
+                                else
+                                {
+                                    if (fourBits)
+                                    {
+                                        newgray = (int)linear(gray, 0, 255, 0, 63) * 4;
+                                    }
+                                    else
+                                    {
+                                        if (twoBits)
+                                        {
+                                            if (gray > 127 + 63)
+                                            {
+                                                newgray = 255;
+                                            }
+                                            else if (gray > 127)
+                                                newgray = 127 + 63;
+                                            else if (gray > 63)
+                                            {
+                                                newgray = 127;
+                                            }
+                                            else if (gray > 0)
+                                                newgray = 63;
+                                            else
+                                                newgray = 0;
+                                        }
+                                        else
+                                        {
+                                            if (gray > 127)
+                                                newgray = 255;
+                                            else
+                                                newgray = 0;
+                                        }
+                                    }
+                                }
                             }
-                            if (y + 1 < height)
-                            {
-                                sourceArr[nextRow] += (byte)((error_r) / 16);
-                                sourceArr[nextRow + 1] += (byte)((error_r) / 16);
-                                sourceArr[nextRow + 2] += (byte)((error_r) / 16);
-                            }
-                            if (x + 3 < width && y + 1 < height)
-                            {
-                                sourceArr[nextIndexOnNextRow] += (byte)((error_r * 3) / 16);
-                                sourceArr[nextIndexOnNextRow + 1] += (byte)((error_r * 3) / 16);
-                                sourceArr[nextIndexOnNextRow + 2] += (byte)((error_r * 3) / 16);
+                            if (newgray > 255)
+                                newgray = 255;
+                            if (newgray < 0)
+                                newgray = 0;
+                            error = gray - newgray;
+                            destArr[i] = (byte)newgray;
+                            destArr[i+1] = (byte)newgray;
+                            destArr[i+2] = (byte)newgray;
 
-                            }
-                            if (x - 3 > 0 && y + 1 < height)
-                            {
-                                sourceArr[prevIndexOnNextRow] += (byte)((error_r * 5) / 16);
-                                sourceArr[prevIndexOnNextRow + 1] += (byte)((error_r * 5) / 16);
-                                sourceArr[prevIndexOnNextRow + 2] += (byte)((error_r * 5) / 16);
-
-                            }
                         }
                     }
                 }
-            }
-
-            for (int i = 0; i < destArr.Length - 3; i++)
-            {
-                destArr[i] = grays[i];
-
             }
 
             Marshal.Copy(destArr, 0, destPtr, destBytes);
@@ -389,14 +342,34 @@ namespace ShiftOS.WinForms.Tools
 
 
 
-            Desktop.InvokeOnWorkerThread(new Action(() => { result?.Invoke(bmp); }));
-
+            return bmp;
         }
 #endif
 
         private static int getIndexFromXY(int x, int y, int width)
         {
             return (width * y) + x;
+        }
+    }
+
+    public class DitheringSkinPostProcessor : ISkinPostProcessor
+    {
+        public byte[] ProcessImage(byte[] original)
+        {
+            try
+            {
+                var img = SkinEngine.ImageFromBinary(original);
+                var dithered = DitheringEngine.DitherImage(img);
+                using (var mstr = new MemoryStream())
+                {
+                    dithered.Save(mstr, System.Drawing.Imaging.ImageFormat.Bmp);
+                    return mstr.ToArray();
+                }
+            }
+            catch
+            {
+                return original;
+            }
         }
     }
 }

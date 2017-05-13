@@ -390,10 +390,7 @@ namespace ShiftOS.WinForms
                     this.BackColor = Color.FromArgb(LoadedSkin.DesktopColor.R, LoadedSkin.DesktopColor.G, LoadedSkin.DesktopColor.B);
                     //Not doing this will cause an ArgumentException.
 
-                    DitheringEngine.DitherImage(SkinEngine.GetImage("desktopbackground"), new Action<Image>((img) =>
-                    {
-                        this.BackgroundImage = img;
-                    }));
+                    this.BackgroundImage = SkinEngine.GetImage("desktopbackground");
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
                     desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
 
