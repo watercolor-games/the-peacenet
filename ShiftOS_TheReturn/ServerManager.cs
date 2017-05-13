@@ -131,6 +131,7 @@ namespace ShiftOS.Engine
             {
                 if (!UserDisconnect)
                 {
+                    Desktop.PushNotification("digital_society_connection", "Disconnected from Digital Society.", "The ShiftOS kernel has been disconnected from the Digital Society. We are attempting to re-connect you.");
                     TerminalBackend.PrefixEnabled = true;
                     ConsoleEx.ForegroundColor = ConsoleColor.Red;
                     ConsoleEx.Bold = true;

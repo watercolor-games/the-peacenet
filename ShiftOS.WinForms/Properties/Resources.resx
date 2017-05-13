@@ -34600,4 +34600,7 @@
   <data name="Ambient9" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Ambient9.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="notestate_connection_full" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\notestate_connection_full.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

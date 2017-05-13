@@ -53,15 +53,20 @@ namespace ShiftOS.WinForms
         private void InitializeComponent()
         {
             this.desktoppanel = new System.Windows.Forms.Panel();
-            this.btnnotifications = new System.Windows.Forms.Button();
+            this.pnlnotifications = new System.Windows.Forms.Panel();
+            this.flnotifications = new System.Windows.Forms.FlowLayoutPanel();
             this.lbtime = new System.Windows.Forms.Label();
             this.panelbuttonholder = new System.Windows.Forms.FlowLayoutPanel();
             this.sysmenuholder = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.apps = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlscreensaver = new System.Windows.Forms.Panel();
-            this.pnlwidgetlayer = new System.Windows.Forms.Panel();
             this.pnlssicon = new System.Windows.Forms.Panel();
+            this.pnlwidgetlayer = new System.Windows.Forms.Panel();
+            this.ntconnectionstatus = new System.Windows.Forms.PictureBox();
+            this.pnlnotificationbox = new System.Windows.Forms.Panel();
+            this.lbnotemsg = new System.Windows.Forms.Label();
+            this.lbnotetitle = new System.Windows.Forms.Label();
             this.pnladvancedal = new System.Windows.Forms.Panel();
             this.flapps = new System.Windows.Forms.FlowLayoutPanel();
             this.flcategories = new System.Windows.Forms.FlowLayoutPanel();
@@ -70,9 +75,13 @@ namespace ShiftOS.WinForms
             this.pnlstatus = new System.Windows.Forms.Panel();
             this.lbalstatus = new System.Windows.Forms.Label();
             this.desktoppanel.SuspendLayout();
+            this.pnlnotifications.SuspendLayout();
+            this.flnotifications.SuspendLayout();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.pnlscreensaver.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).BeginInit();
+            this.pnlnotificationbox.SuspendLayout();
             this.pnladvancedal.SuspendLayout();
             this.pnlalsystemactions.SuspendLayout();
             this.pnlstatus.SuspendLayout();
@@ -81,8 +90,7 @@ namespace ShiftOS.WinForms
             // desktoppanel
             // 
             this.desktoppanel.BackColor = System.Drawing.Color.Green;
-            this.desktoppanel.Controls.Add(this.btnnotifications);
-            this.desktoppanel.Controls.Add(this.lbtime);
+            this.desktoppanel.Controls.Add(this.pnlnotifications);
             this.desktoppanel.Controls.Add(this.panelbuttonholder);
             this.desktoppanel.Controls.Add(this.sysmenuholder);
             this.desktoppanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -92,28 +100,34 @@ namespace ShiftOS.WinForms
             this.desktoppanel.TabIndex = 0;
             this.desktoppanel.Paint += new System.Windows.Forms.PaintEventHandler(this.desktoppanel_Paint);
             // 
-            // btnnotifications
+            // pnlnotifications
             // 
-            this.btnnotifications.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnnotifications.AutoSize = true;
-            this.btnnotifications.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnnotifications.BackColor = System.Drawing.Color.Transparent;
-            this.btnnotifications.FlatAppearance.BorderSize = 0;
-            this.btnnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnnotifications.Location = new System.Drawing.Point(1066, -2);
-            this.btnnotifications.Name = "btnnotifications";
-            this.btnnotifications.Size = new System.Drawing.Size(136, 24);
-            this.btnnotifications.TabIndex = 3;
-            this.btnnotifications.Text = "Notifications (0)";
-            this.btnnotifications.UseVisualStyleBackColor = false;
-            this.btnnotifications.Click += new System.EventHandler(this.btnnotifications_Click);
+            this.pnlnotifications.Controls.Add(this.flnotifications);
+            this.pnlnotifications.Controls.Add(this.lbtime);
+            this.pnlnotifications.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pnlnotifications.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pnlnotifications.Location = new System.Drawing.Point(1096, 0);
+            this.pnlnotifications.Name = "pnlnotifications";
+            this.pnlnotifications.Size = new System.Drawing.Size(200, 24);
+            this.pnlnotifications.TabIndex = 3;
+            // 
+            // flnotifications
+            // 
+            this.flnotifications.AutoSize = true;
+            this.flnotifications.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flnotifications.Controls.Add(this.ntconnectionstatus);
+            this.flnotifications.Dock = System.Windows.Forms.DockStyle.Left;
+            this.flnotifications.Location = new System.Drawing.Point(0, 0);
+            this.flnotifications.Name = "flnotifications";
+            this.flnotifications.Size = new System.Drawing.Size(22, 24);
+            this.flnotifications.TabIndex = 1;
             // 
             // lbtime
             // 
             this.lbtime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbtime.AutoSize = true;
-            this.lbtime.Location = new System.Drawing.Point(3, 0);
+            this.lbtime.Location = new System.Drawing.Point(139, 7);
             this.lbtime.Name = "lbtime";
             this.lbtime.Size = new System.Drawing.Size(49, 14);
             this.lbtime.TabIndex = 0;
@@ -170,6 +184,13 @@ namespace ShiftOS.WinForms
             this.pnlscreensaver.TabIndex = 1;
             this.pnlscreensaver.Visible = false;
             // 
+            // pnlssicon
+            // 
+            this.pnlssicon.Location = new System.Drawing.Point(303, 495);
+            this.pnlssicon.Name = "pnlssicon";
+            this.pnlssicon.Size = new System.Drawing.Size(200, 100);
+            this.pnlssicon.TabIndex = 0;
+            // 
             // pnlwidgetlayer
             // 
             this.pnlwidgetlayer.BackColor = System.Drawing.Color.Transparent;
@@ -179,12 +200,53 @@ namespace ShiftOS.WinForms
             this.pnlwidgetlayer.Size = new System.Drawing.Size(1296, 714);
             this.pnlwidgetlayer.TabIndex = 1;
             // 
-            // pnlssicon
+            // ntconnectionstatus
             // 
-            this.pnlssicon.Location = new System.Drawing.Point(303, 495);
-            this.pnlssicon.Name = "pnlssicon";
-            this.pnlssicon.Size = new System.Drawing.Size(200, 100);
-            this.pnlssicon.TabIndex = 0;
+            this.ntconnectionstatus.Image = global::ShiftOS.WinForms.Properties.Resources.notestate_connection_full;
+            this.ntconnectionstatus.Location = new System.Drawing.Point(3, 3);
+            this.ntconnectionstatus.Name = "ntconnectionstatus";
+            this.ntconnectionstatus.Size = new System.Drawing.Size(16, 16);
+            this.ntconnectionstatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.ntconnectionstatus.TabIndex = 0;
+            this.ntconnectionstatus.TabStop = false;
+            this.ntconnectionstatus.Tag = "digitalsociety";
+            // 
+            // pnlnotificationbox
+            // 
+            this.pnlnotificationbox.AutoSize = true;
+            this.pnlnotificationbox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pnlnotificationbox.Controls.Add(this.lbnotemsg);
+            this.pnlnotificationbox.Controls.Add(this.lbnotetitle);
+            this.pnlnotificationbox.Location = new System.Drawing.Point(654, 111);
+            this.pnlnotificationbox.Name = "pnlnotificationbox";
+            this.pnlnotificationbox.Size = new System.Drawing.Size(69, 68);
+            this.pnlnotificationbox.TabIndex = 0;
+            this.pnlnotificationbox.Visible = false;
+            // 
+            // lbnotemsg
+            // 
+            this.lbnotemsg.AutoSize = true;
+            this.lbnotemsg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbnotemsg.Location = new System.Drawing.Point(0, 34);
+            this.lbnotemsg.MaximumSize = new System.Drawing.Size(350, 0);
+            this.lbnotemsg.Name = "lbnotemsg";
+            this.lbnotemsg.Padding = new System.Windows.Forms.Padding(10);
+            this.lbnotemsg.Size = new System.Drawing.Size(69, 34);
+            this.lbnotemsg.TabIndex = 1;
+            this.lbnotemsg.Text = "label1";
+            // 
+            // lbnotetitle
+            // 
+            this.lbnotetitle.AutoSize = true;
+            this.lbnotetitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbnotetitle.Location = new System.Drawing.Point(0, 0);
+            this.lbnotetitle.Margin = new System.Windows.Forms.Padding(10);
+            this.lbnotetitle.Name = "lbnotetitle";
+            this.lbnotetitle.Padding = new System.Windows.Forms.Padding(10);
+            this.lbnotetitle.Size = new System.Drawing.Size(69, 34);
+            this.lbnotetitle.TabIndex = 0;
+            this.lbnotetitle.Tag = "header2";
+            this.lbnotetitle.Text = "label1";
             // 
             // pnladvancedal
             // 
@@ -262,6 +324,7 @@ namespace ShiftOS.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1296, 738);
+            this.Controls.Add(this.pnlnotificationbox);
             this.Controls.Add(this.pnlwidgetlayer);
             this.Controls.Add(this.pnladvancedal);
             this.Controls.Add(this.pnlscreensaver);
@@ -274,16 +337,24 @@ namespace ShiftOS.WinForms
             this.Load += new System.EventHandler(this.Desktop_Load);
             this.desktoppanel.ResumeLayout(false);
             this.desktoppanel.PerformLayout();
+            this.pnlnotifications.ResumeLayout(false);
+            this.pnlnotifications.PerformLayout();
+            this.flnotifications.ResumeLayout(false);
+            this.flnotifications.PerformLayout();
             this.sysmenuholder.ResumeLayout(false);
             this.sysmenuholder.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.pnlscreensaver.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).EndInit();
+            this.pnlnotificationbox.ResumeLayout(false);
+            this.pnlnotificationbox.PerformLayout();
             this.pnladvancedal.ResumeLayout(false);
             this.pnlalsystemactions.ResumeLayout(false);
             this.pnlalsystemactions.PerformLayout();
             this.pnlstatus.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -295,7 +366,6 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem apps;
         private System.Windows.Forms.FlowLayoutPanel panelbuttonholder;
-        private System.Windows.Forms.Button btnnotifications;
         private System.Windows.Forms.Panel pnlscreensaver;
         private System.Windows.Forms.Panel pnlssicon;
         private System.Windows.Forms.Panel pnladvancedal;
@@ -306,6 +376,12 @@ namespace ShiftOS.WinForms
         private System.Windows.Forms.FlowLayoutPanel flapps;
         private System.Windows.Forms.FlowLayoutPanel flcategories;
         private System.Windows.Forms.Panel pnlwidgetlayer;
+        private System.Windows.Forms.Panel pnlnotifications;
+        private System.Windows.Forms.FlowLayoutPanel flnotifications;
+        private System.Windows.Forms.Panel pnlnotificationbox;
+        private System.Windows.Forms.Label lbnotemsg;
+        private System.Windows.Forms.Label lbnotetitle;
+        private System.Windows.Forms.PictureBox ntconnectionstatus;
     }
 
 }

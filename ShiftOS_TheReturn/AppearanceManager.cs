@@ -226,7 +226,10 @@ namespace ShiftOS.Engine
             OnExit?.Invoke();
             //disconnect from MUD
             ServerManager.Disconnect();
-            Environment.Exit(0);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                Environment.Exit(0);
+            });
         }
 
         /// <summary>

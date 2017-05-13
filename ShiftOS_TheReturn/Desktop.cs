@@ -102,7 +102,14 @@ namespace ShiftOS.Engine
         /// Gets the name of the desktop.
         /// </summary>
         string DesktopName { get; }
-        
+
+        /// <summary>
+        /// Show a notification on the desktop.
+        /// </summary>
+        /// <param name="app">An application ID (for determining what system icon to show the notification alongside)</param>
+        /// <param name="title">The title of the notification.</param>
+        /// <param name="message">Isn't this.... self explanatory?</param>
+        void PushNotification(string app, string title, string message);
 
         /// <summary>
         /// Performs most of the skinning and layout handling for the desktop.
@@ -265,6 +272,14 @@ namespace ShiftOS.Engine
         public static void HideAppLauncher()
         {
             _desktop.HideAppLauncher();
+        }
+
+        public static void PushNotification(string app, string title, string msg)
+        {
+            InvokeOnWorkerThread(() =>
+            {
+                _desktop.PushNotification(app, title, msg);
+            });
         }
     }
     // sorry i almost killed everything :P

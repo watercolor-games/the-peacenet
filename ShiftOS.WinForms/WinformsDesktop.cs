@@ -54,6 +54,38 @@ namespace ShiftOS.WinForms
 
         private int millisecondsUntilScreensaver = 300000;
 
+        public void PushNotification(string app, string title, string msg)
+        {
+            lbnotemsg.Text = msg;
+            lbnotetitle.Text = title;
+
+            var ctl = flnotifications.Controls.ToList().FirstOrDefault(x => x.Tag.ToString() == app);
+            if (ctl == null)
+                pnlnotificationbox.Left = desktoppanel.Width - pnlnotificationbox.Width;
+            else
+            {
+                int left = ctl.PointToScreen(ctl.Location).X;
+                int realleft = left - pnlnotificationbox.Width;
+                realleft += ctl.Width;
+                pnlnotificationbox.Left = realleft;
+            }
+
+
+            if (LoadedSkin.DesktopPanelPosition == 0)
+                pnlnotificationbox.Top = desktoppanel.Height;
+            else
+                pnlnotificationbox.Top = this.Height - desktoppanel.Height - pnlnotificationbox.Height;
+            var notekiller = new System.Windows.Forms.Timer();
+            notekiller.Interval = 10000;
+            notekiller.Tick += (o, a) =>
+            {
+                pnlnotificationbox.Hide();
+            };
+            Engine.AudioManager.PlayStream(Properties.Resources.infobox);
+            pnlnotificationbox.Show();
+            notekiller.Start();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
         /// </summary>
@@ -105,24 +137,6 @@ namespace ShiftOS.WinForms
             };
             this.TopMost = false;
 
-            NotificationDaemon.NotificationMade += (note) =>
-            {
-                //Soon this will pop a balloon note.
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
-            };
-
-            NotificationDaemon.NotificationRead += () =>
-            {
-                //Soon this will pop a balloon note.
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
-            };
-
             this.LocationChanged += (o, a) =>
             {
                 if (this.Left != 0)
@@ -143,10 +157,6 @@ namespace ShiftOS.WinForms
             {
                 if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
             };
             Shiftorium.Installed += () =>
             {
@@ -187,8 +197,10 @@ namespace ShiftOS.WinForms
                     if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
                     {
                         lbtime.Text = Applications.Terminal.GetTime();
-                        lbtime.Left = desktoppanel.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
+                        lbtime.Left = pnlnotifications.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
                         lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
+
+                        pnlnotifications.Width = flnotifications.Width + lbtime.Width + LoadedSkin.DesktopPanelClockFromRight.X;
                     }
                 }
 
@@ -215,8 +227,6 @@ namespace ShiftOS.WinForms
                 catch { }
 
 
-                btnnotifications.Left = lbtime.Left - btnnotifications.Width - 2;
-                btnnotifications.Top = (desktoppanel.Height - btnnotifications.Height) / 2;
             };
             time.Start();
 
@@ -372,10 +382,13 @@ namespace ShiftOS.WinForms
                     desktoppanel.Visible = Shiftorium.UpgradeInstalled("desktop");
                     lbtime.Visible = Shiftorium.UpgradeInstalled("desktop_clock_widget");
 
-                    btnnotifications.Visible = Shiftorium.UpgradeInstalled("panel_notifications");
+                    ControlManager.SetupControls(pnlnotificationbox);
 
                     //skinning
-                    lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
+                    lbtime.BackColor = Color.Transparent;
+                    pnlnotifications.BackgroundImage = GetImage("panelclockbg");
+                    pnlnotifications.BackgroundImageLayout = GetImageLayout("panelclockbg");
+                    pnlnotifications.BackColor = LoadedSkin.DesktopPanelClockBackgroundColor;
 
                     panelbuttonholder.Top = 0;
                     panelbuttonholder.Left = LoadedSkin.PanelButtonHolderFromLeft;
@@ -1058,6 +1071,17 @@ namespace ShiftOS.WinForms
             {
                 Engine.AppearanceManager.SetupWindow(Activator.CreateInstance(kv.LaunchType) as IShiftOSWindow);
             }
+        }
+    }
+
+    public static class ControlCollectionExtensions
+    {
+        public static IList<Control> ToList(this Control.ControlCollection ctrls)
+        {
+            var lst = new List<Control>();
+            foreach (var ctl in ctrls)
+                lst.Add(ctl as Control);
+            return lst;
         }
     }
 }

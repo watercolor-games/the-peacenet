@@ -276,6 +276,14 @@ namespace ShiftOS.Engine
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
+        [Image("panelclockbg")]
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("Panel Clock")]
+        [ShifterName("Panel Clock Background Image")]
+        [ShifterDescription("Set the background image of the panel clock.")]
+        [RequiresUpgrade("skinning;shift_panel_clock")]
+        public byte[] PanelClockBG = null;
+
         [ShifterMeta("System")]
         [ShifterCategory("Login Screen")]
         [RequiresUpgrade("gui_based_login_screen")]
