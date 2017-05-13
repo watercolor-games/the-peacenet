@@ -226,6 +226,53 @@ namespace ShiftOS.WinForms.Tools
         }
 #endif
 
+        public static int GetClosestColor(int gray, bool eightBits, bool sixBits, bool fourBits, bool twoBits)
+        {
+            int newgray = gray;
+            if (!eightBits)
+            {
+                if (sixBits)
+                {
+                    newgray = gray >> 2;
+                }
+                else
+                {
+                    if (fourBits)
+                    {
+                        newgray = (int)linear(gray, 0, 255, 0, 15) * 4;
+                    }
+                    else
+                    {
+                        if (twoBits)
+                        {
+                            if (gray > 127 + 63)
+                            {
+                                newgray = 255;
+                            }
+                            else if (gray > 127)
+                                newgray = 127 + 63;
+                            else if (gray > 63)
+                            {
+                                newgray = 127;
+                            }
+                            else if (gray > 0)
+                                newgray = 63;
+                            else
+                                newgray = 0;
+                        }
+                        else
+                        {
+                            if (gray > 127)
+                                newgray = 255;
+                            else
+                                newgray = 0;
+                        }
+                    }
+                }
+            }
+            return newgray;
+        }
+
 #if FLOYDSTEINBERG
         public static Image DitherImage(Image source)
         {
@@ -260,75 +307,78 @@ namespace ShiftOS.WinForms.Tools
             bool eightBits = Shiftorium.UpgradeInstalled("color_depth_8_bits");
             bool color_depth_floydsteinberg = Shiftorium.UpgradeInstalled("color_depth_floyd-steinberg_dithering");
             bool dithering = Shiftorium.UpgradeInstalled("color_depth_dithering");
-
-            if (!sixteenBits)
+            bool twentyfourbits = Shiftorium.UpgradeInstalled("color_depth_24_bits");
+            if (twentyfourbits)
             {
-                if (dithering == true)
-                {
-                    if (false == true)
-                    {
+                sourceArr.CopyTo(destArr, 0);
+            }
+            else
+            {
 
+                if (!sixteenBits)
+                {
+                    if (dithering == true)
+                    {
+                        if (false == true)
+                        {
+
+                        }
+                        else
+                        {
+                            int error = 0;
+                            for (int i = 0; i < destArr.Length; i += 3)
+                            {
+                                byte r = sourceArr[i];
+                                byte g = sourceArr[i + 1];
+                                byte b = sourceArr[i + 2];
+
+                                if (SkinEngine.LoadedSkin.SystemKey == Color.FromArgb(r, g, b))
+                                {
+                                    destArr[i] = r;
+                                    destArr[i + 1] = g;
+                                    destArr[i + 2] = b;
+                                    continue;
+                                }
+
+
+                                int gray = (((r + g + b) / 3) + error);
+                                int newgray = gray;
+                                newgray = GetClosestColor(gray, eightBits, sixBits, fourBits, twoBits);
+                                if (newgray > 255)
+                                    newgray = 255;
+                                if (newgray < 0)
+                                    newgray = 0;
+                                error = gray - newgray;
+                                destArr[i] = (byte)newgray;
+                                destArr[i + 1] = (byte)newgray;
+                                destArr[i + 2] = (byte)newgray;
+
+                            }
+                        }
                     }
+
                     else
                     {
-                        int error = 0;
-                        for (int i = 0; i < destArr.Length; i += 3)
+                        for (int i = 0; i < sourceArr.Length; i += 3)
                         {
                             byte r = sourceArr[i];
                             byte g = sourceArr[i + 1];
                             byte b = sourceArr[i + 2];
-
-                            int gray = (((r + g + b) / 3) + error);
-                            int newgray = gray;
-                            if (!eightBits)
+                            if (SkinEngine.LoadedSkin.SystemKey == Color.FromArgb(r, g, b))
                             {
-                                if (sixBits)
-                                {
-                                    newgray = gray >> 2;
-                                }
-                                else
-                                {
-                                    if (fourBits)
-                                    {
-                                        newgray = (int)linear(gray, 0, 255, 0, 63) * 4;
-                                    }
-                                    else
-                                    {
-                                        if (twoBits)
-                                        {
-                                            if (gray > 127 + 63)
-                                            {
-                                                newgray = 255;
-                                            }
-                                            else if (gray > 127)
-                                                newgray = 127 + 63;
-                                            else if (gray > 63)
-                                            {
-                                                newgray = 127;
-                                            }
-                                            else if (gray > 0)
-                                                newgray = 63;
-                                            else
-                                                newgray = 0;
-                                        }
-                                        else
-                                        {
-                                            if (gray > 127)
-                                                newgray = 255;
-                                            else
-                                                newgray = 0;
-                                        }
-                                    }
-                                }
+                                destArr[i] = r;
+                                destArr[i + 1] = g;
+                                destArr[i + 2] = b;
+                                continue;
                             }
-                            if (newgray > 255)
-                                newgray = 255;
-                            if (newgray < 0)
-                                newgray = 0;
-                            error = gray - newgray;
+
+                            int gray = (r + g + b) / 3;
+                            int newgray = GetClosestColor(gray, eightBits, sixBits, fourBits, twoBits);
                             destArr[i] = (byte)newgray;
-                            destArr[i+1] = (byte)newgray;
-                            destArr[i+2] = (byte)newgray;
+                            destArr[i + 1] = (byte)newgray;
+                            destArr[i + 2] = (byte)newgray;
+
+
 
                         }
                     }

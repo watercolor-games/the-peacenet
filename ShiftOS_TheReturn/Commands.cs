@@ -378,6 +378,40 @@ namespace ShiftOS.Engine
     [Namespace("sos")]
     public static class ShiftOSCommands
     {
+        [Command("setsfxvolume", description = "Set the volume of various sound effects to a value between 1 and 100.")]
+        [RequiresArgument("value")]
+        public static bool SetSfxVolume(Dictionary<string, object> args)
+        {
+            int value = int.Parse(args["value"].ToString());
+            if (value >= 0 && value <= 100)
+            {
+                SaveSystem.CurrentSave.SfxVolume = value;
+                SaveSystem.SaveGame();
+            }
+            else
+            {
+                Console.WriteLine("Volume must be between 0 and 100!");
+            }
+            return true;
+        }
+
+        [Command("setmusicvolume", description ="Set the music volume to a value between 1 and 100.")]
+        [RequiresArgument("value")]
+        public static bool SetMusicVolume(Dictionary<string, object> args)
+        {
+            int value = int.Parse(args["value"].ToString());
+            if(value >= 0 && value <= 100)
+            {
+                SaveSystem.CurrentSave.MusicVolume = value;
+                SaveSystem.SaveGame();
+            }
+            else
+            {
+                Console.WriteLine("Volume must be between 0 and 100!");
+            }
+            return true;
+        }
+
         [RemoteLock]
         [Command("shutdown")]
         public static bool Shutdown()

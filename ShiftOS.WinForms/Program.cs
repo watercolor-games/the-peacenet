@@ -68,11 +68,7 @@ namespace ShiftOS.WinForms
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
             ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
             Localization.RegisterProvider(new WFLanguageProvider());
-            AppearanceManager.OnExit += () =>
-            {
-                Environment.Exit(0);
-            };
-
+            
             TutorialManager.RegisterTutorial(new Oobe());
 
             TerminalBackend.TerminalRequested += () =>

@@ -35,6 +35,9 @@ namespace ShiftOS.Objects
     public class Save
     {
 
+        public int MusicVolume { get; set; }
+        public int SfxVolume { get; set; }
+
         [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
 

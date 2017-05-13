@@ -223,6 +223,7 @@ namespace ShiftOS.Engine
         /// </summary>
         internal static void Exit()
         {
+            OnExit?.Invoke();
             //disconnect from MUD
             ServerManager.Disconnect();
             Environment.Exit(0);

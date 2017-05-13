@@ -491,9 +491,9 @@ namespace ShiftOS.WinForms.Applications
                 TerminalBackend.InStory = false;
                 TerminalBackend.PrintPrompt();
                 bool help_entered = false;
-                TerminalBackend.TextSent += (text) =>
+                TerminalBackend.CommandProcessed += (text, args) =>
                 {
-                    if (text == "sos.help" && help_entered == false)
+                    if (text.EndsWith("sos.help") && help_entered == false)
                         help_entered = true;
                 };
                 while (help_entered == false)
@@ -523,10 +523,10 @@ namespace ShiftOS.WinForms.Applications
                 TerminalBackend.InStory = false;
                 bool winopenEntered = false;
                 TerminalBackend.PrintPrompt();
-                TerminalBackend.TextSent += (text) =>
+                TerminalBackend.CommandProcessed += (text, args) =>
                 {
                     if (help_entered == true)
-                        if (text == "win.open" && winopenEntered == false)
+                        if (text.EndsWith("win.open") && winopenEntered == false)
                             winopenEntered = true;
                 };
                 while (winopenEntered == false)

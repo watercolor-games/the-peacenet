@@ -74,7 +74,19 @@ namespace ShiftOS.WinForms
                 MemoryStream str = null;
                 NAudio.Wave.Mp3FileReader mp3 = null;
                 NAudio.Wave.WaveOut o = null;
-                while (!Engine.SaveSystem.ShuttingDown)
+                bool shuttingDown = false;
+
+                Engine.AppearanceManager.OnExit += () =>
+                {
+                    shuttingDown = true;
+                    o?.Stop();
+                    o?.Dispose();
+                    mp3?.Close();
+                    mp3?.Dispose();
+                    str?.Close();
+                    str?.Dispose();
+                };
+                while (shuttingDown == false)
                 {
                     str = new MemoryStream(GetRandomSong());
                     mp3 = new NAudio.Wave.Mp3FileReader(str);
@@ -87,14 +99,15 @@ namespace ShiftOS.WinForms
                         c = true;
                     };
                     while (!c)
+                    {
+                        try
+                        {
+                            o.Volume = (float)Engine.SaveSystem.CurrentSave.MusicVolume / 100;
+                        }
+                        catch { }
                         Thread.Sleep(10);
-                    str.Dispose();
-                    o.Dispose();
-                    mp3.Dispose();
+                    }
                 }
-                str?.Dispose();
-                o?.Dispose();
-                mp3?.Dispose();
             });
             athread.IsBackground = true;
             athread.Start();
