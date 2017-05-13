@@ -424,35 +424,38 @@ namespace ShiftOS.Engine
         {
             if (SaveSystem.CurrentSave != null && CurrentUser != null)
             {
-                ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
-                ConsoleEx.Italic = false;
-                ConsoleEx.Underline = false;
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Underline = false;
 
-                ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
-                ConsoleEx.Bold = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+                    ConsoleEx.Bold = true;
 
-                Console.Write(SaveSystem.CurrentUser.Username);
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                Console.Write("@");
-                ConsoleEx.Italic = true;
-                ConsoleEx.Bold = true;
-                ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write(SaveSystem.CurrentSave.SystemName);
-                ConsoleEx.Italic = false;
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                Console.Write(":~");
-                Console.ForegroundColor = ConsoleColor.White;
-                ConsoleEx.Italic = true;
-                if (KernelWatchdog.InKernelMode == true)
-                    Console.Write("#");
-                else
-                    Console.Write("$");
-                ConsoleEx.Italic = false;
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                Console.Write(" ");
+                    Console.Write(SaveSystem.CurrentUser.Username);
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write("@");
+                    ConsoleEx.Italic = true;
+                    ConsoleEx.Bold = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(SaveSystem.CurrentSave.SystemName);
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write(":~");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    ConsoleEx.Italic = true;
+                    if (KernelWatchdog.InKernelMode == true)
+                        Console.Write("#");
+                    else
+                        Console.Write("$");
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                    Console.Write(" ");
+                });
             }
         }
 

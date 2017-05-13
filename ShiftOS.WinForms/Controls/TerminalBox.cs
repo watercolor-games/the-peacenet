@@ -63,12 +63,14 @@ namespace ShiftOS.WinForms.Controls
 
         public void Write(string text)
         {
+            this.SuspendLayout();
             this.HideSelection = true;
             this.SelectionFont = ConstructFont();
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text));
             this.HideSelection = false;
+            this.ResumeLayout();
         }
 
         private Font ConstructFont()
@@ -86,6 +88,7 @@ namespace ShiftOS.WinForms.Controls
 
         public void WriteLine(string text)
         {
+            this.SuspendLayout();
             Engine.AudioManager.PlayStream(Properties.Resources.writesound);
             this.HideSelection = true;
             this.Select(this.TextLength, 0);
@@ -94,6 +97,7 @@ namespace ShiftOS.WinForms.Controls
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
             this.AppendText(Localization.Parse(text) + Environment.NewLine);
             this.HideSelection = false;
+            this.ResumeLayout();
         }
 
         bool quickCopying = false;

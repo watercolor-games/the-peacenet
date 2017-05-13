@@ -132,23 +132,31 @@ namespace ShiftOS.WinForms.Applications
                     {
                         ResetAllKeywords();
                         rtbterm.Text = "";
-                        if (!Shiftorium.UpgradeInstalled("desktop"))
+                        if (Shiftorium.UpgradeInstalled("first_steps"))
                         {
-                            TerminalBackend.PrefixEnabled = true;
-                            TerminalBackend.InStory = false;
-                            TerminalBackend.PrintPrompt();
-                            if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                            if (!Shiftorium.UpgradeInstalled("desktop"))
                             {
-                                this.ParentForm.Width = 640;
-                                this.ParentForm.Height = 480;
-                                this.ParentForm.Left = (Screen.PrimaryScreen.Bounds.Width - 640) / 2;
-                                this.ParentForm.Top = (Screen.PrimaryScreen.Bounds.Height - 480) / 2;
+                                TerminalBackend.PrefixEnabled = true;
+                                TerminalBackend.InStory = false;
+                                TerminalBackend.PrintPrompt();
+                                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                                {
+                                    this.ParentForm.Width = 640;
+                                    this.ParentForm.Height = 480;
+                                    this.ParentForm.Left = (Screen.PrimaryScreen.Bounds.Width - 640) / 2;
+                                    this.ParentForm.Top = (Screen.PrimaryScreen.Bounds.Height - 480) / 2;
 
+                                }
+                            }
+                            else
+                            {
+                                AppearanceManager.Close(this);
                             }
                         }
                         else
                         {
-                            AppearanceManager.Close(this);
+                            Story.Start("first_steps");
+
                         }
                     }));
                 }
@@ -431,6 +439,108 @@ namespace ShiftOS.WinForms.Applications
             {
                 Thread.Sleep(1000);
                 TerminalBackend.PrintPrompt();
+            }).Start();
+        }
+
+        [Story("first_steps")]
+        public static void FirstSteps()
+        {
+            new Thread(() =>
+            {
+                TerminalBackend.InStory = true;
+                Console.WriteLine("Hey there, and welcome to ShiftOS.");
+                Thread.Sleep(2000);
+                Console.WriteLine("My name is DevX. I am the developer of this operating system.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Right now, I am using the Terminal application as a means of talking to you.");
+                Thread.Sleep(2000);
+                Console.WriteLine("ShiftOS is a very early operating system, but I have big plans for it.");
+                Thread.Sleep(2000);
+                Console.WriteLine("I can't reveal all my plans to you at this moment, but you play a big role.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Your role in all of this is to help me develop ShiftOS more.");
+                Thread.Sleep(2000);
+                Console.WriteLine("You may not know how to program, but that's perfectly fine. You don't need to.");
+                Thread.Sleep(2000);
+                Console.WriteLine("What you do need to do, is simply use the operating system - like you would a regular computer.");
+                Thread.Sleep(2000);
+                Console.WriteLine("As you use ShiftOS, you will earn a special currency called Codepoints.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The more things you do, the more Codepoints you get! Simple, right?");
+                Thread.Sleep(2000);
+                Console.WriteLine("Once you rack up enough Codepoints, you can use them inside the Shiftorium to buy new features for ShiftOS.");
+                Thread.Sleep(2000);
+                Console.WriteLine("These features include new programs, system enhancements, Terminal commands, and so much more!");
+                Thread.Sleep(2000);
+                Console.WriteLine("Ahh, that reminds me. I suppose you don't know how to use the Terminal yet, do you...");
+                Thread.Sleep(2000);
+                Console.WriteLine("Well, the ShiftOS terminal is similar to a regular Linux terminal, however things are a bit... how you say.... primitive.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Let's just say.... I've been focusing more on function than form with this one.... Anyways, here's how the terminal works.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Each command is categorized into a \"Namespace\". All a namespace is, is a nice way of distinguishing between commands.");
+                Thread.Sleep(2000);
+                Console.WriteLine("...For example you may have a bunch of commands for managing files, and others for opening/closing programs.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The three main namespaces you'll be using for the next while are the \"sos\", \"shiftorium\", and \"win\" namespaces.");
+                Thread.Sleep(2000);
+                Console.WriteLine("To run a command, simply type its namespace, followed by a period/full-stop, followed by the command name.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Give it a try! Type \"sos.help\" in the following prompt to view a list of all ShiftOS commands.");
+                Thread.Sleep(2000);
+                TerminalBackend.InStory = false;
+                TerminalBackend.PrintPrompt();
+                bool help_entered = false;
+                TerminalBackend.TextSent += (text) =>
+                {
+                    if (text == "sos.help" && help_entered == false)
+                        help_entered = true;
+                };
+                while (help_entered == false)
+                    Thread.Sleep(10);
+                TerminalBackend.InStory = true;
+                Thread.Sleep(2000);
+                Console.WriteLine("Good job! Next, we will look at how to pass data to a command, such as win.open.");
+                Thread.Sleep(2000);
+                Console.WriteLine("In ShiftOS, passing data to a command is quite simple! After the command name, place an opening and closing curly brace, like so: \"win.open{}\".");
+                Thread.Sleep(2000);
+                Console.WriteLine("Everything between those two curly braces is treated as command data.");
+                Thread.Sleep(2000);
+                Console.WriteLine("However, you can't just spam a bunch of 1s and 0s and call it a day, nonono!");
+                Thread.Sleep(2000);
+                Console.WriteLine("Command data is split into a list of keys and values.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The key tells the command the name of the data, and the value is what the command will see when it looks at the key.");
+                Thread.Sleep(2000);
+                Console.WriteLine("There are three main types of values. Booleans, which can be either \"true\" or \"false\", Numbers, which can be any integer number, positive or negative, and Strings - any piece of text as long as it is surrounded by double-quotes.");
+                Thread.Sleep(2000);
+                Console.WriteLine("For example, we could write every programmer's first program - by typing \"trm.echo{msg:\"Hello, world!\"}\". Running this will cause the Terminal to print, well, \"Hello, world!\"");
+                Thread.Sleep(2000);
+                Console.WriteLine("To open an application in ShiftOS, you can use this principle with the \"win.open\" command.");
+                Thread.Sleep(2000);
+                Console.WriteLine("First, type \"win.open\" with no data to see a list of all installed programs.");
+                Thread.Sleep(2000);
+                TerminalBackend.InStory = false;
+                bool winopenEntered = false;
+                TerminalBackend.PrintPrompt();
+                TerminalBackend.TextSent += (text) =>
+                {
+                    if (help_entered == true)
+                        if (text == "win.open" && winopenEntered == false)
+                            winopenEntered = true;
+                };
+                while (winopenEntered == false)
+                    Thread.Sleep(10);
+                TerminalBackend.InStory = true;
+                Thread.Sleep(2000);
+                Console.WriteLine("Pretty cool, it gave you a nice list of other win.open commands that will let you open each program.");
+                Thread.Sleep(2000);
+                Console.WriteLine("I'll leave you to it, you've got the hang of it! One last thing, if ever you find yourself in another program, and want to exit, simply press CTRL+T to return to the Terminal.");
+                Thread.Sleep(2000);
+
+                TerminalBackend.InStory = false;
+                TerminalBackend.PrintPrompt();
+                SaveSystem.SaveGame();
             }).Start();
         }
 
