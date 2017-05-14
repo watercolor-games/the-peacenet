@@ -242,12 +242,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.pgupgradeprogress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pgupgradeprogress.BlockSize = 5;
             this.pgupgradeprogress.Location = new System.Drawing.Point(146, 390);
             this.pgupgradeprogress.Maximum = 100;
             this.pgupgradeprogress.Name = "pgupgradeprogress";
             this.pgupgradeprogress.Size = new System.Drawing.Size(254, 23);
-            this.pgupgradeprogress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgupgradeprogress.TabIndex = 1;
             this.pgupgradeprogress.Value = 25;
             // 

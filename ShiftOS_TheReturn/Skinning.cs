@@ -276,6 +276,127 @@ namespace ShiftOS.Engine
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar;skinning")]
+        [Image("progressbarbg")]
+        [ShifterName("Progress Bar Background Image")]
+        [ShifterDescription("Set an image for the background of a progress bar.")]
+        public byte[] ProgressBarBG = null;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar;skinning")]
+        [Image("progress")]
+        [ShifterName("Progress Image")]
+        [ShifterDescription("Set the image for the progress inside a progress bar.")]
+        public byte[] Progress = null;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar foreground color")]
+        [ShifterDescription("Set the color of the progress indicator.")]
+        public Color ProgressColor = Accent1;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar background color")]
+        [ShifterDescription("The background color of the progress bar.")]
+        public Color ProgressBarBackgroundColor = Color.Black;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar block size")]
+        [ShifterDescription("If the progress bar style is set to Blocks, this determines how wide each block should be.")]
+        public int ProgressBarBlockSize = 15;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterDescription("Set the style of a progress bar.\r\nMarquee: The progress bar will render a box that moves from the left to the right in a loop.\r\nContinuous: Progress is shown by a single, continuous box.\r\nBlocks: Just like Continuous, but the box is split into even smaller boxes of a set width.")]
+        [ShifterName("Progress bar style")]
+        public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
+
+
+
+
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button background color")]
+        [ShifterDescription("Set the background color for each button's Idle state.")]
+        public Color ButtonBackgroundColor = Skin.DefaultBackground;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons;skinning")]
+        [Image("buttonhover")]
+        [ShifterName("Button hover image")]
+        [ShifterDescription("Set the image that's displayed when the mouse hovers over a button.")]
+        public byte[] ButtonHoverImage = null;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("skinning;shift_buttons")]
+        [Image("buttonpressed")]
+        [ShifterName("Button pressed image")]
+        [ShifterDescription("Select an image to show when the user presses a button.")]
+        public byte[] ButtonPressedImage = null;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button hover color")]
+        [ShifterDescription("Choose the color that displays on a button when the mouse hovers over it.")]
+        public Color ButtonHoverColor = Skin.Accent1;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button pressed color")]
+        [ShifterDescription("Select the background color for the button when the mouse clicks it.")]
+        public Color ButtonPressedColor = Skin.Accent2;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button foreground color")]
+        [ShifterDescription("Select the text and border color for each button.")]
+        public Color ButtonForegroundColor = Skin.DefaultForeground;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button border width")]
+        [ShifterDescription("Set the width, in pixels, of the button's border.")]
+        public int ButtonBorderWidth = 2;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button font")]
+        [ShifterDescription("Select the font for the button's text.")]
+        public Font ButtonTextFont = Skin.SysFont;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons;skinning")]
+        [Image("buttonidle")]
+        [ShifterName("Button background color")]
+        [ShifterDescription("Select an image to show as the button's Idle state.")]
+        public byte[] ButtonBG = null;
+
+
         [Image("panelclockbg")]
         [ShifterMeta("Desktop")]
         [ShifterCategory("Panel Clock")]

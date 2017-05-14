@@ -91,12 +91,10 @@
             // 
             // pgplaytime
             // 
-            this.pgplaytime.BlockSize = 5;
             this.pgplaytime.Location = new System.Drawing.Point(46, 3);
             this.pgplaytime.Maximum = 100;
             this.pgplaytime.Name = "pgplaytime";
             this.pgplaytime.Size = new System.Drawing.Size(749, 23);
-            this.pgplaytime.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgplaytime.TabIndex = 1;
             this.pgplaytime.Tag = "keepbg";
             this.pgplaytime.Text = "shiftedProgressBar1";

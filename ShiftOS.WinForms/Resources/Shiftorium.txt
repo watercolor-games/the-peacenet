@@ -8,6 +8,20 @@
 		Category: "Enhancements",
 	},
 	{
+		Name: "Shift Progress Bar",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you'll get the ability to set the foreground and background color of the progress bar, and many more things!.",
+		Dependencies: "shifter;shift_buttons",
+		Category: "Customization"
+	},
+	{
+		Name: "Shift Buttons",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS buttons? This Shifter upgrade gives you a new \"Buttons\" category in the System category to do just that.",
+		Dependencies: "shifter",
+		Category: "Customization"
+	},
+	{
 		Name: "GUI Based Login Screen",
 		Cost: 500,
 		Description: "Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, why not use these tools to create a functioning and awesome-looking login screen?",
