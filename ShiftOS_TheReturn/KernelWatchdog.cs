@@ -10,6 +10,7 @@ namespace ShiftOS.Engine
 {
     public static class KernelWatchdog
     {
+        //store logs into a file
         public static void Log(string e, string desc)
         {
             string line = $"[{DateTime.Now}] <{e}> {desc}";
@@ -36,12 +37,13 @@ namespace ShiftOS.Engine
             }
             set
             {
-                if(value == false)
+                if(value == false) // hey game if you want to disconnect from mud do this:
                 {
                     foreach(var win in AppearanceManager.OpenForms)
                     {
                         foreach(var attr in win.ParentWindow.GetType().GetCustomAttributes(true))
                         {
+                            // prevents disconnect from mud if an application that needs a connection is open
                             if(attr is MultiplayerOnlyAttribute)
                             {
                                 ConsoleEx.Bold = true;
@@ -59,11 +61,12 @@ namespace ShiftOS.Engine
                     }
                 }
 
-                _mudConnected = value;
+                _mudConnected = value; // connects or disconnects from mud
                 Desktop.PopulateAppLauncher();
             }
         }
 
+        //determines if user is root
         public static bool IsSafe(Type type)
         {
             if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
@@ -81,6 +84,7 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        //also determines if user is root, only for a method instead
         public static bool IsSafe(MethodInfo type)
         {
             if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
@@ -98,24 +102,25 @@ namespace ShiftOS.Engine
             return true;
         }
 
-        static string regularUsername = "";
+        static string regularUsername = ""; //put regular username in here later
 
 
         public static void EnterKernelMode()
         {
-            regularUsername = SaveSystem.CurrentUser.Username;
-            SaveSystem.CurrentUser = SaveSystem.Users.FirstOrDefault(x => x.Username == "root");
+            regularUsername = SaveSystem.CurrentUser.Username; // k for now put user's username in here for the time being
+            SaveSystem.CurrentUser = SaveSystem.Users.FirstOrDefault(x => x.Username == "root"); // now their username is root
 
         }
 
         public static void LeaveKernelMode()
         {
-            var user = SaveSystem.Users.FirstOrDefault(x => x.Username == regularUsername);
-            if (user == null)
-                throw new Exception("User not in root mode.");
+            var user = SaveSystem.Users.FirstOrDefault(x => x.Username == regularUsername); //finds username
+            if (user == null) 
+                throw new Exception("User not in root mode."); // fuck this means the user isnt root quick throw error
             SaveSystem.CurrentUser = user;
         }
 
+        //determines if you can disconnect from mud if there are no applications that currently need to
         internal static bool CanRunOffline(Type method)
         {
             if (MudConnected)
@@ -128,7 +133,8 @@ namespace ShiftOS.Engine
             }
             return true;
         }
-
+        
+        //same as above but this time for methods
         internal static bool CanRunOffline(MethodInfo method)
         {
             if (MudConnected)
