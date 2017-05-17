@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Engine
 {
+    //define a whole bunch of things that are needed 
     public interface ILanguageProvider
     {
         List<string> GetJSONTranscripts();
@@ -51,14 +52,15 @@ namespace ShiftOS.Engine
         {
             if(_provider == null)
             {
-                return JsonConvert.DeserializeObject<string[]>(Properties.Resources.languages);
+                return JsonConvert.DeserializeObject<string[]>(Properties.Resources.languages); //collect all the languages availible
             }
             else
             {
-                return _provider.GetAllLanguages();
+                return _provider.GetAllLanguages(); //also collect all the languages avalible but from a specific provider this time
             }
         }
 
+        //if no local selected, english will be loaded
         public static void SetupTHETRUEDefaultLocals()
         {
             if (_provider == null)
@@ -79,6 +81,7 @@ namespace ShiftOS.Engine
             }
         }
 
+        // ignore this not really setup of default no no zone
         public static void SetupDefaultLocals(string lines, string path)
         {
             Utils.WriteAllText(Paths.GetPath(path), lines);
@@ -86,13 +89,8 @@ namespace ShiftOS.Engine
         }
 
 
-        /// <summary>
-        /// Takes in a string and parses localization blocks into text blocks in the current language.
-        /// </summary>
-        /// <example>"{CODEPOINTS}: 0" will come out as "Codepoints: 0" if the current language is english.</example>
-        /// <param name="original">The string to parse</param>
-        /// <returns>The parsed string.</returns>
-        /// 
+        // Takes in a string and parses localization blocks into text blocks in the current language.
+        // example: "{CODEPOINTS}: 0" will come out as "Codepoints: 0" if the current language is english
         public static string Parse(string original)
         {
             return Parse(original, new Dictionary<string, string>());
@@ -104,25 +102,24 @@ namespace ShiftOS.Engine
             Dictionary<string, string> localizationStrings = new Dictionary<string, string>();
 
 
-
             try
             {
                 localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(_provider.GetCurrentTranscript());
             }
             catch
             {
-                localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(Paths.GetPath("english.local")));
+                localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(Paths.GetPath("english.local"))); //if no provider fall back to english
             }
 
             foreach (var kv in localizationStrings)
             {
-                original = original.Replace(kv.Key, kv.Value);
+                original = original.Replace(kv.Key, kv.Value); // goes through and replaces all the localization blocks
             }
 
             List<string> orphaned = new List<string>();
             if (Utils.FileExists("0:/dev_orphaned_lang.txt"))
             {
-                orphaned = JsonConvert.DeserializeObject<List<string>>(Utils.ReadAllText("0:/dev_orphaned_lang.txt"));
+                orphaned = JsonConvert.DeserializeObject<List<string>>(Utils.ReadAllText("0:/dev_orphaned_lang.txt")); // if this file exists read from it and put in list orphaned
             }
 
 
@@ -132,6 +129,7 @@ namespace ShiftOS.Engine
 
             foreach (var c in original)
             {
+                // start paying attenion when you see a "{"
                 if (c == '{')
                 {
                     start_index = original.IndexOf(c);
@@ -140,6 +138,7 @@ namespace ShiftOS.Engine
 
                 if (indexing == true)
                 {
+                    // stop paying attention when you see a "}" after seeing a "{"
                     length++;
                     if (c == '}')
                     {
@@ -157,7 +156,7 @@ namespace ShiftOS.Engine
 
             if (orphaned.Count > 0)
             {
-                Utils.WriteAllText("0:/dev_orphaned_lang.txt", JsonConvert.SerializeObject(orphaned, Formatting.Indented));
+                Utils.WriteAllText("0:/dev_orphaned_lang.txt", JsonConvert.SerializeObject(orphaned, Formatting.Indented)); //format if from this txt file
             }
 
             //string original2 = Parse(original);
@@ -165,21 +164,24 @@ namespace ShiftOS.Engine
             string usernameReplace = "";
             string domainReplace = "";
 
+            // if the user has saved then store their username and systemname in these string variables please
             if (SaveSystem.CurrentSave != null)
             {
-                usernameReplace = SaveSystem.CurrentSave.Username;
+                usernameReplace = SaveSystem.CurrentUser.Username;
                 domainReplace = SaveSystem.CurrentSave.SystemName;
             }
 
             string namespaceReplace = "";
             string commandReplace = "";
 
+            // if the user did a command in the terminal and it had a period in it then split it up into the part before the period and the part after and then store them into these two string variables please 
             if (TerminalBackend.latestCommmand != "" && TerminalBackend.latestCommmand.IndexOf('.') > -1)
             {
                 namespaceReplace = TerminalBackend.latestCommmand.Split('.')[0];
                 commandReplace = TerminalBackend.latestCommmand.Split('.')[1];
             }
 
+            // if you see these then replace them with what you need to
             Dictionary<string, string> defaultReplace = new Dictionary<string, string>() {
                 {"%username", usernameReplace},
                 {"%domain", domainReplace},
@@ -188,19 +190,22 @@ namespace ShiftOS.Engine
                 {"%cp", SaveSystem.CurrentSave?.Codepoints.ToString() },
             };
 
+            // actually do the replacement
             foreach (KeyValuePair<string, string> replacement in replace)
             {
                 original = original.Replace(replacement.Key, Parse(replacement.Value));
             }
 
+            // do the replacement but default
             foreach (KeyValuePair<string, string> replacement in defaultReplace)
             {
                 original = original.Replace(replacement.Key, replacement.Value);
             }
 
-            return original;
+            return original; // returns the now replaced string
         }
 
+        // a few things are defined here
         public static void RegisterProvider(ILanguageProvider p)
         {
             _provider = p;
