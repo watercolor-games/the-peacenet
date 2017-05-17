@@ -38,9 +38,7 @@ using static ShiftOS.Engine.SaveSystem;
 
 namespace ShiftOS.Engine
 {
-    /// <summary>
-    /// Provides functionality for managing windows within ShiftOS.
-    /// </summary>
+    // Provides functionality for managing windows within ShiftOS.
     public static class AppearanceManager
     {
         [Obsolete("Please use Localization.GetAllLanguages().")]
@@ -49,12 +47,7 @@ namespace ShiftOS.Engine
             return Localization.GetAllLanguages();
         }
 
-        /// <summary>
-        /// Sets the title text of the specified window.
-        /// </summary>
-        /// <param name="window">The window to modify</param>
-        /// <param name="title">The title text to use</param>
-        /// <exception cref="ArgumentNullException">Thrown if the window is null.</exception>
+        // Sets the title text of the specified window.
         public static void SetWindowTitle(IShiftOSWindow window, string title)
         {
             if (window == null)
@@ -62,11 +55,13 @@ namespace ShiftOS.Engine
             winmgr.SetTitle(window, title);
         }
 
+        //HEY LETS FIND THE WINDOWS
         public static IEnumerable<Type> GetAllWindowTypes()
         {
             List<Type> types = new List<Type>();
             foreach(var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
             {
+                // hey if a thing is an exe or a dll show up plz kthx
                 if(file.EndsWith(".exe") || file.EndsWith(".dll"))
                 {
                     try
@@ -84,12 +79,7 @@ namespace ShiftOS.Engine
             return types;
         }
 
-        /// <summary>
-        /// Returns the default window title for a specified <see cref="IShiftOSWindow"/>-inheriting type. 
-        /// </summary>
-        /// <param name="winType">The type to scan</param>
-        /// <returns>The default title</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="winType"/> is null.</exception>
+        // hey you know that window we just made appear? well give it its title
         public static string GetDefaultTitle(Type winType)
         {
             if (winType == null)
@@ -104,123 +94,95 @@ namespace ShiftOS.Engine
             return winType.Name;
         }
 
-        /// <summary>
-        /// Current cursor position of the console
-        /// </summary>
+        // Current cursor position of the console
         public static int CurrentPosition { get; set; }
 
-        /// <summary>
-        /// We don't know what this does. It may be gone if it does nothing.
-        /// </summary>
+        // We don't know what this does. It may be gone if it does nothing.
         public static int LastLength { get; set; }
 
 
-        /// <summary>
-        /// Minimize a window.
-        /// </summary>
-        /// <param name="form">The window border to minimize.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="form"/> is null.</exception> 
-        /// <exception cref="EngineModuleDisabledException">Thrown if this part of the engine hasn't been enabled.</exception> 
+        // Minimize a window.
         public static void Minimize(IWindowBorder form)
         {
             if (form == null)
+                //FUCK WHY THE FUCK IS THIS NULL
                 throw new ArgumentNullException("form");
             if (winmgr == null)
+                //FUCK THIS PART OF THE ENGINE WASNT TURNED ON YET
                 throw new EngineModuleDisabledException();
             winmgr.Minimize(form);
         }
 
-        /// <summary>
-        /// Maximizes a window.
-        /// </summary>
-        /// <param name="form">The window border to maximize.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="form"/> is null.</exception> 
-        /// <exception cref="EngineModuleDisabledException">Thrown if this engine module hasn't been enabled.</exception>
+        // Maximizes a window! :D
         public static void Maximize(IWindowBorder form)
         {
             if (form == null)
+                //AHHHH SHOULDNT BE NULLLLLL
                 throw new ArgumentNullException("form");
             if (winmgr == null)
+                //WHY ARE YOU DOING THIS PART OF THE ENGINE IT WASNT ENABLED FUCK
                 throw new EngineModuleDisabledException();
             winmgr.Maximize(form);
         }
 
 
-        /// <summary>
-        /// Provides a list of all open ShiftOS windows.
-        /// </summary>
+        // Provides a list of all open ShiftOS windows.
         public static List<IWindowBorder> OpenForms = new List<IWindowBorder>();
 
-        /// <summary>
-        /// Decorates a window with a border, then shows the window.
-        /// </summary>
-        /// <param name="form">The window to decorate and show.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="form"/> is null. </exception>
-        /// <exception cref="EngineModuleDisabledException">Thrown if this engine module has not been initiated yet.</exception> 
+        // Decorates a window with a border, then shows the window.
         public static void SetupWindow(IShiftOSWindow form)
         {
             if (form == null)
+                //YOU GET THE POINT THIS REALLY SHOULDNT BE NULL
                 throw new ArgumentNullException("form");
             if (winmgr == null)
+                //SAME HERE
                 throw new EngineModuleDisabledException();
             winmgr.SetupWindow(form);
             Desktop.ResetPanelButtons();
         }
 
-        /// <summary>
-        /// Closes the specified window.
-        /// </summary>
-        /// <param name="win">The window to close.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="win"/> is null. </exception>
-        /// <exception cref="EngineModuleDisabledException">Thrown if this engine module has not been initiated yet.</exception> 
+        // Closes the specified window. SHOCKED YOU ARE I KNOW, HOW COULD YOU HAVE GUESSED
         public static void Close(IShiftOSWindow win)
         {
             if (win == null)
+                //NOPE SHOULDNT BE NULL
                 throw new ArgumentNullException("win");
             if (winmgr == null)
+                //WHY IS THIS NULL
                 throw new EngineModuleDisabledException();
             winmgr.Close(win);
             Desktop.ResetPanelButtons();
         }
 
-        /// <summary>
-        /// Decorates a window with a border, then shows the window, as a dialog box.
-        /// </summary>
-        /// <param name="form">The window to decorate and show.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="form"/> is null. </exception>
-        /// <exception cref="EngineModuleDisabledException">Thrown if this engine module has not been initiated yet.</exception> 
+
+        // Decorates a window with a border, then shows the window, as a dialog box.
         public static void SetupDialog(IShiftOSWindow form)
         {
             if (form == null)
+                //NULLLLLLLLL
                 throw new ArgumentNullException("form");
             if (winmgr == null)
+                //ASGDFHASDGF
                 throw new EngineModuleDisabledException();
             winmgr.SetupDialog(form);
             Desktop.ResetPanelButtons();
         }
 
-        /// <summary>
-        /// The underlying window manager for this engine module
-        /// </summary>
+        // The underlying window manager for this engine module
         private static WindowManager winmgr = null;
 
-        /// <summary>
-        /// Initiate this engine module, and perform mandatory configuration.
-        /// </summary>
-        /// <param name="mgr">A working, configured <see cref="WindowManager"/> to use as a backend for this module </param>
+        // Initiate this engine module, and perform mandatory configuration.
         public static void Initiate(WindowManager mgr)
         {
-            winmgr = mgr;
+            winmgr = mgr; // A working, configured window manager to use as a backend for this module
         }
 
-        /// <summary>
-        /// Raised when the engine is entering its shutdown phase. Save your work!
-        /// </summary>
+
+        // Raised when the engine is entering its shutdown phase. Save your work!
         public static event EmptyEventHandler OnExit;
 
-        /// <summary>
-        /// Starts the engine's exit routine, firing the OnExit event.
-        /// </summary>
+        // Starts the engine's exit routine, firing the OnExit event.
         internal static void Exit()
         {
             OnExit?.Invoke();
@@ -228,137 +190,59 @@ namespace ShiftOS.Engine
             ServerManager.Disconnect();
             Desktop.InvokeOnWorkerThread(() =>
             {
-                Environment.Exit(0);
+                Environment.Exit(0); //bye bye
             });
         }
 
-        /// <summary>
-        /// The current terminal body control.
-        /// </summary>
+        // The current terminal body control.
         public static ITerminalWidget ConsoleOut { get; set; }
 
-        /// <summary>
-        /// Redirects the .NET <see cref="Console"/> to a new <see cref="TerminalTextWriter"/> instance.  
-        /// </summary>
+        // Redirects the .NET to a new TerminalTextWriter instance.  
         public static void StartConsoleOut()
         {
-            Console.SetOut(new TerminalTextWriter());
+            Console.SetOut(new TerminalTextWriter()); //"plz start writing text .NET kthx"
         }
 
-        /// <summary>
-        /// Invokes an action on the window management thread.
-        /// </summary>
-        /// <param name="act">The action to invoke</param>
+        // Invokes an action on the window management thread.
         public static void Invoke(Action act)
         {
             winmgr.InvokeAction(act);
         }
     }
 
-    /// <summary>
-    /// Provides the base functionality for a ShiftOS terminal.
-    /// </summary>
+    // Provides the base functionality for a ShiftOS terminal.
     public interface ITerminalWidget
     {
-        /// <summary>
-        /// Write text to this Terminal.
-        /// </summary>
-        /// <param name="text">Text to write</param>
-        void Write(string text);
-        /// <summary>
-        /// Write text to this Terminal, followed by a newline.
-        /// </summary>
-        /// <param name="text">Text to write.</param>
-        void WriteLine(string text);
-        /// <summary>
-        /// Clear the contents of this Terminal.
-        /// </summary>
-        void Clear();
-        /// <summary>
-        /// Move the cursor to the last character in the Terminal.
-        /// </summary>
-        void SelectBottom();
+        void Write(string text); // Actually write text to this Terminal! :D:D:D:D
+        void WriteLine(string text); // Write text to this Terminal, followed by a newline.
+        void Clear(); // Clear the contents of this Terminal, i bet you wouldve never guessed that
+        void SelectBottom(); // Move the cursor to the last character in the Terminal.
     }
 
-    /// <summary>
-    /// Provides the base functionality for a ShiftOS window manager.
-    /// </summary>
+    // makes the window manager actually do its job
     public abstract class WindowManager
     {
-        /// <summary>
-        /// Minimizes a window
-        /// </summary>
-        /// <param name="border">The window border to minimize</param>
-        public abstract void Minimize(IWindowBorder border);
-
-        /// <summary>
-        /// Maximizes a window
-        /// </summary>
-        /// <param name="border">The window border to maximize</param>
-        public abstract void Maximize(IWindowBorder border);
-
-        /// <summary>
-        /// Closes a window
-        /// </summary>
-        /// <param name="win">The window to close</param>
-        public abstract void Close(IShiftOSWindow win);
-
-        /// <summary>
-        /// Decorates a window with a window border, then shows it to the user.
-        /// </summary>
-        /// <param name="win">The window to decorate.</param>
-        public abstract void SetupWindow(IShiftOSWindow win);
-
-        /// <summary>
-        /// Decorates a window with a border, then shows it to the user as a dialog box.
-        /// </summary>
-        /// <param name="win">The window to decorate</param>
-        public abstract void SetupDialog(IShiftOSWindow win);
-
-        /// <summary>
-        /// Invokes an action on the window management thread.
-        /// </summary>
-        /// <param name="act">The action to invoke.</param>
-        public abstract void InvokeAction(Action act);
-
-        /// <summary>
-        /// Sets the title text of a window.
-        /// </summary>
-        /// <param name="win">The window to modify.</param>
-        /// <param name="title">The new title text.</param>
-        public abstract void SetTitle(IShiftOSWindow win, string title);
+        public abstract void Minimize(IWindowBorder border); // guess what this does
+        public abstract void Maximize(IWindowBorder border); // ooh this too
+        public abstract void Close(IShiftOSWindow win); // omg this probably does something
+        public abstract void SetupWindow(IShiftOSWindow win); // i cant think of what this does
+        public abstract void SetupDialog(IShiftOSWindow win); // how about this???????
+        public abstract void InvokeAction(Action act); // i wonder what this invokes
+        public abstract void SetTitle(IShiftOSWindow win, string title); // what is a title again
     }
 
-    /// <summary>
-    /// Provides the base functionality for a typical ShiftOS window border.
-    /// </summary>
+    // Provides the base functionality for a typical ShiftOS window border, what did you expect
     public interface IWindowBorder
     {
-        /// <summary>
-        /// Closes the border along with its window. Unload events should be invoked here.
-        /// </summary>
-        void Close();
-
-        /// <summary>
-        /// Gets or sets the title text for the window border.
-        /// </summary>
-        string Text { get; set; }
-
-        /// <summary>
-        /// Gets or sets the underlying <see cref="IShiftOSWindow"/> for this border. 
-        /// </summary>
-        IShiftOSWindow ParentWindow { get; set; }
+        void Close(); // CLOSES THE BORDER ALONG WITH ITS WINDOW!!!!!!! HOLY SHIT I DIDNT EXPECT THAT
+        string Text { get; set; } // title text exists now
+        IShiftOSWindow ParentWindow { get; set; } // Gets or sets the underlying for this border. 
     }
-    
-    /// <summary>
-    /// Provides a way of setting default title text for <see cref="IShiftOSWindow"/> classes. 
-    /// </summary>
+
+    // Provides a way of setting default title text for classes. 
     public class DefaultTitleAttribute : Attribute
     {
-        /// <summary>
-        /// Creates a new instance of the <see cref="DefaultTitleAttribute"/>. 
-        /// </summary>
-        /// <param name="title">A default title to associate with this attribute.</param>
+        // oy if you cant find a title this is the one you should use
         public DefaultTitleAttribute(string title)
         {
             Title = title;
@@ -367,17 +251,13 @@ namespace ShiftOS.Engine
         public string Title { get; private set; }
     }
 
-    /// <summary>
-    /// An exception that is thrown when mandatory configuration to run a specific method or module hasn't been done yet.
-    /// </summary>
+    // An exception that is thrown when mandatory configuration to run a specific method or module hasn't been done yet.
     public class EngineModuleDisabledException : Exception
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EngineModuleDisabledException"/>. 
-        /// </summary>
+        // FUCK WE DIDNT ORDER THINGS RIGHT
         public EngineModuleDisabledException() : base("This engine module has not yet been enabled.")
         {
-
+            //FUCK
         }
     }
 }
