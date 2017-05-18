@@ -34,6 +34,7 @@ namespace ShiftOS.Engine
 {
     public static class NotificationDaemon
     {
+        //if the notifications file already exists then get them
         public static Notification[] GetAllFromFile()
         {
             Notification[] notes = { };
@@ -44,23 +45,25 @@ namespace ShiftOS.Engine
             return notes;
         }
 
+        //tells the computer how it likes it to be written in the file
         internal static void WriteNotes(Notification[] notes)
         {
-            Utils.WriteAllText(Paths.GetPath("notifications.dat"), JsonConvert.SerializeObject(notes, Formatting.Indented));
+            Utils.WriteAllText(Paths.GetPath("notifications.dat"), JsonConvert.SerializeObject(notes, Formatting.Indented)); //"write it in there indented pls"
         }
 
-        public static event Action<Notification> NotificationMade;
-
+        public static event Action<Notification> NotificationMade; //use this if you want to know when a notification has been made
+        
         public static void AddNotification(NotificationType note, object data)
         {
-            var lst = new List<Notification>(GetAllFromFile());
-            lst.Add(new Engine.Notification(note, data));
+            var lst = new List<Notification>(GetAllFromFile()); //grabs all current notifications
+            lst.Add(new Engine.Notification(note, data)); //then adds the new one to the list
             WriteNotes(lst.ToArray());
-            NotificationMade?.Invoke(lst[lst.Count - 1]);
+            NotificationMade?.Invoke(lst[lst.Count - 1]); //says to the program that a notification has indeed been made
         }
 
         public static event Action NotificationRead;
 
+        //for every notification that there is, mark them as read
         public static void MarkAllRead()
         {
             var notes = GetAllFromFile();
@@ -68,30 +71,33 @@ namespace ShiftOS.Engine
                 MarkRead(i);
         }
 
+        //grabs list of notifcations and if the notification you want to mark as read actually exsists, then it assigns it as read
         public static void MarkRead(int note)
         {
             var notes = GetAllFromFile();
             if (note >= notes.Length || note < 0)
                 throw new ArgumentOutOfRangeException("note", new Exception("You cannot mark a notification that does not exist as read."));
 
-            notes[note].Read = true;
+            notes[note].Read = true; //assigns the specific notification as read
             WriteNotes(notes);
             NotificationRead?.Invoke();
         }
 
-        public static int GetUnreadCount()
+        public static int GetUnreadCount() //use this if you want the unread notification count, but i think you probably already knew that
         {
             int c = 0;
             foreach (var note in GetAllFromFile())
                 if (note.Read == false)
-                    c++; //gahh I hate that programming language.
+                    c++; //gahh I hate that programming language. //dont we all
             return c;
         }
 
     }
 
+    //actually gives the proper data for the notification 
     public struct Notification
     {
+        //defaults for all notificaions
         public Notification(NotificationType t, object data)
         {
             Type = t;
@@ -106,9 +112,10 @@ namespace ShiftOS.Engine
         public DateTime Timestamp { get; set; }
     }
 
+    //defines all the possible notificaions that can happen
     public enum NotificationType
     {
-        Generic = 0x00,
+        Generic = 0x00, //lets get generic
         MemoReceived = 0x10,
         MemoSent = 0x11,
         DownloadStarted = 0x20,
