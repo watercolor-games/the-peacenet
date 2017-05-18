@@ -88,17 +88,17 @@ namespace ShiftOS.Engine
                 _reader = new AudioFileReader(file);
                 _out = new WaveOut();
                 _out.Init(_reader);
-                try
-                {
-                    _out.Volume = (float)SaveSystem.CurrentSave.SfxVolume / 100;
-                }
-                catch
-                {
-                }
                 _out.Play();
+                if (SaveSystem.CurrentSave == null)
+                    _out.Volume = 1.0f;
+                else
+                    _out.Volume = (float)SaveSystem.CurrentSave.MusicVolume / 100;
                 _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Audio error: " + ex.Message);
+            }
         }
 
         /// <summary>
