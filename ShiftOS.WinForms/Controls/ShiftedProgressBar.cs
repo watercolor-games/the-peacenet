@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,40 +138,12 @@ namespace ShiftOS.WinForms.Controls
             }
         }
 
-        public TextureBrush CreateBG()
-        {
-            var tex = new TextureBrush(RealBackgroundImage);
-            var mt = new Matrix(new Rectangle(0, 0, this.Width, this.Height), new[]
-            {
-                new Point(0,0),
-                new Point(this.Width,0),
-                new Point(this.Width, this.Height)
-            });
-            tex.Transform = mt;
-            tex.WrapMode = WrapMode.Clamp;
-            return tex;
-        }
-
-        public TextureBrush CreateTexture()
-        {
-            var tex = new TextureBrush(ProgressImage);
-            var mt = new Matrix(new Rectangle(0, 0, this.Width, this.Height), new[]
-            {
-                new Point(0,0),
-                new Point(this.Width,0),
-                new Point(this.Width, this.Height)
-            });
-            tex.Transform = mt;
-            tex.WrapMode = WrapMode.Clamp;
-            return tex;
-        }
-
         protected override void OnPaint(PaintEventArgs pe)
         {
             pe.Graphics.Clear(this.RealBackColor);
             if(RealBackgroundImage != null)
             {
-                pe.Graphics.FillRectangle(CreateBG(), new Rectangle(0, 0, this.Width, this.Height));
+                pe.Graphics.FillRectangle(new TextureBrush(RealBackgroundImage), new Rectangle(0, 0, this.Width, this.Height));
             }
             switch (Style)
             {
@@ -180,7 +151,7 @@ namespace ShiftOS.WinForms.Controls
                     double width = linear(this.Value, 0, this.Maximum, 0, this.Width);
                     if (ProgressImage != null)
                     {
-                        pe.Graphics.FillRectangle(CreateTexture(), new RectangleF(0, 0, (float)width, this.Height));
+                        pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new RectangleF(0, 0, (float)width, this.Height));
                     }
                     else
                     {
@@ -195,7 +166,7 @@ namespace ShiftOS.WinForms.Controls
                         int position = i * (BlockSize + 2);
                         if (ProgressImage != null)
                         {
-                            pe.Graphics.FillRectangle(CreateTexture(), new Rectangle(position, 0, BlockSize, this.Height));
+                            pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(position, 0, BlockSize, this.Height));
 
                         }
                         else
@@ -207,7 +178,7 @@ namespace ShiftOS.WinForms.Controls
                 case ProgressBarStyle.Marquee:
                     if (ProgressImage != null)
                     {
-                        pe.Graphics.FillRectangle(CreateTexture(), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
+                        pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
                     }
                     else
                     {
