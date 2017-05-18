@@ -445,6 +445,7 @@ namespace ShiftOS.WinForms.Applications
         [Story("first_steps")]
         public static void FirstSteps()
         {
+            TerminalBackend.PrefixEnabled = false;
             new Thread(() =>
             {
                 TerminalBackend.InStory = true;
@@ -489,6 +490,7 @@ namespace ShiftOS.WinForms.Applications
                 Console.WriteLine("Give it a try! Type \"sos.help\" in the following prompt to view a list of all ShiftOS commands.");
                 Thread.Sleep(2000);
                 TerminalBackend.InStory = false;
+                TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.PrintPrompt();
                 bool help_entered = false;
                 TerminalBackend.CommandProcessed += (text, args) =>
@@ -499,6 +501,7 @@ namespace ShiftOS.WinForms.Applications
                 while (help_entered == false)
                     Thread.Sleep(10);
                 TerminalBackend.InStory = true;
+                TerminalBackend.PrefixEnabled = false;
                 Thread.Sleep(2000);
                 Console.WriteLine("Good job! Next, we will look at how to pass data to a command, such as win.open.");
                 Thread.Sleep(2000);
@@ -522,6 +525,7 @@ namespace ShiftOS.WinForms.Applications
                 Thread.Sleep(2000);
                 TerminalBackend.InStory = false;
                 bool winopenEntered = false;
+                TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.PrintPrompt();
                 TerminalBackend.CommandProcessed += (text, args) =>
                 {
@@ -532,15 +536,18 @@ namespace ShiftOS.WinForms.Applications
                 while (winopenEntered == false)
                     Thread.Sleep(10);
                 TerminalBackend.InStory = true;
+                TerminalBackend.PrefixEnabled = false;
+
                 Thread.Sleep(2000);
                 Console.WriteLine("Pretty cool, it gave you a nice list of other win.open commands that will let you open each program.");
                 Thread.Sleep(2000);
                 Console.WriteLine("I'll leave you to it, you've got the hang of it! One last thing, if ever you find yourself in another program, and want to exit, simply press CTRL+T to return to the Terminal.");
                 Thread.Sleep(2000);
-
+                TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.InStory = false;
-                TerminalBackend.PrintPrompt();
                 SaveSystem.SaveGame();
+                Thread.Sleep(1000);
+                TerminalBackend.PrintPrompt();
             }).Start();
         }
 
