@@ -167,8 +167,24 @@ namespace ShiftOS.Engine
             // if the user has saved then store their username and systemname in these string variables please
             if (SaveSystem.CurrentSave != null)
             {
-                usernameReplace = SaveSystem.CurrentUser.Username;
-                domainReplace = SaveSystem.CurrentSave.SystemName;
+                try
+                {
+                    usernameReplace = SaveSystem.CurrentUser.Username;
+                }
+                catch
+                {
+                        usernameReplace = "user";
+                }
+
+                try
+                {
+                    domainReplace = SaveSystem.CurrentSave.SystemName;
+                }
+                catch
+                {
+                    domainReplace = "system";
+                }
+                
             }
 
             string namespaceReplace = "";
