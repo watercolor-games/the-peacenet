@@ -220,13 +220,22 @@ namespace ShiftOS.WinForms.Tools
                     Desktop.InvokeOnWorkerThread(() =>
                     {
                         Button b = ctrl as Button;
-                        b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
-                        b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                        b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        if (!b.Tag.ToString().ToLower().Contains("keepbg"))
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        }
                         b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
-                        b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                        b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                        b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+                        if (!b.Tag.ToString().ToLower().Contains("keepfg"))
+                        {
+                            b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                            b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                        }
+                        if(!b.Tag.ToString().ToLower().Contains("keepfont"))
+                            b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+
+                        Color orig_bg = b.BackColor;
 
                         b.MouseEnter += (o, a) =>
                         {
@@ -236,13 +245,13 @@ namespace ShiftOS.WinForms.Tools
                         };
                         b.MouseLeave += (o, a) =>
                         {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                            b.BackColor = orig_bg;
                             b.BackgroundImage = SkinEngine.GetImage("buttonidle");
                             b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
                         };
                         b.MouseUp += (o, a) =>
                         {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                            b.BackColor = orig_bg;
                             b.BackgroundImage = SkinEngine.GetImage("buttonidle");
                             b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
                         };
@@ -254,6 +263,14 @@ namespace ShiftOS.WinForms.Tools
                             b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
 
                         };
+                    });
+                }
+
+                if(ctrl is TextBox)
+                {
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        (ctrl as TextBox).BorderStyle = BorderStyle.FixedSingle;
                     });
                 }
 

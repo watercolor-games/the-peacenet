@@ -814,15 +814,12 @@ namespace ShiftOS.WinForms.Applications
                     ControlManager.SetupControl(color);
 
                     color.BackColor = ((Color)c.Field.GetValue(LoadedSkin));
-                    color.BackColorChanged += (o, a) =>
-                    {
-                        c.Field.SetValue(LoadedSkin, color.BackColor);
-                    };
                     color.Click += (o, a) =>
                     {
-                        AppearanceManager.SetupDialog(new ColorPicker(color.BackColor, c.Name, new Action<Color>((col) =>
+                        AppearanceManager.SetupDialog(new ColorPicker((Color)c.Field.GetValue(LoadedSkin), c.Name, new Action<Color>((col) =>
                         {
                             color.BackColor = col;
+                            c.Field.SetValue(LoadedSkin, col);
                             CodepointValue += 300;
                             InvokeSetup(cat);
 
