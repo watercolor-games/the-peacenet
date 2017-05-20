@@ -39,6 +39,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ShiftOS.Engine
 {
+    [Obsolete("Use the servers.conf file instead.")]
     public class EngineConfig
     {
         public bool ConnectToMud = true;
@@ -46,16 +47,34 @@ namespace ShiftOS.Engine
         public int MudDefaultPort = 13370;
     }
 
+    /// <summary>
+    /// Management class for the ShiftOS save system.
+    /// </summary>
     public static class SaveSystem
     {
+        /// <summary>
+        /// Boolean representing whether the system is shutting down.
+        /// </summary>
         public static bool ShuttingDown = false;
 
+        /// <summary>
+        /// Gets or sets the current logged in client-side user.
+        /// </summary>
         public static ClientSave CurrentUser { get; set; }
 
+        /// <summary>
+        /// Boolean representing whether the save system is ready to be used.
+        /// </summary>
         public static bool Ready = false;
 
+        /// <summary>
+        /// Occurs before the save system connects to the ShiftOS Digital Society.
+        /// </summary>
         public static event Action PreDigitalSocietyConnection;
 
+        /// <summary>
+        /// Gets or sets the current server-side save file.
+        /// </summary>
         public static Save CurrentSave { get; set; }
 
         /// <summary>
@@ -182,7 +201,10 @@ namespace ShiftOS.Engine
             thread.Start();
         }
 
-        public static void FinishBootstrap()
+        /// <summary>
+        /// Finish bootstrapping the engine.
+        /// </summary>
+        private static void FinishBootstrap()
         {
             KernelWatchdog.Log("mud_handshake", "handshake successful: kernel watchdog access code is \"" + ServerManager.thisGuid.ToString() + "\"");
 
@@ -391,8 +413,14 @@ namespace ShiftOS.Engine
             GameReady?.Invoke();
         }
 
+        /// <summary>
+        /// Delegate type for events with no caller objects or event arguments. You can use the () => {...} (C#) lambda expression with this delegate 
+        /// </summary>
         public delegate void EmptyEventHandler();
 
+        /// <summary>
+        /// Gets a list of all client-side users.
+        /// </summary>
         public static List<ClientSave> Users
         {
             get
@@ -401,20 +429,35 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Occurs when the engine is loaded and the game can take over.
+        /// </summary>
         public static event EmptyEventHandler GameReady;
 
+        /// <summary>
+        /// Deducts a set amount of Codepoints from the save file... and sends them to a place where they'll never be seen again.
+        /// </summary>
+        /// <param name="amount">The amount of Codepoints to deduct.</param>
         public static void TransferCodepointsToVoid(long amount)
         {
+            if (amount < 0)
+                throw new ArgumentOutOfRangeException("We see what you did there. Trying to pull Codepoints from the void? That won't work.");
             CurrentSave.Codepoints -= amount;
             NotificationDaemon.AddNotification(NotificationType.CodepointsSent, amount);
         }
 
+        /// <summary>
+        /// Restarts the game.
+        /// </summary>
         public static void Restart()
         {
             TerminalBackend.InvokeCommand("sos.shutdown");
             System.Windows.Forms.Application.Restart();
         }
 
+        /// <summary>
+        /// Requests the save file from the server. If authentication fails, this will cause the user to be prompted for their website login and a new save will be created if none is associated with the login.
+        /// </summary>
         public static void ReadSave()
         {
             //Migrate old saves.
@@ -458,6 +501,9 @@ namespace ShiftOS.Engine
 
         }
 
+        /// <summary>
+        /// Creates a new save, starting the Out Of Box Experience (OOBE).
+        /// </summary>
         public static void NewSave()
         {
             AppearanceManager.Invoke(new Action(() =>
@@ -470,6 +516,9 @@ namespace ShiftOS.Engine
             }));
         }
 
+        /// <summary>
+        /// Saves the game to the server, updating website stats if possible.
+        /// </summary>
         public static void SaveGame()
         {
             if(!Shiftorium.Silent)
@@ -486,15 +535,29 @@ namespace ShiftOS.Engine
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }
 
+        /// <summary>
+        /// Transfers codepoints from an arbitrary character to the save file.
+        /// </summary>
+        /// <param name="who">The character name</param>
+        /// <param name="amount">The amount of Codepoints.</param>
         public static void TransferCodepointsFrom(string who, long amount)
         {
+            if (amount < 0)
+                throw new ArgumentOutOfRangeException("We see what you did there... You can't just give a fake character Codepoints like that. It's better if you transfer them to the void.");
             NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
             CurrentSave.Codepoints += amount;
         }
     }
 
+    /// <summary>
+    /// Delegate for handling Terminal text input.
+    /// </summary>
+    /// <param name="text">The text inputted by the user (including prompt text).</param>
     public delegate void TextSentEventHandler(string text);
 
+    /// <summary>
+    /// Denotes that this Terminal command or namespace is for developers.
+    /// </summary>
     public class DeveloperAttribute : Attribute
     {
 
