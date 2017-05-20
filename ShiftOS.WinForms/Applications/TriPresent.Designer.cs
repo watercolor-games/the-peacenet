@@ -40,14 +40,17 @@
             this.placeAdd = new System.Windows.Forms.Button();
             this.yLabel = new System.Windows.Forms.Label();
             this.xLabel = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.yPosition = new System.Windows.Forms.NumericUpDown();
+            this.xPosition = new System.Windows.Forms.NumericUpDown();
             this.labelContents = new System.Windows.Forms.TextBox();
             this.addItemLabel = new System.Windows.Forms.Label();
+            this.designerPanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.AddItem.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yPosition)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.xPosition)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -107,23 +110,26 @@
             // 
             // AddItem
             // 
+            this.AddItem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AddItem.Controls.Add(this.label1);
+            this.AddItem.Controls.Add(this.panel1);
             this.AddItem.Controls.Add(this.cancelAdd);
             this.AddItem.Controls.Add(this.placeAdd);
             this.AddItem.Controls.Add(this.yLabel);
             this.AddItem.Controls.Add(this.xLabel);
-            this.AddItem.Controls.Add(this.numericUpDown2);
-            this.AddItem.Controls.Add(this.numericUpDown1);
+            this.AddItem.Controls.Add(this.yPosition);
+            this.AddItem.Controls.Add(this.xPosition);
             this.AddItem.Controls.Add(this.labelContents);
             this.AddItem.Controls.Add(this.addItemLabel);
             this.AddItem.Location = new System.Drawing.Point(260, 152);
             this.AddItem.Name = "AddItem";
-            this.AddItem.Size = new System.Drawing.Size(244, 187);
+            this.AddItem.Size = new System.Drawing.Size(244, 199);
             this.AddItem.TabIndex = 1;
             this.AddItem.Visible = false;
             // 
             // cancelAdd
             // 
-            this.cancelAdd.Location = new System.Drawing.Point(121, 164);
+            this.cancelAdd.Location = new System.Drawing.Point(120, 174);
             this.cancelAdd.Name = "cancelAdd";
             this.cancelAdd.Size = new System.Drawing.Size(123, 23);
             this.cancelAdd.TabIndex = 7;
@@ -133,17 +139,18 @@
             // 
             // placeAdd
             // 
-            this.placeAdd.Location = new System.Drawing.Point(0, 164);
+            this.placeAdd.Location = new System.Drawing.Point(-1, 174);
             this.placeAdd.Name = "placeAdd";
             this.placeAdd.Size = new System.Drawing.Size(123, 23);
             this.placeAdd.TabIndex = 6;
             this.placeAdd.Text = "Place";
             this.placeAdd.UseVisualStyleBackColor = true;
+            this.placeAdd.Click += new System.EventHandler(this.placeAdd_Click);
             // 
             // yLabel
             // 
             this.yLabel.AutoSize = true;
-            this.yLabel.Location = new System.Drawing.Point(227, 117);
+            this.yLabel.Location = new System.Drawing.Point(227, 95);
             this.yLabel.Name = "yLabel";
             this.yLabel.Size = new System.Drawing.Size(14, 13);
             this.yLabel.TabIndex = 5;
@@ -152,27 +159,37 @@
             // xLabel
             // 
             this.xLabel.AutoSize = true;
-            this.xLabel.Location = new System.Drawing.Point(3, 117);
+            this.xLabel.Location = new System.Drawing.Point(3, 95);
             this.xLabel.Name = "xLabel";
             this.xLabel.Size = new System.Drawing.Size(14, 13);
             this.xLabel.TabIndex = 4;
             this.xLabel.Text = "X";
             // 
-            // numericUpDown2
+            // yPosition
             // 
-            this.numericUpDown2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.numericUpDown2.Location = new System.Drawing.Point(157, 136);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(87, 20);
-            this.numericUpDown2.TabIndex = 3;
+            this.yPosition.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.yPosition.Location = new System.Drawing.Point(157, 114);
+            this.yPosition.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.yPosition.Name = "yPosition";
+            this.yPosition.Size = new System.Drawing.Size(87, 20);
+            this.yPosition.TabIndex = 3;
             // 
-            // numericUpDown1
+            // xPosition
             // 
-            this.numericUpDown1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.numericUpDown1.Location = new System.Drawing.Point(3, 136);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(87, 20);
-            this.numericUpDown1.TabIndex = 2;
+            this.xPosition.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.xPosition.Location = new System.Drawing.Point(3, 114);
+            this.xPosition.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.xPosition.Name = "xPosition";
+            this.xPosition.Size = new System.Drawing.Size(87, 20);
+            this.xPosition.TabIndex = 2;
             // 
             // labelContents
             // 
@@ -192,11 +209,40 @@
             this.addItemLabel.Text = "{ADD_ITEM_LABEL}";
             this.addItemLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // designerPanel
+            // 
+            this.designerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.designerPanel.Location = new System.Drawing.Point(0, 24);
+            this.designerPanel.Name = "designerPanel";
+            this.designerPanel.Size = new System.Drawing.Size(758, 456);
+            this.designerPanel.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Black;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.ForeColor = System.Drawing.Color.Black;
+            this.panel1.Location = new System.Drawing.Point(203, 144);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(35, 20);
+            this.panel1.TabIndex = 8;
+            this.panel1.Click += new System.EventHandler(this.panel1_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(139, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Text Color:";
+            // 
             // TriPresent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.AddItem);
+            this.Controls.Add(this.designerPanel);
             this.Controls.Add(this.menuStrip1);
             this.Name = "TriPresent";
             this.Size = new System.Drawing.Size(758, 480);
@@ -204,8 +250,8 @@
             this.menuStrip1.PerformLayout();
             this.AddItem.ResumeLayout(false);
             this.AddItem.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yPosition)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.xPosition)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -226,8 +272,11 @@
         private System.Windows.Forms.Button placeAdd;
         private System.Windows.Forms.Label yLabel;
         private System.Windows.Forms.Label xLabel;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown yPosition;
+        private System.Windows.Forms.NumericUpDown xPosition;
         private System.Windows.Forms.TextBox labelContents;
+        private System.Windows.Forms.Panel designerPanel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel1;
     }
 }

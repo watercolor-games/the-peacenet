@@ -53,5 +53,27 @@ namespace ShiftOS.WinForms.Applications
         {
              
         }
+
+        private void placeAdd_Click(object sender, EventArgs e)
+        {
+            Label label = new Label();
+            label.Parent = designerPanel;
+            label.BackColor = Color.Transparent;
+            label.ForeColor = panel1.BackColor;
+            label.Text = labelContents.Text;
+            label.Location = new Point(Convert.ToInt32(xPosition.Value), Convert.ToInt32(yPosition.Value));
+            label.Text = labelContents.Text;
+            Random rnd = new Random();
+            label.Name = labelContents.Text + rnd.Next(0, 500);
+        }
+
+        private void panel1_Click(object sender, EventArgs e)
+        {
+            AppearanceManager.SetupDialog(new ColorPicker(panel1.BackColor, "Text Color", new Action<Color>((col) =>
+            {
+                panel1.ForeColor = col;
+                panel1.BackColor = col;
+            })));
+        }
     }
 }
