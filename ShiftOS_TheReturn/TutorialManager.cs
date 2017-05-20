@@ -30,10 +30,18 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Engine
 {
+    [Obsolete("This isn't used... I don't think...")]
     public static class TutorialManager
     {
+        /// <summary>
+        /// The tutorial frontend.
+        /// </summary>
         private static ITutorial _tut = null;
 
+        /// <summary>
+        /// Registers a tutorial frontend to the backend.
+        /// </summary>
+        /// <param name="tut"></param>
         public static void RegisterTutorial(ITutorial tut)
         {
             IsInTutorial = false;
