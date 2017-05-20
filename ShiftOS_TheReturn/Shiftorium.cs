@@ -34,6 +34,9 @@ using System.Diagnostics;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Backend class for the Shiftorium.
+    /// </summary>
     public static class Shiftorium
     {
         /// <summary>
@@ -62,11 +65,19 @@ namespace ShiftOS.Engine
             return cats.ToArray();
         }
 
+        /// <summary>
+        /// Causes the engine to alert the frontend of a new Shiftorium upgrade install.
+        /// </summary>
         public static void InvokeUpgradeInstalled()
         {
             Installed?.Invoke();
         }
 
+        /// <summary>
+        /// Gets the category of an upgrade.
+        /// </summary>
+        /// <param name="id">The upgrade ID to check</param>
+        /// <returns>"Other" if the upgrade is not found, else, the upgrade category.</returns>
         public static string GetCategory(string id)
         {
             var upg = GetDefaults().FirstOrDefault(x => x.ID == id);
@@ -75,16 +86,32 @@ namespace ShiftOS.Engine
             return (upg.Category == null) ? "Other" : upg.Category;
         }
 
+        /// <summary>
+        /// Gets all upgrades in a given category.
+        /// </summary>
+        /// <param name="cat">The category name to search</param>
+        /// <returns>The upgrades in the category.</returns>
         public static IEnumerable<ShiftoriumUpgrade> GetAllInCategory(string cat)
         {
             return GetDefaults().Where(x => x.Category == cat);
         }
 
+        /// <summary>
+        /// Gets whether or not the user has installed all upgrades in a category.
+        /// </summary>
+        /// <param name="cat">The category to search.</param>
+        /// <returns>Boolean value representing whether the user has installed all upgrades in the category.</returns>
         public static bool IsCategoryEmptied(string cat)
         {
             return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => x.Installed == false) == null;
         }
 
+        /// <summary>
+        /// Buy an upgrade, deducting the specified amount of Codepoints.
+        /// </summary>
+        /// <param name="id">The upgrade ID to buy</param>
+        /// <param name="cost">The amount of Codepoints to deduct</param>
+        /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Codepoints or the upgrade wasn' found.</returns>
         public static bool Buy(string id, long cost)
         {
             if(SaveSystem.CurrentSave.Codepoints >= cost)
@@ -105,6 +132,11 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Determines whether all Shiftorium upgrade attributes for this type have been installed.
+        /// </summary>
+        /// <param name="type">The type to scan</param>
+        /// <returns>Boolean value representing the result of this function.</returns>
         public static bool UpgradeAttributesUnlocked(Type type)
         {
             foreach(var attr in type.GetCustomAttributes(true))
@@ -119,6 +151,11 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Determines whether all Shiftorium upgrade attributes for this method have been installed.
+        /// </summary>
+        /// <param name="type">The method to scan</param>
+        /// <returns>Boolean value representing the result of this function.</returns>
         public static bool UpgradeAttributesUnlocked(MethodInfo type)
         {
             foreach (var attr in type.GetCustomAttributes(true))
@@ -133,6 +170,11 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Determines whether all Shiftorium upgrade attributes for this property have been installed.
+        /// </summary>
+        /// <param name="type">The property to scan</param>
+        /// <returns>Boolean value representing the result of this function.</returns>
         public static bool UpgradeAttributesUnlocked(PropertyInfo type)
         {
             foreach (var attr in type.GetCustomAttributes(true))
@@ -147,6 +189,11 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Determines whether all Shiftorium upgrade attributes for this field have been installed.
+        /// </summary>
+        /// <param name="type">The field to scan</param>
+        /// <returns>Boolean value representing the result of this function.</returns>
         public static bool UpgradeAttributesUnlocked(FieldInfo type)
         {
             foreach (var attr in type.GetCustomAttributes(true))
@@ -161,8 +208,16 @@ namespace ShiftOS.Engine
             return true;
         }
 
+
+        /// <summary>
+        /// Gets or sets whether the Shiftorium has been initiated.
+        /// </summary>
         public static bool IsInitiated { get; private set; }
 
+
+        /// <summary>
+        /// Initiates the Shiftorium.
+        /// </summary>
         public static void Init()
         {
             if (IsInitiated == false)
@@ -188,6 +243,11 @@ namespace ShiftOS.Engine
 
         }
 
+        /// <summary>
+        /// Get the codepoint value for an upgrade.
+        /// </summary>
+        /// <param name="id">The upgrade ID to search</param>
+        /// <returns>The codepoint value.</returns>
         public static long GetCPValue(string id)
         {
             foreach(var upg in GetDefaults())
@@ -198,6 +258,10 @@ namespace ShiftOS.Engine
             return 0;
         }
 
+        /// <summary>
+        /// Gets all available upgrades.
+        /// </summary>
+        /// <returns></returns>
         public static ShiftoriumUpgrade[] GetAvailable()
         {
             List<ShiftoriumUpgrade> available = new List<ShiftoriumUpgrade>();
@@ -209,6 +273,11 @@ namespace ShiftOS.Engine
             return available.ToArray();
         }
 
+        /// <summary>
+        /// Determines whether all dependencies of a given upgrade have been installed.
+        /// </summary>
+        /// <param name="upg">The upgrade to scan</param>
+        /// <returns>Boolean representing the result of this function.</returns>
         public static bool DependenciesInstalled(ShiftoriumUpgrade upg)
         {
             if (string.IsNullOrEmpty(upg.Dependencies))
@@ -231,8 +300,16 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Fired when an upgrade is installed.
+        /// </summary>
         public static event EmptyEventHandler Installed;
 
+        /// <summary>
+        /// Determines if an upgrade is installed.
+        /// </summary>
+        /// <param name="id">The upgrade ID to scan.</param>
+        /// <returns>Whether the upgrade is installed.</returns>
         public static bool UpgradeInstalled(string id)
         {
             if (SaveSystem.CurrentSave != null)
@@ -286,7 +363,10 @@ namespace ShiftOS.Engine
             _provider = p;
         }
 
-        //Bless the newer NEWER engine.
+        /// <summary>
+        /// Gets every upgrade inside the frontend and all mods.
+        /// </summary>
+        /// <returns>Every single found Shiftorium upgrade.</returns>
         public static List<ShiftoriumUpgrade> GetDefaults()
         {
             List<ShiftoriumUpgrade> list = new List<ShiftoriumUpgrade>();
@@ -405,6 +485,10 @@ namespace ShiftOS.Engine
 
     public interface IShiftoriumProvider
     {
+        /// <summary>
+        /// Retrieves all frontend upgrades.
+        /// </summary>
+        /// <returns></returns>
         List<ShiftoriumUpgrade> GetDefaults();
     }
 
