@@ -32,12 +32,22 @@ using System.Windows.Forms;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Backend class for forwarding <see cref="System.Console"/> to the ShiftOS terminal. 
+    /// </summary>
     public class TerminalTextWriter : TextWriter
     {
+        /// <summary>
+        /// Win32 API call to lock the window from being updated.
+        /// </summary>
+        /// <param name="hWndLock">The Win32 window handle</param>
+        /// <returns>...I....have no idea.</returns>
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
         
-
+        /// <summary>
+        /// Gets the encoding format for this <see cref="TextWriter"/>. God bless the Unicode Consortiem. 
+        /// </summary>
         public override Encoding Encoding
         {
             get
@@ -46,6 +56,9 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Gets the underlying <see cref="ITerminalWidget"/> that this <see cref="TerminalTextWriter"/> is forwarding to.  
+        /// </summary>
         public ITerminalWidget UnderlyingControl
         {
             get
@@ -54,6 +67,9 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Moves the caret to the last character in the textbox.
+        /// </summary>
         public void select()
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
@@ -63,6 +79,10 @@ namespace ShiftOS.Engine
             }));
         }
 
+        /// <summary>
+        /// Write a character to the Terminal.
+        /// </summary>
+        /// <param name="value">The character to write.</param>
         public override void Write(char value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
@@ -82,6 +102,10 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Write text to the Terminal, followed by a newline.
+        /// </summary>
+        /// <param name="value">The text to write.</param>
         public override void WriteLine(string value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
@@ -102,10 +126,15 @@ namespace ShiftOS.Engine
             }
         }
 
+        [Obsolete("Stub.")]
         public void SetLastText()
         {
         }
 
+        /// <summary>
+        /// Write text to the Terminal.
+        /// </summary>
+        /// <param name="value">The text to write.</param>
         public override void Write(string value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
