@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -26,17 +27,18 @@ namespace ShiftOS.WinForms.Applications
         private void addLabelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             addItemLabel.Text = "Add Label";
-            AddItem.Show();
+            addLabel.Show();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            AddItem.Hide();
+            addLabel.Hide();
         }
 
         public void OnLoad()
         {
-            
+            panel1.ForeColor = Color.Black;
+            panel1.BackColor = Color.Black;
         }
 
         public void OnSkinLoad()
@@ -56,15 +58,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void placeAdd_Click(object sender, EventArgs e)
         {
-            Label label = new Label();
-            label.Parent = designerPanel;
-            label.BackColor = Color.Transparent;
-            label.ForeColor = panel1.BackColor;
-            label.Text = labelContents.Text;
-            label.Location = new Point(Convert.ToInt32(xPosition.Value), Convert.ToInt32(yPosition.Value));
-            label.Text = labelContents.Text;
-            Random rnd = new Random();
-            label.Name = labelContents.Text + rnd.Next(0, 500);
+            
         }
 
         private void panel1_Click(object sender, EventArgs e)
@@ -74,6 +68,20 @@ namespace ShiftOS.WinForms.Applications
                 panel1.ForeColor = col;
                 panel1.BackColor = col;
             })));
+        }
+
+        private void designerPanel_Click(object sender, EventArgs e)
+        {
+            if (addLabel.Visible == true)
+            {
+                    Label label = new Label();
+                    label.Parent = designerPanel;
+                    label.BackColor = Color.Transparent;
+                    label.ForeColor = panel1.BackColor;
+                    label.Text = labelContents.Text;
+                    label.Location = new Point(Cursor.Position.X / 3, Cursor.Position.Y);
+                    label.Text = labelContents.Text;
+            }
         }
     }
 }
