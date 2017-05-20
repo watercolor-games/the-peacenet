@@ -76,6 +76,12 @@
     <Compile Include="Applications\TriPresent.Designer.cs">
       <DependentUpon>TriPresent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\TriSheet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriSheet.Designer.cs">
+      <DependentUpon>TriSheet.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\TriWrite.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -420,6 +426,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriPresent.resx">
       <DependentUpon>TriPresent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriSheet.resx">
+      <DependentUpon>TriSheet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriWrite.resx">
       <DependentUpon>TriWrite.cs</DependentUpon>
