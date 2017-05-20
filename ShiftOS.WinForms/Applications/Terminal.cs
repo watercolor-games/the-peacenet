@@ -541,6 +541,16 @@ namespace ShiftOS.WinForms.Applications
                 Thread.Sleep(2000);
                 Console.WriteLine("Pretty cool, it gave you a nice list of other win.open commands that will let you open each program.");
                 Thread.Sleep(2000);
+                Console.WriteLine("You've got the just of using ShiftOS. Now, for your goal.");
+                Thread.Sleep(2000);
+                Console.WriteLine("As you know, ShiftOS doesn't have very many features.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Using the applications you have, I need you to earn 50,000 Codepoints.");
+                Thread.Sleep(2000);
+                Console.WriteLine("You can use the Codepoints you earn to buy new applications and features in the Shiftorium, to help earn Codepoints.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Start small, try to earn 500. Once you do, I'll contact you with more details.");
+                Thread.Sleep(2000);
                 Console.WriteLine("I'll leave you to it, you've got the hang of it! One last thing, if ever you find yourself in another program, and want to exit, simply press CTRL+T to return to the Terminal.");
                 Thread.Sleep(2000);
                 TerminalBackend.PrefixEnabled = true;
