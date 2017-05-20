@@ -134,7 +134,6 @@
     <Compile Include="TutorialManager.cs" />
     <Compile Include="UniteClient.cs" />
     <Compile Include="UserManagementCommands.cs" />
-    <Compile Include="VirusEngine.cs" />
     <Compile Include="WinOpenAttribute.cs" />
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>
