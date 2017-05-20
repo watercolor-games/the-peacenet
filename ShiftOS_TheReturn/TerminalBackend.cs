@@ -34,12 +34,26 @@ using static ShiftOS.Engine.SaveSystem;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Backend for the ShiftOS terminal.
+    /// </summary>
     public static class TerminalBackend
     {
+        /// <summary>
+        /// Occurs when a command is processed.
+        /// </summary>
         public static event Action<string, string> CommandProcessed;
 
+        /// <summary>
+        /// Gets or sets whether the current command is elevated.
+        /// </summary>
         public static bool Elevated { get; set; }
 
+        /// <summary>
+        /// Parses command-line arguments using the ShiftOS syntax and stores them in a <see cref="Dictionary{string, string}"/>, removing the parsed text from the original string.
+        /// </summary>
+        /// <param name="text">The text to parse.</param>
+        /// <returns><see cref="Dictionary{string, string}"/> containing the parsed arguments.</returns>
         public static Dictionary<string, string> GetArgs(ref string text)
         {
             bool shouldParse = false;
@@ -64,8 +78,18 @@ namespace ShiftOS.Engine
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(args);
         }
 
+        /// <summary>
+        /// String representing the last command entered by the user.
+        /// </summary>
         public static string LastCommand = "";
 
+        /// <summary>
+        /// Invokes a ShiftOS terminal command.
+        /// </summary>
+        /// <param name="ns">The command's namespace.</param>
+        /// <param name="command">The command name.</param>
+        /// <param name="arguments">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false)
         {
             try
@@ -97,6 +121,11 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Transforms a <see cref="Dictionary{String, String}"/> of arguments to a <see cref="Dictionary{String, Object}"/>.  
+        /// </summary>
+        /// <param name="argss">The original argument dictionary to convert.</param>
+        /// <returns>The converted dictionary.</returns>
         public static string GetSentArgs(Dictionary<string, string> argss)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -107,6 +136,11 @@ namespace ShiftOS.Engine
             return JsonConvert.SerializeObject(args);
         }
 
+        /// <summary>
+        /// Invokes a ShiftOS terminal command.
+        /// </summary>
+        /// <param name="text">The full command text in regular ShiftOS syntax</param>
+        /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string text, bool isRemote = false)
         {
             try
@@ -138,19 +172,40 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether the user prefix is printed after a command completes.
+        /// </summary>
         public static bool PrefixEnabled { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether the user is in a story plot, and thus, the terminal input should be disabled.
+        /// </summary>
         public static bool InStory { get; set; }
 
+        /// <summary>
+        /// Another latest command string.
+        /// </summary>
         public static string latestCommmand = "";
 
+        /// <summary>
+        /// Occurs when the engine requests a Terminal to be open.
+        /// </summary>
         public static event EmptyEventHandler TerminalRequested;
 
+        /// <summary>
+        /// Opens a Terminal.
+        /// </summary>
         internal static void OpenTerminal()
         {
             TerminalRequested?.Invoke();
         }
 
+        /// <summary>
+        /// Determines if the specified command method can be ran in RTS
+        /// </summary>
+        /// <param name="mth">The method to scan</param>
+        /// <param name="isRemote">Is the user in an RTS session?</param>
+        /// <returns>Whether the command can be run.</returns>
         public static bool CanRunRemotely(MethodInfo mth, bool isRemote)
         {
             if (!isRemote)
@@ -165,12 +220,26 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Runs a command on the client-side.
+        /// </summary>
+        /// <param name="ns">The command's namespace.</param>
+        /// <param name="cmd">The command name.</param>
+        /// <param name="args">The command's arguments.</param>
+        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string ns, string cmd, Dictionary<string, string> args, bool isRemote = false)
         {
             return RunClient(ns + "." + cmd, args, isRemote);
         }
 
-
+        /// <summary>
+        /// Runs a command on the client.
+        /// </summary>
+        /// <param name="text">The command text.</param>
+        /// <param name="argss">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string text, Dictionary<string, string> argss, bool isRemote = false)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -181,6 +250,13 @@ namespace ShiftOS.Engine
             return RunClient(text, args, isRemote);
         }
 
+        /// <summary>
+        /// Runs a command on the client.
+        /// </summary>
+        /// <param name="text">The command text.</param>
+        /// <param name="args">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be run in RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false)
         {
             latestCommmand = text;
@@ -420,6 +496,9 @@ namespace ShiftOS.Engine
             return false;
         }
 
+        /// <summary>
+        /// Prints the user prompt to the terminal.
+        /// </summary>
         public static void PrintPrompt()
         {
             if (SaveSystem.CurrentSave != null && CurrentUser != null)
@@ -459,7 +538,9 @@ namespace ShiftOS.Engine
             }
         }
 
-
+        /// <summary>
+        /// Static constructor for <see cref="TerminalBackend"/>. 
+        /// </summary>
         static TerminalBackend()
         {
             ServerMessageReceived onMessageReceived = (msg) =>
@@ -514,11 +595,25 @@ namespace ShiftOS.Engine
             ServerManager.MessageReceived += onMessageReceived;
         }
 
+        /// <summary>
+        /// Gets whether the terminal backend is forwarding console write requests through RTS to a remote client.
+        /// </summary>
         public static bool IsForwardingConsoleWrites { get; internal set; }
+
+        /// <summary>
+        /// Gets the RTS forward GUID.
+        /// </summary>
         public static string ForwardGUID { get; internal set; }
 
+        /// <summary>
+        /// Occurs when the user inputs text in a Terminal.
+        /// </summary>
         public static event TextSentEventHandler TextSent;
 
+        /// <summary>
+        /// Fakes the user inputting text to a Terminal.
+        /// </summary>
+        /// <param name="text">The text to input.</param>
         public static void SendText(string text)
         {
             TextSent?.Invoke(text);
