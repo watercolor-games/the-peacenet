@@ -133,7 +133,6 @@
     <Compile Include="TerminalTextWriter.cs" />
     <Compile Include="TutorialManager.cs" />
     <Compile Include="UniteClient.cs" />
-    <Compile Include="UniteTestCommands.cs" />
     <Compile Include="UserManagementCommands.cs" />
     <Compile Include="VirusEngine.cs" />
     <Compile Include="WinOpenAttribute.cs" />
