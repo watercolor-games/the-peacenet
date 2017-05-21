@@ -56,6 +56,7 @@
     <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="Shop.cs" />
+    <Compile Include="UniteClient.cs" />
     <Compile Include="Unite\Download.cs" />
     <Compile Include="Unite\ReleaseQuery.cs" />
     <Compile Include="UserConfig.cs" />
