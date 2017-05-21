@@ -35,6 +35,7 @@ using ShiftOS;
 using static ShiftOS.Engine.SaveSystem;
 using Newtonsoft.Json;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace ShiftOS.Engine
 {
@@ -53,6 +54,12 @@ namespace ShiftOS.Engine
         public static Guid thisGuid { get; private set; }
         private static NetObjectClient client { get; set; }
         private static bool UserDisconnect = false;
+
+        public static long DigitalSocietyPing
+        {
+            get;
+            private set;
+        }
 
         public static void Disconnect()
         {
@@ -139,6 +146,11 @@ namespace ShiftOS.Engine
             };
             client.OnReceived += (o, a) =>
             {
+                if (PingTimer.IsRunning)
+                {
+                    DigitalSocietyPing = PingTimer.ElapsedMilliseconds;
+                    PingTimer.Reset();
+                }
                 var msg = a.Data.Object as ServerMessage;
                 if (msg.Name == "Welcome")
                 {
@@ -207,6 +219,8 @@ namespace ShiftOS.Engine
             }
         }
 
+        private static Stopwatch PingTimer = new Stopwatch();
+
         public static void SendMessage(string name, string contents)
         {
             var sMsg = new ServerMessage
@@ -215,7 +229,7 @@ namespace ShiftOS.Engine
                 Contents = contents,
                 GUID = thisGuid.ToString(),
             };
-
+            PingTimer.Start();
             client.Send(new NetObject("msg", sMsg));
 
         }

@@ -70,9 +70,7 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\TriWrite.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Applications\TriWrite.cs" />
     <Compile Include="Applications\TriWrite.Designer.cs">
       <DependentUpon>TriWrite.cs</DependentUpon>
     </Compile>
@@ -178,9 +176,7 @@
     <Compile Include="Applications\Notifications.Designer.cs">
       <DependentUpon>Notifications.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\Pong.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Applications\Pong.cs" />
     <Compile Include="Applications\Pong.Designer.cs">
       <DependentUpon>Pong.cs</DependentUpon>
     </Compile>
@@ -202,9 +198,7 @@
     <Compile Include="Applications\Shiftnet.Designer.cs">
       <DependentUpon>Shiftnet.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\ShiftoriumFrontend.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Applications\ShiftoriumFrontend.cs" />
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </Compile>
@@ -226,9 +220,7 @@
     <Compile Include="Applications\ShopItemCreator.Designer.cs">
       <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\Skin Loader.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Applications\Skin Loader.cs" />
     <Compile Include="Applications\Skin Loader.Designer.cs">
       <DependentUpon>Skin Loader.cs</DependentUpon>
     </Compile>
@@ -298,6 +290,12 @@
     <Compile Include="DesktopWidgets\CodepointsWidget.Designer.cs">
       <DependentUpon>CodepointsWidget.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.Designer.cs">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
+    </Compile>
     <Compile Include="DesktopWidgets\TerminalWidget.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -317,6 +315,12 @@
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIFunctions.cs" />
+    <Compile Include="GUILogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUILogin.Designer.cs">
+      <DependentUpon>GUILogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
@@ -502,6 +506,9 @@
     <EmbeddedResource Include="DesktopWidgets\CodepointsWidget.resx">
       <DependentUpon>CodepointsWidget.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\HeartbeatWidget.resx">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DesktopWidgets\TerminalWidget.resx">
       <DependentUpon>TerminalWidget.cs</DependentUpon>
     </EmbeddedResource>
@@ -510,6 +517,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUILogin.resx">
+      <DependentUpon>GUILogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>

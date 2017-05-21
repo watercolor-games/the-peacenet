@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 using Newtonsoft.Json;
 using System.Net;
+using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms
 {
@@ -99,7 +100,7 @@ namespace ShiftOS.WinForms
 
             try
             {
-                var webrequest = HttpWebRequest.Create("http://getshiftos.ml/Auth/Register?appname=ShiftOS&appdesc=ShiftOS+client&version=1_0_beta_2_4&displayname=" + txtdisplay.Text + "&sysname=" + txtsysname.Text);
+                var webrequest = HttpWebRequest.Create(UserConfig.Get().UniteUrl + "/Auth/Register?appname=ShiftOS&appdesc=ShiftOS+client&version=1_0_beta_2_4&displayname=" + txtdisplay.Text + "&sysname=" + txtsysname.Text);
                 string base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{u}:{p}"));
                 webrequest.Headers.Add("Authentication: Basic " + base64);
                 var response = webrequest.GetResponse();

@@ -34,8 +34,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using static ShiftOS.Objects.ShiftFS.Utils;
-using Newtonsoft.Json;
 using ShiftOS.Engine;
+using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -129,8 +129,14 @@ namespace ShiftOS.WinForms.Applications
         {
             int amountsCalled = -1;
             amountsCalled = amountsCalled + 1;
-            pinnedItems.Nodes.Add(path);
-            pinnedItems.Nodes[amountsCalled].Nodes.Add("test");
+            List<string> Pinned = new List<string>();
+            if(FileExists(Paths.GetPath("data") + "/pinned_items.dat"))
+            {
+                Pinned = JsonConvert.DeserializeObject<List<string>>(ReadAllText(Paths.GetPath("data") + "/pinned_items.dat"));
+            }
+            Pinned.Add(path);
+            WriteAllText(Paths.GetPath("data") + "/pinned_items.dat", JsonConvert.SerializeObject(Pinned));
+            ResetList();
         }
 
         public void ChangeDirectory(string path)
@@ -153,8 +159,40 @@ namespace ShiftOS.WinForms.Applications
             }
         }
 
+        public void PopulatePinned(TreeNode node, string[] items)
+        {
+            foreach(var dir in items)
+            {
+                var treenode = new TreeNode();
+                if (DirectoryExists(dir))
+                {
+                    var dinf = GetDirectoryInfo(dir);
+                    treenode.Text = dinf.Name;
+                }
+                else if (FileExists(dir))
+                {
+                    var finf = GetFileInfo(dir);
+                    treenode.Text = finf.Name;
+                }
+                treenode.Tag = dir;
+                node.Nodes.Add(treenode);
+            }
+        }
+
         public void ResetList()
         {
+            pinnedItems.Nodes.Clear();
+            List<string> Pinned = new List<string>();
+            if(FileExists(Paths.GetPath("data") + "/pinned_items.dat"))
+            {
+                Pinned = JsonConvert.DeserializeObject<List<string>>(ReadAllText(Paths.GetPath("data") + "/pinned_items.dat"));
+            }
+            var node = new TreeNode();
+            node.Text = "Pinned";
+            PopulatePinned(node, Pinned.ToArray());
+            pinnedItems.Nodes.Add(node);
+            node.ExpandAll();
+
             if(lvitems.LargeImageList == null)
             {
                 lvitems.LargeImageList = new ImageList();
@@ -423,18 +461,39 @@ namespace ShiftOS.WinForms.Applications
                 {
                     if (result == true)
                     {
-                        if (currentdir != "__system")
+                        if (currentdir != "__system" && lvitems.SelectedItems[0].Text != "Up one")
                         {
                             pinDirectory(currentdir + "/" + lvitems.SelectedItems[0].Text);
                             ResetList();
                         }
                         else
                         {
-                            Infobox.Show("Cannot Pin", "You cannot pin a system drive.");
+                            Infobox.Show("Cannot Pin", "You can only pin files or folders.");
                         }
                             
                     }
                 });
+            }
+            catch { }
+        }
+
+        private void pinnedItems_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pinnedItems.SelectedNode != null)
+                {
+                    string path = pinnedItems.SelectedNode.Tag.ToString();
+                    if (DirectoryExists(path))
+                    {
+                        currentdir = path;
+                        ResetList();
+                    }
+                    else if (FileExists(path))
+                    {
+                        FileSkimmerBackend.OpenFile(path);
+                    }
+                }
             }
             catch { }
         }

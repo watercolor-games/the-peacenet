@@ -70,7 +70,7 @@ namespace ShiftOS.Engine
             {
                 var root = new ShiftOS.Objects.ShiftFS.Directory();
                 root.Name = "System";
-                root.permissions = Permissions.All;
+                root.permissions = UserPermissions.Guest;
                 System.IO.File.WriteAllText(Paths.SaveFile, JsonConvert.SerializeObject(root));
             }
 
@@ -98,13 +98,25 @@ namespace ShiftOS.Engine
                 }
 
                 Thread.Sleep(350);
-                Console.WriteLine("Initiating kernel...");
+                Console.WriteLine("ShiftKernel v0.4.2");
+                Console.WriteLine("(MIT) DevX 2017, Very Little Rights Reserved");
+                Console.WriteLine("");
+                Console.WriteLine("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
+                Console.WriteLine("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
+                Console.WriteLine("FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE");
+                Console.WriteLine("AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER");
+                Console.WriteLine("LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,");
+                Console.WriteLine("OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE");
+                Console.WriteLine("SOFTWARE.");
+                Console.WriteLine("");
                 Thread.Sleep(250);
-                Console.WriteLine("Reading filesystem...");
+                Console.WriteLine("[init] Kernel boot complete.");
+                Console.WriteLine("[sfs] Loading SFS driver v3");
                 Thread.Sleep(100);
-                Console.WriteLine("Reading configuration...");
+                Console.WriteLine("[sfs] 4096 blocks read.");
+                Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
 
-                Console.WriteLine("{CONNECTING_TO_MUD}");
+                Console.WriteLine("[inetd] Connecting to network...");
 
                 if (defaultConf.ConnectToMud == true)
                 {
@@ -113,32 +125,32 @@ namespace ShiftOS.Engine
                     {
                         //Connection successful! Stop waiting!
                         guidReceived = true;
-                        Console.WriteLine("Connection successful.");
+                        Console.WriteLine("[inetd] Connection successful.");
                     };
 
                     try
                     {
                         
-                        ServerManager.Initiate("secondary4162.cloudapp.net", 13370);
+                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
                         //This haults the client until the connection is successful.
                         while (ServerManager.thisGuid == new Guid())
                         {
                             Thread.Sleep(10);
                         }
-                        Console.WriteLine("GUID received - bootstrapping complete.");
+                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
                         FinishBootstrap();
                     }
                     catch (Exception ex)
                     {
                         //No errors, this never gets called.
-                        Console.WriteLine("{ERROR}: " + ex.Message);
+                        Console.WriteLine("[inetd] SEVERE: " + ex.Message);
                         Thread.Sleep(3000);
                         ServerManager.StartLANServer();
                         while (ServerManager.thisGuid == new Guid())
                         {
                             Thread.Sleep(10);
                         }
-                        Console.WriteLine("GUID received - bootstrapping complete.");
+                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
                         FinishBootstrap();
                     }
                 }
@@ -196,14 +208,60 @@ namespace ShiftOS.Engine
             Thread.Sleep(75);
 
             Thread.Sleep(50);
-            Console.WriteLine("{SYSTEM_INITIATED}");
+            Console.WriteLine("[usr-man] Accepting logins on local tty 1.");
 
+            Sysname:
+            bool waitingForNewSysName = false;
+            bool gobacktosysname = false;
+
+            if (string.IsNullOrWhiteSpace(CurrentSave.SystemName))
+            {
+                Infobox.PromptText("Enter a system name", "Your system does not have a name. All systems within the digital society must have a name. Please enter one.", (name) =>
+                {
+                    if (string.IsNullOrWhiteSpace(name))
+                        Infobox.Show("Invalid name", "Please enter a valid name.", () =>
+                        {
+                            gobacktosysname = true;
+                            waitingForNewSysName = false;
+                        });
+                    else if (name.Length < 5)
+                        Infobox.Show("Value too small.", "Your system name must have at least 5 characters in it.", () =>
+                        {
+                            gobacktosysname = true;
+                            waitingForNewSysName = false;
+                        });
+                    else
+                    {
+                        CurrentSave.SystemName = name;
+                        if (!string.IsNullOrWhiteSpace(CurrentSave.UniteAuthToken))
+                        {
+                            var unite = new Unite.UniteClient("http://getshiftos.ml", CurrentSave.UniteAuthToken);
+                            unite.SetSysName(name);
+                        }
+                        SaveSystem.SaveGame();
+                        gobacktosysname = false;
+                        waitingForNewSysName = false;
+                    }
+                });
+
+
+            }
+
+            while (waitingForNewSysName)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (gobacktosysname)
+            {
+                goto Sysname;
+            }
 
             if (CurrentSave.Users == null)
                 CurrentSave.Users = new List<ClientSave>();
 
 
-            if(CurrentSave.Users.Count == 0)
+            if (CurrentSave.Users.Count == 0)
             {
                 CurrentSave.Users.Add(new ClientSave
                 {
@@ -211,76 +269,101 @@ namespace ShiftOS.Engine
                     Password = "",
                     Permissions = UserPermissions.Root
                 });
-                Console.WriteLine("No users found. Creating new user with username \"root\", with no password.");
+                Console.WriteLine("[usr-man] WARN: No users found. Creating new user with username \"root\", with no password.");
             }
             TerminalBackend.InStory = false;
 
             TerminalBackend.PrefixEnabled = false;
 
-            Login:
-            string username = "";
-            int progress = 0;
-            bool goback = false;
-            TextSentEventHandler ev = null;
-            ev = (text) =>
+            if (LoginManager.ShouldUseGUILogin)
             {
-                if (progress == 0)
+                Action<ClientSave> Completed = null;
+                Completed += (user) =>
                 {
-                    if (!string.IsNullOrWhiteSpace(text))
+                    CurrentUser = user;
+                    LoginManager.LoginComplete -= Completed;
+                };
+                LoginManager.LoginComplete += Completed;
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    LoginManager.PromptForLogin();
+                });
+                while (CurrentUser == null)
+                {
+                    Thread.Sleep(10);
+                }
+            }
+            else
+            {
+
+                Login:
+                string username = "";
+                int progress = 0;
+                bool goback = false;
+                TextSentEventHandler ev = null;
+                ev = (text) =>
+                {
+                    if (progress == 0)
                     {
-                        if (CurrentSave.Users.FirstOrDefault(x => x.Username == text) == null)
+                        string loginstr = CurrentSave.SystemName + " login: ";
+                        string getuser = text.Remove(0, loginstr.Length);
+                        if (!string.IsNullOrWhiteSpace(getuser))
                         {
-                            Console.WriteLine("User not found.");
+                            if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
+                            {
+                                Console.WriteLine("User not found.");
+                                goback = true;
+                                progress++;
+                                TerminalBackend.TextSent -= ev;
+                                return;
+                            }
+                            username = getuser;
+                            progress++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Username not provided.");
+                            TerminalBackend.TextSent -= ev;
                             goback = true;
                             progress++;
-                            TerminalBackend.TextSent -= ev;
-                            return;
                         }
-                        username = text;
-                        progress++;
                     }
-                    else
+                    else if (progress == 1)
                     {
-                        Console.WriteLine("Username not provided.");
+                        string passwordstr = "password: ";
+                        string getpass = text.Remove(0, passwordstr.Length);
+                        var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
+                        if (user.Password == getpass)
+                        {
+                            Console.WriteLine("Welcome to ShiftOS.");
+                            CurrentUser = user;
+                            Thread.Sleep(2000);
+                            progress++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Access denied.");
+                            goback = true;
+                            progress++;
+                        }
                         TerminalBackend.TextSent -= ev;
-                        goback = true;
-                        progress++;
                     }
-                }
-                else if (progress == 1)
+                };
+                TerminalBackend.TextSent += ev;
+
+                Console.Write(CurrentSave.SystemName + " login: ");
+                while (progress == 0)
                 {
-                    var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
-                    if (user.Password == text)
-                    {
-                        Console.WriteLine("Welcome to ShiftOS.");
-                        CurrentUser = user;
-                        Thread.Sleep(2000);
-                        progress++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Access denied.");
-                        goback = true;
-                        progress++;
-                    }
-                    TerminalBackend.TextSent -= ev;
+                    Thread.Sleep(10);
                 }
-            };
-            TerminalBackend.TextSent += ev;
-            Console.WriteLine(CurrentSave.SystemName + " login:");
-            while(progress == 0)
-            {
-                Thread.Sleep(10);
+                if (goback)
+                    goto Login;
+                Console.Write("password: ");
+                while (progress == 1)
+                    Thread.Sleep(10);
+                if (goback)
+                    goto Login;
             }
-            if (goback)
-                goto Login;
-            Console.WriteLine("password:");
-            while (progress == 1)
-                Thread.Sleep(10);
-            if (goback)
-                goto Login;
-
-
             TerminalBackend.PrefixEnabled = true;
             Shiftorium.LogOrphanedUpgrades = true;
             Desktop.InvokeOnWorkerThread(new Action(() =>

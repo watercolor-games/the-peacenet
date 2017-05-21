@@ -120,7 +120,7 @@ namespace ShiftOS.WinForms
                     Console.Write(" ");
                     ConsoleEx.BackgroundColor = ConsoleColor.Black;
                 }
-                Engine.AudioManager.PlayStream(Properties.Resources.typesound);
+                Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.typesound));
                 formatProgress++;
                 Thread.Sleep(175);
             }
@@ -135,15 +135,15 @@ namespace ShiftOS.WinForms
                 {
                     Console.WriteLine("Creating: " + dir);
                     Thread.Sleep(125);
-                    Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                    Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.writesound));
                 }
             }
             Console.WriteLine();
             Console.WriteLine("Next, let's get user information.");
             Console.WriteLine();
             ShiftOS.Engine.OutOfBoxExperience.PromptForLogin();
-
         }
+
         private static bool isValid(string text, string chars)
         {
             foreach(var c in text)

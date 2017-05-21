@@ -8,6 +8,13 @@
 		Category: "Enhancements",
 	},
 	{
+		Name: "GUI Based Login Screen",
+		Cost: 500,
+		Description: "Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, why not use these tools to create a functioning and awesome-looking login screen?",
+		Dependencies: "skinning;desktop;wm_free_placement",
+		Category: "Kernel & System"
+	},
+	{
 		Name: "Shift Screensavers",
 		Cost: 100,
 		Description: "This Shifter upgrade will allow you to customize the screensaver.",
