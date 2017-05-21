@@ -34,13 +34,11 @@
             // 
             // pgupgrades
             // 
-            this.pgupgrades.BlockSize = 5;
             this.pgupgrades.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pgupgrades.Location = new System.Drawing.Point(0, 99);
             this.pgupgrades.Maximum = 100;
             this.pgupgrades.Name = "pgupgrades";
             this.pgupgrades.Size = new System.Drawing.Size(227, 23);
-            this.pgupgrades.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgupgrades.TabIndex = 0;
             this.pgupgrades.Text = "shiftedProgressBar1";
             this.pgupgrades.Value = 0;

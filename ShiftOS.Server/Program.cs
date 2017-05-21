@@ -92,6 +92,7 @@ namespace ShiftOS.Server
                 System.Diagnostics.Process.Start("ShiftOS.Server.exe");
                 Environment.Exit(0);
             };
+            UserConfig.Get();
             System.Timers.Timer tmr = new System.Timers.Timer(5000);
             tmr.Elapsed += (o, a) =>
             {

@@ -70,7 +70,21 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\TriWrite.cs" />
+    <Compile Include="Applications\TriPresent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriPresent.Designer.cs">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriSheet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriSheet.Designer.cs">
+      <DependentUpon>TriSheet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriWrite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Applications\TriWrite.Designer.cs">
       <DependentUpon>TriWrite.cs</DependentUpon>
     </Compile>
@@ -176,7 +190,9 @@
     <Compile Include="Applications\Notifications.Designer.cs">
       <DependentUpon>Notifications.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\Pong.cs" />
+    <Compile Include="Applications\Pong.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Applications\Pong.Designer.cs">
       <DependentUpon>Pong.cs</DependentUpon>
     </Compile>
@@ -198,7 +214,9 @@
     <Compile Include="Applications\Shiftnet.Designer.cs">
       <DependentUpon>Shiftnet.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\ShiftoriumFrontend.cs" />
+    <Compile Include="Applications\ShiftoriumFrontend.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
     </Compile>
@@ -220,7 +238,9 @@
     <Compile Include="Applications\ShopItemCreator.Designer.cs">
       <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\Skin Loader.cs" />
+    <Compile Include="Applications\Skin Loader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Applications\Skin Loader.Designer.cs">
       <DependentUpon>Skin Loader.cs</DependentUpon>
     </Compile>
@@ -403,6 +423,12 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriPresent.resx">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriSheet.resx">
+      <DependentUpon>TriSheet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriWrite.resx">
       <DependentUpon>TriWrite.cs</DependentUpon>
@@ -749,11 +775,21 @@
     <None Include="Resources\ShiftnetServices.txt" />
     <None Include="Resources\3beepvirus.wav" />
     <None Include="Resources\dial-up-modem-02.wav" />
+    <None Include="Resources\Ambient1.mp3" />
+    <None Include="Resources\Ambient2.mp3" />
+    <None Include="Resources\Ambient3.mp3" />
+    <None Include="Resources\Ambient4.mp3" />
+    <None Include="Resources\Ambient5.mp3" />
+    <None Include="Resources\Ambient6.mp3" />
+    <None Include="Resources\Ambient7.mp3" />
+    <None Include="Resources\Ambient8.mp3" />
+    <None Include="Resources\Ambient9.mp3" />
     <Content Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />
     <None Include="Resources\writesound.wav" />
     <None Include="Resources\SuperDesk screenshot.png" />
+    <None Include="Resources\notestate_connection_full.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
