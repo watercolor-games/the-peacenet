@@ -41,8 +41,33 @@ namespace ShiftOS.Objects
         [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
 
+        private long _cp = 0;
 
-        public long Codepoints { get; set; }
+        public long Codepoints
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
+                {
+                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                    return uc.GetCodepoints();
+                }
+                else
+                    return _cp;
+            }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
+                {
+                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                    uc.SetCodepoints(value);
+                }
+                else
+                    _cp = value;
+
+            }
+        }
+
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
         public string Language { get; set; }
