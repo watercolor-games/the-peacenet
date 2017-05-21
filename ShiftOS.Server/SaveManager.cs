@@ -216,21 +216,6 @@ namespace ShiftOS.Server
                             WriteEncFile(savefile, JsonConvert.SerializeObject(save));
                         }
 
-                        try
-                        {
-                            var wr = System.Net.HttpWebRequest.Create("http://getshiftos.ml/API/GetCodepoints");
-                            wr.Headers.Add("Authentication: Token " + save.UniteAuthToken);
-                            var response = wr.GetResponse();
-                            using (var rstr = response.GetResponseStream())
-                            {
-                                using (var sreader = new StreamReader(rstr))
-                                {
-                                    long cp = Convert.ToInt64(sreader.ReadToEnd());
-                                    save.Codepoints = cp;
-                                }
-                            }
-                        }
-                        catch { }
 
                         Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                         {
