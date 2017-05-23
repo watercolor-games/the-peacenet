@@ -1,4 +1,6 @@
-﻿using ShiftOS.Objects.ShiftFS;
+﻿#define BETA_2_5
+
+using ShiftOS.Objects.ShiftFS;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,10 +15,12 @@ using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
+#if !BETA_2_5
     [WinOpen("tripresent")]
     [AppscapeEntry("TriPresent", "Part of the trilogy of office applications for enhancement of your system. TriPresent is easliy the best presentation creator out there for ShiftOS.", 2048, 1500, "file_skimmer", "Office")]
     [DefaultTitle("TriPresent")]
     [Launcher("TriPresent", false, null, "Office")]
+#endif
     public partial class TriPresent : UserControl, IShiftOSWindow
     {
         public TriPresent()

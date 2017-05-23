@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define BETA_2_5
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
