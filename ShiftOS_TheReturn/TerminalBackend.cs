@@ -356,8 +356,11 @@ namespace ShiftOS.Engine
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string text, bool isRemote = false)
         {
+            var tw = new MemoryTextWriter();
+            Console.SetOut(tw);
             try
             {
+
                 if (string.IsNullOrWhiteSpace(text))
                     return;
 
@@ -391,6 +394,10 @@ namespace ShiftOS.Engine
                 PrefixEnabled = true;
 
             }
+            string buffer = tw.ToString();
+            Console.SetOut(new TerminalTextWriter());
+            Console.Write(buffer);
+
         }
 
         /// <summary>
@@ -484,8 +491,6 @@ namespace ShiftOS.Engine
 
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
 
-            var tw = new MemoryTextWriter();
-            Console.SetOut(tw);
 
             string[] split = text.Split('.');
             var cmd = Commands.FirstOrDefault(x => x.NamespaceInfo.name == split[0] && x.CommandInfo.name == split[1]);
@@ -493,11 +498,6 @@ namespace ShiftOS.Engine
                 return false;
             if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))
                 return false;
-            if(cmd.RequiredArguments.Count != args.Count)
-            {
-                Console.WriteLine("Command error: Argument count mismatch! You supplied " + args.Count + " arguments to a command that expects " + cmd.RequiredArguments.Count + ".");
-                return true;
-            }
             bool res = false;
             foreach (var arg in cmd.RequiredArguments)
             {
@@ -518,9 +518,6 @@ namespace ShiftOS.Engine
                 Console.WriteLine("Command error: " + ex.Message);
             }
 
-            string buffer = tw.ToString();
-            Console.SetOut(new TerminalTextWriter());
-            Console.Write(buffer);
             return true;
         }
 
