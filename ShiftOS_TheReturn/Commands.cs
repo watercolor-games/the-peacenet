@@ -330,8 +330,13 @@ namespace ShiftOS.Engine
         {
             foreach (var upg in Shiftorium.GetDefaults())
             {
-                Shiftorium.Buy(upg.ID, 0);
+                if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.ID))
+                    SaveSystem.CurrentSave.Upgrades.Add(upg.ID, true);
+                else
+                    SaveSystem.CurrentSave.Upgrades[upg.ID] = true;
             }
+            Shiftorium.InvokeUpgradeInstalled();
+            SkinEngine.LoadSkin();
             return true;
         }
 
@@ -453,121 +458,39 @@ namespace ShiftOS.Engine
         [Command("help", "{COMMAND_HELP_USAGE", "{COMMAND_HELP_DESCRIPTION}")]
         public static bool Help(Dictionary<string, object> args)
         {
-            Console.WriteLine("Retrieving help data...");
+            var sb = new StringBuilder();
+            sb.AppendLine("Retrieving help data.");
+
             if (args.ContainsKey("ns"))
             {
-                if (args["ns"] is string)
+                string ns = args["ns"].ToString();
+                //First let's check for a command that has this namespace.
+                var cmdtest = TerminalBackend.Commands.FirstOrDefault(x => x.NamespaceInfo.name == ns);
+                if (cmdtest == null) //Namespace not found.
+                    sb.AppendLine("Error retrieving help for namespace \"" + ns + "\". Namespace not found.");
+                else
                 {
-                    string ns = args["ns"].ToString();
-                    bool foundNS = false;
-                    foreach (var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                    //Now do the actual scan.
+                    sb.AppendLine("Namespace: " + ns);
+                    foreach(var cmd in TerminalBackend.Commands.Where(x => x.NamespaceInfo.name == ns))
                     {
-                        if (exec.EndsWith(".exe") || exec.EndsWith(".dll"))
-                        {
-                            try
-                            {
-                                var asm = Assembly.LoadFile(exec);
-
-                                var types = asm.GetTypes();
-
-                                foreach (var type in types)
-                                {
-                                    if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                    {
-                                        var nsa = (Namespace)type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace && (x as Namespace).name == ns);
-
-                                        if (nsa != null)
-                                        {
-
-                                            if (!nsa.hide)
-                                            {
-                                                foundNS = true;
-                                                string descp = "{NAMESPACE_" + nsa.name.ToUpper() + "_DESCRIPTION}";
-                                                if (descp == Localization.Parse(descp))
-                                                    descp = "";
-                                                else
-                                                    descp = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descp) : "";
-
-                                                Console.WriteLine($"{{NAMESPACE}}{nsa.name}" + descp);
-
-                                                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                                {
-                                                    if (Shiftorium.UpgradeAttributesUnlocked(method))
-                                                    {
-                                                        foreach (var ma in method.GetCustomAttributes(false))
-                                                        {
-                                                            if (ma is Command)
-                                                            {
-                                                                var cmd = ma as Command;
-
-                                                                if (!cmd.hide)
-                                                                {
-                                                                    string descriptionparse = "{COMMAND_" + nsa.name.ToUpper() + "_" + cmd.name.ToUpper() + "_DESCRIPTION}";
-                                                                    string usageparse = "{COMMAND_" + nsa.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                    if (descriptionparse == Localization.Parse(descriptionparse))
-                                                                        descriptionparse = "";
-                                                                    else
-                                                                        descriptionparse = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descriptionparse) : "";
-
-                                                                    if (usageparse == Localization.Parse(usageparse))
-                                                                        usageparse = "";
-                                                                    else
-                                                                        usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{SEPERATOR}" + usageparse, new Dictionary<string, string>() {
-                                                            {"%ns", nsa.name},
-                                                            {"%cmd", cmd.name}
-                                                        }) : "";
-
-                                                                    Console.WriteLine($"{{COMMAND}}{nsa.name}.{cmd.name}" + usageparse + descriptionparse);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
-
-
-
-
-                            catch { }
-                        }
+                        string str = cmd.ToString();
+                        str = str.Replace(str.Substring(str.LastIndexOf("|")), "");
+                        sb.AppendLine(str);
                     }
-                    if (foundNS == false)
-                    {
-                        Console.WriteLine("Error: Namespace not found! Couldn't retrieve help info.");
-                    }
-
                 }
-                return true;
             }
-
-            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            else
             {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                
+                //print all unique namespaces.
+                foreach(var n in TerminalBackend.Commands.Select(x => x.NamespaceInfo.name).Distinct())
                 {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes())
-                        {
-                            Namespace ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
-                            if(ns != null)
-                            {
-                                if(!ns.hide)
-                                {
-                                    Console.WriteLine("sos.help{ns:\"" + ns.name + "\"}");
-                                }
-                            }
-                        }
-                    }
-                    catch { }
+                    sb.AppendLine("sos.help{ns:\"" + n + "\"}");
                 }
             }
+
+            Console.WriteLine(sb.ToString());
 
             return true;
         }

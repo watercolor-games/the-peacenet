@@ -63,6 +63,7 @@ namespace ShiftOS.WinForms.Controls
 
         public void Write(string text)
         {
+            Thread.Sleep(5);
             this.SuspendLayout();
             this.HideSelection = true;
             this.SelectionFont = ConstructFont();
@@ -88,6 +89,7 @@ namespace ShiftOS.WinForms.Controls
 
         public void WriteLine(string text)
         {
+            Thread.Sleep(5);
             this.SuspendLayout();
             Engine.AudioManager.PlayStream(Properties.Resources.writesound);
             this.HideSelection = true;

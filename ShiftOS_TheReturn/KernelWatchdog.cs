@@ -66,41 +66,19 @@ namespace ShiftOS.Engine
             }
         }
 
-        //determines if user is root
-        public static bool IsSafe(Type type)
+        public static bool IsSafe(TerminalBackend.TerminalCommand cmd)
         {
-            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
+            if (!cmd.RequiresElevation)
                 return true;
-
-            foreach (var attrib in type.GetCustomAttributes(false))
+            else
             {
-                if (attrib is KernelModeAttribute)
-                {
-                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
-                        return true;
+                if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
+                    return true;
+                else
                     return false;
-                }
             }
-            return true;
         }
 
-        //also determines if user is root, only for a method instead
-        public static bool IsSafe(MethodInfo type)
-        {
-            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
-                return true;
-
-            foreach (var attrib in type.GetCustomAttributes(false))
-            {
-                if (attrib is KernelModeAttribute)
-                {
-                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
-                        return true;
-                    return false;
-                }
-            }
-            return true;
-        }
 
         static string regularUsername = ""; //put regular username in here later
 

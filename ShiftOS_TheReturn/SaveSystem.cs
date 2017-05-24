@@ -137,7 +137,8 @@ namespace ShiftOS.Engine
                 Thread.Sleep(100);
                 Console.WriteLine("[sfs] 4096 blocks read.");
                 Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
-
+                Console.WriteLine("[termdb] Building command database from filesystem...");
+                TerminalBackend.PopulateTerminalCommands();
                 Console.WriteLine("[inetd] Connecting to network...");
 
                 Ready = false;
