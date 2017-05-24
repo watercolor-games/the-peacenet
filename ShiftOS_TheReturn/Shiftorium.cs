@@ -52,11 +52,11 @@ namespace ShiftOS.Engine
         public static string[] GetCategories(bool onlyAvailable = true)
         {
             List<string> cats = new List<string>();
-            IEnumerable < ShiftoriumUpgrade > upgrades = GetDefaults();
+            IEnumerable<ShiftoriumUpgrade> upgrades = GetDefaults();
             if (onlyAvailable)
                 upgrades = new List<ShiftoriumUpgrade>(GetAvailable());
 
-            foreach(var upg in upgrades)
+            foreach (var upg in upgrades)
             {
                 if (!cats.Contains(upg.Category))
                     cats.Add(upg.Category);
@@ -114,7 +114,7 @@ namespace ShiftOS.Engine
         /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Codepoints or the upgrade wasn' found.</returns>
         public static bool Buy(string id, long cost)
         {
-            if(SaveSystem.CurrentSave.Codepoints >= cost)
+            if (SaveSystem.CurrentSave.Codepoints >= cost)
             {
                 SaveSystem.CurrentSave.Upgrades[id] = true;
                 TerminalBackend.InvokeCommand("sos.save");
@@ -126,7 +126,7 @@ namespace ShiftOS.Engine
             }
             else
             {
-                if(!Silent)
+                if (!Silent)
                     Console.WriteLine($"{{SHIFTORIUM_NOTENOUGHCP}}: {cost} > {SaveSystem.CurrentSave.Codepoints}");
                 return false;
             }
@@ -139,9 +139,9 @@ namespace ShiftOS.Engine
         /// <returns>Boolean value representing the result of this function.</returns>
         public static bool UpgradeAttributesUnlocked(Type type)
         {
-            foreach(var attr in type.GetCustomAttributes(true))
+            foreach (var attr in type.GetCustomAttributes(true))
             {
-                if(attr is RequiresUpgradeAttribute)
+                if (attr is RequiresUpgradeAttribute)
                 {
                     var rAttr = attr as RequiresUpgradeAttribute;
                     return rAttr.Installed;
@@ -208,6 +208,122 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        private static List<ShiftoriumUpgrade> upgDb = null;
+
+        public static void CreateUpgradeDatabase()
+        {
+            upgDb = new List<ShiftoriumUpgrade>();
+            //Now we probe for ShiftoriumUpgradeAttributes for mods.
+            foreach (var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if (file.EndsWith(".exe") || file.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(file);
+                        foreach (var type in asm.GetTypes())
+                        {
+                            if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
+                            {
+                                if (type.GetCustomAttributes().FirstOrDefault(x => x is ShiftoriumProviderAttribute) != null)
+                                {
+                                    var _p = Activator.CreateInstance(type, null) as IShiftoriumProvider;
+                                    upgDb.AddRange(_p.GetDefaults());
+                                }
+                            }
+
+
+                            ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                            if (attrib != null)
+                            {
+                                if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                                    throw new ShiftoriumConflictException(attrib.Upgrade);
+                                upgDb.Add(new ShiftoriumUpgrade
+                                {
+                                    Id = attrib.Upgrade,
+                                    Name = attrib.Name,
+                                    Cost = attrib.Cost,
+                                    Description = attrib.Description,
+                                    Dependencies = attrib.Dependencies,
+                                    Category = attrib.Category
+                                });
+                            }
+
+                            foreach (var mth in type.GetMethods())
+                            {
+                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                                if (attrib != null)
+                                {
+                                    if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                                        throw new ShiftoriumConflictException(attrib.Upgrade);
+                                    upgDb.Add(new ShiftoriumUpgrade
+                                    {
+                                        Id = attrib.Upgrade,
+                                        Name = attrib.Name,
+                                        Cost = attrib.Cost,
+                                        Description = attrib.Description,
+                                        Dependencies = attrib.Dependencies,
+                                        Category = attrib.Category
+                                    });
+
+                                }
+                            }
+
+                            foreach (var mth in type.GetFields())
+                            {
+                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                                if (attrib != null)
+                                {
+                                    if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                                        throw new ShiftoriumConflictException(attrib.Upgrade);
+                                    upgDb.Add(new ShiftoriumUpgrade
+                                    {
+                                        Id = attrib.Upgrade,
+                                        Name = attrib.Name,
+                                        Cost = attrib.Cost,
+                                        Description = attrib.Description,
+                                        Dependencies = attrib.Dependencies,
+                                        Category = attrib.Category
+                                    });
+
+                                }
+                            }
+
+                            foreach (var mth in type.GetProperties())
+                            {
+                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                                if (attrib != null)
+                                {
+                                    if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                                        throw new ShiftoriumConflictException(attrib.Upgrade);
+                                    upgDb.Add(new ShiftoriumUpgrade
+                                    {
+                                        Id = attrib.Upgrade,
+                                        Name = attrib.Name,
+                                        Cost = attrib.Cost,
+                                        Description = attrib.Description,
+                                        Dependencies = attrib.Dependencies,
+                                        Category = attrib.Category
+                                    });
+
+                                }
+                            }
+
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+
+
+            foreach (var item in upgDb)
+            {
+                if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
+                    throw new ShiftoriumConflictException(item.Id);
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets whether the Shiftorium has been initiated.
@@ -224,7 +340,8 @@ namespace ShiftOS.Engine
             {
                 IsInitiated = true;
                 //Let the crash handler deal with this one...
-                var dict = GetDefaults();
+                CreateUpgradeDatabase();
+                var dict = upgDb;
                 foreach (var itm in dict)
                 {
                     if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(itm.ID))
@@ -250,7 +367,7 @@ namespace ShiftOS.Engine
         /// <returns>The codepoint value.</returns>
         public static long GetCPValue(string id)
         {
-            foreach(var upg in GetDefaults())
+            foreach (var upg in GetDefaults())
             {
                 if (upg.ID == id)
                     return upg.Cost;
@@ -265,7 +382,7 @@ namespace ShiftOS.Engine
         public static ShiftoriumUpgrade[] GetAvailable()
         {
             List<ShiftoriumUpgrade> available = new List<ShiftoriumUpgrade>();
-            foreach(var defaultupg in GetDefaults())
+            foreach (var defaultupg in GetDefaults())
             {
                 if (!UpgradeInstalled(defaultupg.ID) && DependenciesInstalled(defaultupg))
                     available.Add(defaultupg);
@@ -287,13 +404,13 @@ namespace ShiftOS.Engine
             else if (upg.Dependencies.Contains(";"))
             {
                 string[] dependencies = upg.Dependencies.Split(';');
-                foreach(var dependency in dependencies)
+                foreach (var dependency in dependencies)
                 {
                     if (!UpgradeInstalled(dependency))
                         return false;
                 }
                 return true;
-            } 
+            }
             else
             {
                 return UpgradeInstalled(upg.Dependencies);
@@ -329,7 +446,7 @@ namespace ShiftOS.Engine
 
                 if (id.Contains(';'))
                 {
-                    foreach(var u in id.Split(';'))
+                    foreach (var u in id.Split(';'))
                     {
                         if (UpgradeInstalled(u) == false)
                             return false;
@@ -338,10 +455,10 @@ namespace ShiftOS.Engine
                 }
 
                 bool upgInstalled = false;
-                if(SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
+                if (SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
                     upgInstalled = SaveSystem.CurrentSave.Upgrades[id];
 
-                if(upgInstalled == false)
+                if (upgInstalled == false)
                     return SaveSystem.CurrentSave.StoriesExperienced.Contains(id);
                 return true;
             }
@@ -371,117 +488,7 @@ namespace ShiftOS.Engine
         /// <returns>Every single found Shiftorium upgrade.</returns>
         public static List<ShiftoriumUpgrade> GetDefaults()
         {
-            List<ShiftoriumUpgrade> list = new List<ShiftoriumUpgrade>();
-            //Now we probe for ShiftoriumUpgradeAttributes for mods.
-            foreach(var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(file.EndsWith(".exe") || file.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(file);
-                        foreach (var type in asm.GetTypes())
-                        {
-                            if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
-                            {
-                                if(type.GetCustomAttributes().FirstOrDefault(x=> x is ShiftoriumProviderAttribute) != null)
-                                {
-                                    var _p = Activator.CreateInstance(type, null) as IShiftoriumProvider;
-                                    list.AddRange(_p.GetDefaults());
-                                }
-                            }
-
-
-                            ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                            if (attrib != null)
-                            {
-                                if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                                    throw new ShiftoriumConflictException(attrib.Upgrade);
-                                list.Add(new ShiftoriumUpgrade
-                                {
-                                    Id = attrib.Upgrade,
-                                    Name = attrib.Name,
-                                    Cost = attrib.Cost,
-                                    Description = attrib.Description,
-                                    Dependencies = attrib.Dependencies,
-                                    Category = attrib.Category
-                                });
-                            }
-
-                            foreach (var mth in type.GetMethods())
-                            {
-                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                                if (attrib != null)
-                                {
-                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                                        throw new ShiftoriumConflictException(attrib.Upgrade);
-                                    list.Add(new ShiftoriumUpgrade
-                                    {
-                                        Id = attrib.Upgrade,
-                                        Name = attrib.Name,
-                                        Cost = attrib.Cost,
-                                        Description = attrib.Description,
-                                        Dependencies = attrib.Dependencies,
-                                        Category = attrib.Category
-                                    });
-
-                                }
-                            }
-
-                            foreach (var mth in type.GetFields())
-                            {
-                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                                if (attrib != null)
-                                {
-                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                                        throw new ShiftoriumConflictException(attrib.Upgrade);
-                                    list.Add(new ShiftoriumUpgrade
-                                    {
-                                        Id = attrib.Upgrade,
-                                        Name = attrib.Name,
-                                        Cost = attrib.Cost,
-                                        Description = attrib.Description,
-                                        Dependencies = attrib.Dependencies,
-                                        Category = attrib.Category
-                                    });
-
-                                }
-                            }
-
-                            foreach (var mth in type.GetProperties())
-                            {
-                                attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                                if (attrib != null)
-                                {
-                                    if (list.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                                        throw new ShiftoriumConflictException(attrib.Upgrade);
-                                    list.Add(new ShiftoriumUpgrade
-                                    {
-                                        Id = attrib.Upgrade,
-                                        Name = attrib.Name,
-                                        Cost = attrib.Cost,
-                                        Description = attrib.Description,
-                                        Dependencies = attrib.Dependencies,
-                                        Category = attrib.Category
-                                    });
-
-                                }
-                            }
-
-                        }
-                    }
-                    catch { }
-                }
-            }
-
-
-
-            foreach(var item in list)
-            {
-                if (list.Where(x => x.ID == item.ID).Count() > 1)
-                    throw new ShiftoriumConflictException(item.Id);
-            }
-            return list;
+            return upgDb;
         }
     }
 
