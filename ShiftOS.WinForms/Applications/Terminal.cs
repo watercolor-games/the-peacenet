@@ -442,6 +442,10 @@ namespace ShiftOS.WinForms.Applications
             }).Start();
         }
 
+        public static string RemoteSystemName { get; set; }
+        public static string RemoteUser { get; set; }
+        public static string RemotePass { get; set; }
+
         [Story("first_steps")]
         public static void FirstSteps()
         {

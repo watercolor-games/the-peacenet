@@ -144,10 +144,7 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControl(Control ctrl)
         {
-            Desktop.InvokeOnWorkerThread(new Action(() =>
-            {
-                ctrl.SuspendLayout();
-            }));
+
             if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
             {
                 string tag = "";
@@ -306,7 +303,6 @@ namespace ShiftOS.WinForms.Tools
             {
 
                 MakeDoubleBuffered(ctrl);
-                ctrl.ResumeLayout();
             });
             ControlSetup?.Invoke(ctrl);
         }
@@ -330,17 +326,18 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControls(Control frm, bool runInThread = true)
         {
-            SetupControl(frm);
             frm.Click += (o, a) =>
             {
                 Desktop.HideAppLauncher();
             };
             ThreadStart ts = () =>
             {
-                for (int i = 0; i < frm.Controls.Count; i++)
+                var ctrls = frm.Controls.ToList();
+                for (int i = 0; i < ctrls.Count(); i++)
                 {
-                        SetupControls(frm.Controls[i], false);
+                        SetupControls(ctrls[i]);
                 }
+                SetupControl(frm);
 
             };
 

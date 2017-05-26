@@ -36,6 +36,8 @@ using static ShiftOS.Engine.SaveSystem;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 
 namespace ShiftOS.Engine
 {
@@ -104,6 +106,43 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         /// </summary>
         public static event Action<string> GUIDReceived;
 
+        private static void delegateToServer(ServerMessage msg)
+        {
+            string[] split = msg.GUID.Split('|');
+            bool finished = false;
+            foreach (var exec in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exec);
+                        foreach(var type in asm.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(Server))))
+                        {
+                            var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
+                            if(attrib != null)
+                            {
+                                if(split[0] == SaveSystem.CurrentSave.SystemName && split[1] == attrib.Port.ToString())
+                                {
+                                    if (Shiftorium.UpgradeAttributesUnlocked(type))
+                                    {
+                                        type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(x => x.Name == "MessageReceived")?.Invoke(Activator.CreateInstance(type), null);
+                                        finished = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            if (finished == false)
+            {
+                Forward(split[2], "Error", $"{split[0]}:{split[1]}: connection refused");
+            }
+        }
+
+
         private static void ServerManager_MessageReceived(ServerMessage msg)
         {
             switch(msg.Name)
@@ -119,10 +158,33 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                         }));
                     }
                     break;
+                case "msgtosys":
+                    try
+                    {
+                        var m = JsonConvert.DeserializeObject<ServerMessage>(msg.Contents);
+                        if(m.GUID.Split('|')[2] != thisGuid.ToString())
+                        {
+                            delegateToServer(m);
+                        }
+                    }
+                    catch { }
+                    break;
                 case "getguid_reply":
                     GUIDReceived?.Invoke(msg.Contents);
                     break;
             }
+        }
+
+        public static void SendMessageToIngameServer(string sysname, int port, string title, string contents)
+        {
+            var smsg = new ServerMessage
+            {
+                Name = title,
+                GUID = $"{sysname}|{port}|{thisGuid.ToString()}",
+                Contents = contents
+            };
+            Forward("all", "msgtosys", JsonConvert.SerializeObject(smsg));
+
         }
 
         public static void Detach_ServerManager_MessageReceived()

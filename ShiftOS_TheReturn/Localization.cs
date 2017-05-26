@@ -117,10 +117,6 @@ namespace ShiftOS.Engine
             }
 
             List<string> orphaned = new List<string>();
-            if (Utils.FileExists("0:/dev_orphaned_lang.txt"))
-            {
-                orphaned = JsonConvert.DeserializeObject<List<string>>(Utils.ReadAllText("0:/dev_orphaned_lang.txt")); // if this file exists read from it and put in list orphaned
-            }
 
 
             int start_index = 0;

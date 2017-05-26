@@ -85,6 +85,11 @@ namespace ShiftOS.Engine
         public static string LastCommand = "";
 
         /// <summary>
+        /// Gets the output of the last command.
+        /// </summary>
+        public static string LastCommandBuffer { get; private set; }
+
+        /// <summary>
         /// Invokes a ShiftOS terminal command.
         /// </summary>
         /// <param name="ns">The command's namespace.</param>
@@ -395,8 +400,10 @@ namespace ShiftOS.Engine
 
             }
             string buffer = tw.ToString();
+            LastCommandBuffer = buffer;
             Console.SetOut(new TerminalTextWriter());
-            Console.Write(buffer);
+            if(!isRemote)
+                Console.Write(buffer);
 
         }
 

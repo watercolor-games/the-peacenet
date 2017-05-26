@@ -31,6 +31,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using ShiftOS.Engine;
 using ShiftOS.WinForms.Tools;
+using System.Linq;
+using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -540,400 +542,425 @@ namespace ShiftOS.WinForms.Applications
         {
             flbody.Controls.Clear();
 
-            List<ShifterSetting> cats = new List<ShifterSetting>();
+            IEnumerable<ShifterSetting> cats = this.settings.Where(x => x.SubCategory == subcat && x.Category == cat && x.Field.FlagFullfilled(LoadedSkin)).OrderBy(x=>x.Name);
 
-            foreach (var c in this.settings)
+            new Thread(() =>
             {
-                if (c.SubCategory == subcat && c.Category == cat)
+                foreach (var c in cats)
                 {
-                    if (c.Field.FlagFullfilled(LoadedSkin))
+                    Label lbl = null;
+                    int labelHeight = 0;
+                    Desktop.InvokeOnWorkerThread(() =>
                     {
-                        if (!cats.Contains(c))
-                        {
-                            cats.Add(c);
-                        }
-                    }
-                }
-            }
-
-            foreach(var c in cats)
-            {
-                var lbl = new Label();
-                int labelHeight = 0;
-                lbl.AutoSize = true;
-                lbl.Text = c.Name + ":";
-                flbody.Controls.Add(lbl);
-                lbl.TextAlign = ContentAlignment.MiddleLeft;
-                lbl.Show();
-                //Cool - label's in.
-                if(c.Field.FieldType == typeof(Point))
-                {
-                    var width = new TextBox();
-                    var height = new TextBox();
-                    labelHeight = width.Height; //irony?
-                    width.Width = 30;
-                    height.Width = width.Width;
-                    width.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).X.ToString();
-                    height.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).Y.ToString();
-                    flbody.SetFlowBreak(height, true);
-                    ControlManager.SetupControl(width);
-                    ControlManager.SetupControl(height);
-
-                    flbody.Controls.Add(width);
-                    width.Show();
-                    flbody.Controls.Add(height);
-                    height.Show();
-
-                    EventHandler tc = (o, a) =>
+                        lbl = new Label();
+                        lbl.AutoSize = true;
+                        lbl.Text = c.Name + ":";
+                        flbody.Controls.Add(lbl);
+                        lbl.TextAlign = ContentAlignment.MiddleLeft;
+                        lbl.Show();
+                    });
+                    //Cool - label's in.
+                    if (c.Field.FieldType == typeof(Point))
                     {
-                        try
+                        TextBox width = null;
+                        TextBox height = null;
+                        Desktop.InvokeOnWorkerThread(() =>
                         {
-                            int x = Convert.ToInt32(width.Text);
-                            int y = Convert.ToInt32(height.Text);
-
-                            int oldx = ((Point)c.Field.GetValue(this.LoadedSkin)).X;
-                            int oldy = ((Point)c.Field.GetValue(this.LoadedSkin)).Y;
-
-                            if(x != oldx || y != oldy)
-                            {
-                                c.Field.SetValue(LoadedSkin, new Point(x, y));
-                                CodepointValue += 200;
-                            }
-                        }
-                        catch
-                        {
+                            width = new TextBox();
+                            height = new TextBox();
+                            labelHeight = width.Height; //irony?
+                            width.Width = 30;
+                            height.Width = width.Width;
                             width.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).X.ToString();
                             height.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).Y.ToString();
-                        }
-                        InvokeSetup(cat);
-                    };
+                            flbody.SetFlowBreak(height, true);
+                            ControlManager.SetupControl(width);
+                            ControlManager.SetupControl(height);
 
-                    width.TextChanged += tc;
-                    height.TextChanged += tc;
+                            flbody.Controls.Add(width);
+                            width.Show();
+                            flbody.Controls.Add(height);
+                            height.Show();
 
-                }
-                else if(c.Field.FieldType == typeof(string))
-                {
-                    var str = new TextBox();
-                    str.Width = 120;
-                    ControlManager.SetupControl(str);
-                    labelHeight = str.Height;
-                    str.Text = c.Field.GetValue(LoadedSkin).ToString();
-                    flbody.SetFlowBreak(str, true);
-                    str.TextChanged += (o, a) =>
-                    {
-                        c.Field.SetValue(LoadedSkin, str.Text); CodepointValue += 100;
-
-                        InvokeSetup(cat);
-                    };
-                    flbody.Controls.Add(str);
-                    str.Show();
-                }
-                else if(c.Field.FieldType == typeof(byte[]))
-                {
-                    //We'll assume that this is an image file.
-                    var color = new Button();
-                    color.Width = 40;
-                    labelHeight = color.Height; 
-                                                //just so it's flat like the system.
-                    ControlManager.SetupControl(color);
-                    flbody.SetFlowBreak(color, true);
-
-                    color.BackgroundImage = SkinEngine.ImageFromBinary((byte[])c.Field.GetValue(this.LoadedSkin));
-                    color.Click += (o, a) =>
-                    {
-                        AppearanceManager.SetupDialog(new GraphicPicker(color.BackgroundImage, c.Name, GetLayout(c.Field.GetImageName()), new Action<byte[], Image, ImageLayout>((col, gdiImg, layout) =>
-                        {
-                            c.Field.SetValue(LoadedSkin, col);
-                            color.BackgroundImage = SkinEngine.ImageFromBinary(col);
-                            color.BackgroundImageLayout = layout;
-                            LoadedSkin.SkinImageLayouts[c.Field.GetImageName()] = layout;
-                            CodepointValue += 700;
-                            InvokeSetup(cat);
-
-                        })));
-                    };
-                    flbody.Controls.Add(color);
-                    color.Show();
-                }
-                else if (c.Field.FieldType == typeof(Size))
-                {
-                    var width = new TextBox();
-                    var height = new TextBox();
-                    width.Width = 30;
-                    height.Width = width.Width;
-                    labelHeight = width.Height;
-                    flbody.SetFlowBreak(height, true);
-
-                    width.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Width.ToString();
-                    height.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Height.ToString();
-                    ControlManager.SetupControl(width);
-                    ControlManager.SetupControl(height);
-
-                    flbody.Controls.Add(width);
-                    width.Show();
-                    flbody.Controls.Add(height);
-                    height.Show();
-
-                    EventHandler tc = (o, a) =>
-                    {
-                        try
-                        {
-                            int x = Convert.ToInt32(width.Text);
-                            int y = Convert.ToInt32(height.Text);
-
-                            int oldx = ((Size)c.Field.GetValue(this.LoadedSkin)).Width;
-                            int oldy = ((Size)c.Field.GetValue(this.LoadedSkin)).Height;
-
-                            if (x != oldx || y != oldy)
+                            EventHandler tc = (o, a) =>
                             {
-                                c.Field.SetValue(LoadedSkin, new Size(x, y));
-                                CodepointValue += 200;
-                            }
-                        }
-                        catch
+                                try
+                                {
+                                    int x = Convert.ToInt32(width.Text);
+                                    int y = Convert.ToInt32(height.Text);
+
+                                    int oldx = ((Point)c.Field.GetValue(this.LoadedSkin)).X;
+                                    int oldy = ((Point)c.Field.GetValue(this.LoadedSkin)).Y;
+
+                                    if (x != oldx || y != oldy)
+                                    {
+                                        c.Field.SetValue(LoadedSkin, new Point(x, y));
+                                        CodepointValue += 200;
+                                    }
+                                }
+                                catch
+                                {
+                                    width.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).X.ToString();
+                                    height.Text = ((Point)c.Field.GetValue(this.LoadedSkin)).Y.ToString();
+                                }
+                                InvokeSetup(cat);
+                            };
+
+                            width.TextChanged += tc;
+                            height.TextChanged += tc;
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(string))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
                         {
+                            var str = new TextBox();
+                            str.Width = 120;
+                            ControlManager.SetupControl(str);
+                            labelHeight = str.Height;
+                            str.Text = c.Field.GetValue(LoadedSkin).ToString();
+                            flbody.SetFlowBreak(str, true);
+                            str.TextChanged += (o, a) =>
+                            {
+                                c.Field.SetValue(LoadedSkin, str.Text); CodepointValue += 100;
+
+                                InvokeSetup(cat);
+                            };
+                            flbody.Controls.Add(str);
+                            str.Show();
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(byte[]))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            //We'll assume that this is an image file.
+                            var color = new Button();
+                            color.Width = 40;
+                            labelHeight = color.Height;
+                            //just so it's flat like the system.
+                            ControlManager.SetupControl(color);
+                            flbody.SetFlowBreak(color, true);
+
+                            color.BackgroundImage = SkinEngine.ImageFromBinary((byte[])c.Field.GetValue(this.LoadedSkin));
+                            color.Click += (o, a) =>
+                            {
+                                AppearanceManager.SetupDialog(new GraphicPicker(color.BackgroundImage, c.Name, GetLayout(c.Field.GetImageName()), new Action<byte[], Image, ImageLayout>((col, gdiImg, layout) =>
+                                {
+                                    c.Field.SetValue(LoadedSkin, col);
+                                    color.BackgroundImage = SkinEngine.ImageFromBinary(col);
+                                    color.BackgroundImageLayout = layout;
+                                    LoadedSkin.SkinImageLayouts[c.Field.GetImageName()] = layout;
+                                    CodepointValue += 700;
+                                    InvokeSetup(cat);
+
+                                })));
+                            };
+                            flbody.Controls.Add(color);
+                            color.Show();
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(Size))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var width = new TextBox();
+                            var height = new TextBox();
+                            width.Width = 30;
+                            height.Width = width.Width;
+                            labelHeight = width.Height;
+                            flbody.SetFlowBreak(height, true);
+
                             width.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Width.ToString();
                             height.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Height.ToString();
-                        }
-                        InvokeSetup(cat);
+                            ControlManager.SetupControl(width);
+                            ControlManager.SetupControl(height);
 
-                    };
+                            flbody.Controls.Add(width);
+                            width.Show();
+                            flbody.Controls.Add(height);
+                            height.Show();
 
-                    width.TextChanged += tc;
-                    height.TextChanged += tc;
-
-                }
-                else if(c.Field.FieldType == typeof(bool))
-                {
-                    var check = new CheckBox();
-                    check.Checked = ((bool)c.Field.GetValue(LoadedSkin));
-                    labelHeight = check.Height;
-                    check.CheckedChanged += (o, a) =>
-                    {
-                        c.Field.SetValue(LoadedSkin, check.Checked);
-                        CodepointValue += 50;
-                        InvokeSetup(cat);
-
-                    };
-                    flbody.SetFlowBreak(check, true);
-
-                    flbody.Controls.Add(check);
-                    check.Show();
-                }
-                else if(c.Field.FieldType == typeof(Font))
-                {
-                    var name = new ComboBox();
-                    var size = new TextBox();
-                    var style = new ComboBox();
-
-                    name.Width = 120;
-                    labelHeight = name.Height;
-                    size.Width = 40;
-                    style.Width = 80;
-                    flbody.SetFlowBreak(style, true);
-
-                    ControlManager.SetupControl(name);
-                    ControlManager.SetupControl(size);
-                    ControlManager.SetupControl(style);
-
-                    //populate the font name box
-                    foreach(var font in FontFamily.Families)
-                    {
-                        name.Items.Add(font.Name);
-                    }
-                    name.Text = ((Font)c.Field.GetValue(LoadedSkin)).Name;
-
-                    size.Text = ((Font)c.Field.GetValue(LoadedSkin)).Size.ToString();
-
-                    //populate the style box
-                    foreach(var s in (FontStyle[])Enum.GetValues(typeof(FontStyle)))
-                    {
-                        style.Items.Add(s.ToString());
-                    }
-                    style.Text = ((Font)c.Field.GetValue(LoadedSkin)).Style.ToString();
-
-                    name.SelectedIndexChanged += (o, a) =>
-                    {
-                        var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
-
-                        var f = en[style.SelectedIndex];
-
-                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
-                        CodepointValue += 100;
-                        InvokeSetup(cat);
-
-                    };
-
-                    style.SelectedIndexChanged += (o, a) =>
-                    {
-                        var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
-
-                        var f = en[style.SelectedIndex];
-
-                        c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
-                        CodepointValue += 50;
-                        InvokeSetup(cat);
-
-                    };
-
-                    size.TextChanged += (o, a) =>
-                    {
-                        try
-                        {
-                            var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
-
-                            var f = en[style.SelectedIndex];
-
-                            c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
-                        }
-                        catch
-                        {
-                            size.Text = ((Font)c.Field.GetValue(LoadedSkin)).Size.ToString();
-                        }
-                        CodepointValue += 50;
-                        InvokeSetup(cat);
-
-                    };
-
-                    flbody.Controls.Add(name);
-                    flbody.Controls.Add(size);
-                    flbody.Controls.Add(style);
-
-                    name.Show();
-                    size.Show();
-                    style.Show();
-
-                }
-                else if(c.Field.FieldType == typeof(Color))
-                {
-                    var color = new Button();
-                    color.Width = 40;
-                    labelHeight = color.Height;
-                    //just so it's flat like the system.
-                    ControlManager.SetupControl(color);
-
-                    color.BackColor = ((Color)c.Field.GetValue(LoadedSkin));
-                    color.Click += (o, a) =>
-                    {
-                        AppearanceManager.SetupDialog(new ColorPicker((Color)c.Field.GetValue(LoadedSkin), c.Name, new Action<Color>((col) =>
-                        {
-                            color.BackColor = col;
-                            c.Field.SetValue(LoadedSkin, col);
-                            CodepointValue += 300;
-                            InvokeSetup(cat);
-
-                        })));
-                    };
-                    flbody.SetFlowBreak(color, true);
-                    color.Tag = "keepbg";
-                    flbody.Controls.Add(color);
-                    color.Show();
-                }
-                else if(c.Field.FieldType.IsEnum == true)
-                {
-                    var cBox = new ComboBox();
-                    cBox.Width = 150;
-                    ControlManager.SetupControl(cBox);
-
-                    foreach(var itm in Enum.GetNames(c.Field.FieldType))
-                    {
-                        cBox.Items.Add(itm);
-                    }
-
-                    cBox.Text = c.Field.GetValue(LoadedSkin).ToString();
-
-                    cBox.SelectedIndexChanged += (o, a) =>
-                    {
-                        c.Field.SetValue(LoadedSkin, Enum.Parse(c.Field.FieldType, cBox.Text));
-                        InvokeSetup(cat);
-
-                    };
-
-                    labelHeight = cBox.Height;
-
-                    flbody.Controls.Add(cBox);
-                    cBox.Show();
-                    flbody.SetFlowBreak(cBox, true);
-                }
-                else if(c.Field.FieldType == typeof(int))
-                {
-                    if (c.Field.HasShifterEnumMask())
-                    {
-                        var name = new ComboBox();
-                        name.Width = 120;
-                        ControlManager.SetupControl(name);
-                        string[] items = c.Field.GetShifterEnumMask();
-                        foreach(var item in items)
-                        {
-                            name.Items.Add(item);
-                        }
-                        name.SelectedIndex = (int)c.Field.GetValue(LoadedSkin);
-                        name.SelectedIndexChanged += (o, a) =>
-                        {
-                            c.Field.SetValue(LoadedSkin, name.SelectedIndex);
-                            CodepointValue += 75;
-                            InvokeSetup(cat);
-
-                        };
-                        labelHeight = name.Height;
-                        flbody.Controls.Add(name);
-                        name.Show();
-                        flbody.SetFlowBreak(name, true);
-
-                    }
-                    else
-                    {
-                        var width = new TextBox();
-                        width.Width = 30;
-                        width.Text = ((int)c.Field.GetValue(this.LoadedSkin)).ToString();
-                        ControlManager.SetupControl(width);
-                        labelHeight = width.Height;
-                        flbody.Controls.Add(width);
-                        width.Show();
-
-                        EventHandler tc = (o, a) =>
-                        {
-                            try
+                            EventHandler tc = (o, a) =>
                             {
-                                int x = Convert.ToInt32(width.Text);
-
-                                int oldx = ((int)c.Field.GetValue(this.LoadedSkin));
-
-                                if (x != oldx)
+                                try
                                 {
-                                    c.Field.SetValue(LoadedSkin, x);
-                                    CodepointValue += 75;
+                                    int x = Convert.ToInt32(width.Text);
+                                    int y = Convert.ToInt32(height.Text);
+
+                                    int oldx = ((Size)c.Field.GetValue(this.LoadedSkin)).Width;
+                                    int oldy = ((Size)c.Field.GetValue(this.LoadedSkin)).Height;
+
+                                    if (x != oldx || y != oldy)
+                                    {
+                                        c.Field.SetValue(LoadedSkin, new Size(x, y));
+                                        CodepointValue += 200;
+                                    }
                                 }
-                            }
-                            catch
+                                catch
+                                {
+                                    width.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Width.ToString();
+                                    height.Text = ((Size)c.Field.GetValue(this.LoadedSkin)).Height.ToString();
+                                }
+                                InvokeSetup(cat);
+
+                            };
+
+                            width.TextChanged += tc;
+                            height.TextChanged += tc;
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(bool))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var check = new CheckBox();
+                            check.Checked = ((bool)c.Field.GetValue(LoadedSkin));
+                            labelHeight = check.Height;
+                            check.CheckedChanged += (o, a) =>
                             {
-                                width.Text = ((int)c.Field.GetValue(this.LoadedSkin)).ToString();
+                                c.Field.SetValue(LoadedSkin, check.Checked);
+                                CodepointValue += 50;
+                                InvokeSetup(cat);
+
+                            };
+                            flbody.SetFlowBreak(check, true);
+
+                            flbody.Controls.Add(check);
+                            check.Show();
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(Font))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var name = new ComboBox();
+                            var size = new TextBox();
+                            var style = new ComboBox();
+
+                            name.Width = 120;
+                            labelHeight = name.Height;
+                            size.Width = 40;
+                            style.Width = 80;
+                            flbody.SetFlowBreak(style, true);
+
+                            ControlManager.SetupControl(name);
+                            ControlManager.SetupControl(size);
+                            ControlManager.SetupControl(style);
+
+                            //populate the font name box
+                            foreach (var font in FontFamily.Families)
+                            {
+                                name.Items.Add(font.Name);
                             }
-                            InvokeSetup(cat);
+                            name.Text = ((Font)c.Field.GetValue(LoadedSkin)).Name;
 
-                        };
+                            size.Text = ((Font)c.Field.GetValue(LoadedSkin)).Size.ToString();
 
-                        width.TextChanged += tc;
-                        flbody.SetFlowBreak(width, true);
+                            //populate the style box
+                            foreach (var s in (FontStyle[])Enum.GetValues(typeof(FontStyle)))
+                            {
+                                style.Items.Add(s.ToString());
+                            }
+                            style.Text = ((Font)c.Field.GetValue(LoadedSkin)).Style.ToString();
 
+                            name.SelectedIndexChanged += (o, a) =>
+                            {
+                                var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
+
+                                var f = en[style.SelectedIndex];
+
+                                c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
+                                CodepointValue += 100;
+                                InvokeSetup(cat);
+
+                            };
+
+                            style.SelectedIndexChanged += (o, a) =>
+                            {
+                                var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
+
+                                var f = en[style.SelectedIndex];
+
+                                c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
+                                CodepointValue += 50;
+                                InvokeSetup(cat);
+
+                            };
+
+                            size.TextChanged += (o, a) =>
+                            {
+                                try
+                                {
+                                    var en = (FontStyle[])Enum.GetValues(typeof(FontStyle));
+
+                                    var f = en[style.SelectedIndex];
+
+                                    c.Field.SetValue(LoadedSkin, new Font(name.Text, (float)Convert.ToDouble(size.Text), f));
+                                }
+                                catch
+                                {
+                                    size.Text = ((Font)c.Field.GetValue(LoadedSkin)).Size.ToString();
+                                }
+                                CodepointValue += 50;
+                                InvokeSetup(cat);
+
+                            };
+
+                            flbody.Controls.Add(name);
+                            flbody.Controls.Add(size);
+                            flbody.Controls.Add(style);
+
+                            name.Show();
+                            size.Show();
+                            style.Show();
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(Color))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var color = new Button();
+                            color.Width = 40;
+                            labelHeight = color.Height;
+                            //just so it's flat like the system.
+                            ControlManager.SetupControl(color);
+
+                            color.BackColor = ((Color)c.Field.GetValue(LoadedSkin));
+                            color.Click += (o, a) =>
+                            {
+                                AppearanceManager.SetupDialog(new ColorPicker((Color)c.Field.GetValue(LoadedSkin), c.Name, new Action<Color>((col) =>
+                                {
+                                    color.BackColor = col;
+                                    c.Field.SetValue(LoadedSkin, col);
+                                    CodepointValue += 300;
+                                    InvokeSetup(cat);
+
+                                })));
+                            };
+                            flbody.SetFlowBreak(color, true);
+                            color.Tag = "keepbg";
+                            flbody.Controls.Add(color);
+                            color.Show();
+                        });
+                    }
+                    else if (c.Field.FieldType.IsEnum == true)
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var cBox = new ComboBox();
+                            cBox.Width = 150;
+                            ControlManager.SetupControl(cBox);
+
+                            foreach (var itm in Enum.GetNames(c.Field.FieldType))
+                            {
+                                cBox.Items.Add(itm);
+                            }
+
+                            cBox.Text = c.Field.GetValue(LoadedSkin).ToString();
+
+                            cBox.SelectedIndexChanged += (o, a) =>
+                            {
+                                c.Field.SetValue(LoadedSkin, Enum.Parse(c.Field.FieldType, cBox.Text));
+                                InvokeSetup(cat);
+
+                            };
+
+                            labelHeight = cBox.Height;
+
+                            flbody.Controls.Add(cBox);
+                            cBox.Show();
+                            flbody.SetFlowBreak(cBox, true);
+                        });
+                    }
+                    else if (c.Field.FieldType == typeof(int))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            if (c.Field.HasShifterEnumMask())
+                            {
+                                var name = new ComboBox();
+                                name.Width = 120;
+                                ControlManager.SetupControl(name);
+                                string[] items = c.Field.GetShifterEnumMask();
+                                foreach (var item in items)
+                                {
+                                    name.Items.Add(item);
+                                }
+                                name.SelectedIndex = (int)c.Field.GetValue(LoadedSkin);
+                                name.SelectedIndexChanged += (o, a) =>
+                                {
+                                    c.Field.SetValue(LoadedSkin, name.SelectedIndex);
+                                    CodepointValue += 75;
+                                    InvokeSetup(cat);
+
+                                };
+                                labelHeight = name.Height;
+                                flbody.Controls.Add(name);
+                                name.Show();
+                                flbody.SetFlowBreak(name, true);
+
+                            }
+                            else
+                            {
+                                var width = new TextBox();
+                                width.Width = 30;
+                                width.Text = ((int)c.Field.GetValue(this.LoadedSkin)).ToString();
+                                ControlManager.SetupControl(width);
+                                labelHeight = width.Height;
+                                flbody.Controls.Add(width);
+                                width.Show();
+
+                                EventHandler tc = (o, a) =>
+                                {
+                                    try
+                                    {
+                                        int x = Convert.ToInt32(width.Text);
+
+                                        int oldx = ((int)c.Field.GetValue(this.LoadedSkin));
+
+                                        if (x != oldx)
+                                        {
+                                            c.Field.SetValue(LoadedSkin, x);
+                                            CodepointValue += 75;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        width.Text = ((int)c.Field.GetValue(this.LoadedSkin)).ToString();
+                                    }
+                                    InvokeSetup(cat);
+
+                                };
+
+                                width.TextChanged += tc;
+                                flbody.SetFlowBreak(width, true);
+
+                            }
+                        });
+                    }
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lbl.AutoSize = false;
+                        lbl.Width = (int)this.CreateGraphics().MeasureString(lbl.Text, SkinEngine.LoadedSkin.MainFont).Width + 15;
+                        lbl.Height = labelHeight;
+                        lbl.TextAlign = ContentAlignment.MiddleLeft;
+                    });
+
+                    if (!string.IsNullOrWhiteSpace(c.Description))
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            var desc = new Label();
+                            flbody.SetFlowBreak(desc, true);
+                            desc.Text = c.Description;
+                            desc.AutoSize = true;
+                            flbody.Controls.Add(desc);
+                            desc.Show();
+                        });
                     }
                 }
-                lbl.AutoSize = false;
-                lbl.Width = (int)this.CreateGraphics().MeasureString(lbl.Text, SkinEngine.LoadedSkin.MainFont).Width + 15;
-                lbl.Height = labelHeight;
-                lbl.TextAlign = ContentAlignment.MiddleLeft;
-
-                if (!string.IsNullOrWhiteSpace(c.Description))
-                {
-                    var desc = new Label();
-                    flbody.SetFlowBreak(desc, true);
-                    desc.Text = c.Description;
-                    desc.AutoSize = true;
-                    flbody.Controls.Add(desc);
-                    desc.Show();
-                }
-            }
+            }).Start();
         }
 
         public ImageLayout GetLayout(string name)

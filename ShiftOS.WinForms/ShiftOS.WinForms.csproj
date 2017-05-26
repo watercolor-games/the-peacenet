@@ -363,6 +363,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScriptingTestFunctions.cs" />
+    <Compile Include="Servers\RemoteTerminalServer.cs" />
     <Compile Include="ShiftnetSites\AppscapeMain.cs">
       <SubType>UserControl</SubType>
     </Compile>
