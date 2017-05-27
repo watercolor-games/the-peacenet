@@ -274,9 +274,10 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        [Obsolete("MUD control center is dying! KILL IT!")]
         public void OpenChat(string id)
         {
-            AppearanceManager.SetupWindow(new Chat(id));
+//            AppearanceManager.SetupWindow(new Chat(id));
         }
 
         private Shop editingShop = null;

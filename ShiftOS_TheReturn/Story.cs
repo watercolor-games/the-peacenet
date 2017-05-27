@@ -66,8 +66,11 @@ namespace ShiftOS.Engine
                                         var story = attrib as StoryAttribute;
                                         if(story.StoryID == stid)
                                         {
-                                            mth.Invoke(null, null);
-                                            SaveSystem.CurrentSave.StoriesExperienced.Add(stid);
+                                            new Thread(() =>
+                                            {
+                                                mth.Invoke(null, null);
+                                                SaveSystem.CurrentSave.StoriesExperienced.Add(stid);
+                                            }).Start();
                                             return;
                                         }
                                     }

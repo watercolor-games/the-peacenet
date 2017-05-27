@@ -61,13 +61,23 @@ namespace ShiftOS.WinForms.Applications
             this.tsbottombar = new System.Windows.Forms.ToolStrip();
             this.txtuserinput = new System.Windows.Forms.ToolStripTextBox();
             this.btnsend = new System.Windows.Forms.ToolStripButton();
+            this.pnlstart = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtchatid = new System.Windows.Forms.TextBox();
+            this.btnjoin = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tsbottombar.SuspendLayout();
+            this.pnlstart.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.pnlstart);
             this.panel1.Controls.Add(this.rtbchat);
             this.panel1.Controls.Add(this.toolStrip1);
             this.panel1.Controls.Add(this.tsbottombar);
@@ -141,6 +151,82 @@ namespace ShiftOS.WinForms.Applications
             this.btnsend.Text = "Send";
             this.btnsend.Click += new System.EventHandler(this.btnsend_Click);
             // 
+            // pnlstart
+            // 
+            this.pnlstart.Controls.Add(this.flowLayoutPanel1);
+            this.pnlstart.Controls.Add(this.label3);
+            this.pnlstart.Controls.Add(this.label2);
+            this.pnlstart.Controls.Add(this.label1);
+            this.pnlstart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlstart.Location = new System.Drawing.Point(0, 25);
+            this.pnlstart.Name = "pnlstart";
+            this.pnlstart.Size = new System.Drawing.Size(633, 268);
+            this.pnlstart.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Padding = new System.Windows.Forms.Padding(10);
+            this.label1.Size = new System.Drawing.Size(143, 33);
+            this.label1.TabIndex = 0;
+            this.label1.Tag = "header1";
+            this.label1.Text = "Welcome to SimpleSRC!";
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Location = new System.Drawing.Point(0, 33);
+            this.label2.Name = "label2";
+            this.label2.Padding = new System.Windows.Forms.Padding(10);
+            this.label2.Size = new System.Drawing.Size(633, 52);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "SimpleSRC is a simple chat program that utilises the ShiftOS Relay Chat protocol." +
+    " All you have to do is enter a chat code or system name, and SimpleSRC will try " +
+    "to initiate a chat for you.";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.Location = new System.Drawing.Point(0, 85);
+            this.label3.Name = "label3";
+            this.label3.Padding = new System.Windows.Forms.Padding(10);
+            this.label3.Size = new System.Drawing.Size(79, 33);
+            this.label3.TabIndex = 2;
+            this.label3.Tag = "header3";
+            this.label3.Text = "Join a chat";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.Controls.Add(this.txtchatid);
+            this.flowLayoutPanel1.Controls.Add(this.btnjoin);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 118);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(633, 29);
+            this.flowLayoutPanel1.TabIndex = 3;
+            // 
+            // txtchatid
+            // 
+            this.txtchatid.Location = new System.Drawing.Point(3, 3);
+            this.txtchatid.Name = "txtchatid";
+            this.txtchatid.Size = new System.Drawing.Size(192, 20);
+            this.txtchatid.TabIndex = 0;
+            // 
+            // btnjoin
+            // 
+            this.btnjoin.Location = new System.Drawing.Point(201, 3);
+            this.btnjoin.Name = "btnjoin";
+            this.btnjoin.Size = new System.Drawing.Size(75, 23);
+            this.btnjoin.TabIndex = 1;
+            this.btnjoin.Text = "Join";
+            this.btnjoin.UseVisualStyleBackColor = true;
+            // 
             // Chat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -154,6 +240,10 @@ namespace ShiftOS.WinForms.Applications
             this.toolStrip1.PerformLayout();
             this.tsbottombar.ResumeLayout(false);
             this.tsbottombar.PerformLayout();
+            this.pnlstart.ResumeLayout(false);
+            this.pnlstart.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -168,5 +258,12 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ToolStrip tsbottombar;
         private System.Windows.Forms.ToolStripTextBox txtuserinput;
         private System.Windows.Forms.ToolStripButton btnsend;
+        private System.Windows.Forms.Panel pnlstart;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.TextBox txtchatid;
+        private System.Windows.Forms.Button btnjoin;
     }
 }

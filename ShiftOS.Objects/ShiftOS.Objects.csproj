@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatRoom.cs" />
     <Compile Include="ClientSave.cs" />
     <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="Job.cs" />
