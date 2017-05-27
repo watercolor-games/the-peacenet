@@ -92,14 +92,7 @@ namespace ShiftOS.WinForms.Stories
             ConsoleEx.ForegroundColor = ConsoleColor.Gray;
             ConsoleEx.Bold = false;
 
-            foreach (var c in text)
-            {
-                Desktop.InvokeOnWorkerThread(() =>
-                {
-                    Console.Write(c);
-                });
-                Thread.Sleep(75);
-            }
+            Console.WriteLine(text);
             Thread.Sleep(1000);
         }
 

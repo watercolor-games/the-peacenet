@@ -188,14 +188,40 @@ namespace ShiftOS.WinForms
                     widget.OnSkinLoad();
                 }
 
+
                 SetupDesktop();
             };
+
+            long lastcp = 0;
+
+            var storythread = new Thread(() =>
+            {
+                do
+                {
+                    if (SaveSystem.CurrentSave != null)
+                    {
+                        if (SaveSystem.CurrentSave.Codepoints != lastcp)
+                            lastcp = SaveSystem.CurrentSave.Codepoints;
+                        if (lastcp >= 10000)
+                        {
+                            if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
+                            {
+                                Story.Start("victortran_shiftnet");
+                            }
+                        }
+                    }
+                } while (!SaveSystem.ShuttingDown);
+            });
+            storythread.IsBackground = true;
+            storythread.Start();
+
             time.Tick += (o, a) =>
             {
                 if (Shiftorium.IsInitiated == true)
                 {
-                    if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
+                    if (SaveSystem.CurrentSave != null)
                     {
+
                         lbtime.Text = Applications.Terminal.GetTime();
                         lbtime.Left = pnlnotifications.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
                         lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
@@ -229,27 +255,6 @@ namespace ShiftOS.WinForms
 
             };
             time.Start();
-
-            var ssThread = new Thread(() =>
-            {
-                while(this.Visible == true)
-                {
-                    var mousePos = Cursor.Position;
-                    while(Cursor.Position == mousePos)
-                    {
-                        if(millisecondsUntilScreensaver <= 0)
-                        {
-                            ShowScreensaver();
-                        }
-                        millisecondsUntilScreensaver--;
-                        Thread.Sleep(1);
-                    }
-                    millisecondsUntilScreensaver = 300000;
-                    HideScreensaver();
-                }
-            });
-            ssThread.IsBackground = true;
-            ssThread.Start();
 
             this.DoubleBuffered = true;
         }

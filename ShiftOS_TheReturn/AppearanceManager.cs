@@ -190,7 +190,7 @@ namespace ShiftOS.Engine
             ServerManager.Disconnect();
             Desktop.InvokeOnWorkerThread(() =>
             {
-                Environment.Exit(0); //bye bye
+                Process.GetCurrentProcess().Kill(); //bye bye
             });
         }
 

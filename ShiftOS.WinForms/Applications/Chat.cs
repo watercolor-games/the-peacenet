@@ -186,6 +186,7 @@ namespace ShiftOS.WinForms.Applications
                     SendMessage(ch, ch, "A little birdie tells me you know about the RTS exploits going around... Try using that on Aiden's server. You can find his systemname on Appscape under \"Contact Us.\" He has a mailserver on Appscape - and also has RTS on the same server.");
                     Thread.Sleep(2500);
                     SendMessage(ch, ch, "Good luck... My life depends on you!");
+                    complete = true;
                 });
                 t.IsBackground = true;
                 t.Start();
