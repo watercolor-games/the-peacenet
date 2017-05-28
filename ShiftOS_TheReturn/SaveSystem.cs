@@ -349,6 +349,7 @@ namespace ShiftOS.Engine
                         {
                             if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
                             {
+                                Console.WriteLine();
                                 Console.WriteLine("User not found.");
                                 goback = true;
                                 progress++;
@@ -360,6 +361,7 @@ namespace ShiftOS.Engine
                         }
                         else
                         {
+                            Console.WriteLine();
                             Console.WriteLine("Username not provided.");
                             TerminalBackend.TextSent -= ev;
                             goback = true;
@@ -373,13 +375,14 @@ namespace ShiftOS.Engine
                         var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
                         if (user.Password == getpass)
                         {
+                            Console.WriteLine();
                             Console.WriteLine("Welcome to ShiftOS.");
                             CurrentUser = user;
-                            Thread.Sleep(2000);
                             progress++;
                         }
                         else
                         {
+                            Console.WriteLine();
                             Console.WriteLine("Access denied.");
                             goback = true;
                             progress++;
@@ -388,7 +391,7 @@ namespace ShiftOS.Engine
                     }
                 };
                 TerminalBackend.TextSent += ev;
-
+                Console.WriteLine();
                 Console.Write(CurrentSave.SystemName + " login: ");
                 while (progress == 0)
                 {
@@ -396,6 +399,7 @@ namespace ShiftOS.Engine
                 }
                 if (goback)
                     goto Login;
+                Console.WriteLine();
                 Console.Write("password: ");
                 while (progress == 1)
                     Thread.Sleep(10);

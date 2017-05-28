@@ -269,6 +269,13 @@ namespace ShiftOS.WinForms.Applications
                     try
                     {
                         a.SuppressKeyPress = true;
+                        if (!TerminalBackend.PrefixEnabled)
+                        {
+                            string textraw = txt.Lines[txt.Lines.Length - 1];
+                            TextSent?.Invoke(textraw);
+                            TerminalBackend.SendText(textraw);
+                            return;
+                        }
                         Console.WriteLine("");
                         var text = txt.Lines.ToArray();
                         var text2 = text[text.Length - 2];
