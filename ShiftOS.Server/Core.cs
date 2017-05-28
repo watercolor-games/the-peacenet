@@ -32,7 +32,6 @@ using NetSockets;
 using Newtonsoft.Json;
 using System.IO;
 using static ShiftOS.Server.Program;
-using ShiftOS.Engine
 
 
 namespace ShiftOS.Server
@@ -181,7 +180,7 @@ namespace ShiftOS.Server
                     if (sve.EndsWith(".save"))
                     {
                         var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(sve));
-                        accs.Add($"{ShiftOS.Engine.SaveSytem.CurrentUser.Username}@{save.SystemName}");
+                        accs.Add($"{save.Username}@{save.SystemName}");
                     }
 
                 }
