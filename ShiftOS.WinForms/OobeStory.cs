@@ -111,6 +111,7 @@ namespace ShiftOS.WinForms
             ConsoleEx.Bold = false;
             ConsoleEx.BackgroundColor = ConsoleColor.Black;
             Console.Write("Formatting: [");
+            ConsoleEx.OnFlush?.Invoke();
             int formatProgress = 3;
             while (formatProgress <= 100)
             {
@@ -118,6 +119,7 @@ namespace ShiftOS.WinForms
                 {
                     ConsoleEx.BackgroundColor = ConsoleColor.White;
                     Console.Write(" ");
+                    ConsoleEx.OnFlush?.Invoke();
                     ConsoleEx.BackgroundColor = ConsoleColor.Black;
                 }
                 Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.typesound));

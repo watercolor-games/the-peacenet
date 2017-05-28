@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+// #define NOSAVE
 
 //#define ONLINEMODE
 
@@ -213,15 +214,14 @@ namespace ShiftOS.Engine
 
             savehandshake = (msg) =>
             {
+                ServerManager.MessageReceived -= savehandshake;
                 if (msg.Name == "mud_savefile")
                 {
                     CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                    ServerManager.MessageReceived -= savehandshake;
                 }
                 else if (msg.Name == "mud_login_denied")
                 {
                     oobe.PromptForLogin();
-                    ServerManager.MessageReceived -= savehandshake;
                 }
             };
             ServerManager.MessageReceived += savehandshake;
@@ -554,6 +554,7 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void SaveGame()
         {
+#if !NOSAVE
             if(!Shiftorium.Silent)
                 Console.WriteLine("");
             if(!Shiftorium.Silent)
@@ -566,6 +567,7 @@ namespace ShiftOS.Engine
             if (!Shiftorium.Silent)
                 Console.WriteLine(" ...{DONE}.");
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
+#endif
         }
 
         /// <summary>
