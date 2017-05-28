@@ -162,10 +162,6 @@
       <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
       <Name>ShiftOS.Objects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShiftOS.Server\ShiftOS.Server.csproj">
-      <Project>{226C63B4-E60D-4949-B4E7-7A2DDBB96776}</Project>
-      <Name>ShiftOS.Server</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="MediaPlayer">

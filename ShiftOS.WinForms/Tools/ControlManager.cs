@@ -207,19 +207,19 @@ namespace ShiftOS.WinForms.Tools
                     if (ctrl is Button)
                     {
                         Button b = ctrl as Button;
-                        if (!b.Tag.ToString().ToLower().Contains("keepbg"))
+                        if (!tag.Contains("keepbg"))
                         {
                             b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
                             b.BackgroundImage = SkinEngine.GetImage("buttonidle");
                             b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
                         }
                         b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
-                        if (!b.Tag.ToString().ToLower().Contains("keepfg"))
+                        if (!tag.Contains("keepfg"))
                         {
                             b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
                             b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
                         }
-                        if (!b.Tag.ToString().ToLower().Contains("keepfont"))
+                        if (!tag.Contains("keepfont"))
                             b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
 
                         Color orig_bg = b.BackColor;

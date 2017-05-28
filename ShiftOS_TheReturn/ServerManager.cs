@@ -316,23 +316,6 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         private static bool singleplayer = false;
         public static bool IsSingleplayer { get { return singleplayer; } }
 
-        public static void StartLANServer()
-        {
-            singleplayer = true;
-            ShiftOS.Server.Program.ServerStarted += (address) =>
-            {
-                Console.WriteLine($"Connecting to {address}...");
-                Initiate(address, 13370);
-            };
-            Disconnected += () =>
-            {
-                ShiftOS.Server.Program.Stop();
-            };
-            ShiftOS.Server.Program.Main(new[] { "" });
-
-
-        }
-
         /// <summary>
         /// Occurs when the server sends a message to this client.
         /// </summary>

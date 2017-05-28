@@ -232,6 +232,7 @@ namespace ShiftOS.WinForms.Applications
                         var text = txt.Lines.ToArray();
                         var text2 = text[text.Length - 1];
                         var text3 = "";
+                        Console.WriteLine();
                         var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
 
                         if (IsInRemoteSystem == true)

@@ -153,50 +153,50 @@ namespace ShiftOS.Engine
                     }
                 }
 
-                if (defaultConf.ConnectToMud == true)
+                
+
+                bool guidReceived = false;
+                ServerManager.GUIDReceived += (str) =>
                 {
-                    bool guidReceived = false;
-                    ServerManager.GUIDReceived += (str) =>
-                    {
                         //Connection successful! Stop waiting!
                         guidReceived = true;
-                        Console.WriteLine("[inetd] Connection successful.");
-                    };
+                    Console.WriteLine("[inetd] Connection successful.");
+                };
 
-                    try
-                    {
-                        
-                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                        //This haults the client until the connection is successful.
-                        while (ServerManager.thisGuid == new Guid())
-                        {
-                            Thread.Sleep(10);
-                        }
-                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                        FinishBootstrap();
-                    }
-                    catch (Exception ex)
-                    {
-                        //No errors, this never gets called.
-                        Console.WriteLine("[inetd] SEVERE: " + ex.Message);
-                        Thread.Sleep(3000);
-                        ServerManager.StartLANServer();
-                        while (ServerManager.thisGuid == new Guid())
-                        {
-                            Thread.Sleep(10);
-                        }
-                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                        FinishBootstrap();
-                    }
-                }
-                else
+                try
                 {
-                    ServerManager.StartLANServer();
+
+                    ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
+                    //This haults the client until the connection is successful.
+                    while (ServerManager.thisGuid == new Guid())
+                    {
+                        Thread.Sleep(10);
+                    }
+                    Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
+                    FinishBootstrap();
+                }
+                catch (Exception ex)
+                {
+                    //No errors, this never gets called.
+                    Console.WriteLine("[inetd] SEVERE: " + ex.Message);
+                    Thread.Sleep(3000);
+                    Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("[sys] 4...");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("[sys] 3...");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("[sys] 2...");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("[sys] 1...");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("[sys] Bye bye.");
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
 
                 //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
 
-                
+
             }));
             thread.IsBackground = true;
             thread.Start();
