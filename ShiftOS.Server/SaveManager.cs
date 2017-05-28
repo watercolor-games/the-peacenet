@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -32,6 +32,7 @@ using System.IO;
 using Newtonsoft.Json;
 using NetSockets;
 using static ShiftOS.Server.Program;
+using System.Net;
 
 namespace ShiftOS.Server
 {
@@ -43,7 +44,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (!args.ContainsKey("username"))
                 throw new MudException("No 'username' argument supplied.");
-
+            args["username"] = args["username"].ToString().ToLower();
             foreach(var savefile in Directory.GetFiles("saves"))
             {
                 var save = ReadSave(savefile);
@@ -64,6 +65,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["password"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 foreach (var savefile in Directory.GetFiles("saves"))
                 {
                     try
@@ -73,6 +75,12 @@ namespace ShiftOS.Server
 
                         if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
                         {
+                            if(save.ID == new Guid())
+                            {
+                                save.ID = Guid.NewGuid();
+                                WriteEncFile(savefile, JsonConvert.SerializeObject(save));
+                            }
+
 
                             Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {
@@ -114,8 +122,9 @@ namespace ShiftOS.Server
         public static void CheckUserExists(string guid, object contents)
         {
             var args = contents as Dictionary<string, object>;
-            if (args["username"] != null && args["password"] != null)
+            if (args["username"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 foreach (var savefile in Directory.GetFiles("saves"))
                 {
                     try
@@ -123,7 +132,7 @@ namespace ShiftOS.Server
                         var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
 
-                        if (save.Username == args["username"].ToString() && save.Password == args["password"].ToString())
+                        if (save.Username == args["username"].ToString())
                         {
                             server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                             {
@@ -156,15 +165,74 @@ namespace ShiftOS.Server
         public static void SaveGame(string guid, object contents)
         {
             var sav = contents as Save;
-
+            if (string.IsNullOrWhiteSpace(sav.Username))
+                return;
+            sav.Username = sav.Username.ToLower();
             WriteEncFile("saves/" + sav.Username + ".save", JsonConvert.SerializeObject(sav, Formatting.Indented));
 
 
             try
             {
+
+                
+
                 Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
                 {
                     Name = "mud_saved",
+                    GUID = "server"
+                }));
+            }
+            catch { }
+
+            try
+            {
+                //Update the shiftos website with the user's codepoints.
+                if (!string.IsNullOrWhiteSpace(sav.UniteAuthToken))
+                {
+                    var wreq = WebRequest.Create(UserConfig.Get().UniteUrl + "/API/SetCodepoints/" + sav.Codepoints.ToString());
+                    wreq.Headers.Add("Authentication: Token " + sav.UniteAuthToken);
+                    wreq.GetResponse();
+                }
+            }
+            catch { }
+
+        }
+
+        [MudRequest("mud_token_login", typeof(string))]
+        public static void TokenLogin(string guid, string token)
+        {
+            foreach (var savefile in Directory.GetFiles("saves"))
+            {
+                try
+                {
+                    var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
+
+
+                    if (save.UniteAuthToken==token)
+                    {
+                        if (save.ID == new Guid())
+                        {
+                            save.ID = Guid.NewGuid();
+                            WriteEncFile(savefile, JsonConvert.SerializeObject(save));
+                        }
+
+
+                        Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
+                        {
+                            Name = "mud_savefile",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(save)
+                        }));
+                        return;
+                    }
+                }
+                catch { }
+            }
+            try
+            {
+                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                {
+                    Name = "mud_login_denied",
                     GUID = "server"
                 }));
             }
@@ -175,7 +243,7 @@ namespace ShiftOS.Server
         public static void DeleteSave(string guid, object contents)
         {
             var cSave = contents as ClientSave;
-
+            cSave.Username = cSave.Username.ToLower();
             foreach(var saveFile in Directory.GetFiles("saves"))
             {
                 try
@@ -198,6 +266,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["amount"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 long cpAmount = (long)args["amount"];
 
@@ -230,6 +299,7 @@ namespace ShiftOS.Server
             var args = contents as Dictionary<string, object>;
             if (args["username"] != null && args["password"] != null && args["amount"] != null && args["yourusername"] != null)
             {
+                args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 string passw = args["password"] as string;
                 int cpAmount = (int)args["amount"];

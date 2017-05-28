@@ -92,6 +92,16 @@ namespace ShiftOS.WinForms
             lbtitletext.Text = title;
         }
 
+        public void SetupControls(Control ctrl)
+        {
+            foreach (Control c in ctrl.Controls)
+                SetupControls(c);
+            ctrl.Click += (o, a) =>
+            {
+                Desktop.HideAppLauncher();
+            };
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WindowBorder"/> class.
         /// </summary>
@@ -125,16 +135,50 @@ namespace ShiftOS.WinForms
                 }
             };
 
-            this.Width = LoadedSkin.LeftBorderWidth + _parentWindow.Width + LoadedSkin.RightBorderWidth;
-            this.Height = LoadedSkin.TitlebarHeight + _parentWindow.Height + LoadedSkin.BottomBorderWidth;
+            this.Width = (LoadedSkin.LeftBorderWidth*2) + _parentWindow.Width + LoadedSkin.RightBorderWidth;
+            this.Height = (LoadedSkin.TitlebarHeight*2) + _parentWindow.Height + LoadedSkin.BottomBorderWidth;
 
             this.pnlcontents.Controls.Add(this._parentWindow);
             this._parentWindow.Dock = DockStyle.Fill;
             this._parentWindow.Show();
+            SetupControls(this);
             ControlManager.SetupControls(this._parentWindow);
 
+            Shiftorium.Installed += () =>
+            {
+                Setup();
+                ParentWindow.OnUpgrade();
+            };
+            Setup();
+            this._parentWindow.TextChanged += (o, a) =>
+            {
+                Setup();
+                Desktop.ResetPanelButtons();
 
-            Desktop.ShowWindow(this);
+            };
+
+
+            if (!this.IsDialog)
+            {
+                Engine.AppearanceManager.OpenForms.Add(this);
+            }
+
+            SaveSystem.GameReady += () =>
+            {
+                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                {
+                    AppearanceManager.Invoke(new Action(() =>
+                    {
+                        this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
+                        this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+
+                    }));
+                }
+                AppearanceManager.Invoke(new Action(() =>
+                {
+                    Setup();
+                }));
+            };
 
         }
 
@@ -172,46 +216,12 @@ namespace ShiftOS.WinForms
         public void WindowBorder_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
-
-            this._parentWindow.TextChanged += (o, a) =>
-            {
-                Setup();
-                Desktop.ResetPanelButtons();
-
-            };
-
             this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+            ParentWindow.OnLoad();
+            ParentWindow.OnSkinLoad();
+            ParentWindow.OnUpgrade();
 
-            if (!this.IsDialog)
-            {
-                Engine.AppearanceManager.OpenForms.Add(this);
-            }
-
-            SaveSystem.GameReady += () =>
-            {
-                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
-                {
-                    AppearanceManager.Invoke(new Action(() =>
-                    {
-                        this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
-                        this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
-
-                    }));
-                }
-                AppearanceManager.Invoke(new Action(() =>
-                {
-                    Setup();
-                }));
-            };
-
-            ControlManager.SetupControls(this);
-
-            Setup();
-
-            var sWin = (IShiftOSWindow)ParentWindow;
-
-            sWin.OnLoad();
         }
 
         /// <summary>
@@ -247,6 +257,7 @@ namespace ShiftOS.WinForms
         {
             this.DoubleBuffered = true;
             this.TransparencyKey = LoadedSkin.SystemKey;
+            pnlcontents.BackColor = this.TransparencyKey;
             pnltitle.Height = LoadedSkin.TitlebarHeight;
             pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
             pnltitle.BackgroundImage = GetImage("titlebar");
@@ -283,9 +294,11 @@ namespace ShiftOS.WinForms
             pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
             pnlbottomr.BackgroundImage = GetImage("bottomrborder");
             pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
+            pnlbottomr.Width = pnlright.Width;
             pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
             pnlbottoml.BackgroundImage = GetImage("bottomlborder");
             pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+            pnlbottoml.Width = pnlleft.Width;
 
             lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
             lbtitletext.Font = LoadedSkin.TitleFont;
@@ -485,6 +498,122 @@ namespace ShiftOS.WinForms
 		/// <param name="e">E.</param>
         private void lbtitletext_MouseMove(object sender, MouseEventArgs e) {
             pnltitle_MouseMove(sender, e);
+        }
+
+        bool resizing = false;
+
+        private void pnlright_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (Shiftorium.UpgradeInstalled("resizable_windows"))
+            {
+                resizing = true;
+            }
+        }
+
+        private void pnlright_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Width += e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
+            }
+        }
+
+        private void pnlright_MouseUp(object sender, MouseEventArgs e)
+        {
+            resizing = false;
+            pnlcontents.Show();
+            switch (LoadedSkin.TitleTextCentered)
+            {
+                case false:
+                    lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                            LoadedSkin.TitleTextLeft.Y);
+                    break;
+                default:
+                    lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                    lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                    break;
+            }
+        }
+
+        private void pnlleft_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Left += e.X;
+                this.Width -= e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
+            }
+        }
+
+        private void pnlbottom_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Height += e.Y;
+            }
+        }
+
+        private void pnlbottomr_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(resizing == true)
+            {
+                this.Width += e.X;
+                this.Height += e.Y;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
+            }
+        }
+
+        private void pnlbottoml_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (resizing == true)
+            {
+                this.Width -= e.X;
+                this.Height += e.Y;
+                this.Left += e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
+            }
+
         }
     }
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -62,6 +62,18 @@ namespace ShiftOS.Objects
         }
 
         public string ResponseName { get; private set; }
+    }
+
+    public class ChatLogRequest
+    {
+        public ChatLogRequest(string chan, int backtrack = 0)
+        {
+            Channel = chan;
+            Backtrack = backtrack;
+        }
+
+        public int Backtrack { get; set; }
+        public string Channel { get; set; }
     }
 
 

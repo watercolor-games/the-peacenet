@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
@@ -39,18 +40,24 @@ namespace ShiftOS.WinForms.Applications
 {
     [Launcher("Shiftorium", true, "al_shiftorium", "Utilities")]
     [RequiresUpgrade("shiftorium_gui")]
+    [MultiplayerOnly]
     [WinOpen("shiftorium")]
     [DefaultTitle("Shiftorium")]
     [DefaultIcon("iconShiftorium")]
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow
     {
-
+        public int CategoryId = 0;
         public static System.Timers.Timer timer100;
 
 
         public ShiftoriumFrontend()
         {
-
+            cp_update = new System.Windows.Forms.Timer();
+            cp_update.Tick += (o, a) =>
+            {
+                lbcodepoints.Text = $"You have {SaveSystem.CurrentSave.Codepoints} Codepoints."; 
+            };
+            cp_update.Interval = 100;
             InitializeComponent();
             PopulateShiftorium();
             lbupgrades.SelectedIndexChanged += (o, a) =>
@@ -84,17 +91,75 @@ namespace ShiftOS.WinForms.Applications
 
         public void PopulateShiftorium()
         {
-            lbupgrades.Items.Clear();
-            upgrades.Clear();
-            Timer();
-            label2.Text = "You have: " + SaveSystem.CurrentSave.Codepoints.ToString() + " Codepoints";
-
-            foreach (var upg in backend.GetAvailable())
+            var t = new Thread(() =>
             {
-                String name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
-                upgrades.Add(name, upg);
-                lbupgrades.Items.Add(name);
-            }
+                try
+                {
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lbnoupgrades.Hide();
+                        lbupgrades.Items.Clear();
+                        upgrades.Clear();
+                        Timer();
+                    });
+
+                    foreach (var upg in backend.GetAvailable().Where(x => x.Category == backend.GetCategories()[CategoryId]))
+                    {
+                        string name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
+                        upgrades.Add(name, upg);
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbupgrades.Items.Add(name);
+                        });
+                    }
+
+                    if (lbupgrades.Items.Count == 0)
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbnoupgrades.Show();
+                            lbnoupgrades.Location = new Point(
+                                (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                                lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
+                                );
+                        });
+                    }
+                    else
+                    {
+                        Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            lbnoupgrades.Hide();
+                        });
+                    }
+
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        try
+                        {
+                            lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
+                            btncat_back.Visible = (CategoryId > 0);
+                            btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
+                        }
+                        catch
+                        {
+
+                        }
+                    });
+                }
+                catch
+                {
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        lbnoupgrades.Show();
+                        lbnoupgrades.Location = new Point(
+                            (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                            lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
+                            );
+                    });
+                }
+            });
+            t.IsBackground = true;
+            t.Start();
         }
 
         public static bool UpgradeInstalled(string upg)
@@ -148,9 +213,38 @@ namespace ShiftOS.WinForms.Applications
 
         private void btnbuy_Click(object sender, EventArgs e)
         {
+            long cpCost = 0;
             backend.Silent = true;
-            backend.Buy(upgrades[lbupgrades.SelectedItem.ToString()].ID, upgrades[lbupgrades.SelectedItem.ToString()].Cost);
-            backend.Silent = false;
+            Dictionary<string, long> UpgradesToBuy = new Dictionary<string, long>(); 
+            foreach (var itm in lbupgrades.SelectedItems)
+            {
+                cpCost += upgrades[itm.ToString()].Cost;
+                UpgradesToBuy.Add(upgrades[itm.ToString()].ID, upgrades[itm.ToString()].Cost);
+            }
+            if (SaveSystem.CurrentSave.Codepoints < cpCost)
+            {
+                Infobox.Show("Insufficient Codepoints", $"You do not have enough Codepoints to perform this action. You need {cpCost - SaveSystem.CurrentSave.Codepoints} more.");
+                
+            }
+            else
+            {
+                foreach(var upg in UpgradesToBuy)
+                {
+                    SaveSystem.CurrentSave.Codepoints -= upg.Value;
+                    if (SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.Key))
+                    {
+                        SaveSystem.CurrentSave.Upgrades[upg.Key] = true;
+                    }
+                    else
+                    {
+                        SaveSystem.CurrentSave.Upgrades.Add(upg.Key, true);
+                    }
+                    SaveSystem.SaveGame();
+                    backend.InvokeUpgradeInstalled();
+                }
+            }
+
+                backend.Silent = false;
             PopulateShiftorium();
             btnbuy.Hide();
         }
@@ -161,6 +255,8 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            cp_update.Start();
+            lbnoupgrades.Hide();
         }
 
         public void OnSkinLoad()
@@ -168,17 +264,22 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        System.Windows.Forms.Timer cp_update = new System.Windows.Forms.Timer();
+
         public bool OnUnload()
         {
+            cp_update.Stop();
+            cp_update = null;
             return true;
         }
 
         public void OnUpgrade()
         {
-
+            lbupgrades.SelectionMode = (UpgradeInstalled("shiftorium_gui_bulk_buy") == true) ? SelectionMode.MultiExtended : SelectionMode.One;
+            lbcodepoints.Visible = Shiftorium.UpgradeInstalled("shiftorium_gui_codepoints_display");
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void lbcodepoints_Click(object sender, EventArgs e)
         {
 
         }
@@ -187,9 +288,33 @@ namespace ShiftOS.WinForms.Applications
         {
             timer100 = new System.Timers.Timer();
             timer100.Interval = 2000;
+            //CLARIFICATION: What is this supposed to do? - Michael
             //timer100.Elapsed += ???;
             timer100.AutoReset = true;
             timer100.Enabled = true;
+        }
+
+        private void btncat_back_Click(object sender, EventArgs e)
+        {
+            if(CategoryId > 0)
+            {
+                CategoryId--;
+                PopulateShiftorium();
+            }
+        }
+
+        private void btncat_forward_Click(object sender, EventArgs e)
+        {
+            if(CategoryId < backend.GetCategories().Length - 1)
+            {
+                CategoryId++;
+                PopulateShiftorium();
+            }
+        }
+
+        private void lblcategorytext_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

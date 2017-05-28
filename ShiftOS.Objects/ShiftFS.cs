@@ -32,23 +32,16 @@ using System.Threading;
 namespace ShiftOS.Objects.ShiftFS
 {
 
-    public enum Permissions
-    {
-        User,
-        Administrator,
-        Superuser,
-        All
-    }
     public class File
     {
         public string Name;
         public byte[] Data;
         public byte[] HeaderData;
         public bool ReadAccessToLowUsers;
-        public Permissions permissions;
+        public UserPermissions permissions;
         public System.IO.Stream GetStream()
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 return new System.IO.MemoryStream(Data);
             }
@@ -59,7 +52,7 @@ namespace ShiftOS.Objects.ShiftFS
             return null;
         }
 
-        public File(string name, byte[] data, bool ReadAccess_to_low_users, Permissions perm)
+        public File(string name, byte[] data, bool ReadAccess_to_low_users, UserPermissions perm)
         {
             Name = name;
             Data = data;
@@ -73,31 +66,31 @@ namespace ShiftOS.Objects.ShiftFS
         public List<File> Files = new List<File>();
         public List<Directory> Subdirectories = new List<Directory>();
         public bool ReadAccessToLowUsers;
-        public Permissions permissions;
+        public UserPermissions permissions;
         public void AddFile(File file)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Files.Add(file);
             }
         }
         public void RemoveFile(string name)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Files.Remove(Files.Find(x => x.Name == name));
             }
         }
         public void RemoveFile(File file)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Files.Remove(file);
             }
         }
         public File FindFileByName(string name)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 return Files.Find(x => x.Name == name);
             }
@@ -105,28 +98,28 @@ namespace ShiftOS.Objects.ShiftFS
         }
         public void AddDirectory(Directory dir)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Subdirectories.Add(dir);
             }
         }
         public void RemoveDirectory(string name)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Subdirectories.Remove(Subdirectories.Find(x => x.Name == name));
             }
         }
         public void RemoveDirectory(Directory dir)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 Subdirectories.Remove(dir);
             }
         }
         public Directory FindDirectoryByName(string name)
         {
-            if ((int)CurrentUser >= (int)permissions || permissions == Permissions.All)
+            if ((int)CurrentUser <= (int)permissions)
             {
                 return Subdirectories.Find(x => x.Name == name);
             }
@@ -136,7 +129,7 @@ namespace ShiftOS.Objects.ShiftFS
 
     public static class Utils
     {
-        public static Permissions CurrentUser { get; set; }
+        public static UserPermissions CurrentUser { get; set; }
 
         public static List<Directory> Mounts { get; set; }
 
@@ -173,6 +166,11 @@ namespace ShiftOS.Objects.ShiftFS
             t.Start();
         }
 
+        public static event Action<string> DirectoryCreated;
+        public static event Action<string> DirectoryDeleted;
+        public static event Action<string> FileWritten;
+        public static event Action<string> FileDeleted;
+
 
         public static void CreateDirectory(string path)
         {
@@ -190,6 +188,7 @@ namespace ShiftOS.Objects.ShiftFS
                     Name = pathlist[pathlist.Length - 1],
                     permissions = CurrentUser,
                 });
+                DirectoryCreated?.Invoke(path);
             }
             else
             {
@@ -224,14 +223,18 @@ namespace ShiftOS.Objects.ShiftFS
 
             if (!FileExists(path))
             {
-                dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false, Permissions.All));
+                try
+                {
+                    dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false, CurrentUser));
+                }
+                catch { }
             }
             else
             {
                 var f = dir.FindFileByName(pathlist[pathlist.Length - 1]);
                 f.Data = Encoding.UTF8.GetBytes(contents);
             }
-
+            FileWritten?.Invoke(path);
         }
 
 
@@ -248,10 +251,12 @@ namespace ShiftOS.Objects.ShiftFS
             if (FileExists(path))
             {
                 dir.RemoveFile(pathlist[pathlist.Length - 1]);
+                FileDeleted?.Invoke(path);
             }
             else
             {
                 dir.RemoveDirectory(pathlist[pathlist.Length - 1]);
+                DirectoryDeleted?.Invoke(path);
             }
 
         }
@@ -269,14 +274,14 @@ namespace ShiftOS.Objects.ShiftFS
 
             if (!FileExists(path))
             {
-                dir.AddFile(new File(pathlist[pathlist.Length - 1], contents, false, Permissions.All));
+                dir.AddFile(new File(pathlist[pathlist.Length - 1], contents, false, CurrentUser));
             }
             else
             {
                 var f = dir.FindFileByName(pathlist[pathlist.Length - 1]);
                 f.Data = contents;
             }
-
+            FileWritten?.Invoke(path);
         }
 
 
@@ -291,10 +296,13 @@ namespace ShiftOS.Objects.ShiftFS
         {
             string[] pathlist = path.Split('/');
             int vol = Convert.ToInt32(pathlist[0].Replace(":", ""));
+            if (Mounts[vol] == null)
+                Mounts[vol] = new Directory();
             var dir = Mounts[vol];
+
             for (int i = 1; i <= pathlist.Length - 1; i++)
             {
-                dir = dir.FindDirectoryByName(pathlist[i]);
+                dir = dir?.FindDirectoryByName(pathlist[i]);
             }
             return dir != null;
 
@@ -388,6 +396,63 @@ namespace ShiftOS.Objects.ShiftFS
             }
             paths.Sort();
             return paths.ToArray();
+        }
+
+        /// <summary>
+        /// Copies a file or directory from one path to another, deleting the original.
+        /// </summary>
+        /// <param name="path">THe input path, must be a valid directory or file.</param>
+        /// <param name="target">The output path.</param>
+        public static void Move(string path, string target)
+        {
+            if (FileExists(path))
+            {
+                WriteAllBytes(target, ReadAllBytes(path));
+                Delete(path);
+            }
+            else if (DirectoryExists(path))
+            {
+                if (!DirectoryExists(target))
+                    CreateDirectory(target);
+                foreach (var file in GetFiles(path))
+                {
+                    var name = GetFileInfo(file).Name;
+                    Copy(file, target + "/" + name);
+                }
+                foreach (var dir in GetDirectories(path))
+                {
+                    string name = GetDirectoryInfo(dir).Name;
+                    Copy(dir, target + "/" + name);
+                }
+                Delete(path);
+            }
+        }
+
+
+        /// <summary>
+        /// Copies a file or directory from one path to another.
+        /// </summary>
+        /// <param name="path">The input path, must be a valid directory or file.</param>
+        /// <param name="target">The output path.</param>
+        public static void Copy(string path, string target)
+        {
+            if (FileExists(path))
+                WriteAllBytes(target, ReadAllBytes(path));
+            else if (DirectoryExists(path))
+            {
+                if (!DirectoryExists(target))
+                    CreateDirectory(target);
+                foreach(var file in GetFiles(path))
+                {
+                    var name = GetFileInfo(file).Name;
+                    Copy(file, target + "/" + name);
+                }
+                foreach(var dir in GetDirectories(path))
+                {
+                    string name = GetDirectoryInfo(dir).Name;
+                    Copy(dir, target + "/" + name);
+                }
+            }
         }
 
         public static string[] GetFiles(string path)

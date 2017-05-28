@@ -32,12 +32,28 @@ using System.Windows.Forms;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Backend class for forwarding <see cref="System.Console"/> to the ShiftOS terminal. 
+    /// </summary>
     public class TerminalTextWriter : TextWriter
     {
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool LockWindowUpdate(IntPtr hWndLock);
         
+        public TerminalTextWriter()
+        {
+            ConsoleEx.OnFlush = () =>
+            {
+                System.Diagnostics.Debug.WriteLine("[terminal] " + buffer);
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    UnderlyingControl?.Write(buffer);
+                    buffer = "";
+                });
+            };
+        }
 
+        /// <summary>
+        /// Gets the encoding format for this <see cref="TextWriter"/>. God bless the Unicode Consortiem. 
+        /// </summary>
         public override Encoding Encoding
         {
             get
@@ -46,6 +62,9 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Gets the underlying <see cref="ITerminalWidget"/> that this <see cref="TerminalTextWriter"/> is forwarding to.  
+        /// </summary>
         public ITerminalWidget UnderlyingControl
         {
             get
@@ -54,15 +73,22 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Moves the caret to the last character in the textbox.
+        /// </summary>
         public void select()
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl.SelectBottom();
+                UnderlyingControl?.SelectBottom();
                 
             }));
         }
 
+        /// <summary>
+        /// Write a character to the Terminal.
+        /// </summary>
+        /// <param name="value">The character to write.</param>
         public override void Write(char value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
@@ -74,14 +100,24 @@ namespace ShiftOS.Engine
             }
             else
             {
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-                {
-                    UnderlyingControl.Write(value.ToString());
-                    select();
-                }));
+                buffer += value;
             }
         }
 
+        private string buffer = "";
+
+        public string Buffer
+        {
+            get
+            {
+                return buffer;
+            }
+        }
+
+        /// <summary>
+        /// Write text to the Terminal, followed by a newline.
+        /// </summary>
+        /// <param name="value">The text to write.</param>
         public override void WriteLine(string value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
@@ -94,18 +130,20 @@ namespace ShiftOS.Engine
             else
             {
 
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-            {
-                UnderlyingControl.WriteLine(value);
-                select();
-            }));
+                buffer += value + Environment.NewLine;
+                ConsoleEx.Flush();
             }
         }
 
+        [Obsolete("Stub.")]
         public void SetLastText()
         {
         }
 
+        /// <summary>
+        /// Write text to the Terminal.
+        /// </summary>
+        /// <param name="value">The text to write.</param>
         public override void Write(string value)
         {
             if (TerminalBackend.IsForwardingConsoleWrites)
@@ -120,8 +158,7 @@ namespace ShiftOS.Engine
 
                 Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl.Write(value.ToString());
-                select();
+                buffer += value;
             }));
             }
         }

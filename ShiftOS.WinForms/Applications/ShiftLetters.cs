@@ -36,8 +36,9 @@ using System.Windows.Forms;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [Launcher("ShiftLetters", false, null, "Games")]
-    [RequiresUpgrade("shiftletters")]
+    [AppscapeEntry("ShiftLetters", "Let's see how much you know about ShiftOS by playing this tiny little Hangman game! Shiftorium Upgrades exist to allow you to buy different word sets!", 300, 150, null, "Games")]
     [WinOpen("shiftletters")]
     [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow
@@ -50,7 +51,7 @@ namespace ShiftOS.WinForms.Applications
                 "shiftorium", "codepoints", "shiftletters", "shops", "mud", "notification", "namechanger",
                 "skinning", "skinloader", "calculator", "fileskimmer", "lua", "shiftnet", "terminal", "textpad"};
         List<String> contributorsWordlist = new List<string> { "philipadams", "carverh", "computelinux", "lempamo",
-                "wowmom", "michaeltheshifter", "arencclc", "therandommelon", "pfg", "craftxbox"};
+                "wowmom", "michaeltheshifter", "arencllc", "therandommelon", "pfg", "craftxbox", "ashifter"};
 
         List<string> osWordlist = new List<string>
         {
@@ -90,7 +91,8 @@ namespace ShiftOS.WinForms.Applications
             "vienna",
             "whistler",
             "windowsxp",
-            "windowsforworkgroups"
+            "windowsforworkgroups",
+            "shiftos"
         };
 
         public ShiftLetters()

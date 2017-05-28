@@ -94,6 +94,8 @@ namespace ShiftOS.Engine
                 //No, not "sex" - ShiftOS EXecutable. xD
                 case "sex":
                     return FileType.Executable;
+                case "cf":
+                    return FileType.CommandFormat;
                 default:
                     return FileType.Unknown;
             }
@@ -178,6 +180,7 @@ namespace ShiftOS.Engine
         Lua,
         Python,
         Filesystem,
+        CommandFormat,
         Unknown
     }
 }

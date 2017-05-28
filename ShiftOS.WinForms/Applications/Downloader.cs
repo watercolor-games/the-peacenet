@@ -41,8 +41,12 @@ using System.IO.Compression;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Downloader", false, null, "Networking")]
+    [MultiplayerOnly]
+    [Launcher("Downloader", true, "al_downloader", "Networking")]
     [DefaultIcon("iconDownloader")]
+    [WinOpen("downloader")]
+    [DefaultTitle("Downloader")]
+    [RequiresUpgrade("downloader")]
     public partial class Downloader : UserControl, IShiftOSWindow
     {
         public Downloader()
@@ -173,18 +177,13 @@ namespace ShiftOS.WinForms.Applications
         /// <returns>Download speed in bytes.</returns>
         public static int GetDownloadSpeed()
         {
-            switch (SaveSystem.CurrentSave.ShiftnetSubscription)
-            {
-                case 0:
-                    return 256/*B*/;
-                case 1:
-                    return 1024 * 1024/*KB*/;
-                case 2:
-                    return 1024 * 10240/*KB*/;
-                case 3:
-                    return 1024 * 1024 * 1024/*MB*/;
-            }
-            return 256;
+            return GetAllSubscriptions()[SaveSystem.CurrentSave.ShiftnetSubscription].DownloadSpeed;
+        }
+
+        public static ShiftOS.Objects.EngineShiftnetSubscription[] GetAllSubscriptions()
+        {
+            //For now we'll have them hard-coded into the client but in future they'll be in the MUD.
+            return JsonConvert.DeserializeObject<ShiftOS.Objects.EngineShiftnetSubscription[]>(Properties.Resources.ShiftnetServices);
         }
 
         public static void StartDownload(Download down)

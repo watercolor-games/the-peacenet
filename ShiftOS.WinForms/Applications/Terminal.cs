@@ -43,6 +43,7 @@ using System.Collections;
 using static ShiftOS.Engine.SkinEngine;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -56,7 +57,6 @@ namespace ShiftOS.WinForms.Applications
         public static System.Windows.Forms.Timer ti = new System.Windows.Forms.Timer();
 
         public static string latestCommmand = "";
-
 
         public static bool IsInRemoteSystem = false;
         public static string RemoteGuid = "";
@@ -116,7 +116,7 @@ namespace ShiftOS.WinForms.Applications
         [Obsolete("This is used for compatibility with old parts of the backend. Please use TerminalBackend instead.")]
         public static void InvokeCommand(string text)
         {
-            
+
             TerminalBackend.InvokeCommand(text);
         }
 
@@ -130,17 +130,30 @@ namespace ShiftOS.WinForms.Applications
                 {
                     this.Invoke(new Action(() =>
                     {
-                        ResetAllKeywords();
-                        rtbterm.Text = "";
-                        TerminalBackend.PrefixEnabled = true;
-                        TerminalBackend.InStory = false;
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-                        if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                        if (Shiftorium.UpgradeInstalled("first_steps"))
                         {
-                            this.ParentForm.Width = 640;
-                            this.ParentForm.Height = 480;
-                            this.ParentForm.Left = (Screen.PrimaryScreen.Bounds.Width - 640) / 2;
-                            this.ParentForm.Top = (Screen.PrimaryScreen.Bounds.Height - 480) / 2;
+                            if (!Shiftorium.UpgradeInstalled("desktop"))
+                            {
+                                TerminalBackend.PrefixEnabled = true;
+                                TerminalBackend.InStory = false;
+                                TerminalBackend.PrintPrompt();
+                                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
+                                {
+                                    this.ParentForm.Width = 640;
+                                    this.ParentForm.Height = 480;
+                                    this.ParentForm.Left = (Screen.PrimaryScreen.Bounds.Width - 640) / 2;
+                                    this.ParentForm.Top = (Screen.PrimaryScreen.Bounds.Height - 480) / 2;
+
+                                }
+                            }
+                            else
+                            {
+                                AppearanceManager.Close(this);
+                            }
+                        }
+                        else
+                        {
+                            Story.Start("first_steps");
 
                         }
                     }));
@@ -188,52 +201,6 @@ namespace ShiftOS.WinForms.Applications
 
         public static event TextSentEventHandler TextSent;
 
-        public void ResetAllKeywords()
-        {
-            string primary = SaveSystem.CurrentSave.Username + " ";
-            string secondary = "shiftos ";
-
-
-            var asm = Assembly.GetExecutingAssembly();
-
-            var types = asm.GetTypes();
-
-            foreach (var type in types)
-            {
-                foreach (var a in type.GetCustomAttributes(false))
-                {
-                    if (ShiftoriumFrontend.UpgradeAttributesUnlocked(type))
-                    {
-                        if (a is Namespace)
-                        {
-                            var ns = a as Namespace;
-                            if (!primary.Contains(ns.name))
-                            {
-                                primary += ns.name + " ";
-                            }
-                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                            {
-                                if (ShiftoriumFrontend.UpgradeAttributesUnlocked(method))
-                                {
-                                    foreach (var ma in method.GetCustomAttributes(false))
-                                    {
-                                        if (ma is Command)
-                                        {
-                                            var cmd = ma as Command;
-                                            if (!secondary.Contains(cmd.name))
-                                                secondary += cmd.name + " ";
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-        }
-
         public static void MakeWidget(Controls.TerminalBox txt)
         {
             AppearanceManager.StartConsoleOut();
@@ -243,15 +210,29 @@ namespace ShiftOS.WinForms.Applications
             };
             txt.KeyDown += (o, a) =>
             {
+                if (a.Control == true || a.Alt == true)
+                {
+                    a.SuppressKeyPress = true;
+                    return;
+                }
+
                 if (a.KeyCode == Keys.Enter)
                 {
                     try
                     {
-                        a.SuppressKeyPress = true;
-                        Console.WriteLine("");
+                        if (!TerminalBackend.InStory)
+                            a.SuppressKeyPress = false;
+                        if (!TerminalBackend.PrefixEnabled)
+                        {
+                            string textraw = txt.Lines[txt.Lines.Length - 1];
+                            TextSent?.Invoke(textraw);
+                            TerminalBackend.SendText(textraw);
+                            return;
+                        }
                         var text = txt.Lines.ToArray();
-                        var text2 = text[text.Length - 2];
+                        var text2 = text[text.Length - 1];
                         var text3 = "";
+                        Console.WriteLine();
                         var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
 
                         if (IsInRemoteSystem == true)
@@ -266,17 +247,41 @@ namespace ShiftOS.WinForms.Applications
                         {
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                                text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                             }
                             TerminalBackend.LastCommand = text3;
                             TextSent?.Invoke(text4);
+                            TerminalBackend.SendText(text4);
                             if (TerminalBackend.InStory == false)
                             {
-                                TerminalBackend.InvokeCommand(text3);
+                                if (text3 == "stop theme")
+                                {
+                                    CurrentCommandParser.parser = null;
+                                }
+                                else
+                                {
+                                    if (CurrentCommandParser.parser == null)
+                                    {
+                                        TerminalBackend.InvokeCommand(text3);
+                                    }
+                                    else
+                                    {
+                                        var result = CurrentCommandParser.parser.ParseCommand(text3);
+
+                                        if (result.Equals(default(KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>)))
+                                        {
+                                            Console.WriteLine("Syntax Error: Syntax Error");
+                                        }
+                                        else
+                                        {
+                                            TerminalBackend.InvokeCommand(result.Key.Key, result.Key.Value, result.Value);
+                                        }
+                                    }
+                                }
                             }
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                                TerminalBackend.PrintPrompt();
                             }
                         }
                     }
@@ -290,7 +295,7 @@ namespace ShiftOS.WinForms.Applications
                     {
                         var tostring3 = txt.Lines[txt.Lines.Length - 1];
                         var tostringlen = tostring3.Length + 1;
-                        var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var workaround = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                         var derp = workaround.Length + 1;
                         if (tostringlen != derp)
                         {
@@ -310,7 +315,7 @@ namespace ShiftOS.WinForms.Applications
                 {
                     var getstring = txt.Lines[txt.Lines.Length - 1];
                     var stringlen = getstring.Length + 1;
-                    var header = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                     var headerlen = header.Length + 1;
                     var selstart = txt.SelectionStart;
                     var remstrlen = txt.TextLength - stringlen;
@@ -325,11 +330,10 @@ namespace ShiftOS.WinForms.Applications
                         a.SuppressKeyPress = true;
                     }
                 }
-                //( ͡° ͜ʖ ͡° ) You found the lennyface without looking at the commit message. Message Michael in the #shiftos channel on Discord saying "ladouceur" somewhere in your message if you see this.
                 else if (a.KeyCode == Keys.Up)
                 {
                     var tostring3 = txt.Lines[txt.Lines.Length - 1];
-                    if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
+                    if (tostring3 == $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                         Console.Write(TerminalBackend.LastCommand);
                     a.SuppressKeyPress = true;
 
@@ -350,8 +354,8 @@ namespace ShiftOS.WinForms.Applications
             txt.Focus();
 
             txt.Font = LoadedSkin.TerminalFont;
-            txt.ForeColor = LoadedSkin.TerminalForeColor;
-            txt.BackColor = LoadedSkin.TerminalBackColor;
+            txt.ForeColor = ControlManager.ConvertColor(LoadedSkin.TerminalForeColorCC);
+            txt.BackColor = ControlManager.ConvertColor(LoadedSkin.TerminalBackColorCC);
 
         }
 
@@ -359,18 +363,17 @@ namespace ShiftOS.WinForms.Applications
         {
             ServerManager.MessageReceived += (msg) =>
             {
-                if(msg.Name == "trm_handshake_guid")
+                if (msg.Name == "trm_handshake_guid")
                 {
                     IsInRemoteSystem = true;
                     RemoteGuid = msg.GUID;
                 }
-                else if(msg.Name == "trm_handshake_stop")
+                else if (msg.Name == "trm_handshake_stop")
                 {
                     IsInRemoteSystem = false;
                     RemoteGuid = "";
                 }
             };
-
         }
 
         private void Terminal_FormClosing(object sender, FormClosingEventArgs e)
@@ -386,16 +389,136 @@ namespace ShiftOS.WinForms.Applications
 
             if (SaveSystem.CurrentSave != null)
             {
+                TerminalBackend.PrintPrompt();
                 if (!ShiftoriumFrontend.UpgradeInstalled("window_manager"))
                 {
-                    rtbterm.Text = AppearanceManager.LastTerminalText;
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
-                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-
             }
 
+        }
 
+        public static string RemoteSystemName { get; set; }
+        public static string RemoteUser { get; set; }
+        public static string RemotePass { get; set; }
+
+        [Story("first_steps")]
+        public static void FirstSteps()
+        {
+            TerminalBackend.PrefixEnabled = false;
+            new Thread(() =>
+            {
+                TerminalBackend.InStory = true;
+                Console.WriteLine("Hey there, and welcome to ShiftOS.");
+                Thread.Sleep(2000);
+                Console.WriteLine("My name is DevX. I am the developer of this operating system.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Right now, I am using the Terminal application as a means of talking to you.");
+                Thread.Sleep(2000);
+                Console.WriteLine("ShiftOS is a very early operating system, but I have big plans for it.");
+                Thread.Sleep(2000);
+                Console.WriteLine("I can't reveal all my plans to you at this moment, but you play a big role.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Your role in all of this is to help me develop ShiftOS more.");
+                Thread.Sleep(2000);
+                Console.WriteLine("You may not know how to program, but that's perfectly fine. You don't need to.");
+                Thread.Sleep(2000);
+                Console.WriteLine("What you do need to do, is simply use the operating system - like you would a regular computer.");
+                Thread.Sleep(2000);
+                Console.WriteLine("As you use ShiftOS, you will earn a special currency called Codepoints.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The more things you do, the more Codepoints you get! Simple, right?");
+                Thread.Sleep(2000);
+                Console.WriteLine("Once you rack up enough Codepoints, you can use them inside the Shiftorium to buy new features for ShiftOS.");
+                Thread.Sleep(2000);
+                Console.WriteLine("These features include new programs, system enhancements, Terminal commands, and so much more!");
+                Thread.Sleep(2000);
+                Console.WriteLine("Ahh, that reminds me. I suppose you don't know how to use the Terminal yet, do you...");
+                Thread.Sleep(2000);
+                Console.WriteLine("Well, the ShiftOS terminal is similar to a regular Linux terminal, however things are a bit... how you say.... primitive.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Let's just say.... I've been focusing more on function than form with this one.... Anyways, here's how the terminal works.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Each command is categorized into a \"Namespace\". All a namespace is, is a nice way of distinguishing between commands.");
+                Thread.Sleep(2000);
+                Console.WriteLine("...For example you may have a bunch of commands for managing files, and others for opening/closing programs.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The three main namespaces you'll be using for the next while are the \"sos\", \"shiftorium\", and \"win\" namespaces.");
+                Thread.Sleep(2000);
+                Console.WriteLine("To run a command, simply type its namespace, followed by a period/full-stop, followed by the command name.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Give it a try! Type \"sos.help\" in the following prompt to view a list of all ShiftOS commands.");
+                Thread.Sleep(2000);
+                TerminalBackend.InStory = false;
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
+                bool help_entered = false;
+                TerminalBackend.CommandProcessed += (text, args) =>
+                {
+                    if (text.EndsWith("sos.help") && help_entered == false)
+                        help_entered = true;
+                };
+                while (help_entered == false)
+                    Thread.Sleep(10);
+                TerminalBackend.InStory = true;
+                TerminalBackend.PrefixEnabled = false;
+                Thread.Sleep(2000);
+                Console.WriteLine("Good job! Next, we will look at how to pass data to a command, such as win.open.");
+                Thread.Sleep(2000);
+                Console.WriteLine("In ShiftOS, passing data to a command is quite simple! After the command name, place an opening and closing curly brace, like so: \"win.open{}\".");
+                Thread.Sleep(2000);
+                Console.WriteLine("Everything between those two curly braces is treated as command data.");
+                Thread.Sleep(2000);
+                Console.WriteLine("However, you can't just spam a bunch of 1s and 0s and call it a day, nonono!");
+                Thread.Sleep(2000);
+                Console.WriteLine("Command data is split into a list of keys and values.");
+                Thread.Sleep(2000);
+                Console.WriteLine("The key tells the command the name of the data, and the value is what the command will see when it looks at the key.");
+                Thread.Sleep(2000);
+                Console.WriteLine("There are three main types of values. Booleans, which can be either \"true\" or \"false\", Numbers, which can be any integer number, positive or negative, and Strings - any piece of text as long as it is surrounded by double-quotes.");
+                Thread.Sleep(2000);
+                Console.WriteLine("For example, we could write every programmer's first program - by typing \"trm.echo{msg:\"Hello, world!\"}\". Running this will cause the Terminal to print, well, \"Hello, world!\"");
+                Thread.Sleep(2000);
+                Console.WriteLine("To open an application in ShiftOS, you can use this principle with the \"win.open\" command.");
+                Thread.Sleep(2000);
+                Console.WriteLine("First, type \"win.open\" with no data to see a list of all installed programs.");
+                Thread.Sleep(2000);
+                TerminalBackend.InStory = false;
+                bool winopenEntered = false;
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
+                TerminalBackend.CommandProcessed += (text, args) =>
+                {
+                    if (help_entered == true)
+                        if (text.EndsWith("win.open") && winopenEntered == false)
+                            winopenEntered = true;
+                };
+                while (winopenEntered == false)
+                    Thread.Sleep(10);
+                TerminalBackend.InStory = true;
+                TerminalBackend.PrefixEnabled = false;
+
+                Thread.Sleep(2000);
+                Console.WriteLine("Pretty cool, it gave you a nice list of other win.open commands that will let you open each program.");
+                Thread.Sleep(2000);
+                Console.WriteLine("You've got the just of using ShiftOS. Now, for your goal.");
+                Thread.Sleep(2000);
+                Console.WriteLine("As you know, ShiftOS doesn't have very many features.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Using the applications you have, I need you to earn as many Codepoints as you can.");
+                Thread.Sleep(2000);
+                Console.WriteLine("You can use the Codepoints you earn to buy new applications and features in the Shiftorium, to help earn even more Codepoints.");
+                Thread.Sleep(2000);
+                Console.WriteLine("Once you earn 1,000 Codepoints, I will check back with you and see how well you've done.");
+                Thread.Sleep(2000);
+                Console.WriteLine("I'll leave you to it, you've got the hang of it! One last thing, if ever you find yourself in another program, and want to exit, simply press CTRL+T to return to the Terminal.");
+                Thread.Sleep(2000);
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.InStory = false;
+                SaveSystem.SaveGame();
+                Thread.Sleep(1000);
+                TerminalBackend.PrintPrompt();
+            }).Start();
         }
 
         public void OnSkinLoad()
@@ -403,8 +526,8 @@ namespace ShiftOS.WinForms.Applications
             try
             {
                 rtbterm.Font = LoadedSkin.TerminalFont;
-                rtbterm.ForeColor = LoadedSkin.TerminalForeColor;
-                rtbterm.BackColor = LoadedSkin.TerminalBackColor;
+                rtbterm.ForeColor = ControlManager.ConvertColor(LoadedSkin.TerminalForeColorCC);
+                rtbterm.BackColor = ControlManager.ConvertColor(LoadedSkin.TerminalBackColorCC);
             }
             catch
             {
@@ -429,7 +552,7 @@ namespace ShiftOS.WinForms.Applications
 
                             if (TerminalBackend.PrefixEnabled)
                             {
-                                Console.Write($"{SaveSystem.CurrentSave.Username}@shiftos:~$ ");
+                                Console.Write($"{SaveSystem.CurrentUser.Username}@shiftos:~$ ");
                             }
                         }
                         catch (Exception ex)
@@ -451,7 +574,10 @@ namespace ShiftOS.WinForms.Applications
         {
 
         }
-        
+
+        internal void ClearText()
+        {
+            rtbterm.Text = "";
+        }
     }
 }
-//lol you found this comment i made so i chould push a change to make a point.

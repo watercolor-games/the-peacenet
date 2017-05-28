@@ -38,8 +38,9 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
 
-    [Launcher("Name Changer", true, "al_name_changer", "Customization")]
-    [RequiresUpgrade("name_changer")]
+    [MultiplayerOnly]
+    [Launcher("Name Changer", false, null, "Customization")]
+    [AppscapeEntry("Name Changer", "Want to change the names of applications within ShiftOS? This application lets you do just that.", 342, 500, "skinning;file_skimmer;wm_titlebar", "Customization")]
     [WinOpen("name_changer")]
     [DefaultTitle("Name Changer")]
     [DefaultIcon("iconNameChanger")]

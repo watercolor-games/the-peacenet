@@ -34,164 +34,52 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 using Newtonsoft.Json;
 using static ShiftOS.Engine.SkinEngine;
+using ShiftOS.WinForms.Tools;
+using System.IO;
+using System.Reflection;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Shiftnet", false, null, "Networking")]
+    //OH MY GOD. I HAD TO CORRECT HEAPS OF BADLY PLACED CURLY BRACES.
+    //
+    //I DO NOT CARE WHAT THE BLUE SMILEY FACE SAYS. CURLY BRACES BELONG ON THEIR OWN LINE.
+    //
+    //READ THE DAMN SHIFTOS CODING GUIDELINES.
+
+    [Launcher("Shiftnet", true, "al_shiftnet", "Networking")]
+    [MultiplayerOnly]
+    [DefaultTitle("Shiftnet")]
+    [WinOpen("shiftnet")]
+    [RequiresUpgrade("victortran_shiftnet")]
     [DefaultIcon("iconShiftnet")]
-    public partial class Shiftnet : UserControl, IShiftOSWindow
+    public partial class Shiftnet : UserControl, IShiftOSWindow, IShiftnetClient
     {
         public Shiftnet()
         {
             InitializeComponent();
-            ServerManager.MessageReceived += (msg) =>
-            {
-                try
-                {
-                    if (msg.Name == "shiftnet_file")
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            wbcanvas.DocumentText = ConstructHtml(msg.Contents);
-                        }));
-                    }
-                }
-                catch
-                {
-
-                }
-            };
-        }
-
-        public string ConstructHtml(string markdown)
-        {
-            string html = $@"<html>
-    <head>
-        <style>
-            body {{
-                background-color: rgb({LoadedSkin.ControlColor.R}, {LoadedSkin.ControlColor.G}, {LoadedSkin.ControlColor.B});
-                color: rgb({LoadedSkin.ControlTextColor.R}, {LoadedSkin.ControlTextColor.G}, {LoadedSkin.ControlTextColor.B});
-                font-family: ""{LoadedSkin.MainFont.Name}"";
-                font-size: {LoadedSkin.MainFont.SizeInPoints}pt;
-            }}
-
-            h1 {{
-                font-family: ""{LoadedSkin.HeaderFont.Name}"";
-                font-size: {LoadedSkin.HeaderFont.SizeInPoints}pt;
-            }}
-
-            h2 {{
-                font-family: ""{LoadedSkin.Header2Font.Name}"";
-                font-size: {LoadedSkin.Header2Font.SizeInPoints}pt;
-            }}
-
-            h3 {{
-                font-family: ""{LoadedSkin.Header3Font.Name}"";
-                font-size: {LoadedSkin.Header3Font.SizeInPoints}pt;
-            }}
-
-            pre, code {{
-                font-family: ""{LoadedSkin.TerminalFont.Name}"";
-                font-size: {LoadedSkin.TerminalFont.SizeInPoints}pt;
-                color: rgb({LoadedSkin.TerminalForeColor.R}, {LoadedSkin.TerminalForeColor.G}, {LoadedSkin.TerminalForeColor.B});
-                background-color: rgb({LoadedSkin.TerminalBackColor.R}, {LoadedSkin.TerminalBackColor.G}, {LoadedSkin.TerminalBackColor.B});                
-            }}
-        </style>
-    </head>
-    <body>
-        <markdown/>
-    </body>
-</html>";
-
-            string body = CommonMark.CommonMarkConverter.Convert(markdown);
-            for(int i = 0; i <= Encoding.UTF8.GetBytes(body).Length; i += DownloadManager.GetDownloadSpeed())
-            {
-                //halt the page load until 'download' finishes.
-            }
-            html = html.Replace("<markdown/>", body);
-            return html;
         }
 
         public string CurrentUrl { get; set; }
 
 
-        private void wbcanvas_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
-            string Url = e.Url.ToString().Replace("http://", "");
-            if (CurrentUrl != Url.ToString() && !Url.ToString().StartsWith("about:"))
-            {
-                e.Cancel = true;
-                Future.Clear();
-                ShiftnetNavigate(Url.ToString());
-            }
-        }
-
         public Stack<string> History = new Stack<string>();
         public Stack<string> Future = new Stack<string>();
 
-        public void ShiftnetNavigate(string Url, bool pushHistory = true)
-        {
-            if (Url.EndsWith(".rnp") || !Url.Contains("."))
-            {
-                if (!string.IsNullOrEmpty(CurrentUrl) && pushHistory)
-                    History.Push(CurrentUrl);
-                CurrentUrl = Url;
-                ServerManager.SendMessage("shiftnet_get", JsonConvert.SerializeObject(new
-                {
-                    url = Url
-                }));
-                txturl.Text = Url;
-
-            }
-            else
-            {
-                ServerMessageReceived smr = null;
-                smr = (msg) =>
-                {
-                    if(msg.Name == "download_meta")
-                    {
-                        var bytes = JsonConvert.DeserializeObject<byte[]>(msg.Contents);
-                        string destPath = null;
-                        string ext = Url.Split('.')[Url.Split('.').Length - 1];
-                        this.Invoke(new Action(() =>
-                        {
-                            FileSkimmerBackend.GetFile(new[] { ext }, FileOpenerStyle.Save, new Action<string>((file) =>
-                            {
-                                destPath = file;
-                            }));
-                        }));
-                        while (string.IsNullOrEmpty(destPath))
-                        {
-                            
-                        }
-                        var d = new Download
-                        {
-                            ShiftnetUrl = Url,
-                            Destination = destPath,
-                            Bytes = bytes,
-                            Progress = 0,
-                        };
-                        DownloadManager.StartDownload(d);
-                        this.Invoke(new Action(() =>
-                        {
-                            AppearanceManager.SetupWindow(new Downloader());
-                        }));
-                        ServerManager.MessageReceived -= smr;
-                    }
-                };
-                ServerManager.MessageReceived += smr;
-                ServerManager.SendMessage("download_start", Url);
-            }
-        }
+        public IShiftnetSite CurrentPage = null;
 
         public void OnLoad()
         {
-            ShiftnetNavigate("shiftnet/main");
+            NavigateToUrl("shiftnet/main");
         }
 
         public void OnSkinLoad()
         {
-            ShiftnetNavigate(CurrentUrl);
+            CurrentPage?.OnSkinLoad();
+            btnback.Location = new Point(2, 2);
+            btnforward.Location = new Point(btnback.Left + btnback.Width + 2, 2);
+            txturl.Location = new Point(btnforward.Left + btnforward.Width + 2, 2);
+            txturl.Width = flcontrols.Width - btnback.Width - 2 - btnforward.Width - 2 - (btngo.Width*2) - 2;
+            btngo.Location = new Point(flcontrols.Width - btngo.Width - 2, 2);
         }
 
         public bool OnUnload()
@@ -201,6 +89,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            CurrentPage?.OnUpgrade();
         }
 
         private void btnback_Click(object sender, EventArgs e)
@@ -211,7 +100,7 @@ namespace ShiftOS.WinForms.Applications
                 if (!string.IsNullOrEmpty(hist))
                 {
                     Future.Push(hist);
-                    ShiftnetNavigate(hist, false);
+                    NavigateToUrl(hist);
                 }
             }
             catch
@@ -227,7 +116,8 @@ namespace ShiftOS.WinForms.Applications
                 string fut = Future.Pop();
                 if (!string.IsNullOrEmpty(fut))
                 {
-                    ShiftnetNavigate(fut);
+                    History.Push(CurrentUrl);
+                    NavigateToUrl(fut);
                 }
             }
             catch
@@ -241,22 +131,109 @@ namespace ShiftOS.WinForms.Applications
             if (!string.IsNullOrWhiteSpace(txturl.Text))
             {
                 Future.Clear();
-
-                ShiftnetNavigate(txturl.Text);
+                History.Push(CurrentUrl);
+                NavigateToUrl(txturl.Text);
             }
         }
 
         private void txturl_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 btngo_Click(sender, EventArgs.Empty);
                 e.SuppressKeyPress = true;
             }
         }
 
-        private void wbcanvas_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        public void NavigateToUrl(string url)
         {
+            txturl.Text = url;
+            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exe);
+                        foreach (var type in asm.GetTypes())
+                        {
+                            if (type.GetInterfaces().Contains(typeof(IShiftnetSite)))
+                            {
+                                if (type.BaseType == typeof(UserControl))
+                                {
+                                    var attribute = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
+                                    if (attribute != null)
+                                    {
+                                        if (attribute.Url == url)
+                                        {
+                                            if (Shiftorium.UpgradeAttributesUnlocked(type))
+                                            {
+                                                var obj = (IShiftnetSite)Activator.CreateInstance(type, null);
+                                                obj.GoToUrl += (u) =>
+                                                {
+                                                    History.Push(u);
+                                                    NavigateToUrl(u);
+                                                };
+                                                obj.GoBack += () =>
+                                                {
+                                                    string u = History.Pop();
+                                                    Future.Push(u);
+                                                    NavigateToUrl(u);
+                                                };
+                                                CurrentPage = obj;
+                                                this.pnlcanvas.Controls.Clear();
+                                                this.pnlcanvas.Controls.Add((UserControl)obj);
+                                                ((UserControl)obj).Show();
+                                                ((UserControl)obj).Dock = DockStyle.Fill;
+                                                obj.OnUpgrade();
+                                                obj.OnSkinLoad();
+                                                obj.Setup();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        pnlcanvas.Controls.Clear();
+                        var tlbl = new Label();
+                        tlbl.Text = "Server error in \"" + url + "\" application.";
+                        tlbl.Tag = "header1";
+                        tlbl.AutoSize = true;
+                        tlbl.Location = new Point(10, 10);
+                        tlbl.Dock = DockStyle.Top;
+                        pnlcanvas.Controls.Add(tlbl);
+                        tlbl.Show();
+
+                        var crash = new Label();
+                        crash.Dock = DockStyle.Fill;
+                        crash.AutoSize = false;
+                        crash.Text = ex.ToString();
+                        pnlcanvas.Controls.Add(crash);
+                        crash.Show();
+                        crash.BringToFront();
+                        ControlManager.SetupControls(pnlcanvas);
+                        return;
+                    }
+                }
+            }
+            pnlcanvas.Controls.Clear();
+            var lbl = new Label();
+            lbl.Text = "Page not found!";
+            lbl.Tag = "header1";
+            lbl.AutoSize = true;
+            lbl.Location = new Point(10, 10);
+            pnlcanvas.Controls.Add(lbl);
+            lbl.Show();
+
+        }
+
+        public void RefreshSite()
+        {
+            NavigateToUrl(CurrentUrl);
         }
     }
 }

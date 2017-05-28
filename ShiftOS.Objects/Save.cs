@@ -34,8 +34,40 @@ namespace ShiftOS.Objects
     //Better to store this stuff server-side so we can do some neat stuff with hacking...
     public class Save
     {
+
+        public int MusicVolume { get; set; }
+        public int SfxVolume { get; set; }
+
+        [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
-        public long Codepoints { get; set; }
+
+        private long _cp = 0;
+
+        public long Codepoints
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
+                {
+                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                    return uc.GetCodepoints();
+                }
+                else
+                    return _cp;
+            }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
+                {
+                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                    uc.SetCodepoints(value);
+                }
+                else
+                    _cp = value;
+
+            }
+        }
+
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
         public string Language { get; set; }
@@ -44,6 +76,21 @@ namespace ShiftOS.Objects
         public int MajorVersion { get; set; }
         public int MinorVersion { get; set; }
         public int Revision { get; set; }
+
+        public string UniteAuthToken { get; set; }
+
+        public bool IsPatreon { get; set; }
+
+        public UserClass Class { get; set; }
+        public double RawReputation { get; set; }
+
+        public Reputation Reputation
+        {
+            get
+            {
+                return (Reputation)((int)Math.Round(RawReputation));
+            }
+        }
 
         public string Password { get; set; }
         public bool PasswordHashed { get; set; }
@@ -65,6 +112,9 @@ namespace ShiftOS.Objects
             }
         }
 
+        public int LastMonthPaid { get; set; }
+        public List<string> StoriesExperienced { get; set; }
+
         public int CountUpgrades()
         {
             int count = 0;
@@ -75,6 +125,8 @@ namespace ShiftOS.Objects
             }
             return count;
         }
+
+        public List<ClientSave> Users { get; set; }
     }
 
     public class SettingsObject : DynamicObject

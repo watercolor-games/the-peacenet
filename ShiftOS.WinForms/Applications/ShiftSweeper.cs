@@ -1,4 +1,4 @@
-/*
+﻿/*
  * MIT License
  * 
  * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
@@ -33,338 +33,334 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
 
-namespace ShiftOS.WinForms.Applications
-{
+namespace ShiftOS.WinForms.Applications {
     [Launcher("ShiftSweeper", true, "al_shiftsweeper", "Games")]
-    [RequiresUpgrade("shiftsweeper")]
+    [AppscapeEntry("ShiftSweeper", "A simple Minesweeper game built for ShiftOS! Careful, it's a hard one.", 1600, 800, "shiftletters", "Games")]
+    [MultiplayerOnly]
     [WinOpen("shiftsweeper")]
     [DefaultIcon("iconShiftSweeper")]
-    public partial class ShiftSweeper : UserControl, IShiftOSWindow
-    {
-        private bool gameplayed = false;
-        private bool flagtime = false;
-        private int mineCount = 0;
-        private int origminecount;
-        private int[,] minemap; //Represents status of tiles. 0-8 = how many mines surrounding. -1 = mine. -2 = flagged mine. -3 to -11 = flagged safe.
+    public partial class ShiftSweeper : UserControl, IShiftOSWindow {
+        int[,] game;
+        int[,] currentGame;
+        bool gameCreated = false;
+        int gameBombCount;
+        int currentGameWidth;
+        int currentGameHeight;
+
         private Timer ticking = new Timer();
         private int minetimer;
-        private TableLayoutPanel minefieldPanel;
 
-        public ShiftSweeper() { InitializeComponent(); }
+        private static readonly Random random = new Random();
 
-        public void OnLoad()
-        {
-            buttonE.Visible = true;
-            buttonM.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
-            buttonH.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
-            ticking.Interval = 1000;
-            ticking.Tick += Ticking_Tick;
-            easyPanel.Visible = false;
-            mediumPanel.Visible = false;
-            hardPanel.Visible = false;
+        Size tileSize;
+
+        Dictionary<int, string> buttonImages = new Dictionary<int, string>(){
+            {-3, "?" },
+            {-2, ">" },
+            {-1, "#" },
+            {0, " " },
+            {1, "1" },
+            {2, "2" },
+            {3, "3" },
+            {4, "4" },
+            {5, "5" },
+            {6, "6" },
+            {7, "7" },
+            {8, "8" },
+            {9, "9" }
+        };
+
+        Dictionary<int, Bitmap> buttonImagess = new Dictionary<int, Bitmap>(){
+            {-2, Properties.Resources.SweeperTileFlag }
+        };
+
+        // Properties.Resources.SweeperTileBomb
+
+        const int QUESTIONED = -3;
+        const int FLAGGED = -2;
+        const int UNDISCOVERED = -1;
+        const int REMOVE = -10;
+
+        public ShiftSweeper() {
+            InitializeComponent();
         }
 
-        private void Ticking_Tick(object sender, EventArgs e)
-        {
+        private void Ticking_Tick(object sender, EventArgs e) {
             minetimer++;
             lbltime.Text = "Time: " + minetimer.ToString();
+            /*lbltime.Text = Localization.Parse("{SHIFTSWEEPER_TIME}", new Dictionary<string, string>{
+                {"%time", minetimer.ToString()}
+            });*/
         }
 
-        public void OnSkinLoad() { }
+        public void OnLoad() {
+            OnUpgrade();
 
-        public bool OnUnload() { return true; }
+            ticking.Interval = 1000;
+            ticking.Tick += Ticking_Tick;
+        }
 
-        public void OnUpgrade() { }
+        public void OnSkinLoad() {
 
-        private void buttonE_Click(object sender, EventArgs e) { startGame(0); }
+        }
 
-        private void clearPreviousGame()
-        {
-            if (minemap != null) for (int x = 0; x < minefieldPanel.ColumnCount; x++)
-            {
-                for (int y = 0; y < minefieldPanel.RowCount; y++)
-                {
-                    minemap[x, y] = 0;
+        public bool OnUnload() {
+            return true;
+        }
 
-                    if (minefieldPanel.GetControlFromPosition(x,y) != null)
-                    {
-                            minefieldPanel.Controls.Remove(minefieldPanel.GetControlFromPosition(x, y));
+        public void OnUpgrade() {
+            buttonEasy.Visible = true;
+            buttonMedium.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_medium");
+            buttonHard.Visible = ShiftoriumFrontend.UpgradeInstalled("shiftsweeper_hard");
+        }
+
+        public void startGame(int w, int h, int b) {
+            panelGameStatus.Image = Properties.Resources.SweeperNormalFace;
+
+            if (gamePanel.RowCount > w || gamePanel.ColumnCount > h) {
+                for (int y = 0; y < gamePanel.ColumnCount; y++) {
+                    for (int x = 0; x < gamePanel.RowCount; x++) {
+                        updateTile(x, y, REMOVE);
                     }
                 }
             }
 
+            gamePanel.RowCount = w;
+            gamePanel.ColumnCount = h;
+
+            game = new int[w, h];
+            currentGame = new int[w, h];
+
+            tileSize = new Size(23, 23);
+
+            gameCreated = false;
+
+            currentGameWidth = w;
+            currentGameHeight = h;
+            gameBombCount = b;
+
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    updateTile(x, y, UNDISCOVERED);
+                }
+            }
         }
 
-        private void startGame(int d)
-        {
-            pictureBox1.Image = Properties.Resources.SweeperNormalFace;
-            clearPreviousGame();
-            lbltime.Text = "Time: 0";
+        public void updateTile(int x, int y, int type) {
+            Button tile = new Button();
+
+            if (type == REMOVE) {
+            } else {
+                tile.Text = buttonImages.ContainsKey(type) ? buttonImages[type] : "";
+                tile.BackgroundImage = buttonImagess.ContainsKey(type) ? buttonImagess[type] : tile.BackgroundImage;
+                tile.MouseDown += new MouseEventHandler(tile_ClickDown);
+                tile.MouseUp += new MouseEventHandler(tile_Click);
+                tile.FlatStyle = FlatStyle.Flat;
+                tile.FlatAppearance.BorderSize = (type == 0) ? 0 : 1;
+
+                tile.Size = tileSize;
+
+                currentGame[x, y] = type;
+            }
+
+            var controlToRemove = gamePanel.GetControlFromPosition(y, x);
+
+            if (controlToRemove != null)
+                gamePanel.Controls.Remove(controlToRemove);
+
+            if (type != REMOVE)
+                gamePanel.Controls.Add(tile, y, x);
+        }
+
+        private void tile_Click(object sender, EventArgs ee) {
+            panelGameStatus.Image = Properties.Resources.SweeperNormalFace;
+
+            MouseEventArgs e = (MouseEventArgs)ee;
+            Control sen = (Control)sender;
+            TableLayoutPanelCellPosition tilePos = gamePanel.GetPositionFromControl(sen);
+
+            if (e.Button == MouseButtons.Left) {
+                revealTile(tilePos.Row, tilePos.Column);
+            } else if (e.Button == MouseButtons.Right) {
+                toggleTileFlag(tilePos.Row, tilePos.Column);
+            } else if (e.Button == MouseButtons.Middle) {
+                toggleTileQuestionMark(tilePos.Row, tilePos.Column);
+            }
+        }
+
+        private void tile_ClickDown(object sender, EventArgs e) {
+            panelGameStatus.Image = Properties.Resources.SweeperClickFace;
+        }
+
+        private void createGameIfNotExists(int x, int y) {
+            if (!gameCreated) {
+                createGameIfNotExists();
+                int i = 0;
+
+                while (game[x, y] != 0 && i < 1000) {
+                    i++;
+                    createGameIfNotExists();
+                }
+
+                if(i > 999)
+                    Infobox.Show("Error", "Failed to generate game");
+                return;
+            }
+        }
+
+        private void createGameIfNotExists() {
+            if (!gameCreated) {
+                for (int b = 0; b < gameBombCount; b++) { // place bombs
+                    game[random.Next(0, currentGameWidth), random.Next(0, currentGameHeight)] = 9;
+                }
+                gameCreated = true;
+                ticking.Start();
+            }
+        }
+
+        private int getBombCountInArea(int x, int y) {
+            createGameIfNotExists(x, y);
+
+            if (game[x, y] == 9) return 9;
+
+            int count = 0;
+            int w = currentGameWidth - 1;
+            int h = currentGameHeight - 1;
+
+            if (x > 0) count += game[x - 1, y] == 9 ? 1 : 0;
+            if (y > 0) count += game[x, y - 1] == 9 ? 1 : 0;
+            if (x < w) count += game[x + 1, y] == 9 ? 1 : 0;
+            if (y < h) count += game[x, y + 1] == 9 ? 1 : 0;
+
+            if (x > 0 && y > 0) count += game[x - 1, y - 1] == 9 ? 1 : 0;
+            if (x < w && y < h) count += game[x + 1, y + 1] == 9 ? 1 : 0;
+            if (x < w && y > 0) count += game[x + 1, y - 1] == 9 ? 1 : 0;
+            if (x > 0 && y < h) count += game[x - 1, y + 1] == 9 ? 1 : 0;
+
+            return count;
+        }
+
+        private void revealTile(int x, int y) {
+            createGameIfNotExists(x, y);
+
+            int bombs = getBombCountInArea(x, y);
+            int previousBombs = currentGame[x, y];
+
+            updateTile(x, y, bombs);
+
+            if (bombs == 0 && previousBombs == UNDISCOVERED) {
+                int w = currentGameWidth - 1;
+                int h = currentGameHeight - 1;
+
+                if (x > 0) revealTile(x - 1, y);
+                if (y > 0) revealTile(x, y - 1);
+                if (x < w) revealTile(x + 1, y);
+                if (y < h) revealTile(x, y + 1);
+
+                if (x > 0 && y > 0) revealTile(x - 1, y - 1);
+                if (x < w && y < h) revealTile(x + 1, y + 1);
+                if (x < w && y > 0) revealTile(x + 1, y - 1);
+                if (x > 0 && y < h) revealTile(x - 1, y + 1);
+            }
+
+            if (bombs != 0) checkWinGame();
+            if (bombs == 9) loseGame();
+        }
+
+        private void toggleTileFlag(int x, int y) {
+            if(currentGame[x,y] == UNDISCOVERED) {
+                updateTile(x, y, FLAGGED);
+            } else if(currentGame[x, y] == FLAGGED) {
+                updateTile(x, y, UNDISCOVERED);
+            }
+
+            checkWinGame();
+        }
+
+        private void toggleTileQuestionMark(int x, int y) {
+            if (currentGame[x, y] == UNDISCOVERED) {
+                updateTile(x, y, QUESTIONED);
+            } else if (currentGame[x, y] == QUESTIONED) {
+                updateTile(x, y, UNDISCOVERED);
+            }
+
+            checkWinGame();
+        }
+
+        private void buttonEasy_Click(object sender, EventArgs e) {
+            startGame(9, 9, 10);
+        }
+
+        private void buttonMedium_Click(object sender, EventArgs e) {
+            startGame(16, 16, 40);
+        }
+
+        private void buttonHard_Click(object sender, EventArgs e) {
+            startGame(30, 30, 99);
+        }
+
+        public void winGame() {
+            int cp = 0;
+            int origminecount = gameBombCount * 10;
+            if (minetimer < 31) cp = (origminecount * 3);
+            else if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+            else if (minetimer < 91) cp = (origminecount * 2);
+            else if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+            else if (minetimer > 120) cp = (origminecount * 1);
+            SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
+            panelGameStatus.Image = Properties.Resources.SweeperWinFace;
+            disableAllTiles(false);
+        }
+
+        public void loseGame() {
+            disableAllTiles(true);
+            panelGameStatus.Image = Properties.Resources.SweeperLoseFace;
+        }
+
+        public void disableAllTiles(bool showBombs) {
+            ticking.Stop();
             minetimer = 0;
-            ticking.Start();
-            if (minefieldPanel != null) minefieldPanel.Visible = false;
-            switch (d)
-            {
-                case 0:
-                    minefieldPanel = easyPanel;
-                    mineCount = 10;
-                    minefieldPanel.ColumnCount = 9;
-                    minefieldPanel.RowCount = 9;
-                    break;
-
-                case 1:
-                    minefieldPanel = mediumPanel;
-                    mineCount = 40;
-                    minefieldPanel.ColumnCount = 16;
-                    minefieldPanel.RowCount = 16;
-                    break;
-
-                case 2:
-                    minefieldPanel = hardPanel;
-                    mineCount = 99;
-                    minefieldPanel.ColumnCount = 30;
-                    minefieldPanel.RowCount = 16;
-                    break;
-
-                default:
-                    throw new NullReferenceException();
-            }
-            minefieldPanel.Visible = true;
-            origminecount = mineCount;
-            lblmines.Text = "Mines: " + mineCount.ToString();
-            buttonE.Enabled = false;
-            buttonM.Enabled = false;
-            buttonH.Enabled = false;
-            gameplayed = true;
-            makegrid();
-        }
-
-        private void makegrid()
-        {
-            Random rnd1 = new Random();
-            minemap = new int[minefieldPanel.ColumnCount, minefieldPanel.RowCount];
-
-            // Makes the minefield full of buttons
-            for (int x = 0; x < minefieldPanel.ColumnCount; x++)
-            {
-                for (int y = 0; y < minefieldPanel.RowCount; y++)
-                {
-                    minemap[x, y] = 0;
-                    minefieldPanel.Controls.Add(makeButton(x, y), x, y);
-                }
-            }
-
-            // Placing the mines
-            int currminecount = mineCount;
-            while (currminecount > 0)
-            {
-                int mineX = rnd1.Next(minefieldPanel.ColumnCount);
-                int mineY = rnd1.Next(minefieldPanel.RowCount);
-
-                if (minemap[mineX, mineY] == 0)
-                {
-                    minemap[mineX, mineY] = -1;
-                    currminecount--;
-                }
-            }
-
-            // Setting the numbers
-            for (int x = 0; x < minefieldPanel.ColumnCount; x++)
-            {
-                for (int y = 0; y < minefieldPanel.RowCount; y++)
-                {
-                    if (minemap[x, y] != -1)
-                    {
-                        int numMines = 0;
-                        for (int xx = -1; xx < 2; xx++)
-                        {
-                            for (int yy = -1; yy < 2; yy++)
-                            {
-                                if (x + xx >= 0 && y + yy >= 0 && x + xx < minefieldPanel.ColumnCount && y + yy < minefieldPanel.RowCount)
-                                {
-                                    if (minemap[x + xx, y + yy] == -1) numMines++;
-                                }
-                            }
-                        }
-                        minemap[x, y] = numMines;
+            for (int y = 0; y < currentGameHeight; y++) {
+                for (int x = 0; x < currentGameWidth; x++) {
+                    gamePanel.GetControlFromPosition(y, x).Visible = true;
+                    gamePanel.GetControlFromPosition(y,x).Enabled = false;
+                    if (game[x,y] == 9 && showBombs) {
+                        gamePanel.GetControlFromPosition(y,x).BackgroundImage = Properties.Resources.SweeperTileBomb;
                     }
+
                 }
             }
         }
 
-        private Button makeButton(int col, int row)
-        {
-            Button bttn = new Button();
-
-            bttn.Text = "";
-            bttn.Name = col.ToString() + " " + row.ToString();
-            Controls.AddRange(new System.Windows.Forms.Control[] { bttn, });
-            bttn.Size = new System.Drawing.Size(minefieldPanel.Width / minefieldPanel.ColumnCount, (minefieldPanel.Height / minefieldPanel.RowCount) + 10);
-            bttn.Click += new System.EventHandler(bttnOnclick);
-            bttn.BackgroundImage = Properties.Resources.SweeperTileBlock;
-            bttn.BackgroundImageLayout = ImageLayout.Stretch;
-
-            return bttn;
-        }
-
-        private void bttnOnclick(object sender, EventArgs e)
-        {
-            if (!ticking.Enabled) return;
-
-            Button bttnClick = sender as Button;
-
-            if (bttnClick == null) return; //not a button.
-
-            string[] split = bttnClick.Name.Split(new Char[] { ' ' });
-
-            int x = System.Convert.ToInt32(split[0]);
-            int y = System.Convert.ToInt32(split[1]);
-
-
-            if (!flagtime)
-            {
-                if (minemap[x, y] == -1)
-                {
-                    ticking.Enabled = false;
-
-                    buttonE.Enabled = true;
-                    buttonM.Enabled = true;
-                    buttonH.Enabled = true;
-
-                    pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
-
-                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
-                    {
-                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
-                        {
-                            pictureBox1.BackgroundImage = Properties.Resources.SweeperLoseFace;
-                            minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
-                            if (minemap[xx, yy] == -1)
-                            {
-                                minefieldPanel.GetControlFromPosition(xx, yy).BackgroundImage = Properties.Resources.SweeperTileBomb;
-                            }
-
+        public void checkWinGame() {
+            for(int y = 0; y < currentGameHeight; y++) {
+                for(int x = 0; x < currentGameWidth; x++) {
+                    int tile = currentGame[x, y];
+                    if(tile == UNDISCOVERED || tile == QUESTIONED) {
+                        return;
+                    }
+                    if(tile == FLAGGED) {
+                        if(game[x,y] != 9) {
+                            // looks like you flagged the wrong thing...
+                            return;
                         }
                     }
-                    pictureBox1.Image = Properties.Resources.SweeperLoseFace;
-                }
-                else if (minemap[x, y] < -1) return;
-                else removeBlank(x, y);
-            }
-            else
-            {
-                if (!bttnClick.Enabled) return;
-
-                if (minemap[x, y] < -1)
-                {
-                    minemap[x, y] = (minemap[x, y] * -1) - 3;
-                    bttnClick.BackgroundImage = Properties.Resources.SweeperTileBlock;
-                    mineCount++;
-                }
-                else
-                {
-                    minemap[x, y] = (minemap[x, y] * -1) - 3;
-                    bttnClick.BackgroundImage = Properties.Resources.SweeperTileFlag;
-                    mineCount--;
-                }
-                lblmines.Text = "Mines: " + mineCount.ToString();
-                bool wrongflags = false;
-                if (mineCount == 0)
-                {
-                    for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
-                    {
-                        if (wrongflags) break;
-                        for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
-                        {
-                            if (wrongflags) break;
-                            if (minemap[xx, yy] < -2) wrongflags = true;
-                        }
+                    if(tile == 9) {
+                        loseGame();
+                        return;
                     }
-                    if (!wrongflags)
-                    {
-                        ticking.Enabled = false;
 
-                        buttonE.Enabled = true;
-                        buttonM.Enabled = true;
-                        buttonH.Enabled = true;
-
-                        for (int xx = 0; xx < minefieldPanel.ColumnCount; xx++)
-                        {
-                            for (int yy = 0; yy < minefieldPanel.RowCount; yy++)
-                            {
-                                minefieldPanel.GetControlFromPosition(xx, yy).Enabled = false;
-                            }
-                        }
-
-                        Int32 cp = 0;
-                        origminecount = origminecount * 10;
-                        if (minetimer < 31) cp = (origminecount * 3);
-                        if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
-                        if (minetimer < 91) cp = (origminecount * 2);
-                        if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
-                        if (minetimer > 120) cp = (origminecount * 1);
-                        SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
-                        pictureBox1.Image = Properties.Resources.SweeperWinFace;
-                    }
                 }
             }
+            winGame();
         }
 
-        private void removeBlank(int x, int y)
-        {
-            minefieldPanel.GetControlFromPosition(x, y).Enabled = false;
-            trueform(x, y);
-            if (minemap[x, y] != 0) return;
-            for (int xx = -1; xx < 2; xx++)
-            {
-                for (int yy = -1; yy < 2; yy++)
-                {
-                    if (x + xx >= 0 && y + yy >= 0 && x + xx < minefieldPanel.ColumnCount && y + yy < minefieldPanel.RowCount)
-                    {
-                        if (minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled && minemap[x+xx,y+yy] != -1 && minemap[x + xx, y + yy] != -2)
-                        {
-                            minefieldPanel.GetControlFromPosition(x + xx, y + yy).Enabled = false;
-                            trueform(x + xx, y + yy);
-                            if (minemap[x + xx, y + yy] == 0)
-                            {
-                                removeBlank(x + xx, y + yy);
-                            }
-                        }
-                    }
-                }
-            }
+        private void panelGameStatus_Click(object sender, EventArgs e) {
+
         }
 
-        private void trueform(int x, int y)
-        {
-            Button bttn = (Button)minefieldPanel.GetControlFromPosition(x, y);
-            if (minemap[x,y] == 0) bttn.BackgroundImage = Properties.Resources.SweeperTile0;
-            else if (minemap[x, y] == 1) bttn.BackgroundImage = Properties.Resources.SweeperTile1;
-            else if (minemap[x, y] == 2) bttn.BackgroundImage = Properties.Resources.SweeperTile2;
-            else if (minemap[x, y] == 3) bttn.BackgroundImage = Properties.Resources.SweeperTile3;
-            else if (minemap[x, y] == 4) bttn.BackgroundImage = Properties.Resources.SweeperTile4;
-            else if (minemap[x, y] == 5) bttn.BackgroundImage = Properties.Resources.SweeperTile5;
-            else if (minemap[x, y] == 6) bttn.BackgroundImage = Properties.Resources.SweeperTile6;
-            else if (minemap[x, y] == 7) bttn.BackgroundImage = Properties.Resources.SweeperTile7;
-            else if (minemap[x, y] == 8) bttn.BackgroundImage = Properties.Resources.SweeperTile8;
-        }
+        private void gamePanel_Paint(object sender, PaintEventArgs e) {
 
-        private void buttonM_Click(object sender, EventArgs e) { startGame(1); }
-
-        private void buttonH_Click(object sender, EventArgs e) { startGame(2); }
-
-        private void flagButton_Click(object sender, EventArgs e)
-        {
-            if (flagtime)
-            {
-                flagButton.Image = Properties.Resources.SweeperTileBlock;
-                flagtime = false;
-            }
-            else
-            {
-                flagButton.Image = Properties.Resources.SweeperTileFlag;
-                flagtime = true;
-            }
         }
     }
 }

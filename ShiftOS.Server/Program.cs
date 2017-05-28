@@ -86,7 +86,25 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
-            
+            Thread.Sleep(2000);
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+                Environment.Exit(0);
+            };
+            UserConfig.Get();
+            System.Timers.Timer tmr = new System.Timers.Timer(5000);
+            tmr.Elapsed += (o, a) =>
+            {
+                if (server.IsOnline)
+                {
+                    server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+                    {
+                        Name = "heartbeat",
+                        GUID = "server"
+                    }));
+                }
+            };
 			if (!Directory.Exists("saves"))
 			{
 				Directory.CreateDirectory("saves");
@@ -106,11 +124,13 @@ namespace ShiftOS.Server
 			{
 				Console.WriteLine($"Server started on address {server.Address}, port {server.Port}.");
 				ServerStarted?.Invoke(server.Address.ToString());
-			};
+                tmr.Start();
+            };
 
 			server.OnStopped += (o, a) =>
 			{
 				Console.WriteLine("WARNING! Server stopped.");
+                tmr.Stop();
 			};
 
 			server.OnError += (o, a) =>
@@ -121,8 +141,32 @@ namespace ShiftOS.Server
 			server.OnClientAccepted += (o, a) =>
 			{
 				Console.WriteLine("Client connected.");
-				server.DispatchTo(a.Guid, new NetObject("welcome", new ServerMessage { Name = "Welcome", Contents = a.Guid.ToString(), GUID = "Server" }));
-			};
+                try
+                {
+                    server.DispatchTo(a.Guid, new NetObject("welcome", new ServerMessage { Name = "Welcome", Contents = a.Guid.ToString(), GUID = "Server" }));
+                }
+                catch
+                {
+                    Console.WriteLine("Oh, you don't have time to finish the handshake? Fine. Get off.");
+                }
+            };
+
+            server.OnClientDisconnected += (o, a) =>
+            {
+                Console.WriteLine("Client disconnected.");
+            };
+
+            server.OnClientRejected += (o, a) =>
+            {
+                Console.WriteLine("FUCK. Something HORRIBLE JUST HAPPENED.");
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                if(server.IsOnline == true)
+                    server.Stop();
+                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+            };
 				
 			server.OnReceived += (o, a) =>
 			{
@@ -164,8 +208,13 @@ namespace ShiftOS.Server
                 Console.WriteLine("Server stopping.");
 
 			};
+            
+            /*
             var task = ChatBackend.StartDiscordBots();
             task.Wait();
+            */
+
+            RandomUserGenerator.StartThread();
 
             while (server.IsOnline)
             {
@@ -254,8 +303,6 @@ namespace ShiftOS.Server
         /// <param name="msg">Message.</param>
         public static void Interpret(ServerMessage msg)
 		{
-			Dictionary<string, object> args = null;
-
 			try
 			{
 				Console.WriteLine($@"[{DateTime.Now}] Message received from {msg.GUID}: {msg.Name}");
@@ -283,8 +330,7 @@ namespace ShiftOS.Server
                                                     try
                                                     {
                                                         object contents = null;
-                                                        bool throwOnNull = false;
-
+                                                        
 
                                                         if (mAttrib.ExpectedType == typeof(int))
                                                         {
@@ -312,7 +358,6 @@ namespace ShiftOS.Server
                                                         }
                                                         else if (mAttrib.ExpectedType == typeof(bool))
                                                         {
-                                                            throwOnNull = true;
                                                             if (msg.Contents.ToLower() == "true")
                                                             {
                                                                 contents = true;
@@ -329,7 +374,6 @@ namespace ShiftOS.Server
                                                         }
                                                         else if (mAttrib.ExpectedType == null)
                                                         {
-                                                            throwOnNull = false;
                                                         }
                                                         else if(mAttrib.ExpectedType == typeof(string))
                                                         {

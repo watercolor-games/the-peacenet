@@ -37,6 +37,7 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [MultiplayerOnly]
     [DefaultTitle("Choose graphic")] [DefaultIcon("icongraphicpicker")]
     public partial class GraphicPicker : UserControl, IShiftOSWindow
     {
@@ -82,12 +83,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void btnidlebrowse_Click(object s, EventArgs a)
         {
-            AppearanceManager.SetupDialog(new FileDialog(new[] { ".png", ".jpg", ".bmp", ".pic" }, FileOpenerStyle.Open, new Action<string>((file) =>
+            AppearanceManager.SetupDialog(new FileDialog(new[] { ".png", ".gif", ".jpg", ".bmp", ".pic" }, FileOpenerStyle.Open, new Action<string>((file) =>
             {
                 ImageAsBinary = Utils.ReadAllBytes(file);
                 System.IO.File.WriteAllBytes("temp_bin.bmp", ImageAsBinary);
                 Image = SkinEngine.ImageFromBinary(ImageAsBinary);
-                Image.Save("temp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
                 Setup();
             })));
         }

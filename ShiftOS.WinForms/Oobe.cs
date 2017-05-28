@@ -36,6 +36,8 @@ using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
 using ShiftOS.Objects.ShiftFS;
+using ShiftOS.Unite;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms
 {
@@ -47,7 +49,10 @@ namespace ShiftOS.WinForms
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.Black;
-
+            this.Load += (o, a) =>
+            {
+                ControlManager.SetupControls(this);
+            };
         }
 
 
@@ -62,9 +67,13 @@ namespace ShiftOS.WinForms
         
         public void TextType(string texttotype)
         {
+            textgeninput.TextAlign = ContentAlignment.MiddleCenter;
             while(typing == true)
             {
+                //JESUS CHRIST PAST MICHAEL.
 
+                //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                Thread.Sleep(100);
             }
             
             charcount = texttotype.Length;
@@ -113,114 +122,40 @@ namespace ShiftOS.WinForms
             {
                 try
                 {
-                    textgeninput = this.lblHijack;
-                    TextType("Your system is now being hijacked.");
-                    rtext = "";
-                    Thread.Sleep(1000);
                     textgeninput = this.lblhackwords;
                     this.Invoke(new Action(() =>
                     {
                         lblHijack.Hide();
+                        lblhackwords.Font = new Font("Courier New", lblhackwords.Font.Size, FontStyle.Bold);
                     }));
-                    TextType("Hello, and welcome to ShiftOS.");
-                    Thread.Sleep(500);
-                    TextType("You have been cordially and involuntarily selected to participate in the development and testing of this operating system.");
-                    Thread.Sleep(500);
-                    TextType("My identity shall remain secret, but if you've been through this before, you'll know exactly who I am.");
-                    Thread.Sleep(500);
-                    TextType("But that doesn't matter.");
-                    Thread.Sleep(500);
-                    TextType("I will now begin to prepare your system for the installation of ShiftOS.");
-                    Thread.Sleep(1000);
-                    FakeSetupScreen fakeForm = null;
-                    this.Invoke(new Action(() =>
-                    {
-                        fakeForm = new FakeSetupScreen(this);
-                        fakeForm.Show();
-                        MySave = save;
-                        lblhackwords.GotFocus += (o, a) =>
-                        {
-                            try
-                            {
-                                fakeForm.Invoke(new Action(() =>
-                                {
-                                    fakeForm.Focus();
-                                    fakeForm.BringToFront();
-                                }));
-                            }
-                            catch { }
-                        };
-                        fakeForm.TextSent += (txt) =>
-                        {
-                            TextType(txt);
-                        };
-                    }));
-                    while (fakeForm?.Visible == true)
-                    {
-                        Thread.Sleep(10);
-                    }
-                    if (fakeForm.CreateNewSave == true)
-                    {
-                        TextType("That's all the information I need for now.");
-                        Thread.Sleep(2000);
-                        TextType("Beginning installation of ShiftOS on " + MySave.SystemName + ".");
-                        Thread.Sleep(500);
-                        TextType("Creating new user: " + MySave.Username);
-                        TextType("...with 0 Codepoints, 0 installed upgrades, no legion, and no user shops...");
-                        MySave.Codepoints = 0;
-                        MySave.CurrentLegions = new List<string>();
-                        MySave.MyShop = "";
-                        TextType("User created successfully.");
-                        Thread.Sleep(450);
-                        TextType("You may be wondering what all that meant... You see, in ShiftOS, your user account holds everything I need to know about you.");
-                        Thread.Sleep(640);
-                        TextType("It holds the amount of Codepoints you have - Codepoints are a special currency you can get by doing various tasks in ShiftOS.");
-                        Thread.Sleep(500);
-                        TextType("It also holds all the upgrades you've installed onto ShiftOS - features, applications, enhancements, patches, all that stuff.");
-                        Thread.Sleep(500);
-                        TextType("As for the legions and the shop thing, I'll reveal that to you when it becomes necessary.");
-                        Thread.Sleep(500);
-                        TextType("Your user account is stored on a server of mine called the multi-user domain. It holds every single user account, every script, every application, every thing within ShiftOS.");
-                        Thread.Sleep(600);
-                        TextType("Every time you boot ShiftOS, if you are connected to the Internet, you will immediately connect to the multi-user domain and ShiftOS will attempt to authenticate using the last ");
-                        TextType("successful username and password pair.");
-                        Thread.Sleep(500);
-                        TextType("When you are in the MUD, you are in the middle of a free-for-all. I don't want it to be this way, it just is. I've employed you to help me develop and test the MUD and ShiftOS, ");
-                        TextType("but you have a secondary task if you choose to accept it.");
-                        Thread.Sleep(500);
-                        TextType("There have been a few rebelious groups in the MUD - who have cracked ShiftOS's security barriers - and they're using these exploits to steal others' Codepoints, upgrades, ");
-                        TextType("and even spread damaging viruses.");
-                        Thread.Sleep(500);
-                        TextType("I want you to stop them.");
-                        Thread.Sleep(500);
-                        TextType("Whoever can stop these hackers will gain eternal control over the multi-user domain. They will be given the ability to do as they please, so long as it doesn't interfere with my experiments.");
-                        Thread.Sleep(500);
-                        TextType("I have been installing ShiftOS on your system in the background as I was talking with you. Before I can set you free, I need to give you a tutorial on how to use the system.");
-                        Thread.Sleep(500);
-                        TextType("I will reboot your system in Tutorial Mode now. Complete the tutorial, and you shall be on your way.");
 
-                        Thread.Sleep(3000);
-                        SaveSystem.CurrentSave = MySave;
-                        SaveSystem.CurrentSave.StoryPosition = 1;
-                        Utils.WriteAllText(Paths.GetPath("user.dat"), JsonConvert.SerializeObject(new
-                        {
-                            username = MySave.Username,
-                            password = MySave.Password
-                        }));
-                        Shiftorium.Silent = true;
-                        SaveSystem.SaveGame(); //Yknow, just incase it crashes.
-                    }
-                    else
+                    TextType("Hello, unsuspecting user.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("Welcome to the Shifted Operating System.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("Your computer has been taken over by ShiftOS, and is currently being wiped clean of all existing files and programs.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("I will not share my identity or my intentions at this moment.I will just proceed with the installation.There’s nothing you can do to stop it.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("All I will say, is I need your help.Once ShiftOS is installed, I will explain.");
+
+
+                 Thread.Sleep(5000);
+                    while(this.Opacity > 0f)
                     {
-                        TextType("Your login attempt was successful, " + SaveSystem.CurrentSave.Username + ".");
-                        Thread.Sleep(500);
-                        TextType($"According to my data on you, you have earned {SaveSystem.CurrentSave.Codepoints} Codepoints so far.");
-                        Thread.Sleep(500);
-                        TextType($"You have also acquired {SaveSystem.CurrentSave.CountUpgrades()} Shiftorium upgrades out of the {SaveSystem.CurrentSave.Upgrades.Count} available.");
-                        Thread.Sleep(500);
-                        TextType("I will now let you proceed to your system.");
-                        Thread.Sleep(1000);
+                        this.Invoke(new Action(() =>
+                        {
+                            this.Opacity -= 0.01f;
+                        }));
+                        Thread.Sleep(25);
                     }
+
+                    Story.Start("mud_fundamentals");
+
                     this.Invoke(new Action(this.Close));
                 }
                 catch (Exception e)
@@ -247,55 +182,152 @@ namespace ShiftOS.WinForms
 
         public void ShowSaveTransfer(Save save)
         {
-            this.Show();
-            var fSetup = new FakeSetupScreen(this, 7);
+            //Stub.
+        }
 
-            var t = new Thread(() =>
-            {
-                textgeninput = lblhackwords;
-                Clear();
-                TextType("Welcome back to ShiftOS.");
-                Thread.Sleep(500);
-                TextType("Since your last time inside ShiftOS, the operating system has changed. Your user account is no longer stored on your local system.");
-                Thread.Sleep(500);
-                this.Invoke(new Action(() =>
-                {
-                    //UPS is drunky heaven over here... it's a liquor store, I think... - Drunk Michael
-                    fSetup.UserReregistered += (u, p, s) =>
-                    {
-                        save.Username = u;
-                        save.Password = p;
-                        save.SystemName = s;
-                        SaveSystem.CurrentSave = save;
-                        SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
-                        Shiftorium.Init();
+        public void PerformUniteLogin()
+        {
 
-                        SaveSystem.SaveGame();
-                        if(Utils.FileExists(Paths.SaveFileInner))
-                            Utils.Delete(Paths.SaveFileInner);
-                        this.Close();
-                    };
-                    fSetup.Show();
-                }));
-            });
-            t.IsBackground = true;
-            t.Start();
         }
 
         public void PromptForLogin()
         {
-            this.Show();
-            this.TopMost = true;
-            lblHijack.Text = "";
-            textgeninput = lblhackwords;
-
-            var fsw = new FakeSetupScreen(this, 10);
-            fsw.Show();
-            fsw.TopMost = true;
-            fsw.DoneLoggingIn += () =>
+            Infobox.Show("Login", "Since the last time you've played ShiftOS, some changes have been made to the login system. You must now login using your website credentials.", () =>
             {
-                this.Close();
-            };
+                Infobox.PromptYesNo("Website account", "Do you have an account at http://getshiftos.ml?", (hasAccount) =>
+                {
+                    if(hasAccount == true)
+                    {
+                        var loginDialog = new UniteLoginDialog((success)=>
+                        {
+                            string token = success;
+                            var uClient = new UniteClient("http://getshiftos.ml", token);
+                            Infobox.Show("Welcome to ShiftOS.", $"Hello, {uClient.GetDisplayName()}! We've signed you into your account. We'll now try to link your ShiftOS account with your save file.", () =>
+                            {
+                                ServerMessageReceived smr = null;
+                                smr = (msg) =>
+                                {
+                                    ServerManager.MessageReceived -= smr;
+                                    if (msg.Name == "mud_savefile")
+                                    {
+                                        SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                        SaveSystem.SaveGame();
+                                    }
+                                    else if(msg.Name=="mud_login_denied")
+                                    {
+                                        LinkSaveFile(token);
+                                    }
+                                };
+                                ServerManager.MessageReceived += smr;
+                                ServerManager.SendMessage("mud_token_login", token);
+                            });
+                        });
+                        AppearanceManager.SetupDialog(loginDialog);
+                    }
+                    else
+                    {
+                        var signupDialog = new UniteSignupDialog((token) =>
+                        {
+                            ServerMessageReceived smr = null;
+                            smr = (msg) =>
+                            {
+                                ServerManager.MessageReceived -= smr;
+                                if (msg.Name == "mud_savefile")
+                                {
+                                    SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                                    SaveSystem.SaveGame();
+                                }
+                                else if (msg.Name == "mud_login_denied")
+                                {
+                                    LinkSaveFile(token);
+                                }
+                            };
+                            ServerManager.MessageReceived += smr;
+                            ServerManager.SendMessage("mud_token_login", token);
+
+                        });
+                        AppearanceManager.SetupDialog(signupDialog);
+                    }
+                });
+            });
+        }
+
+        public void LinkSaveFile(string token)
+        {
+            if (Utils.FileExists(Paths.GetPath("user.dat")))
+            {
+                try
+                {
+                    var details = JsonConvert.DeserializeObject<ClientSave>(Utils.ReadAllText(Paths.GetPath("user.dat")));
+                    ServerMessageReceived smr = null;
+                    bool msgreceived = false;
+                    bool found = false;
+                    smr = (msg) =>
+                    {
+                        if (msg.Name == "mud_savefile")
+                        {
+                            var save = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                            save.UniteAuthToken = token;
+                            Infobox.Show("Migration complete.", "We have migrated your old save file to the new system successfully. You can still log in using the old system on old builds of ShiftOS.", () =>
+                            {
+                                SaveSystem.CurrentSave = save;
+                                SaveSystem.SaveGame();
+                                found = true;
+                                msgreceived = true;
+                            });
+                        }
+                        else if (msg.Name == "mud_login_denied")
+                        {
+                            found = false;
+                            msgreceived = true;
+                        }
+                        ServerManager.MessageReceived -= smr;
+                    };
+                    ServerManager.MessageReceived += smr;
+                    ServerManager.SendMessage("mud_login", JsonConvert.SerializeObject(new
+                    {
+                        username = details.Username,
+                        password = details.Password
+                    }));
+                    while (msgreceived == false)
+                        Thread.Sleep(10);
+                    if (found == true)
+                        return;
+                }
+                catch
+                {
+                    
+                }
+            }
+
+            var client = new UniteClient("http://getshiftos.ml", token);
+            var sve = new Save();
+            SaveSystem.CurrentUser.Username = client.GetEmail();
+            sve.Password = Guid.NewGuid().ToString();
+            sve.SystemName = client.GetSysName();
+            sve.UniteAuthToken = token;
+            sve.Codepoints = 0;
+            sve.Upgrades = new Dictionary<string, bool>();
+            sve.ID = Guid.NewGuid();
+            sve.StoriesExperienced = new List<string>();
+            sve.StoriesExperienced.Add("mud_fundamentals");
+            Infobox.Show("Welcome to ShiftOS.", "Welcome to ShiftOS, " + client.GetDisplayName() + ". We have created a save file for you. Now, go on and Shift It Your Way.", () =>
+            {
+                sve.StoryPosition = 8675309;
+                SaveSystem.CurrentSave = sve;
+                Shiftorium.Silent = true;
+                SaveSystem.SaveGame();
+                Shiftorium.Silent = false;
+
+            });
+        }
+
+        public void ForceReboot()
+        {
+            string json = Utils.ExportMount(0);
+            System.IO.File.WriteAllText(Paths.SaveFile, json);
+            System.Diagnostics.Process.Start(Application.ExecutablePath);
+            Environment.Exit(0);
         }
 
         public void StartTrailer()
@@ -419,7 +451,7 @@ namespace ShiftOS.WinForms
                 Clear();
                 textgeninput = lblhackwords;
                 Clear();
-                
+
                 this.Invoke(new Action(() =>
                 {
                     textgeninput.Font = SkinEngine.LoadedSkin.TerminalFont;
@@ -450,8 +482,12 @@ namespace ShiftOS.WinForms
                 TextType("In ShiftOS, the Terminal is your main control centre for the operating system. You can see system status, check Codepoints, open other programs, buy upgrades, and more.");
                 Thread.Sleep(500);
                 TextType("Go ahead and type 'sos.help' to see a list of commands.");
-                while(TutorialProgress == 0)
+                while (TutorialProgress == 0)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("As you can see, sos.help gives you a list of all commands in the system.");
@@ -459,8 +495,12 @@ namespace ShiftOS.WinForms
                 TextType("You can run any command, by typing in their Namespace, followed by a period (.), followed by their Command Name.");
                 Thread.Sleep(500);
                 TextType("Go ahead and run the 'status' command within the 'sos' namespace to see what the command does.");
-                while(TutorialProgress == 1)
+                while (TutorialProgress == 1)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("Brilliant. The sos.status command will tell you how many Codepoints you have, as well as how many upgrades you have installed and how many are available.");
@@ -476,8 +516,12 @@ namespace ShiftOS.WinForms
                 TextType("You can easily get upgrades using the Shiftorium - a repository of approved ShiftOS upgrades.");
                 Thread.Sleep(500);
                 TextType("To start using the Shiftorium, simply type 'shiftorium.list' to see available upgrades.");
-                while(TutorialProgress == 2)
+                while (TutorialProgress == 2)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 Clear();
@@ -500,17 +544,25 @@ namespace ShiftOS.WinForms
                 TextType("If you want to escape a backslash inside a string, simply type two backslashes instead of one - for example key:\"Back\\\\slash.\"");
                 Thread.Sleep(500);
                 TextType("shiftorium.info requires an upgrade argument, which is a string type. Go ahead and give shiftorium.info's upgrade argument the 'mud_fundamentals' upgrade's ID.");
-                while(TutorialProgress == 3)
+                while (TutorialProgress == 3)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
 
-                } 
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
+
+                }
                 TextType("As you can see, mud_fundamentals is very useful. In fact, a lot of useful upgrades depend on it. You should buy it!");
                 Thread.Sleep(500);
                 TextType("shiftorium.info already gave you a command that will let you buy the upgrade - go ahead and run that command!");
                 while (!Shiftorium.UpgradeInstalled("mud_fundamentals"))
-                {
+                {                //JESUS CHRIST PAST MICHAEL.
 
-                } 
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
+
+
+                }
                 TextType("Hooray! You now have the MUD Fundamentals upgrade.");
                 Thread.Sleep(500);
                 TextType("You can also earn more Codepoints by playing Pong. To open Pong, you can use the win.open command.");
@@ -518,20 +570,25 @@ namespace ShiftOS.WinForms
                 TextType("If you run win.open without arguments, you can see a list of applications that you can open.");
                 Thread.Sleep(500);
                 TextType("Just run win.open without arguments, and this tutorial will be completed!");
-                while(TutorialProgress == 4)
+                while (TutorialProgress == 4)
                 {
+                    //JESUS CHRIST PAST MICHAEL.
+
+                    //We should PROBABLY block the thread... You know... not everyone has a 10-core processor.
+                    Thread.Sleep(100);
 
                 }
                 TextType("This concludes the ShiftOS beginners' guide brought to you by the multi-user domain. Stay safe in a connected world.");
                 Thread.Sleep(2000);
-                this.Invoke(new Action(() =>
+                Desktop.InvokeOnWorkerThread(() =>
                 {
                     OnComplete?.Invoke(this, EventArgs.Empty);
-                    this.Close();
                     SaveSystem.CurrentSave.StoryPosition = 2;
+                    this.Close();
                     SaveSystem.SaveGame();
                     AppearanceManager.SetupWindow(new Applications.Terminal());
-                }));
+                });
+
             });
             t.IsBackground = true;
             t.Start();

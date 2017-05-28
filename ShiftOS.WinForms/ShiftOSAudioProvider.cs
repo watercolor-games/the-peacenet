@@ -39,8 +39,13 @@ namespace ShiftOS.WinForms
         {
             get
             {
-                var wc = new System.Net.WebClient();
-                return JsonConvert.DeserializeObject<List<string>>(wc.DownloadString("http://getshiftos.ml/api.php?q=soundtrack")).Count;
+                System.Net.WebClient wc = new System.Net.WebClient();
+                try {
+                    string result = wc.DownloadString("http://getshiftos.ml/api.php?q=soundtrack");
+                    return JsonConvert.DeserializeObject<List<string>>(result).Count;
+                } catch { 
+                    return JsonConvert.DeserializeObject<List<string>>("[]").Count;
+                }
             }
         }
 
@@ -73,10 +78,17 @@ namespace ShiftOS.WinForms
 
         public byte[] GetTrack(int index)
         {
-            var wc = new System.Net.WebClient();
-            var st = JsonConvert.DeserializeObject<List<string>>(wc.DownloadString("http://getshiftos.ml/api.php?q=soundtrack"));
+            System.Net.WebClient wc = new System.Net.WebClient();
 
-            return wc.DownloadData(st[index]);
+            try {
+                string result = wc.DownloadString("http://getshiftos.ml/api.php?q=soundtrack");
+
+                var st = JsonConvert.DeserializeObject<List<string>>(result);
+
+                return wc.DownloadData(st[index]);
+            } catch {
+                return null;
+            }
         }
     }
 

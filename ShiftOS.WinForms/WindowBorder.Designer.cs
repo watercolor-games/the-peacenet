@@ -173,6 +173,9 @@ namespace ShiftOS.WinForms
             this.pnlbottom.Name = "pnlbottom";
             this.pnlbottom.Size = new System.Drawing.Size(730, 2);
             this.pnlbottom.TabIndex = 1;
+            this.pnlbottom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseDown);
+            this.pnlbottom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlbottom_MouseMove);
+            this.pnlbottom.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseUp);
             // 
             // pnlbottomr
             // 
@@ -181,6 +184,9 @@ namespace ShiftOS.WinForms
             this.pnlbottomr.Name = "pnlbottomr";
             this.pnlbottomr.Size = new System.Drawing.Size(2, 2);
             this.pnlbottomr.TabIndex = 3;
+            this.pnlbottomr.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseDown);
+            this.pnlbottomr.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlbottomr_MouseMove);
+            this.pnlbottomr.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseUp);
             // 
             // pnlbottoml
             // 
@@ -189,6 +195,9 @@ namespace ShiftOS.WinForms
             this.pnlbottoml.Name = "pnlbottoml";
             this.pnlbottoml.Size = new System.Drawing.Size(2, 2);
             this.pnlbottoml.TabIndex = 2;
+            this.pnlbottoml.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseDown);
+            this.pnlbottoml.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlbottoml_MouseMove);
+            this.pnlbottoml.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseUp);
             // 
             // pnlleft
             // 
@@ -198,6 +207,9 @@ namespace ShiftOS.WinForms
             this.pnlleft.Name = "pnlleft";
             this.pnlleft.Size = new System.Drawing.Size(2, 461);
             this.pnlleft.TabIndex = 2;
+            this.pnlleft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseDown);
+            this.pnlleft.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlleft_MouseMove);
+            this.pnlleft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseUp);
             // 
             // pnlright
             // 
@@ -207,6 +219,9 @@ namespace ShiftOS.WinForms
             this.pnlright.Name = "pnlright";
             this.pnlright.Size = new System.Drawing.Size(2, 461);
             this.pnlright.TabIndex = 3;
+            this.pnlright.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseDown);
+            this.pnlright.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseMove);
+            this.pnlright.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlright_MouseUp);
             // 
             // pnlcontents
             // 

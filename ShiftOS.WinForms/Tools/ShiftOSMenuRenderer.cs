@@ -28,21 +28,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-using static ShiftOS.Engine.SkinEngine;
+using ShiftOS.Engine;
 using System.Windows.Forms;
 
 namespace ShiftOS.WinForms.Tools
 {
     public class ShiftOSMenuRenderer : ToolStripProfessionalRenderer
     {
-        public ShiftOSMenuRenderer() : base(new ShiftOSColorTable())
+        public ShiftOSMenuRenderer() : base(new ShiftOSColorTable(ShiftOS.Engine.SkinEngine.LoadedSkin))
         {
-
+            
         }
 
         public ShiftOSMenuRenderer(ProfessionalColorTable table) : base(table)
         {
 
+        }
+
+        public ShiftOSMenuRenderer(Skin skn) : base(new ShiftOSColorTable(skn))
+        {
+
+        }
+
+        public Skin LoadedSkin
+        {
+            get
+            {
+                if(ColorTable is ShiftOSColorTable)
+                {
+                    return (ColorTable as ShiftOSColorTable).LoadedSkin;
+                }
+                else
+                {
+                    return SkinEngine.LoadedSkin;
+                }
+            }
         }
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
@@ -99,6 +119,18 @@ namespace ShiftOS.WinForms.Tools
 
     public class ShiftOSColorTable : ProfessionalColorTable
     {
+        public ShiftOSColorTable(ShiftOS.Engine.Skin skn)
+        {
+            LoadedSkin = skn;
+        }
+
+        public Skin LoadedSkin { get; private set; }
+
+        public Image GetImage(string id)
+        {
+            return SkinEngine.GetImage(id);
+        }
+
         public override Color ButtonSelectedHighlight
         {
             get { return LoadedSkin.Menu_ButtonSelectedHighlight; }
@@ -327,6 +359,23 @@ namespace ShiftOS.WinForms.Tools
 
     public class AppLauncherColorTable : ProfessionalColorTable
     {
+        public Image GetImage(string id)
+        {
+            return SkinEngine.GetImage(id);
+        }
+
+        public AppLauncherColorTable()
+        {
+            LoadedSkin = SkinEngine.LoadedSkin;
+        }
+
+        public AppLauncherColorTable(Skin skn)
+        {
+            LoadedSkin = skn;
+        }
+
+        public Skin LoadedSkin { get; private set; }
+
         public override Color ButtonSelectedHighlight
         {
             get { return LoadedSkin.Menu_ButtonSelectedHighlight; }

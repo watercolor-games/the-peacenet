@@ -66,9 +66,13 @@ namespace ShiftOS.WinForms.Applications
             this.createLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.joinLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.myLegionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.joinAChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.pnlclasses = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel6 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnchooseclass = new System.Windows.Forms.Button();
+            this.lbclasses = new System.Windows.Forms.ListBox();
+            this.lbclassdesc = new System.Windows.Forms.Label();
+            this.lbclasstitle = new System.Windows.Forms.Label();
             this.you_systemstatus = new System.Windows.Forms.Panel();
             this.btndeletesave = new System.Windows.Forms.Button();
             this.lblsysstatus = new System.Windows.Forms.Label();
@@ -148,6 +152,8 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.pnlclasses.SuspendLayout();
+            this.flowLayoutPanel6.SuspendLayout();
             this.you_systemstatus.SuspendLayout();
             this.shop_all.SuspendLayout();
             this.shop_view.SuspendLayout();
@@ -180,8 +186,7 @@ namespace ShiftOS.WinForms.Applications
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.youToolStripMenuItem,
             this.shopsToolStripMenuItem,
-            this.legionsToolStripMenuItem,
-            this.chatToolStripMenuItem});
+            this.legionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(756, 24);
@@ -281,26 +286,12 @@ namespace ShiftOS.WinForms.Applications
             this.myLegionToolStripMenuItem.Text = "My Legion";
             this.myLegionToolStripMenuItem.Click += new System.EventHandler(this.myLegionToolStripMenuItem_Click);
             // 
-            // chatToolStripMenuItem
-            // 
-            this.chatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.joinAChatToolStripMenuItem});
-            this.chatToolStripMenuItem.Name = "chatToolStripMenuItem";
-            this.chatToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.chatToolStripMenuItem.Text = "Chat";
-            // 
-            // joinAChatToolStripMenuItem
-            // 
-            this.joinAChatToolStripMenuItem.Name = "joinAChatToolStripMenuItem";
-            this.joinAChatToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
-            this.joinAChatToolStripMenuItem.Text = "Join a chat";
-            this.joinAChatToolStripMenuItem.Click += new System.EventHandler(this.joinAChatToolStripMenuItem_Click);
-            // 
             // toolStripContainer1
             // 
             // 
             // toolStripContainer1.ContentPanel
             // 
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.pnlclasses);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.you_systemstatus);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_all);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.shop_view);
@@ -321,6 +312,75 @@ namespace ShiftOS.WinForms.Applications
             // toolStripContainer1.TopToolStripPanel
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip1);
+            // 
+            // pnlclasses
+            // 
+            this.pnlclasses.Controls.Add(this.flowLayoutPanel6);
+            this.pnlclasses.Controls.Add(this.lbclasses);
+            this.pnlclasses.Controls.Add(this.lbclassdesc);
+            this.pnlclasses.Controls.Add(this.lbclasstitle);
+            this.pnlclasses.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlclasses.Location = new System.Drawing.Point(0, 0);
+            this.pnlclasses.Name = "pnlclasses";
+            this.pnlclasses.Size = new System.Drawing.Size(756, 464);
+            this.pnlclasses.TabIndex = 3;
+            // 
+            // flowLayoutPanel6
+            // 
+            this.flowLayoutPanel6.AutoSize = true;
+            this.flowLayoutPanel6.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel6.Controls.Add(this.btnchooseclass);
+            this.flowLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel6.Location = new System.Drawing.Point(0, 415);
+            this.flowLayoutPanel6.Name = "flowLayoutPanel6";
+            this.flowLayoutPanel6.Padding = new System.Windows.Forms.Padding(10);
+            this.flowLayoutPanel6.Size = new System.Drawing.Size(756, 49);
+            this.flowLayoutPanel6.TabIndex = 3;
+            // 
+            // btnchooseclass
+            // 
+            this.btnchooseclass.AutoSize = true;
+            this.btnchooseclass.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnchooseclass.Location = new System.Drawing.Point(13, 13);
+            this.btnchooseclass.Name = "btnchooseclass";
+            this.btnchooseclass.Size = new System.Drawing.Size(53, 23);
+            this.btnchooseclass.TabIndex = 0;
+            this.btnchooseclass.Text = "Choose";
+            this.btnchooseclass.UseVisualStyleBackColor = true;
+            this.btnchooseclass.Click += new System.EventHandler(this.btnchooseclass_Click);
+            // 
+            // lbclasses
+            // 
+            this.lbclasses.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbclasses.FormattingEnabled = true;
+            this.lbclasses.Location = new System.Drawing.Point(0, 66);
+            this.lbclasses.Name = "lbclasses";
+            this.lbclasses.Size = new System.Drawing.Size(756, 398);
+            this.lbclasses.TabIndex = 2;
+            // 
+            // lbclassdesc
+            // 
+            this.lbclassdesc.AutoSize = true;
+            this.lbclassdesc.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbclassdesc.Location = new System.Drawing.Point(0, 33);
+            this.lbclassdesc.Name = "lbclassdesc";
+            this.lbclassdesc.Padding = new System.Windows.Forms.Padding(10);
+            this.lbclassdesc.Size = new System.Drawing.Size(727, 33);
+            this.lbclassdesc.TabIndex = 1;
+            this.lbclassdesc.Text = "A class is a way for the multi-user domain to better understand you. It defines w" +
+    "ho you are as a sentient being, what you do, what you like, and so on.";
+            // 
+            // lbclasstitle
+            // 
+            this.lbclasstitle.AutoSize = true;
+            this.lbclasstitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbclasstitle.Location = new System.Drawing.Point(0, 0);
+            this.lbclasstitle.Name = "lbclasstitle";
+            this.lbclasstitle.Padding = new System.Windows.Forms.Padding(10);
+            this.lbclasstitle.Size = new System.Drawing.Size(82, 33);
+            this.lbclasstitle.TabIndex = 0;
+            this.lbclasstitle.Tag = "header1";
+            this.lbclasstitle.Text = "Join a class";
             // 
             // you_systemstatus
             // 
@@ -1198,6 +1258,10 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.pnlclasses.ResumeLayout(false);
+            this.pnlclasses.PerformLayout();
+            this.flowLayoutPanel6.ResumeLayout(false);
+            this.flowLayoutPanel6.PerformLayout();
             this.you_systemstatus.ResumeLayout(false);
             this.you_systemstatus.PerformLayout();
             this.shop_all.ResumeLayout(false);
@@ -1336,8 +1400,12 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.Button btnremoveitem;
         private System.Windows.Forms.Button btnedititem;
         private System.Windows.Forms.Button btneditshop;
-        private System.Windows.Forms.ToolStripMenuItem chatToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem joinAChatToolStripMenuItem;
         private System.Windows.Forms.Button btndeletesave;
+        private System.Windows.Forms.Panel pnlclasses;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel6;
+        private System.Windows.Forms.Button btnchooseclass;
+        private System.Windows.Forms.ListBox lbclasses;
+        private System.Windows.Forms.Label lbclassdesc;
+        private System.Windows.Forms.Label lbclasstitle;
     }
 }

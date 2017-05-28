@@ -32,7 +32,7 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{TERMINAL}":"Terminal",
 	"{PONG}":"Pong",
 	"{CODEPOINTS}":"Codepoints",
-	"{CODEPOINTS_VALUE}":"%cp "
+	"{CODEPOINTS_VALUE}":"%cp ",
 	"{SHIFTORIUM}":"Shiftorium",
 	"{HACK}":"Hack",
 	"{SHIFTER}":"Shifter",
@@ -215,7 +215,7 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{ALIAS}":"Alias:",
 	"{OBSOLETE_SYS_SHUTDOWN}":"sys.shutdown is obsolete",
 	"{PY_EXCEPTION}":"There was an error running python code.",
-	"{LUA_ERROR}":"There was an error running lua code."
+	"{LUA_ERROR}":"There was an error running lua code.",
 
 	"{TERMINAL_NAME}":"Terminal",
 	"{ARTPAD_NAME}":"Artpad",

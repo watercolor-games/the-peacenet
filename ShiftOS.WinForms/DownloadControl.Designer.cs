@@ -83,12 +83,10 @@ namespace ShiftOS.WinForms
             // 
             this.pgprogress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pgprogress.BlockSize = 5;
             this.pgprogress.Location = new System.Drawing.Point(4, 52);
             this.pgprogress.Maximum = 100;
             this.pgprogress.Name = "pgprogress";
             this.pgprogress.Size = new System.Drawing.Size(371, 23);
-            this.pgprogress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgprogress.TabIndex = 0;
             this.pgprogress.Text = "shiftedProgressBar1";
             this.pgprogress.Value = 0;

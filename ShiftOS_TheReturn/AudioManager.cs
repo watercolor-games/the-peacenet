@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-//#define NOSOUND
+#define NOSOUND
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -40,68 +41,84 @@ namespace ShiftOS.Engine
         private static WaveOut _out = null;
         private static AudioFileReader _reader = null;
         private static IAudioProvider _provider = null;
-        private static bool _running = true;
-
-        public static void Init(IAudioProvider _p)
+        
+        /// <summary>
+        /// Stops the current sound if one is playing and disposes of the sound.
+        /// </summary>
+        public static void Stop()
         {
-#if !NOSOUND
-            _provider = _p;
-            AppearanceManager.OnExit += () =>
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                _running = false;
                 _out?.Stop();
                 _reader?.Dispose();
                 _out?.Dispose();
-                System.IO.File.Delete("temp.mp3");
-            };
-            var t = new Thread(() =>
-            {
-                SaveSystem.GameReady += () =>
-                {
-                    while(_out == null)
-                    {
-
-                    }
-                    _out.Volume = _provider.Volume;
-                };
-                Random rnd = new Random();
-                while(_running == true)
-                {
-                    int track = rnd.Next(0, _provider.Count);
-                    byte[] mp3 = _provider.GetTrack(track);
-                    System.IO.File.WriteAllBytes("temp.mp3", mp3);
-                    _reader = new AudioFileReader("temp.mp3");
-                    _out = new WaveOut();
-                    _out.Init(_reader);
-                    _out.Volume = _provider.Volume;
-
-                    _out.Play();
-                    while(_out.PlaybackState == PlaybackState.Playing)
-                    {
-                        Thread.Sleep(5000); //even when the player isn't playing, this will give a good delay between songs.
-                    }
-                    _reader.Dispose();
-                    _out.Dispose();
-                }
             });
-            t.IsBackground = true;
-            t.Start();
-#endif
         }
 
+        /// <summary>
+        /// Initiates this engine module using an <see cref="IAudioProvider"/> as a backend for selecting background soundtrack as well as the volume level for the sound.
+        /// </summary>
+        /// <param name="_p">A background soundtrack and volume provider.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="_p"/> is null.</exception> 
+        public static void Init(IAudioProvider _p)
+        {
+            if (_p == null)
+                throw new ArgumentNullException("_p");
+            _provider = _p;
+        }
+
+        /// <summary>
+        /// Sets the volume of the audio system.
+        /// </summary>
+        /// <param name="volume">The volume to use, from 0 to 1.</param>
         public static void SetVolume(float volume)
         {
             _provider.Volume = volume; //persist between songs
             _out.Volume = volume;
         }
 
-        internal static void Kill()
+        /// <summary>
+        /// Plays a specified sound file.
+        /// </summary>
+        /// <param name="file">The file to play.</param>
+        public static void Play(string file)
         {
-            _running = false;
-            _out.Stop();
-            _out.Dispose();
-            _reader.Dispose();
+            try
+            {
+                _reader = new AudioFileReader(file);
+                _out = new WaveOut();
+                _out.Init(_reader);
+                _out.Play();
+                if (SaveSystem.CurrentSave == null)
+                    _out.Volume = 1.0f;
+                else
+                    _out.Volume = (float)SaveSystem.CurrentSave.MusicVolume / 100;
+                _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Audio error: " + ex.Message);
+            }
         }
+
+        /// <summary>
+        /// Writes the data in the specified <see cref="Stream"/> to a file, and plays it as a sound file. 
+        /// </summary>
+        /// <param name="str">The stream to read from.</param>
+        public static void PlayStream(Stream str)
+        {
+            var bytes = new byte[str.Length];
+            str.Read(bytes, 0, bytes.Length);
+            ShiftOS.Engine.AudioManager.Stop();
+            if (File.Exists("snd.wav"))
+                File.Delete("snd.wav");
+            File.WriteAllBytes("snd.wav", bytes);
+
+            ShiftOS.Engine.AudioManager.Play("snd.wav");
+
+        }
+
+        public static event Action PlayCompleted;
     }
 
     public interface IAudioProvider

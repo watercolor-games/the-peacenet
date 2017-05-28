@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  * 
@@ -28,6 +29,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
@@ -67,89 +69,46 @@ namespace ShiftOS.WinForms.Tools
         }
 
 
-        public static void SetupWindows()
+        internal static Color ConvertColor(ConsoleColor cCol)
         {
-            if (SaveSystem.CurrentSave != null)
+            switch (cCol)
             {
-                int screen_height_start = 0;
-                if (Shiftorium.UpgradeInstalled("wm_free_placement"))
-                {
-                }
-                else if (Shiftorium.UpgradeInstalled("wm_4_windows"))
-                {
-                    int screen_width_half = Screen.PrimaryScreen.Bounds.Width / 2;
-                    int screen_height_half = (Screen.PrimaryScreen.Bounds.Height - screen_height_start) / 2;
-
-                    for (int i = 0; i < OpenForms.Count; i++)
-                    {
-                        var frm = OpenForms[i] as WindowBorder;
-
-                        switch (i)
-                        {
-                            case 0:
-                                frm.Location = new System.Drawing.Point(0, screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 1) ? screen_width_half : screen_width_half * 2, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-
-                                break;
-                            case 1:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-                                break;
-                            case 2:
-                                frm.Location = new System.Drawing.Point(0, screen_height_half + screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 3) ? screen_width_half : screen_width_half * 2, screen_height_half);
-                                break;
-                            case 3:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_half + screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, (OpenForms.Count > 2) ? screen_height_half : screen_height_half * 2);
-                                break;
-                        }
-                    }
-
-                }
-                else if (Shiftorium.UpgradeInstalled("window_manager"))
-                {
-                    int screen_width_half = Screen.PrimaryScreen.Bounds.Width / 2;
-                    int screen_height = (Screen.PrimaryScreen.Bounds.Height) - screen_height_start;
-
-
-
-                    for (int i = 0; i < OpenForms.Count; i++)
-                    {
-
-
-                        var frm = OpenForms[i] as WindowBorder;
-                        switch (i)
-                        {
-                            case 0:
-                                frm.Location = new System.Drawing.Point(0, screen_height_start);
-                                frm.Size = new System.Drawing.Size((OpenForms.Count > 1) ? screen_width_half : screen_width_half * 2, screen_height);
-                                break;
-                            case 1:
-                                frm.Location = new System.Drawing.Point(screen_width_half, screen_height_start);
-                                frm.Size = new System.Drawing.Size(screen_width_half, screen_height);
-                                break;
-                        }
-                        OpenForms[i] = frm;
-                    }
-                }
-                else
-                {
-                    var frm = OpenForms[0] as WindowBorder;
-                    frm.Location = new Point(0, 0);
-                    frm.Size = Desktop.Size;
-                    OpenForms[0] = frm;
-
-                }
+                case ConsoleColor.Black:
+                    return Color.Black;
+                case ConsoleColor.Gray:
+                    return Color.Gray;
+                case ConsoleColor.DarkGray:
+                    return Color.DarkGray;
+                case ConsoleColor.Blue:
+                    return Color.Blue;
+                case ConsoleColor.Cyan:
+                    return Color.Cyan;
+                case ConsoleColor.DarkBlue:
+                    return Color.DarkBlue;
+                case ConsoleColor.DarkCyan:
+                    return Color.DarkCyan;
+                case ConsoleColor.DarkGreen:
+                    return Color.DarkGreen;
+                case ConsoleColor.DarkMagenta:
+                    return Color.DarkMagenta;
+                case ConsoleColor.DarkRed:
+                    return Color.DarkRed;
+                case ConsoleColor.DarkYellow:
+                    return Color.YellowGreen;
+                case ConsoleColor.Yellow:
+                    return Color.Yellow;
+                case ConsoleColor.Green:
+                    return Color.Green;
+                case ConsoleColor.Magenta:
+                    return Color.Magenta;
+                case ConsoleColor.Red:
+                    return Color.Red;
+                case ConsoleColor.White:
+                    return Color.White;
+                default:
+                    return Color.Black;
             }
-            else
-            {
-                var frm = OpenForms[0] as WindowBorder;
-                frm.Location = new Point(0, 0);
-                frm.Size = Desktop.Size;
-                OpenForms[0] = frm;
 
-            }
         }
 
         public static void SetCursor(Control ctrl)
@@ -172,55 +131,133 @@ namespace ShiftOS.WinForms.Tools
 #endif
         }
 
+        /// <summary>
+        /// Centers the control along its parent.
+        /// </summary>
+        /// <param name="ctrl">The control to center (this is an extension method - you can call it on a control as though it was a method in that control)</param>
+        public static void CenterParent(this Control ctrl)
+        {
+            ctrl.Location = new Point(
+                    (ctrl.Parent.Width - ctrl.Width) / 2,
+                    (ctrl.Parent.Height - ctrl.Height) / 2
+                );
+        }
+
         public static void SetupControl(Control ctrl)
         {
-            SuspendDrawing(ctrl);
-            SetCursor(ctrl);
-            if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                string tag = "";
-
-                try
+                if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
                 {
-                    tag = ctrl.Tag.ToString();
-                }
-                catch { }
+                    string tag = "";
 
-                if (!tag.Contains("keepbg"))
-                {
-                    if (ctrl.BackColor != Control.DefaultBackColor)
+                    try
                     {
-                        ctrl.BackColor = SkinEngine.LoadedSkin.ControlColor;
+                        if (ctrl.Tag != null)
+                            tag = ctrl.Tag.ToString();
+                    }
+                    catch { }
+
+                    if (!tag.Contains("keepbg"))
+                    {
+                        if (ctrl.BackColor != Control.DefaultBackColor)
+                        {
+                            ctrl.BackColor = SkinEngine.LoadedSkin.ControlColor;
+                        }
+                    }
+
+                    if (!tag.Contains("keepfont"))
+                    {
+                        ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
+                        ctrl.Font = SkinEngine.LoadedSkin.MainFont;
+                        if (tag.Contains("header1"))
+                        {
+                            Desktop.InvokeOnWorkerThread(() =>
+                            {
+                                ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
+                            });
+                        }
+
+                        if (tag.Contains("header2"))
+                        {
+                            ctrl.Font = SkinEngine.LoadedSkin.Header2Font;
+                        }
+
+                        if (tag.Contains("header3"))
+                        {
+
+                            ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
+                        }
+                    }
+                    try
+                    {
+#if !SLOW_LOCALIZATION
+                        if (!string.IsNullOrWhiteSpace(ctrl.Text))
+                            {
+                                string ctrlText = Localization.Parse(ctrl.Text);
+                                ctrl.Text = ctrlText;
+                            }
+#endif
+                    }
+                    catch
+                    {
+
+                    }
+
+                    if (ctrl is Button)
+                    {
+                        Button b = ctrl as Button;
+                        if (!tag.Contains("keepbg"))
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        }
+                        b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
+                        if (!tag.Contains("keepfg"))
+                        {
+                            b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                            b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                        }
+                        if (!tag.Contains("keepfont"))
+                            b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+
+                        Color orig_bg = b.BackColor;
+
+                        b.MouseEnter += (o, a) =>
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonhover");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
+                        };
+                        b.MouseLeave += (o, a) =>
+                        {
+                            b.BackColor = orig_bg;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        };
+                        b.MouseUp += (o, a) =>
+                        {
+                            b.BackColor = orig_bg;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        };
+
+                        b.MouseDown += (o, a) =>
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
+
+                        };
                     }
                 }
 
-                ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
-
-                ctrl.Font = SkinEngine.LoadedSkin.MainFont;
-
-                if (tag.Contains("header1"))
+                if (ctrl is TextBox)
                 {
-                    ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
+                    (ctrl as TextBox).BorderStyle = BorderStyle.FixedSingle;
                 }
 
-                if (tag.Contains("header2"))
-                {
-                    ctrl.Font = SkinEngine.LoadedSkin.Header2Font;
-                }
-
-                if (tag.Contains("header3"))
-                {
-                    ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
-                }
-
-                try
-                {
-                    ctrl.Text = Localization.Parse(ctrl.Text);
-                }
-                catch
-                {
-
-                }
                 ctrl.KeyDown += (o, a) =>
                 {
                     if (a.Control && a.KeyCode == Keys.T)
@@ -228,13 +265,7 @@ namespace ShiftOS.WinForms.Tools
                         a.SuppressKeyPress = true;
 
 
-                        if (SaveSystem.CurrentSave != null)
-                        {
-                            if (Shiftorium.UpgradeInstalled("window_manager"))
-                            {
-                                Engine.AppearanceManager.SetupWindow(new Applications.Terminal());
-                            }
-                        }
+                        Engine.AppearanceManager.SetupWindow(new Applications.Terminal());
                     }
 
                     ShiftOS.Engine.Scripting.LuaInterpreter.RaiseEvent("on_key_down", a);
@@ -248,11 +279,14 @@ namespace ShiftOS.WinForms.Tools
                 {
                     (ctrl as WindowBorder).Setup();
                 }
-            }
-
-            MakeDoubleBuffered(ctrl);
-            ResumeDrawing(ctrl);
+                MakeDoubleBuffered(ctrl);
+                ControlSetup?.Invoke(ctrl);
+            });
         }
+
+
+
+        public static event Action<Control> ControlSetup;
 
         public static void MakeDoubleBuffered(Control c)
         {
@@ -269,14 +303,18 @@ namespace ShiftOS.WinForms.Tools
 
         }
 
-        public static void SetupControls(Control frm)
+        public static void SetupControls(Control frm, bool runInThread = true)
         {
-            SetupControl(frm);
-
-            for (int i = 0; i < frm.Controls.Count; i++)
+            frm.Click += (o, a) =>
             {
-                SetupControls(frm.Controls[i]);
+                Desktop.HideAppLauncher();
+            };
+            var ctrls = frm.Controls.ToList();
+            for (int i = 0; i < ctrls.Count(); i++)
+            {
+                SetupControls(ctrls[i]);
             }
+            SetupControl(frm);
         }
 
     }

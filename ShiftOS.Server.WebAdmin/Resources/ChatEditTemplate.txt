@@ -1,5 +1,0 @@
-<h3>Create/edit chat</h3>
-
-<p>Please fill out the details below for your channel list to be modified.</p>
-
-{form}

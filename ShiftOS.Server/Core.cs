@@ -32,12 +32,44 @@ using NetSockets;
 using Newtonsoft.Json;
 using System.IO;
 using static ShiftOS.Server.Program;
+using ShiftOS.Engine
 
 
 namespace ShiftOS.Server
 {
     public static class Core
     {
+        [MudRequest("mud_forward", typeof(ServerMessage))]
+        public static void ForwardMessage(string guid, ServerMessage message)
+        {
+            if (message.GUID == "all")
+            {
+                Server.Program.server.DispatchAll(new NetObject("forward", new ServerMessage
+                {
+                    Name = "forward",
+                    GUID = "Server",
+                    Contents = JsonConvert.SerializeObject(message)
+                }));
+            }
+            else
+            {
+                try
+                {
+                    Server.Program.server.DispatchTo(new Guid(message.GUID), new NetObject("forward", new ServerMessage
+                    {
+                        Name = "forward",
+                        GUID = "Server",
+                        Contents = JsonConvert.SerializeObject(message)
+                    }));
+                }
+                catch
+                {
+
+                }
+            }
+        }
+    
+
         [MudRequest("getguid_reply", typeof(string))]
         public static void GuidBounce(string guid, object contents)
         {
@@ -96,10 +128,11 @@ namespace ShiftOS.Server
                     {
                         Name = "run",
                         GUID = "Server",
-                        Contents = $@"{{
-    script:""{File.ReadAllText($"scripts/{user}/{script}.lua").Replace("\"", "\\\"")}"",
-							args:""{sArgs}""
-							}}"
+                        Contents = JsonConvert.SerializeObject(new
+                        {
+                            script = File.ReadAllText($"scripts/{user}/{script}.lua"),
+                            args = sArgs
+                        })
                     }));
                 }
                 else
@@ -115,7 +148,7 @@ namespace ShiftOS.Server
                     {
                         Name = "Error",
                         GUID = "Server",
-                        Contents = JsonConvert.SerializeObject(new MudException("Command parse error"))
+                        Contents = JsonConvert.SerializeObject(new MudException("<script_runner> Script not found or script error detected."))
                     }));
                 }
                 catch
@@ -123,6 +156,103 @@ namespace ShiftOS.Server
                     //fuck.
                 }
             }
+
+        }
+
+        [MudRequest("diag_log", typeof(string))]
+        public static void Diagnostic(string guid, string line)
+        {
+            List<string> lines = new List<string>();
+            if (File.Exists("diagnostics.log"))
+                lines = new List<string>(File.ReadAllLines("diagnostics.log"));
+
+            lines.Add(line);
+            File.WriteAllLines("diagnostics.log", lines.ToArray());
+        }
+
+        [MudRequest("getusers", typeof(string))]
+        public static void GetAllUsers(string guid, string contents)
+        {
+            List<string> accs = new List<string>();
+            if(contents == "dead")
+            {
+                foreach(var sve in Directory.GetFiles("deadsaves"))
+                {
+                    if (sve.EndsWith(".save"))
+                    {
+                        var save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(sve));
+                        accs.Add($"{ShiftOS.Engine.SaveSytem.CurrentUser.Username}@{save.SystemName}");
+                    }
+
+                }
+            }
+            server.DispatchTo(new Guid(guid), new NetObject("h4xx0r", new ServerMessage
+            {
+                Name = "allusers",
+                GUID = "server",
+                Contents = JsonConvert.SerializeObject(accs)
+            }));
+        }
+
+        [MudRequest("mud_save_allow_dead", typeof(Save))]
+        public static void SaveDead(string guid, Save sve)
+        {
+            if(File.Exists("saves/" + sve.Username + ".save"))
+            {
+                WriteEncFile("saves/" + sve.Username + ".save", JsonConvert.SerializeObject(sve));
+            }
+            else if(File.Exists("deadsaves/" + sve.Username + ".save"))
+            {
+                File.WriteAllText("deadsaves/" + sve.Username + ".save", JsonConvert.SerializeObject(sve));
+            }
+        }
+
+        [MudRequest("get_user_data", typeof(Dictionary<string, string>))]
+        public static void GetUserData(string guid, Dictionary<string, string> contents)
+        {
+            string usr = contents["user"];
+            string sys = contents["sysname"];
+
+            foreach(var sve in Directory.GetFiles("deadsaves"))
+            {
+                if (sve.EndsWith(".save"))
+                {
+                    var saveFile = JsonConvert.DeserializeObject<Save>(File.ReadAllText(sve));
+                    if(saveFile.Username == usr && saveFile.SystemName == sys)
+                    {
+                        server.DispatchTo(new Guid(guid), new NetObject("1337", new ServerMessage
+                        {
+                            Name = "user_data",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(saveFile)
+                        }));
+                        return;
+                    }
+                }
+            }
+            foreach (var sve in Directory.GetFiles("saves"))
+            {
+                if (sve.EndsWith(".save"))
+                {
+                    var saveFile = JsonConvert.DeserializeObject<Save>(ReadEncFile(sve));
+                    if (saveFile.Username == usr && saveFile.SystemName == sys)
+                    {
+                        server.DispatchTo(new Guid(guid), new NetObject("1337", new ServerMessage
+                        {
+                            Name = "user_data",
+                            GUID = "server",
+                            Contents = JsonConvert.SerializeObject(saveFile)
+                        }));
+                        return;
+                    }
+                }
+            }
+
+            server.DispatchTo(new Guid(guid), new NetObject("n07_50_1337", new ServerMessage
+            {
+                Name = "user_data_not_found",
+                GUID = "server"
+            }));
 
         }
     }

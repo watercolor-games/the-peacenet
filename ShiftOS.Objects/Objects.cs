@@ -96,6 +96,10 @@ namespace ShiftOS.Objects
         //Don't describe this one. We want it to be hidden from the admin panel's chat editor.
         public string ID { get; set; }
 
+        [FriendlyName("Requires Patreon?")]
+        [FriendlyDescription("If checked, this chat will only be shown in the MUD Control Centre if the user's save is marked as a Patreon supporter.")]
+        public bool RequiresPatreon { get; set; }
+
         [FriendlyName("Chat topic")]
         [FriendlyDescription("A more in-depth version of your chat name. Describe what your chat's about in a sentence.")]
         public string Topic { get; set; }

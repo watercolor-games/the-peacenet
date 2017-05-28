@@ -34,5 +34,14 @@ namespace ShiftOS.Objects
     {
         public string Username { get; set; }
         public string Password { get; set; }
+        public UserPermissions Permissions { get; set; }
+    }
+
+    public enum UserPermissions
+    {
+        Root,
+        Admin,
+        User,
+        Guest
     }
 }

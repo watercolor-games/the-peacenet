@@ -47,18 +47,29 @@ namespace ShiftOS.WinForms.Applications
         public Skin_Loader()
         {
             InitializeComponent();
-
+            SetupControls(pnlborder);
+            SetupControls(pnldesktop);
             LoadedSkin = JsonConvert.DeserializeObject<Skin>(JsonConvert.SerializeObject(SkinEngine.LoadedSkin));
             this.Load += (o, a) => { SetupUI(); };
             
+        }
+
+        public void SetupControls(Control ctrl)
+        {
+            ctrl.Tag = "keepbg keepfg keepfont";
+            foreach (Control c in ctrl.Controls)
+                SetupControls(c);
         }
 
         public Skin LoadedSkin { get; set; }
 
         public void SetupUI()
         {
-            SetupDesktop();
-            Setup();
+            if (LoadedSkin != null)
+            {
+                SetupDesktop();
+                Setup();
+            }
         }
 
         public void SetupDesktop()
@@ -70,7 +81,7 @@ namespace ShiftOS.WinForms.Applications
 
             //upgrades
 
-            if (SaveSystem.CurrentSave != null)
+            if (SaveSystem.CurrentSave != null && LoadedSkin != null)
             {
                 desktoppanel.Visible = ShiftoriumFrontend.UpgradeInstalled("desktop");
                 lbtime.Visible = ShiftoriumFrontend.UpgradeInstalled("desktop_clock_widget");
@@ -295,7 +306,7 @@ namespace ShiftOS.WinForms.Applications
                      System.IO.Directory.CreateDirectory(Paths.SharedFolder + "\\skins");
                  }
 
-                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentSave.Username + "-" + fname;
+                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentUser.Username + "-" + fname;
                  System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(LoadedSkin));
                   
              })));
@@ -305,7 +316,15 @@ namespace ShiftOS.WinForms.Applications
         {
             AppearanceManager.SetupDialog(new FileDialog(new[] { ".skn" }, FileOpenerStyle.Open, new Action<string>((filename) =>
             {
-                LoadedSkin = JsonConvert.DeserializeObject<Skin>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(filename));
+                try
+                {
+                    LoadedSkin = JsonConvert.DeserializeObject<Skin>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(filename));
+                }
+                catch
+                {
+                    Infobox.Show("Invalid Skin", "This skin is not compatible with this version of ShiftOS.");
+                }
+                
                 SetupUI();
             })));
         }
@@ -318,6 +337,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnSkinLoad()
         {
+            SetupUI();
         }
 
         public bool OnUnload()
@@ -327,6 +347,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            SetupUI();
         }
     }
 }

@@ -57,13 +57,12 @@ namespace ShiftOS.WinForms.Applications
             this.btnforward = new System.Windows.Forms.Button();
             this.txturl = new System.Windows.Forms.TextBox();
             this.btngo = new System.Windows.Forms.Button();
-            this.wbcanvas = new System.Windows.Forms.WebBrowser();
+            this.pnlcanvas = new System.Windows.Forms.Panel();
             this.flcontrols.SuspendLayout();
             this.SuspendLayout();
             // 
             // flcontrols
             // 
-            this.flcontrols.AutoSize = true;
             this.flcontrols.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flcontrols.Controls.Add(this.btnback);
             this.flcontrols.Controls.Add(this.btnforward);
@@ -123,42 +122,35 @@ namespace ShiftOS.WinForms.Applications
             this.btngo.UseVisualStyleBackColor = true;
             this.btngo.Click += new System.EventHandler(this.btngo_Click);
             // 
-            // wbcanvas
+            // pnlcanvas
             // 
-            this.wbcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wbcanvas.IsWebBrowserContextMenuEnabled = false;
-            this.wbcanvas.Location = new System.Drawing.Point(0, 29);
-            this.wbcanvas.MinimumSize = new System.Drawing.Size(20, 20);
-            this.wbcanvas.Name = "wbcanvas";
-            this.wbcanvas.ScriptErrorsSuppressed = true;
-            this.wbcanvas.Size = new System.Drawing.Size(805, 510);
-            this.wbcanvas.TabIndex = 1;
-            this.wbcanvas.WebBrowserShortcutsEnabled = false;
-            this.wbcanvas.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.wbcanvas_Navigated);
-            this.wbcanvas.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.wbcanvas_Navigating);
+            this.pnlcanvas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlcanvas.Location = new System.Drawing.Point(0, 29);
+            this.pnlcanvas.Name = "pnlcanvas";
+            this.pnlcanvas.Size = new System.Drawing.Size(805, 510);
+            this.pnlcanvas.TabIndex = 1;
             // 
             // Shiftnet
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.wbcanvas);
+            this.Controls.Add(this.pnlcanvas);
             this.Controls.Add(this.flcontrols);
             this.Name = "Shiftnet";
             this.Size = new System.Drawing.Size(805, 539);
             this.flcontrols.ResumeLayout(false);
             this.flcontrols.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flcontrols;
         private System.Windows.Forms.Button btnback;
         private System.Windows.Forms.Button btnforward;
         private System.Windows.Forms.TextBox txturl;
         private System.Windows.Forms.Button btngo;
-        private System.Windows.Forms.WebBrowser wbcanvas;
+        private System.Windows.Forms.Panel pnlcanvas;
+        private System.Windows.Forms.FlowLayoutPanel flcontrols;
     }
 }

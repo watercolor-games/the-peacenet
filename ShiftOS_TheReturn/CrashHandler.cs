@@ -41,38 +41,41 @@ namespace ShiftOS.Engine
 {
     public class GetHardwareInfo
     {
+        // returns the processor's name for the crash
         public static string GetProcessorName()
         {
-            string ProcessorName = "";
+            string ProcessorName = ""; // put the processors name in here sometime later
             ManagementObjectSearcher mos
-    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor");
+    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor"); // OI CPU TELL ME YOUR NAME PLZ
 
             foreach (ManagementObject mo in mos.Get())
-                ProcessorName = mo["Name"].ToString();
+                ProcessorName = mo["Name"].ToString(); // see told you it puts in it there
 
             return ProcessorName;
         }
+        // same as above but instead for the gpu's name for the crash as well
         public static string GetGPUName()
         {
             string GPUName = "";
             ManagementObjectSearcher mos
-    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_VideoController");
+    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_VideoController"); //now can you tell me your name cpu kthx
 
             foreach (ManagementObject mo in mos.Get())
                 GPUName = mo["Name"].ToString();
 
             return GPUName;
         }
+        // oh wow even more same, but this time its RAM AMOUNT oooh nice
         public static string GetRAMAmount()
         {
             var RAMAmount = "";
             ManagementObjectSearcher mos
-    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PhysicalMemory");
+    = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PhysicalMemory"); //ram you too how much of you exists
 
             foreach (ManagementObject mo in mos.Get())
                 RAMAmount = mo["Capacity"].ToString();
 
-            RAMAmount = (RAMAmount + " B");
+            RAMAmount = (RAMAmount + " B"); // ooh and now we add "bytes" to the end
 
             return RAMAmount;
         }
@@ -81,23 +84,24 @@ namespace ShiftOS.Engine
 
     public partial class CrashHandler : Form
     {
+        //fuck it crashed
         public CrashHandler()
         {
             InitializeComponent();
 
             
-            //Send the bug to Debugle
-            // or alternatively, send to reportbug@shiftos.ml OR narodgaming@shiftos.ml
+            //Send the bug to Unite as a bug report
+            // or alternatively, send to reportbug@shiftos.ml
+            // or just on the discord that works too
             
         }
 
-        public static Exception HandledException = null;
+        public static Exception HandledException = null; // this value determines if we can try to set the game back on track or we cant do anything about it
 
         public static void Start(Exception e)
         {
             if(SaveSystem.CurrentSave != null)
-                TerminalBackend.InvokeCommand("sos.save");
-            AudioManager.Kill();
+                TerminalBackend.InvokeCommand("sos.save");  // SAVE BEFORE CRASHING
             ServerManager.Disconnect();
 
             while (Application.OpenForms.Count > 0)
@@ -109,6 +113,7 @@ namespace ShiftOS.Engine
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(assembly.Location);
             DateTime lastModified = fileInfo.LastWriteTime;
 
+            // put all this in a text document
             string rtbcrash_Text = $@" === {AssemblyName} has crashed. === 
 
 Game:           {AssemblyName}
@@ -180,11 +185,11 @@ Stack trace:
 
             }
 
-            File.WriteAllText("crash.txt", rtbcrash_Text);
+            File.WriteAllText("crash.txt", rtbcrash_Text); // make that text document and put above super long string in it
             var result = MessageBox.Show(caption: "ShiftOS - Fatal error", text: "ShiftOS has encountered a fatal error and has been shut down. Info about the error has been saved to a file called crash.txt in the same folder as the active executable. Would you like to try and recover the game session?", buttons: MessageBoxButtons.YesNo);
             if(result == DialogResult.Yes)
             {
-                Application.Restart();
+                Application.Restart(); // tries to restart if user clicks yes, who wouldve guessed
             }
         }
 
@@ -198,18 +203,20 @@ Stack trace:
             this.Close();
             Application.Restart();
         }
-
+        
+        // make both of those variables that appear in the long string above
         public static string AssemblyName { get; private set; }
         public static string AssemblyDescription { get; private set; }
 
+        // get info about the game itself
         public static void SetGameMetadata(Assembly assembly)
         {
-            AssemblyName = assembly.GetName().Name;
+            AssemblyName = assembly.GetName().Name; // name of game
             foreach(var attr in assembly.GetCustomAttributes(true))
             {
                 if(attr is AssemblyDescriptionAttribute)
                 {
-                    AssemblyDescription = (attr as AssemblyDescriptionAttribute).Description;
+                    AssemblyDescription = (attr as AssemblyDescriptionAttribute).Description; // description of the game
                 }
             }
 

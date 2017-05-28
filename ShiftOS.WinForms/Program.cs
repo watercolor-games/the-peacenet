@@ -34,6 +34,7 @@ using static ShiftOS.Objects.ShiftFS.Utils;
 using ShiftOS.WinForms.Applications;
 using ShiftOS.WinForms.Tools;
 using System.Reflection;
+using System.IO;
 
 namespace ShiftOS.WinForms
 {
@@ -48,28 +49,38 @@ namespace ShiftOS.WinForms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
+            SkinEngine.SetPostProcessor(new DitheringSkinPostProcessor());
+            SaveSystem.PreDigitalSocietyConnection += () =>
+            {
+                Action completed = null;
+                completed = () =>
+                {
+                    SaveSystem.Ready = true;
+                    Engine.AudioManager.PlayCompleted -= completed;
+                    AudioManager.StartAmbientLoop();
+                };
+                Engine.AudioManager.PlayCompleted += completed;
+                Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
+
+            };
+            LoginManager.Init(new GUILoginFrontend());
             CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
             ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
             Localization.RegisterProvider(new WFLanguageProvider());
-            Shiftorium.RegisterProvider(new WinformsShiftoriumProvider());
-            AppearanceManager.OnExit += () =>
-            {
-                Environment.Exit(0);
-            };
-
+            
             TutorialManager.RegisterTutorial(new Oobe());
 
             TerminalBackend.TerminalRequested += () =>
             {
                 AppearanceManager.SetupWindow(new Applications.Terminal());
             };
-            AppearanceManager.Initiate(new WinformsWindowManager());
-            OutOfBoxExperience.Init(new Oobe());
             Infobox.Init(new Dialog());
             FileSkimmerBackend.Init(new WinformsFSFrontend());
             var desk = new WinformsDesktop();
             Desktop.Init(desk);
+            OutOfBoxExperience.Init(new Oobe());
+            AppearanceManager.Initiate(new WinformsWindowManager());
             Application.Run(desk);
         }
     }
@@ -94,14 +105,64 @@ namespace ShiftOS.WinForms
         }
     }
 
+    [ShiftoriumProvider]
     internal class WinformsShiftoriumProvider : IShiftoriumProvider
     {
         public List<ShiftoriumUpgrade> GetDefaults()
         {
-            return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+            var defaultList = JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+
+            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exe);
+                        foreach (var type in asm.GetTypes())
+                        {
+                            var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                            if (attrib != null)
+                            {
+                                var upgrade = new ShiftoriumUpgrade
+                                {
+                                    Id = attrib.Name.ToLower().Replace(" ", "_"),
+                                    Name = attrib.Name,
+                                    Description = attrib.Description,
+                                    Cost = attrib.Cost,
+                                    Category = attrib.Category,
+                                    Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
+                                };
+                                defaultList.Add(upgrade);
+                            }
+
+                            var sattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is StpContents) as StpContents;
+                            if (sattrib != null)
+                            {
+                                var upgrade = new ShiftoriumUpgrade
+                                {
+                                    Id = sattrib.Upgrade,
+                                    Name = sattrib.Name,
+                                    Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
+                                    Cost = 0,
+                                    Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
+                                    Dependencies = "dummy_nodisplay"
+                                };
+                                defaultList.Add(upgrade);
+                            }
+
+                        }
+
+
+
+
+                    }
+                    catch { }
+                }
+            }
+            return defaultList;
         }
     }
-
 
     public class WinformsFSFrontend : IFileSkimmer
     {

@@ -37,12 +37,18 @@
       <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,6 +69,30 @@
     </Compile>
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriPresent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriPresent.Designer.cs">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriSheet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriSheet.Designer.cs">
+      <DependentUpon>TriSheet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriWrite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriWrite.Designer.cs">
+      <DependentUpon>TriWrite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\AddressBook.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\AddressBook.Designer.cs">
+      <DependentUpon>AddressBook.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Artpad.cs">
       <SubType>UserControl</SubType>
@@ -130,6 +160,12 @@
     <Compile Include="Applications\GraphicPicker.Designer.cs">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Installer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Installer.Designer.cs">
+      <DependentUpon>Installer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\ShiftLetters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -166,6 +202,12 @@
     <Compile Include="Applications\Shifter.Designer.cs">
       <DependentUpon>Shifter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\ShiftLotto.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\ShiftLotto.Designer.cs">
+      <DependentUpon>ShiftLotto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Shiftnet.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -177,6 +219,12 @@
     </Compile>
     <Compile Include="Applications\ShiftoriumFrontend.Designer.cs">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\FormatEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\FormatEditor.Designer.cs">
+      <DependentUpon>FormatEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\ShiftSweeper.cs">
       <SubType>UserControl</SubType>
@@ -208,6 +256,36 @@
     <Compile Include="Applications\Terminal.Designer.cs">
       <DependentUpon>Terminal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\TutorialBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TutorialBox.Designer.cs">
+      <DependentUpon>TutorialBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\UpdateManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\UpdateManager.Designer.cs">
+      <DependentUpon>UpdateManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\VideoPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\VideoPlayer.Designer.cs">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\WebBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\WebBrowser.Designer.cs">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\WidgetManagerFrontend.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\WidgetManagerFrontend.Designer.cs">
+      <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
+    </Compile>
     <Compile Include="AudioManager.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Controls\ColorControl.cs">
@@ -225,19 +303,52 @@
     <Compile Include="Controls\TerminalBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DesktopWidgetAttribute.cs" />
+    <Compile Include="DesktopWidgets\Clock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\Clock.Designer.cs">
+      <DependentUpon>Clock.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopWidgets\CodepointsWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\CodepointsWidget.Designer.cs">
+      <DependentUpon>CodepointsWidget.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\HeartbeatWidget.Designer.cs">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopWidgets\TerminalWidget.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\TerminalWidget.Designer.cs">
+      <DependentUpon>TerminalWidget.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopWidgets\UpgradePercentage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopWidgets\UpgradePercentage.Designer.cs">
+      <DependentUpon>UpgradePercentage.cs</DependentUpon>
+    </Compile>
     <Compile Include="DownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DownloadControl.Designer.cs">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FakeSetupScreen.cs">
+    <Compile Include="GUIFunctions.cs" />
+    <Compile Include="GUILogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FakeSetupScreen.Designer.cs">
-      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
+    <Compile Include="GUILogin.Designer.cs">
+      <DependentUpon>GUILogin.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUIFunctions.cs" />
+    <Compile Include="HackerCommands.cs" />
+    <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
@@ -245,19 +356,63 @@
     <Compile Include="Oobe.Designer.cs">
       <DependentUpon>Oobe.cs</DependentUpon>
     </Compile>
+    <Compile Include="OobeStory.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ScriptingTestFunctions.cs" />
+    <Compile Include="Servers\RemoteTerminalServer.cs" />
+    <Compile Include="ShiftnetSites\AppscapeMain.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\AppscapeMain.Designer.cs">
+      <DependentUpon>AppscapeMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\DesktopWidgetWebsite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\DesktopWidgetWebsite.Designer.cs">
+      <DependentUpon>DesktopWidgetWebsite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\MainHomepage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\MainHomepage.Designer.cs">
+      <DependentUpon>MainHomepage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftGames.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
+      <DependentUpon>ShiftGames.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
+    <Compile Include="SkinCommands.cs" />
+    <Compile Include="Stories\LegionStory.cs" />
+    <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
     <Compile Include="Tools\ControlManager.cs" />
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
+    <Compile Include="UniteLoginDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteLoginDialog.Designer.cs">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UniteSignupDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UniteSignupDialog.Designer.cs">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
+    <Compile Include="WidgetManager.cs" />
     <Compile Include="Window.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -282,8 +437,23 @@
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriPresent.resx">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriSheet.resx">
+      <DependentUpon>TriSheet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriWrite.resx">
+      <DependentUpon>TriWrite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\AddressBook.resx">
+      <DependentUpon>AddressBook.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\Artpad.resx">
       <DependentUpon>Artpad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\AudioPlayer.resx">
+      <DependentUpon>AudioPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Calculator.resx">
       <DependentUpon>Calculator.cs</DependentUpon>
@@ -309,6 +479,9 @@
     <EmbeddedResource Include="Applications\GraphicPicker.resx">
       <DependentUpon>GraphicPicker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Installer.resx">
+      <DependentUpon>Installer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftLetters.resx">
       <DependentUpon>ShiftLetters.cs</DependentUpon>
     </EmbeddedResource>
@@ -327,11 +500,17 @@
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\ShiftLotto.resx">
+      <DependentUpon>ShiftLotto.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shiftnet.resx">
       <DependentUpon>Shiftnet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftoriumFrontend.resx">
       <DependentUpon>ShiftoriumFrontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\FormatEditor.resx">
+      <DependentUpon>FormatEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftSweeper.resx">
       <DependentUpon>ShiftSweeper.cs</DependentUpon>
@@ -348,11 +527,41 @@
     <EmbeddedResource Include="Applications\Terminal.resx">
       <DependentUpon>Terminal.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TutorialBox.resx">
+      <DependentUpon>TutorialBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\UpdateManager.resx">
+      <DependentUpon>UpdateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\VideoPlayer.resx">
+      <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\WebBrowser.resx">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\WidgetManagerFrontend.resx">
+      <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\Clock.resx">
+      <DependentUpon>Clock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\CodepointsWidget.resx">
+      <DependentUpon>CodepointsWidget.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\HeartbeatWidget.resx">
+      <DependentUpon>HeartbeatWidget.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\TerminalWidget.resx">
+      <DependentUpon>TerminalWidget.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopWidgets\UpgradePercentage.resx">
+      <DependentUpon>UpgradePercentage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FakeSetupScreen.resx">
-      <DependentUpon>FakeSetupScreen.cs</DependentUpon>
+    <EmbeddedResource Include="GUILogin.resx">
+      <DependentUpon>GUILogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
@@ -361,6 +570,24 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\AppscapeMain.resx">
+      <DependentUpon>AppscapeMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\DesktopWidgetWebsite.resx">
+      <DependentUpon>DesktopWidgetWebsite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
+      <DependentUpon>MainHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
+      <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteLoginDialog.resx">
+      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniteSignupDialog.resx">
+      <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowBorder.resx">
       <DependentUpon>WindowBorder.cs</DependentUpon>
@@ -553,6 +780,35 @@
     <None Include="Resources\SweeperTile3.png" />
     <None Include="Resources\SweeperTile4.png" />
     <None Include="Resources\SweeperTileBomb.png" />
+    <None Include="Resources\SnakeyHeadU.png" />
+    <None Include="Resources\SnakeyTailD.png" />
+    <None Include="Resources\SnakeyTailL.png" />
+    <None Include="Resources\SnakeyTailR.png" />
+    <None Include="Resources\SnakeyTailU.png" />
+    <None Include="Resources\SnakeyBG.png" />
+    <None Include="Resources\SnakeyBody.png" />
+    <None Include="Resources\SnakeyHeadD.png" />
+    <None Include="Resources\SnakeyHeadL.png" />
+    <None Include="Resources\SnakeyHeadR.png" />
+    <None Include="Resources\SnakeyFruit.png" />
+    <None Include="Resources\ShiftnetServices.txt" />
+    <None Include="Resources\3beepvirus.wav" />
+    <None Include="Resources\dial-up-modem-02.wav" />
+    <None Include="Resources\Ambient1.mp3" />
+    <None Include="Resources\Ambient2.mp3" />
+    <None Include="Resources\Ambient3.mp3" />
+    <None Include="Resources\Ambient4.mp3" />
+    <None Include="Resources\Ambient5.mp3" />
+    <None Include="Resources\Ambient6.mp3" />
+    <None Include="Resources\Ambient7.mp3" />
+    <None Include="Resources\Ambient8.mp3" />
+    <None Include="Resources\Ambient9.mp3" />
+    <Content Include="Resources\fileiconcf.bmp" />
+    <None Include="Resources\infobox.wav" />
+    <None Include="Resources\typesound.wav" />
+    <None Include="Resources\writesound.wav" />
+    <None Include="Resources\SuperDesk screenshot.png" />
+    <None Include="Resources\notestate_connection_full.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
@@ -566,6 +822,7 @@
     <Content Include="SystemIcons\iconFileSaver.fw.png" />
     <Content Include="SystemIcons\iconFileSkimmer.png" />
     <Content Include="SystemIcons\iconfloodgate.png" />
+    <Content Include="SystemIcons\iconFormatEditor.png" />
     <Content Include="SystemIcons\icongraphicpicker.png" />
     <Content Include="SystemIcons\iconIconManager.png" />
     <Content Include="SystemIcons\iconInfoBox.fw.png" />
@@ -577,6 +834,7 @@
     <Content Include="SystemIcons\iconPong.png" />
     <Content Include="SystemIcons\iconShifter.png" />
     <None Include="SystemIcons\iconShiftLetters.png" />
+    <Content Include="SystemIcons\iconShiftLotto.png" />
     <Content Include="SystemIcons\iconShiftnet.png" />
     <Content Include="SystemIcons\iconShiftorium.png" />
     <None Include="SystemIcons\iconShiftSweeper.png" />
@@ -597,6 +855,25 @@
     <Content Include="Resources\hello.txt" />
     <None Include="Resources\secretlang.txt" />
     <None Include="Resources\strings_ver.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

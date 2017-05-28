@@ -97,8 +97,10 @@
     <Compile Include="AppearanceManager.cs" />
     <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="AudioManager.cs" />
+    <Compile Include="CommandParser.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="ConsoleEx.cs" />
     <Compile Include="CrashHandler.cs" />
     <Compile Include="CrashHandler.Designer.cs">
       <DependentUpon>CrashHandler.cs</DependentUpon>
@@ -107,7 +109,9 @@
     <Compile Include="FileSkimmerBackend.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />
+    <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
+    <Compile Include="LoginManager.cs" />
     <Compile Include="NotificationDaemon.cs" />
     <Compile Include="OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />
@@ -120,14 +124,16 @@
     </Compile>
     <Compile Include="SaveSystem.cs" />
     <Compile Include="Scripting.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="ServerManager.cs" />
+    <Compile Include="ShiftnetSite.cs" />
     <Compile Include="Shiftorium.cs" />
     <Compile Include="Skinning.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
     <Compile Include="TerminalTextWriter.cs" />
     <Compile Include="TutorialManager.cs" />
-    <Compile Include="VirusEngine.cs" />
+    <Compile Include="UserManagementCommands.cs" />
     <Compile Include="WinOpenAttribute.cs" />
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>
@@ -155,10 +161,6 @@
     <ProjectReference Include="..\ShiftOS.Objects\ShiftOS.Objects.csproj">
       <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
       <Name>ShiftOS.Objects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShiftOS.Server\ShiftOS.Server.csproj">
-      <Project>{226C63B4-E60D-4949-B4E7-7A2DDBB96776}</Project>
-      <Name>ShiftOS.Server</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

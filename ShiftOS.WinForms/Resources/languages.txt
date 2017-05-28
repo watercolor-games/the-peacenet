@@ -1,4 +1,4 @@
 [
 	"english"
-	"deutsch - in beta"
+	"deutsch"
 ]

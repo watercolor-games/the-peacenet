@@ -38,7 +38,8 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [RequiresUpgrade("mud_fundamentals")]
+    [MultiplayerOnly]
+    [RequiresUpgrade("mud_control_centre")]
     [Launcher("MUD Control Centre", true, "al_mud_control_centre", "Networking")]
     [WinOpen("mud_control_centre")]
     [DefaultIcon("iconSysinfo")]
@@ -99,7 +100,7 @@ namespace ShiftOS.WinForms.Applications
                                     {
                                         ServerManager.SendMessage("shop_removeowned", JsonConvert.SerializeObject(new
                                         {
-                                            username = SaveSystem.CurrentSave.Username
+                                            username = SaveSystem.CurrentUser.Username
                                         }));
                                         ShowCreateShop();
                                     }
@@ -176,6 +177,42 @@ namespace ShiftOS.WinForms.Applications
             };
         }
 
+
+
+        internal void ShowClasses()
+        {
+            var descriptions = new Dictionary<UserClass, string> {
+
+            { UserClass.Skinner, "Skinners, otherwise known as \"Shifters\" due to their excessive use of the Shifter application, like to customize ShiftOS to look like other operating systems or even have an entirely different UI. They gain heaps of codepoints from it, and like to sell their skins for even more Codepoints." },
+        { UserClass.Hacker, "Hackers are notorious for taking down large groups and individuals of which have many useful documents and Codepoints on their system. Hackers enjoy the rush of typing malicious commands into their terminals and seeing how they affect their target." },
+            { UserClass.Investigator, "Much like hackers, investigators are skilled with a terminal and breaching systems, but they don't do it directly for monetary gain. They will search a target's system for any files and clues that may lead to them being guilty of a crime within the digital society. Unlike Hackers, Investigators mostly have higher reputations in society, and go after those with lower reputations."},
+            { UserClass.Explorer,  "Explorers like to venture the vast regions of the multi-user domain and Shiftnet looking for secrets, hidden tools and software, and finding the hidden truths behind their screen. Explorers don't always know how to hack, but if it involves finding a secret about ShiftOS, they will do it. They typically do not have malicious intent."},
+                { UserClass.SafetyActivist, "Safety Activists are skilled with exploitation and hacking, but they only go after the worst there is in the multi-user domain. Crime rings, large hacker groups, you name it. Their primary goal is keeping the multi-user domain safe." },
+                { UserClass.PenetrationTester, "Penetration testers go hand-in-hand with Safety Activists. They go after the good guys, but rather than attacking them, they alert them that an exploit was found in their service and that this exploit should be fixed. They are a gray subject though - you never know if you are dealing with a genuine pen-tester or a hacker skilled with social engineering. Be careful." },
+                { UserClass.Collector, "Collectors go well with Explorers - however, Collectors are the ones who open shops. They like to find rare objects and sell them for Codepoints." },
+                {UserClass.Programmer, "Programmers are the ones who write applications and services for ShiftOS and the multi-user domain. Depending on the code that they write, they can be seen as either morally wrong sentiences or morally correct sentiences, it's up to their decisions." },
+
+            };
+
+            lbclasses.Items.Clear();
+            lbclasses.SelectedIndexChanged += (o, a) =>
+            {
+                newClass = (UserClass)Enum.Parse(typeof(UserClass), lbclasses.SelectedItem.ToString());
+                lbclassdesc.Text = descriptions[newClass];
+                lbclasstitle.Text = newClass.ToString();
+            };
+            foreach (var kv in descriptions)
+            {
+                lbclasses.Items.Add(kv.Key.ToString());
+
+            }
+            menuStrip1.Hide();
+            pnlclasses.Show();
+            pnlclasses.BringToFront();
+        }
+
+        UserClass newClass = UserClass.None;
+
         public void ListAllChats(Channel[] channels)
         {
             shop_all.BringToFront();
@@ -237,9 +274,10 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        [Obsolete("MUD control center is dying! KILL IT!")]
         public void OpenChat(string id)
         {
-            AppearanceManager.SetupWindow(new Chat(id));
+//            AppearanceManager.SetupWindow(new Chat(id));
         }
 
         private Shop editingShop = null;
@@ -252,7 +290,7 @@ namespace ShiftOS.WinForms.Applications
                 creatingShop = true;
                 editingShop.Name = "My shop";
                 editingShop.Description = "My shop has lots of awesome items. You should buy from my shop.";
-                editingShop.Owner = SaveSystem.CurrentSave.Username;
+                editingShop.Owner = SaveSystem.CurrentUser.Username;
                 editingShop.Items = new List<ShopItem>();
                 shop_editor.BringToFront();
                 PopulateShopEditor();
@@ -364,7 +402,7 @@ namespace ShiftOS.WinForms.Applications
                 lbprice.Text = $"Cost: {item.Cost} CP";
                 btnbuy.Show();
             };
-            if(shop.Owner == SaveSystem.CurrentSave.Username)
+            if(shop.Owner == SaveSystem.CurrentUser.Username)
             {
                 btneditshop.Show();
             }
@@ -522,7 +560,7 @@ namespace ShiftOS.WinForms.Applications
 
             you_systemstatus.BringToFront();
 
-            lblsysstatus.Text = $@"Username: {SaveSystem.CurrentSave.Username}
+            lblsysstatus.Text = $@"Username: {SaveSystem.CurrentUser.Username}
 System name: {SaveSystem.CurrentSave.SystemName}
 
 Codepoints: {SaveSystem.CurrentSave.Codepoints}
@@ -531,6 +569,8 @@ Upgrades: {SaveSystem.CurrentSave.CountUpgrades()}/{Shiftorium.GetDefaults().Cou
 System version: {SaveSystem.CurrentSave.MajorVersion}.{SaveSystem.CurrentSave.MinorVersion}.{SaveSystem.CurrentSave.Revision}
 
 Shared scripts: {scripts}
+
+Reputation: {SaveSystem.CurrentSave.RawReputation} ({SaveSystem.CurrentSave.Reputation})
 
 Current legions: {legionname}";
         }
@@ -551,7 +591,7 @@ Current legions: {legionname}";
         private void tsMemos_Click(object sender, EventArgs e)
         {
             ServerManager.SendMessage("get_memos_for_user", $@"{{
-    username: ""{SaveSystem.CurrentSave.Username}""                
+    username: ""{SaveSystem.CurrentUser.Username}""                
 }}");
             you_memos.BringToFront();
         }
@@ -603,6 +643,11 @@ Current legions: {legionname}";
             ServerManager.SendMessage("legion_get_all", "");
         }
 
+        public void ShowLegionSelector()
+        {
+            ServerManager.SendMessage("legion_get_all", "");
+        }
+
         private void btnjoinlegion_Click(object sender, EventArgs e)
         {
             string shortname = lblegiontitle.Text.Split(']')[0].Remove(0, 1);
@@ -611,7 +656,11 @@ Current legions: {legionname}";
 
             SaveSystem.SaveGame();
             ServerManager.SendMessage("user_get_legion", JsonConvert.SerializeObject(SaveSystem.CurrentSave));
+            LegionChanged?.Invoke();
+
         }
+
+        public event Action LegionChanged;
 
         private void btnleavelegion_Click(object sender, EventArgs e)
         {
@@ -763,7 +812,7 @@ Current legions: {legionname}";
         {
             ServerManager.SendMessage("user_shop_check", JsonConvert.SerializeObject(new
             {
-                username = SaveSystem.CurrentSave.Username
+                username = SaveSystem.CurrentUser.Username
             }));
         }
 
@@ -846,7 +895,7 @@ Current legions: {legionname}";
 
         private void myShopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentSave.Username);
+            ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentUser.Username);
         }
 
         private void btneditshop_Click(object sender, EventArgs e)
@@ -874,7 +923,7 @@ Current legions: {legionname}";
                         {
                             ServerManager.SendMessage("delete_save", JsonConvert.SerializeObject(new ClientSave
                             {
-                                Username = SaveSystem.CurrentSave.Username,
+                                Username = SaveSystem.CurrentUser.Username,
                                 Password = SaveSystem.CurrentSave.Password
                             }));
 
@@ -888,6 +937,22 @@ Current legions: {legionname}";
                     });
                 }
             });
+        }
+
+        public event Action ClassChanged;
+
+        private void btnchooseclass_Click(object sender, EventArgs e)
+        {
+            if(newClass != UserClass.None)
+            {
+                SaveSystem.CurrentSave.Class = newClass;
+                SaveSystem.SaveGame();
+                ClassChanged?.Invoke();
+                menuStrip1.Show();
+                pnlclasses.SendToBack();
+                this.SetupSystemStatus();
+                return;
+            }
         }
     }
 }
