@@ -202,11 +202,19 @@ namespace ShiftOS.WinForms
                     {
                         if (SaveSystem.CurrentSave.Codepoints != lastcp)
                             lastcp = SaveSystem.CurrentSave.Codepoints;
-                        if (lastcp >= 10000)
+                        if (lastcp >= 2500)
                         {
                             if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
                             {
                                 Story.Start("victortran_shiftnet");
+                            }
+                        }
+                        if(lastcp >= 5000)
+                        {
+                            if(Shiftorium.UpgradeInstalled("triwrite") && Shiftorium.UpgradeInstalled("simplesrc") && Shiftorium.UpgradeInstalled("victortran_shiftnet") && Shiftorium.UpgradeInstalled("story_hacker101_breakingthebonds"))
+                            {
+                                if (!Shiftorium.UpgradeInstalled("story_thefennfamily"))
+                                    Story.Start("story_thefennfamily");
                             }
                         }
                     }

@@ -41,6 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [WinOpen("simplesrc")]
     [Launcher("SimpleSRC Client", false, null, "Networking")]
     [DefaultTitle("SimpleSRC Client")]
+    [AppscapeEntry("SimpleSRC", "A simple ShiftOS Relay Chat client that allows you to talk with other ShiftOS users from all over the world.", 300, 145, "file_skimmer", "Networking")]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat()

@@ -504,11 +504,11 @@ namespace ShiftOS.WinForms.Applications
                 Thread.Sleep(2000);
                 Console.WriteLine("As you know, ShiftOS doesn't have very many features.");
                 Thread.Sleep(2000);
-                Console.WriteLine("Using the applications you have, I need you to earn 50,000 Codepoints.");
+                Console.WriteLine("Using the applications you have, I need you to earn as many Codepoints as you can.");
                 Thread.Sleep(2000);
-                Console.WriteLine("You can use the Codepoints you earn to buy new applications and features in the Shiftorium, to help earn Codepoints.");
+                Console.WriteLine("You can use the Codepoints you earn to buy new applications and features in the Shiftorium, to help earn even more Codepoints.");
                 Thread.Sleep(2000);
-                Console.WriteLine("Start small, try to earn 500. Once you do, I'll contact you with more details.");
+                Console.WriteLine("Once you earn 1,000 Codepoints, I will check back with you and see how well you've done.");
                 Thread.Sleep(2000);
                 Console.WriteLine("I'll leave you to it, you've got the hang of it! One last thing, if ever you find yourself in another program, and want to exit, simply press CTRL+T to return to the Terminal.");
                 Thread.Sleep(2000);

@@ -111,48 +111,9 @@ namespace ShiftOS.Engine
                 localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(Paths.GetPath("english.local"))); //if no provider fall back to english
             }
 
-            foreach (var kv in localizationStrings)
+            foreach (var kv in localizationStrings.Where(x=>original.Contains(x.Key)))
             {
                 original = original.Replace(kv.Key, kv.Value); // goes through and replaces all the localization blocks
-            }
-
-            List<string> orphaned = new List<string>();
-
-
-            int start_index = 0;
-            int length = 0;
-            bool indexing = false;
-
-            foreach (var c in original)
-            {
-                // start paying attenion when you see a "{"
-                if (c == '{')
-                {
-                    start_index = original.IndexOf(c);
-                    indexing = true;
-                }
-
-                if (indexing == true)
-                {
-                    // stop paying attention when you see a "}" after seeing a "{"
-                    length++;
-                    if (c == '}')
-                    {
-                        indexing = false;
-                        string o = original.Substring(start_index, length);
-                        if (!orphaned.Contains(o))
-                        {
-                            orphaned.Add(o);
-                        }
-                        start_index = 0;
-                        length = 0;
-                    }
-                }
-            }
-
-            if (orphaned.Count > 0)
-            {
-                Utils.WriteAllText("0:/dev_orphaned_lang.txt", JsonConvert.SerializeObject(orphaned, Formatting.Indented)); //format if from this txt file
             }
 
             //string original2 = Parse(original);
@@ -203,13 +164,13 @@ namespace ShiftOS.Engine
             };
 
             // actually do the replacement
-            foreach (KeyValuePair<string, string> replacement in replace)
+            foreach (KeyValuePair<string, string> replacement in replace.Where(x => original.Contains(x.Key)))
             {
                 original = original.Replace(replacement.Key, Parse(replacement.Value));
             }
 
             // do the replacement but default
-            foreach (KeyValuePair<string, string> replacement in defaultReplace)
+            foreach (KeyValuePair<string, string> replacement in defaultReplace.Where(x => original.Contains(x.Key)))
             {
                 original = original.Replace(replacement.Key, replacement.Value);
             }

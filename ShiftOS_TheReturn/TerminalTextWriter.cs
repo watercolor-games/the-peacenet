@@ -42,6 +42,7 @@ namespace ShiftOS.Engine
         {
             ConsoleEx.OnFlush = () =>
             {
+                System.Diagnostics.Debug.WriteLine("[terminal] " + buffer);
                 Desktop.InvokeOnWorkerThread(() =>
                 {
                     UnderlyingControl?.Write(buffer);
