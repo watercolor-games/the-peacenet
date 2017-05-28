@@ -361,14 +361,12 @@ namespace ShiftOS.Engine
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string text, bool isRemote = false)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return;
             var tw = new MemoryTextWriter();
             Console.SetOut(tw);
             try
             {
-
-                if (string.IsNullOrWhiteSpace(text))
-                    return;
-
                 var args = GetArgs(ref text);
 
                 Stopwatch debugger = new Stopwatch();
@@ -533,10 +531,9 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void PrintPrompt()
         {
+            Console.WriteLine();
             if (SaveSystem.CurrentSave != null && CurrentUser != null)
             {
-                Desktop.InvokeOnWorkerThread(() =>
-                {
                     ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
                     ConsoleEx.Italic = false;
                     ConsoleEx.Underline = false;
@@ -566,7 +563,7 @@ namespace ShiftOS.Engine
                     ConsoleEx.Bold = false;
                     ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
                     Console.Write(" ");
-                });
+                ConsoleEx.Flush();
             }
         }
 

@@ -393,6 +393,7 @@ namespace ShiftOS.Engine
                 TerminalBackend.TextSent += ev;
                 Console.WriteLine();
                 Console.Write(CurrentSave.SystemName + " login: ");
+                ConsoleEx.Flush();
                 while (progress == 0)
                 {
                     Thread.Sleep(10);
@@ -401,6 +402,7 @@ namespace ShiftOS.Engine
                     goto Login;
                 Console.WriteLine();
                 Console.Write("password: ");
+                ConsoleEx.Flush();
                 while (progress == 1)
                     Thread.Sleep(10);
                 if (goback)

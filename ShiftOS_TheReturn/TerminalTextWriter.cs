@@ -37,14 +37,19 @@ namespace ShiftOS.Engine
     /// </summary>
     public class TerminalTextWriter : TextWriter
     {
-        /// <summary>
-        /// Win32 API call to lock the window from being updated.
-        /// </summary>
-        /// <param name="hWndLock">The Win32 window handle</param>
-        /// <returns>...I....have no idea.</returns>
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool LockWindowUpdate(IntPtr hWndLock);
         
+        public TerminalTextWriter()
+        {
+            ConsoleEx.OnFlush = () =>
+            {
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    UnderlyingControl?.Write(buffer);
+                    buffer = "";
+                });
+            };
+        }
+
         /// <summary>
         /// Gets the encoding format for this <see cref="TextWriter"/>. God bless the Unicode Consortiem. 
         /// </summary>
@@ -94,11 +99,17 @@ namespace ShiftOS.Engine
             }
             else
             {
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-                {
-                    UnderlyingControl?.Write(value.ToString());
-                    select();
-                }));
+                buffer += value;
+            }
+        }
+
+        private string buffer = "";
+
+        public string Buffer
+        {
+            get
+            {
+                return buffer;
             }
         }
 
@@ -118,11 +129,8 @@ namespace ShiftOS.Engine
             else
             {
 
-                Desktop.InvokeOnWorkerThread(new Action(() =>
-            {
-                UnderlyingControl?.WriteLine(value);
-                select();
-            }));
+                buffer += value + Environment.NewLine;
+                ConsoleEx.Flush();
             }
         }
 
@@ -149,8 +157,7 @@ namespace ShiftOS.Engine
 
                 Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                UnderlyingControl?.Write(value.ToString());
-                select();
+                buffer += value;
             }));
             }
         }

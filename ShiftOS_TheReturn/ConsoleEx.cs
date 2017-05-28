@@ -48,5 +48,12 @@ namespace ShiftOS.Engine
         /// Gets or sets whether text in the Terminal is underlined.
         /// </summary>
         public static bool Underline { get; set; }
+
+        internal static void Flush()
+        {
+            OnFlush?.Invoke();
+        }
+
+        public static Action OnFlush;
     }
 }
