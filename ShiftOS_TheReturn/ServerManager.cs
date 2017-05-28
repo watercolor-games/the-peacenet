@@ -148,7 +148,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
             switch(msg.Name)
             {
                 case "getguid_fromserver":
-                    if(SaveSystem.CurrentSave.Username == msg.Contents)
+                    if(SaveSystem.CurrentUser.Username == msg.Contents)
                     {
                         client.Send(new NetObject("yes_i_am", new ServerMessage
                         {
@@ -244,7 +244,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                 else if(msg.Name == "update_your_cp")
                 {
                     var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
-                    if(args["username"] as string == SaveSystem.CurrentSave.Username)
+                    if(args["username"] as string == SaveSystem.CurrentUser.Username)
                     {
                         SaveSystem.CurrentSave.Codepoints += (long)args["amount"];
                         Desktop.InvokeOnWorkerThread(new Action(() =>

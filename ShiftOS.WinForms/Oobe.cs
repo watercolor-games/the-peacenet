@@ -302,7 +302,7 @@ namespace ShiftOS.WinForms
 
             var client = new UniteClient("http://getshiftos.ml", token);
             var sve = new Save();
-            sve.Username = client.GetEmail();
+            SaveSystem.CurrentUser.Username = client.GetEmail();
             sve.Password = Guid.NewGuid().ToString();
             sve.SystemName = client.GetSysName();
             sve.UniteAuthToken = token;

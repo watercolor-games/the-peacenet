@@ -581,7 +581,7 @@ namespace ShiftOS.Engine
 
                     if (TerminalBackend.PrefixEnabled)
                     {
-                        text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                        text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                     }
                     IsForwardingConsoleWrites = true;
                     if (TerminalBackend.InStory == false)
@@ -590,7 +590,7 @@ namespace ShiftOS.Engine
                     }
                     if (TerminalBackend.PrefixEnabled)
                     {
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                     }
                     IsForwardingConsoleWrites = false;
                 }
@@ -605,7 +605,7 @@ namespace ShiftOS.Engine
                     string pass = a["password"] as string;
                     string sys = a["sysname"] as string;
                     string guid = msg.GUID;
-                    if (SaveSystem.CurrentSave.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
+                    if (SaveSystem.CurrentUser.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
                     {
                         ForwardGUID = guid;
                         ServerManager.SendMessage("trm_handshake_accept", $@"{{
@@ -615,7 +615,7 @@ namespace ShiftOS.Engine
 
                         IsForwardingConsoleWrites = true;
                         InvokeCommand("sos.status");
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                         IsForwardingConsoleWrites = false;
                     }
                 }

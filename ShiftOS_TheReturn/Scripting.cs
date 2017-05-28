@@ -312,7 +312,7 @@ end");
             {
                 Console.WriteLine("");
                 Lua(lua);
-                Console.WriteLine($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                Console.WriteLine($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
             }
             catch (Exception e)
             {

@@ -95,7 +95,7 @@ namespace ShiftOS.Engine
             {
                 TerminalBackend.IsForwardingConsoleWrites = forwarding;
                 TerminalBackend.ForwardGUID = (forwarding == true) ? fGuid : null;
-                Console.WriteLine($"{SaveSystem.CurrentSave.Username} says \"{result}\".");
+                Console.WriteLine($"{SaveSystem.CurrentUser.Username} says \"{result}\".");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };
             Desktop.InvokeOnWorkerThread(new Action(() =>

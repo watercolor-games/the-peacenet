@@ -107,7 +107,7 @@ namespace ShiftOS.WinForms
                 Thread.Sleep(2000);
                 writeSlow($"Hello there, fellow multi-user domain user.");
                 writeSlow("My name, as you can tell, is hacker101.");
-                writeSlow("And yours must be... don't say it... it's " + SaveSystem.CurrentSave.Username + "@" + SaveSystem.CurrentSave.SystemName + ", right?");
+                writeSlow("And yours must be... don't say it... it's " + SaveSystem.CurrentUser.Username + "@" + SaveSystem.CurrentSave.SystemName + ", right?");
                 writeSlow("Of course it is.");
                 writeSlow("And I bet you 10,000 Codepoints that you have... " + SaveSystem.CurrentSave.Codepoints.ToString() + " Codepoints.");
                 writeSlow("Oh, and how much upgrades have you installed since you first started using ShiftOS?");
@@ -135,7 +135,7 @@ namespace ShiftOS.WinForms
                 Console.Write(" ..done");
                 TerminalBackend.InStory = false;
                 TerminalBackend.PrefixEnabled = true;
-                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                 StartHackerTutorial();
                 TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.PrintPrompt();
@@ -454,7 +454,7 @@ namespace ShiftOS.WinForms
                     var sve = JsonConvert.DeserializeObject<Save>(msg.Contents);
                     if(sve.Password == pass)
                     {
-                        Console.WriteLine("Username: " + sve.Username);
+                        Console.WriteLine("Username: " + SaveSystem.CurrentUser.Username);
                         Console.WriteLine("Password: " + sve.Password);
                         Console.WriteLine("System name: " + sve.SystemName);
                         Console.WriteLine();
@@ -531,7 +531,7 @@ namespace ShiftOS.WinForms
                         }
 
                         sve.Codepoints -= amount;
-                        SaveSystem.TransferCodepointsFrom(sve.Username, amount);
+                        SaveSystem.TransferCodepointsFrom(SaveSystem.CurrentUser.Username, amount);
                         ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
                         SaveSystem.SaveGame();
                     }

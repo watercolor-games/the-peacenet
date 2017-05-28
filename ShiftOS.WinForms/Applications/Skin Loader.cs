@@ -306,7 +306,7 @@ namespace ShiftOS.WinForms.Applications
                      System.IO.Directory.CreateDirectory(Paths.SharedFolder + "\\skins");
                  }
 
-                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentSave.Username + "-" + fname;
+                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentUser.Username + "-" + fname;
                  System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(LoadedSkin));
                   
              })));

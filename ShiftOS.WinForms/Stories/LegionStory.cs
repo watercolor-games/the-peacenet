@@ -142,7 +142,7 @@ namespace ShiftOS.WinForms.Stories
             {
                 WriteLine("DevX@mud - user connecting to your system.", false);
                 Thread.Sleep(2000);
-                WriteLine($"Hello, {SaveSystem.CurrentSave.Username}. It's been a while.");
+                WriteLine($"Hello, {SaveSystem.CurrentUser.Username}. It's been a while.");
                 WriteLine("My intelligence suggests you've installed all GUI-based Shiftorium upgrades.");
                 WriteLine("Bet you're liking ShiftOS now that the terminal isn't the only way you can control it.");
                 WriteLine("Well, now it's time to introduce your next task.");
