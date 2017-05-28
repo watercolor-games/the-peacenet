@@ -38,7 +38,7 @@ namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
     [Launcher("ShiftLetters", false, null, "Games")]
-    [RequiresUpgrade("shiftletters")]
+    [AppscapeEntry("ShiftLetters", "Let's see how much you know about ShiftOS by playing this tiny little Hangman game! Shiftorium Upgrades exist to allow you to buy different word sets!", 300, 150, null, "Games")]
     [WinOpen("shiftletters")]
     [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow

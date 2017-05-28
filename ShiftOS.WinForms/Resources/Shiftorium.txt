@@ -152,13 +152,6 @@
 
 	// SHIFTLETTERS AND WORDLISTS
 	{
-		Name: "ShiftLetters",
-		Cost: 150,
-		Dependencies: null,
-		Category: "Applications",
-		Description: "Sick and tired of playing Pong? Buy this upgrade to get a whole new game!"
-	},
-	{
 		Name: "AL ShiftLetters",
 		Cost: 150,
 		Dependencies: "app_launcher;shiftletters",
@@ -1028,13 +1021,6 @@
 
 	// SHIFTSWEEPER
 
-	{
-		Name: "ShiftSweeper",
-		Cost: 800,
-		Dependencies: "shiftletters",
-		Category: "Applications",
-		Description: "Getting bored with Pong and ShiftLetters? Try this BRAND NEW game called ShiftSweeper!"
-	},
 	{
 		Name: "AL ShiftSweeper",
 		Cost: 100,

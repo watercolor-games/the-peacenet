@@ -35,7 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
     [Launcher("ShiftSweeper", true, "al_shiftsweeper", "Games")]
-    [RequiresUpgrade("shiftsweeper")]
+    [AppscapeEntry("ShiftSweeper", "A simple Minesweeper game built for ShiftOS! Careful, it's a hard one.", 1600, 800, "shiftletters", "Games")]
     [MultiplayerOnly]
     [WinOpen("shiftsweeper")]
     [DefaultIcon("iconShiftSweeper")]

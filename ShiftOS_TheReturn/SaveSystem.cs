@@ -298,6 +298,32 @@ namespace ShiftOS.Engine
             if (CurrentSave.Users == null)
                 CurrentSave.Users = new List<ClientSave>();
 
+            Console.WriteLine($@"
+                   `-:/++++::.`                   
+              .+ydNMMMMMNNMMMMMNhs/.              
+           /yNMMmy+:-` `````.-/ohNMMms-           
+        `oNMMh/.`:oydmNMMMMNmhs+- .+dMMm+`             Welcome to ShiftOS.
+      `oMMmo``+dMMMMMMMMMMMMMMMMMNh/`.sNMN+       
+     :NMN+ -yMMMMMMMNdhyssyyhdmNMMMMNs``sMMd.          SYSTEM STATUS:
+    oMMd.`sMMMMMMd+.            `/MMMMN+ -mMN:         ----------------------
+   oMMh .mMMMMMM/     `-::::-.`  :MMMMMMh`.mMM:   
+  :MMd .NMMMMMMs    .dMMMMMMMMMNddMMMMMMMd`.NMN.        Codepoints:     {SaveSystem.CurrentSave.Codepoints}
+  mMM. dMMMMMMMo    -mMMMMMMMMMMMMMMMMMMMMs /MMy        Upgrades:       {SaveSystem.CurrentSave.CountUpgrades()} installed
+ :MMh :MMMMMMMMm`     .+shmMMMMMMMMMMMMMMMN` NMN`                       {Shiftorium.GetAvailable().Count()} available
+ oMM+ sMMMMMMMMMN+`        `-/smMMMMMMMMMMM: hMM:       Filesystems:    {Utils.Mounts.Count} filesystems mounted in memory.
+ sMM+ sMMMMMMMMMMMMds/-`        .sMMMMMMMMM/ yMM/ 
+ +MMs +MMMMMMMMMMMMMMMMMmhs:`     +MMMMMMMM- dMM-       System name:    {CurrentSave.SystemName.ToUpper()}
+ .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        Users:          {Users.Count()} found.
+  hMM+ +MMMMMMmsdNMMMMMMMMMMN/    -MMMMMMN- yMM+        
+  `NMN- oMMMMMd   `-/+osso+-     .mMMMMMN: +MMd   
+   -NMN: /NMMMm`               :yMMMMMMm- oMMd`   
+    -mMMs``sMMMMNdhso++///+oydNMMMMMMNo .hMMh`    
+     `yMMm/ .omMMMMMMMMMMMMMMMMMMMMd+``oNMNo      
+       -hMMNo. -ohNMMMMMMMMMMMMmy+. -yNMNy`       
+         .sNMMms/. `-/+++++/:-` ./yNMMmo`         
+            :sdMMMNdyso+++ooshdNMMMdo-            
+               `:+yhmNNMMMMNNdhs+-                
+                       ````                       ");
 
             if (CurrentSave.Users.Count == 0)
             {
