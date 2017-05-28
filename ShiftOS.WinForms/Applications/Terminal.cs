@@ -130,8 +130,6 @@ namespace ShiftOS.WinForms.Applications
                 {
                     this.Invoke(new Action(() =>
                     {
-                        ResetAllKeywords();
-                        rtbterm.Text = "";
                         if (Shiftorium.UpgradeInstalled("first_steps"))
                         {
                             if (!Shiftorium.UpgradeInstalled("desktop"))
@@ -202,52 +200,6 @@ namespace ShiftOS.WinForms.Applications
 
 
         public static event TextSentEventHandler TextSent;
-
-        public void ResetAllKeywords()
-        {
-            string primary = SaveSystem.CurrentUser.Username + " ";
-            string secondary = "shiftos ";
-
-
-            var asm = Assembly.GetExecutingAssembly();
-
-            var types = asm.GetTypes();
-
-            foreach (var type in types)
-            {
-                foreach (var a in type.GetCustomAttributes(false))
-                {
-                    if (ShiftoriumFrontend.UpgradeAttributesUnlocked(type))
-                    {
-                        if (a is Namespace)
-                        {
-                            var ns = a as Namespace;
-                            if (!primary.Contains(ns.name))
-                            {
-                                primary += ns.name + " ";
-                            }
-                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                            {
-                                if (ShiftoriumFrontend.UpgradeAttributesUnlocked(method))
-                                {
-                                    foreach (var ma in method.GetCustomAttributes(false))
-                                    {
-                                        if (ma is Command)
-                                        {
-                                            var cmd = ma as Command;
-                                            if (!secondary.Contains(cmd.name))
-                                                secondary += cmd.name + " ";
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-        }
 
         public static void MakeWidget(Controls.TerminalBox txt)
         {
@@ -436,17 +388,13 @@ namespace ShiftOS.WinForms.Applications
 
             if (SaveSystem.CurrentSave != null)
             {
+                TerminalBackend.PrintPrompt();
                 if (!ShiftoriumFrontend.UpgradeInstalled("window_manager"))
                 {
                     rtbterm.Select(rtbterm.TextLength, 0);
                 }
             }
 
-            new Thread(() =>
-            {
-                Thread.Sleep(1000);
-                TerminalBackend.PrintPrompt();
-            }).Start();
         }
 
         public static string RemoteSystemName { get; set; }
