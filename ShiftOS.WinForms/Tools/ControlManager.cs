@@ -1,4 +1,3 @@
-#define SLOW_LOCALIZATION
 
 /*
  * MIT License

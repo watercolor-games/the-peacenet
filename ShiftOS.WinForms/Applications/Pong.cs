@@ -343,10 +343,10 @@ namespace ShiftOS.WinForms.Applications
                 if (IsLeader)
                 {
                     //lblstats.Text = "Xspeed: " & Math.Abs(xVel) & " Yspeed: " & Math.Abs(yVel) & " Human Location: " & paddleHuman.Location.ToString & " Computer Location: " & paddleComputer.Location.ToString & Environment.NewLine & " Ball Location: " & ball.Location.ToString & " Xdec: " & xveldec & " Ydec: " & yveldec & " Xinc: " & incrementx & " Yinc: " & incrementy
-                    lblstatsX.Text = Localization.Parse("{H_VEL}: ") + xveldec;
-                    lblstatsY.Text = Localization.Parse("{V_VEL}: ") + yveldec;
-                    lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
-                    lbllevelandtime.Text = Localization.Parse("{LEVEL}: " + level + " - " + secondsleft + " {SECONDS_LEFT}");
+                    lblstatsX.Text = "X vel: " + xveldec;
+                    lblstatsY.Text = "Y vel: " + yveldec;
+                    lblstatscodepoints.Text = "Codepoints: " + (levelrewards[level - 1] + beatairewardtotal).ToString();
+                    lbllevelandtime.Text = "Level: " + level + " - " + secondsleft + " seconds left";
 
                     if (xVel > 20 || xVel < -20)
                     {
@@ -634,7 +634,7 @@ namespace ShiftOS.WinForms.Applications
                         CompleteLevel();
                     }
 
-                    lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
+                    lblstatscodepoints.Text = "Codepoints: " + (levelrewards[level - 1] + beatairewardtotal).ToString();
                 }
             }
             SetupStats();

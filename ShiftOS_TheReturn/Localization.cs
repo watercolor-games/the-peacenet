@@ -160,7 +160,9 @@ namespace ShiftOS.Engine
                 {"%domain", domainReplace},
                 {"%ns", namespaceReplace},
                 {"%cmd", commandReplace},
-                {"%cp", SaveSystem.CurrentSave?.Codepoints.ToString() },
+#if LOCALIZE_CODEPOINTS
+                { "%cp", SaveSystem.CurrentSave?.Codepoints.ToString() },
+#endif
             };
 
             // actually do the replacement
