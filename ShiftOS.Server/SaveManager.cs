@@ -207,7 +207,6 @@ namespace ShiftOS.Server
                 {
                     var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-
                     if (save.UniteAuthToken==token)
                     {
                         if (save.ID == new Guid())
@@ -216,6 +215,31 @@ namespace ShiftOS.Server
                             WriteEncFile(savefile, JsonConvert.SerializeObject(save));
                         }
 
+                        var wr = HttpWebRequest.Create(UserConfig.Get().UniteUrl + "/API/GetCodepoints");
+                        wr.Headers.Add("Authentication: Token " + save.UniteAuthToken);
+                        try
+                        {
+                            using(var resp = wr.GetResponse())
+                            {
+                                using(var str = resp.GetResponseStream())
+                                {
+                                    using(var reader = new StreamReader(str))
+                                    {
+                                        Console.WriteLine("This user has " + reader.ReadToEnd() + " Codepoint(s).");
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                            {
+                                Name = "mud_login_denied",
+                                GUID = "server"
+                            }));
+                            return;
+                        }
 
                         Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                         {

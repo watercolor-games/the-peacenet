@@ -98,11 +98,16 @@ namespace ShiftOS.Server
             {
                 if (server.IsOnline)
                 {
-                    server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+
+                    try
                     {
-                        Name = "heartbeat",
-                        GUID = "server"
-                    }));
+                        server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+                        {
+                            Name = "heartbeat",
+                            GUID = "server"
+                        }));
+                    }
+                    catch { }
                 }
             };
 			if (!Directory.Exists("saves"))

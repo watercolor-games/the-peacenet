@@ -47,24 +47,27 @@ namespace ShiftOS.Objects
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
+                try
                 {
                     var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
                     return uc.GetCodepoints();
                 }
-                else
+                catch
+                {
                     return _cp;
+                }
             }
             set
             {
-                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
-                {
-                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
-                    uc.SetCodepoints(value);
-                }
-                else
-                    _cp = value;
-
+                    try
+                    {
+                        var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                        uc.SetCodepoints(value);
+                    }
+                    catch
+                    {
+                        _cp = value;
+                    }
             }
         }
 
