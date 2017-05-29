@@ -388,6 +388,12 @@
     <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
       <DependentUpon>ShiftGames.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.Designer.cs">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
@@ -582,6 +588,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft_Ping.resx">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UniteLoginDialog.resx">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>

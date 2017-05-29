@@ -51,6 +51,8 @@ namespace ShiftOS.WinForms.Stories
                 Desktop.InvokeOnWorkerThread(() =>
                 {
                     Story.Start("installer");
+                    while (!Shiftorium.UpgradeInstalled("installer"))
+                        Thread.Sleep(20);
                     AppearanceManager.SetupWindow(installer);
                     installer.InitiateInstall(new ShiftnetInstallation());
                 });
@@ -64,6 +66,10 @@ namespace ShiftOS.WinForms.Stories
                 WriteLine("There are also lots of companies offering many services.");
                 WriteLine("I'd stay on the shiftnet/ cluster though, others may be dangerous.");
                 WriteLine("I'd also stick to the sites listed on shiftnet/shiftsoft/ping - that site is regularly updated with the most safe Shiftnet sites.");
+                WriteLine("Oh, that reminds me. I have set you up with ShiftSoft's service provider, Freebie Solutions.");
+                WriteLine("It's a free provider, but it offers only 256 bytes per second download and upload speeds.");
+                WriteLine("You may want to go look for another provider when you can afford it.");
+                WriteLine("Trust me - with this provider, things get slow.");
                 WriteLine("Anyways, it was nice meeting you, hopefully someday you'll give theShell a try.");
 
                 TerminalBackend.PrefixEnabled = true;
