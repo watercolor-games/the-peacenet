@@ -214,13 +214,22 @@ namespace ShiftOS.Engine
 
             savehandshake = (msg) =>
             {
-                ServerManager.MessageReceived -= savehandshake;
                 if (msg.Name == "mud_savefile")
                 {
-                    CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                }
+                    ServerManager.MessageReceived -= savehandshake;
+                    try
+                    {
+                        CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("[system] [SEVERE] Cannot parse configuration file.");
+                        oobe.PromptForLogin();
+                    }
+                    }
                 else if (msg.Name == "mud_login_denied")
                 {
+                    ServerManager.MessageReceived -= savehandshake;
                     oobe.PromptForLogin();
                 }
             };

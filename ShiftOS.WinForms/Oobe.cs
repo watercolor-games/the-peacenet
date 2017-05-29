@@ -207,14 +207,15 @@ namespace ShiftOS.WinForms
                                 ServerMessageReceived smr = null;
                                 smr = (msg) =>
                                 {
-                                    ServerManager.MessageReceived -= smr;
                                     if (msg.Name == "mud_savefile")
                                     {
+                                        ServerManager.MessageReceived -= smr;
                                         SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
                                         SaveSystem.SaveGame();
                                     }
                                     else if(msg.Name=="mud_login_denied")
                                     {
+                                        ServerManager.MessageReceived -= smr;
                                         LinkSaveFile(token);
                                     }
                                 };

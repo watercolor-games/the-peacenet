@@ -313,21 +313,24 @@ namespace ShiftOS.WinForms.Applications
                 }
                 else if (a.KeyCode == Keys.Left)
                 {
-                    var getstring = txt.Lines[txt.Lines.Length - 1];
-                    var stringlen = getstring.Length + 1;
-                    var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
-                    var headerlen = header.Length + 1;
-                    var selstart = txt.SelectionStart;
-                    var remstrlen = txt.TextLength - stringlen;
-                    var finalnum = selstart - remstrlen;
+                    if (SaveSystem.CurrentSave != null)
+                    {
+                        var getstring = txt.Lines[txt.Lines.Length - 1];
+                        var stringlen = getstring.Length + 1;
+                        var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var headerlen = header.Length + 1;
+                        var selstart = txt.SelectionStart;
+                        var remstrlen = txt.TextLength - stringlen;
+                        var finalnum = selstart - remstrlen;
 
-                    if (finalnum != headerlen)
-                    {
-                        AppearanceManager.CurrentPosition--;
-                    }
-                    else
-                    {
-                        a.SuppressKeyPress = true;
+                        if (finalnum != headerlen)
+                        {
+                            AppearanceManager.CurrentPosition--;
+                        }
+                        else
+                        {
+                            a.SuppressKeyPress = true;
+                        }
                     }
                 }
                 else if (a.KeyCode == Keys.Up)
