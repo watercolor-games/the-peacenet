@@ -80,6 +80,7 @@ namespace ShiftOS.WinForms.Applications
             txturl.Location = new Point(btnforward.Left + btnforward.Width + 2, 2);
             txturl.Width = flcontrols.Width - btnback.Width - 2 - btnforward.Width - 2 - (btngo.Width*2) - 2;
             btngo.Location = new Point(flcontrols.Width - btngo.Width - 2, 2);
+            flcontrols.BackColor = SkinEngine.LoadedSkin.TitleBackgroundColor;
         }
 
         public bool OnUnload()
@@ -147,6 +148,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void NavigateToUrl(string url)
         {
+            
             txturl.Text = url;
             foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
             {
@@ -188,6 +190,7 @@ namespace ShiftOS.WinForms.Applications
                                                 obj.OnUpgrade();
                                                 obj.OnSkinLoad();
                                                 obj.Setup();
+                                                AppearanceManager.SetWindowTitle(this, attribute.Name + " - Shiftnet");
                                                 return;
                                             }
                                         }

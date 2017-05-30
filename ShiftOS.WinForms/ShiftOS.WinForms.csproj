@@ -388,6 +388,12 @@
     <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
       <DependentUpon>ShiftGames.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.Designer.cs">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\ShiftSoft_Ping.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -588,6 +594,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft.resx">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftSoft_Ping.resx">
       <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>

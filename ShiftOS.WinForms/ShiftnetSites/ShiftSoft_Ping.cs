@@ -25,11 +25,6 @@ namespace ShiftOS.WinForms.ShiftnetSites
         public event Action GoBack;
         public event Action<string> GoToUrl;
 
-        public void OnLoad()
-        {
-            SetupListing();
-        }
-
         public void OnSkinLoad()
         {
             ControlManager.SetupControls(this);
@@ -38,6 +33,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public void SetupListing()
         {
+            fllist.Controls.Clear();
             foreach(var exec in Directory.GetFiles(Environment.CurrentDirectory))
             {
                 if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
@@ -50,27 +46,36 @@ namespace ShiftOS.WinForms.ShiftnetSites
                         {
                             if (type.GetInterfaces().Contains(typeof(IShiftnetSite)))
                             {
-                                var attr = type.GetCustomAttributes(false).Where(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
+                                var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
                                 if (attr != null)
                                 {
-                                    var lnk = new LinkLabel();
-                                    lnk.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
-                                    lnk.Tag = "header3";
-                                    lnk.Text = attr.Name;
-                                    var desc = new Label();
-                                    desc.AutoSize = true;
-                                    lnk.AutoSize = true;
-                                    desc.MaximumSize = new Size(this.Width / 3, 0);
-                                    desc.Text = attr.Description;
-                                    lnk.Click += (o, a) =>
+                                    if (attr.Url.StartsWith("shiftnet/"))
                                     {
-                                        GoToUrl?.Invoke(attr.Url);
-                                    };
-                                    fllist.Controls.Add(lnk);
-                                    fllist.Controls.Add(desc);
-                                    ControlManager.SetupControls(lnk);
-                                    lnk.Show();
-                                    desc.Show();
+                                        var lnk = new LinkLabel();
+                                        lnk.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
+                                        lnk.Text = attr.Name;
+                                        var desc = new Label();
+                                        desc.AutoSize = true;
+                                        lnk.AutoSize = true;
+                                        desc.MaximumSize = new Size(this.Width / 3, 0);
+                                        desc.Text = attr.Description;
+                                        desc.Padding = new Padding
+                                        {
+                                            Bottom = 25,
+                                            Top = 0,
+                                            Left = 10,
+                                            Right = 10
+                                        };
+                                        lnk.Click += (o, a) =>
+                                        {
+                                            GoToUrl?.Invoke(attr.Url);
+                                        };
+                                        fllist.Controls.Add(lnk);
+                                        fllist.Controls.Add(desc);
+                                        ControlManager.SetupControls(lnk);
+                                        lnk.Show();
+                                        desc.Show();
+                                    }
                                 }
                             }
                         }

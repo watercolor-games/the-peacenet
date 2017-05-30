@@ -332,18 +332,18 @@ namespace ShiftOS.Engine
     public class Skin
     {
         //borrowing from the discourse theme for the default skin
-        private static readonly Color DefaultBackground = Color.FromArgb(0, 0x44, 0x00);
+        private static readonly Color DefaultBackground = Color.FromArgb(0x11, 0x11, 0x11);
         private static readonly Color DefaultForeground = Color.FromArgb(0xDD, 0xDD, 0xDD);
         private static readonly Color Accent1 = Color.FromArgb(0x66, 0x66, 0x66);
         private static readonly Color Accent2 = Color.FromArgb(0x80, 0, 0);
-        private static readonly Color DesktopBG = Color.FromArgb(0x22, 0x22, 0x22);
+        private static readonly Color DesktopBG = Color.FromArgb(0x00, 0x00, 0x00);
         private static readonly Font SysFont = new Font("Tahoma", 9F);
         private static readonly Font SysFont2 = new Font("Tahoma", 10F, FontStyle.Bold);
-        private static readonly Font Header1 = new Font("Helvetica", 20F, FontStyle.Bold);
-        private static readonly Font Header2 = new Font("Helvetica", 17.5F, FontStyle.Bold);
-        private static readonly Font Header3 = new Font("Tahoma", 15F, FontStyle.Bold);
+        private static readonly Font Header1 = new Font("Courier New", 20F, FontStyle.Bold);
+        private static readonly Font Header2 = new Font("Courier New", 17.5F, FontStyle.Bold);
+        private static readonly Font Header3 = new Font("Courier New", 15F, FontStyle.Bold);
 
-        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x11, 0x11);
+        private static readonly Color TitleBG = Color.FromArgb(0x55, 0x11, 0x11);
         private static readonly Color TitleFG = Color.FromArgb(0xaa, 0xaa, 0xaa);
 
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
