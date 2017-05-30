@@ -288,7 +288,7 @@ namespace ShiftOS.Server
             {
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
-                long cpAmount = (long)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -322,7 +322,7 @@ namespace ShiftOS.Server
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 string passw = args["password"] as string;
-                int cpAmount = (int)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -335,7 +335,7 @@ namespace ShiftOS.Server
                             WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
                             Program.ClientDispatcher.Broadcast("update_your_cp", new {
                                 username = userName,
-                                amount = -cpAmount
+                                amount = -(long)cpAmount
                             });
                             Program.ClientDispatcher.DispatchTo("update_your_cp", guid, new
                             {
