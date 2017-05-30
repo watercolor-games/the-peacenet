@@ -192,7 +192,7 @@ namespace ShiftOS.WinForms
                 SetupDesktop();
             };
 
-            long lastcp = 0;
+            ulong lastcp = 0;
 
             var storythread = new Thread(() =>
             {

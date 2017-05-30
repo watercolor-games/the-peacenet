@@ -391,7 +391,7 @@ namespace ShiftOS.WinForms.Applications
         }
 
 
-        public int CodepointValue = 0;
+        public uint CodepointValue = 0;
         public List<ShifterSetting> settings = new List<ShifterSetting>();
         public Skin LoadedSkin = null;
 

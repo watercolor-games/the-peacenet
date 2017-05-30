@@ -213,9 +213,9 @@ namespace ShiftOS.WinForms.Applications
 
         private void btnbuy_Click(object sender, EventArgs e)
         {
-            long cpCost = 0;
+            ulong cpCost = 0;
             backend.Silent = true;
-            Dictionary<string, long> UpgradesToBuy = new Dictionary<string, long>(); 
+            Dictionary<string, ulong> UpgradesToBuy = new Dictionary<string, ulong>(); 
             foreach (var itm in lbupgrades.SelectedItems)
             {
                 cpCost += upgrades[itm.ToString()].Cost;

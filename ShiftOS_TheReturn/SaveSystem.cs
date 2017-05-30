@@ -480,7 +480,7 @@ namespace ShiftOS.Engine
         /// Deducts a set amount of Codepoints from the save file... and sends them to a place where they'll never be seen again.
         /// </summary>
         /// <param name="amount">The amount of Codepoints to deduct.</param>
-        public static void TransferCodepointsToVoid(long amount)
+        public static void TransferCodepointsToVoid(ulong amount)
         {
             if (amount < 0)
                 throw new ArgumentOutOfRangeException("We see what you did there. Trying to pull Codepoints from the void? That won't work.");
@@ -584,7 +584,7 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="who">The character name</param>
         /// <param name="amount">The amount of Codepoints.</param>
-        public static void TransferCodepointsFrom(string who, long amount)
+        public static void TransferCodepointsFrom(string who, ulong amount)
         {
             if (amount < 0)
                 throw new ArgumentOutOfRangeException("We see what you did there... You can't just give a fake character Codepoints like that. It's better if you transfer them to the void.");

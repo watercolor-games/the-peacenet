@@ -58,10 +58,10 @@ namespace ShiftOS.WinForms.Applications
         double incrementy = 0.2;
         int levelxspeed = 3;
         int levelyspeed = 3;
-        int beatairewardtotal;
-        int beataireward = 1;
-        int[] levelrewards = new int[50];
-        int totalreward;
+        ulong beatairewardtotal;
+        ulong beataireward = 1;
+        ulong[] levelrewards = new ulong[50];
+        ulong totalreward;
         int countdown = 3;
 
         bool aiShouldIsbeEnabled = true;
@@ -297,11 +297,11 @@ namespace ShiftOS.WinForms.Applications
                         lblmissedout.Text = Localization.Parse("{YOU_MISSED_OUT_ON}:") + Environment.NewLine + lblstatscodepoints.Text.Replace(Localization.Parse("{CODEPOINTS}: "), "") + Localization.Parse(" {CODEPOINTS}");
                         if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade_2"))
                         {
-                            totalreward = levelrewards[level - 1] + beatairewardtotal;
+                            totalreward = (ulong)(levelrewards[level - 1] + beatairewardtotal);
                             double onePercent = (totalreward / 100);
                             lblbutyougained.Show();
                             lblbutyougained.Text = Localization.Parse("{BUT_YOU_GAINED}:") + Environment.NewLine + onePercent.ToString("") + (Localization.Parse(" {CODEPOINTS}"));
-                            SaveSystem.TransferCodepointsFrom("pong", (totalreward / 100));
+                            SaveSystem.TransferCodepointsFrom("pong", (ulong)(totalreward / 100));
                         }
                         else
                         {
@@ -715,10 +715,10 @@ namespace ShiftOS.WinForms.Applications
             {
                 if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
                 {
-                    beataireward = level * 10;
+                    beataireward = (ulong)(level * 10);
                 } else
                 {
-                    beataireward = level * 5;
+                    beataireward = (ulong)(level * 5);
                 }
             }
             else
@@ -726,11 +726,11 @@ namespace ShiftOS.WinForms.Applications
                 if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
                 {
                     double br = levelrewards[level - 1] / 10;
-                    beataireward = (int)Math.Round(br) * 10;
+                    beataireward = (ulong)Math.Round(br) * 10;
                 } else
                 {
                     double br = levelrewards[level - 1] / 10;
-                    beataireward = (int)Math.Round(br) * 5;
+                    beataireward = (ulong)Math.Round(br) * 5;
                 }
             }
 

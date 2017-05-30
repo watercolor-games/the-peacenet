@@ -504,7 +504,7 @@ namespace ShiftOS.WinForms
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
-            long amount = (long)args["amount"];
+            ulong amount = (ulong)args["amount"];
             if(amount < 0)
             {
                 Console.WriteLine("--invalid codepoint amount - halting...");

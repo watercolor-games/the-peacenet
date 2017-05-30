@@ -88,7 +88,7 @@ namespace ShiftOS.WinForms.Applications
             }
             else
             {
-                if (SaveSystem.CurrentSave.Codepoints - (codePoints * difficulty) <= 0)
+                if (SaveSystem.CurrentSave.Codepoints - (ulong)(codePoints * difficulty) <= 0)
                 {
                     Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to gamble this amount!");
                 }
@@ -102,7 +102,7 @@ namespace ShiftOS.WinForms.Applications
                     int winningNumber = rnd.Next(0, difficulty);
 
                     // Multiply CodePoints * Difficulty
-                    int jackpot = codePoints * difficulty;
+                    ulong jackpot = (ulong)(codePoints * difficulty);
 
                     // Test the random ints
                     if (guessedNumber == winningNumber)

@@ -311,7 +311,7 @@ namespace ShiftOS.Engine
             if (args.ContainsKey("amount"))
                 try
                 {
-                    long codepointsToAdd = Convert.ToInt64(args["amount"].ToString());
+                    ulong codepointsToAdd = Convert.ToUInt64(args["amount"].ToString());
                     SaveSystem.CurrentSave.Codepoints += codepointsToAdd;
                     return true;
                 }
@@ -639,7 +639,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                     cat = args["cat"].ToString();
                 }
 
-                Dictionary<string, long> upgrades = new Dictionary<string, long>();
+                Dictionary<string, ulong> upgrades = new Dictionary<string, ulong>();
                 int maxLength = 5;
 
                 IEnumerable<ShiftoriumUpgrade> upglist = Shiftorium.GetAvailable();

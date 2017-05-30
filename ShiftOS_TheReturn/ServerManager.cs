@@ -246,7 +246,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                     var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                     if(args["username"] as string == SaveSystem.CurrentUser.Username)
                     {
-                        SaveSystem.CurrentSave.Codepoints += (long)args["amount"];
+                        SaveSystem.CurrentSave.Codepoints += (ulong)args["amount"];
                         Desktop.InvokeOnWorkerThread(new Action(() =>
                         {
                             Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");

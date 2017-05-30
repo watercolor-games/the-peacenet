@@ -444,7 +444,7 @@ end");
         /// Retrieves the user's Codepoints from the save file.
         /// </summary>
         /// <returns>The user's Codepoints.</returns>
-        public long getCodepoints() { return SaveSystem.CurrentSave.Codepoints; }
+        public ulong getCodepoints() { return SaveSystem.CurrentSave.Codepoints; }
 
         /// <summary>
         /// Run a command in the Terminal.
@@ -462,7 +462,7 @@ end");
         /// Adds the specified amount of Codepoints to the save flie.
         /// </summary>
         /// <param name="cp">The codepoints to add.</param>
-        public void addCodepoints(int cp)
+        public void addCodepoints(uint cp)
         {
             if (cp > 100 || cp <= 0)
             {

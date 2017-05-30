@@ -83,9 +83,9 @@ namespace ShiftOS.Unite
         /// Get the Pong codepoint highscore for the current user.
         /// </summary>
         /// <returns>The amount of Codepoints returned by the server</returns>
-        public int GetPongCP()
+        public ulong GetPongCP()
         {
-            return Convert.ToInt32(MakeCall("/API/GetPongCP"));
+            return Convert.ToUInt64(MakeCall("/API/GetPongCP"));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace ShiftOS.Unite
         /// Set the pong Codepoints record for the user
         /// </summary>
         /// <param name="value">The amount of Codepoints to set the record to</param>
-        public void SetPongCP(int value)
+        public void SetPongCP(ulong value)
         {
             MakeCall("/API/SetPongCP/" + value.ToString());
         }
@@ -182,16 +182,16 @@ namespace ShiftOS.Unite
         /// Get the user's codepoints.
         /// </summary>
         /// <returns>The amount of codepoints stored on the server for this user.</returns>
-        public long GetCodepoints()
+        public ulong GetCodepoints()
         {
-            return Convert.ToInt64(MakeCall("/API/GetCodepoints"));
+            return Convert.ToUInt64(MakeCall("/API/GetCodepoints"));
         }
 
         /// <summary>
         /// Set the user's codepoints.
         /// </summary>
         /// <param name="value">The amount of codepoints to set the user's codepoints value to.</param>
-        public void SetCodepoints(long value)
+        public void SetCodepoints(ulong value)
         {
             MakeCall("/API/SetCodepoints/" + value.ToString());
         }
