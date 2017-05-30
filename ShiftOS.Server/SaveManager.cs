@@ -207,7 +207,7 @@ namespace ShiftOS.Server
                 {
                     var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-                    if (save.UniteAuthToken==token)
+                    if (save.UniteAuthToken == token)
                     {
                         if (save.ID == new Guid())
                         {
@@ -219,11 +219,11 @@ namespace ShiftOS.Server
                         wr.Headers.Add("Authentication: Token " + save.UniteAuthToken);
                         try
                         {
-                            using(var resp = wr.GetResponse())
+                            using (var resp = wr.GetResponse())
                             {
-                                using(var str = resp.GetResponseStream())
+                                using (var str = resp.GetResponseStream())
                                 {
-                                    using(var reader = new StreamReader(str))
+                                    using (var reader = new StreamReader(str))
                                     {
                                         Console.WriteLine("This user has " + reader.ReadToEnd() + " Codepoint(s).");
                                     }
@@ -252,15 +252,11 @@ namespace ShiftOS.Server
                 }
                 catch { }
             }
-            try
+            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
             {
-                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
-                {
-                    Name = "mud_login_denied",
-                    GUID = "server"
-                }));
-            }
-            catch { }
+                Name = "mud_login_denied",
+                GUID = "server"
+            }));
         }
 
         [MudRequest("delete_save", typeof(ClientSave))]
