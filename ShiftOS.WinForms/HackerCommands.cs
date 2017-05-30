@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
+using ShiftOS.Objects.ShiftFS;
 using ShiftOS.WinForms.Applications;
 using static ShiftOS.Objects.ShiftFS.Utils;
 
@@ -671,6 +673,34 @@ namespace ShiftOS.WinForms
         public static bool StartStory(Dictionary<string, object> args)
         {
             Story.Start(args["id"].ToString());
+            return true;
+        }
+
+        [Command("list", description ="Lists all story IDs.")]
+        public static bool ListIds()
+        {
+            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exec);
+                        {
+                            foreach(var type in asm.GetTypes())
+                            {
+                                foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                                {
+                                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is StoryAttribute);
+                                    if (attr != null)
+                                        Console.WriteLine(" - " + (attr as StoryAttribute).StoryID);
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
             return true;
         }
 
