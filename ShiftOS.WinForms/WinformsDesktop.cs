@@ -47,8 +47,24 @@ namespace ShiftOS.WinForms
     /// <summary>
     /// Winforms desktop.
     /// </summary>
+    [Namespace("desktop")]
     public partial class WinformsDesktop : Form, IDesktop
     {
+        [Command("pushnote")]
+        [RequiresArgument("target")]
+        [RequiresArgument("title")]
+        [RequiresArgument("body")]
+        public static bool PushNote(Dictionary<string, object> args)
+        {
+            string ta = args["target"].ToString();
+            string ti = args["title"].ToString();
+            string bo = args["body"].ToString();
+
+            Desktop.PushNotification(ta, ti, bo);
+
+            return true;
+        }
+
         public List<IDesktopWidget> Widgets = new List<IDesktopWidget>();
 
 
@@ -64,7 +80,7 @@ namespace ShiftOS.WinForms
                 pnlnotificationbox.Left = desktoppanel.Width - pnlnotificationbox.Width;
             else
             {
-                int left = ctl.PointToScreen(ctl.Location).X;
+                int left = ctl.Parent.PointToScreen(ctl.Location).X;
                 int realleft = left - pnlnotificationbox.Width;
                 realleft += ctl.Width;
                 pnlnotificationbox.Left = realleft;
@@ -75,6 +91,7 @@ namespace ShiftOS.WinForms
                 pnlnotificationbox.Top = desktoppanel.Height;
             else
                 pnlnotificationbox.Top = this.Height - desktoppanel.Height - pnlnotificationbox.Height;
+            ControlManager.SetupControls(pnlnotificationbox);
             var notekiller = new System.Windows.Forms.Timer();
             notekiller.Interval = 10000;
             notekiller.Tick += (o, a) =>
@@ -83,6 +100,7 @@ namespace ShiftOS.WinForms
             };
             Engine.AudioManager.PlayStream(Properties.Resources.infobox);
             pnlnotificationbox.Show();
+            pnlnotificationbox.BringToFront();
             notekiller.Start();
         }
 
