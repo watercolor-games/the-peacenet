@@ -338,6 +338,7 @@ namespace ShiftOS.WinForms.Applications
                     var tostring3 = txt.Lines[txt.Lines.Length - 1];
                     if (tostring3 == $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                         Console.Write(TerminalBackend.LastCommand);
+                    ConsoleEx.OnFlush?.Invoke();
                     a.SuppressKeyPress = true;
 
                 }

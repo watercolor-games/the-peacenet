@@ -74,6 +74,10 @@ namespace ShiftOS.WinForms
         {
             lbnotemsg.Text = msg;
             lbnotetitle.Text = title;
+            int height = pnlnotificationbox.Height;
+            pnlnotificationbox.AutoSize = false;
+            pnlnotificationbox.Height = height;
+            pnlnotificationbox.Width = lbnotetitle.Width;
 
             var ctl = flnotifications.Controls.ToList().FirstOrDefault(x => x.Tag.ToString() == app);
             if (ctl == null)
@@ -97,8 +101,11 @@ namespace ShiftOS.WinForms
             notekiller.Tick += (o, a) =>
             {
                 pnlnotificationbox.Hide();
+                pnlnotificationbox.AutoSize = true;
             };
             Engine.AudioManager.PlayStream(Properties.Resources.infobox);
+
+
             pnlnotificationbox.Show();
             pnlnotificationbox.BringToFront();
             notekiller.Start();
