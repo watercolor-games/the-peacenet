@@ -70,6 +70,46 @@ namespace ShiftOS.WinForms
 
         private int millisecondsUntilScreensaver = 300000;
 
+        public void LoadIcons()
+        {
+            //That shot me back to 0.0.x with that name. Whatever.
+            flnotifications.Controls.Clear(); //Clear the status tray
+            
+            foreach(var itype in NotificationDaemon.GetAllStatusIcons())
+            {
+                //We have the types. No need for shiftorium calls or anything.
+                //First create the icon control...
+
+                var ic = new PictureBox();
+                //We can use the type name, in lowercase, for the icon tag.
+                ic.Tag = itype.Name.ToLower();
+                //Next get the icon data if any.
+
+                var iconattrib = itype.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultIconAttribute) as DefaultIconAttribute;
+                if(iconattrib != null)
+                {
+                    //We can use this attribute's ID in the skin engine to get an icon.
+                    var img = GetIcon(iconattrib.ID);
+                    //Make it transparent.
+                    (img as Bitmap).MakeTransparent(LoadedSkin.SystemKey);
+                    //Assign it to the control
+                    ic.Image = img;
+                    //Set the sizing mode
+                    ic.SizeMode = PictureBoxSizeMode.StretchImage;
+                }
+                else
+                {
+                    ic.BackColor = Color.White; //TODO: Make it skinnable.
+                }
+                ic.Size = new Size(20, 20); //TODO: make it skinnable
+                //add to the notification tray
+                flnotifications.Controls.Add(ic);
+                ic.Show();
+
+                //TODO: Settings pane on click.
+            }
+        }
+
         public void PushNotification(string app, string title, string msg)
         {
             lbnotemsg.Text = msg;
@@ -134,6 +174,8 @@ namespace ShiftOS.WinForms
                     widget.OnUpgrade();
                 }
 
+                LoadIcons();
+
                 //Only if the DevX Legions story hasn't been experienced yet.
                 if (!Shiftorium.UpgradeInstalled("devx_legions"))
                 {
@@ -180,6 +222,7 @@ namespace ShiftOS.WinForms
 
             SaveSystem.GameReady += () =>
             {
+                this.Invoke(new Action(LoadIcons));
                 if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
             };
@@ -208,6 +251,7 @@ namespace ShiftOS.WinForms
             };
             SkinEngine.SkinLoaded += () =>
             {
+                LoadIcons();
                 foreach (var widget in Widgets)
                 {
                     widget.OnSkinLoad();

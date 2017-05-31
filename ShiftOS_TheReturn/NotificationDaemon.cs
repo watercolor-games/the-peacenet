@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -34,6 +35,35 @@ namespace ShiftOS.Engine
 {
     public static class NotificationDaemon
     {
+        /// <summary>
+        /// Gets a list of all <see cref="IStatusIcon"/> objects that meet their Shiftorium dependencies.  
+        /// </summary>
+        /// <returns>An array of <see cref="Type"/>s containing the found objects.</returns>
+        public static Type[] GetAllStatusIcons()
+        {
+            List<Type> lst = new List<Type>();
+            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exec);
+                        foreach(var type in asm.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(IStatusIcon))))
+                        {
+                            if (Shiftorium.UpgradeAttributesUnlocked(type))
+                            {
+                                lst.Add(type);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return lst.ToArray();
+        }
+
+
         //if the notifications file already exists then get them
         public static Notification[] GetAllFromFile()
         {
