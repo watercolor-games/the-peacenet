@@ -106,7 +106,32 @@ namespace ShiftOS.WinForms
                 flnotifications.Controls.Add(ic);
                 ic.Show();
 
-                //TODO: Settings pane on click.
+                ic.Click += (o, a) =>
+                {
+                    HideAppLauncher();
+
+                    if(itype.BaseType == typeof(UserControl))
+                    {
+                        UserControl ctrl = (UserControl)Activator.CreateInstance(itype);
+                        (ctrl as IStatusIcon).Setup();
+                        currentSettingsPane = ctrl;
+                        if(LoadedSkin.DesktopPanelPosition == 0)
+                        {
+                            ctrl.Top = desktoppanel.Height;
+                        }
+                        else
+                        {
+                            ctrl.Top = this.Height - desktoppanel.Height - ctrl.Height;
+                        }
+                        int noteleft = flnotifications.PointToScreen(ic.Location).X;
+                        int realleft = (this.Width - (noteleft + ic.Width)) - ctrl.Width;
+                        ctrl.Left = realleft;
+                        ControlManager.SetupControls(ctrl);
+                        ctrl.Show();
+                    }
+
+
+                };
             }
         }
 
@@ -150,6 +175,8 @@ namespace ShiftOS.WinForms
             pnlnotificationbox.BringToFront();
             notekiller.Start();
         }
+
+        private UserControl currentSettingsPane = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
@@ -1101,6 +1128,8 @@ namespace ShiftOS.WinForms
         {
             this.Invoke(new Action(() =>
             {
+                currentSettingsPane?.Hide();
+                currentSettingsPane = null;
                 pnladvancedal.Hide();
             }));
         }
