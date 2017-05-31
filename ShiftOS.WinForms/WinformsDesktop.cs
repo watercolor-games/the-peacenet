@@ -85,26 +85,23 @@ namespace ShiftOS.WinForms
                 ic.Tag = itype.Name.ToLower();
                 //Next get the icon data if any.
 
-                var iconattrib = itype.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultIconAttribute) as DefaultIconAttribute;
-                if(iconattrib != null)
-                {
                     //We can use this attribute's ID in the skin engine to get an icon.
-                    var img = GetIcon(iconattrib.ID);
+                    var img = GetIcon(itype.Name);
                     //Make it transparent.
-                    (img as Bitmap).MakeTransparent(LoadedSkin.SystemKey);
+                    (img as Bitmap).MakeTransparent(Color.White);
                     //Assign it to the control
                     ic.Image = img;
                     //Set the sizing mode
                     ic.SizeMode = PictureBoxSizeMode.StretchImage;
-                }
-                else
-                {
-                    ic.BackColor = Color.White; //TODO: Make it skinnable.
-                }
-                ic.Size = new Size(20, 20); //TODO: make it skinnable
+                ic.Size = new Size(16, 16); //TODO: make it skinnable
                 //add to the notification tray
                 flnotifications.Controls.Add(ic);
                 ic.Show();
+
+                ic.BringToFront();
+
+                flnotifications.Show();
+                
 
                 ic.Click += (o, a) =>
                 {
@@ -115,7 +112,14 @@ namespace ShiftOS.WinForms
                         UserControl ctrl = (UserControl)Activator.CreateInstance(itype);
                         (ctrl as IStatusIcon).Setup();
                         currentSettingsPane = ctrl;
-                        if(LoadedSkin.DesktopPanelPosition == 0)
+                        ControlManager.SetupControls(ctrl);
+                        this.Controls.Add(ctrl);
+                        ctrl.BringToFront();
+                        int left = ic.Parent.PointToScreen(ic.Location).X;
+                        int realleft = left - ctrl.Width;
+                        realleft += ic.Width;
+                        ctrl.Left = realleft;
+                        if (LoadedSkin.DesktopPanelPosition == 0)
                         {
                             ctrl.Top = desktoppanel.Height;
                         }
@@ -123,10 +127,6 @@ namespace ShiftOS.WinForms
                         {
                             ctrl.Top = this.Height - desktoppanel.Height - ctrl.Height;
                         }
-                        int noteleft = flnotifications.PointToScreen(ic.Location).X;
-                        int realleft = (this.Width - (noteleft + ic.Width)) - ctrl.Width;
-                        ctrl.Left = realleft;
-                        ControlManager.SetupControls(ctrl);
                         ctrl.Show();
                     }
 

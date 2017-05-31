@@ -140,51 +140,65 @@ namespace ShiftOS.WinForms.Controls
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.Clear(this.RealBackColor);
-            if(RealBackgroundImage != null)
+            try
             {
-                pe.Graphics.FillRectangle(new TextureBrush(RealBackgroundImage), new Rectangle(0, 0, this.Width, this.Height));
-            }
-            switch (Style)
-            {
-                case ProgressBarStyle.Continuous:
-                    double width = linear(this.Value, 0, this.Maximum, 0, this.Width);
-                    if (ProgressImage != null)
-                    {
-                        pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new RectangleF(0, 0, (float)width, this.Height));
-                    }
-                    else
-                    {
-                        pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new RectangleF(0, 0, (float)width, this.Height));
-                    }
-                    break;
-                case ProgressBarStyle.Blocks:
-                    int block_count = this.Width / (this.BlockSize + 2);
-                    int blocks = (int)linear(this.Value, 0, this.Maximum, 0, block_count);
-                    for(int i = 0; i < blocks - 1; i++)
-                    {
-                        int position = i * (BlockSize + 2);
+                pe.Graphics.Clear(this.RealBackColor);
+                if (RealBackgroundImage != null)
+                {
+                    pe.Graphics.FillRectangle(new TextureBrush(RealBackgroundImage), new Rectangle(0, 0, this.Width, this.Height));
+                }
+                switch (Style)
+                {
+                    case ProgressBarStyle.Continuous:
+                        double width = linear(this.Value, 0, this.Maximum, 0, this.Width);
                         if (ProgressImage != null)
                         {
-                            pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(position, 0, BlockSize, this.Height));
-
+                            pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new RectangleF(0, 0, (float)width, this.Height));
                         }
                         else
                         {
-                            pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new Rectangle(position, 0, BlockSize, this.Height));
+                            pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new RectangleF(0, 0, (float)width, this.Height));
                         }
-                    }
-                    break;
-                case ProgressBarStyle.Marquee:
-                    if (ProgressImage != null)
-                    {
-                        pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
-                    }
-                    else
-                    {
-                        pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
-                    }
-                    break;
+                        break;
+                    case ProgressBarStyle.Blocks:
+                        int block_count = this.Width / (this.BlockSize + 2);
+                        int blocks = (int)linear(this.Value, 0, this.Maximum, 0, block_count);
+                        for (int i = 0; i < blocks - 1; i++)
+                        {
+                            int position = i * (BlockSize + 2);
+                            if (ProgressImage != null)
+                            {
+                                pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(position, 0, BlockSize, this.Height));
+
+                            }
+                            else
+                            {
+                                pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new Rectangle(position, 0, BlockSize, this.Height));
+                            }
+                        }
+                        break;
+                    case ProgressBarStyle.Marquee:
+                        if (ProgressImage != null)
+                        {
+                            pe.Graphics.FillRectangle(new TextureBrush(ProgressImage), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
+                        }
+                        else
+                        {
+                            pe.Graphics.FillRectangle(new SolidBrush(ProgressColor), new Rectangle(_marqueePos, 0, this.Width / 4, this.Height));
+                        }
+                        break;
+                }
+            }
+            catch
+            {
+                pe.Graphics.Clear(Color.Black);
+                string text = "Preview mode. This control can't be drawn without an initiated ShiftOS engine.";
+                SizeF sz = pe.Graphics.MeasureString(text, this.Font);
+                PointF loc = new PointF(
+                        (this.Width - sz.Width) / 2,
+                        (this.Height - sz.Height) / 2
+                    );
+                pe.Graphics.DrawString(text, Font, new SolidBrush(Color.White), loc);
             }
         }
 

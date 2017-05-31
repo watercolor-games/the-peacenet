@@ -158,6 +158,15 @@ namespace ShiftOS.WinForms.Tools
                     }
                     catch { }
 
+                    if (!tag.Contains("ignoreal"))
+                    {
+                        ctrl.Click += (o, a) =>
+                        {
+                            Desktop.HideAppLauncher();
+                        };
+
+                    }
+
                     if (!tag.Contains("keepbg"))
                     {
                         if (ctrl.BackColor != Control.DefaultBackColor)
@@ -279,6 +288,8 @@ namespace ShiftOS.WinForms.Tools
                 {
                     (ctrl as WindowBorder).Setup();
                 }
+
+                
                 MakeDoubleBuffered(ctrl);
                 ControlSetup?.Invoke(ctrl);
             });
@@ -305,10 +316,6 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControls(Control frm, bool runInThread = true)
         {
-            frm.Click += (o, a) =>
-            {
-                Desktop.HideAppLauncher();
-            };
             var ctrls = frm.Controls.ToList();
             for (int i = 0; i < ctrls.Count(); i++)
             {

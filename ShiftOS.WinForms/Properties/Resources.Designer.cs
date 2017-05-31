@@ -950,6 +950,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconSpeaker {
+            get {
+                object obj = ResourceManager.GetObject("iconSpeaker", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconSysinfo {
             get {
                 object obj = ResourceManager.GetObject("iconSysinfo", resourceCulture);
@@ -1103,9 +1113,9 @@ namespace ShiftOS.WinForms.Properties {
         ///		Category: &quot;Enhancements&quot;,
         ///	},
         ///	{
-        ///		Name: &quot;GUI Based Login Screen&quot;,
-        ///		Cost: 500,
-        ///		Description: &quot;Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, w [rest of string was truncated]&quot;;.
+        ///		Name: &quot;Shift Progress Bar&quot;,
+        ///		Cost: 150,
+        ///		Description: &quot;Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you&apos;ll get the ability to set the foreground an [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {

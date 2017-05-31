@@ -403,6 +403,18 @@
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
+    <Compile Include="StatusIcons\ShiftnetStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\ShiftnetStatus.Designer.cs">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.Designer.cs">
+      <DependentUpon>Volume.cs</DependentUpon>
+    </Compile>
     <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
@@ -600,6 +612,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftSoft_Ping.resx">
       <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\ShiftnetStatus.resx">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\Volume.resx">
+      <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UniteLoginDialog.resx">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>
@@ -827,6 +845,7 @@
     <None Include="Resources\writesound.wav" />
     <None Include="Resources\SuperDesk screenshot.png" />
     <None Include="Resources\notestate_connection_full.bmp" />
+    <None Include="Resources\iconSpeaker.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
