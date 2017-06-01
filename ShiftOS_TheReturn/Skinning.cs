@@ -343,7 +343,7 @@ namespace ShiftOS.Engine
         private static readonly Color DefaultBackground = Color.FromArgb(0x11, 0x11, 0x11);
         private static readonly Color DefaultForeground = Color.FromArgb(0xDD, 0xDD, 0xDD);
         private static readonly Color Accent1 = Color.FromArgb(0x66, 0x66, 0x66);
-        private static readonly Color Accent2 = Color.FromArgb(0x80, 0, 0);
+        private static readonly Color Accent2 = Color.FromArgb(0x0, 0x80, 0);
         private static readonly Color DesktopBG = Color.FromArgb(0x00, 0x00, 0x00);
         private static readonly Font SysFont = new Font("Tahoma", 9F);
         private static readonly Font SysFont2 = new Font("Tahoma", 10F, FontStyle.Bold);
@@ -351,7 +351,7 @@ namespace ShiftOS.Engine
         private static readonly Font Header2 = new Font("Courier New", 17.5F, FontStyle.Bold);
         private static readonly Font Header3 = new Font("Courier New", 15F, FontStyle.Bold);
 
-        private static readonly Color TitleBG = Color.FromArgb(0x55, 0x11, 0x11);
+        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x55, 0x11);
         private static readonly Color TitleFG = Color.FromArgb(0xaa, 0xaa, 0xaa);
 
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
@@ -650,7 +650,7 @@ namespace ShiftOS.Engine
         [ShifterName("Close Button Color")]
         [RequiresUpgrade("shift_title_buttons")]
         [ShifterDescription("The close button color")]
-        public Color CloseButtonColor = Accent2;
+        public Color CloseButtonColor = Color.FromArgb(0x80,0,0);
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
