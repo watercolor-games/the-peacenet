@@ -287,7 +287,15 @@ namespace ShiftOS.Engine
                 LoadedSkin.AppIcons.Add(id, null);
 
             if (LoadedSkin.AppIcons[id] == null)
-                return GetDefaultIcon(id);
+            {
+                var img = GetDefaultIcon(id);
+                using (var mstr = new MemoryStream())
+                {
+                    img.Save(mstr, System.Drawing.Imaging.ImageFormat.Png);
+                    LoadedSkin.AppIcons[id] = mstr.ToArray();
+                }
+                return img;
+            }
             else
             {
                 using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))

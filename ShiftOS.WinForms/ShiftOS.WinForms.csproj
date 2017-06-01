@@ -70,6 +70,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\IconManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\IconManager.Designer.cs">
+      <DependentUpon>IconManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\TriPresent.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -409,6 +415,12 @@
     <Compile Include="StatusIcons\ShiftnetStatus.Designer.cs">
       <DependentUpon>ShiftnetStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="StatusIcons\TestStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\TestStatus.Designer.cs">
+      <DependentUpon>TestStatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="StatusIcons\Volume.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -460,6 +472,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\IconManager.resx">
+      <DependentUpon>IconManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriPresent.resx">
       <DependentUpon>TriPresent.cs</DependentUpon>
@@ -615,6 +630,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StatusIcons\ShiftnetStatus.resx">
       <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\TestStatus.resx">
+      <DependentUpon>TestStatus.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StatusIcons\Volume.resx">
       <DependentUpon>Volume.cs</DependentUpon>
