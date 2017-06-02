@@ -196,38 +196,14 @@ namespace ShiftOS.WinForms
             SetupControl(desktoppanel);
             Shiftorium.Installed += () =>
             {
-                foreach(var widget in Widgets)
+                foreach (var widget in Widgets)
                 {
                     widget.OnUpgrade();
                 }
 
                 LoadIcons();
 
-                //Only if the DevX Legions story hasn't been experienced yet.
-                if (!Shiftorium.UpgradeInstalled("devx_legions"))
-                {
-                    //Check for shiftnet story experience
-                    if (Shiftorium.UpgradeInstalled("shiftnet"))
-                    {
-                        //Check for saturation of the "GUI" upgrade set
-                        if (Shiftorium.IsCategoryEmptied("GUI"))
-                        {
-                            //Start the MUD Control Centre story.
-                            Story.Start("devx_legions");
-                        }
-                    }
-                }
 
-                if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
-                {
-                    if (SaveSystem.CurrentSave.Codepoints >= 50000)
-                    {
-                        if (Shiftorium.IsCategoryEmptied("Applications"))
-                        {
-                            Story.Start("victortran_shiftnet");
-                        }
-                    }
-                }
             };
             this.TopMost = false;
 
@@ -294,6 +270,9 @@ namespace ShiftOS.WinForms
             {
                 do
                 {
+                    while (SaveSystem.CurrentUser == null)
+                        Thread.Sleep(10);
+
                     if (SaveSystem.CurrentSave != null)
                     {
                         if (SaveSystem.CurrentSave.Codepoints != lastcp)
