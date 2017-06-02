@@ -182,7 +182,6 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.Name = "pgcontents";
             this.pgcontents.Size = new System.Drawing.Size(912, 504);
             this.pgcontents.TabIndex = 20;
-            this.pgcontents.Paint += new System.Windows.Forms.PaintEventHandler(this.pgcontents_Paint);
             this.pgcontents.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pongMain_MouseMove);
             // 
             // pnlmultiplayerhandshake
@@ -250,7 +249,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label6.TabIndex = 15;
             this.Label6.Text = "{PONG_DESC}";
             this.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Label6.Click += new System.EventHandler(this.Label6_Click);
             // 
             // btnstartgame
             // 
@@ -273,7 +271,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label8.Size = new System.Drawing.Size(280, 31);
             this.Label8.TabIndex = 14;
             this.Label8.Text = "{PONG_WELCOME}";
-            this.Label8.Click += new System.EventHandler(this.Label8_Click);
             // 
             // pnlhighscore
             // 
