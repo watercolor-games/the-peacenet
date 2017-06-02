@@ -88,23 +88,46 @@ namespace ShiftOS.WinForms
                 };
                 while (shuttingDown == false)
                 {
-                    str = new MemoryStream(GetRandomSong());
-                    mp3 = new NAudio.Wave.Mp3FileReader(str);
-                    o = new NAudio.Wave.WaveOut();
-                    o.Init(mp3);
-                    bool c = false;
-                    o.Play();
-                    o.PlaybackStopped += (s, a) =>
+                    if (Engine.SaveSystem.CurrentSave != null)
                     {
-                        c = true;
-                    };
-                    while (!c)
-                    {
-                        try
+                        if (Engine.SaveSystem.CurrentSave.MusicEnabled)
                         {
-                            o.Volume = (float)Engine.SaveSystem.CurrentSave.MusicVolume / 100;
+                            str = new MemoryStream(GetRandomSong());
+                            mp3 = new NAudio.Wave.Mp3FileReader(str);
+                            o = new NAudio.Wave.WaveOut();
+                            o.Init(mp3);
+                            bool c = false;
+                            o.Play();
+                            o.PlaybackStopped += (s, a) =>
+                            {
+                                c = true;
+                            };
+
+                            while (!c)
+                            {
+                                if (Engine.SaveSystem.CurrentSave.MusicEnabled)
+                                {
+                                    try
+                                    {
+                                        o.Volume = (float)Engine.SaveSystem.CurrentSave.MusicVolume / 100;
+                                    }
+                                    catch { }
+                                }
+                                else
+                                {
+                                    o.Stop();
+                                    c = true;
+                                }
+                                Thread.Sleep(10);
+                            }
                         }
-                        catch { }
+                        else
+                        {
+                            Thread.Sleep(10);
+                        }
+                    }
+                    else
+                    {
                         Thread.Sleep(10);
                     }
                 }

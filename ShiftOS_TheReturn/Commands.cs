@@ -383,26 +383,48 @@ namespace ShiftOS.Engine
     [Namespace("sos")]
     public static class ShiftOSCommands
     {
-        [Command("setsfxvolume", description = "Set the volume of various sound effects to a value between 1 and 100.")]
+
+        [Command("setsfxenabled", description = "Set whether or not sound effects are enabled in the system.")]
         [RequiresArgument("value")]
-        public static bool SetSfxVolume(Dictionary<string, object> args)
+        public static bool SetSfxEnabled(Dictionary<string, object> args)
         {
-            int value = int.Parse(args["value"].ToString());
-            if (value >= 0 && value <= 100)
+            try
             {
-                SaveSystem.CurrentSave.SfxVolume = value;
+                bool value = Convert.ToBoolean(args["value"].ToString());
+                SaveSystem.CurrentSave.SoundEnabled = value;
                 SaveSystem.SaveGame();
             }
-            else
+            catch
             {
-                Console.WriteLine("Volume must be between 0 and 100!");
+                Console.WriteLine("Error: Value must be either true or false.");
             }
             return true;
         }
 
-        [Command("setmusicvolume", description ="Set the music volume to a value between 1 and 100.")]
+
+
+        [Command("setmusicenabled", description = "Set whether or not music is enabled in the system.")]
         [RequiresArgument("value")]
-        public static bool SetMusicVolume(Dictionary<string, object> args)
+        public static bool SetMusicEnabled(Dictionary<string, object> args)
+        {
+            try
+            {
+                bool value = Convert.ToBoolean(args["value"].ToString());
+                SaveSystem.CurrentSave.MusicEnabled = value;
+                SaveSystem.SaveGame();
+            }
+            catch
+            {
+                Console.WriteLine("Error: Value must be either true or false.");
+            }
+            return true;
+        }
+
+        
+
+        [Command("setsfxvolume", description ="Set the system sound volume to a value between 1 and 100.")]
+        [RequiresArgument("value")]
+        public static bool SetSfxVolume(Dictionary<string, object> args)
         {
             int value = int.Parse(args["value"].ToString());
             if(value >= 0 && value <= 100)
