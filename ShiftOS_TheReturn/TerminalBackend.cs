@@ -108,13 +108,7 @@ namespace ShiftOS.Engine
 
                 if (!commandWasClient && !string.IsNullOrWhiteSpace(ns))
                 {
-                    PrefixEnabled = false;
-
-                    ServerManager.SendMessage("script", $@"{{
-    user: ""{ns}"",
-    script: ""{command}"",
-    args: ""{GetSentArgs(arguments)}""
-}}");
+                    Console.WriteLine("Error: Command not found.");
                 }
 
                 CommandProcessed?.Invoke(ns + "." + command, JsonConvert.SerializeObject(arguments));
@@ -369,27 +363,14 @@ namespace ShiftOS.Engine
             {
                 var args = GetArgs(ref text);
 
-                Stopwatch debugger = new Stopwatch();
-                debugger.Start();
                 bool commandWasClient = RunClient(text, args, isRemote);
 
                 if (!commandWasClient)
                 {
-                    Console.WriteLine("Command not found.");
-                    debugger.Stop();
-                    return;
+                    Console.WriteLine("Error: Command not found.");
+                    
                 }
                 CommandProcessed?.Invoke(text, GetSentArgs(args));
-                debugger.Stop();
-                ConsoleEx.ForegroundColor = ConsoleColor.White;
-                Console.Write("<");
-                ConsoleEx.Bold = true;
-                ConsoleEx.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("debugger");
-                ConsoleEx.ForegroundColor = ConsoleColor.White;
-                ConsoleEx.Bold = false;
-                Console.Write("> ");
-                Console.WriteLine("Command " + text + " took " + debugger.Elapsed.ToString() + " to execute.");
             }
             catch (Exception ex)
             {
