@@ -26,8 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace ShiftOS.Objects
 {
@@ -41,33 +40,77 @@ namespace ShiftOS.Objects
         [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
 
-        private ulong _cp = 0;
+        private List<Action> _setCpCallbacks = new List<Action>(); // everything in this list is called by Codepoints.set() and syncCp().
+        private ulong _cp = 0; // locally cached codepoints counter
+        private Object _cpLock = new Object(); // locked when modifying or reading the codepoints counter
+        private Object _webLock = new Object(); // locked when communicating with the server
+        private Timer _updTimer; // timer to start a new sync thread every 5 minutes
+
+        // Sync local Codepoints count with the server.
+        public void syncCp()
+        {
+                new Thread(() =>
+                {
+                    lock (_cpLock)
+                    {
+                        lock (_webLock)
+                        {
+                            var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                            _cp = uc.GetCodepoints();
+                        }
+                    }
+                    foreach (Action a in _setCpCallbacks)
+                        a();
+                }).Start();
+        }
+
+        // we have to write these wrapper functions so we can keep _setCpCallbacks private,
+        // so that it doesn't get serialised
+        public void addSetCpCallback(Action callback)
+        {
+            _setCpCallbacks.Add(callback);
+        }
+
+        public void removeSetCpCallback(Action callback)
+        {
+            _setCpCallbacks.Remove(callback);
+        }
 
         public ulong Codepoints
         {
             get
             {
-                try
-                {
-                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
-                    return uc.GetCodepoints();
-                }
-                catch
+                if (_updTimer == null)
+                    _updTimer = new Timer((o) => syncCp(), null, 0, 300000);
+                lock (_cpLock)
                 {
                     return _cp;
                 }
             }
             set
             {
-                    try
+                lock (_cpLock)
+                {
+                    _cp = value;
+                    new Thread(() =>
                     {
-                        var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
-                        uc.SetCodepoints(value);
-                    }
-                    catch
+                        lock (_webLock)
+                        {
+                            try
+                            {
+                                var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
+                                uc.SetCodepoints(value);
+                            }
+                            catch
+                            { }
+                        }
+                    })
                     {
-                        _cp = value;
-                    }
+                        IsBackground = false
+                    }.Start();
+                }
+                foreach (Action a in _setCpCallbacks)
+                    a();
             }
         }
 

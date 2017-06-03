@@ -189,7 +189,6 @@ namespace ShiftOS.WinForms.Applications
             this.lblcategorytext.TabIndex = 2;
             this.lblcategorytext.Text = "No Upgrades";
             this.lblcategorytext.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblcategorytext.Click += new System.EventHandler(this.lblcategorytext_Click);
             // 
             // btncat_forward
             // 
@@ -226,7 +225,6 @@ namespace ShiftOS.WinForms.Applications
             this.lbcodepoints.Size = new System.Drawing.Size(135, 13);
             this.lbcodepoints.TabIndex = 3;
             this.lbcodepoints.Text = "You have: %cp Codepoints";
-            this.lbcodepoints.Click += new System.EventHandler(this.lbcodepoints_Click);
             // 
             // label1
             // 
@@ -280,7 +278,6 @@ namespace ShiftOS.WinForms.Applications
             this.ForeColor = System.Drawing.Color.LightGreen;
             this.Name = "ShiftoriumFrontend";
             this.Size = new System.Drawing.Size(782, 427);
-            this.Load += new System.EventHandler(this.Shiftorium_Load);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.pnlupgradeactions.ResumeLayout(false);

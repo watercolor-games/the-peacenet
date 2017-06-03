@@ -570,8 +570,15 @@ namespace ShiftOS.Engine
                 Console.Write("{SE_SAVING}... ");
             if (SaveSystem.CurrentSave != null)
             {
-                Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);                
-                ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
+                Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);
+                var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
+                new Thread(() =>
+                {
+                    // please don't do networking on the main thread if you're just going to
+                    // discard the response, it's extremely slow
+                    ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                })
+                { IsBackground = false }.Start();
             }
             if (!Shiftorium.Silent)
                 Console.WriteLine(" ...{DONE}.");
