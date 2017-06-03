@@ -173,7 +173,7 @@ namespace ShiftOS.WinForms.Applications
                                                 var obj = (IShiftnetSite)Activator.CreateInstance(type, null);
                                                 obj.GoToUrl += (u) =>
                                                 {
-                                                    History.Push(u);
+                                                    History.Push(CurrentUrl);
                                                     NavigateToUrl(u);
                                                 };
                                                 obj.GoBack += () =>
