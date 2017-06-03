@@ -427,6 +427,7 @@
     <Compile Include="StatusIcons\Volume.Designer.cs">
       <DependentUpon>Volume.cs</DependentUpon>
     </Compile>
+    <Compile Include="Stories\DevXSkinningStory.cs" />
     <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />

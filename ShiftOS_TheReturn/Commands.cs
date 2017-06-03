@@ -533,11 +533,20 @@ namespace ShiftOS.Engine
 
 Codepoints:       {SaveSystem.CurrentSave.Codepoints}
 Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
-                  {Shiftorium.GetAvailable().Length} available";
+                  {Shiftorium.GetAvailable().Length} available
 
-            if (Shiftorium.UpgradeInstalled("mud_control_centre"))
-                status += Environment.NewLine + $"Reputation:       {SaveSystem.CurrentSave.RawReputation} ({SaveSystem.CurrentSave.Reputation})";
+";
+
             Console.WriteLine(status);
+
+            if(Story.CurrentObjective != null)
+            {
+                Console.WriteLine("CURRENT OBJECTIVE: " + Story.CurrentObjective.Name);
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine();
+                Console.WriteLine(Story.CurrentObjective.Description);
+            }
+
             return true;
         }
     }

@@ -35,11 +35,100 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.Engine
 {
+    public class StoryContext
+    {
+        public string Id { get; set; }
+        public MethodInfo Method { get; set; }
+        public bool AutoComplete = false;
+
+        public StoryContext()
+        {
+            AutoComplete = true;
+        }
+
+        public void MarkComplete()
+        {
+            SaveSystem.CurrentSave.StoriesExperienced.Add(Id);
+            OnComplete?.Invoke();
+        }
+
+        public event Action OnComplete;
+    }
+
+    public class Objective
+    {
+        private Func<bool> _completeFunc = null;
+
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public bool IsComplete
+        {
+            get
+            {
+                return (bool)_completeFunc?.Invoke();
+            }
+        }
+
+        public Objective(string name, string desc, Func<bool> completeFunc, Action onComplete)
+        {
+            _completeFunc = completeFunc;
+            Name = name;
+            Description = desc;
+            this.onComplete = onComplete;
+        }
+
+        private Action onComplete = null;
+
+        public void Complete()
+        {
+            onComplete?.Invoke();
+        }
+    }
+
     /// <summary>
     /// Storyline management class.
     /// </summary>
     public static class Story
     {
+        public static StoryContext Context { get; private set; }
+        public static event Action<string> StoryComplete;
+        public static Objective CurrentObjective { get; private set; }
+
+        public static void PushObjective(string name, string desc, Func<bool> completeFunc, Action onComplete)
+        {
+            if (CurrentObjective != null)
+            {
+                if (CurrentObjective.IsComplete == false)
+                {
+                    throw new Exception("Cannot start objective - an objective is already running.");
+                }
+                else
+                {
+                    CurrentObjective = null;
+                }
+            }
+
+            CurrentObjective = new Objective(name, desc, completeFunc, onComplete);
+
+            var t = new Thread(() =>
+            {
+                var obj = CurrentObjective;
+                while (!obj.IsComplete)
+                {
+                    Thread.Sleep(5000);
+                }
+                obj.Complete();
+                CurrentObjective = null;
+            });
+            t.IsBackground = true;
+            t.Start();
+
+            Console.WriteLine("NEW OBJECTIVE:");
+            Console.WriteLine("A new objective has been added to your system. Run sos.status to find out what you need to do.");
+        }
+        
+        
         /// <summary>
         /// Starts the storyline with the specified Storyline ID.
         /// </summary>
@@ -68,8 +157,21 @@ namespace ShiftOS.Engine
                                         {
                                             new Thread(() =>
                                             {
+                                                Context = new Engine.StoryContext
+                                                {
+                                                    Id = stid,
+                                                    Method = mth,
+                                                    AutoComplete = true,
+                                                };
+                                                Context.OnComplete += () =>
+                                                {
+                                                    StoryComplete?.Invoke(stid);
+                                                };
                                                 mth.Invoke(null, null);
-                                                SaveSystem.CurrentSave.StoriesExperienced.Add(stid);
+                                                if (Context.AutoComplete)
+                                                {
+                                                    Context.MarkComplete();
+                                                }
                                             }).Start();
                                             return;
                                         }
