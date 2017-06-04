@@ -55,17 +55,6 @@ namespace ShiftOS.Server
 	public class Program
 	{
 		/// <summary>
-		/// The admin username.
-		/// </summary>
-		public static string AdminUsername = "admin";
-
-		/// <summary>
-		/// The admin password.
-		/// </summary>
-		public static string AdminPassword = "admin";
-
-
-		/// <summary>
 		/// The server.
 		/// </summary>
 		public static NetObjectServer server;
