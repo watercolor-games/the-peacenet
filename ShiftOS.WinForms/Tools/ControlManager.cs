@@ -137,10 +137,14 @@ namespace ShiftOS.WinForms.Tools
         /// <param name="ctrl">The control to center (this is an extension method - you can call it on a control as though it was a method in that control)</param>
         public static void CenterParent(this Control ctrl)
         {
-            ctrl.Location = new Point(
-                    (ctrl.Parent.Width - ctrl.Width) / 2,
-                    (ctrl.Parent.Height - ctrl.Height) / 2
-                );
+            try
+            {
+                ctrl.Location = new Point(
+                        (ctrl.Parent.Width - ctrl.Width) / 2,
+                        (ctrl.Parent.Height - ctrl.Height) / 2
+                    );
+            }
+            catch { }
         }
 
         public static void SetupControl(Control ctrl)

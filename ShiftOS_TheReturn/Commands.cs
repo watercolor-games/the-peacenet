@@ -538,15 +538,28 @@ Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
 ";
 
             Console.WriteLine(status);
-
-            if(Story.CurrentObjective != null)
+            Console.WriteLine("Objectives:");
+            try
             {
-                Console.WriteLine("CURRENT OBJECTIVE: " + Story.CurrentObjective.Name);
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine();
-                Console.WriteLine(Story.CurrentObjective.Description);
+                if (Story.CurrentObjectives.Count > 0)
+                {
+                    foreach (var obj in Story.CurrentObjectives)
+                    {
+                        Console.WriteLine(obj.Name);
+                        Console.WriteLine("-------------------------------");
+                        Console.WriteLine();
+                        Console.WriteLine(obj.Description);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(" - No objectives are running. Check back later!");
+                }
             }
-
+            catch
+            {
+                Console.WriteLine(" - No objectives are running. Check back later!");
+            }
             return true;
         }
     }

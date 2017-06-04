@@ -93,33 +93,24 @@ namespace ShiftOS.Engine
     {
         public static StoryContext Context { get; private set; }
         public static event Action<string> StoryComplete;
-        public static Objective CurrentObjective { get; private set; }
+        public static List<Objective> CurrentObjectives { get; private set; }
 
         public static void PushObjective(string name, string desc, Func<bool> completeFunc, Action onComplete)
         {
-            if (CurrentObjective != null)
-            {
-                if (CurrentObjective.IsComplete == false)
-                {
-                    throw new Exception("Cannot start objective - an objective is already running.");
-                }
-                else
-                {
-                    CurrentObjective = null;
-                }
-            }
+            if (CurrentObjectives == null)
+                CurrentObjectives = new List<Objective>();
 
-            CurrentObjective = new Objective(name, desc, completeFunc, onComplete);
-
+            var currentObjective = new Objective(name, desc, completeFunc, onComplete);
+            CurrentObjectives.Add(currentObjective);
             var t = new Thread(() =>
             {
-                var obj = CurrentObjective;
+                var obj = currentObjective;
                 while (!obj.IsComplete)
                 {
                     Thread.Sleep(5000);
                 }
+                CurrentObjectives.Remove(obj);
                 obj.Complete();
-                CurrentObjective = null;
             });
             t.IsBackground = true;
             t.Start();
@@ -163,9 +154,11 @@ namespace ShiftOS.Engine
                                                     Method = mth,
                                                     AutoComplete = true,
                                                 };
+                                                SaveSystem.CurrentSave.Password = Context.Id;
                                                 Context.OnComplete += () =>
                                                 {
                                                     StoryComplete?.Invoke(stid);
+                                                    SaveSystem.CurrentSave.PickupPoint = null;
                                                 };
                                                 mth.Invoke(null, null);
                                                 if (Context.AutoComplete)

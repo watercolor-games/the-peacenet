@@ -173,6 +173,11 @@ namespace ShiftOS.Objects
         }
 
         public List<ClientSave> Users { get; set; }
+
+        /// <summary>
+        /// DO NOT MODIFY THIS. EVER. YOU WILL BREAK THE STORYLINE. Let the engine do it's job. 
+        /// </summary>
+        public string PickupPoint { get; set; }
     }
 
     public class SettingsObject : DynamicObject

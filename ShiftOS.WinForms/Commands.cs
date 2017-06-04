@@ -80,7 +80,6 @@ namespace ShiftOS.WinForms
         }
     }
 
-
     [Namespace("coherence")]
     [RequiresUpgrade("kernel_coherence")]
     public static class CoherenceCommands

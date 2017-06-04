@@ -453,6 +453,16 @@ namespace ShiftOS.Engine
 
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
+
+            if (!string.IsNullOrWhiteSpace(CurrentSave.PickupPoint))
+            {
+                try
+                {
+                    Story.Start(CurrentSave.PickupPoint);
+                    TerminalBackend.PrintPrompt();
+                }
+                catch { }
+            }
         }
 
         /// <summary>

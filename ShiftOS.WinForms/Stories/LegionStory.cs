@@ -16,8 +16,8 @@ namespace ShiftOS.WinForms.Stories
         [Story("victortran_shiftnet")]
         public static void ShiftnetStoryFeaturingTheBlueSmileyFaceHolyFuckThisFunctionNameIsLong()
         {
-            CharacterName = "victor_tran";
-            SysName = "theos";
+            CharacterName = "aiden";
+            SysName = "appscape_main";
             bool waiting = false;
             var installer = new Applications.Installer();
             installer.InstallCompleted += () =>
@@ -35,52 +35,106 @@ namespace ShiftOS.WinForms.Stories
                 AppearanceManager.SetupWindow(term);
             }
 
-            var t = new Thread(() =>
+            WriteLine("aiden@appscape_main - user connecting to your system.", false);
+            Thread.Sleep(2000);
+            WriteLine("Hello there! My name's Aiden Nirh.");
+            WriteLine("I run a small Shiftnet website known simply as \"Appscape\".");
+            WriteLine("Oh - wait... you don't know what the Shiftnet is...");
+            WriteLine("Well, the Shiftnet is like... a private Internet, only accessible through ShiftOS.");
+            WriteLine("It has many sites and companies on it - banks, software centres, service providers, you name it.");
+            WriteLine("Appscape is one of them. I host many applications on Appscape, from games to utilities to productivity programs, and anything in between. If it exists as a ShiftOS program, it's either on the Shiftorium or Appscape.");
+            WriteLine("I'm going to assume you're interested... and I'll install the Shiftnet just in case.");
+            WriteLine("Beginning installation of Shiftnet...");
+            //Set up an Installer.
+            waiting = true;
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                WriteLine("victortran@theos - user connecting to your system.", false);
-                Thread.Sleep(2000);
-                WriteLine("Hey there - yes, I am not just a sentient being. I am indeed Victor Tran.");
-                WriteLine("I am the creator of a Linux desktop environment called theShell.");
-                WriteLine("I'm in the middle of working on a ShiftOS version of it.");
-                WriteLine("However, before I start, I feel I need to show you something.");
-                WriteLine("You have a lot of ShiftOS applications, and you can earn lots of Codepoints - and you already have lots.");
-                WriteLine("Well, you'd be a perfect candidate for me to install the Shiftnet Client on your system.");
-                WriteLine("I'll begin the installation right now.");
-                //Set up an Installer.
-                waiting = true;
-                Desktop.InvokeOnWorkerThread(() =>
-                {
-                    Story.Start("installer");
-                    while (!Shiftorium.UpgradeInstalled("installer"))
-                        Thread.Sleep(20);
-                    AppearanceManager.SetupWindow(installer);
-                    installer.InitiateInstall(new ShiftnetInstallation());
-                });
-                while (waiting == true)
-                    Thread.Sleep(25);
+                SaveSystem.CurrentSave.StoriesExperienced.Add("installer");
+                SaveSystem.CurrentSave.StoriesExperienced.Add("downloader");
 
-                WriteLine("All installed! Once I disconnect, type win.open to see a list of your new apps.");
-                WriteLine("The Shiftnet is a vast network of websites only accessible through ShiftOS.");
-                WriteLine("Think of it as the DarkNet, but much darker, and much more secretive.");
-                WriteLine("There are lots of apps, games, skins and utilities on the Shiftnet.");
-                WriteLine("There are also lots of companies offering many services.");
-                WriteLine("I'd stay on the shiftnet/ cluster though, others may be dangerous.");
-                WriteLine("I'd also stick to the sites listed on shiftnet/shiftsoft/ping - that site is regularly updated with the most safe Shiftnet sites.");
-                WriteLine("Oh, that reminds me. I have set you up with ShiftSoft's service provider, Freebie Solutions.");
-                WriteLine("It's a free provider, but it offers only 256 bytes per second download and upload speeds.");
-                WriteLine("You may want to go look for another provider when you can afford it.");
-                WriteLine("Trust me - with this provider, things get slow.");
-                WriteLine("Anyways, it was nice meeting you, hopefully someday you'll give theShell a try.");
+                while (!Shiftorium.UpgradeInstalled("installer"))
+                    Thread.Sleep(20);
+                AppearanceManager.SetupWindow(installer);
+                installer.InitiateInstall(new ShiftnetInstallation());
+            });
+            while (waiting == true)
+                Thread.Sleep(25);
+
+            WriteLine("All good to go! Once I disconnect, type win.open to see a list of your new apps.");
+            WriteLine("I've installed everything you need, for free.");
+            WriteLine("You've got the Downloader, a simple application to help you track Shiftnet file downloads...");
+            WriteLine("...the Installer which will help you unpack programs from .stp files and install them to your system...");
+            WriteLine("...and lastly, the Shiftnet browser itself. This program lets you browse the Shiftnet, much like you would the real Internet.");
+            WriteLine("I'd stay on the shiftnet/ cluster though, because although there are many services on the Shiftnet, some of them may try to scam you into losing loads of Codepoints, or worse, wrecking your system with viruses.");
+            WriteLine("If you want a nice list of safe Shiftnet services, head to ShiftSoft's \"Ping\" site, at shiftnet/shiftsoft/ping.");
+            WriteLine("Oh, also, the Shiftnet, much like the real internet, is not free.");
+            WriteLine("It requires a service provider. Service providers cost a fair amount of Codepoints, but if you want to get faster speeds and more reliable connections on the Shiftnet, finding a good service provider is a necessity.");
+            WriteLine("Right now, you are on ShiftSoft's free trial plan, Freebie Solutions, which gives you access to the Shiftnet however you are locked at 256 bytes per second file downloads and can't leave the shiftnet/ cluster.");
+            WriteLine("It's enough to get you started - you'll want to find a faster provider though..");
+            WriteLine("Anyways, that's all I'll say for now. Have fun on the Shiftnet. I have to go work on something.");
+            WriteLine("One of my friends'll contact you once you've gotten a new service provider.");
+
+            Story.PushObjective("Register with a new Shiftnet service provider.", "You've just unlocked the Shiftnet, which has opened up a whole new world of applications and features for ShiftOS. Before you go nuts with it, you may want to register with a better service provider than Freebie Solutions.", () =>
+            {
+                return SaveSystem.CurrentSave.ShiftnetSubscription != 0;
+            },
+            () =>
+            {
+                Story.Context.MarkComplete();
+                SaveSystem.SaveGame();
+                TerminalBackend.PrintPrompt();
+                Story.Start("hacker101_breakingbonds_1");
+            });
 
                 TerminalBackend.PrefixEnabled = true;
-                TerminalBackend.PrintPrompt();
-            });
-            t.IsBackground = true;
-            t.Start();
+            TerminalBackend.PrintPrompt();
 
-            TerminalBackend.PrefixEnabled = false;
+            Story.Context.AutoComplete = false;
+        }
+
+        [Story("hacker101_breakingbonds_1")]
+        public static void BreakingTheBondsIntro()
+        {
+            CharacterName = "hacker101";
+            SysName = "pebcak";
+            
+            if (!terminalOpen())
+            {
+                var term = new Applications.Terminal();
+                AppearanceManager.SetupWindow(term);
+            }
+
+            WriteLine("hacker101@pebcak - user connecting to your system.", false);
+            Thread.Sleep(2000);
+            WriteLine("Greetings, user.");
+            WriteLine("My name is hacker101. I have a few things to show you.");
+            WriteLine("Before I can do that, however, I need you to do a few things.");
+            WriteLine("I'll assign what I need you to do as an objective. When you're done, I'll tell you what you need to know.");
+
+            Story.PushObjective("Breaking the Bonds: Errand Boy", @"hacker101 has something he needs to show you, however before he can, you need to do the following:
+
+ - Buy ""TriWrite"" from Appscape
+ - Buy ""Address Book"" from Appscape
+ - Buy ""SimpleSRC"" from Appscape", () =>
+            {
+                bool flag1 = Shiftorium.UpgradeInstalled("address_book");
+                bool flag2 = Shiftorium.UpgradeInstalled("triwrite");
+                bool flag3 = Shiftorium.UpgradeInstalled("simplesrc");
+                return flag1 && flag2 && flag3;
+            }, () =>
+            {
+                Story.Context.MarkComplete();
+                SaveSystem.SaveGame();
+                Story.Start("hacker101_breakingbonds_2");
+            });
+
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+
+            Story.Context.AutoComplete = false;
 
         }
+
 
         private static void WriteLine(string text, bool showCharacterName=true)
         {
@@ -90,15 +144,23 @@ namespace ShiftOS.WinForms.Stories
                 ConsoleEx.Bold = true;
                 ConsoleEx.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write(CharacterName);
+                ConsoleEx.OnFlush?.Invoke();
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write("@");
+                ConsoleEx.OnFlush?.Invoke();
                 ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write(SysName + ": ");
+                ConsoleEx.OnFlush?.Invoke();
             }
             ConsoleEx.ForegroundColor = ConsoleColor.Gray;
             ConsoleEx.Bold = false;
 
-            Console.WriteLine(text);
+            foreach(var c in text)
+            {
+                Console.Write(c);
+                ConsoleEx.OnFlush?.Invoke();
+                Thread.Sleep(45);
+            }
             Thread.Sleep(1000);
         }
 

@@ -91,6 +91,7 @@ namespace ShiftOS.WinForms
                 slashcount++;
                 if (slashcount == 5)
                     slashcount = 1;
+                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
                 Thread.Sleep(50);
             }
             rtext += Environment.NewLine;
@@ -138,7 +139,10 @@ namespace ShiftOS.WinForms
                     TextType("Your computer has been taken over by ShiftOS, and is currently being wiped clean of all existing files and programs.");
                     Thread.Sleep(2000);
                     Clear();
-                    TextType("I will not share my identity or my intentions at this moment.I will just proceed with the installation.There’s nothing you can do to stop it.");
+                    TextType("I will not share my identity or my intentions at this moment.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("I will just proceed with the installation.There’s nothing you can do to stop it.");
                     Thread.Sleep(2000);
                     Clear();
                     TextType("All I will say, is I need your help.Once ShiftOS is installed, I will explain.");
