@@ -368,7 +368,7 @@ namespace ShiftOS.WinForms.Stories
                     SetProgress(i);
                     Thread.Sleep(100);
                 }
-                Story.Start("downloader");
+                SaveSystem.CurrentSave.StoriesExperienced.Add("downloader");
                 SetProgress(0);
                 SetStatus("Dependencies installed.");
                 Thread.Sleep(2000);

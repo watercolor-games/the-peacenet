@@ -154,7 +154,7 @@ namespace ShiftOS.Engine
                                                     Method = mth,
                                                     AutoComplete = true,
                                                 };
-                                                SaveSystem.CurrentSave.Password = Context.Id;
+                                                SaveSystem.CurrentSave.PickupPoint = Context.Id;
                                                 Context.OnComplete += () =>
                                                 {
                                                     StoryComplete?.Invoke(stid);

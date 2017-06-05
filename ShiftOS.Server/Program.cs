@@ -155,13 +155,7 @@ namespace ShiftOS.Server
                 Console.WriteLine("FUCK. Something HORRIBLE JUST HAPPENED.");
             };
 
-            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
-            {
-                if(server.IsOnline == true)
-                    server.Stop();
-                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
-            };
-				
+            	
 			server.OnReceived += (o, a) =>
 			{
 				var obj = a.Data.Object;
@@ -208,7 +202,6 @@ namespace ShiftOS.Server
             task.Wait();
             */
 
-            RandomUserGenerator.StartThread();
 
             while (server.IsOnline)
             {
