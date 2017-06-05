@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -34,12 +35,26 @@ using static ShiftOS.Engine.SaveSystem;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Backend for the ShiftOS terminal.
+    /// </summary>
     public static class TerminalBackend
     {
+        /// <summary>
+        /// Occurs when a command is processed.
+        /// </summary>
         public static event Action<string, string> CommandProcessed;
 
+        /// <summary>
+        /// Gets or sets whether the current command is elevated.
+        /// </summary>
         public static bool Elevated { get; set; }
 
+        /// <summary>
+        /// Parses command-line arguments using the ShiftOS syntax and stores them in a <see cref="Dictionary{string, string}"/>, removing the parsed text from the original string.
+        /// </summary>
+        /// <param name="text">The text to parse.</param>
+        /// <returns><see cref="Dictionary{string, string}"/> containing the parsed arguments.</returns>
         public static Dictionary<string, string> GetArgs(ref string text)
         {
             bool shouldParse = false;
@@ -64,8 +79,23 @@ namespace ShiftOS.Engine
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(args);
         }
 
+        /// <summary>
+        /// String representing the last command entered by the user.
+        /// </summary>
         public static string LastCommand = "";
 
+        /// <summary>
+        /// Gets the output of the last command.
+        /// </summary>
+        public static string LastCommandBuffer { get; private set; }
+
+        /// <summary>
+        /// Invokes a ShiftOS terminal command.
+        /// </summary>
+        /// <param name="ns">The command's namespace.</param>
+        /// <param name="command">The command name.</param>
+        /// <param name="arguments">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false)
         {
             try
@@ -78,13 +108,7 @@ namespace ShiftOS.Engine
 
                 if (!commandWasClient && !string.IsNullOrWhiteSpace(ns))
                 {
-                    PrefixEnabled = false;
-
-                    ServerManager.SendMessage("script", $@"{{
-    user: ""{ns}"",
-    script: ""{command}"",
-    args: ""{GetSentArgs(arguments)}""
-}}");
+                    Console.WriteLine("Error: Command not found.");
                 }
 
                 CommandProcessed?.Invoke(ns + "." + command, JsonConvert.SerializeObject(arguments));
@@ -97,6 +121,11 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Transforms a <see cref="Dictionary{String, String}"/> of arguments to a <see cref="Dictionary{String, Object}"/>.  
+        /// </summary>
+        /// <param name="argss">The original argument dictionary to convert.</param>
+        /// <returns>The converted dictionary.</returns>
         public static string GetSentArgs(Dictionary<string, string> argss)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -107,26 +136,239 @@ namespace ShiftOS.Engine
             return JsonConvert.SerializeObject(args);
         }
 
+        public class TerminalCommand
+        {
+            public override int GetHashCode()
+            {
+                int hash = 0;
+                foreach (char c in ToString())
+                {
+                    hash += (int)c;
+                }
+                return hash;
+            }
+
+            public Namespace NamespaceInfo { get; set; }
+            public Command CommandInfo { get; set; }
+
+            public List<string> RequiredArguments { get; set; }
+            public string Dependencies { get; set; }
+
+            public MethodInfo CommandHandler;
+
+            public Type CommandType;
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(this.NamespaceInfo.name);
+                sb.Append(".");
+                sb.Append(this.CommandInfo.name);
+                if (this.RequiredArguments.Count > 0)
+                {
+                    sb.Append("{");
+                    foreach (var arg in RequiredArguments)
+                    {
+                        sb.Append(arg);
+                        sb.Append(":");
+                        if (RequiredArguments.IndexOf(arg) < RequiredArguments.Count - 1)
+                            sb.Append(',');
+                    }
+                    sb.Append("}");
+                }
+                sb.Append("|");
+                sb.Append(CommandHandler.Name + "()");
+                return sb.ToString();
+            }
+
+            public bool RequiresElevation { get; set; }
+
+            public void Invoke(Dictionary<string, object> args)
+            {
+                List<string> errors = new List<string>();
+                bool requiresAuth = false;
+                if (!KernelWatchdog.IsSafe(this))
+                {
+                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
+                        requiresAuth = true;
+                    else
+                        errors.Add("You can't run this command - you do not have permission.");
+                }
+                if (errors.Count > 0)
+                {
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine("Command error: " + error);
+                    }
+                    return;
+                }
+                if (requiresAuth)
+                {
+                    Infobox.PromptText("Enter your password.", "This command requires you to have elevated permissions. Please enter your password to confirm this action.", (pass) =>
+                    {
+                        if (pass == SaveSystem.CurrentUser.Password)
+                        {
+                            var uname = SaveSystem.CurrentUser.Username;
+                            SaveSystem.CurrentUser = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == "root");
+                            try
+                            {
+                                var h = CommandHandler;
+                                h.Invoke(null, new[] { args });
+                            }
+                            catch
+                            {
+                                var h = CommandHandler;
+                                h.Invoke(null, null);
+                            }
+                            SaveSystem.CurrentUser = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == uname);
+                        }
+                        else
+                        {
+                            Infobox.Show("Access denied.", "Incorrect password provided. The command will not run.");
+                        }
+                    }, true);
+                }
+
+                try
+                {
+                    CommandHandler.Invoke(null, new[] { args });
+                }
+                catch
+                {
+                    CommandHandler.Invoke(null, null);
+                }
+            }
+        }
+
+        public class MemoryTextWriter : System.IO.TextWriter
+        {
+            public override Encoding Encoding
+            {
+                get
+                {
+                    return Encoding.Unicode;
+                }
+            }
+
+            private StringBuilder sb = null;
+
+            public MemoryTextWriter()
+            {
+                sb = new StringBuilder();
+            }
+
+            public override string ToString()
+            {
+                return sb.ToString();
+            }
+
+            public override void Write(char value)
+            {
+                sb.Append(value);
+            }
+
+            public override void WriteLine()
+            {
+                sb.AppendLine();
+            }
+
+            public override void Write(string value)
+            {
+                sb.Append(value);
+            }
+
+            public override void Close()
+            {
+                sb.Clear();
+                sb = null;
+                base.Close();
+            }
+
+            public override void WriteLine(string value)
+            {
+                sb.AppendLine(value);
+            }
+        }
+
+        public static List<TerminalCommand> Commands { get; private set; }
+
+        public static void PopulateTerminalCommands()
+        {
+            Commands = new List<TerminalCommand>();
+            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exec);
+                        foreach(var type in asm.GetTypes())
+                        {
+                            var ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
+                            if(ns != null)
+                            {
+                                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                                {
+                                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
+                                    if(cmd != null)
+                                    {
+                                        var tc = new TerminalCommand();
+                                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+
+                                        tc.NamespaceInfo = ns;
+
+                                        tc.CommandInfo = cmd as Command;
+                                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                                        tc.RequiredArguments = new List<string>();
+                                        foreach (var arg in mth.GetCustomAttributes(false).Where(x=>x is RequiresArgument))
+                                        {
+                                            var rarg = arg as RequiresArgument;
+                                            tc.RequiredArguments.Add(rarg.argument);
+                                        }
+                                        var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                                        if (rupg != null)
+                                            tc.Dependencies = rupg.Upgrade;
+                                        else
+                                            tc.Dependencies = "";
+                                        tc.CommandType = type;
+                                        tc.CommandHandler = mth;
+                                        if (!Commands.Contains(tc))
+                                            Commands.Add(tc);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("[termdb] Error: " + e.ToString());
+                    }
+                }
+            }
+            Console.WriteLine("[termdb] " + Commands.Count + " commands found.");
+        }
+
+        /// <summary>
+        /// Invokes a ShiftOS terminal command.
+        /// </summary>
+        /// <param name="text">The full command text in regular ShiftOS syntax</param>
+        /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string text, bool isRemote = false)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+            var tw = new MemoryTextWriter();
+            Console.SetOut(tw);
             try
             {
-                if (string.IsNullOrWhiteSpace(text))
-                    return;
-
                 var args = GetArgs(ref text);
 
                 bool commandWasClient = RunClient(text, args, isRemote);
 
                 if (!commandWasClient)
                 {
-                    PrefixEnabled = false;
-
-                    ServerManager.SendMessage("script", $@"{{
-    user: ""{text.Split('.')[0]}"",
-    script: ""{text.Split('.')[1]}"",
-    args: ""{GetSentArgs(args)}""
-}}");
+                    Console.WriteLine("Error: Command not found.");
+                    
                 }
                 CommandProcessed?.Invoke(text, GetSentArgs(args));
             }
@@ -136,21 +378,48 @@ namespace ShiftOS.Engine
                 PrefixEnabled = true;
 
             }
+            string buffer = tw.ToString();
+            LastCommandBuffer = buffer;
+            Console.SetOut(new TerminalTextWriter());
+            if(!isRemote)
+                Console.Write(buffer);
+
         }
 
+        /// <summary>
+        /// Gets or sets whether the user prefix is printed after a command completes.
+        /// </summary>
         public static bool PrefixEnabled { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether the user is in a story plot, and thus, the terminal input should be disabled.
+        /// </summary>
         public static bool InStory { get; set; }
 
+        /// <summary>
+        /// Another latest command string.
+        /// </summary>
         public static string latestCommmand = "";
 
+        /// <summary>
+        /// Occurs when the engine requests a Terminal to be open.
+        /// </summary>
         public static event EmptyEventHandler TerminalRequested;
 
+        /// <summary>
+        /// Opens a Terminal.
+        /// </summary>
         internal static void OpenTerminal()
         {
             TerminalRequested?.Invoke();
         }
 
+        /// <summary>
+        /// Determines if the specified command method can be ran in RTS
+        /// </summary>
+        /// <param name="mth">The method to scan</param>
+        /// <param name="isRemote">Is the user in an RTS session?</param>
+        /// <returns>Whether the command can be run.</returns>
         public static bool CanRunRemotely(MethodInfo mth, bool isRemote)
         {
             if (!isRemote)
@@ -165,12 +434,26 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Runs a command on the client-side.
+        /// </summary>
+        /// <param name="ns">The command's namespace.</param>
+        /// <param name="cmd">The command name.</param>
+        /// <param name="args">The command's arguments.</param>
+        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string ns, string cmd, Dictionary<string, string> args, bool isRemote = false)
         {
             return RunClient(ns + "." + cmd, args, isRemote);
         }
 
-
+        /// <summary>
+        /// Runs a command on the client.
+        /// </summary>
+        /// <param name="text">The command text.</param>
+        /// <param name="argss">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string text, Dictionary<string, string> argss, bool isRemote = false)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -181,291 +464,93 @@ namespace ShiftOS.Engine
             return RunClient(text, args, isRemote);
         }
 
+        /// <summary>
+        /// Runs a command on the client.
+        /// </summary>
+        /// <param name="text">The command text.</param>
+        /// <param name="args">The command arguments.</param>
+        /// <param name="isRemote">Whether the command should be run in RTS.</param>
+        /// <returns>Whether the command ran successfully.</returns>
         public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false)
         {
             latestCommmand = text;
 
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
 
-            foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+
+            string[] split = text.Split('.');
+            var cmd = Commands.FirstOrDefault(x => x.NamespaceInfo.name == split[0] && x.CommandInfo.name == split[1]);
+            if (cmd == null)
+                return false;
+            if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))
+                return false;
+            bool res = false;
+            foreach (var arg in cmd.RequiredArguments)
             {
-                try
+                if (!args.ContainsKey(arg))
                 {
-                    var asm = Assembly.LoadFile(asmExec);
-
-                    var types = asm.GetTypes();
-                    foreach (var type in types)
-                    {
-                        if (Shiftorium.UpgradeAttributesUnlocked(type))
-                        {
-                            foreach (var a in type.GetCustomAttributes(false))
-                            {
-                                if (a is Namespace)
-                                {
-                                    var ns = a as Namespace;
-                                    if (text.Split('.')[0] == ns.name)
-                                    {
-                                        if (KernelWatchdog.IsSafe(type))
-                                        {
-                                            if (KernelWatchdog.CanRunOffline(type))
-                                            {
-                                                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                                {
-                                                    if (Shiftorium.UpgradeAttributesUnlocked(method))
-                                                    {
-                                                        if (CanRunRemotely(method, isRemote))
-                                                        {
-                                                            foreach (var ma in method.GetCustomAttributes(false))
-                                                            {
-                                                                if (ma is Command)
-                                                                {
-                                                                    var cmd = ma as Command;
-                                                                    if (text.Split('.')[1] == cmd.name)
-                                                                    {
-                                                                        if (KernelWatchdog.IsSafe(method))
-                                                                        {
-                                                                            if (KernelWatchdog.CanRunOffline(method))
-                                                                            {
-                                                                                var attr = method.GetCustomAttribute<CommandObsolete>();
-
-                                                                                if (attr != null)
-                                                                                {
-                                                                                    string newcommand = attr.newcommand;
-                                                                                    if (attr.warn)
-                                                                                    {
-                                                                                        Console.WriteLine(Localization.Parse((newcommand == "" ? "{ERROR}" : "{WARN}") + attr.reason, new Dictionary<string, string>() {
-                                                                {"%newcommand", newcommand}
-                                                            }));
-                                                                                    }
-                                                                                    if (newcommand != "")
-                                                                                    {
-                                                                                        // redo the entire process running newcommand
-
-                                                                                        return RunClient(newcommand, args);
-                                                                                    }
-                                                                                }
-
-                                                                                var requiresArgs = method.GetCustomAttributes<RequiresArgument>();
-                                                                                bool error = false;
-                                                                                bool providedusage = false;
-
-                                                                                foreach (RequiresArgument argument in requiresArgs)
-                                                                                {
-                                                                                    if (!args.ContainsKey(argument.argument))
-                                                                                    {
-
-                                                                                        if (!providedusage)
-                                                                                        {
-                                                                                            string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                                            if (usageparse == Localization.Parse(usageparse))
-                                                                                                usageparse = "";
-                                                                                            else
-                                                                                                usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{ERROR}{USAGE}" + usageparse, new Dictionary<string, string>() {
-                                                                        {"%ns", ns.name},
-                                                                        {"%cmd", cmd.name}
-                                                                    }) : "";
-
-                                                                                            Console.WriteLine(usageparse);
-
-                                                                                            providedusage = true;
-                                                                                        }
-                                                                                        if (Shiftorium.UpgradeInstalled("help_usage"))
-                                                                                        {
-                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED}", new Dictionary<string, string>() {
-                                                                    {"%argument", argument.argument}
-                                                                }));
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            Console.WriteLine(Localization.Parse("{ERROR_ARGUMENT_REQUIRED_NO_USAGE}"));
-                                                                                        }
-
-                                                                                        error = true;
-                                                                                    }
-                                                                                }
-
-                                                                                if (error)
-                                                                                {
-                                                                                    throw new Exception("{ERROR_COMMAND_WRONG}");
-                                                                                }
-
-                                                                                try
-                                                                                {
-                                                                                    return (bool)method.Invoke(null, new[] { args });
-                                                                                }
-                                                                                catch (TargetInvocationException e)
-                                                                                {
-                                                                                    Console.WriteLine(Localization.Parse("{ERROR_EXCEPTION_THROWN_IN_METHOD}"));
-                                                                                    Console.WriteLine(e.InnerException.Message);
-                                                                                    Console.WriteLine(e.InnerException.StackTrace);
-                                                                                    return true;
-                                                                                }
-                                                                                catch
-                                                                                {
-                                                                                    return (bool)method.Invoke(null, new object[] { });
-                                                                                }
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                Console.Write("<");
-                                                                                ConsoleEx.Bold = true;
-                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                                                Console.Write("session_mgr");
-                                                                                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                                                                ConsoleEx.Bold = false;
-                                                                                Console.Write(">");
-                                                                                ConsoleEx.Italic = true;
-                                                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
-                                                                                return true;
-
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
-                                                                            {
-                                                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
-                                                                                {
-                                                                                    if (pass == SaveSystem.CurrentUser.Password)
-                                                                                    {
-                                                                                        KernelWatchdog.EnterKernelMode();
-                                                                                        RunClient(text, args, isRemote);
-                                                                                        KernelWatchdog.LeaveKernelMode();
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
-                                                                                    }
-                                                                                }, true);
-                                                                                return true;
-                                                                            }
-                                                                            Console.Write("<");
-                                                                            ConsoleEx.Bold = true;
-                                                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                                            Console.Write("watchdog");
-                                                                            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                                                            ConsoleEx.Bold = false;
-                                                                            Console.Write(">");
-                                                                            ConsoleEx.Italic = true;
-                                                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
-                                                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
-                                                                            return true;
-                                                                        }
-                                                                    }
-                                                                }
-
-
-                                                            }
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        Console.WriteLine(text + " cannot be ran in a remote session");
-                                                        return true;
-                                                    }
-                                                }
-
-                                            }
-
-
-                                            else
-                                            {
-                                                Console.Write("<");
-                                                ConsoleEx.Bold = true;
-                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                                Console.Write("session_mgr");
-                                                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                                ConsoleEx.Bold = false;
-                                                Console.Write(">");
-                                                ConsoleEx.Italic = true;
-                                                ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                                Console.WriteLine(" You cannot run this command while disconnected from the multi-user domain..");
-                                                return true;
-
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
-                                            {
-                                                Infobox.PromptText("Elevate to root mode", "This command cannot be run as a regular user. To run this command, please enter your password to elevate to root mode temporarily.", (pass) =>
-                                                {
-                                                    if (pass == SaveSystem.CurrentUser.Password)
-                                                    {
-                                                        KernelWatchdog.EnterKernelMode();
-                                                        RunClient(text, args, isRemote);
-                                                        KernelWatchdog.LeaveKernelMode();
-                                                    }
-                                                    else
-                                                    {
-                                                        Infobox.Show("Access denied.", "You did not type in the correct password.");
-                                                    }
-                                                }, true);
-                                                return true;
-                                            }
-                                            Console.Write("<");
-                                            ConsoleEx.Bold = true;
-                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkRed;
-                                            Console.Write("watchdog");
-                                            ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                                            ConsoleEx.Bold = false;
-                                            Console.Write(">");
-                                            ConsoleEx.Italic = true;
-                                            ConsoleEx.ForegroundColor = ConsoleColor.DarkYellow;
-                                            Console.WriteLine(" You cannot run this command. You do not have permission. Incident reported.");
-                                            KernelWatchdog.Log("potential_sys_breach", "user attempted to run kernel mode command " + text + " - watchdog has prevented this, good sir.");
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    res = true;
+                    Console.WriteLine("You are missing an argument with the key \"" + arg + "\".");
                 }
-                catch { }
             }
-            return false;
+            if (res == true)
+                return true;
+            try
+            {
+                cmd.Invoke(args);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Command error: " + ex.Message);
+            }
+
+            return true;
         }
+
+        /// <summary>
+        /// Prints the user prompt to the terminal.
+        /// </summary>
         public static void PrintPrompt()
         {
+            Console.WriteLine();
             if (SaveSystem.CurrentSave != null && CurrentUser != null)
             {
-                ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
-                ConsoleEx.Italic = false;
-                ConsoleEx.Underline = false;
+                    ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Underline = false;
 
-                ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
-                ConsoleEx.Bold = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+                    ConsoleEx.Bold = true;
 
-                Console.Write(SaveSystem.CurrentUser.Username);
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                Console.Write("@");
-                ConsoleEx.Italic = true;
-                ConsoleEx.Bold = true;
-                ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write(SaveSystem.CurrentSave.SystemName);
-                ConsoleEx.Italic = false;
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                Console.Write(":~");
-                Console.ForegroundColor = ConsoleColor.White;
-                ConsoleEx.Italic = true;
-                if (KernelWatchdog.InKernelMode == true)
-                    Console.Write("#");
-                else
-                    Console.Write("$");
-                ConsoleEx.Italic = false;
-                ConsoleEx.Bold = false;
-                ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                Console.Write(" ");
+                    Console.Write(SaveSystem.CurrentUser.Username);
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write("@");
+                    ConsoleEx.Italic = true;
+                    ConsoleEx.Bold = true;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(SaveSystem.CurrentSave.SystemName);
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write(":~");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    ConsoleEx.Italic = true;
+                    if (KernelWatchdog.InKernelMode == true)
+                        Console.Write("#");
+                    else
+                        Console.Write("$");
+                    ConsoleEx.Italic = false;
+                    ConsoleEx.Bold = false;
+                    ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
+                    Console.Write(" ");
+                ConsoleEx.Flush();
             }
         }
 
-
+        /// <summary>
+        /// Static constructor for <see cref="TerminalBackend"/>. 
+        /// </summary>
         static TerminalBackend()
         {
             ServerMessageReceived onMessageReceived = (msg) =>
@@ -477,7 +562,7 @@ namespace ShiftOS.Engine
 
                     if (TerminalBackend.PrefixEnabled)
                     {
-                        text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                        text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                     }
                     IsForwardingConsoleWrites = true;
                     if (TerminalBackend.InStory == false)
@@ -486,7 +571,7 @@ namespace ShiftOS.Engine
                     }
                     if (TerminalBackend.PrefixEnabled)
                     {
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                     }
                     IsForwardingConsoleWrites = false;
                 }
@@ -501,7 +586,7 @@ namespace ShiftOS.Engine
                     string pass = a["password"] as string;
                     string sys = a["sysname"] as string;
                     string guid = msg.GUID;
-                    if (SaveSystem.CurrentSave.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
+                    if (SaveSystem.CurrentUser.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
                     {
                         ForwardGUID = guid;
                         ServerManager.SendMessage("trm_handshake_accept", $@"{{
@@ -511,7 +596,7 @@ namespace ShiftOS.Engine
 
                         IsForwardingConsoleWrites = true;
                         InvokeCommand("sos.status");
-                        Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                         IsForwardingConsoleWrites = false;
                     }
                 }
@@ -520,11 +605,25 @@ namespace ShiftOS.Engine
             ServerManager.MessageReceived += onMessageReceived;
         }
 
+        /// <summary>
+        /// Gets whether the terminal backend is forwarding console write requests through RTS to a remote client.
+        /// </summary>
         public static bool IsForwardingConsoleWrites { get; internal set; }
+
+        /// <summary>
+        /// Gets the RTS forward GUID.
+        /// </summary>
         public static string ForwardGUID { get; internal set; }
 
+        /// <summary>
+        /// Occurs when the user inputs text in a Terminal.
+        /// </summary>
         public static event TextSentEventHandler TextSent;
 
+        /// <summary>
+        /// Fakes the user inputting text to a Terminal.
+        /// </summary>
+        /// <param name="text">The text to input.</param>
         public static void SendText(string text)
         {
             TextSent?.Invoke(text);

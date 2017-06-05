@@ -100,7 +100,7 @@ namespace ShiftOS.WinForms.Applications
                                     {
                                         ServerManager.SendMessage("shop_removeowned", JsonConvert.SerializeObject(new
                                         {
-                                            username = SaveSystem.CurrentSave.Username
+                                            username = SaveSystem.CurrentUser.Username
                                         }));
                                         ShowCreateShop();
                                     }
@@ -274,9 +274,10 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
+        [Obsolete("MUD control center is dying! KILL IT!")]
         public void OpenChat(string id)
         {
-            AppearanceManager.SetupWindow(new Chat(id));
+//            AppearanceManager.SetupWindow(new Chat(id));
         }
 
         private Shop editingShop = null;
@@ -289,7 +290,7 @@ namespace ShiftOS.WinForms.Applications
                 creatingShop = true;
                 editingShop.Name = "My shop";
                 editingShop.Description = "My shop has lots of awesome items. You should buy from my shop.";
-                editingShop.Owner = SaveSystem.CurrentSave.Username;
+                editingShop.Owner = SaveSystem.CurrentUser.Username;
                 editingShop.Items = new List<ShopItem>();
                 shop_editor.BringToFront();
                 PopulateShopEditor();
@@ -401,7 +402,7 @@ namespace ShiftOS.WinForms.Applications
                 lbprice.Text = $"Cost: {item.Cost} CP";
                 btnbuy.Show();
             };
-            if(shop.Owner == SaveSystem.CurrentSave.Username)
+            if(shop.Owner == SaveSystem.CurrentUser.Username)
             {
                 btneditshop.Show();
             }
@@ -559,7 +560,7 @@ namespace ShiftOS.WinForms.Applications
 
             you_systemstatus.BringToFront();
 
-            lblsysstatus.Text = $@"Username: {SaveSystem.CurrentSave.Username}
+            lblsysstatus.Text = $@"Username: {SaveSystem.CurrentUser.Username}
 System name: {SaveSystem.CurrentSave.SystemName}
 
 Codepoints: {SaveSystem.CurrentSave.Codepoints}
@@ -590,7 +591,7 @@ Current legions: {legionname}";
         private void tsMemos_Click(object sender, EventArgs e)
         {
             ServerManager.SendMessage("get_memos_for_user", $@"{{
-    username: ""{SaveSystem.CurrentSave.Username}""                
+    username: ""{SaveSystem.CurrentUser.Username}""                
 }}");
             you_memos.BringToFront();
         }
@@ -811,7 +812,7 @@ Current legions: {legionname}";
         {
             ServerManager.SendMessage("user_shop_check", JsonConvert.SerializeObject(new
             {
-                username = SaveSystem.CurrentSave.Username
+                username = SaveSystem.CurrentUser.Username
             }));
         }
 
@@ -894,7 +895,7 @@ Current legions: {legionname}";
 
         private void myShopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentSave.Username);
+            ServerManager.SendMessage("user_get_shop", SaveSystem.CurrentUser.Username);
         }
 
         private void btneditshop_Click(object sender, EventArgs e)
@@ -922,7 +923,7 @@ Current legions: {legionname}";
                         {
                             ServerManager.SendMessage("delete_save", JsonConvert.SerializeObject(new ClientSave
                             {
-                                Username = SaveSystem.CurrentSave.Username,
+                                Username = SaveSystem.CurrentUser.Username,
                                 Password = SaveSystem.CurrentSave.Password
                             }));
 

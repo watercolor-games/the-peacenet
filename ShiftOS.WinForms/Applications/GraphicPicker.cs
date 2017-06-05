@@ -45,6 +45,12 @@ namespace ShiftOS.WinForms.Applications
         {
             InitializeComponent();
             SelectedLayout = layout;
+            Image = old;
+            using(var ms = new System.IO.MemoryStream())
+            {
+                Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                ImageAsBinary = ms.ToArray();
+            }
             Callback = cb;
             lblobjecttoskin.Text = name;
             
@@ -123,10 +129,12 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            Setup();
         }
 
         public void OnSkinLoad()
         {
+            Setup();
         }
 
         public bool OnUnload()
@@ -136,6 +144,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+            Setup();
         }
     }
 }

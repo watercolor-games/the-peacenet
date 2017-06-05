@@ -65,8 +65,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void SetupUI()
         {
-            SetupDesktop();
-            Setup();
+            if (LoadedSkin != null)
+            {
+                SetupDesktop();
+                Setup();
+            }
         }
 
         public void SetupDesktop()
@@ -78,7 +81,7 @@ namespace ShiftOS.WinForms.Applications
 
             //upgrades
 
-            if (SaveSystem.CurrentSave != null)
+            if (SaveSystem.CurrentSave != null && LoadedSkin != null)
             {
                 desktoppanel.Visible = ShiftoriumFrontend.UpgradeInstalled("desktop");
                 lbtime.Visible = ShiftoriumFrontend.UpgradeInstalled("desktop_clock_widget");
@@ -303,7 +306,7 @@ namespace ShiftOS.WinForms.Applications
                      System.IO.Directory.CreateDirectory(Paths.SharedFolder + "\\skins");
                  }
 
-                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentSave.Username + "-" + fname;
+                 string path = Paths.SharedFolder + "\\skins\\" + SaveSystem.CurrentUser.Username + "-" + fname;
                  System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(LoadedSkin));
                   
              })));

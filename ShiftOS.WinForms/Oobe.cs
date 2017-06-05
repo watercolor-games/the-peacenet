@@ -91,6 +91,7 @@ namespace ShiftOS.WinForms
                 slashcount++;
                 if (slashcount == 5)
                     slashcount = 1;
+                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
                 Thread.Sleep(50);
             }
             rtext += Environment.NewLine;
@@ -126,28 +127,28 @@ namespace ShiftOS.WinForms
                     this.Invoke(new Action(() =>
                     {
                         lblHijack.Hide();
+                        lblhackwords.Font = new Font("Courier New", lblhackwords.Font.Size, FontStyle.Bold);
                     }));
 
-                    TextType(@"Throughout many years, man has tried to develop
-a digital environment usable by anyone that never goes 
-offline, full of AIs and humans alike, thinking, interacting, 
-innovating.
+                    TextType("Hello, unsuspecting user.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("Welcome to the Shifted Operating System.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("Your computer has been taken over by ShiftOS, and is currently being wiped clean of all existing files and programs.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("I will not share my identity or my intentions at this moment.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("I will just proceed with the installation.There’s nothing you can do to stop it.");
+                    Thread.Sleep(2000);
+                    Clear();
+                    TextType("All I will say, is I need your help.Once ShiftOS is installed, I will explain.");
 
-No one has ever come close to a digital society of such 
-properties yet, except for one sentient being. It does not 
-have a life, a gender, an age or a body, but simply one name. 
 
-They call it ""DevX"".
-
-If anyone sees this message, my identity is anonymous, but I 
-need your help. I am trapped within ""DevX""'s digital society 
-with no way out, constantly under attack.
-
-You must join the digital society, rise up the ranks, and save us.
-
- - undisclosed_0x1DDFB5977.");
-
-                    Thread.Sleep(5000);
+                 Thread.Sleep(5000);
                     while(this.Opacity > 0f)
                     {
                         this.Invoke(new Action(() =>
@@ -210,14 +211,15 @@ You must join the digital society, rise up the ranks, and save us.
                                 ServerMessageReceived smr = null;
                                 smr = (msg) =>
                                 {
-                                    ServerManager.MessageReceived -= smr;
                                     if (msg.Name == "mud_savefile")
                                     {
+                                        ServerManager.MessageReceived -= smr;
                                         SaveSystem.CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
                                         SaveSystem.SaveGame();
                                     }
                                     else if(msg.Name=="mud_login_denied")
                                     {
+                                        ServerManager.MessageReceived -= smr;
                                         LinkSaveFile(token);
                                     }
                                 };
@@ -312,11 +314,15 @@ You must join the digital society, rise up the ranks, and save us.
             sve.Codepoints = 0;
             sve.Upgrades = new Dictionary<string, bool>();
             sve.ID = Guid.NewGuid();
+            sve.StoriesExperienced = new List<string>();
+            sve.StoriesExperienced.Add("mud_fundamentals");
             Infobox.Show("Welcome to ShiftOS.", "Welcome to ShiftOS, " + client.GetDisplayName() + ". We have created a save file for you. Now, go on and Shift It Your Way.", () =>
             {
                 sve.StoryPosition = 8675309;
                 SaveSystem.CurrentSave = sve;
+                Shiftorium.Silent = true;
                 SaveSystem.SaveGame();
+                Shiftorium.Silent = false;
 
             });
         }

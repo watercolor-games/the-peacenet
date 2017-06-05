@@ -70,6 +70,96 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient1 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient2 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient3 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient4 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient4", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient5 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient5", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient6 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient6", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient7 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient7", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient8 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient8", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Ambient9 {
+            get {
+                object obj = ResourceManager.GetObject("Ambient9", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ArtPadcirclerubber {
@@ -860,6 +950,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconSpeaker {
+            get {
+                object obj = ResourceManager.GetObject("iconSpeaker", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconSysinfo {
             get {
                 object obj = ResourceManager.GetObject("iconSysinfo", resourceCulture);
@@ -961,6 +1061,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap notestate_connection_full {
+            get {
+                object obj = ResourceManager.GetObject("notestate_connection_full", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap RegularDesktopGlyph {
             get {
                 object obj = ResourceManager.GetObject("RegularDesktopGlyph", resourceCulture);
@@ -994,22 +1104,18 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to [
-        ///	//TEMPORARY
-        ///	{
-        ///		Name: &quot;Desktop Widgets&quot;,
-        ///		Cost: 0,
-        ///		Description: &quot;Temporary upgrade. Will be replaced by either a Shiftnet app or a story element.&quot;,
-        ///		Dependencies: &quot;advanced_app_launcher;wm_free_placement&quot;,
-        ///		Category: &quot;Work-in-progress&quot;
-        ///	},
-        ///
-        ///
-        ///
         ///// SCREENSAVER
         ///	{
         ///		Name: &quot;Screensavers&quot;,
         ///		Cost: 750,
-        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot; [rest of string was truncated]&quot;;.
+        ///		Description: &quot;Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.&quot;,
+        ///		Dependencies: &quot;desktop&quot;,
+        ///		Category: &quot;Enhancements&quot;,
+        ///	},
+        ///	{
+        ///		Name: &quot;Shift Progress Bar&quot;,
+        ///		Cost: 150,
+        ///		Description: &quot;Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you&apos;ll get the ability to set the foreground an [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {

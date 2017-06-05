@@ -55,7 +55,7 @@ namespace ShiftOS.WinForms.Applications
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbshiftit = new System.Windows.Forms.Label();
-            this.lbaboutdesc = new System.Windows.Forms.Label();
+            this.lbaboutdesc = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -94,11 +94,11 @@ namespace ShiftOS.WinForms.Applications
             this.lbaboutdesc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbaboutdesc.Location = new System.Drawing.Point(14, 126);
+            this.lbaboutdesc.Location = new System.Drawing.Point(23, 158);
+            this.lbaboutdesc.Multiline = true;
             this.lbaboutdesc.Name = "lbaboutdesc";
-            this.lbaboutdesc.Size = new System.Drawing.Size(498, 328);
+            this.lbaboutdesc.Size = new System.Drawing.Size(492, 302);
             this.lbaboutdesc.TabIndex = 3;
-            this.lbaboutdesc.Text = "label2";
             // 
             // About
             // 
@@ -121,6 +121,6 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbshiftit;
-        private System.Windows.Forms.Label lbaboutdesc;
+        private System.Windows.Forms.TextBox lbaboutdesc;
     }
 }

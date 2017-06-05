@@ -189,7 +189,7 @@ namespace ShiftOS.Server
                 //Update the shiftos website with the user's codepoints.
                 if (!string.IsNullOrWhiteSpace(sav.UniteAuthToken))
                 {
-                    var wreq = WebRequest.Create("http://getshiftos.ml/API/SetCodepoints/" + sav.Codepoints.ToString());
+                    var wreq = WebRequest.Create(UserConfig.Get().UniteUrl + "/API/SetCodepoints/" + sav.Codepoints.ToString());
                     wreq.Headers.Add("Authentication: Token " + sav.UniteAuthToken);
                     wreq.GetResponse();
                 }
@@ -207,8 +207,7 @@ namespace ShiftOS.Server
                 {
                     var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-
-                    if (save.UniteAuthToken==token)
+                    if (save.UniteAuthToken == token)
                     {
                         if (save.ID == new Guid())
                         {
@@ -216,6 +215,31 @@ namespace ShiftOS.Server
                             WriteEncFile(savefile, JsonConvert.SerializeObject(save));
                         }
 
+                        var wr = HttpWebRequest.Create(UserConfig.Get().UniteUrl + "/API/GetCodepoints");
+                        wr.Headers.Add("Authentication: Token " + save.UniteAuthToken);
+                        try
+                        {
+                            using (var resp = wr.GetResponse())
+                            {
+                                using (var str = resp.GetResponseStream())
+                                {
+                                    using (var reader = new StreamReader(str))
+                                    {
+                                        Console.WriteLine("This user has " + reader.ReadToEnd() + " Codepoint(s).");
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
+                            {
+                                Name = "mud_login_denied",
+                                GUID = "server"
+                            }));
+                            return;
+                        }
 
                         Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                         {
@@ -228,15 +252,11 @@ namespace ShiftOS.Server
                 }
                 catch { }
             }
-            try
+            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
             {
-                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
-                {
-                    Name = "mud_login_denied",
-                    GUID = "server"
-                }));
-            }
-            catch { }
+                Name = "mud_login_denied",
+                GUID = "server"
+            }));
         }
 
         [MudRequest("delete_save", typeof(ClientSave))]
@@ -268,7 +288,7 @@ namespace ShiftOS.Server
             {
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
-                long cpAmount = (long)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -302,7 +322,7 @@ namespace ShiftOS.Server
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 string passw = args["password"] as string;
-                int cpAmount = (int)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -315,7 +335,7 @@ namespace ShiftOS.Server
                             WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
                             Program.ClientDispatcher.Broadcast("update_your_cp", new {
                                 username = userName,
-                                amount = -cpAmount
+                                amount = -(long)cpAmount
                             });
                             Program.ClientDispatcher.DispatchTo("update_your_cp", guid, new
                             {

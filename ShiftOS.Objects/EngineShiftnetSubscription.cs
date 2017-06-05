@@ -10,7 +10,7 @@ namespace ShiftOS.Objects
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int CostPerMonth { get; set; }
+        public uint CostPerMonth { get; set; }
         public int DownloadSpeed { get; set; }
         public string Company { get; set; }
     }

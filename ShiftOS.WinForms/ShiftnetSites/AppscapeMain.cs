@@ -372,7 +372,7 @@ namespace ShiftOS.WinForms
     /// </summary>
     public class AppscapeEntryAttribute : RequiresUpgradeAttribute
     {
-        public AppscapeEntryAttribute(string name, string description, int downloadSize, long cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
+        public AppscapeEntryAttribute(string name, string description, int downloadSize, ulong cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
         {
             Name = name;
             Description = description;
@@ -385,7 +385,7 @@ namespace ShiftOS.WinForms
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string Category { get; private set; }
-        public long Cost { get; private set; }
+        public ulong Cost { get; private set; }
         public string DependencyString { get; private set; }
         public int DownloadSize { get; private set; }
     }

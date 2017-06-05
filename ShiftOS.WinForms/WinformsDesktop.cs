@@ -47,12 +47,136 @@ namespace ShiftOS.WinForms
     /// <summary>
     /// Winforms desktop.
     /// </summary>
+    [Namespace("desktop")]
     public partial class WinformsDesktop : Form, IDesktop
     {
+        [Command("pushnote")]
+        [RequiresArgument("target")]
+        [RequiresArgument("title")]
+        [RequiresArgument("body")]
+        public static bool PushNote(Dictionary<string, object> args)
+        {
+            string ta = args["target"].ToString();
+            string ti = args["title"].ToString();
+            string bo = args["body"].ToString();
+
+            Desktop.PushNotification(ta, ti, bo);
+
+            return true;
+        }
+
         public List<IDesktopWidget> Widgets = new List<IDesktopWidget>();
 
 
         private int millisecondsUntilScreensaver = 300000;
+
+        public void LoadIcons()
+        {
+            //That shot me back to 0.0.x with that name. Whatever.
+            flnotifications.Controls.Clear(); //Clear the status tray
+            
+            foreach(var itype in NotificationDaemon.GetAllStatusIcons())
+            {
+                //We have the types. No need for shiftorium calls or anything.
+                //First create the icon control...
+
+                var ic = new PictureBox();
+                //We can use the type name, in lowercase, for the icon tag.
+                ic.Tag = itype.Name.ToLower();
+                //Next get the icon data if any.
+
+                    //We can use this attribute's ID in the skin engine to get an icon.
+                    var img = GetIcon(itype.Name);
+                    //Make it transparent.
+                    (img as Bitmap).MakeTransparent(Color.White);
+                    //Assign it to the control
+                    ic.Image = img;
+                    //Set the sizing mode
+                    ic.SizeMode = PictureBoxSizeMode.StretchImage;
+                ic.Size = new Size(16, 16); //TODO: make it skinnable
+                //add to the notification tray
+                flnotifications.Controls.Add(ic);
+                ic.Show();
+
+                ic.BringToFront();
+
+                flnotifications.Show();
+                
+
+                ic.Click += (o, a) =>
+                {
+                    HideAppLauncher();
+
+                    if(itype.BaseType == typeof(UserControl))
+                    {
+                        UserControl ctrl = (UserControl)Activator.CreateInstance(itype);
+                        (ctrl as IStatusIcon).Setup();
+                        currentSettingsPane = ctrl;
+                        ControlManager.SetupControls(ctrl);
+                        this.Controls.Add(ctrl);
+                        ctrl.BringToFront();
+                        int left = ic.Parent.PointToScreen(ic.Location).X;
+                        int realleft = left - ctrl.Width;
+                        realleft += ic.Width;
+                        ctrl.Left = realleft;
+                        if (LoadedSkin.DesktopPanelPosition == 0)
+                        {
+                            ctrl.Top = desktoppanel.Height;
+                        }
+                        else
+                        {
+                            ctrl.Top = this.Height - desktoppanel.Height - ctrl.Height;
+                        }
+                        ctrl.Show();
+                    }
+
+
+                };
+            }
+        }
+
+        public void PushNotification(string app, string title, string msg)
+        {
+            lbnotemsg.Text = msg;
+            lbnotetitle.Text = title;
+            int height = pnlnotificationbox.Height;
+            pnlnotificationbox.AutoSize = false;
+            pnlnotificationbox.Height = height;
+            pnlnotificationbox.Width = lbnotetitle.Width;
+
+            var ctl = flnotifications.Controls.ToList().FirstOrDefault(x => x.Tag.ToString() == app);
+            if (ctl == null)
+                pnlnotificationbox.Left = desktoppanel.Width - pnlnotificationbox.Width;
+            else
+            {
+                int left = ctl.Parent.PointToScreen(ctl.Location).X;
+                int realleft = left - pnlnotificationbox.Width;
+                realleft += ctl.Width;
+                pnlnotificationbox.Left = realleft;
+            }
+
+
+            if (LoadedSkin.DesktopPanelPosition == 0)
+                pnlnotificationbox.Top = desktoppanel.Height;
+            else
+                pnlnotificationbox.Top = this.Height - desktoppanel.Height - pnlnotificationbox.Height;
+            ControlManager.SetupControls(pnlnotificationbox);
+            var notekiller = new System.Windows.Forms.Timer();
+            notekiller.Interval = 10000;
+            notekiller.Tick += (o, a) =>
+            {
+                pnlnotificationbox.Hide();
+                pnlnotificationbox.AutoSize = true;
+            };
+            Engine.AudioManager.PlayStream(Properties.Resources.infobox);
+
+
+            pnlnotificationbox.Show();
+            pnlnotificationbox.BringToFront();
+            notekiller.Start();
+        }
+
+        private UserControl currentSettingsPane = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftOS.WinForms.WinformsDesktop"/> class.
@@ -72,56 +196,16 @@ namespace ShiftOS.WinForms
             SetupControl(desktoppanel);
             Shiftorium.Installed += () =>
             {
-                foreach(var widget in Widgets)
+                foreach (var widget in Widgets)
                 {
                     widget.OnUpgrade();
                 }
 
-                //Only if the DevX Legions story hasn't been experienced yet.
-                if (!Shiftorium.UpgradeInstalled("devx_legions"))
-                {
-                    //Check for shiftnet story experience
-                    if (Shiftorium.UpgradeInstalled("shiftnet"))
-                    {
-                        //Check for saturation of the "GUI" upgrade set
-                        if (Shiftorium.IsCategoryEmptied("GUI"))
-                        {
-                            //Start the MUD Control Centre story.
-                            Story.Start("devx_legions");
-                        }
-                    }
-                }
+                LoadIcons();
 
-                if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
-                {
-                    if (SaveSystem.CurrentSave.Codepoints >= 50000)
-                    {
-                        if (Shiftorium.IsCategoryEmptied("Applications"))
-                        {
-                            Story.Start("victortran_shiftnet");
-                        }
-                    }
-                }
+
             };
             this.TopMost = false;
-
-            NotificationDaemon.NotificationMade += (note) =>
-            {
-                //Soon this will pop a balloon note.
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
-            };
-
-            NotificationDaemon.NotificationRead += () =>
-            {
-                //Soon this will pop a balloon note.
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
-            };
 
             this.LocationChanged += (o, a) =>
             {
@@ -141,12 +225,9 @@ namespace ShiftOS.WinForms
 
             SaveSystem.GameReady += () =>
             {
+                this.Invoke(new Action(LoadIcons));
                 if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
-                this.Invoke(new Action(() =>
-                {
-                    btnnotifications.Text = Localization.Parse("{NOTIFICATIONS} (" + NotificationDaemon.GetUnreadCount().ToString() + ")");
-                }));
             };
             Shiftorium.Installed += () =>
             {
@@ -173,22 +254,62 @@ namespace ShiftOS.WinForms
             };
             SkinEngine.SkinLoaded += () =>
             {
+                LoadIcons();
                 foreach (var widget in Widgets)
                 {
                     widget.OnSkinLoad();
                 }
 
+
                 SetupDesktop();
             };
+
+            ulong lastcp = 0;
+
+            var storythread = new Thread(() =>
+            {
+                do
+                {
+                    while (SaveSystem.CurrentUser == null)
+                        Thread.Sleep(10);
+
+                    if (SaveSystem.CurrentSave != null)
+                    {
+                        if (SaveSystem.CurrentSave.Codepoints != lastcp)
+                            lastcp = SaveSystem.CurrentSave.Codepoints;
+                        if (lastcp >= 2500)
+                        {
+                            if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
+                            {
+                                Story.Start("victortran_shiftnet");
+                            }
+                        }
+                        if(lastcp >= 5000)
+                        {
+                            if(Shiftorium.UpgradeInstalled("triwrite") && Shiftorium.UpgradeInstalled("simplesrc") && Shiftorium.UpgradeInstalled("victortran_shiftnet") && Shiftorium.UpgradeInstalled("story_hacker101_breakingthebonds"))
+                            {
+                                if (!Shiftorium.UpgradeInstalled("story_thefennfamily"))
+                                    Story.Start("story_thefennfamily");
+                            }
+                        }
+                    }
+                } while (!SaveSystem.ShuttingDown);
+            });
+            storythread.IsBackground = true;
+            storythread.Start();
+
             time.Tick += (o, a) =>
             {
                 if (Shiftorium.IsInitiated == true)
                 {
-                    if (SaveSystem.CurrentSave != null && TutorialManager.IsInTutorial == false)
+                    if (SaveSystem.CurrentSave != null)
                     {
+
                         lbtime.Text = Applications.Terminal.GetTime();
-                        lbtime.Left = desktoppanel.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
+                        lbtime.Left = pnlnotifications.Width - lbtime.Width - LoadedSkin.DesktopPanelClockFromRight.X;
                         lbtime.Top = LoadedSkin.DesktopPanelClockFromRight.Y;
+
+                        pnlnotifications.Width = flnotifications.Width + lbtime.Width + LoadedSkin.DesktopPanelClockFromRight.X;
                     }
                 }
 
@@ -215,31 +336,8 @@ namespace ShiftOS.WinForms
                 catch { }
 
 
-                btnnotifications.Left = lbtime.Left - btnnotifications.Width - 2;
-                btnnotifications.Top = (desktoppanel.Height - btnnotifications.Height) / 2;
             };
             time.Start();
-
-            var ssThread = new Thread(() =>
-            {
-                while(this.Visible == true)
-                {
-                    var mousePos = Cursor.Position;
-                    while(Cursor.Position == mousePos)
-                    {
-                        if(millisecondsUntilScreensaver <= 0)
-                        {
-                            ShowScreensaver();
-                        }
-                        millisecondsUntilScreensaver--;
-                        Thread.Sleep(1);
-                    }
-                    millisecondsUntilScreensaver = 300000;
-                    HideScreensaver();
-                }
-            });
-            ssThread.IsBackground = true;
-            ssThread.Start();
 
             this.DoubleBuffered = true;
         }
@@ -372,10 +470,13 @@ namespace ShiftOS.WinForms
                     desktoppanel.Visible = Shiftorium.UpgradeInstalled("desktop");
                     lbtime.Visible = Shiftorium.UpgradeInstalled("desktop_clock_widget");
 
-                    btnnotifications.Visible = Shiftorium.UpgradeInstalled("panel_notifications");
+                    ControlManager.SetupControls(pnlnotificationbox);
 
                     //skinning
-                    lbtime.ForeColor = LoadedSkin.DesktopPanelClockColor;
+                    lbtime.BackColor = Color.Transparent;
+                    pnlnotifications.BackgroundImage = GetImage("panelclockbg");
+                    pnlnotifications.BackgroundImageLayout = GetImageLayout("panelclockbg");
+                    pnlnotifications.BackColor = LoadedSkin.DesktopPanelClockBackgroundColor;
 
                     panelbuttonholder.Top = 0;
                     panelbuttonholder.Left = LoadedSkin.PanelButtonHolderFromLeft;
@@ -390,10 +491,7 @@ namespace ShiftOS.WinForms
                     this.BackColor = Color.FromArgb(LoadedSkin.DesktopColor.R, LoadedSkin.DesktopColor.G, LoadedSkin.DesktopColor.B);
                     //Not doing this will cause an ArgumentException.
 
-                    DitheringEngine.DitherImage(SkinEngine.GetImage("desktopbackground"), new Action<Image>((img) =>
-                    {
-                        this.BackgroundImage = img;
-                    }));
+                    this.BackgroundImage = SkinEngine.GetImage("desktopbackground");
                     this.BackgroundImageLayout = GetImageLayout("desktopbackground");
                     desktoppanel.BackColor = LoadedSkin.DesktopPanelColor;
 
@@ -1009,6 +1107,8 @@ namespace ShiftOS.WinForms
         {
             this.Invoke(new Action(() =>
             {
+                currentSettingsPane?.Hide();
+                currentSettingsPane = null;
                 pnladvancedal.Hide();
             }));
         }
@@ -1061,6 +1161,17 @@ namespace ShiftOS.WinForms
             {
                 Engine.AppearanceManager.SetupWindow(Activator.CreateInstance(kv.LaunchType) as IShiftOSWindow);
             }
+        }
+    }
+
+    public static class ControlCollectionExtensions
+    {
+        public static IList<Control> ToList(this Control.ControlCollection ctrls)
+        {
+            var lst = new List<Control>();
+            foreach (var ctl in ctrls)
+                lst.Add(ctl as Control);
+            return lst;
         }
     }
 }

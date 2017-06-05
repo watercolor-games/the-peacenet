@@ -95,7 +95,7 @@ namespace ShiftOS.Engine
             {
                 TerminalBackend.IsForwardingConsoleWrites = forwarding;
                 TerminalBackend.ForwardGUID = (forwarding == true) ? fGuid : null;
-                Console.WriteLine($"{SaveSystem.CurrentSave.Username} says \"{result}\".");
+                Console.WriteLine($"{SaveSystem.CurrentUser.Username} says \"{result}\".");
                 TerminalBackend.IsForwardingConsoleWrites = false;
             };
             Desktop.InvokeOnWorkerThread(new Action(() =>
@@ -233,6 +233,23 @@ namespace ShiftOS.Engine
     [Namespace("dev")]
     public static class ShiftOSDevCommands
     {
+        [Command("buy")]
+        public static bool UnlockUpgrade(Dictionary<string, object> args)
+        {
+            string upg = args["id"].ToString();
+            try
+            {
+                SaveSystem.CurrentSave.Upgrades[upg] = true;
+                Shiftorium.InvokeUpgradeInstalled();
+                SaveSystem.SaveGame();
+            }
+            catch
+            {
+                Console.WriteLine("Upgrade not found.");
+            }
+            return true;
+        }
+
         [Command("rock", description = "A little surprise for unstable builds...")]
         public static bool ThrowASandwichingRock()
         {
@@ -276,6 +293,17 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        [Command("restart")]
+        public static bool Restart()
+        {
+            SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
+            SaveSystem.CurrentSave.Codepoints = 0;
+            SaveSystem.CurrentSave.StoriesExperienced.Clear();
+            SaveSystem.CurrentSave.StoriesExperienced.Add("mud_fundamentals");
+            SaveSystem.SaveGame();
+            Shiftorium.InvokeUpgradeInstalled();
+            return true;
+        }
 
         [Command("freecp")]
         public static bool FreeCodepoints(Dictionary<string, object> args)
@@ -283,8 +311,8 @@ namespace ShiftOS.Engine
             if (args.ContainsKey("amount"))
                 try
                 {
-                    Int64 codepointsToAdd = Convert.ToInt64(args["amount"].ToString());
-                    SaveSystem.TransferCodepointsFrom("dev", codepointsToAdd);
+                    ulong codepointsToAdd = Convert.ToUInt64(args["amount"].ToString());
+                    SaveSystem.CurrentSave.Codepoints += codepointsToAdd;
                     return true;
                 }
                 catch (Exception ex)
@@ -293,7 +321,7 @@ namespace ShiftOS.Engine
                     return true;
                 }
 
-            SaveSystem.TransferCodepointsFrom("dev", 1000);
+            SaveSystem.CurrentSave.Codepoints += 1000;
             return true;
         }
 
@@ -302,8 +330,13 @@ namespace ShiftOS.Engine
         {
             foreach (var upg in Shiftorium.GetDefaults())
             {
-                Shiftorium.Buy(upg.ID, 0);
+                if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.ID))
+                    SaveSystem.CurrentSave.Upgrades.Add(upg.ID, true);
+                else
+                    SaveSystem.CurrentSave.Upgrades[upg.ID] = true;
             }
+            Shiftorium.InvokeUpgradeInstalled();
+            SkinEngine.LoadSkin();
             return true;
         }
 
@@ -350,12 +383,67 @@ namespace ShiftOS.Engine
     [Namespace("sos")]
     public static class ShiftOSCommands
     {
+
+        [Command("setsfxenabled", description = "Set whether or not sound effects are enabled in the system.")]
+        [RequiresArgument("value")]
+        public static bool SetSfxEnabled(Dictionary<string, object> args)
+        {
+            try
+            {
+                bool value = Convert.ToBoolean(args["value"].ToString());
+                SaveSystem.CurrentSave.SoundEnabled = value;
+                SaveSystem.SaveGame();
+            }
+            catch
+            {
+                Console.WriteLine("Error: Value must be either true or false.");
+            }
+            return true;
+        }
+
+
+
+        [Command("setmusicenabled", description = "Set whether or not music is enabled in the system.")]
+        [RequiresArgument("value")]
+        public static bool SetMusicEnabled(Dictionary<string, object> args)
+        {
+            try
+            {
+                bool value = Convert.ToBoolean(args["value"].ToString());
+                SaveSystem.CurrentSave.MusicEnabled = value;
+                SaveSystem.SaveGame();
+            }
+            catch
+            {
+                Console.WriteLine("Error: Value must be either true or false.");
+            }
+            return true;
+        }
+
+        
+
+        [Command("setsfxvolume", description ="Set the system sound volume to a value between 1 and 100.")]
+        [RequiresArgument("value")]
+        public static bool SetSfxVolume(Dictionary<string, object> args)
+        {
+            int value = int.Parse(args["value"].ToString());
+            if(value >= 0 && value <= 100)
+            {
+                SaveSystem.CurrentSave.MusicVolume = value;
+                SaveSystem.SaveGame();
+            }
+            else
+            {
+                Console.WriteLine("Volume must be between 0 and 100!");
+            }
+            return true;
+        }
+
         [RemoteLock]
         [Command("shutdown")]
         public static bool Shutdown()
         {
             TerminalBackend.InvokeCommand("sos.save");
-            SaveSystem.ShuttingDown = true;
             AppearanceManager.Exit();
             return true;
         }
@@ -389,84 +477,42 @@ namespace ShiftOS.Engine
             }
         }
 
-        [Command("help", "{COMMAND_HELP_USAGE}", "{COMMAND_HELP_DESCRIPTION}")]
-        public static bool Help()
+        [Command("help", "{COMMAND_HELP_USAGE", "{COMMAND_HELP_DESCRIPTION}")]
+        public static bool Help(Dictionary<string, object> args)
         {
-            foreach (var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            var sb = new StringBuilder();
+            sb.AppendLine("Retrieving help data.");
+
+            if (args.ContainsKey("ns"))
             {
-                if (exec.EndsWith(".exe") || exec.EndsWith(".dll"))
+                string ns = args["ns"].ToString();
+                //First let's check for a command that has this namespace.
+                var cmdtest = TerminalBackend.Commands.FirstOrDefault(x => x.NamespaceInfo.name == ns);
+                if (cmdtest == null) //Namespace not found.
+                    sb.AppendLine("Error retrieving help for namespace \"" + ns + "\". Namespace not found.");
+                else
                 {
-                    try
+                    //Now do the actual scan.
+                    sb.AppendLine("Namespace: " + ns);
+                    foreach(var cmd in TerminalBackend.Commands.Where(x => x.NamespaceInfo.name == ns))
                     {
-                        var asm = Assembly.LoadFile(exec);
-
-                        var types = asm.GetTypes();
-
-                        foreach (var type in types)
-                        {
-                            if (Shiftorium.UpgradeAttributesUnlocked(type))
-                            {
-                                foreach (var a in type.GetCustomAttributes(false))
-                                {
-                                    if (a is Namespace)
-                                    {
-                                        var ns = a as Namespace;
-
-                                        if (!ns.hide)
-                                        {
-                                            string descp = "{NAMESPACE_" + ns.name.ToUpper() + "_DESCRIPTION}";
-                                            if (descp == Localization.Parse(descp))
-                                                descp = "";
-                                            else
-                                                descp = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descp) : "";
-
-                                            Console.WriteLine($"{{NAMESPACE}}{ns.name}" + descp);
-
-                                            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                            {
-                                                if (Shiftorium.UpgradeAttributesUnlocked(method))
-                                                {
-                                                    foreach (var ma in method.GetCustomAttributes(false))
-                                                    {
-                                                        if (ma is Command)
-                                                        {
-                                                            var cmd = ma as Command;
-
-                                                            if (!cmd.hide)
-                                                            {
-                                                                string descriptionparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_DESCRIPTION}";
-                                                                string usageparse = "{COMMAND_" + ns.name.ToUpper() + "_" + cmd.name.ToUpper() + "_USAGE}";
-                                                                if (descriptionparse == Localization.Parse(descriptionparse))
-                                                                    descriptionparse = "";
-                                                                else
-                                                                    descriptionparse = Shiftorium.UpgradeInstalled("help_description") ? Localization.Parse("{SEPERATOR}" + descriptionparse) : "";
-
-                                                                if (usageparse == Localization.Parse(usageparse))
-                                                                    usageparse = "";
-                                                                else
-                                                                    usageparse = Shiftorium.UpgradeInstalled("help_usage") ? Localization.Parse("{SEPERATOR}" + usageparse, new Dictionary<string, string>() {
-                                                            {"%ns", ns.name},
-                                                            {"%cmd", cmd.name}
-                                                        }) : "";
-
-                                                                Console.WriteLine($"{{COMMAND}}{ns.name}.{cmd.name}" + usageparse + descriptionparse);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-
+                        string str = cmd.ToString();
+                        str = str.Replace(str.Substring(str.LastIndexOf("|")), "");
+                        sb.AppendLine(str);
                     }
-                    catch { }
                 }
             }
+            else
+            {
+                
+                //print all unique namespaces.
+                foreach(var n in TerminalBackend.Commands.Select(x => x.NamespaceInfo.name).Distinct())
+                {
+                    sb.AppendLine("sos.help{ns:\"" + n + "\"}");
+                }
+            }
+
+            Console.WriteLine(sb.ToString());
 
             return true;
         }
@@ -487,11 +533,33 @@ namespace ShiftOS.Engine
 
 Codepoints:       {SaveSystem.CurrentSave.Codepoints}
 Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
-                  {Shiftorium.GetAvailable().Length} available";
+                  {Shiftorium.GetAvailable().Length} available
 
-            if (Shiftorium.UpgradeInstalled("mud_control_centre"))
-                status += Environment.NewLine + $"Reputation:       {SaveSystem.CurrentSave.RawReputation} ({SaveSystem.CurrentSave.Reputation})";
+";
+
             Console.WriteLine(status);
+            Console.WriteLine("Objectives:");
+            try
+            {
+                if (Story.CurrentObjectives.Count > 0)
+                {
+                    foreach (var obj in Story.CurrentObjectives)
+                    {
+                        Console.WriteLine(obj.Name);
+                        Console.WriteLine("-------------------------------");
+                        Console.WriteLine();
+                        Console.WriteLine(obj.Description);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(" - No objectives are running. Check back later!");
+                }
+            }
+            catch
+            {
+                Console.WriteLine(" - No objectives are running. Check back later!");
+            }
             return true;
         }
     }
@@ -615,7 +683,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                     cat = args["cat"].ToString();
                 }
 
-                Dictionary<string, long> upgrades = new Dictionary<string, long>();
+                Dictionary<string, ulong> upgrades = new Dictionary<string, ulong>();
                 int maxLength = 5;
 
                 IEnumerable<ShiftoriumUpgrade> upglist = Shiftorium.GetAvailable();

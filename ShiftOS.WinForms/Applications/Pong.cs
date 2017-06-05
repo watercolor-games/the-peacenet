@@ -58,13 +58,62 @@ namespace ShiftOS.WinForms.Applications
         double incrementy = 0.2;
         int levelxspeed = 3;
         int levelyspeed = 3;
-        int beatairewardtotal;
-        int beataireward = 1;
-        int[] levelrewards = new int[50];
-        int totalreward;
+        ulong beatairewardtotal;
+        ulong beataireward = 1;
+        readonly uint[] levelrewards = {
+            0,
+            20,
+            60,
+            140,
+            290,
+            400,
+            600,
+            900,
+            1200,
+            1600,
+            2000,
+            2500,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000,
+            10000,
+            13000,
+            16000,
+            20000,
+            25000,
+            32000,
+            40000,
+            50000,
+            60000,
+            75000,
+            90000,
+            110000,
+            140000,
+            180000,
+            220000,
+            270000,
+            320000,
+            400000,
+            500000,
+            640000,
+            800000,
+            1000000,
+            1500000,
+            2000000};
+        ulong totalreward;
         int countdown = 3;
+        int rwdmultiplier;
+        Thread soundThread;
 
-        bool aiShouldIsbeEnabled = true;
+        bool aiShouldIsbeEnabled = true; // who named this variable? and were they having a stroke?
+
+        private void playsound(System.IO.Stream stream)
+        {
+            soundThread = new Thread((a) => ShiftOS.Engine.AudioManager.PlayStream((System.IO.Stream)a));
+            soundThread.Start(stream);
+        }
 
         public Pong()
         {
@@ -73,10 +122,8 @@ namespace ShiftOS.WinForms.Applications
 
         private void Pong_Load(object sender, EventArgs e)
         {
-            setuplevelrewards();
+            rwdmultiplier = ShiftoriumFrontend.UpgradeInstalled("pong_upgrade") ? 2 : 1;
         }
-
-
 
         // Move the paddle according to the mouse position.
         private void pongMain_MouseMove(object sender, MouseEventArgs e)
@@ -133,9 +180,7 @@ namespace ShiftOS.WinForms.Applications
         {
             if (this.Left < Screen.PrimaryScreen.Bounds.Width)
             {
-                ball.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
-                paddleComputer.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
-                paddleHuman.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
+                ball.BackColor = paddleComputer.BackColor = paddleHuman.BackColor = SkinEngine.LoadedSkin.ControlTextColor;
 
                 //Check if paddle upgrade has been bought and change paddles accordingly
                 //if (ShiftoriumFrontend.UpgradeInstalled("pong_increased_paddle_size"))
@@ -146,7 +191,7 @@ namespace ShiftOS.WinForms.Applications
                 //I don't know the point of this but I'm fucking 86ing it. - Michael
 
                 //Set the computer player to move according to the ball's position.
-                if (IsMultiplayerSession == true)
+                if (IsMultiplayerSession)
                 {
                     //If we're multiplayer, then we want to set the computer Y to the opponent's Y.
                     //If we're the leader, we set the AI paddle, else we set the player paddle.
@@ -160,83 +205,63 @@ namespace ShiftOS.WinForms.Applications
                     if (aiShouldIsbeEnabled)
                         if (ball.Location.X > (this.Width - (this.Width / 3)) - xVel * 10 && xVel > 0)
                         {
-                            if (ball.Location.Y > paddleComputer.Location.Y + 50)
-                            {
-                                paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y + computerspeed);
-                            }
-                            if (ball.Location.Y < paddleComputer.Location.Y + 50)
-                            {
-                                paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y - computerspeed);
-                            }
+                            if (ball.Top > paddleComputer.Top + 50)
+                                paddleComputer.Top += computerspeed;
+                            else
+                                paddleComputer.Top -= computerspeed;
                             casualposition = rand.Next(-150, 201);
                         }
                         else
                         {
                             //used to be me.location.y - except it's fucking C# and this comment is misleading as fuck. OH WAIT! I didn't write it! And none of the current devs did either! - Michael
-                            if (paddleComputer.Location.Y > this.Size.Height / 2 - paddleComputer.Height + casualposition)
-                            {
-                                paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y - computerspeed);
-                            }
-                            //Rylan is hot. Used to be //used to be me.location.y
-                            if (paddleComputer.Location.Y < this.Size.Height / 2 - paddleComputer.Height + casualposition)
-                            {
-                                paddleComputer.Location = new Point(paddleComputer.Location.X, paddleComputer.Location.Y + computerspeed);
-                            }
+                            if (paddleComputer.Top > this.Height / 2 - paddleComputer.Height + casualposition)
+                                paddleComputer.Top -= computerspeed;
+                            else
+                                paddleComputer.Top += computerspeed;
                         }
                 }
                 //Set Xvel and Yvel speeds from decimal
                 if (xVel > 0)
                     xVel = (int)Math.Round(xveldec);
-                if (xVel < 0)
+                else
                     xVel = (int)-Math.Round(xveldec);
                 if (yVel > 0)
                     yVel = (int)Math.Round(yveldec);
-                if (yVel < 0)
+                else
                     yVel = (int)-Math.Round(yveldec);
 
-                bool BallPhysics = true;
-
-                if (IsMultiplayerSession)
+                if (IsMultiplayerSession && !IsLeader)
                 {
-                    //Logic for moving the ball in Multiplayer.
-                    if (IsLeader)
-                    {
-                        ball.Location = new Point(ball.Location.X + xVel, ball.Location.Y + yVel);
-                    }
-                    else
-                    {
-                        //Move it to the leader's ball position.
-                        ball.Location = new Point(LeaderX, LeaderY);
-                        BallPhysics = false;
-                    }
+                    // Move it to the leader's ball position.
+                    ball.Location = new Point(LeaderX, LeaderY);
                 }
                 else
-                {// Move the game ball.
-                    ball.Location = new Point(ball.Location.X + xVel, ball.Location.Y + yVel);
-                }
-                if (BallPhysics)
                 {
+                    var newRect = new Rectangle(ball.Location, ball.Size); // copy ball's Bounds
+                    newRect.X += xVel;
+                    newRect.Y += yVel;
+
                     // Check for top wall.
-                    if (ball.Location.Y < 0)
+                    if (newRect.Y < 0)
                     {
-                        ball.Location = new Point(ball.Location.X, 0);
+                        newRect.Y = 0;
                         yVel = -yVel;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
+                        playsound(Properties.Resources.typesound);
                     }
 
                     // Check for bottom wall.
-                    if (ball.Location.Y > pgcontents.Height - ball.Height)
+                    if (newRect.Y > pgcontents.Height - ball.Height)
                     {
-                        ball.Location = new Point(ball.Location.X, pgcontents.Height - ball.Size.Height);
+                        newRect.Y = pgcontents.Height - ball.Height;
                         yVel = -yVel;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
+                        playsound(Properties.Resources.typesound);
                     }
 
 
                     // Check for player paddle.
-                    if (ball.Bounds.IntersectsWith(paddleHuman.Bounds))
+                    if (newRect.IntersectsWith(paddleHuman.Bounds))
                     {
-                        ball.Location = new Point(paddleHuman.Location.X + ball.Size.Width + 1, ball.Location.Y);
+                        newRect.X = paddleHuman.Left + ball.Width + 1;
                         //randomly increase x or y speed of ball
                         switch (rand.Next(1, 3))
                         {
@@ -246,23 +271,24 @@ namespace ShiftOS.WinForms.Applications
                             case 2:
                                 if (yveldec > 0)
                                     yveldec = yveldec + incrementy;
-                                if (yveldec < 0)
+                                else
                                     yveldec = yveldec - incrementy;
                                 break;
                         }
                         xVel = -xVel;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                        playsound(Properties.Resources.writesound);
 
                     }
 
                     // Check for computer paddle.
-                    if (ball.Bounds.IntersectsWith(paddleComputer.Bounds))
+                    if (newRect.IntersectsWith(paddleComputer.Bounds))
                     {
-                        ball.Location = new Point(paddleComputer.Location.X - paddleComputer.Size.Width - 1, ball.Location.Y);
+                        newRect.X = paddleComputer.Left - paddleComputer.Width - 1;
                         xveldec = xveldec + incrementx;
                         xVel = -xVel;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                        playsound(Properties.Resources.writesound);
                     }
+                    ball.Location = newRect.Location;
                 }
 
 
@@ -297,11 +323,11 @@ namespace ShiftOS.WinForms.Applications
                         lblmissedout.Text = Localization.Parse("{YOU_MISSED_OUT_ON}:") + Environment.NewLine + lblstatscodepoints.Text.Replace(Localization.Parse("{CODEPOINTS}: "), "") + Localization.Parse(" {CODEPOINTS}");
                         if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade_2"))
                         {
-                            totalreward = levelrewards[level - 1] + beatairewardtotal;
+                            totalreward = (levelrewards[level - 1] * (ulong) rwdmultiplier + beatairewardtotal);
                             double onePercent = (totalreward / 100);
                             lblbutyougained.Show();
                             lblbutyougained.Text = Localization.Parse("{BUT_YOU_GAINED}:") + Environment.NewLine + onePercent.ToString("") + (Localization.Parse(" {CODEPOINTS}"));
-                            SaveSystem.TransferCodepointsFrom("pong", (totalreward / 100));
+                            SaveSystem.TransferCodepointsFrom("pong", (ulong)(onePercent));
                         }
                         else
                         {
@@ -343,10 +369,10 @@ namespace ShiftOS.WinForms.Applications
                 if (IsLeader)
                 {
                     //lblstats.Text = "Xspeed: " & Math.Abs(xVel) & " Yspeed: " & Math.Abs(yVel) & " Human Location: " & paddleHuman.Location.ToString & " Computer Location: " & paddleComputer.Location.ToString & Environment.NewLine & " Ball Location: " & ball.Location.ToString & " Xdec: " & xveldec & " Ydec: " & yveldec & " Xinc: " & incrementx & " Yinc: " & incrementy
-                    lblstatsX.Text = Localization.Parse("{H_VEL}: ") + xveldec;
-                    lblstatsY.Text = Localization.Parse("{V_VEL}: ") + yveldec;
-                    lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
-                    lbllevelandtime.Text = Localization.Parse("{LEVEL}: " + level + " - " + secondsleft + " {SECONDS_LEFT}");
+                    lblstatsX.Text = "X vel: " + xveldec;
+                    lblstatsY.Text = "Y vel: " + yveldec;
+                    lblstatscodepoints.Text = "Codepoints: " + (levelrewards[level - 1] * (ulong) rwdmultiplier + beatairewardtotal).ToString();
+                    lbllevelandtime.Text = "Level: " + level + " - " + secondsleft + " seconds left";
 
                     if (xVel > 20 || xVel < -20)
                     {
@@ -355,8 +381,7 @@ namespace ShiftOS.WinForms.Applications
                     }
                     else
                     {
-                        paddleHuman.Width = 20;
-                        paddleComputer.Width = 20;
+                        paddleHuman.Width = paddleComputer.Width = 20;
                     }
                 }
                 if (!IsMultiplayerSession)
@@ -415,7 +440,7 @@ namespace ShiftOS.WinForms.Applications
                         StartLevel();
                     }));
                 }
-                else if(msg.Name == "pong_mp_levelcompleted")
+                else if (msg.Name == "pong_mp_levelcompleted")
                 {
                     level = Convert.ToInt32(msg.Contents) + 1;
                     this.Invoke(new Action(CompleteLevel));
@@ -434,7 +459,7 @@ namespace ShiftOS.WinForms.Applications
                         pnlmultiplayerhandshake.Hide();
                     }));
                 }
-                else if(msg.Name == "pong_mp_cashedout")
+                else if (msg.Name == "pong_mp_cashedout")
                 {
                     this.Invoke(new Action(() =>
                     {
@@ -442,19 +467,19 @@ namespace ShiftOS.WinForms.Applications
                     }));
                     Infobox.Show("Cashed out.", "The other player has cashed out their Codepoints. Therefore, we have automatically cashed yours out.");
                 }
-                else if(msg.Name == "pong_mp_startlevel")
+                else if (msg.Name == "pong_mp_startlevel")
                 {
                     OpponentAgrees = true;
-                    if(YouAgree == false)
+                    if (YouAgree == false)
                     {
-                        Infobox.PromptYesNo("Play another level?", "The opponent wants to play another level. Would you like to as well?", (answer)=>
+                        Infobox.PromptYesNo("Play another level?", "The opponent wants to play another level. Would you like to as well?", (answer) =>
                         {
                             YouAgree = answer;
                             ServerManager.Forward(OpponentGUID, "pong_mp_level_callback", YouAgree.ToString());
                         });
                     }
                 }
-                else if(msg.Name == "pong_mp_level_callback")
+                else if (msg.Name == "pong_mp_level_callback")
                 {
                     bool agreed = bool.Parse(msg.Contents);
                     OpponentAgrees = agreed;
@@ -472,7 +497,7 @@ namespace ShiftOS.WinForms.Applications
                         this.PossibleMatchmakes.Remove(msg.Contents);
                     this.Invoke(new Action(ListMatchmakes));
                 }
-                else if(msg.Name == "pong_mp_clockupdate")
+                else if (msg.Name == "pong_mp_clockupdate")
                 {
                     secondsleft = Convert.ToInt32(msg.Contents);
                 }
@@ -566,7 +591,7 @@ namespace ShiftOS.WinForms.Applications
         public void LoseMP()
         {
             ball.Location = new Point(this.Size.Width / 2 + 200, this.Size.Height / 2);
-            if(IsLeader)
+            if (IsLeader)
                 if (xVel > 0)
                     xVel = -xVel;
             lblbeatai.Show();
@@ -629,12 +654,12 @@ namespace ShiftOS.WinForms.Applications
                 if (this.Left < Screen.PrimaryScreen.Bounds.Width)
                 {
                     secondsleft = secondsleft - 1;
-                    if (secondsleft == 1)
+                    if (secondsleft == 0)
                     {
                         CompleteLevel();
                     }
 
-                    lblstatscodepoints.Text = Localization.Parse("{CODEPOINTS}: ") + (levelrewards[level - 1] + beatairewardtotal).ToString();
+                    lblstatscodepoints.Text = "Codepoints: " + (levelrewards[level - 1] * (ulong) rwdmultiplier + beatairewardtotal).ToString();
                 }
             }
             SetupStats();
@@ -670,165 +695,34 @@ namespace ShiftOS.WinForms.Applications
 
             lblpreviousstats.Text = Localization.Parse("{INITIAL_H_VEL}: " + levelxspeed + Environment.NewLine + "{INITIAL_V_VEL}: " + levelyspeed + Environment.NewLine + "{INC_H_VEL}: " + incrementx + Environment.NewLine + "{INC_V_VEL}: " + incrementy);
 
-            switch (rand.Next(1, 3))
-            {
-                case 1:
-                    levelxspeed = levelxspeed + 1;
-                    break;
-                case 2:
-                    levelxspeed = levelxspeed + 2;
-                    break;
-            }
+            levelxspeed += rand.Next(1, 3);
 
-            switch (rand.Next(1, 3))
-            {
-                case 1:
-                    levelyspeed = levelyspeed + 1;
-                    break;
-                case 2:
-                    levelyspeed = levelyspeed + 2;
-                    break;
-            }
+            levelyspeed += rand.Next(1, 3);
 
-            switch (rand.Next(1, 6))
-            {
-                case 1:
-                    incrementx = incrementx + 0.1;
-                    break;
-                case 2:
-                    incrementx = incrementx + 0.2;
-                    break;
-                case 3:
-                    incrementy = incrementy + 0.1;
-                    break;
-                case 4:
-                    incrementy = incrementy + 0.2;
-                    break;
-                case 5:
-                    incrementy = incrementy + 0.3;
-                    break;
-            }
+            int rndinc = rand.Next(1, 6);
+            if (rndinc == 5)
+                incrementy += 0.3;
+            else
+                incrementy += (((rndinc - 1) % 2) + 1) / 10;
 
             lblnextstats.Text = Localization.Parse("{INITIAL_H_VEL}: " + levelxspeed + Environment.NewLine + "{INITIAL_V_VEL}: " + levelyspeed + Environment.NewLine + "{INC_H_VEL}: " + incrementx + Environment.NewLine + "{INC_V_VEL}: " + incrementy);
 
             if (level < 15)
             {
+                beataireward = (ulong)(level * 5);
                 if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
-                {
-                    beataireward = level * 10;
-                } else
-                {
-                    beataireward = level * 5;
-                }
+                    beataireward *= 2;
             }
             else
-            {
                 if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
-                {
-                    double br = levelrewards[level - 1] / 10;
-                    beataireward = (int)Math.Round(br) * 10;
-                } else
-                {
-                    double br = levelrewards[level - 1] / 10;
-                    beataireward = (int)Math.Round(br) * 5;
-                }
-            }
+                beataireward = levelrewards[level - 1];
+            else
+                beataireward = (ulong)Math.Round((double) levelrewards[level - 1] / 2);
 
-            totalreward = levelrewards[level - 1] + beatairewardtotal;
+            totalreward = levelrewards[level - 1] * (ulong) rwdmultiplier + beatairewardtotal;
 
             btncashout.Text = Localization.Parse("{CASH_OUT_WITH_CODEPOINTS}");
             btnplayon.Text = Localization.Parse("{PONG_PLAY_ON_FOR_MORE}");
-        }
-
-        private void setuplevelrewards()
-        {
-            if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
-            {
-                levelrewards[0] = 0;
-                levelrewards[1] = 40;
-                levelrewards[2] = 120;
-                levelrewards[3] = 280;
-                levelrewards[4] = 580;
-                levelrewards[5] = 800;
-                levelrewards[6] = 1200;
-                levelrewards[7] = 1800;
-                levelrewards[8] = 2400;
-                levelrewards[9] = 3200;
-                levelrewards[10] = 4000;
-                levelrewards[11] = 5000;
-                levelrewards[12] = 6000;
-                levelrewards[13] = 8000;
-                levelrewards[14] = 10000;
-                levelrewards[15] = 12000;
-                levelrewards[16] = 16000;
-                levelrewards[17] = 20000;
-                levelrewards[18] = 26000;
-                levelrewards[19] = 32000;
-                levelrewards[20] = 40000;
-                levelrewards[21] = 50000;
-                levelrewards[22] = 64000;
-                levelrewards[23] = 80000;
-                levelrewards[24] = 100000;
-                levelrewards[25] = 120000;
-                levelrewards[26] = 150000;
-                levelrewards[27] = 180000;
-                levelrewards[28] = 220000;
-                levelrewards[29] = 280000;
-                levelrewards[30] = 360000;
-                levelrewards[31] = 440000;
-                levelrewards[32] = 540000;
-                levelrewards[33] = 640000;
-                levelrewards[34] = 800000;
-                levelrewards[35] = 1000000;
-                levelrewards[36] = 1280000;
-                levelrewards[37] = 1600000;
-                levelrewards[38] = 2000000;
-                levelrewards[39] = 3000000;
-                levelrewards[40] = 4000000;
-            } else
-            {
-                levelrewards[0] = 0;
-                levelrewards[1] = 20;
-                levelrewards[2] = 60;
-                levelrewards[3] = 140;
-                levelrewards[4] = 290;
-                levelrewards[5] = 400;
-                levelrewards[6] = 600;
-                levelrewards[7] = 900;
-                levelrewards[8] = 1200;
-                levelrewards[9] = 1600;
-                levelrewards[10] = 2000;
-                levelrewards[11] = 2500;
-                levelrewards[12] = 3000;
-                levelrewards[13] = 4000;
-                levelrewards[14] = 5000;
-                levelrewards[15] = 6000;
-                levelrewards[16] = 8000;
-                levelrewards[17] = 10000;
-                levelrewards[18] = 13000;
-                levelrewards[19] = 16000;
-                levelrewards[20] = 20000;
-                levelrewards[21] = 25000;
-                levelrewards[22] = 32000;
-                levelrewards[23] = 40000;
-                levelrewards[24] = 50000;
-                levelrewards[25] = 60000;
-                levelrewards[26] = 75000;
-                levelrewards[27] = 90000;
-                levelrewards[28] = 110000;
-                levelrewards[29] = 140000;
-                levelrewards[30] = 180000;
-                levelrewards[31] = 220000;
-                levelrewards[32] = 270000;
-                levelrewards[33] = 320000;
-                levelrewards[34] = 400000;
-                levelrewards[35] = 500000;
-                levelrewards[36] = 640000;
-                levelrewards[37] = 800000;
-                levelrewards[38] = 1000000;
-                levelrewards[39] = 1500000;
-                levelrewards[40] = 2000000;
-            }
         }
 
         // ERROR: Handles clauses are not supported in C#
@@ -836,34 +730,21 @@ namespace ShiftOS.WinForms.Applications
         {
             if (this.Left < Screen.PrimaryScreen.Bounds.Width)
             {
-                switch (countdown)
+                if (countdown == 0)
                 {
-                    case 0:
-                        countdown = 3;
-                        lblcountdown.Hide();
-                        lblbeatai.Hide();
-                        gameTimer.Start();
-                        counter.Start();
-                        tmrcountdown.Stop();
-                        break;
-                    case 1:
-                        lblcountdown.Text = "1";
-                        countdown = countdown - 1;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
-                        break;
-                    case 2:
-                        lblcountdown.Text = "2";
-                        countdown = countdown - 1;
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
-                        break;
-                    case 3:
-                        lblcountdown.Text = "3";
-                        countdown = countdown - 1;
-                        lblcountdown.Show();
-                        ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.typesound);
-                        break;
+                    countdown = 3;
+                    lblcountdown.Hide();
+                    lblbeatai.Hide();
+                    gameTimer.Start();
+                    counter.Start();
+                    tmrcountdown.Stop();
+                    return;
                 }
-            
+                if (!lblcountdown.Visible)
+                    lblcountdown.Show();
+                lblcountdown.Text = countdown.ToString();
+                countdown -= 1;
+                playsound(Properties.Resources.typesound);
             }
         }
 
@@ -874,7 +755,7 @@ namespace ShiftOS.WinForms.Applications
             pnlfinalstats.Show();
             lblfinalcodepointswithtext.Text = Localization.Parse("{YOU_WON} " + totalreward + " {CODEPOINTS}!");
             lblfinallevelreached.Text = Localization.Parse("{CODEPOINTS_FOR_BEATING_LEVEL}: ") + (level - 1).ToString();
-            lblfinallevelreward.Text = levelrewards[level - 1].ToString();
+            lblfinallevelreward.Text = (levelrewards[level - 1] * rwdmultiplier).ToString();
             lblfinalcomputerreward.Text = beatairewardtotal.ToString();
             lblfinalcodepoints.Text = totalreward + Localization.Parse(" {CODEPOINTS_SHORT}");
             SaveSystem.TransferCodepointsFrom("pong", totalreward);
@@ -912,7 +793,8 @@ namespace ShiftOS.WinForms.Applications
             if (ShiftoriumFrontend.UpgradeInstalled("pong_upgrade"))
             {
                 beataireward = 10;
-            } else
+            }
+            else
             {
                 beataireward = 5;
             }
@@ -981,6 +863,10 @@ namespace ShiftOS.WinForms.Applications
                     var hs = unite.GetPongHighscores();
                     foreach (var score in hs.Highscores)
                     {
+                        if (this.ParentForm.Visible == false)
+                        {
+                            Thread.CurrentThread.Abort();
+                        }
                         string username = unite.GetDisplayNameId(score.UserId);
                         this.Invoke(new Action(() =>
                         {
@@ -994,8 +880,15 @@ namespace ShiftOS.WinForms.Applications
                 }
                 catch
                 {
-                    Infobox.Show("Service unavailable.", "The Pong Highscore service is unavailable at this time.");
-                    this.Invoke(new Action(pnlgamestats.BringToFront));
+                    try
+                    {
+                        if (this.ParentForm.Visible)
+                        {
+                            Infobox.Show("Service unavailable.", "The Pong Highscore service is unavailable at this time.");
+                            this.Invoke(new Action(pnlgamestats.BringToFront));
+                        }
+                    }
+                    catch { } //JUST. ABORT. THE. FUCKING. THREAD.
                     return;
                 }
             });
@@ -1019,7 +912,7 @@ namespace ShiftOS.WinForms.Applications
         {
             newgame();
         }
-        
+
         // ERROR: Handles clauses are not supported in C#
         private void btnstartgame_Click(object sender, EventArgs e)
         {
@@ -1034,9 +927,7 @@ namespace ShiftOS.WinForms.Applications
             int i = rand.Next(0, 100);
 
             if (i >= 25 && i <= 50)
-            {
                 tmrstoryline.Stop();
-            }
 
         }
 
@@ -1046,25 +937,13 @@ namespace ShiftOS.WinForms.Applications
             tmrstoryline.Stop();
         }
 
-        private void Label6_Click(object sender, EventArgs e)
+        private void ball_MouseEnter(object sender, EventArgs e)
         {
-
-        }
-
-        private void Label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pgcontents_Paint(object sender, PaintEventArgs e) {
-
-        }
-
-        private void ball_MouseEnter(object sender, EventArgs e) {
             aiShouldIsbeEnabled = false;
         }
 
-        private void ball_MouseLeave(object sender, EventArgs e) {
+        private void ball_MouseLeave(object sender, EventArgs e)
+        {
             aiShouldIsbeEnabled = true;
         }
 
@@ -1091,12 +970,12 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
-            if(IsMultiplayerSession == true)
+            if (IsMultiplayerSession)
             {
-                if(!string.IsNullOrWhiteSpace(OpponentGUID))
+                if (!string.IsNullOrWhiteSpace(OpponentGUID))
                     ServerManager.Forward(OpponentGUID, "pong_mp_left", null);
+                LeaveMatchmake();
             }
-            LeaveMatchmake();
             ServerManager.MessageReceived -= this.ServerMessageReceivedHandler;
 
             return true;
@@ -1123,7 +1002,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void lvotherplayers_DoubleClick(object sender, EventArgs e)
         {
-            if(lvotherplayers.SelectedItems.Count > 0)
+            if (lvotherplayers.SelectedItems.Count > 0)
             {
                 SendLeaderGUID(lvotherplayers.SelectedItems[0].Text);
             }

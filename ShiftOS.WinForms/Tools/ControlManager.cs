@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  * 
@@ -136,84 +137,140 @@ namespace ShiftOS.WinForms.Tools
         /// <param name="ctrl">The control to center (this is an extension method - you can call it on a control as though it was a method in that control)</param>
         public static void CenterParent(this Control ctrl)
         {
-            ctrl.Location = new Point(
-                    (ctrl.Parent.Width - ctrl.Width) / 2,
-                    (ctrl.Parent.Height - ctrl.Height) / 2
-                );
+            try
+            {
+                ctrl.Location = new Point(
+                        (ctrl.Parent.Width - ctrl.Width) / 2,
+                        (ctrl.Parent.Height - ctrl.Height) / 2
+                    );
+            }
+            catch { }
         }
 
         public static void SetupControl(Control ctrl)
         {
-            Desktop.InvokeOnWorkerThread(new Action(() =>
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                ctrl.SuspendLayout();
-            }));
-            if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
-            {
-                string tag = "";
-
-                try
+                if (!(ctrl is MenuStrip) && !(ctrl is ToolStrip) && !(ctrl is StatusStrip) && !(ctrl is ContextMenuStrip))
                 {
-                    if(ctrl.Tag != null)
-                    tag = ctrl.Tag.ToString();
-                }
-                catch { }
+                    string tag = "";
 
-                if (!tag.Contains("keepbg"))
-                {
-                    if (ctrl.BackColor != Control.DefaultBackColor)
+                    try
                     {
-                        Desktop.InvokeOnWorkerThread(() =>
+                        if (ctrl.Tag != null)
+                            tag = ctrl.Tag.ToString();
+                    }
+                    catch { }
+
+                    if (!tag.Contains("ignoreal"))
+                    {
+                        ctrl.Click += (o, a) =>
+                        {
+                            Desktop.HideAppLauncher();
+                        };
+
+                    }
+
+                    if (!tag.Contains("keepbg"))
+                    {
+                        if (ctrl.BackColor != Control.DefaultBackColor)
                         {
                             ctrl.BackColor = SkinEngine.LoadedSkin.ControlColor;
-                        });
+                        }
                     }
-                }
 
-                if (!tag.Contains("keepfont"))
-                {
-                    Desktop.InvokeOnWorkerThread(() =>
+                    if (!tag.Contains("keepfont"))
                     {
                         ctrl.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
                         ctrl.Font = SkinEngine.LoadedSkin.MainFont;
-                    });
-                    if (tag.Contains("header1"))
-                    {
-                        Desktop.InvokeOnWorkerThread(() =>
+                        if (tag.Contains("header1"))
                         {
-                            ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
-                        });
-                    }
+                            Desktop.InvokeOnWorkerThread(() =>
+                            {
+                                ctrl.Font = SkinEngine.LoadedSkin.HeaderFont;
+                            });
+                        }
 
-                    if (tag.Contains("header2"))
-                    {
-                        Desktop.InvokeOnWorkerThread(() =>
+                        if (tag.Contains("header2"))
                         {
                             ctrl.Font = SkinEngine.LoadedSkin.Header2Font;
-                        });
-                    }
+                        }
 
-                    if (tag.Contains("header3"))
-                    {
-                        Desktop.InvokeOnWorkerThread(() =>
+                        if (tag.Contains("header3"))
                         {
 
                             ctrl.Font = SkinEngine.LoadedSkin.Header3Font;
-                        });
+                        }
+                    }
+                    try
+                    {
+#if !SLOW_LOCALIZATION
+                        if (!string.IsNullOrWhiteSpace(ctrl.Text))
+                            {
+                                string ctrlText = Localization.Parse(ctrl.Text);
+                                ctrl.Text = ctrlText;
+                            }
+#endif
+                    }
+                    catch
+                    {
+
+                    }
+
+                    if (ctrl is Button)
+                    {
+                        Button b = ctrl as Button;
+                        if (!tag.Contains("keepbg"))
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        }
+                        b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
+                        if (!tag.Contains("keepfg"))
+                        {
+                            b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                            b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                        }
+                        if (!tag.Contains("keepfont"))
+                            b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+
+                        Color orig_bg = b.BackColor;
+
+                        b.MouseEnter += (o, a) =>
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonhover");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
+                        };
+                        b.MouseLeave += (o, a) =>
+                        {
+                            b.BackColor = orig_bg;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        };
+                        b.MouseUp += (o, a) =>
+                        {
+                            b.BackColor = orig_bg;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                        };
+
+                        b.MouseDown += (o, a) =>
+                        {
+                            b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
+                            b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
+                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
+
+                        };
                     }
                 }
-                try
-                {
-                    string ctrlText = Localization.Parse(ctrl.Text);
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        ctrl.Text = ctrlText;
-                    });
-                }
-                catch
-                {
 
+                if (ctrl is TextBox)
+                {
+                    (ctrl as TextBox).BorderStyle = BorderStyle.FixedSingle;
                 }
+
                 ctrl.KeyDown += (o, a) =>
                 {
                     if (a.Control && a.KeyCode == Keys.T)
@@ -229,27 +286,20 @@ namespace ShiftOS.WinForms.Tools
                 };
                 if (ctrl is Button)
                 {
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        (ctrl as Button).FlatStyle = FlatStyle.Flat;
-                    });
+                    (ctrl as Button).FlatStyle = FlatStyle.Flat;
                 }
                 else if (ctrl is WindowBorder)
                 {
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        (ctrl as WindowBorder).Setup();
-                    });
+                    (ctrl as WindowBorder).Setup();
                 }
-            }
-            Desktop.InvokeOnWorkerThread(() =>
-            {
 
+                
                 MakeDoubleBuffered(ctrl);
-                ctrl.ResumeLayout();
+                ControlSetup?.Invoke(ctrl);
             });
-            ControlSetup?.Invoke(ctrl);
         }
+
+
 
         public static event Action<Control> ControlSetup;
 
@@ -270,30 +320,12 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControls(Control frm, bool runInThread = true)
         {
+            var ctrls = frm.Controls.ToList();
+            for (int i = 0; i < ctrls.Count(); i++)
+            {
+                SetupControls(ctrls[i]);
+            }
             SetupControl(frm);
-            frm.Click += (o, a) =>
-            {
-                Desktop.HideAppLauncher();
-            };
-            ThreadStart ts = () =>
-            {
-                for (int i = 0; i < frm.Controls.Count; i++)
-                {
-                        SetupControls(frm.Controls[i], false);
-                }
-
-            };
-
-            if (runInThread == true)
-            {
-                var t = new Thread(ts);
-                t.IsBackground = true;
-                t.Start();
-            }
-            else
-            {
-                ts?.Invoke();
-            }
         }
 
     }

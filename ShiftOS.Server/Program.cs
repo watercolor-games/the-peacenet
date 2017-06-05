@@ -55,17 +55,6 @@ namespace ShiftOS.Server
 	public class Program
 	{
 		/// <summary>
-		/// The admin username.
-		/// </summary>
-		public static string AdminUsername = "admin";
-
-		/// <summary>
-		/// The admin password.
-		/// </summary>
-		public static string AdminPassword = "admin";
-
-
-		/// <summary>
 		/// The server.
 		/// </summary>
 		public static NetObjectServer server;
@@ -86,16 +75,28 @@ namespace ShiftOS.Server
 		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string[] args)
 		{
+            Thread.Sleep(2000);
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
+                Environment.Exit(0);
+            };
+            UserConfig.Get();
             System.Timers.Timer tmr = new System.Timers.Timer(5000);
             tmr.Elapsed += (o, a) =>
             {
                 if (server.IsOnline)
                 {
-                    server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+
+                    try
                     {
-                        Name = "heartbeat",
-                        GUID = "server"
-                    }));
+                        server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+                        {
+                            Name = "heartbeat",
+                            GUID = "server"
+                        }));
+                    }
+                    catch { }
                 }
             };
 			if (!Directory.Exists("saves"))
@@ -154,13 +155,7 @@ namespace ShiftOS.Server
                 Console.WriteLine("FUCK. Something HORRIBLE JUST HAPPENED.");
             };
 
-            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
-            {
-                if(server.IsOnline == true)
-                    server.Stop();
-                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
-            };
-				
+            	
 			server.OnReceived += (o, a) =>
 			{
 				var obj = a.Data.Object;
@@ -207,7 +202,6 @@ namespace ShiftOS.Server
             task.Wait();
             */
 
-            RandomUserGenerator.StartThread();
 
             while (server.IsOnline)
             {

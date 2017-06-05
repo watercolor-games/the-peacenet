@@ -8,6 +8,41 @@
 		Category: "Enhancements",
 	},
 	{
+		Name: "Icon Manager",
+		Cost: 450,
+		Description: "This tool allows you to add and edit application icons within ShiftOS for the small prive of 450 Codepoints!",
+		Dependencies: "skinning",
+		Category: "Application"
+	},
+	{
+		Name: "AL Icon Manager",
+		Costs: 150,
+		Description: "Add an App Launcher entry for the Icon Manager.",
+		Dependencies: "icon_manager;app_launcher",
+		Category: "Customization"
+	},
+	{
+		Name: "Shift Progress Bar",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you'll get the ability to set the foreground and background color of the progress bar, and many more things!.",
+		Dependencies: "shifter;shift_buttons",
+		Category: "Customization"
+	},
+	{
+		Name: "Shift Buttons",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS buttons? This Shifter upgrade gives you a new \"Buttons\" category in the System category to do just that.",
+		Dependencies: "shifter",
+		Category: "Customization"
+	},
+	{
+		Name: "GUI Based Login Screen",
+		Cost: 500,
+		Description: "Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, why not use these tools to create a functioning and awesome-looking login screen?",
+		Dependencies: "skinning;desktop;wm_free_placement",
+		Category: "Kernel & System"
+	},
+	{
 		Name: "Shift Screensavers",
 		Cost: 100,
 		Description: "This Shifter upgrade will allow you to customize the screensaver.",
@@ -130,13 +165,6 @@
 	},
 
 	// SHIFTLETTERS AND WORDLISTS
-	{
-		Name: "ShiftLetters",
-		Cost: 150,
-		Dependencies: null,
-		Category: "Applications",
-		Description: "Sick and tired of playing Pong? Buy this upgrade to get a whole new game!"
-	},
 	{
 		Name: "AL ShiftLetters",
 		Cost: 150,
@@ -269,7 +297,7 @@
 		Name: "AL Widget Manager",
 		Cost: 125,
 		Description: "Desktop Widgets are a huge advancement in ShiftOS technology, allowing access to system information, and quick control of your system, without even opening a window. However, we still need to be able to modify each widget. This upgrade adds an App Launcher entry for the Desktop Widget Manager.",
-		Description: "app_launcher;desktop_widgets",
+		Dependencies: "app_launcher;desktop_widgets",
 		Category: "GUI"
 	},
 	{
@@ -690,7 +718,8 @@
 		Name: "Artpad",
 		Cost: 7500,
 		Category: "Applications",
-		Description: "ArtPad is a very extensible tool that allows you to draw images within ShiftOS. Buy this upgrade to gain access to it through win.open{}!"
+		Description: "ArtPad is a very extensible tool that allows you to draw images within ShiftOS. Buy this upgrade to gain access to it through win.open{}!",
+		Dependencies: "color_depth_8_bits"
 	},
 	{
 		Name: "AL Artpad",
@@ -1007,13 +1036,6 @@
 
 	// SHIFTSWEEPER
 
-	{
-		Name: "ShiftSweeper",
-		Cost: 800,
-		Dependencies: "shiftletters",
-		Category: "Applications",
-		Description: "Getting bored with Pong and ShiftLetters? Try this BRAND NEW game called ShiftSweeper!"
-	},
 	{
 		Name: "AL ShiftSweeper",
 		Cost: 100,

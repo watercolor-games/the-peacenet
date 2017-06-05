@@ -61,16 +61,16 @@ namespace ShiftOS.WinForms.Applications
             this.btnbuy = new System.Windows.Forms.Button();
             this.lbupgradetitle = new System.Windows.Forms.Label();
             this.pnllist = new System.Windows.Forms.Panel();
+            this.lbnoupgrades = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.lblcategorytext = new System.Windows.Forms.Label();
+            this.btncat_forward = new System.Windows.Forms.Button();
+            this.btncat_back = new System.Windows.Forms.Button();
             this.lbcodepoints = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.pgupgradeprogress = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
             this.lbupgrades = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.btncat_back = new System.Windows.Forms.Button();
-            this.btncat_forward = new System.Windows.Forms.Button();
-            this.lblcategorytext = new System.Windows.Forms.Label();
-            this.lbnoupgrades = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnlupgradeactions.SuspendLayout();
@@ -159,6 +159,63 @@ namespace ShiftOS.WinForms.Applications
             this.pnllist.Size = new System.Drawing.Size(406, 427);
             this.pnllist.TabIndex = 0;
             // 
+            // lbnoupgrades
+            // 
+            this.lbnoupgrades.AutoSize = true;
+            this.lbnoupgrades.Location = new System.Drawing.Point(69, 183);
+            this.lbnoupgrades.Name = "lbnoupgrades";
+            this.lbnoupgrades.Size = new System.Drawing.Size(71, 13);
+            this.lbnoupgrades.TabIndex = 6;
+            this.lbnoupgrades.Tag = "header2";
+            this.lbnoupgrades.Text = "No upgrades!";
+            this.lbnoupgrades.Visible = false;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.lblcategorytext);
+            this.panel3.Controls.Add(this.btncat_forward);
+            this.panel3.Controls.Add(this.btncat_back);
+            this.panel3.Location = new System.Drawing.Point(6, 76);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(394, 23);
+            this.panel3.TabIndex = 5;
+            // 
+            // lblcategorytext
+            // 
+            this.lblcategorytext.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblcategorytext.Location = new System.Drawing.Point(29, 0);
+            this.lblcategorytext.Name = "lblcategorytext";
+            this.lblcategorytext.Size = new System.Drawing.Size(336, 23);
+            this.lblcategorytext.TabIndex = 2;
+            this.lblcategorytext.Text = "No Upgrades";
+            this.lblcategorytext.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btncat_forward
+            // 
+            this.btncat_forward.AutoSize = true;
+            this.btncat_forward.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btncat_forward.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btncat_forward.Location = new System.Drawing.Point(365, 0);
+            this.btncat_forward.Name = "btncat_forward";
+            this.btncat_forward.Size = new System.Drawing.Size(29, 23);
+            this.btncat_forward.TabIndex = 1;
+            this.btncat_forward.Text = "-->";
+            this.btncat_forward.UseVisualStyleBackColor = true;
+            this.btncat_forward.Click += new System.EventHandler(this.btncat_forward_Click);
+            // 
+            // btncat_back
+            // 
+            this.btncat_back.AutoSize = true;
+            this.btncat_back.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btncat_back.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btncat_back.Location = new System.Drawing.Point(0, 0);
+            this.btncat_back.Name = "btncat_back";
+            this.btncat_back.Size = new System.Drawing.Size(29, 23);
+            this.btncat_back.TabIndex = 0;
+            this.btncat_back.Text = "<--";
+            this.btncat_back.UseVisualStyleBackColor = true;
+            this.btncat_back.Click += new System.EventHandler(this.btncat_back_Click);
+            // 
             // lbcodepoints
             // 
             this.lbcodepoints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -168,7 +225,6 @@ namespace ShiftOS.WinForms.Applications
             this.lbcodepoints.Size = new System.Drawing.Size(135, 13);
             this.lbcodepoints.TabIndex = 3;
             this.lbcodepoints.Text = "You have: %cp Codepoints";
-            this.lbcodepoints.Click += new System.EventHandler(this.lbcodepoints_Click);
             // 
             // label1
             // 
@@ -184,12 +240,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.pgupgradeprogress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pgupgradeprogress.BlockSize = 5;
             this.pgupgradeprogress.Location = new System.Drawing.Point(146, 390);
             this.pgupgradeprogress.Maximum = 100;
             this.pgupgradeprogress.Name = "pgupgradeprogress";
             this.pgupgradeprogress.Size = new System.Drawing.Size(254, 23);
-            this.pgupgradeprogress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgupgradeprogress.TabIndex = 1;
             this.pgupgradeprogress.Value = 25;
             // 
@@ -215,63 +269,6 @@ namespace ShiftOS.WinForms.Applications
             this.label3.Size = new System.Drawing.Size(137, 13);
             this.label3.TabIndex = 2;
             // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.lblcategorytext);
-            this.panel3.Controls.Add(this.btncat_forward);
-            this.panel3.Controls.Add(this.btncat_back);
-            this.panel3.Location = new System.Drawing.Point(6, 76);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(394, 23);
-            this.panel3.TabIndex = 5;
-            // 
-            // btncat_back
-            // 
-            this.btncat_back.AutoSize = true;
-            this.btncat_back.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btncat_back.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btncat_back.Location = new System.Drawing.Point(0, 0);
-            this.btncat_back.Name = "btncat_back";
-            this.btncat_back.Size = new System.Drawing.Size(29, 23);
-            this.btncat_back.TabIndex = 0;
-            this.btncat_back.Text = "<--";
-            this.btncat_back.UseVisualStyleBackColor = true;
-            this.btncat_back.Click += new System.EventHandler(this.btncat_back_Click);
-            // 
-            // btncat_forward
-            // 
-            this.btncat_forward.AutoSize = true;
-            this.btncat_forward.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btncat_forward.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btncat_forward.Location = new System.Drawing.Point(365, 0);
-            this.btncat_forward.Name = "btncat_forward";
-            this.btncat_forward.Size = new System.Drawing.Size(29, 23);
-            this.btncat_forward.TabIndex = 1;
-            this.btncat_forward.Text = "-->";
-            this.btncat_forward.UseVisualStyleBackColor = true;
-            this.btncat_forward.Click += new System.EventHandler(this.btncat_forward_Click);
-            // 
-            // lblcategorytext
-            // 
-            this.lblcategorytext.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblcategorytext.Location = new System.Drawing.Point(29, 0);
-            this.lblcategorytext.Name = "lblcategorytext";
-            this.lblcategorytext.Size = new System.Drawing.Size(336, 23);
-            this.lblcategorytext.TabIndex = 2;
-            this.lblcategorytext.Text = "label2";
-            this.lblcategorytext.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lbnoupgrades
-            // 
-            this.lbnoupgrades.AutoSize = true;
-            this.lbnoupgrades.Location = new System.Drawing.Point(69, 183);
-            this.lbnoupgrades.Name = "lbnoupgrades";
-            this.lbnoupgrades.Size = new System.Drawing.Size(71, 13);
-            this.lbnoupgrades.TabIndex = 6;
-            this.lbnoupgrades.Tag = "header2";
-            this.lbnoupgrades.Text = "No upgrades!";
-            this.lbnoupgrades.Visible = false;
-            // 
             // ShiftoriumFrontend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -281,7 +278,6 @@ namespace ShiftOS.WinForms.Applications
             this.ForeColor = System.Drawing.Color.LightGreen;
             this.Name = "ShiftoriumFrontend";
             this.Size = new System.Drawing.Size(782, 427);
-            this.Load += new System.EventHandler(this.Shiftorium_Load);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.pnlupgradeactions.ResumeLayout(false);

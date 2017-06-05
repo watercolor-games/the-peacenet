@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Objects;
+using ShiftOS.Objects.ShiftFS;
 using ShiftOS.WinForms.Applications;
 using static ShiftOS.Objects.ShiftFS.Utils;
 
@@ -107,7 +109,7 @@ namespace ShiftOS.WinForms
                 Thread.Sleep(2000);
                 writeSlow($"Hello there, fellow multi-user domain user.");
                 writeSlow("My name, as you can tell, is hacker101.");
-                writeSlow("And yours must be... don't say it... it's " + SaveSystem.CurrentSave.Username + "@" + SaveSystem.CurrentSave.SystemName + ", right?");
+                writeSlow("And yours must be... don't say it... it's " + SaveSystem.CurrentUser.Username + "@" + SaveSystem.CurrentSave.SystemName + ", right?");
                 writeSlow("Of course it is.");
                 writeSlow("And I bet you 10,000 Codepoints that you have... " + SaveSystem.CurrentSave.Codepoints.ToString() + " Codepoints.");
                 writeSlow("Oh, and how much upgrades have you installed since you first started using ShiftOS?");
@@ -135,7 +137,7 @@ namespace ShiftOS.WinForms
                 Console.Write(" ..done");
                 TerminalBackend.InStory = false;
                 TerminalBackend.PrefixEnabled = true;
-                Console.Write($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
                 StartHackerTutorial();
                 TerminalBackend.PrefixEnabled = true;
                 TerminalBackend.PrintPrompt();
@@ -454,7 +456,7 @@ namespace ShiftOS.WinForms
                     var sve = JsonConvert.DeserializeObject<Save>(msg.Contents);
                     if(sve.Password == pass)
                     {
-                        Console.WriteLine("Username: " + sve.Username);
+                        Console.WriteLine("Username: " + SaveSystem.CurrentUser.Username);
                         Console.WriteLine("Password: " + sve.Password);
                         Console.WriteLine("System name: " + sve.SystemName);
                         Console.WriteLine();
@@ -504,7 +506,7 @@ namespace ShiftOS.WinForms
             string usr = args["user"].ToString();
             string sys = args["sys"].ToString();
             string pass = args["pass"].ToString();
-            long amount = (long)args["amount"];
+            ulong amount = (ulong)args["amount"];
             if(amount < 0)
             {
                 Console.WriteLine("--invalid codepoint amount - halting...");
@@ -531,7 +533,7 @@ namespace ShiftOS.WinForms
                         }
 
                         sve.Codepoints -= amount;
-                        SaveSystem.TransferCodepointsFrom(sve.Username, amount);
+                        SaveSystem.TransferCodepointsFrom(SaveSystem.CurrentUser.Username, amount);
                         ServerManager.SendMessage("mud_save_allow_dead", JsonConvert.SerializeObject(sve));
                         SaveSystem.SaveGame();
                     }
@@ -671,6 +673,34 @@ namespace ShiftOS.WinForms
         public static bool StartStory(Dictionary<string, object> args)
         {
             Story.Start(args["id"].ToString());
+            return true;
+        }
+
+        [Command("list", description ="Lists all story IDs.")]
+        public static bool ListIds()
+        {
+            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                {
+                    try
+                    {
+                        var asm = Assembly.LoadFile(exec);
+                        {
+                            foreach(var type in asm.GetTypes())
+                            {
+                                foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                                {
+                                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is StoryAttribute);
+                                    if (attr != null)
+                                        Console.WriteLine(" - " + (attr as StoryAttribute).StoryID);
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
             return true;
         }
 

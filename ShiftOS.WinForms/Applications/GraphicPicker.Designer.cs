@@ -86,12 +86,12 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgcontents.Location = new System.Drawing.Point(0, 0);
             this.pgcontents.Name = "pgcontents";
-            this.pgcontents.Size = new System.Drawing.Size(390, 383);
+            this.pgcontents.Size = new System.Drawing.Size(487, 383);
             this.pgcontents.TabIndex = 20;
             // 
             // btncancel
             // 
-            this.btncancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btncancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btncancel.Location = new System.Drawing.Point(21, 335);
             this.btncancel.Name = "btncancel";
             this.btncancel.Size = new System.Drawing.Size(109, 32);
@@ -102,10 +102,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             // btnreset
             // 
-            this.btnreset.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnreset.Location = new System.Drawing.Point(136, 335);
             this.btnreset.Name = "btnreset";
-            this.btnreset.Size = new System.Drawing.Size(109, 32);
+            this.btnreset.Size = new System.Drawing.Size(206, 32);
             this.btnreset.TabIndex = 22;
             this.btnreset.Text = "Reset";
             this.btnreset.UseVisualStyleBackColor = true;
@@ -113,8 +114,8 @@ namespace ShiftOS.WinForms.Applications
             // 
             // btnapply
             // 
-            this.btnapply.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnapply.Location = new System.Drawing.Point(251, 335);
+            this.btnapply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnapply.Location = new System.Drawing.Point(348, 335);
             this.btnapply.Name = "btnapply";
             this.btnapply.Size = new System.Drawing.Size(118, 32);
             this.btnapply.TabIndex = 21;
@@ -124,19 +125,21 @@ namespace ShiftOS.WinForms.Applications
             // 
             // Label2
             // 
-            this.Label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Label2.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label2.Location = new System.Drawing.Point(125, 260);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(163, 28);
+            this.Label2.Size = new System.Drawing.Size(260, 28);
             this.Label2.TabIndex = 12;
+            this.Label2.Tag = "header3";
             this.Label2.Text = "Idle";
             this.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnidlebrowse
             // 
-            this.btnidlebrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnidlebrowse.Location = new System.Drawing.Point(295, 260);
+            this.btnidlebrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnidlebrowse.Location = new System.Drawing.Point(392, 260);
             this.btnidlebrowse.Name = "btnidlebrowse";
             this.btnidlebrowse.Size = new System.Drawing.Size(73, 60);
             this.btnidlebrowse.TabIndex = 10;
@@ -146,14 +149,15 @@ namespace ShiftOS.WinForms.Applications
             // 
             // txtidlefile
             // 
-            this.txtidlefile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtidlefile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtidlefile.BackColor = System.Drawing.Color.White;
             this.txtidlefile.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtidlefile.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtidlefile.Location = new System.Drawing.Point(125, 291);
             this.txtidlefile.Multiline = true;
             this.txtidlefile.Name = "txtidlefile";
-            this.txtidlefile.Size = new System.Drawing.Size(163, 29);
+            this.txtidlefile.Size = new System.Drawing.Size(260, 29);
             this.txtidlefile.TabIndex = 9;
             this.txtidlefile.Text = "None";
             this.txtidlefile.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -172,9 +176,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             // btnzoom
             // 
+            this.btnzoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnzoom.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.btnzoom.FlatAppearance.BorderSize = 0;
-            this.btnzoom.Location = new System.Drawing.Point(286, 144);
+            this.btnzoom.Location = new System.Drawing.Point(383, 144);
             this.btnzoom.Name = "btnzoom";
             this.btnzoom.Size = new System.Drawing.Size(82, 65);
             this.btnzoom.TabIndex = 7;
@@ -184,9 +189,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             // btnstretch
             // 
+            this.btnstretch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnstretch.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.btnstretch.FlatAppearance.BorderSize = 0;
-            this.btnstretch.Location = new System.Drawing.Point(197, 144);
+            this.btnstretch.Location = new System.Drawing.Point(294, 144);
             this.btnstretch.Name = "btnstretch";
             this.btnstretch.Size = new System.Drawing.Size(82, 65);
             this.btnstretch.TabIndex = 6;
@@ -228,6 +234,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             // picgraphic
             // 
+            this.picgraphic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.picgraphic.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.picgraphic.Location = new System.Drawing.Point(0, 0);
             this.picgraphic.Name = "picgraphic";
@@ -237,11 +246,14 @@ namespace ShiftOS.WinForms.Applications
             // 
             // lblobjecttoskin
             // 
+            this.lblobjecttoskin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblobjecttoskin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblobjecttoskin.Location = new System.Drawing.Point(19, 9);
             this.lblobjecttoskin.Name = "lblobjecttoskin";
-            this.lblobjecttoskin.Size = new System.Drawing.Size(350, 23);
+            this.lblobjecttoskin.Size = new System.Drawing.Size(447, 23);
             this.lblobjecttoskin.TabIndex = 2;
+            this.lblobjecttoskin.Tag = "header1";
             this.lblobjecttoskin.Text = "Close Button";
             this.lblobjecttoskin.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
@@ -249,10 +261,9 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(390, 383);
             this.Controls.Add(this.pgcontents);
             this.Name = "GraphicPicker";
-            this.Text = "{GRAPHIC_PICKER_NAME}";
+            this.Size = new System.Drawing.Size(487, 383);
             this.Load += new System.EventHandler(this.Graphic_Picker_Load);
             this.pgcontents.ResumeLayout(false);
             this.pgcontents.PerformLayout();

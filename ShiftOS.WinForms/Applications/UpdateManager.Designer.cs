@@ -64,12 +64,10 @@
             // 
             this.pgdownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pgdownload.BlockSize = 5;
             this.pgdownload.Location = new System.Drawing.Point(86, 4);
             this.pgdownload.Maximum = 100;
             this.pgdownload.Name = "pgdownload";
             this.pgdownload.Size = new System.Drawing.Size(427, 23);
-            this.pgdownload.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pgdownload.TabIndex = 2;
             this.pgdownload.Text = "Updating...";
             this.pgdownload.Value = 0;

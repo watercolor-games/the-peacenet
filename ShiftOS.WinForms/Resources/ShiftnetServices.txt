@@ -11,21 +11,22 @@ With Freebie Solutions from ShiftSoft, you'll be able to traverse the Shiftnet w
 	{
 		Company: "Shiftcast",
 		Name: "NetXtreme Hyper Edition",
-		CostPerMonth: 1500,
+		CostPerMonth: 150,
 		DownloadSpeed: 524288, //512 kb/s
 		Description: "It's time to supercharge your Shiftnet experience. With all the multimedia available, fast download speeds are a must on the Shiftnet. Start your subscription today for the low price of 1500 Codepoints and become a hyper-traveller today."
 	},
 	{
-		Company: "Plumb Corp.",
-		Name: "youConnect",
-		CostPerMonth: 6000,
+		Company: "Bit Communications",
+		Name: "EncoderNet",
+		CostPerMonth: 600,
 		DownloadSpeed: 1048576, //1 mb/s
+		Description: "The most reliable service provider on the Shiftnet."
 	},
 	{
-		Company: "theCorp",
-		Name: "theNet",
-		CostPerMonth: 3000,
+		Company: "SOL Communications",
+		Name: "ShiftOS Online",
+		CostPerMonth: 300,
 		DownloadSpeed: 786342, //768 kb/s
-		Description: "theNet is not *just* a Shiftnet service provider. It is theGateway to all of theShiftnet and your needs. It is also theValue service provider with theGreatest price and download speed."
+		Description: "SOL is the Shiftnet."
 	},
 ]

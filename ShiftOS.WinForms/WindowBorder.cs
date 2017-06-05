@@ -515,6 +515,17 @@ namespace ShiftOS.WinForms
             if(resizing == true)
             {
                 this.Width += e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
             }
         }
 
@@ -522,6 +533,17 @@ namespace ShiftOS.WinForms
         {
             resizing = false;
             pnlcontents.Show();
+            switch (LoadedSkin.TitleTextCentered)
+            {
+                case false:
+                    lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                            LoadedSkin.TitleTextLeft.Y);
+                    break;
+                default:
+                    lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                    lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                    break;
+            }
         }
 
         private void pnlleft_MouseMove(object sender, MouseEventArgs e)
@@ -530,6 +552,17 @@ namespace ShiftOS.WinForms
             {
                 this.Left += e.X;
                 this.Width -= e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
             }
         }
 
@@ -547,6 +580,17 @@ namespace ShiftOS.WinForms
             {
                 this.Width += e.X;
                 this.Height += e.Y;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
             }
         }
 
@@ -557,6 +601,17 @@ namespace ShiftOS.WinForms
                 this.Width -= e.X;
                 this.Height += e.Y;
                 this.Left += e.X;
+                switch (LoadedSkin.TitleTextCentered)
+                {
+                    case false:
+                        lbtitletext.Location = new Point(16 + LoadedSkin.TitlebarIconFromSide.X + LoadedSkin.TitleTextLeft.X,
+                                LoadedSkin.TitleTextLeft.Y);
+                        break;
+                    default:
+                        lbtitletext.Left = (pnltitle.Width - lbtitletext.Width) / 2;
+                        lbtitletext.Top = LoadedSkin.TitleTextLeft.Y;
+                        break;
+                }
             }
 
         }

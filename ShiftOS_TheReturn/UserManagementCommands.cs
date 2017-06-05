@@ -7,11 +7,19 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Administrative user management terminal commands.
+    /// </summary>
     [Namespace("admin")]
     [KernelMode]
     [RequiresUpgrade("mud_fundamentals")]
     public static class AdminUserManagementCommands
     {
+        /// <summary>
+        /// Add a user to the system.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
         [Command("add", description = "Add a user to the system.", usage ="name:")]
         [RequiresArgument("name")]
         public static bool AddUser(Dictionary<string, object> args)
@@ -35,6 +43,12 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// Remove a user from the system.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
+
         [Command("remove", description = "Remove a user from the system.", usage = "name:")]
         [RequiresArgument("name")]
         public static bool RemoveUser(Dictionary<string, object> args)
@@ -47,11 +61,24 @@ namespace ShiftOS.Engine
             }
 
             var user = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == name);
+            if(user.Username != SaveSystem.CurrentUser.Username)
+            {
+                Console.WriteLine("Error: Cannot remove yourself.");
+                return true;
+            }
             SaveSystem.CurrentSave.Users.Remove(user);
             Console.WriteLine($"Removing user \"{name}\" from system...");
             SaveSystem.SaveGame();
             return true;
         }
+
+
+
+        /// <summary>
+        /// Set access control level for a user.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
 
         [Command("set_acl")]
         [RequiresArgument("user")]
@@ -116,14 +143,76 @@ namespace ShiftOS.Engine
             return true;
         }
 
+        /// <summary>
+        /// List all users in the system.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
+
+        [Command("users", description = "Get a list of all users on the system.")]
+        public static bool GetUsers()
+        {
+            foreach (var u in SaveSystem.CurrentSave.Users)
+            {
+                if (u.Username == SaveSystem.CurrentUser.Username)
+                {
+                    ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
+                    ConsoleEx.Bold = true;
+                }
+                else
+                {
+                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    ConsoleEx.Bold = false;
+                }
+                Console.WriteLine(u.Username);
+            }
+            return true;
+        }
     }
 
+    /// <summary>
+    /// Non-administrative user management terminal commands.
+    /// </summary>
     [Namespace("user")]
     [RequiresUpgrade("mud_fundamentals")]
     public static class UserManagementCommands
     {
+        /// <summary>
+        /// Log in as another user.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
+        [Command("login", description = "Log in as another user.")]
+        [RequiresArgument("user")]
+        [RequiresArgument("pass")]
+        public static bool Login(Dictionary<string, object> args)
+        {
+            string user = args["user"].ToString();
+            string pass = args["pass"].ToString();
 
+            var usr = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == user);
+            if(usr==null)
+            {
+                Console.WriteLine("Error: No such user.");
+                return true;
+            }
 
+            if (usr.Password != pass)
+            {
+                Console.WriteLine("Access denied.");
+                return true;
+            }
+
+            SaveSystem.CurrentUser = usr;
+            Console.WriteLine("Access granted.");
+            return true;
+        }
+
+        /// <summary>
+        /// Set the password for the current user.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Command result.</returns>
         [Command("setpass", description ="Allows you to set your password to a new value.", usage ="old:,new:")]
         [RequiresArgument("old")]
         [RequiresArgument("new")]

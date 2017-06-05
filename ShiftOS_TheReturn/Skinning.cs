@@ -37,35 +37,71 @@ using System.Reflection;
 using ShiftOS.Engine.Scripting;
 namespace ShiftOS.Engine
 {
-
+    /// <summary>
+    /// Skinning API for Lua.
+    /// </summary>
     [Exposed("skinning")]
     public class SkinFunctions
     {
+        /// <summary>
+        /// Reload the current skin.
+        /// </summary>
         public void loadSkin()
         {
             SkinEngine.LoadSkin();
         }
 
+        /// <summary>
+        /// Get the current skin info.
+        /// </summary>
+        /// <returns>A proxy object containing all skin variables.</returns>
         public dynamic getSkin()
         {
             return SkinEngine.LoadedSkin;
         }
 
+        /// <summary>
+        /// Set the current skin to the specified <see cref="Skin"/> class. 
+        /// </summary>
+        /// <param name="skn">The <see cref="Skin"/> class to load.</param>
         public void setSkin(Skin skn)
         {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(skn));
             SkinEngine.LoadSkin();
         }
 
+        /// <summary>
+        /// Retrieves an image from the skin file.
+        /// </summary>
+        /// <param name="id">The skin image ID</param>
+        /// <returns>The loaded image, null (nil in Lua) if none is found.</returns>
         public dynamic getImage(string id)
         {
             return SkinEngine.GetImage(id);
         }
     }
 
-
+    /// <summary>
+    /// Skin engine management class.
+    /// </summary>
     public static class SkinEngine
     {
+        private static ISkinPostProcessor processor = null;
+
+        /// <summary>
+        /// Load a new skin postprocessor into the engine.
+        /// </summary>
+        /// <param name="_processor">The postprocessor to load.</param>
+        public static void SetPostProcessor(ISkinPostProcessor _processor)
+        {
+            processor = _processor;
+        }
+
+        /// <summary>
+        /// Retrieve the user-specified image layout of a skin image.
+        /// </summary>
+        /// <param name="img">The skin image ID.</param>
+        /// <returns>The <see cref="ImageLayout"/> for the image.</returns>
         public static ImageLayout GetImageLayout(string img)
         {
             if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
@@ -79,6 +115,11 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Retrieves an image from the skin after postprocessing it.
+        /// </summary>
+        /// <param name="img">The image ID to search.</param>
+        /// <returns>The post-processed image, or null if none was found.</returns>
         public static System.Drawing.Image GetImage(string img)
         {
             var type = typeof(Skin);
@@ -93,6 +134,8 @@ namespace ShiftOS.Engine
                         if (iattr.Name == img)
                         {
                             byte[] image = (byte[])field.GetValue(LoadedSkin);
+                            if (processor != null)
+                                image = processor.ProcessImage(image);
                             return ImageFromBinary(image);
                         }
                     }
@@ -102,11 +145,20 @@ namespace ShiftOS.Engine
             return null;
         }
 
+        /// <summary>
+        /// Set the engine's current icon prober.
+        /// </summary>
+        /// <param name="prober">The icon prober to use.</param>
         public static void SetIconProber(IIconProber prober)
         {
             _iconProber = prober;
         }
 
+        /// <summary>
+        /// Load a <see cref="Image"/> from a <see cref="byte"/> array.  
+        /// </summary>
+        /// <param name="image">The array to convert</param>
+        /// <returns>The resulting image.</returns>
         public static Image ImageFromBinary(byte[] image)
         {
             if (image == null)
@@ -117,6 +169,9 @@ namespace ShiftOS.Engine
 
         private static Skin loadedSkin = new Skin();
 
+        /// <summary>
+        /// Gets the currently loaded skin.
+        /// </summary>
         public static Skin LoadedSkin
         {
             get
@@ -129,6 +184,9 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Initiates the skin engine.
+        /// </summary>
         public static void Init()
         {
             Application.ApplicationExit += (o, a) =>
@@ -151,8 +209,14 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Occurs when the skin is loaded.
+        /// </summary>
         public static event EmptyEventHandler SkinLoaded;
 
+        /// <summary>
+        /// Reload the current skin.
+        /// </summary>
         public static void LoadSkin()
         {
             LoadedSkin = JsonConvert.DeserializeObject<Skin>(Utils.ReadAllText(Paths.GetPath("skin.json")));
@@ -161,6 +225,9 @@ namespace ShiftOS.Engine
             Desktop.PopulateAppLauncher();
         }
 
+        /// <summary>
+        /// Save the skin loaded in memory to the filesystem.
+        /// </summary>
         public static void SaveSkin()
         {
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
@@ -168,6 +235,11 @@ namespace ShiftOS.Engine
 
         private static IIconProber _iconProber = null;
 
+        /// <summary>
+        /// Retrieves the default icon for a given icon ID.
+        /// </summary>
+        /// <param name="id">The icon ID to search.</param>
+        /// <returns>The resulting icon image.</returns>
         public static Image GetDefaultIcon(string id)
         {
             if (_iconProber == null)
@@ -204,13 +276,26 @@ namespace ShiftOS.Engine
             }
         }
 
+        /// <summary>
+        /// Retrieves the user-defined icon for a specified icon ID.
+        /// </summary>
+        /// <param name="id">The icon ID to search.</param>
+        /// <returns>The resulting icon image.</returns>
         public static Image GetIcon(string id)
         {
             if (!LoadedSkin.AppIcons.ContainsKey(id))
                 LoadedSkin.AppIcons.Add(id, null);
 
             if (LoadedSkin.AppIcons[id] == null)
-                return GetDefaultIcon(id);
+            {
+                var img = GetDefaultIcon(id);
+                using (var mstr = new MemoryStream())
+                {
+                    img.Save(mstr, System.Drawing.Imaging.ImageFormat.Png);
+                    LoadedSkin.AppIcons[id] = mstr.ToArray();
+                }
+                return img;
+            }
             else
             {
                 using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))
@@ -222,11 +307,23 @@ namespace ShiftOS.Engine
         }
     }
 
+    /// <summary>
+    /// Interface for probing app icons.
+    /// </summary>
     public interface IIconProber
     {
+        /// <summary>
+        /// Retrieve the icon image from a <see cref="DefaultIconAttribute"/>. 
+        /// </summary>
+        /// <param name="attr">The attribute data</param>
+        /// <returns>The resulting image.</returns>
         Image GetIcon(DefaultIconAttribute attr);
     }
 
+    /// <summary>
+    /// Sets the default icon ID for a <see cref="IShiftOSWindow"/>. 
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
     public class DefaultIconAttribute : Attribute
     {
         public DefaultIconAttribute(string id)
@@ -237,21 +334,24 @@ namespace ShiftOS.Engine
         public string ID { get; private set; }
     }
 
+    /// <summary>
+    /// The data stored in any .skn file.
+    /// </summary>
     public class Skin
     {
         //borrowing from the discourse theme for the default skin
-        private static readonly Color DefaultBackground = Color.FromArgb(0, 0x44, 0x00);
+        private static readonly Color DefaultBackground = Color.FromArgb(0x11, 0x11, 0x11);
         private static readonly Color DefaultForeground = Color.FromArgb(0xDD, 0xDD, 0xDD);
         private static readonly Color Accent1 = Color.FromArgb(0x66, 0x66, 0x66);
-        private static readonly Color Accent2 = Color.FromArgb(0x80, 0, 0);
-        private static readonly Color DesktopBG = Color.FromArgb(0x22, 0x22, 0x22);
+        private static readonly Color Accent2 = Color.FromArgb(0x0, 0x80, 0);
+        private static readonly Color DesktopBG = Color.FromArgb(0x00, 0x00, 0x00);
         private static readonly Font SysFont = new Font("Tahoma", 9F);
         private static readonly Font SysFont2 = new Font("Tahoma", 10F, FontStyle.Bold);
-        private static readonly Font Header1 = new Font("Helvetica", 20F, FontStyle.Bold);
-        private static readonly Font Header2 = new Font("Helvetica", 17.5F, FontStyle.Bold);
-        private static readonly Font Header3 = new Font("Tahoma", 15F, FontStyle.Bold);
+        private static readonly Font Header1 = new Font("Courier New", 20F, FontStyle.Bold);
+        private static readonly Font Header2 = new Font("Courier New", 17.5F, FontStyle.Bold);
+        private static readonly Font Header3 = new Font("Courier New", 15F, FontStyle.Bold);
 
-        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x11, 0x11);
+        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x55, 0x11);
         private static readonly Color TitleFG = Color.FromArgb(0xaa, 0xaa, 0xaa);
 
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
@@ -266,6 +366,151 @@ namespace ShiftOS.Engine
 
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar;skinning")]
+        [Image("progressbarbg")]
+        [ShifterName("Progress Bar Background Image")]
+        [ShifterDescription("Set an image for the background of a progress bar.")]
+        public byte[] ProgressBarBG = null;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar;skinning")]
+        [Image("progress")]
+        [ShifterName("Progress Image")]
+        [ShifterDescription("Set the image for the progress inside a progress bar.")]
+        public byte[] Progress = null;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar foreground color")]
+        [ShifterDescription("Set the color of the progress indicator.")]
+        public Color ProgressColor = Accent1;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar background color")]
+        [ShifterDescription("The background color of the progress bar.")]
+        public Color ProgressBarBackgroundColor = Color.Black;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterName("Progress bar block size")]
+        [ShifterDescription("If the progress bar style is set to Blocks, this determines how wide each block should be.")]
+        public int ProgressBarBlockSize = 15;
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Progress Bar")]
+        [RequiresUpgrade("shift_progress_bar")]
+        [ShifterDescription("Set the style of a progress bar.\r\nMarquee: The progress bar will render a box that moves from the left to the right in a loop.\r\nContinuous: Progress is shown by a single, continuous box.\r\nBlocks: Just like Continuous, but the box is split into even smaller boxes of a set width.")]
+        [ShifterName("Progress bar style")]
+        public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
+
+
+
+
+
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button background color")]
+        [ShifterDescription("Set the background color for each button's Idle state.")]
+        public Color ButtonBackgroundColor = Skin.DefaultBackground;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons;skinning")]
+        [Image("buttonhover")]
+        [ShifterName("Button hover image")]
+        [ShifterDescription("Set the image that's displayed when the mouse hovers over a button.")]
+        public byte[] ButtonHoverImage = null;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("skinning;shift_buttons")]
+        [Image("buttonpressed")]
+        [ShifterName("Button pressed image")]
+        [ShifterDescription("Select an image to show when the user presses a button.")]
+        public byte[] ButtonPressedImage = null;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button hover color")]
+        [ShifterDescription("Choose the color that displays on a button when the mouse hovers over it.")]
+        public Color ButtonHoverColor = Skin.Accent1;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button pressed color")]
+        [ShifterDescription("Select the background color for the button when the mouse clicks it.")]
+        public Color ButtonPressedColor = Skin.Accent2;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button foreground color")]
+        [ShifterDescription("Select the text and border color for each button.")]
+        public Color ButtonForegroundColor = Skin.DefaultForeground;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button border width")]
+        [ShifterDescription("Set the width, in pixels, of the button's border.")]
+        public int ButtonBorderWidth = 2;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons")]
+        [ShifterName("Button font")]
+        [ShifterDescription("Select the font for the button's text.")]
+        public Font ButtonTextFont = Skin.SysFont;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Buttons")]
+        [RequiresUpgrade("shift_buttons;skinning")]
+        [Image("buttonidle")]
+        [ShifterName("Button background color")]
+        [ShifterDescription("Select an image to show as the button's Idle state.")]
+        public byte[] ButtonBG = null;
+
+
+        [Image("panelclockbg")]
+        [ShifterMeta("Desktop")]
+        [ShifterCategory("Panel Clock")]
+        [ShifterName("Panel Clock Background Image")]
+        [ShifterDescription("Set the background image of the panel clock.")]
+        [RequiresUpgrade("skinning;shift_panel_clock")]
+        public byte[] PanelClockBG = null;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Login Screen")]
+        [RequiresUpgrade("gui_based_login_screen")]
+        [ShifterName("Login Screen Background Color")]
+        [ShifterDescription("Change the background color of the login screen.")]
+        public Color LoginScreenColor = Skin.DesktopBG;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("Login Screen")]
+        [RequiresUpgrade("skinning;gui_based_login_screen")]
+        [ShifterName("Login Screen Background Image")]
+        [ShifterDescription("Set an image as your login screen!")]
+        [Image("login")]
+        public byte[] LoginScreenBG = null;
+
 
         [RequiresUpgrade("shift_screensaver")]
         [ShifterMeta("System")]
@@ -405,7 +650,7 @@ namespace ShiftOS.Engine
         [ShifterName("Close Button Color")]
         [RequiresUpgrade("shift_title_buttons")]
         [ShifterDescription("The close button color")]
-        public Color CloseButtonColor = Accent2;
+        public Color CloseButtonColor = Color.FromArgb(0x80,0,0);
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
@@ -1218,6 +1463,9 @@ namespace ShiftOS.Engine
         public Font AdvALItemFont = SysFont2;
     }
 
+    /// <summary>
+    /// Marks a skin spec field as hidden from the Shifter.
+    /// </summary>
     public class ShifterHiddenAttribute : Attribute
     {
 
@@ -1305,6 +1553,16 @@ namespace ShiftOS.Engine
         }
 
         public string Category { get; set; }
+    }
+
+    public interface ISkinPostProcessor
+    {
+        /// <summary>
+        /// Perform algorithmic operations at the bit level on a ShiftOS skin image.
+        /// </summary>
+        /// <param name="original">The image, as loaded by the engine, as a 32-bit ARGB byte array.</param>
+        /// <returns>The processed image.</returns>
+        byte[] ProcessImage(byte[] original);
     }
 
     public class ShifterMetaAttribute : Attribute

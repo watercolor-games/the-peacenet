@@ -70,6 +70,24 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\IconManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\IconManager.Designer.cs">
+      <DependentUpon>IconManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriPresent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriPresent.Designer.cs">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\TriSheet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\TriSheet.Designer.cs">
+      <DependentUpon>TriSheet.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\TriWrite.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -262,6 +280,12 @@
     <Compile Include="Applications\VideoPlayer.Designer.cs">
       <DependentUpon>VideoPlayer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\WebBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\WebBrowser.Designer.cs">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\WidgetManagerFrontend.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -323,6 +347,12 @@
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIFunctions.cs" />
+    <Compile Include="GUILogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUILogin.Designer.cs">
+      <DependentUpon>GUILogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
@@ -339,6 +369,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScriptingTestFunctions.cs" />
+    <Compile Include="Servers\RemoteTerminalServer.cs" />
     <Compile Include="ShiftnetSites\AppscapeMain.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -357,9 +388,46 @@
     <Compile Include="ShiftnetSites\MainHomepage.Designer.cs">
       <DependentUpon>MainHomepage.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftGames.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
+      <DependentUpon>ShiftGames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.Designer.cs">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.Designer.cs">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
+    <Compile Include="StatusIcons\ShiftnetStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\ShiftnetStatus.Designer.cs">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusIcons\TestStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\TestStatus.Designer.cs">
+      <DependentUpon>TestStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.Designer.cs">
+      <DependentUpon>Volume.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Stories\DevXSkinningStory.cs" />
     <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
@@ -405,6 +473,15 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\IconManager.resx">
+      <DependentUpon>IconManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriPresent.resx">
+      <DependentUpon>TriPresent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\TriSheet.resx">
+      <DependentUpon>TriSheet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriWrite.resx">
       <DependentUpon>TriWrite.cs</DependentUpon>
@@ -499,6 +576,9 @@
     <EmbeddedResource Include="Applications\VideoPlayer.resx">
       <DependentUpon>VideoPlayer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\WebBrowser.resx">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\WidgetManagerFrontend.resx">
       <DependentUpon>WidgetManagerFrontend.cs</DependentUpon>
     </EmbeddedResource>
@@ -520,6 +600,9 @@
     <EmbeddedResource Include="DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUILogin.resx">
+      <DependentUpon>GUILogin.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
     </EmbeddedResource>
@@ -536,6 +619,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
+      <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft.resx">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft_Ping.resx">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\ShiftnetStatus.resx">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\TestStatus.resx">
+      <DependentUpon>TestStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\Volume.resx">
+      <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UniteLoginDialog.resx">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>
@@ -748,11 +849,22 @@
     <None Include="Resources\ShiftnetServices.txt" />
     <None Include="Resources\3beepvirus.wav" />
     <None Include="Resources\dial-up-modem-02.wav" />
+    <None Include="Resources\Ambient1.mp3" />
+    <None Include="Resources\Ambient2.mp3" />
+    <None Include="Resources\Ambient3.mp3" />
+    <None Include="Resources\Ambient4.mp3" />
+    <None Include="Resources\Ambient5.mp3" />
+    <None Include="Resources\Ambient6.mp3" />
+    <None Include="Resources\Ambient7.mp3" />
+    <None Include="Resources\Ambient8.mp3" />
+    <None Include="Resources\Ambient9.mp3" />
     <Content Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />
     <None Include="Resources\writesound.wav" />
     <None Include="Resources\SuperDesk screenshot.png" />
+    <None Include="Resources\notestate_connection_full.bmp" />
+    <None Include="Resources\iconSpeaker.bmp" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

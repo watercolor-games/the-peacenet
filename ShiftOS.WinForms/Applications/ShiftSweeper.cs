@@ -35,7 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
     [Launcher("ShiftSweeper", true, "al_shiftsweeper", "Games")]
-    [RequiresUpgrade("shiftsweeper")]
+    [AppscapeEntry("ShiftSweeper", "A simple Minesweeper game built for ShiftOS! Careful, it's a hard one.", 1600, 800, "shiftletters", "Games")]
     [MultiplayerOnly]
     [WinOpen("shiftsweeper")]
     [DefaultIcon("iconShiftSweeper")]
@@ -300,12 +300,12 @@ namespace ShiftOS.WinForms.Applications {
         }
 
         public void winGame() {
-            int cp = 0;
-            int origminecount = gameBombCount * 10;
+            ulong cp = 0;
+            ulong origminecount = (ulong)(gameBombCount * 10);
             if (minetimer < 31) cp = (origminecount * 3);
-            else if (minetimer < 61) cp = (Int32)(origminecount * 2.5);
+            else if (minetimer < 61) cp = (ulong)(origminecount * 2.5);
             else if (minetimer < 91) cp = (origminecount * 2);
-            else if (minetimer < 121) cp = (Int32)(origminecount * 1.5);
+            else if (minetimer < 121) cp = (ulong)(origminecount * 1.5);
             else if (minetimer > 120) cp = (origminecount * 1);
             SaveSystem.TransferCodepointsFrom("shiftsweeper", cp);
             panelGameStatus.Image = Properties.Resources.SweeperWinFace;

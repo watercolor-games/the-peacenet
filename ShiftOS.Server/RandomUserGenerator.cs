@@ -111,7 +111,7 @@ namespace ShiftOS.Server
                             break;
                     }
 
-                    sve.Codepoints = rnd.Next(startCP, maxAmt);
+                    sve.Codepoints = (ulong)rnd.Next(startCP, maxAmt);
 
                     //FS treasure generation.
                     /*

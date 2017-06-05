@@ -42,7 +42,7 @@ namespace ShiftOS.Objects
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Cost { get; set; }
+        public ulong Cost { get; set; }
         public int FileType { get; set; }
         public byte[] MUDFile { get; set; }
     }

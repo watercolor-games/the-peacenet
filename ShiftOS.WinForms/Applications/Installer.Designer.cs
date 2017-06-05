@@ -118,12 +118,10 @@
             // 
             this.pginstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pginstall.BlockSize = 5;
             this.pginstall.Location = new System.Drawing.Point(17, 161);
             this.pginstall.Maximum = 100;
             this.pginstall.Name = "pginstall";
             this.pginstall.Size = new System.Drawing.Size(414, 23);
-            this.pginstall.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pginstall.TabIndex = 2;
             this.pginstall.Text = "shiftedProgressBar1";
             this.pginstall.Value = 0;

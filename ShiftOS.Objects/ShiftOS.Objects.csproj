@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatRoom.cs" />
     <Compile Include="ClientSave.cs" />
     <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="Job.cs" />
@@ -56,8 +57,10 @@
     <Compile Include="Save.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="Shop.cs" />
+    <Compile Include="UniteClient.cs" />
     <Compile Include="Unite\Download.cs" />
     <Compile Include="Unite\ReleaseQuery.cs" />
+    <Compile Include="UserConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

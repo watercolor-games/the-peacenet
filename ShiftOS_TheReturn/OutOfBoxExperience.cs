@@ -45,17 +45,17 @@ namespace ShiftOS.Engine
 
         public static void Init(IOobe oobe)
         {
-            _oobe = oobe;
+            _oobe = oobe; // takes the oobe and makes it an IOobe
         }
 
         public static void Start(Save save)
         {
-
+            //if its null then FUCK YOU DID THE WRONG THING
             if (_oobe == null)
                 throw new InvalidOperationException("OOBE frontend not activated! This function can't be used! Please use OutOfBoxExperience.Init() passing an IOobe-implementing object to start the OOBE frontend.");
 
 
-            _oobe.StartShowing(save);
+            _oobe.StartShowing(save); //tells the save data to start showing the oobe
 
 
         }
@@ -64,7 +64,7 @@ namespace ShiftOS.Engine
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                _oobe.PromptForLogin();
+                _oobe.PromptForLogin(); //prompts for login, what did you expect
             }));
         }
 
@@ -72,12 +72,13 @@ namespace ShiftOS.Engine
         {
             Desktop.InvokeOnWorkerThread(new Action(() =>
             {
-                _oobe.ShowSaveTransfer(save);
+                _oobe.ShowSaveTransfer(save); //triggers save transfer if not done already
                 
             }));
         }
     }
 
+    //triggers all the above events
     public interface IOobe
     {
         void StartShowing(Save save);
