@@ -47,7 +47,7 @@ namespace ShiftOS.WinForms.Applications
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow
     {
         public int CategoryId = 0;
-        private string[] cats = backend.GetCategories();
+        private string[] cats;
         private ShiftoriumUpgrade[] avail;
 
 
@@ -94,6 +94,7 @@ namespace ShiftOS.WinForms.Applications
         
         private void Populate()
         {
+            cats = Shiftorium.GetCategories();
             upgrades = new Dictionary<string, ShiftoriumUpgrade>[cats.Length];
             int numComplete = 0;
             avail = backend.GetAvailable();
