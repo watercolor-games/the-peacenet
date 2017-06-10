@@ -302,15 +302,17 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         /// <param name="contents">The message body</param>
         public static void SendMessage(string name, string contents)
         {
-            var sMsg = new ServerMessage
+            if (!SaveSystem.IsSandbox)
             {
-                Name = name,
-                Contents = contents,
-                GUID = thisGuid.ToString(),
-            };
-            PingTimer.Start();
-            client.Send(new NetObject("msg", sMsg));
-
+                var sMsg = new ServerMessage
+                {
+                    Name = name,
+                    Contents = contents,
+                    GUID = thisGuid.ToString(),
+                };
+                PingTimer.Start();
+                client.Send(new NetObject("msg", sMsg));
+            }
         }
 
         private static bool singleplayer = false;

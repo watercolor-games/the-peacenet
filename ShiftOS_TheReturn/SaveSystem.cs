@@ -67,6 +67,7 @@ namespace ShiftOS.Engine
         /// Boolean representing whether the save system is ready to be used.
         /// </summary>
         public static bool Ready = false;
+        public static bool IsSandbox = false;
 
         /// <summary>
         /// Occurs before the save system connects to the ShiftOS Digital Society.
@@ -140,63 +141,126 @@ namespace ShiftOS.Engine
                 Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
                 Console.WriteLine("[termdb] Building command database from filesystem...");
                 TerminalBackend.PopulateTerminalCommands();
-                Console.WriteLine("[inetd] Connecting to network...");
 
-                Ready = false;
-
-                if (PreDigitalSocietyConnection != null)
+                if (IsSandbox == false)
                 {
-                    PreDigitalSocietyConnection?.Invoke();
+                    Console.WriteLine("[inetd] Connecting to network...");
 
-                    while (!Ready)
+                    Ready = false;
+
+                    if (PreDigitalSocietyConnection != null)
                     {
-                        Thread.Sleep(10);
+                        PreDigitalSocietyConnection?.Invoke();
+
+                        while (!Ready)
+                        {
+                            Thread.Sleep(10);
+                        }
                     }
-                }
 
-                
 
-                bool guidReceived = false;
-                ServerManager.GUIDReceived += (str) =>
-                {
-                        //Connection successful! Stop waiting!
-                        guidReceived = true;
-                    Console.WriteLine("[inetd] Connection successful.");
-                };
 
-                try
-                {
-
-                    ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                    //This haults the client until the connection is successful.
-                    while (ServerManager.thisGuid == new Guid())
+                    bool guidReceived = false;
+                    ServerManager.GUIDReceived += (str) =>
                     {
-                        Thread.Sleep(10);
+                    //Connection successful! Stop waiting!
+                    guidReceived = true;
+                        Console.WriteLine("[inetd] Connection successful.");
+                    };
+
+                    try
+                    {
+
+                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
+                        //This haults the client until the connection is successful.
+                        while (ServerManager.thisGuid == new Guid())
+                        {
+                            Thread.Sleep(10);
+                        }
+                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
+                        FinishBootstrap();
                     }
-                    Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                    FinishBootstrap();
+                    catch (Exception ex)
+                    {
+                        //No errors, this never gets called.
+                        Console.WriteLine("[inetd] SEVERE: " + ex.Message);
+                        Thread.Sleep(3000);
+                        Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 4...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 3...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 2...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 1...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] Bye bye.");
+                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    }
+
+                    //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
                 }
-                catch (Exception ex)
+                else
                 {
-                    //No errors, this never gets called.
-                    Console.WriteLine("[inetd] SEVERE: " + ex.Message);
-                    Thread.Sleep(3000);
-                    Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 4...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 3...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 2...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 1...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] Bye bye.");
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    Console.WriteLine("[inetd] Sandbox mode initiating...");
+                    CurrentSave = new Save
+                    {
+                        IsSandbox = true,
+                        Username = "sandbox",
+                        Password = "sandbox",
+                        SystemName = "shiftos",
+                        Users = new List<ClientSave>
+                        {
+                            new ClientSave
+                            {
+                                Username = "user",
+                                Password = "",
+                                Permissions = 0
+                            }
+                        },
+                        Class = 0,
+                        ID = new Guid(),
+                        Upgrades = new Dictionary<string, bool>(),
+                        CurrentLegions = null,
+                        IsMUDAdmin = false,
+                        IsPatreon = false,
+                        Language = "english",
+                        LastMonthPaid = 0,
+                        MajorVersion = 1,
+                        MinorVersion = 0,
+                        MusicEnabled = false,
+                        MusicVolume = 100,
+                        MyShop = "",
+                        PasswordHashed = false,
+                        PickupPoint = "",
+                        RawReputation = 0.0f,
+                        Revision = 0,
+                        ShiftnetSubscription = 0,
+                        SoundEnabled = true,
+                        StoriesExperienced = null,
+                        StoryPosition = 0,
+                        UniteAuthToken = "",
+                    };
+
+                    CurrentUser = CurrentSave.Users.First();
+
+                    Localization.SetupTHETRUEDefaultLocals();
+
+                    Shiftorium.Init();
+
+                    TerminalBackend.InStory = false;
+                    TerminalBackend.PrefixEnabled = true;
+
+                    Desktop.InvokeOnWorkerThread(new Action(() =>
+                    {
+                        ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
+                    }));
+
+
+                    Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
+                    GameReady?.Invoke();
                 }
-
-                //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
-
 
             }));
             thread.IsBackground = true;
@@ -242,10 +306,6 @@ namespace ShiftOS.Engine
             {
                 Thread.Sleep(10);
             }
-
-            Localization.SetupTHETRUEDefaultLocals();
-
-            Shiftorium.Init();
 
             while (CurrentSave.StoryPosition < 1)
             {

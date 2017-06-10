@@ -117,14 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lbdesc.Text" xml:space="preserve">
-    <value>Welcome to ShiftSoft. We understand the troubles of being locked within a digital society. For some, it's a prison. For others, it's all they know. It's what life means for them.
-
-But for us, it's a safe-haven. We may all be locked within an evolving operating system with no possibility of escaping, but we can at least develop ways of improving life within this binary world, and that's what we at ShiftSoft are doing.</value>
-  </data>
-  <data name="lbfreebiedesc.Text" xml:space="preserve">
-    <value>The Shiftnet is a wonderful place full of apps, utilities, enhancements and much more for ShiftOS, but it comes at a cost.
-
-Freebie Solutions takes that cost away. You get free Shiftnet usage, but are locked to sites listed on Ping and you are limited to 256 byte-per-second downloads. Perfect for those situations where Codepoints and shiftnet connectivity are a needed resource.</value>
-  </data>
 </root>

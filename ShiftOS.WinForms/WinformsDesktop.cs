@@ -50,6 +50,8 @@ namespace ShiftOS.WinForms
     [Namespace("desktop")]
     public partial class WinformsDesktop : Form, IDesktop
     {
+        public MainMenu.MainMenu ParentMenu = null;
+
         [Command("pushnote")]
         [RequiresArgument("target")]
         [RequiresArgument("title")]
@@ -921,7 +923,7 @@ namespace ShiftOS.WinForms
         /// <param name="e">E.</param>
         private void Desktop_Load(object sender, EventArgs e)
         {
-
+            SaveSystem.IsSandbox = this.IsSandbox;
             SaveSystem.Begin();
 
             SetupDesktop();
@@ -964,6 +966,7 @@ namespace ShiftOS.WinForms
         }
 
         private IWindowBorder focused = null;
+        internal bool IsSandbox = false;
 
         public string DesktopName
         {
@@ -1033,10 +1036,17 @@ namespace ShiftOS.WinForms
         {
             try
             {
-                this.Invoke(new Action(() =>
+                if (this.Visible == true)
                 {
-                    act?.Invoke();
-                }));
+                    this.Invoke(new Action(() =>
+                    {
+                        act?.Invoke();
+                    }));
+                }
+                else
+                {
+                    ParentMenu?.Invoke(act);
+                }
             }
             catch
             {
@@ -1105,12 +1115,16 @@ namespace ShiftOS.WinForms
 
         public void HideAppLauncher()
         {
-            this.Invoke(new Action(() =>
+            try
             {
-                currentSettingsPane?.Hide();
-                currentSettingsPane = null;
-                pnladvancedal.Hide();
-            }));
+                this.Invoke(new Action(() =>
+                {
+                    currentSettingsPane?.Hide();
+                    currentSettingsPane = null;
+                    pnladvancedal.Hide();
+                }));
+            }
+            catch { }
         }
     }
 

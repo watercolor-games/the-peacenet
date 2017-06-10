@@ -50,6 +50,21 @@ namespace ShiftOS.WinForms
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
             SkinEngine.SetPostProcessor(new DitheringSkinPostProcessor());
+            LoginManager.Init(new GUILoginFrontend());
+            CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
+            SkinEngine.SetIconProber(new ShiftOSIconProvider());
+            TerminalBackend.TerminalRequested += () =>
+            {
+                AppearanceManager.SetupWindow(new Applications.Terminal());
+            };
+            Localization.RegisterProvider(new WFLanguageProvider());
+            Infobox.Init(new Dialog());
+            FileSkimmerBackend.Init(new WinformsFSFrontend());
+            var desk = new WinformsDesktop();
+            Desktop.Init(desk);
+            OutOfBoxExperience.Init(new Oobe());
+            AppearanceManager.Initiate(new WinformsWindowManager());
+#if OLD
             SaveSystem.PreDigitalSocietyConnection += () =>
             {
                 Action completed = null;
@@ -63,25 +78,11 @@ namespace ShiftOS.WinForms
                 Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
 
             };
-            LoginManager.Init(new GUILoginFrontend());
-            CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
-            SkinEngine.SetIconProber(new ShiftOSIconProvider());
-            ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
-            Localization.RegisterProvider(new WFLanguageProvider());
             
-            TutorialManager.RegisterTutorial(new Oobe());
-
-            TerminalBackend.TerminalRequested += () =>
-            {
-                AppearanceManager.SetupWindow(new Applications.Terminal());
-            };
-            Infobox.Init(new Dialog());
-            FileSkimmerBackend.Init(new WinformsFSFrontend());
-            var desk = new WinformsDesktop();
-            Desktop.Init(desk);
-            OutOfBoxExperience.Init(new Oobe());
-            AppearanceManager.Initiate(new WinformsWindowManager());
             Application.Run(desk);
+#else
+            Application.Run(new MainMenu.MainMenu(desk));
+#endif
         }
     }
 

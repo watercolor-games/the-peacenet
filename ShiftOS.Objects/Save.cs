@@ -76,10 +76,14 @@ namespace ShiftOS.Objects
             _setCpCallbacks.Remove(callback);
         }
 
+        public bool IsSandbox = false;
+
         public ulong Codepoints
         {
             get
             {
+                if (IsSandbox == true)
+                    return 0;
                 if (_updTimer == null)
                     _updTimer = new Timer((o) => syncCp(), null, 0, 300000);
                 lock (_cpLock)
@@ -89,6 +93,8 @@ namespace ShiftOS.Objects
             }
             set
             {
+                if (IsSandbox == true)
+                    return;
                 lock (_cpLock)
                 {
                     _cp = value;

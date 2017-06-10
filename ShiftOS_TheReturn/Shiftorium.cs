@@ -429,6 +429,9 @@ namespace ShiftOS.Engine
         /// <returns>Whether the upgrade is installed.</returns>
         public static bool UpgradeInstalled(string id)
         {
+            if (SaveSystem.IsSandbox == true)
+                return true;
+
             if (string.IsNullOrWhiteSpace(id))
                 return true;
             if (SaveSystem.CurrentSave != null)

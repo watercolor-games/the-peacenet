@@ -74,22 +74,10 @@ namespace ShiftOS.WinForms.Stories
             WriteLine("Anyways, that's all I'll say for now. Have fun on the Shiftnet. I have to go work on something.");
             WriteLine("One of my friends'll contact you once you've gotten a new service provider.");
 
-            Story.PushObjective("Register with a new Shiftnet service provider.", "You've just unlocked the Shiftnet, which has opened up a whole new world of applications and features for ShiftOS. Before you go nuts with it, you may want to register with a better service provider than Freebie Solutions.", () =>
-            {
-                return SaveSystem.CurrentSave.ShiftnetSubscription != 0;
-            },
-            () =>
-            {
-                Story.Context.MarkComplete();
-                SaveSystem.SaveGame();
-                TerminalBackend.PrintPrompt();
-                Story.Start("hacker101_breakingbonds_1");
-            });
 
-                TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.PrintPrompt();
 
-            Story.Context.AutoComplete = false;
+            Story.Context.MarkComplete();
+            Story.Start("aiden_shiftnet2");
         }
 
         [Story("hacker101_breakingbonds_1")]
@@ -111,6 +99,9 @@ namespace ShiftOS.WinForms.Stories
             WriteLine("Before I can do that, however, I need you to do a few things.");
             WriteLine("I'll assign what I need you to do as an objective. When you're done, I'll tell you what you need to know.");
 
+            Story.Context.MarkComplete();
+            TerminalBackend.PrefixEnabled = true;
+
             Story.PushObjective("Breaking the Bonds: Errand Boy", @"hacker101 has something he needs to show you, however before he can, you need to do the following:
 
  - Buy ""TriWrite"" from Appscape
@@ -127,14 +118,25 @@ namespace ShiftOS.WinForms.Stories
                 SaveSystem.SaveGame();
                 Story.Start("hacker101_breakingbonds_2");
             });
-
-            TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.PrintPrompt();
-
             Story.Context.AutoComplete = false;
-
         }
 
+        [Story("aiden_shiftnet2")]
+        public static void AidenShiftnet2()
+        {
+            Story.PushObjective("Register with a new Shiftnet service provider.", "You've just unlocked the Shiftnet, which has opened up a whole new world of applications and features for ShiftOS. Before you go nuts with it, you may want to register with a better service provider than Freebie Solutions.", () =>
+            {
+                return SaveSystem.CurrentSave.ShiftnetSubscription != 0;
+            },
+            () =>
+            {
+                Story.Context.MarkComplete();
+                SaveSystem.SaveGame();
+                TerminalBackend.PrintPrompt();
+                Story.Start("hacker101_breakingbonds_1");
+            });
+            Story.Context.AutoComplete = false;
+        }
 
         private static void WriteLine(string text, bool showCharacterName=true)
         {
@@ -159,7 +161,7 @@ namespace ShiftOS.WinForms.Stories
             {
                 Console.Write(c);
                 ConsoleEx.OnFlush?.Invoke();
-                Thread.Sleep(45);
+                Thread.Sleep(5);
             }
             Thread.Sleep(1000);
         }
