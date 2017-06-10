@@ -307,6 +307,8 @@ namespace ShiftOS.Engine
                 Thread.Sleep(10);
             }
 
+            Shiftorium.Init();
+
             while (CurrentSave.StoryPosition < 1)
             {
                 Thread.Sleep(10);
@@ -633,27 +635,30 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void SaveGame()
         {
-#if !NOSAVE
-            if(!Shiftorium.Silent)
-                Console.WriteLine("");
-            if(!Shiftorium.Silent)
-                Console.Write("{SE_SAVING}... ");
-            if (SaveSystem.CurrentSave != null)
+            if (IsSandbox == false)
             {
-                Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);
-                var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
-                new Thread(() =>
+#if !NOSAVE
+                if (!Shiftorium.Silent)
+                    Console.WriteLine("");
+                if (!Shiftorium.Silent)
+                    Console.Write("{SE_SAVING}... ");
+                if (SaveSystem.CurrentSave != null)
                 {
-                    // please don't do networking on the main thread if you're just going to
-                    // discard the response, it's extremely slow
-                    ServerManager.SendMessage("mud_save", serialisedSaveFile);
-                })
-                { IsBackground = false }.Start();
-            }
-            if (!Shiftorium.Silent)
-                Console.WriteLine(" ...{DONE}.");
-            System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
+                    Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);
+                    var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
+                    new Thread(() =>
+                    {
+                        // please don't do networking on the main thread if you're just going to
+                        // discard the response, it's extremely slow
+                        ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                    })
+                    { IsBackground = false }.Start();
+                }
+                if (!Shiftorium.Silent)
+                    Console.WriteLine(" ...{DONE}.");
+                System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
 #endif
+            }
         }
 
         /// <summary>

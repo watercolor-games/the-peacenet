@@ -59,6 +59,7 @@ namespace ShiftOS.WinForms
             };
             Localization.RegisterProvider(new WFLanguageProvider());
             Infobox.Init(new Dialog());
+            LoginManager.Init(new WinForms.GUILoginFrontend());
             FileSkimmerBackend.Init(new WinformsFSFrontend());
             var desk = new WinformsDesktop();
             Desktop.Init(desk);
