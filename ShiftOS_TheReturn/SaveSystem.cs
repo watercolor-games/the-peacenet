@@ -527,8 +527,10 @@ namespace ShiftOS.Engine
             {
                 try
                 {
-                    Story.Start(CurrentSave.PickupPoint);
-                    TerminalBackend.PrintPrompt();
+                    if (Story.Context == null)
+                    {
+                        Story.Start(CurrentSave.PickupPoint);
+                    }
                 }
                 catch { }
             }

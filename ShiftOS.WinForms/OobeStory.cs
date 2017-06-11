@@ -143,7 +143,37 @@ namespace ShiftOS.WinForms
             Console.WriteLine();
             Console.WriteLine("Next, let's get user information.");
             Console.WriteLine();
-            ShiftOS.Engine.OutOfBoxExperience.PromptForLogin();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                var uSignUpDialog = new UniteSignupDialog((result) =>
+                {
+                    var sve = new Save();
+                    sve.SystemName = result.SystemName;
+                    sve.Codepoints = 0;
+                    sve.Upgrades = new Dictionary<string, bool>();
+                    sve.ID = Guid.NewGuid();
+                    sve.StoriesExperienced = new List<string>();
+                    sve.StoriesExperienced.Add("mud_fundamentals");
+                    sve.Users = new List<ClientSave>
+                    {
+                    new ClientSave
+                    {
+                        Username = "root",
+                        Password = result.RootPassword,
+                        Permissions = 0
+                    }
+                    };
+
+                    sve.StoryPosition = 8675309;
+                    SaveSystem.CurrentSave = sve;
+                    Shiftorium.Silent = true;
+                    SaveSystem.SaveGame();
+                    Shiftorium.Silent = false;
+
+
+                });
+                AppearanceManager.SetupDialog(uSignUpDialog);
+            });
         }
 
         private static bool isValid(string text, string chars)

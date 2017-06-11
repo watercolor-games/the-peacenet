@@ -109,6 +109,7 @@ namespace ShiftOS.Engine
                 {
                     Thread.Sleep(5000);
                 }
+                Thread.Sleep(500);
                 CurrentObjectives.Remove(obj);
                 obj.Complete();
             });

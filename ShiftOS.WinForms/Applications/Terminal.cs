@@ -624,7 +624,7 @@ Your goal: Earn 1,000 Codepoints.");
                 {
                     if (AppearanceManager.OpenForms.Count <= 1)
                     {
-                        Console.WriteLine("");
+                        //Console.WriteLine("");
                         Console.WriteLine("{WIN_CANTCLOSETERMINAL}");
                         try
                         {
