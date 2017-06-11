@@ -242,38 +242,16 @@ namespace ShiftOS.Engine
         /// <returns>The resulting icon image.</returns>
         public static Image GetDefaultIcon(string id)
         {
-            if (_iconProber == null)
+            if (_iconProber != null)
             {
-                return new Bitmap(16, 16);
-            }
-            else
-            {
-                foreach (var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.Name == id))
                 {
-                    if (f.EndsWith(".exe") || f.EndsWith(".dll"))
-                    {
-                        try
-                        {
-                            var asm = Assembly.LoadFile(f);
-                            foreach (var type in asm.GetTypes())
-                            {
-                                if (type.Name == id)
-                                {
-                                    foreach (var attr in type.GetCustomAttributes(true))
-                                    {
-                                        if (attr is DefaultIconAttribute)
-                                        {
-                                            return _iconProber.GetIcon(attr as DefaultIconAttribute);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch { }
-                    }
+                    var attr = Array.Find(type.GetCustomAttributes(true), a => a is DefaultIconAttribute);
+                    if (attr != null)
+                        return _iconProber.GetIcon(attr as DefaultIconAttribute);
                 }
-                return new Bitmap(16, 16);
             }
+            return new Bitmap(16, 16);
         }
 
         /// <summary>

@@ -214,23 +214,11 @@ namespace ShiftOS.Engine
         {
             upgDb = new List<ShiftoriumUpgrade>();
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
-            foreach (var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if (file.EndsWith(".exe") || file.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(file);
-                        foreach (var type in asm.GetTypes())
+                        foreach (var type in ReflectMan.Types)
                         {
                             if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
-                            {
-                                if (type.GetCustomAttributes().FirstOrDefault(x => x is ShiftoriumProviderAttribute) != null)
-                                {
-                                    var _p = Activator.CreateInstance(type, null) as IShiftoriumProvider;
-                                    upgDb.AddRange(_p.GetDefaults());
-                                }
-                            }
+                                if (type.GetCustomAttributes().Any(x => x is ShiftoriumProviderAttribute))
+                                    upgDb.AddRange((Activator.CreateInstance(type, null) as IShiftoriumProvider).GetDefaults());
 
 
                             ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
@@ -310,10 +298,6 @@ namespace ShiftOS.Engine
                             }
 
                         }
-                    }
-                    catch { }
-                }
-            }
 
 
 

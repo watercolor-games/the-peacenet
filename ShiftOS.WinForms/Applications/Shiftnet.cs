@@ -150,78 +150,59 @@ namespace ShiftOS.WinForms.Applications
         {
             
             txturl.Text = url;
-            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            try
             {
-                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftnetSite)) && t.BaseType == typeof(UserControl) && Shiftorium.UpgradeAttributesUnlocked(t)))
                 {
-                    try
+                    var attribute = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute && (x as ShiftnetSiteAttribute).Url == url) as ShiftnetSiteAttribute;
+                    if (attribute != null)
                     {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach (var type in asm.GetTypes())
-                        {
-                            if (type.GetInterfaces().Contains(typeof(IShiftnetSite)))
+                            var obj = (IShiftnetSite)Activator.CreateInstance(type, null);
+                            obj.GoToUrl += (u) =>
                             {
-                                if (type.BaseType == typeof(UserControl))
-                                {
-                                    var attribute = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
-                                    if (attribute != null)
-                                    {
-                                        if (attribute.Url == url)
-                                        {
-                                            if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                            {
-                                                var obj = (IShiftnetSite)Activator.CreateInstance(type, null);
-                                                obj.GoToUrl += (u) =>
-                                                {
-                                                    History.Push(CurrentUrl);
-                                                    NavigateToUrl(u);
-                                                };
-                                                obj.GoBack += () =>
-                                                {
-                                                    string u = History.Pop();
-                                                    Future.Push(u);
-                                                    NavigateToUrl(u);
-                                                };
-                                                CurrentPage = obj;
-                                                this.pnlcanvas.Controls.Clear();
-                                                this.pnlcanvas.Controls.Add((UserControl)obj);
-                                                ((UserControl)obj).Show();
-                                                ((UserControl)obj).Dock = DockStyle.Fill;
-                                                obj.OnUpgrade();
-                                                obj.OnSkinLoad();
-                                                obj.Setup();
-                                                AppearanceManager.SetWindowTitle(this, attribute.Name + " - Shiftnet");
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        pnlcanvas.Controls.Clear();
-                        var tlbl = new Label();
-                        tlbl.Text = "Server error in \"" + url + "\" application.";
-                        tlbl.Tag = "header1";
-                        tlbl.AutoSize = true;
-                        tlbl.Location = new Point(10, 10);
-                        tlbl.Dock = DockStyle.Top;
-                        pnlcanvas.Controls.Add(tlbl);
-                        tlbl.Show();
-
-                        var crash = new Label();
-                        crash.Dock = DockStyle.Fill;
-                        crash.AutoSize = false;
-                        crash.Text = ex.ToString();
-                        pnlcanvas.Controls.Add(crash);
-                        crash.Show();
-                        crash.BringToFront();
-                        ControlManager.SetupControls(pnlcanvas);
-                        return;
+                                History.Push(CurrentUrl);
+                                NavigateToUrl(u);
+                            };
+                            obj.GoBack += () =>
+                            {
+                                string u = History.Pop();
+                                Future.Push(u);
+                                NavigateToUrl(u);
+                            };
+                            CurrentPage = obj;
+                            this.pnlcanvas.Controls.Clear();
+                            this.pnlcanvas.Controls.Add((UserControl)obj);
+                            ((UserControl)obj).Show();
+                            ((UserControl)obj).Dock = DockStyle.Fill;
+                            obj.OnUpgrade();
+                            obj.OnSkinLoad();
+                            obj.Setup();
+                            AppearanceManager.SetWindowTitle(this, attribute.Name + " - Shiftnet");
+                            return;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                pnlcanvas.Controls.Clear();
+                var tlbl = new Label();
+                tlbl.Text = "Server error in \"" + url + "\" application.";
+                tlbl.Tag = "header1";
+                tlbl.AutoSize = true;
+                tlbl.Location = new Point(10, 10);
+                tlbl.Dock = DockStyle.Top;
+                pnlcanvas.Controls.Add(tlbl);
+                tlbl.Show();
+
+                var crash = new Label();
+                crash.Dock = DockStyle.Fill;
+                crash.AutoSize = false;
+                crash.Text = ex.ToString();
+                pnlcanvas.Controls.Add(crash);
+                crash.Show();
+                crash.BringToFront();
+                ControlManager.SetupControls(pnlcanvas);
+                return;
             }
             pnlcanvas.Controls.Clear();
             var lbl = new Label();

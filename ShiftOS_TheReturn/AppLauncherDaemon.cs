@@ -63,55 +63,16 @@ namespace ShiftOS.Engine
         {
             List<LauncherItem> win = new List<LauncherItem>();
             
-            foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)) && Shiftorium.UpgradeAttributesUnlocked(t)))
             {
-                if (asmExec.EndsWith(".dll") | asmExec.EndsWith(".exe"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFrom(asmExec);
-
-                        if (asm.GetReferencedAssemblies().Contains("ShiftOS.Engine") || asm.FullName.Contains("ShiftOS.Engine"))
+                foreach (var attr in type.GetCustomAttributes(false))
+                    if (!(attr is MultiplayerOnlyAttribute && !KernelWatchdog.MudConnected))
+                        if (attr is LauncherAttribute)
                         {
-                            foreach (var type in asm.GetTypes())
-                            {
-                                if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
-                                {
-                                    bool isAllowed = true;
-                                    foreach (var attr in type.GetCustomAttributes(false))
-                                    {
-                                        if(attr is MultiplayerOnlyAttribute)
-                                        {
-                                            if(KernelWatchdog.MudConnected == false)
-                                            {
-                                                isAllowed = false;
-
-                                            }
-                                        }
-                                        if (isAllowed == true)
-                                        {
-                                            if (attr is LauncherAttribute)
-                                            {
-                                                if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                                {
-                                                    var launch = attr as LauncherAttribute;
-                                                    if (launch.UpgradeInstalled)
-                                                    {
-                                                        win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            var launch = attr as LauncherAttribute;
+                            if (launch.UpgradeInstalled)
+                                win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
                         }
-                    }
-                    catch
-                    {
-
-                    }
-                }
             }
 
             foreach(var file in Utils.GetFiles(Paths.GetPath("applauncher")))

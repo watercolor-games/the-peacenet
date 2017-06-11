@@ -114,8 +114,12 @@ namespace ShiftOS.WinForms.Applications
 
         private void SetList()
         {
-            lbnoupgrades.Hide();
             lbupgrades.Items.Clear();
+            if (upgrades.Length == 0)
+                return;
+            lbnoupgrades.Hide();
+            if (CategoryId > upgrades.Length)
+                CategoryId = 0;
             try
             {
                 lbupgrades.Items.AddRange(upgrades[CategoryId].Keys.ToArray());
@@ -250,6 +254,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void moveCat(short direction) // direction is -1 to move backwards or 1 to move forwards
         {
+            if (cats.Length == 0) return;
             CategoryId += direction;
             CategoryId %= cats.Length;
             if (CategoryId < 0) CategoryId += cats.Length; // fix modulo on negatives

@@ -39,49 +39,30 @@ namespace ShiftOS.WinForms.ShiftnetSites
         {
             //Get the Fundamentals List
             flfundamentals.Controls.Clear();
-            foreach (var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftnetSite)) && t.BaseType == typeof(UserControl) && Shiftorium.UpgradeAttributesUnlocked(t)))
             {
-                if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                var attrs = type.GetCustomAttributes(false);
+                var attribute = attrs.FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
+                if (attribute != null)
                 {
-                    try
+                    if (attrs.OfType<ShiftnetFundamentalAttribute>().Any())
                     {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach (var type in asm.GetTypes())
+                        var dash = new Label();
+                        dash.Text = " - ";
+                        dash.AutoSize = true;
+                        flfundamentals.Controls.Add(dash);
+                        dash.Show();
+                        var link = new LinkLabel();
+                        link.Text = attribute.Name;
+                        link.Click += (o, a) =>
                         {
-                            if (type.GetInterfaces().Contains(typeof(IShiftnetSite)))
-                            {
-                                if (type.BaseType == typeof(UserControl))
-                                {
-                                    var attribute = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
-                                    if (attribute != null)
-                                    {
-                                        if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                        {
-                                            if (type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetFundamentalAttribute) != null)
-                                            {
-                                                var dash = new Label();
-                                                dash.Text = " - ";
-                                                dash.AutoSize = true;
-                                                flfundamentals.Controls.Add(dash);
-                                                dash.Show();
-                                                var link = new LinkLabel();
-                                                link.Text = attribute.Name;
-                                                link.Click += (o, a) =>
-                                                {
-                                                    GoToUrl?.Invoke(attribute.Url);
-                                                };
-                                                flfundamentals.Controls.Add(link);
-                                                flfundamentals.SetFlowBreak(link, true);
-                                                link.Show();
-                                                link.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                            GoToUrl?.Invoke(attribute.Url);
+                        };
+                        flfundamentals.Controls.Add(link);
+                        flfundamentals.SetFlowBreak(link, true);
+                        link.Show();
+                        link.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
                     }
-                    catch { }
                 }
             }
 
