@@ -874,6 +874,7 @@
     <None Include="Resources\SuperDesk screenshot.png" />
     <None Include="Resources\notestate_connection_full.bmp" />
     <None Include="Resources\iconSpeaker.bmp" />
+    <None Include="Resources\ShiftOSFull.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

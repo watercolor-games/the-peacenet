@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,12 +19,60 @@ namespace ShiftOS.WinForms.MainMenu
         {
             InitializeComponent();
             (desk as WinformsDesktop).ParentMenu = this;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+#if DEBUG
+            var asm = Assembly.GetExecutingAssembly();
 
+            string asmName = asm.GetName().Name;
+            string vstring = "";
+            var version = asm.GetCustomAttributes(true).FirstOrDefault(x => x is AssemblyVersionAttribute) as AssemblyVersionAttribute;
+            if (version != null)
+                vstring = version.Version;
+            lbbuilddetails.Text = $"{asmName} - version number: {vstring} - THIS IS AN UNSTABLE RELEASE.";
+
+#else
+            lbbuilddetails.Hide();
+#endif
+        }
+
+        public void HideOptions()
+        {
+            pnloptions.Hide();
+            flmenu.BringToFront();
+            flmenu.CenterParent();
+            currentMenu = flmenu;
+            CategoryText = "Main menu";
+        }
+
+        public string CategoryText
+        {
+            get
+            {
+                return lbcurrentui.Text;
+            }
+            set
+            {
+                lbcurrentui.Text = value;
+                lbcurrentui.CenterParent();
+                lbcurrentui.Top = currentMenu.Top - (lbcurrentui.Height * 2);
+            }
+        }
+
+        private Control currentMenu = null;
+
+        private void MainMenu_Load(object sender, EventArgs e)
+        {
+            Tools.ControlManager.SetupControls(this);
+            shiftos.CenterParent();
+            shiftos.Top = 35;
+
+            
             var tickermove = new Timer();
             var tickerreset = new Timer();
             tickermove.Tick += (o, a) =>
             {
-                if(lbticker.Left <= (0 - lbticker.Width))
+                if (lbticker.Left <= (0 - lbticker.Width))
                 {
                     tickermove.Stop();
                     tickerreset.Start();
@@ -52,18 +101,9 @@ namespace ShiftOS.WinForms.MainMenu
             flmenu.CenterParent();
 
             tickerreset.Start();
-        }
 
-        public void HideOptions()
-        {
-            pnloptions.Hide();
-            flmenu.BringToFront();
-            flmenu.CenterParent();
-        }
-
-        private void MainMenu_Load(object sender, EventArgs e)
-        {
-            Tools.ControlManager.SetupControls(this);
+            currentMenu = flmenu;
+            CategoryText = "Main menu";
 
         }
 
@@ -110,6 +150,9 @@ namespace ShiftOS.WinForms.MainMenu
             flcampaign.Show();
             flcampaign.BringToFront();
             flcampaign.CenterParent();
+            currentMenu = flcampaign;
+            CategoryText = "Campaign";
+
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -135,6 +178,9 @@ namespace ShiftOS.WinForms.MainMenu
             pnloptions.Show();
             pnloptions.BringToFront();
             pnloptions.CenterParent();
+            currentMenu = pnloptions;
+            CategoryText = "Settings";
+
         }
 
         private void opt_btncancel_Click(object sender, EventArgs e)
@@ -187,6 +233,8 @@ namespace ShiftOS.WinForms.MainMenu
             flmenu.Show();
             flmenu.BringToFront();
             flmenu.CenterParent();
+            currentMenu = flmenu;
+            CategoryText = "Main menu";
         }
 
         private void btncontinue_Click(object sender, EventArgs e)

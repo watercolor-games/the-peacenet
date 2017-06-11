@@ -1092,9 +1092,9 @@ namespace ShiftOS.WinForms.Properties {
         ///	{
         ///		Company: &quot;Shiftcast&quot;,
         ///		Name: &quot;NetXtreme Hyper Edition&quot;,
-        ///		CostPerMonth: 1500,
+        ///		CostPerMonth: 150,
         ///		DownloadSpeed: 524288, //512 kb/s
-        ///		Description: &quot;It&apos;s time to supercharge your Shif [rest of string was truncated]&quot;;.
+        ///		Description: &quot;It&apos;s time to supercharge your Shift [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ShiftnetServices {
             get {
@@ -1113,9 +1113,10 @@ namespace ShiftOS.WinForms.Properties {
         ///		Category: &quot;Enhancements&quot;,
         ///	},
         ///	{
-        ///		Name: &quot;Shift Progress Bar&quot;,
-        ///		Cost: 150,
-        ///		Description: &quot;Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you&apos;ll get the ability to set the foreground an [rest of string was truncated]&quot;;.
+        ///		Name: &quot;Icon Manager&quot;,
+        ///		Cost: 450,
+        ///		Description: &quot;This tool allows you to add and edit application icons within ShiftOS for the small prive of 450 Codepoints!&quot;,
+        ///		Dependencies: &quot;skinning [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {
@@ -1130,6 +1131,16 @@ namespace ShiftOS.WinForms.Properties {
         internal static string ShiftOS {
             get {
                 return ResourceManager.GetString("ShiftOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ShiftOSFull {
+            get {
+                object obj = ResourceManager.GetObject("ShiftOSFull", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

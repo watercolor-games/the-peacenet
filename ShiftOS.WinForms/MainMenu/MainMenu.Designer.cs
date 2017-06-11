@@ -49,10 +49,14 @@
             this.btnnewgame = new System.Windows.Forms.Button();
             this.btncontinue = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
+            this.lbcurrentui = new System.Windows.Forms.Label();
+            this.shiftos = new System.Windows.Forms.PictureBox();
+            this.lbbuilddetails = new System.Windows.Forms.Label();
             this.flmenu.SuspendLayout();
             this.pnloptions.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flcampaign.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.shiftos)).BeginInit();
             this.SuspendLayout();
             // 
             // flmenu
@@ -281,12 +285,45 @@
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
+            // lbcurrentui
+            // 
+            this.lbcurrentui.AutoSize = true;
+            this.lbcurrentui.Location = new System.Drawing.Point(704, 259);
+            this.lbcurrentui.Name = "lbcurrentui";
+            this.lbcurrentui.Size = new System.Drawing.Size(35, 13);
+            this.lbcurrentui.TabIndex = 4;
+            this.lbcurrentui.Tag = "header2";
+            this.lbcurrentui.Text = "label4";
+            // 
+            // shiftos
+            // 
+            this.shiftos.Image = global::ShiftOS.WinForms.Properties.Resources.ShiftOSFull;
+            this.shiftos.Location = new System.Drawing.Point(432, 381);
+            this.shiftos.Name = "shiftos";
+            this.shiftos.Size = new System.Drawing.Size(468, 109);
+            this.shiftos.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.shiftos.TabIndex = 5;
+            this.shiftos.TabStop = false;
+            // 
+            // lbbuilddetails
+            // 
+            this.lbbuilddetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbbuilddetails.AutoSize = true;
+            this.lbbuilddetails.Location = new System.Drawing.Point(1, 553);
+            this.lbbuilddetails.Name = "lbbuilddetails";
+            this.lbbuilddetails.Size = new System.Drawing.Size(35, 13);
+            this.lbbuilddetails.TabIndex = 6;
+            this.lbbuilddetails.Text = "label4";
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1161, 566);
+            this.Controls.Add(this.lbbuilddetails);
+            this.Controls.Add(this.shiftos);
+            this.Controls.Add(this.lbcurrentui);
             this.Controls.Add(this.flcampaign);
             this.Controls.Add(this.pnloptions);
             this.Controls.Add(this.lbticker);
@@ -301,6 +338,7 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.flcampaign.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.shiftos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,5 +367,8 @@
         private System.Windows.Forms.Button btnnewgame;
         private System.Windows.Forms.Button btncontinue;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Label lbcurrentui;
+        private System.Windows.Forms.PictureBox shiftos;
+        private System.Windows.Forms.Label lbbuilddetails;
     }
 }
