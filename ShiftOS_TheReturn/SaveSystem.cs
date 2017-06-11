@@ -575,14 +575,14 @@ namespace ShiftOS.Engine
         public static void ReadSave()
         {
             //Migrate old saves.
-            if(System.IO.Directory.Exists("C:\\ShiftOS2"))
+            if (System.IO.Directory.Exists("C:\\ShiftOS2"))
             {
                 Console.WriteLine("Old save detected. Migrating filesystem to MFS...");
                 foreach (string file in System.IO.Directory.EnumerateDirectories("C:\\ShiftOS2")
 .Select(d => new DirectoryInfo(d).FullName))
                 {
-                    if(!Utils.DirectoryExists(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/")))
-                    Utils.CreateDirectory(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"));
+                    if (!Utils.DirectoryExists(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/")))
+                        Utils.CreateDirectory(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"));
                 }
                 foreach (string file in System.IO.Directory.EnumerateFiles("C:\\ShiftOS2"))
                 {
@@ -594,24 +594,17 @@ namespace ShiftOS.Engine
 
             }
 
+            string path = Path.Combine(Paths.SaveDirectory, "autosave.save");
 
-            if (Utils.FileExists(Paths.SaveFileInner))
+            if (System.IO.File.Exists(Path.Combine(Paths.SaveDirectory, "autosave.save")))
             {
-                oobe.ShowSaveTransfer(JsonConvert.DeserializeObject<Save>(Utils.ReadAllText(Paths.SaveFileInner)));
+                CurrentSave = JsonConvert.DeserializeObject<Save>(System.IO.File.ReadAllText(path));
             }
             else
             {
-                if (Utils.FileExists(Paths.GetPath("user.dat")))
-                {
-                    string token = Utils.ReadAllText(Paths.GetPath("user.dat"));
-
-                    ServerManager.SendMessage("mud_token_login", token);
-                }
-                else
-                {
-                    NewSave();
-                }
+                NewSave();
             }
+
 
         }
 
@@ -644,15 +637,25 @@ namespace ShiftOS.Engine
                     Console.Write("{SE_SAVING}... ");
                 if (SaveSystem.CurrentSave != null)
                 {
-                    Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);
                     var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
                     new Thread(() =>
                     {
-                        // please don't do networking on the main thread if you're just going to
-                        // discard the response, it's extremely slow
-                        ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                        try
+                        {
+                            // please don't do networking on the main thread if you're just going to
+                            // discard the response, it's extremely slow
+                            ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                        }
+                        catch { }
                     })
                     { IsBackground = false }.Start();
+                    if (!System.IO.Directory.Exists(Paths.SaveDirectory))
+                    {
+                        System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
+
+                    }
+
+                    System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
                 }
                 if (!Shiftorium.Silent)
                     Console.WriteLine(" ...{DONE}.");

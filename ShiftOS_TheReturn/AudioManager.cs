@@ -125,6 +125,10 @@ namespace ShiftOS.Engine
                 }
                 if (play)
                 {
+                    while(_out.PlaybackState == PlaybackState.Playing)
+                    {
+                        Thread.Sleep(10);
+                    }
                     ShiftOS.Engine.AudioManager.Stop();
                     _out = new WaveOut();
                     var mp3 = new WaveFileReader(str);

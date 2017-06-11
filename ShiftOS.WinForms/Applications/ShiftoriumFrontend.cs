@@ -59,7 +59,6 @@ namespace ShiftOS.WinForms.Applications
         public ShiftoriumFrontend()
         {
             InitializeComponent();
-            SaveSystem.CurrentSave.addSetCpCallback(updatecounter);
             updatecounter();
             Populate();
             SetList();
@@ -238,7 +237,6 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
-            SaveSystem.CurrentSave.removeSetCpCallback(updatecounter);
             return true;
         }
 

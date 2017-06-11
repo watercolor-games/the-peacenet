@@ -47,9 +47,18 @@ namespace ShiftOS.WinForms.MainMenu
             tickermove.Interval = 1;
             tickerreset.Interval = 1000;
 
+            pnloptions.Hide();
+            flcampaign.Hide();
             flmenu.CenterParent();
 
             tickerreset.Start();
+        }
+
+        public void HideOptions()
+        {
+            pnloptions.Hide();
+            flmenu.BringToFront();
+            flmenu.CenterParent();
         }
 
         private void MainMenu_Load(object sender, EventArgs e)
@@ -76,6 +85,12 @@ namespace ShiftOS.WinForms.MainMenu
                     return "Terminal too weird for ya? You can use the Format Editor to generate your own Terminal command parser. No coding knowledge needed!";
                 case 5:
                     return "Contests are a good way to earn heaps of Codepoints. Head on over to http://getshiftos.ml/Contests for info on current community contests.";
+                case 6:
+                    return "There's no bugs in this game... But if you find some, please submit them to http://getshiftos.ml/Bugs.";
+                case 7:
+                    return "SHIFTOS - PROPERTY OF MICHAEL VANOVERBEEK. FOR INTERNAL USE ONLY. Build number = sos_tr_133764 [Just kidding. ShiftOS is open-source. Find the code at http://github.com/shiftos-game/ShiftOS!]";
+                case 8:
+                    return "Hold your Codepoints against the wall...           when they take everything away. Hold your Codepoints against the wall...";
                 default:
                     return "Good God. We don't know what to put here.";
             }
@@ -83,7 +98,18 @@ namespace ShiftOS.WinForms.MainMenu
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Desktop.CurrentDesktop.Show();
+            if(System.IO.File.Exists(System.IO.Path.Combine(Paths.SaveDirectory, "autosave.save")))
+            {
+                btncontinue.Show();
+            }
+            else
+            {
+                btncontinue.Hide();
+            }
+            flmenu.Hide();
+            flcampaign.Show();
+            flcampaign.BringToFront();
+            flcampaign.CenterParent();
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -95,6 +121,98 @@ namespace ShiftOS.WinForms.MainMenu
         {
             (Desktop.CurrentDesktop as WinformsDesktop).IsSandbox = true;
             Desktop.CurrentDesktop.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var conf = ShiftOS.Objects.UserConfig.Get();
+
+            txtubase.Text = conf.UniteUrl;
+            txtdsaddress.Text = conf.DigitalSocietyAddress;
+            txtdsport.Text = conf.DigitalSocietyPort.ToString();
+
+
+            pnloptions.Show();
+            pnloptions.BringToFront();
+            pnloptions.CenterParent();
+        }
+
+        private void opt_btncancel_Click(object sender, EventArgs e)
+        {
+            HideOptions();
+        }
+
+        private void btnsave_Click(object sender, EventArgs e)
+        {
+            var conf = ShiftOS.Objects.UserConfig.Get();
+
+            conf.DigitalSocietyAddress = txtdsaddress.Text;
+
+            int p = 0;
+
+            if(int.TryParse(txtdsport.Text, out p) == false)
+            {
+                Infobox.Show("Invalid port number", "The Digital Society Port must be a valid whole number between 0 and 65535.");
+                return;
+            }
+            else
+            {
+                if(p < 0 || p > 65535)
+                {
+                    Infobox.Show("Invalid port number", "The Digital Society Port must be a valid whole number between 0 and 65535.");
+                    return;
+                }
+            }
+
+            conf.DigitalSocietyPort = p;
+
+            string unite = txtubase.Text;
+            if (unite.EndsWith("/"))
+            {
+                int len = unite.Length;
+                int index = len - 1;
+                int end = 1;
+                unite = unite.Remove(index, end);
+            }
+            conf.UniteUrl = unite;
+
+            System.IO.File.WriteAllText("servers.json", Newtonsoft.Json.JsonConvert.SerializeObject(conf, Newtonsoft.Json.Formatting.Indented));
+
+            HideOptions();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            flcampaign.Hide();
+            flmenu.Show();
+            flmenu.BringToFront();
+            flmenu.CenterParent();
+        }
+
+        private void btncontinue_Click(object sender, EventArgs e)
+        {
+            Desktop.CurrentDesktop.Show();
+
+        }
+
+        private void btnnewgame_Click(object sender, EventArgs e)
+        {
+            string path = System.IO.Path.Combine(Paths.SaveDirectory, "autosave.save");
+            if (System.IO.File.Exists(path))
+            {
+                Infobox.PromptYesNo("Campaign", "You are about to start a new game, which will erase any previous progress. Are you sure you want to do this?", (result) =>
+                {
+                    if (result == true)
+                    {
+                        System.IO.File.Delete(path);
+                        Desktop.CurrentDesktop.Show();
+                    }
+                });
+            }
+            else
+            {
+                Desktop.CurrentDesktop.Show();
+            }
         }
     }
 }
