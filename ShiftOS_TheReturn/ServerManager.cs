@@ -134,32 +134,19 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         {
             string[] split = msg.GUID.Split('|');
             bool finished = false;
-            foreach (var exec in Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+            if (split[0] == SaveSystem.CurrentSave.SystemName)
+                foreach(var type in Array.FindAll(ReflectMan.Types, x => x.GetInterfaces().Contains(typeof(Server)) && Shiftorium.UpgradeAttributesUnlocked(x)))
                 {
-                    try
+                    var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
+                    if(attrib != null)
                     {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(Server))))
+                        if(split[1] == attrib.Port.ToString())
                         {
-                            var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
-                            if(attrib != null)
-                            {
-                                if(split[0] == SaveSystem.CurrentSave.SystemName && split[1] == attrib.Port.ToString())
-                                {
-                                    if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                    {
-                                        type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(x => x.Name == "MessageReceived")?.Invoke(Activator.CreateInstance(type), null);
-                                        finished = true;
-                                    }
-                                }
-                            }
+                            type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(x => x.Name == "MessageReceived")?.Invoke(Activator.CreateInstance(type), null);
+                            finished = true;
                         }
                     }
-                    catch { }
                 }
-            }
             if (finished == false)
             {
                 Forward(split[2], "Error", $"{split[0]}:{split[1]}: connection refused");

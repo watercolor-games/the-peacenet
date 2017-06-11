@@ -295,53 +295,39 @@ namespace ShiftOS.Engine
         public static void PopulateTerminalCommands()
         {
             Commands = new List<TerminalCommand>();
-            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            foreach(var type in ReflectMan.Types)
             {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                var ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
+                if(ns != null)
                 {
-                    try
+                    foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                     {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes())
+                        var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
+                        if(cmd != null)
                         {
-                            var ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
-                            if(ns != null)
+                            var tc = new TerminalCommand();
+                            tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+
+                            tc.NamespaceInfo = ns;
+
+                            tc.CommandInfo = cmd as Command;
+                            tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                            tc.RequiredArguments = new List<string>();
+                            foreach (var arg in mth.GetCustomAttributes(false).Where(x=>x is RequiresArgument))
                             {
-                                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                {
-                                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
-                                    if(cmd != null)
-                                    {
-                                        var tc = new TerminalCommand();
-                                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
-
-                                        tc.NamespaceInfo = ns;
-
-                                        tc.CommandInfo = cmd as Command;
-                                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
-                                        tc.RequiredArguments = new List<string>();
-                                        foreach (var arg in mth.GetCustomAttributes(false).Where(x=>x is RequiresArgument))
-                                        {
-                                            var rarg = arg as RequiresArgument;
-                                            tc.RequiredArguments.Add(rarg.argument);
-                                        }
-                                        var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
-                                        if (rupg != null)
-                                            tc.Dependencies = rupg.Upgrade;
-                                        else
-                                            tc.Dependencies = "";
-                                        tc.CommandType = type;
-                                        tc.CommandHandler = mth;
-                                        if (!Commands.Contains(tc))
-                                            Commands.Add(tc);
-                                    }
-                                }
+                                var rarg = arg as RequiresArgument;
+                                tc.RequiredArguments.Add(rarg.argument);
                             }
+                            var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                            if (rupg != null)
+                                tc.Dependencies = rupg.Upgrade;
+                            else
+                                tc.Dependencies = "";
+                            tc.CommandType = type;
+                            tc.CommandHandler = mth;
+                            if (!Commands.Contains(tc))
+                                Commands.Add(tc);
                         }
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine("[termdb] Error: " + e.ToString());
                     }
                 }
             }

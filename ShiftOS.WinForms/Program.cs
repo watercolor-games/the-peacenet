@@ -114,53 +114,39 @@ namespace ShiftOS.WinForms
         {
             var defaultList = JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
 
-            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in ReflectMan.Types)
             {
-                if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                var attribs = type.GetCustomAttributes(false);
+                var attrib = attribs.FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                if (attrib != null)
                 {
-                    try
+                    var upgrade = new ShiftoriumUpgrade
                     {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach (var type in asm.GetTypes())
-                        {
-                            var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
-                            if (attrib != null)
-                            {
-                                var upgrade = new ShiftoriumUpgrade
-                                {
-                                    Id = attrib.Name.ToLower().Replace(" ", "_"),
-                                    Name = attrib.Name,
-                                    Description = attrib.Description,
-                                    Cost = attrib.Cost,
-                                    Category = attrib.Category,
-                                    Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
-                                };
-                                defaultList.Add(upgrade);
-                            }
-
-                            var sattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is StpContents) as StpContents;
-                            if (sattrib != null)
-                            {
-                                var upgrade = new ShiftoriumUpgrade
-                                {
-                                    Id = sattrib.Upgrade,
-                                    Name = sattrib.Name,
-                                    Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
-                                    Cost = 0,
-                                    Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
-                                    Dependencies = "dummy_nodisplay"
-                                };
-                                defaultList.Add(upgrade);
-                            }
-
-                        }
-
-
-
-
-                    }
-                    catch { }
+                        Id = attrib.Name.ToLower().Replace(" ", "_"),
+                        Name = attrib.Name,
+                        Description = attrib.Description,
+                        Cost = attrib.Cost,
+                        Category = attrib.Category,
+                        Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
+                    };
+                    defaultList.Add(upgrade);
                 }
+
+                var sattrib = attribs.FirstOrDefault(x => x is StpContents) as StpContents;
+                if (sattrib != null)
+                {
+                    var upgrade = new ShiftoriumUpgrade
+                    {
+                        Id = sattrib.Upgrade,
+                        Name = sattrib.Name,
+                        Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
+                        Cost = 0,
+                        Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
+                        Dependencies = "dummy_nodisplay"
+                    };
+                    defaultList.Add(upgrade);
+                }
+
             }
             return defaultList;
         }

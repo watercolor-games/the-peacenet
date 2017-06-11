@@ -205,55 +205,14 @@ end");
             //This temporary proxy() method will be used by the API prober.
             Lua.proxy = new Func<string, dynamic>((objName) =>
             {
-                foreach (var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-                {
-                    if (f.EndsWith(".exe") || f.EndsWith(".dll"))
-                    {
-                        try
-                        {
-
-                            var asm = Assembly.LoadFile(f);
-                            foreach (var type in asm.GetTypes())
-                            {
-                                if (type.Name == objName)
-                                {
-                                    dynamic dynObj = Activator.CreateInstance(type);
-                                    return dynObj;
-                                }
-
-                            }
-                        }
-                        catch { }
-                    }
-                }
+                dynamic dynObj = ReflectMan.Types.FirstOrDefault(t => t.Name == objName);
+                if (dynObj != null)
+                    return dynObj;
                 throw new Exception("{CLASS_NOT_FOUND}");
             });
-
-            foreach (var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if (f.EndsWith(".exe") || f.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var thisasm = Assembly.LoadFile(f);
-                        foreach (var type in thisasm.GetTypes())
-                        {
-                            foreach (var attr in type.GetCustomAttributes(false))
-                            {
-                                if (attr is ExposedAttribute)
-                                {
-                                    var eattr = attr as ExposedAttribute;
-                                    Lua($"{eattr.Name} = proxy(\"{type.Name}\")");
-                                }
-                            }
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-                }
-            }
+            foreach (var type in ReflectMan.Types)
+                foreach (var attr in Array.FindAll(type.GetCustomAttributes(false), a => a is ExposedAttribute))
+                    Lua($"{(attr as ExposedAttribute).Name} = proxy(\"{type.Name}\")");
             //Now we can null out the proxy() method as it can cause security risks.
             Lua.isRunning = new Func<bool>(() => { return this.Running; });
             Lua.proxy = null;

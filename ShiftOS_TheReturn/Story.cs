@@ -134,55 +134,42 @@ namespace ShiftOS.Engine
         /// <param name="stid">The storyline ID to start.</param>
         public static void Start(string stid)
         {
-            foreach (var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            if (SaveSystem.CurrentSave.StoriesExperienced == null)
+                SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
+            foreach (var type in ReflectMan.Types)
             {
-                if(exec.EndsWith(".exe") || exec.EndsWith(".dll"))
+                foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
-                    try
+                    foreach (var attrib in Array.FindAll(mth.GetCustomAttributes(false), a => a is StoryAttribute))
                     {
-                        if (SaveSystem.CurrentSave.StoriesExperienced == null)
-                            SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes())
+                        var story = attrib as StoryAttribute;
+                        if (story.StoryID == stid)
                         {
-                            foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                            new Thread(() =>
                             {
-                                foreach(var attrib in mth.GetCustomAttributes(false))
+                                Context = new Engine.StoryContext
                                 {
-                                    if(attrib is StoryAttribute)
-                                    {
-                                        var story = attrib as StoryAttribute;
-                                        if(story.StoryID == stid)
-                                        {
-                                            new Thread(() =>
-                                            {
-                                                Context = new Engine.StoryContext
-                                                {
-                                                    Id = stid,
-                                                    Method = mth,
-                                                    AutoComplete = true,
-                                                };
-                                                SaveSystem.CurrentSave.PickupPoint = Context.Id;
-                                                Context.OnComplete += () =>
-                                                {
-                                                    StoryComplete?.Invoke(stid);
-                                                    SaveSystem.CurrentSave.PickupPoint = null;
-                                                };
-                                                mth.Invoke(null, null);
-                                                if (Context.AutoComplete)
-                                                {
-                                                    Context.MarkComplete();
-                                                }
-                                            }).Start();
-                                            return;
-                                        }
-                                    }
+                                    Id = stid,
+                                    Method = mth,
+                                    AutoComplete = true,
+                                };
+                                SaveSystem.CurrentSave.PickupPoint = Context.Id;
+                                Context.OnComplete += () =>
+                                {
+                                    StoryComplete?.Invoke(stid);
+                                    SaveSystem.CurrentSave.PickupPoint = null;
+                                };
+                                mth.Invoke(null, null);
+                                if (Context.AutoComplete)
+                                {
+                                    Context.MarkComplete();
                                 }
-                            }
+                            }).Start();
+                            return;
                         }
                     }
-                    catch (Exception ex) { throw ex; }
                 }
+
             }
 #if DEBUG
             throw new ArgumentException("Story ID not found: " + stid + " - Talk to Michael. NOW.");

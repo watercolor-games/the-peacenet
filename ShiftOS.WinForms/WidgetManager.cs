@@ -16,36 +16,12 @@ namespace ShiftOS.WinForms
     {
         public static Dictionary<DesktopWidgetAttribute, Type> GetAllWidgetTypes()
         {
-            Dictionary<DesktopWidgetAttribute, Type> types = new Dictionary<WinForms.DesktopWidgetAttribute, Type>();
-            foreach(var exe in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exe.EndsWith(".exe") || exe.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach(var type in asm.GetTypes())
-                        {
-                            if (type.GetInterfaces().Contains(typeof(IDesktopWidget)))
-                            {
-                                if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                {
-                                    foreach (var attrib in type.GetCustomAttributes(false))
-                                    {
-                                        if (attrib is DesktopWidgetAttribute)
-                                        {
-                                            var dw = attrib as DesktopWidgetAttribute;
-                                            types.Add(dw, type);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-            return types;
+            var ret = new Dictionary<DesktopWidgetAttribute, Type>();
+            var types = Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IDesktopWidget)) && Shiftorium.UpgradeAttributesUnlocked(t));
+            foreach (var type in types)
+                foreach (var attrib in Array.FindAll(type.GetCustomAttributes(false), a =>  a is DesktopWidgetAttribute))
+                        ret.Add(attrib as DesktopWidgetAttribute, type);
+            return ret;
         }
 
         internal static void SaveDetails(Type type, WidgetDetails location)

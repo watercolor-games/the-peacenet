@@ -679,28 +679,13 @@ namespace ShiftOS.WinForms
         [Command("list", description ="Lists all story IDs.")]
         public static bool ListIds()
         {
-            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+            foreach(var type in ReflectMan.Types)
+                foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(exec);
-                        {
-                            foreach(var type in asm.GetTypes())
-                            {
-                                foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                {
-                                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is StoryAttribute);
-                                    if (attr != null)
-                                        Console.WriteLine(" - " + (attr as StoryAttribute).StoryID);
-                                }
-                            }
-                        }
-                    }
-                    catch { }
+                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is StoryAttribute);
+                    if (attr != null)
+                        Console.WriteLine(" - " + (attr as StoryAttribute).StoryID);
                 }
-            }
             return true;
         }
 

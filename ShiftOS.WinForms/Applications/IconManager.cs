@@ -92,70 +92,51 @@ namespace ShiftOS.WinForms.Applications
         {
             flbody.Controls.Clear(); //Clear the icon list.
 
-            List<Type> types = new List<Type>();
+            Type[] types = Array.FindAll(ReflectMan.Types, x => x.GetCustomAttributes(false).FirstOrDefault(y => y is DefaultIconAttribute) != null);
 
-            foreach(var exe in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            pageCount = types.GetPageCount(pageSize);
+
+            foreach (var type in Array.FindAll(types.GetItemsOnPage(currentPage, pageSize), t => Shiftorium.UpgradeAttributesUnlocked(t)))
             {
-                if(exe.ToLower().EndsWith(".exe") || exe.ToLower().EndsWith(".dll"))
+                var pnl = new Panel();
+                pnl.Height = 30;
+                pnl.Width = flbody.Width - 15;
+                flbody.Controls.Add(pnl);
+                pnl.Show();
+                var pic = new PictureBox();
+                pic.SizeMode = PictureBoxSizeMode.StretchImage;
+                pic.Size = new Size(24, 24);
+                pic.Image = GetIcon(type.Name);
+                pnl.Controls.Add(pic);
+                pic.Left = 5;
+                pic.Top = (pnl.Height - pic.Height) / 2;
+                pic.Show();
+                var lbl = new Label();
+                lbl.Tag = "header3";
+                lbl.AutoSize = true;
+                lbl.Text = NameChangerBackend.GetNameRaw(type);
+                ControlManager.SetupControl(lbl);
+                pnl.Controls.Add(lbl);
+                lbl.CenterParent();
+                lbl.Show();
+                var btn = new Button();
+                btn.Text = "Change...";
+                btn.AutoSize = true;
+                btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                pnl.Controls.Add(btn);
+                btn.Left = (pnl.Width - btn.Width) - 5;
+                btn.Top = (pnl.Height - btn.Height) / 2;
+                btn.Click += (o, a) =>
                 {
-                    try
+                    var gfp = new GraphicPicker(pic.Image, lbl.Text + " icon", ImageLayout.Stretch, (raw, img, layout) =>
                     {
-                        var asm = Assembly.LoadFile(exe);
-
-                        var typeList = asm.GetTypes().Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is DefaultIconAttribute) != null);
-                        types.AddRange(typeList);
-
-                    }
-                    catch { }
-                }
-            }
-
-            pageCount = types.ToArray().GetPageCount(pageSize);
-
-            foreach (var type in types.ToArray().GetItemsOnPage(currentPage, pageSize))
-            {
-                if (Shiftorium.UpgradeAttributesUnlocked(type))
-                {
-                    var pnl = new Panel();
-                    pnl.Height = 30;
-                    pnl.Width = flbody.Width - 15;
-                    flbody.Controls.Add(pnl);
-                    pnl.Show();
-                    var pic = new PictureBox();
-                    pic.SizeMode = PictureBoxSizeMode.StretchImage;
-                    pic.Size = new Size(24, 24);
-                    pic.Image = GetIcon(type.Name);
-                    pnl.Controls.Add(pic);
-                    pic.Left = 5;
-                    pic.Top = (pnl.Height - pic.Height) / 2;
-                    pic.Show();
-                    var lbl = new Label();
-                    lbl.Tag = "header3";
-                    lbl.AutoSize = true;
-                    lbl.Text = NameChangerBackend.GetNameRaw(type);
-                    ControlManager.SetupControl(lbl);
-                    pnl.Controls.Add(lbl);
-                    lbl.CenterParent();
-                    lbl.Show();
-                    var btn = new Button();
-                    btn.Text = "Change...";
-                    btn.AutoSize = true;
-                    btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                    pnl.Controls.Add(btn);
-                    btn.Left = (pnl.Width - btn.Width) - 5;
-                    btn.Top = (pnl.Height - btn.Height) / 2;
-                    btn.Click += (o, a) =>
-                    {
-                        var gfp = new GraphicPicker(pic.Image, lbl.Text + " icon", ImageLayout.Stretch, (raw, img, layout) =>
-                        {
-                            pic.Image = img;
-                            SetIcon(type.Name, raw);
-                        });
-                        AppearanceManager.SetupDialog(gfp);
-                    };
-                    btn.Show();
-                    ControlManager.SetupControls(pnl);
-                }
+                        pic.Image = img;
+                        SetIcon(type.Name, raw);
+                    });
+                    AppearanceManager.SetupDialog(gfp);
+                };
+                btn.Show();
+                ControlManager.SetupControls(pnl);
             }
 
             btnnext.Visible = (currentPage < pageCount - 1);

@@ -771,84 +771,41 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                 {
                     var app = args["app"] as string;
                     //ANNND now we start reflecting...
-                    foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                    foreach (var type in Array.FindAll(ReflectMan.Types, t => t.BaseType == typeof(UserControl)))
                     {
-                        if (asmExec.EndsWith(".exe") || asmExec.EndsWith(".dll"))
+                        var attr = type.GetCustomAttributes(false).FirstOrDefault(a => a is WinOpenAttribute && app == (a as WinOpenAttribute).ID);
+                        if (attr != null)
                         {
-                            var asm = Assembly.LoadFile(asmExec);
-                            try
+                            if (SaveSystem.CurrentSave.Upgrades.ContainsKey(app))
                             {
-                                foreach (var type in asm.GetTypes())
+                                if (Shiftorium.UpgradeInstalled(app))
                                 {
-                                    if (type.BaseType == typeof(UserControl))
-                                    {
-                                        foreach (var attr in type.GetCustomAttributes(false))
-                                        {
-                                            if (attr is WinOpenAttribute)
-                                            {
-                                                if (app == (attr as WinOpenAttribute).ID)
-                                                {
-                                                    if (SaveSystem.CurrentSave.Upgrades.ContainsKey(app))
-                                                    {
-                                                        if (Shiftorium.UpgradeInstalled(app))
-                                                        {
-                                                            IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
-                                                            AppearanceManager.SetupWindow(frm);
-                                                            return true;
-                                                        }
-                                                        else
-                                                        {
-                                                            throw new Exception($"{app} was not found on your system! Try looking in the shiftorium...");
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
-                                                        AppearanceManager.SetupWindow(frm);
-                                                        return true;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
+                                    AppearanceManager.SetupWindow(frm);
+                                    return true;
+                                }
+                                else
+                                {
+                                    throw new Exception($"{app} was not found on your system! Try looking in the shiftorium...");
                                 }
                             }
-                            catch { }
-
+                            else
+                            {
+                                IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
+                                AppearanceManager.SetupWindow(frm);
+                                return true;
+                            }
                         }
                     }
 
                 }
                 else
                 {
-                    foreach (var asmExec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-                    {
-                        if (asmExec.EndsWith(".exe") || asmExec.EndsWith(".dll"))
-                        {
-                            try
-                            {
-                                var asm = Assembly.LoadFile(asmExec);
-
-                                foreach (var type in asm.GetTypes())
-                                {
-                                    if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
-                                    {
-                                        foreach (var attr in type.GetCustomAttributes(false))
-                                        {
-                                            if (attr is WinOpenAttribute)
-                                            {
-                                                if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                                {
-                                                    Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            catch { }
-                        }
-                    }
+                   
+                    foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)) && Shiftorium.UpgradeAttributesUnlocked(t)))
+                        foreach (var attr in Array.FindAll(type.GetCustomAttributes(false), a => a is WinOpenAttribute))
+                                if (Shiftorium.UpgradeAttributesUnlocked(type))
+                                    Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
 
 
                     return true;

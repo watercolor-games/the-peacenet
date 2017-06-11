@@ -207,33 +207,21 @@ namespace ShiftOS.WinForms.ShiftnetSites
                                 if (result == true)
                                 {
                                     SaveSystem.CurrentSave.Codepoints -= upg.Cost;
-                                    foreach (var exe in Directory.GetFiles(Environment.CurrentDirectory))
+                                    foreach (var type in ReflectMan.Types)
                                     {
-                                        if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                                        var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                                        if (attrib != null)
                                         {
-                                            try
+                                            if (attrib.Name == upg.Name)
                                             {
-                                                var asm = Assembly.LoadFile(exe);
-                                                foreach (var type in asm.GetTypes())
-                                                {
-                                                    var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
-                                                    if (attrib != null)
-                                                    {
-                                                        if (attrib.Name == upg.Name)
-                                                        {
-                                                            var installer = new Applications.Installer();
-                                                            var installation = new AppscapeInstallation(upg.Name, attrib.DownloadSize, upg.ID);
-                                                            AppearanceManager.SetupWindow(installer);
-                                                            installer.InitiateInstall(installation);
-                                                            return;
-                                                        }
-                                                    }
-                                                }
+                                                var installer = new Applications.Installer();
+                                                var installation = new AppscapeInstallation(upg.Name, attrib.DownloadSize, upg.ID);
+                                                AppearanceManager.SetupWindow(installer);
+                                                installer.InitiateInstall(installation);
+                                                return;
                                             }
-                                            catch { }
                                         }
                                     }
-
                                 }
                             });
                         }

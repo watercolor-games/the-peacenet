@@ -41,26 +41,7 @@ namespace ShiftOS.Engine
         /// <returns>An array of <see cref="Type"/>s containing the found objects.</returns>
         public static Type[] GetAllStatusIcons()
         {
-            List<Type> lst = new List<Type>();
-            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(IStatusIcon))))
-                        {
-                            if (Shiftorium.UpgradeAttributesUnlocked(type))
-                            {
-                                lst.Add(type);
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-            return lst.ToArray();
+            return Array.FindAll(ReflectMan.Types, x => x.GetInterfaces().Contains(typeof(IStatusIcon)) && Shiftorium.UpgradeAttributesUnlocked(x));
         }
 
 

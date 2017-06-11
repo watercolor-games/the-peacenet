@@ -34,53 +34,38 @@ namespace ShiftOS.WinForms.ShiftnetSites
         public void SetupListing()
         {
             fllist.Controls.Clear();
-            foreach(var exec in Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftnetSite))))
             {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
+                if (attr != null)
                 {
-                    try
+                    if (attr.Url.StartsWith("shiftnet/"))
                     {
-                        var asm = Assembly.LoadFile(exec);
-                        var types = asm.GetTypes();
-                        foreach (var type in types)
+                        var lnk = new LinkLabel();
+                        lnk.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
+                        lnk.Text = attr.Name;
+                        var desc = new Label();
+                        desc.AutoSize = true;
+                        lnk.AutoSize = true;
+                        desc.MaximumSize = new Size(this.Width / 3, 0);
+                        desc.Text = attr.Description;
+                        desc.Padding = new Padding
                         {
-                            if (type.GetInterfaces().Contains(typeof(IShiftnetSite)))
-                            {
-                                var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftnetSiteAttribute) as ShiftnetSiteAttribute;
-                                if (attr != null)
-                                {
-                                    if (attr.Url.StartsWith("shiftnet/"))
-                                    {
-                                        var lnk = new LinkLabel();
-                                        lnk.LinkColor = SkinEngine.LoadedSkin.ControlTextColor;
-                                        lnk.Text = attr.Name;
-                                        var desc = new Label();
-                                        desc.AutoSize = true;
-                                        lnk.AutoSize = true;
-                                        desc.MaximumSize = new Size(this.Width / 3, 0);
-                                        desc.Text = attr.Description;
-                                        desc.Padding = new Padding
-                                        {
-                                            Bottom = 25,
-                                            Top = 0,
-                                            Left = 10,
-                                            Right = 10
-                                        };
-                                        lnk.Click += (o, a) =>
-                                        {
-                                            GoToUrl?.Invoke(attr.Url);
-                                        };
-                                        fllist.Controls.Add(lnk);
-                                        fllist.Controls.Add(desc);
-                                        ControlManager.SetupControls(lnk);
-                                        lnk.Show();
-                                        desc.Show();
-                                    }
-                                }
-                            }
-                        }
+                            Bottom = 25,
+                            Top = 0,
+                            Left = 10,
+                            Right = 10
+                        };
+                        lnk.Click += (o, a) =>
+                        {
+                            GoToUrl?.Invoke(attr.Url);
+                        };
+                        fllist.Controls.Add(lnk);
+                        fllist.Controls.Add(desc);
+                        ControlManager.SetupControls(lnk);
+                        lnk.Show();
+                        desc.Show();
                     }
-                    catch { }
                 }
             }
         }
