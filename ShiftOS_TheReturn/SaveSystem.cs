@@ -163,22 +163,29 @@ namespace ShiftOS.Engine
                     bool guidReceived = false;
                     ServerManager.GUIDReceived += (str) =>
                     {
-                    //Connection successful! Stop waiting!
-                    guidReceived = true;
+                        //Connection successful! Stop waiting!
+                        guidReceived = true;
                         Console.WriteLine("[inetd] Connection successful.");
                     };
 
                     try
                     {
-
-                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                        //This haults the client until the connection is successful.
-                        while (ServerManager.thisGuid == new Guid())
+                        if (ServerManager.ServerOnline)
                         {
-                            Thread.Sleep(10);
+                            ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
+                            //This haults the client until the connection is successful.
+                            while (ServerManager.thisGuid == new Guid())
+                            {
+                                Thread.Sleep(10);
+                            }
+                            Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
+                            FinishBootstrap();
                         }
-                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                        FinishBootstrap();
+                        else
+                        {
+                            Console.WriteLine("[inetd] No suitable network interface card found, skipping network connection.");
+                            FinishBootstrap();
+                        }
                     }
                     catch (Exception ex)
                     {

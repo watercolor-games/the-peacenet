@@ -38,6 +38,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Net.NetworkInformation;
 
 namespace ShiftOS.Engine
 {
@@ -46,6 +47,29 @@ namespace ShiftOS.Engine
     /// </summary>
     public static class ServerManager
     {
+
+        public static bool ServerOnline
+        {
+            get
+            {
+                try
+                {
+                    Ping myPing = new Ping();
+                    String host = UserConfig.Get().DigitalSocietyAddress;
+                    byte[] buffer = new byte[32];
+                    int timeout = 1000;
+                    PingOptions pingOptions = new PingOptions();
+                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+                    return (reply.Status == IPStatus.Success);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+
         /// <summary>
         /// Print connection diagnostic information.
         /// </summary>
