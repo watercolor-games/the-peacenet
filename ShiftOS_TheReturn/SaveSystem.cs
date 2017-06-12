@@ -163,29 +163,22 @@ namespace ShiftOS.Engine
                     bool guidReceived = false;
                     ServerManager.GUIDReceived += (str) =>
                     {
-                        //Connection successful! Stop waiting!
-                        guidReceived = true;
+                    //Connection successful! Stop waiting!
+                    guidReceived = true;
                         Console.WriteLine("[inetd] Connection successful.");
                     };
 
                     try
                     {
-                        if (ServerManager.ServerOnline)
+
+                        ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
+                        //This haults the client until the connection is successful.
+                        while (ServerManager.thisGuid == new Guid())
                         {
-                            ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                            //This haults the client until the connection is successful.
-                            while (ServerManager.thisGuid == new Guid())
-                            {
-                                Thread.Sleep(10);
-                            }
-                            Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                            FinishBootstrap();
+                            Thread.Sleep(10);
                         }
-                        else
-                        {
-                            Console.WriteLine("[inetd] No suitable network interface card found, skipping network connection.");
-                            FinishBootstrap();
-                        }
+                        Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
+                        FinishBootstrap();
                     }
                     catch (Exception ex)
                     {
@@ -527,10 +520,8 @@ namespace ShiftOS.Engine
             {
                 try
                 {
-                    if (Story.Context == null)
-                    {
-                        Story.Start(CurrentSave.PickupPoint);
-                    }
+                    Story.Start(CurrentSave.PickupPoint);
+                    TerminalBackend.PrintPrompt();
                 }
                 catch { }
             }
@@ -637,40 +628,40 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void SaveGame()
         {
-            if (IsSandbox == false)
-            {
 #if !NOSAVE
-                if (!Shiftorium.Silent)
-                    Console.WriteLine("");
-                if (!Shiftorium.Silent)
-                    Console.Write("{SE_SAVING}... ");
-                if (SaveSystem.CurrentSave != null)
+                if (!IsSandbox)
                 {
-                    var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
-                    new Thread(() =>
+                    if (!Shiftorium.Silent)
+                        Console.WriteLine("");
+                    if (!Shiftorium.Silent)
+                        Console.Write("{SE_SAVING}... ");
+                    if (SaveSystem.CurrentSave != null)
                     {
-                        try
+                        var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
+                        new Thread(() =>
                         {
+                            try
+                            {
                             // please don't do networking on the main thread if you're just going to
                             // discard the response, it's extremely slow
                             ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                            }
+                            catch { }
+                        })
+                        { IsBackground = false }.Start();
+                        if (!System.IO.Directory.Exists(Paths.SaveDirectory))
+                        {
+                            System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
+
                         }
-                        catch { }
-                    })
-                    { IsBackground = false }.Start();
-                    if (!System.IO.Directory.Exists(Paths.SaveDirectory))
-                    {
-                        System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
 
+                        System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
                     }
-
-                    System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
+                    if (!Shiftorium.Silent)
+                        Console.WriteLine(" ...{DONE}.");
                 }
-                if (!Shiftorium.Silent)
-                    Console.WriteLine(" ...{DONE}.");
                 System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
 #endif
-            }
         }
 
         /// <summary>
