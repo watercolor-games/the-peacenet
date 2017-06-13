@@ -37,6 +37,7 @@
       <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.2.22, Culture=neutral, PublicKeyToken=7f709c5b713576e1" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
@@ -356,6 +357,12 @@
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
+    <Compile Include="MainMenu\Loading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainMenu\Loading.Designer.cs">
+      <DependentUpon>Loading.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainMenu\MainMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -608,6 +615,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUILogin.resx">
       <DependentUpon>GUILogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainMenu\Loading.resx">
+      <DependentUpon>Loading.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainMenu\MainMenu.resx">
       <DependentUpon>MainMenu.cs</DependentUpon>
@@ -875,6 +885,7 @@
     <None Include="Resources\notestate_connection_full.bmp" />
     <None Include="Resources\iconSpeaker.bmp" />
     <None Include="Resources\ShiftOSFull.png" />
+    <Content Include="Resources\GuessTheNumber.py" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

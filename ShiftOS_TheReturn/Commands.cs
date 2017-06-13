@@ -804,8 +804,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
                    
                     foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)) && Shiftorium.UpgradeAttributesUnlocked(t)))
                         foreach (var attr in Array.FindAll(type.GetCustomAttributes(false), a => a is WinOpenAttribute))
-                                if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                    Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
+                            Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
 
 
                     return true;

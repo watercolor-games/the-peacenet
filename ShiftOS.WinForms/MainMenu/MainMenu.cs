@@ -15,6 +15,11 @@ namespace ShiftOS.WinForms.MainMenu
 {
     public partial class MainMenu : Form
     {
+        private void StartGame()
+        {
+            new Loading().Show();
+        }
+
         public MainMenu(IDesktop desk)
         {
             InitializeComponent();
@@ -163,7 +168,7 @@ namespace ShiftOS.WinForms.MainMenu
         private void button2_Click(object sender, EventArgs e)
         {
             (Desktop.CurrentDesktop as WinformsDesktop).IsSandbox = true;
-            Desktop.CurrentDesktop.Show();
+            StartGame();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -239,7 +244,7 @@ namespace ShiftOS.WinForms.MainMenu
 
         private void btncontinue_Click(object sender, EventArgs e)
         {
-            Desktop.CurrentDesktop.Show();
+            StartGame();
 
         }
 
@@ -253,13 +258,13 @@ namespace ShiftOS.WinForms.MainMenu
                     if (result == true)
                     {
                         System.IO.File.Delete(path);
-                        Desktop.CurrentDesktop.Show();
+                        StartGame();
                     }
                 });
             }
             else
             {
-                Desktop.CurrentDesktop.Show();
+                StartGame();
             }
         }
     }

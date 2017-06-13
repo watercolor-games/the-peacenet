@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Microsoft.Scripting.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,34 +32,46 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Engine
 {
+    /// <summary>
+    /// Mirror, mirror on the wall. Manages a list of types found in ShiftOS-related assemblies.
+    /// </summary>
     public static class ReflectMan
     {
         private static Assembly[] asms = null;
+        /// <summary>
+        /// The list of found assemblies.
+        /// </summary>
         public static Assembly[] Asms
         {
             get
             {
                 if (asms == null)
-                    LoadAssemblies();
+                    LoadFiles();
                 return asms;
             }
         }
 
         private static Type[] types = null;
+        /// <summary>
+        /// The list of found types.
+        /// </summary>
         public static Type[] Types
         {
             get
             {
                 if (types == null)
+                {
                     FindTypes();
+                    PythonAPI.Scan();
+                }
                 return types;
             }
         }
 
-        private static void LoadAssemblies()
+        private static void LoadFiles()
         {
             var ret = new List<Assembly>();
-            foreach (var exe in Array.FindAll(System.IO.Directory.GetFiles(Environment.CurrentDirectory), n => n.EndsWith(".exe") || n.EndsWith(".dll")))
+            foreach (var exe in Array.FindAll(System.IO.Directory.GetFiles(Environment.CurrentDirectory), n => n.EndsWith(".exe", true, null) || n.EndsWith(".dll", true, null)))
                 try
                 {
                     var asm = Assembly.LoadFile(exe);
@@ -76,5 +89,31 @@ namespace ShiftOS.Engine
                 ret.AddRange(asm.GetTypes());
             types = ret.ToArray();
         }
+
+        /// <summary>
+        /// Add extra types to the ReflectMan array after the scan is complete.
+        /// Shouldn't be public, but C# doesn't support "friend".
+        /// </summary>
+        /// <param name="newtypes">An array of types to append.</param>
+        public static void AddTypes(Type[] newtypes)
+        {
+            var oldlength = types.Length;
+            Array.Resize(ref types, oldlength + newtypes.Length);
+            newtypes.CopyTo(types, oldlength);
+        }
     }
+
+#if DEBUG
+    [Namespace("dev")]
+    public static class ReflectDebug
+    {
+        [Command("listalltypes", description = "List all types that were found by ReflectMan. Only present in DEBUG builds of ShiftOS.")]
+        public static bool ListAllTypes(Dictionary<string, object> args)
+        {
+            foreach (var type in ReflectMan.Types)
+                Console.WriteLine(type.ToString());
+            return true;
+        }
+    }
+#endif
 }
