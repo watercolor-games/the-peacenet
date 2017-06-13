@@ -46,10 +46,13 @@ namespace ShiftOS.WinForms.Applications
             InitializeComponent();
             SelectedLayout = layout;
             Image = old;
-            using(var ms = new System.IO.MemoryStream())
+            if (Image != null)
             {
-                Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                ImageAsBinary = ms.ToArray();
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    ImageAsBinary = ms.ToArray();
+                }
             }
             Callback = cb;
             lblobjecttoskin.Text = name;
