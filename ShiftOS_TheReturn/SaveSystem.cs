@@ -79,6 +79,7 @@ namespace ShiftOS.Engine
         /// </summary>
         public static Save CurrentSave { get; set; }
 
+
         /// <summary>
         /// Start the entire ShiftOS engine.
         /// </summary>
@@ -104,6 +105,8 @@ namespace ShiftOS.Engine
 
             Localization.SetupTHETRUEDefaultLocals();
             SkinEngine.Init();
+            Random rnd = new Random();
+            int loadingJoke1 = rnd.Next(5);
 
             TerminalBackend.OpenTerminal();
 
@@ -138,7 +141,19 @@ namespace ShiftOS.Engine
                 Console.WriteLine("[sfs] Loading SFS driver v3");
                 Thread.Sleep(100);
                 Console.WriteLine("[sfs] 4096 blocks read.");
+                if (loadingJoke1 == 0)
+                    Console.WriteLine("[sos] Getting good and ready...");
+                if (loadingJoke1 == 1)
+                    Console.WriteLine("[sos] Shifting the OS...");
+                if (loadingJoke1 == 2)
+                    Console.WriteLine("[sos] Placing things everywhere...");
+                if (loadingJoke1 == 3)
+                    Console.WriteLine("[sos] Making an an errors...");
+                if (loadingJoke1 == 4)
+                    Console.WriteLine("[sos] Testing to see if this OS is indeed on...");
+                Thread.Sleep(50);
                 Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
+                Thread.Sleep(20);
                 Console.WriteLine("[termdb] Building command database from filesystem...");
                 TerminalBackend.PopulateTerminalCommands();
 
@@ -637,7 +652,7 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void SaveGame()
         {
-            if (IsSandbox == false)
+            if (!IsSandbox)
             {
 #if !NOSAVE
                 if (!Shiftorium.Silent)
@@ -668,9 +683,9 @@ namespace ShiftOS.Engine
                 }
                 if (!Shiftorium.Silent)
                     Console.WriteLine(" ...{DONE}.");
-                System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
 #endif
             }
+            System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }
 
         /// <summary>
