@@ -106,7 +106,8 @@ namespace ShiftOS.Engine
             Localization.SetupTHETRUEDefaultLocals();
             SkinEngine.Init();
             Random rnd = new Random();
-            int loadingJoke1 = rnd.Next(5);
+            int loadingJoke1 = rnd.Next(10);
+            int loadingJoke2 = rnd.Next(10);
 
             TerminalBackend.OpenTerminal();
 
@@ -126,6 +127,7 @@ namespace ShiftOS.Engine
 
                 Thread.Sleep(350);
                 Console.WriteLine("ShiftKernel v0.4.2");
+                Thread.Sleep(50);
                 Console.WriteLine("(MIT) DevX 2017, Very Little Rights Reserved");
                 Console.WriteLine("");
                 Console.WriteLine("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
@@ -139,7 +141,7 @@ namespace ShiftOS.Engine
                 Thread.Sleep(250);
                 Console.WriteLine("[init] Kernel boot complete.");
                 Console.WriteLine("[sfs] Loading SFS driver v3");
-                Thread.Sleep(100);
+                Thread.Sleep(350);
                 Console.WriteLine("[sfs] 4096 blocks read.");
                 if (loadingJoke1 == 0)
                     Console.WriteLine("[sos] Getting good and ready...");
@@ -151,9 +153,19 @@ namespace ShiftOS.Engine
                     Console.WriteLine("[sos] Making an an errors...");
                 if (loadingJoke1 == 4)
                     Console.WriteLine("[sos] Testing to see if this OS is indeed on...");
-                Thread.Sleep(50);
+                if (loadingJoke1 == 5)
+                    Console.WriteLine("[sos] Calming user...");
+                if (loadingJoke1 == 6)
+                    Console.WriteLine("[sos] Cleaning room...");
+                if (loadingJoke1 == 7)
+                    Console.WriteLine("[sos] Checking for piracy...");
+                if (loadingJoke1 == 8)
+                    Console.WriteLine("[sos] Getting Jim that important office memo...");
+                if (loadingJoke1 == 9)
+                    Console.WriteLine("[sos] Using imagination...");
+                Thread.Sleep(500);
                 Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
-                Thread.Sleep(20);
+                Thread.Sleep(30);
                 Console.WriteLine("[termdb] Building command database from filesystem...");
                 TerminalBackend.PopulateTerminalCommands();
 
@@ -181,6 +193,28 @@ namespace ShiftOS.Engine
                         //Connection successful! Stop waiting!
                         guidReceived = true;
                         Console.WriteLine("[inetd] Connection successful.");
+                        Thread.Sleep(100);
+                        if (loadingJoke2 == 0)
+                            Console.WriteLine("[sos] Running final checks (gotta be sure!)...");
+                        if (loadingJoke2 == 1)
+                            Console.WriteLine("[sos] Fixing the time because we think we got it wrong...");
+                        if (loadingJoke2 == 2)
+                            Console.WriteLine("[sos] Fun Fact: there is a 12% chance you will read this...");
+                        if (loadingJoke2 == 3)
+                            Console.WriteLine("[sos] Fixing sloppy code...");
+                        if (loadingJoke2 == 4)
+                            Console.WriteLine("[sos] Welcoming new users...");
+                        if (loadingJoke2 == 5)
+                            Console.WriteLine("[sos] Taking inspiration from GMod...");
+                        if (loadingJoke2 == 6)
+                            Console.WriteLine("[sos] Getting help...");
+                        if (loadingJoke2 == 7)
+                            Console.WriteLine("[sos] I'm very clevery guy...");
+                        if (loadingJoke2 == 8)
+                            Console.WriteLine("[sos] Waiting a bit...");
+                        if (loadingJoke2 == 9)
+                            Console.WriteLine("[sos] Do a digital dancing...");
+                        Thread.Sleep(500);
                     };
 
                     try
