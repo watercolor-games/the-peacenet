@@ -80,7 +80,7 @@ namespace ShiftOS.Engine
     {
         private static class AsmCache
         {
-            private static byte[] magic = Encoding.UTF8.GetBytes("AsmC");
+            private static byte[] magic = Encoding.UTF8.GetBytes("ASMC");
             public static Dictionary<string, AsmCacheEntry> Load(Stream fobj)
             {
                 var ret = new Dictionary<string, AsmCacheEntry>();
@@ -103,10 +103,16 @@ namespace ShiftOS.Engine
                     // read SHA-512 checksum
                     fobj.Read(entry.checksum, 0, 64);
 
-                    // read assembly
-                    var asmlen = read.ReadInt32();
-                    entry.asm = new byte[asmlen];
-                    fobj.Read(entry.asm, 0, asmlen);
+                    // read assemblies
+                    var numasm = read.ReadInt32();
+                    for (int j = 0; j < numasm; j++)
+                    {
+                        var asmlen = read.ReadInt32();
+                        var asmdata = new byte[asmlen];
+                        fobj.Read(asmdata, 0, asmlen);
+                        entry.asms.Add(asmdata);
+
+                    }
 
                     ret.Add(fname, entry);
                 }
@@ -128,19 +134,25 @@ namespace ShiftOS.Engine
                     // write SHA-512 checksum
                     fobj.Write(entry.Value.checksum, 0, 64);
 
-                    // write assembly
-                    var asmlen = entry.Value.asm.Length;
-                    write.Write(asmlen);
-                    fobj.Write(entry.Value.asm, 0, asmlen);
+                    // write assemblies
+                    write.Write(entry.Value.asms.Count);
+                    foreach (var asm in entry.Value.asms)
+                    {
+                        var asmlen = asm.Length;
+                        write.Write(asmlen);
+                        fobj.Write(asm, 0, asmlen);
+                    }
                 }
             }
         }
         private class AsmCacheEntry
         {
-            public byte[] checksum, asm;
+            public byte[] checksum;
+            public List<byte[]> asms;
             public AsmCacheEntry()
             {
                 checksum = new byte[64];
+                asms = new List<byte[]>();
             }
         }
         private static bool scanned = false;
@@ -199,7 +211,8 @@ namespace ShiftOS.Engine
                     {
                         try
                         {
-                            types.AddRange(Assembly.Load(oldentry.asm).GetTypes());
+                            foreach (var asm in oldentry.asms)
+                                types.AddRange(Assembly.Load(asm).GetTypes());
                             newcache.Add(fname, oldentry);
                             continue;
                         }
@@ -214,6 +227,8 @@ namespace ShiftOS.Engine
                 }
                 var scriptlines = script.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n'); // line-ending independent...
                 int pos = 0;
+                var entry = new AsmCacheEntry();
+                entry.checksum = checksum;
                 try
                 {
                     while (pos < scriptlines.Length)
@@ -248,10 +263,7 @@ namespace ShiftOS.Engine
                             throw new Exception(except);
                         }
                         types.AddRange(results.CompiledAssembly.GetTypes()); // We did it!
-                        var entry = new AsmCacheEntry();
-                        entry.asm = File.ReadAllBytes(results.PathToAssembly);
-                        entry.checksum = checksum;
-                        newcache.Add(fname, entry);
+                        entry.asms.Add(File.ReadAllBytes(results.PathToAssembly));
                         File.Delete(results.PathToAssembly);
                         pos++; // keep scanning the file for more classes
                     }
@@ -263,6 +275,7 @@ namespace ShiftOS.Engine
                     Console.WriteLine(ex.ToString());
 #endif
                 }
+                newcache.Add(fname, entry);
             }
 #if DEBUG
             Console.WriteLine("[dev] " + types.Count.ToString() + " Python mods loaded successfully.");
