@@ -219,50 +219,53 @@ namespace ShiftOS.WinForms.Tools
 
                     if (ctrl is Button)
                     {
-                        Button b = ctrl as Button;
-                        if (!tag.Contains("keepbg"))
+                        if (!tag.ToLower().Contains("nobuttonskin"))
                         {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            Button b = ctrl as Button;
+                            if (!tag.Contains("keepbg"))
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            }
+                            b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
+                            if (!tag.Contains("keepfg"))
+                            {
+                                b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                                b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                            }
+                            if (!tag.Contains("keepfont"))
+                                b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+
+                            Color orig_bg = b.BackColor;
+
+                            b.MouseEnter += (o, a) =>
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonhover");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
+                            };
+                            b.MouseLeave += (o, a) =>
+                            {
+                                b.BackColor = orig_bg;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            };
+                            b.MouseUp += (o, a) =>
+                            {
+                                b.BackColor = orig_bg;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            };
+
+                            b.MouseDown += (o, a) =>
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
+
+                            };
                         }
-                        b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
-                        if (!tag.Contains("keepfg"))
-                        {
-                            b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                            b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                        }
-                        if (!tag.Contains("keepfont"))
-                            b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
-
-                        Color orig_bg = b.BackColor;
-
-                        b.MouseEnter += (o, a) =>
-                        {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonhover");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
-                        };
-                        b.MouseLeave += (o, a) =>
-                        {
-                            b.BackColor = orig_bg;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
-                        };
-                        b.MouseUp += (o, a) =>
-                        {
-                            b.BackColor = orig_bg;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
-                        };
-
-                        b.MouseDown += (o, a) =>
-                        {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
-
-                        };
                     }
                 }
 
