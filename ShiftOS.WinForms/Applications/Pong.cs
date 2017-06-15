@@ -33,6 +33,9 @@ namespace ShiftOS.WinForms.Applications
         private double ballX = 0.0f;
         private double ballY = 0.0f;
 
+        private double aiBallX = 0.0f;
+        private double aiBallY = 0.0f;
+
 
         private double speedFactor = 0.025;
 
@@ -44,6 +47,8 @@ namespace ShiftOS.WinForms.Applications
         private double playerY = 0.0;
         private double opponentY = 0.0;
 
+        bool doAi = true;
+
         public void UpdateBall()
         {
             double ballXLocal = linear(ballX, -1.0, 1.0, 0, pnlcanvas.Width);
@@ -52,6 +57,13 @@ namespace ShiftOS.WinForms.Applications
             ballXLocal -= ((double)paddleWidth / 2);
             ballYLocal -= ((double)paddleWidth / 2);
 
+            double aiBallXLocal = linear(aiBallX, -1.0, 1.0, 0, pnlcanvas.Width);
+            double aiBallYLocal = linear(aiBallY, -1.0, 1.0, 0, pnlcanvas.Height);
+
+            aiBallXLocal -= ((double)paddleWidth / 2);
+            aiBallYLocal -= ((double)paddleWidth / 2);
+
+
             double playerYLocal = linear(playerY, -1.0, 1.0, 0, pnlcanvas.Height);
             double opponentYLocal = linear(opponentY, -1.0, 1.0, 0, pnlcanvas.Height);
 
@@ -59,6 +71,9 @@ namespace ShiftOS.WinForms.Applications
 
 
             Rectangle ballRect = new Rectangle((int)ballXLocal, (int)ballYLocal, paddleWidth, paddleWidth);
+
+            Rectangle aiBallRect = new Rectangle((int)aiBallXLocal, (int)aiBallYLocal, paddleWidth, paddleWidth);
+
 
             Rectangle playerRect = new Rectangle((int)paddleWidth, (int)(playerYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
             Rectangle opponentRect = new Rectangle((int)(pnlcanvas.Width - (paddleWidth * 2)), (int)(opponentYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
@@ -90,6 +105,16 @@ namespace ShiftOS.WinForms.Applications
             }
 
 
+            //Enemy paddle - AI:
+            if (aiBallRect.IntersectsWith(opponentRect))
+            {
+                //check if the ball x is greater than the player paddle's middle coordinate
+                if (aiBallRect.Right <= opponentRect.Right - (opponentRect.Width / 2))
+                {
+                    doAi = false;
+                }
+
+            }
 
 
             //Player paddle:
@@ -104,6 +129,10 @@ namespace ShiftOS.WinForms.Applications
                     //set y velocity based on where the ball hit the paddle
                     yVel = linear((ballRect.Top + (ballRect.Height / 2)), playerRect.Top, playerRect.Bottom, -1, 1);
 
+                    //reset the ai location
+                    aiBallX = ballX;
+                    aiBallY = ballY;
+                    doAi = true;
                 }
 
             }
@@ -115,6 +144,23 @@ namespace ShiftOS.WinForms.Applications
             ballX += xVel * speedFactor;
             ballY += yVel * speedFactor;
 
+            aiBallX += xVel * (speedFactor * 2);
+            aiBallY += yVel * (speedFactor * 2);
+
+            if (doAi == true)
+            {
+                if (opponentY != aiBallY)
+                {
+                    if (opponentY < aiBallY)
+                    {
+                        opponentY += speedFactor;
+                    }
+                    else
+                    {
+                        opponentY -= speedFactor;
+                    }
+                }
+            }
         }
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
