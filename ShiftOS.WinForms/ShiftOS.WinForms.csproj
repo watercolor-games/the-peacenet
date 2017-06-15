@@ -77,6 +77,12 @@
     <Compile Include="Applications\IconManager.Designer.cs">
       <DependentUpon>IconManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Pong.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Pong.Designer.cs">
+      <DependentUpon>Pong.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\TriPresent.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -196,12 +202,6 @@
     </Compile>
     <Compile Include="Applications\Notifications.Designer.cs">
       <DependentUpon>Notifications.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\Pong.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\Pong.Designer.cs">
-      <DependentUpon>Pong.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Shifter.cs">
       <SubType>UserControl</SubType>
@@ -490,6 +490,9 @@
     <EmbeddedResource Include="Applications\IconManager.resx">
       <DependentUpon>IconManager.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Pong.resx">
+      <DependentUpon>Pong.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriPresent.resx">
       <DependentUpon>TriPresent.cs</DependentUpon>
     </EmbeddedResource>
@@ -546,9 +549,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Notifications.resx">
       <DependentUpon>Notifications.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\Pong.resx">
-      <DependentUpon>Pong.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
