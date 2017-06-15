@@ -44,6 +44,10 @@ namespace ShiftOS.WinForms.Applications
 
         private int paddleWidth;
 
+        private long codepointsToEarn = 0;
+        private int level = 1;
+
+
         private double playerY = 0.0;
         private double opponentY = 0.0;
 
@@ -82,11 +86,22 @@ namespace ShiftOS.WinForms.Applications
             if (ballRect.Top <= 0 || ballRect.Bottom >= pnlcanvas.Height)
                 yVel = -yVel; //reverse the Y velocity
 
-            //Left and right walls (NOTE: TEMPORARY)
-            if (ballRect.Left <= 0 || ballRect.Right >= pnlcanvas.Width)
-                xVel = -xVel; //reverse the Y velocity
 
+            //Left wall
+            if(ballRect.Left <= 0)
+            {
+                //You lose.
+                codepointsToEarn = 0;
+                Lose();
+            }
 
+            //Right wall
+            if(ballRect.Right >= pnlcanvas.Width)
+            {
+                //You win.
+                codepointsToEarn += CalculateAIBeatCP();
+                Win();
+            }
 
             //Enemy paddle:
             if (ballRect.IntersectsWith(opponentRect))
@@ -153,14 +168,43 @@ namespace ShiftOS.WinForms.Applications
                 {
                     if (opponentY < aiBallY)
                     {
-                        opponentY += speedFactor;
+                        if (opponentY < 0.9)
+                            opponentY += speedFactor;
                     }
                     else
                     {
-                        opponentY -= speedFactor;
+                        if (opponentY > -0.9)
+                            opponentY -= speedFactor;
                     }
                 }
             }
+        }
+
+        public void Lose()
+        {
+            InitializeCoordinates();
+        }
+
+        public long CalculateAIBeatCP()
+        {
+            return 2 * (10 * level);
+        }
+
+        public void Win()
+        {
+            InitializeCoordinates();
+        }
+
+        public void InitializeCoordinates()
+        {
+            ballX = 0;
+            ballY = 0;
+            xVel = 1;
+            yVel = 1;
+            opponentY = 0;
+            aiBallX = 0;
+            aiBallY = 0;
+            doAi = true;
         }
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
@@ -192,6 +236,15 @@ namespace ShiftOS.WinForms.Applications
             //draw opponent
             e.Graphics.FillRectangle(new SolidBrush(pnlcanvas.ForeColor), new RectangleF((float)(pnlcanvas.Width - (paddleWidth*2)), (float)(opponentYLocal - (float)(paddleHeight / 2)), (float)paddleWidth, (float)paddleHeight));
 
+            string cp_text = Localization.Parse("{CODEPOINTS}: " + codepointsToEarn);
+
+            var tSize = e.Graphics.MeasureString(cp_text, SkinEngine.LoadedSkin.Header3Font);
+
+            var tLoc = new PointF((pnlcanvas.Width - (int)tSize.Width) / 2,
+                (pnlcanvas.Height - (int)tSize.Height)
+                
+                );
+            e.Graphics.DrawString(cp_text, SkinEngine.LoadedSkin.Header3Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
         }
 
         static public double linear(double x, double x0, double x1, double y0, double y1)
