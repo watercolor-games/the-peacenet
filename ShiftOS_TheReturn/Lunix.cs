@@ -126,7 +126,7 @@ namespace ShiftOS.Engine
             {
                 get
                 {
-                    return Bash.RunCommand("df --output='fstype'").Split('\n')[dfrow];
+                    return ourdf("fstype");
                 }
             }
 
