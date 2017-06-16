@@ -206,6 +206,16 @@ namespace ShiftOS.WinForms.Applications
         public void Lose()
         {
             InitializeCoordinates();
+            counterTimer.Stop();
+            secondsleft = 60;
+            level = 1;
+            speedFactor = 0.0125;
+            pnlgamestart.Show();
+            pnlgamestart.BringToFront();
+            pnlgamestart.CenterParent();
+            Infobox.Show("You lose.", "You lost the game! Guess you should've cashed out...");
+            doAi = false;
+            doBallCalc = false;
         }
 
         public void LevelComplete()
@@ -255,8 +265,6 @@ namespace ShiftOS.WinForms.Applications
         {
             ballX = 0;
             ballY = 0;
-            xVel = 1;
-            yVel = 1;
             opponentY = 0;
             aiBallX = 0;
             aiBallY = 0;
