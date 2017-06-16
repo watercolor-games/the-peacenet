@@ -36,7 +36,7 @@
             this.pnlcanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlcanvas.Location = new System.Drawing.Point(0, 0);
             this.pnlcanvas.Name = "pnlcanvas";
-            this.pnlcanvas.Size = new System.Drawing.Size(620, 469);
+            this.pnlcanvas.Size = new System.Drawing.Size(879, 450);
             this.pnlcanvas.TabIndex = 0;
             this.pnlcanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlcanvas_Paint);
             this.pnlcanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlcanvas_MouseMove);
@@ -47,7 +47,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlcanvas);
             this.Name = "Pong";
-            this.Size = new System.Drawing.Size(620, 469);
+            this.Size = new System.Drawing.Size(879, 450);
             this.ResumeLayout(false);
 
         }

@@ -22,11 +22,24 @@ namespace ShiftOS.WinForms.Applications
             InitializeComponent();
             paddleWidth = pnlcanvas.Width / 30;
             drawTimer = new Timer();
-            drawTimer.Interval = 16;
+            drawTimer.Interval = 1;
             drawTimer.Tick += (o, a) =>
             {
                 UpdateBall();
                 pnlcanvas.Refresh();
+            };
+            counterTimer = new Timer();
+            counterTimer.Interval = 1000;
+            counterTimer.Tick += (o, a) =>
+            {
+                if(secondsleft > 0)
+                {
+                    secondsleft--;
+                }
+                else
+                {
+                    LevelComplete();
+                }
             };
         }
 
@@ -37,12 +50,14 @@ namespace ShiftOS.WinForms.Applications
         private double aiBallY = 0.0f;
 
 
-        private double speedFactor = 0.025;
+        private double speedFactor = 0.0125;
 
         private double xVel = 1;
         private double yVel = 1;
 
         private int paddleWidth;
+
+        Timer counterTimer = null;
 
         private long codepointsToEarn = 0;
         private int level = 1;
@@ -50,131 +65,139 @@ namespace ShiftOS.WinForms.Applications
 
         private double playerY = 0.0;
         private double opponentY = 0.0;
-
+        private int secondsleft = 60;
         bool doAi = true;
+        bool doBallCalc = true;
+
+        private string header = "Pong - Technology Demo";
+
+        private string counter = "";
 
         public void UpdateBall()
         {
-            double ballXLocal = linear(ballX, -1.0, 1.0, 0, pnlcanvas.Width);
-            double ballYLocal = linear(ballY, -1.0, 1.0, 0, pnlcanvas.Height);
-
-            ballXLocal -= ((double)paddleWidth / 2);
-            ballYLocal -= ((double)paddleWidth / 2);
-
-            double aiBallXLocal = linear(aiBallX, -1.0, 1.0, 0, pnlcanvas.Width);
-            double aiBallYLocal = linear(aiBallY, -1.0, 1.0, 0, pnlcanvas.Height);
-
-            aiBallXLocal -= ((double)paddleWidth / 2);
-            aiBallYLocal -= ((double)paddleWidth / 2);
-
-
-            double playerYLocal = linear(playerY, -1.0, 1.0, 0, pnlcanvas.Height);
-            double opponentYLocal = linear(opponentY, -1.0, 1.0, 0, pnlcanvas.Height);
-
-            int paddleHeight = pnlcanvas.Height / 5;
-
-
-            Rectangle ballRect = new Rectangle((int)ballXLocal, (int)ballYLocal, paddleWidth, paddleWidth);
-
-            Rectangle aiBallRect = new Rectangle((int)aiBallXLocal, (int)aiBallYLocal, paddleWidth, paddleWidth);
-
-
-            Rectangle playerRect = new Rectangle((int)paddleWidth, (int)(playerYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
-            Rectangle opponentRect = new Rectangle((int)(pnlcanvas.Width - (paddleWidth * 2)), (int)(opponentYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
-
-            //Top and bottom walls:
-            if (ballRect.Top <= 0 || ballRect.Bottom >= pnlcanvas.Height)
-                yVel = -yVel; //reverse the Y velocity
-
-
-            //Left wall
-            if(ballRect.Left <= 0)
+            if (doBallCalc)
             {
-                //You lose.
-                codepointsToEarn = 0;
-                Lose();
-            }
+                double ballXLocal = linear(ballX, -1.0, 1.0, 0, pnlcanvas.Width);
+                double ballYLocal = linear(ballY, -1.0, 1.0, 0, pnlcanvas.Height);
 
-            //Right wall
-            if(ballRect.Right >= pnlcanvas.Width)
-            {
-                //You win.
-                codepointsToEarn += CalculateAIBeatCP();
-                Win();
-            }
+                ballXLocal -= ((double)paddleWidth / 2);
+                ballYLocal -= ((double)paddleWidth / 2);
 
-            //Enemy paddle:
-            if (ballRect.IntersectsWith(opponentRect))
-            {
-                //check if the ball x is greater than the player paddle's middle coordinate
-                if (ballRect.Right <= opponentRect.Right - (opponentRect.Width / 2))
+                double aiBallXLocal = linear(aiBallX, -1.0, 1.0, 0, pnlcanvas.Width);
+                double aiBallYLocal = linear(aiBallY, -1.0, 1.0, 0, pnlcanvas.Height);
+
+                aiBallXLocal -= ((double)paddleWidth / 2);
+                aiBallYLocal -= ((double)paddleWidth / 2);
+
+
+                double playerYLocal = linear(playerY, -1.0, 1.0, 0, pnlcanvas.Height);
+                double opponentYLocal = linear(opponentY, -1.0, 1.0, 0, pnlcanvas.Height);
+
+                int paddleHeight = pnlcanvas.Height / 5;
+
+
+                Rectangle ballRect = new Rectangle((int)ballXLocal, (int)ballYLocal, paddleWidth, paddleWidth);
+
+                Rectangle aiBallRect = new Rectangle((int)aiBallXLocal, (int)aiBallYLocal, paddleWidth, paddleWidth);
+
+
+                Rectangle playerRect = new Rectangle((int)paddleWidth, (int)(playerYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
+                Rectangle opponentRect = new Rectangle((int)(pnlcanvas.Width - (paddleWidth * 2)), (int)(opponentYLocal - (int)(paddleHeight / 2)), (int)paddleWidth, (int)paddleHeight);
+
+                //Top and bottom walls:
+                if (ballRect.Top <= 0 || ballRect.Bottom >= pnlcanvas.Height)
+                    yVel = -yVel; //reverse the Y velocity
+
+
+                //Left wall
+                if (ballRect.Left <= 0)
                 {
-                    //reverse x velocity to send the ball the other way
-                    xVel = -xVel;
-
-                    //set y velocity based on where the ball hit the paddle
-                    yVel = linear((ballRect.Top + (ballRect.Height / 2)), opponentRect.Top, opponentRect.Bottom, -1, 1);
-
+                    //You lose.
+                    codepointsToEarn = 0;
+                    Lose();
                 }
 
-            }
-
-
-            //Enemy paddle - AI:
-            if (aiBallRect.IntersectsWith(opponentRect))
-            {
-                //check if the ball x is greater than the player paddle's middle coordinate
-                if (aiBallRect.Right <= opponentRect.Right - (opponentRect.Width / 2))
+                //Right wall
+                if (ballRect.Right >= pnlcanvas.Width)
                 {
-                    doAi = false;
+                    //You win.
+                    codepointsToEarn += CalculateAIBeatCP();
+                    Win();
                 }
 
-            }
-
-
-            //Player paddle:
-            if (ballRect.IntersectsWith(playerRect))
-            {
-                //check if the ball x is greater than the player paddle's middle coordinate
-                if(ballRect.Left >= playerRect.Left + (playerRect.Width / 2))
+                //Enemy paddle:
+                if (ballRect.IntersectsWith(opponentRect))
                 {
-                    //reverse x velocity to send the ball the other way
-                    xVel = -xVel;
-
-                    //set y velocity based on where the ball hit the paddle
-                    yVel = linear((ballRect.Top + (ballRect.Height / 2)), playerRect.Top, playerRect.Bottom, -1, 1);
-
-                    //reset the ai location
-                    aiBallX = ballX;
-                    aiBallY = ballY;
-                    doAi = true;
-                }
-
-            }
-
-
-
-
-
-            ballX += xVel * speedFactor;
-            ballY += yVel * speedFactor;
-
-            aiBallX += xVel * (speedFactor * 2);
-            aiBallY += yVel * (speedFactor * 2);
-
-            if (doAi == true)
-            {
-                if (opponentY != aiBallY)
-                {
-                    if (opponentY < aiBallY)
+                    //check if the ball x is greater than the player paddle's middle coordinate
+                    if (ballRect.Right >= opponentRect.Left)
                     {
-                        if (opponentY < 0.9)
-                            opponentY += speedFactor;
+                        //reverse x velocity to send the ball the other way
+                        xVel = -xVel;
+
+                        //set y velocity based on where the ball hit the paddle
+                        yVel = linear((ballRect.Top + (ballRect.Height / 2)), opponentRect.Top, opponentRect.Bottom, -1, 1);
+                        doAi = false;
                     }
-                    else
+
+                }
+
+
+                //Enemy paddle - AI:
+                if (aiBallRect.IntersectsWith(opponentRect))
+                {
+                    //check if the ball x is greater than the player paddle's middle coordinate
+                    if (aiBallRect.Right >= opponentRect.Left)
                     {
-                        if (opponentY > -0.9)
-                            opponentY -= speedFactor;
+                        doAi = false;
+                    }
+
+                }
+
+
+                //Player paddle:
+                if (ballRect.IntersectsWith(playerRect))
+                {
+                    //check if the ball x is greater than the player paddle's middle coordinate
+                    if (ballRect.Left >= playerRect.Left)
+                    {
+                        //reverse x velocity to send the ball the other way
+                        xVel = -xVel;
+
+                        //set y velocity based on where the ball hit the paddle
+                        yVel = linear((ballRect.Top + (ballRect.Height / 2)), playerRect.Top, playerRect.Bottom, -1, 1);
+
+                        //reset the ai location
+                        aiBallX = ballX;
+                        aiBallY = ballY;
+                        doAi = true;
+                    }
+
+                }
+
+
+
+
+
+                ballX += xVel * speedFactor;
+                ballY += yVel * speedFactor;
+
+                aiBallX += xVel * (speedFactor * 2);
+                aiBallY += yVel * (speedFactor * 2);
+
+                if (doAi == true)
+                {
+                    if (opponentY != aiBallY)
+                    {
+                        if (opponentY < aiBallY)
+                        {
+                            if (opponentY < 0.9)
+                                opponentY += speedFactor;
+                        }
+                        else
+                        {
+                            if (opponentY > -0.9)
+                                opponentY -= speedFactor;
+                        }
                     }
                 }
             }
@@ -185,6 +208,13 @@ namespace ShiftOS.WinForms.Applications
             InitializeCoordinates();
         }
 
+        public void LevelComplete()
+        {
+            level++;
+            speedFactor += speedFactor / level;
+            secondsleft = 60;
+        }
+
         public long CalculateAIBeatCP()
         {
             return 2 * (10 * level);
@@ -192,7 +222,24 @@ namespace ShiftOS.WinForms.Applications
 
         public void Win()
         {
+            header = "You beat the AI! " + CalculateAIBeatCP() + " Codepoints!.";
             InitializeCoordinates();
+            new System.Threading.Thread(() =>
+            {
+                doBallCalc = false;
+                counter = "3";
+                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                System.Threading.Thread.Sleep(1000);
+                counter = "2";
+                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                System.Threading.Thread.Sleep(1000);
+                counter = "1";
+                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                System.Threading.Thread.Sleep(1000);
+                doBallCalc = true;
+                header = "";
+                counter = "";
+            }).Start();
         }
 
         public void InitializeCoordinates()
@@ -221,6 +268,7 @@ namespace ShiftOS.WinForms.Applications
             e.Graphics.Clear(pnlcanvas.BackColor);
 
             //draw the ball
+            if(doBallCalc)
             e.Graphics.FillEllipse(new SolidBrush(pnlcanvas.ForeColor), new RectangleF((float)ballXLocal, (float)ballYLocal, (float)paddleWidth, (float)paddleWidth));
 
             double playerYLocal = linear(playerY, -1.0, 1.0, 0, pnlcanvas.Height);
@@ -245,6 +293,30 @@ namespace ShiftOS.WinForms.Applications
                 
                 );
             e.Graphics.DrawString(cp_text, SkinEngine.LoadedSkin.Header3Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
+            tSize = e.Graphics.MeasureString(counter, SkinEngine.LoadedSkin.Header2Font);
+
+            tLoc = new PointF((pnlcanvas.Width - (int)tSize.Width) / 2,
+                (pnlcanvas.Height - (int)tSize.Height) / 2
+
+                );
+            e.Graphics.DrawString(counter, SkinEngine.LoadedSkin.Header2Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
+            tSize = e.Graphics.MeasureString(header, SkinEngine.LoadedSkin.Header2Font);
+
+            tLoc = new PointF((pnlcanvas.Width - (int)tSize.Width) / 2,
+                (pnlcanvas.Height - (int)tSize.Height) / 4
+
+                );
+            e.Graphics.DrawString(header, SkinEngine.LoadedSkin.Header2Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
+
+            string l = Localization.Parse("{LEVEL}: " + level + " - " + secondsleft + " {SECONDS_LEFT}");
+            tSize = e.Graphics.MeasureString(l, SkinEngine.LoadedSkin.Header3Font);
+
+            tLoc = new PointF((pnlcanvas.Width - (int)tSize.Width) / 2,
+                (tSize.Height)
+                );
+            e.Graphics.DrawString(l, SkinEngine.LoadedSkin.Header3Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
+
+
         }
 
         static public double linear(double x, double x0, double x1, double y0, double y1)
@@ -261,6 +333,7 @@ namespace ShiftOS.WinForms.Applications
         public void OnLoad()
         {
             drawTimer.Start();
+            counterTimer.Start();
         }
 
         public void OnSkinLoad()
@@ -270,6 +343,7 @@ namespace ShiftOS.WinForms.Applications
         public bool OnUnload()
         {
             drawTimer.Stop();
+            counterTimer.Stop();
             return true;
         }
 
