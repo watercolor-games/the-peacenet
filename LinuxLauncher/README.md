@@ -11,7 +11,8 @@ make an AUR package of this script if all goes to plan.
 
 * the first time you start the game, the Wine virtual desktop doesn't
 enable properly
-* the story mode intro crashes when it starts to "format" your drive
+* text input boxes are white on white
+* the terminal puts an extra newline after displaying the prompt
 * the ShiftOS desktop can go in front of applications
 * there is a blue border from the Wine desktop (I want to change that
 to black, but I also don't want it showing through while the game is

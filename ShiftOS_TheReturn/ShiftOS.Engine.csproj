@@ -138,6 +138,7 @@
     <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="LoginManager.cs" />
+    <Compile Include="Lunix.cs" />
     <Compile Include="NotificationDaemon.cs" />
     <Compile Include="OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />

@@ -85,28 +85,40 @@ namespace ShiftOS.WinForms
             ConsoleEx.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(@"We'll now begin formatting your drive. Please be patient.");
             Console.WriteLine();
-            var dinf = new DriveInfo("C:\\");
-            decimal bytesFree = ((dinf.AvailableFreeSpace / 1024) / 1024) / 1024;
-            decimal totalBytes = ((dinf.TotalSize / 1024) / 1024) / 1024;
-            string type = dinf.DriveType.ToString();
-            string name = dinf.Name;
-            ConsoleEx.Bold = true;
-            Console.Write("Drive name: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(name);
-            ConsoleEx.Bold = true;
-            Console.Write("Drive type: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(type);
-            ConsoleEx.Bold = true;
-            Console.Write("Total space: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(totalBytes.ToString() + " GB");
-            ConsoleEx.Bold = true;
-            Console.Write("Free space: ");
-            Console.WriteLine(bytesFree.ToString() + " GB");
-            Console.WriteLine();
-
+            double bytesFree, totalBytes;
+            string type, name;
+            dynamic dinf;
+            try
+            {
+                if (Lunix.InWine)
+                    dinf = new Lunix.DFDriveInfo("/");
+                else
+                    dinf = new DriveInfo("C:\\");
+                bytesFree = dinf.AvailableFreeSpace / 1073741824.0;
+                totalBytes = dinf.TotalSize / 1073741824.0;
+                type = dinf.DriveFormat.ToString();
+                name = dinf.Name;
+                ConsoleEx.Bold = true;
+                Console.Write("Drive name: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(name);
+                ConsoleEx.Bold = true;
+                Console.Write("Drive type: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(type);
+                ConsoleEx.Bold = true;
+                Console.Write("Total space: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(String.Format("{0:F1}", totalBytes) + " GB");
+                ConsoleEx.Bold = true;
+                Console.Write("Free space: ");
+                Console.WriteLine(String.Format("{0:F1}", bytesFree) + " GB");
+                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             ConsoleEx.Bold = false;
             ConsoleEx.BackgroundColor = ConsoleColor.Black;
