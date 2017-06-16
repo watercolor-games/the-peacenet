@@ -167,11 +167,7 @@ namespace ShiftOS.Engine
             scopes = new Dictionary<string, ScriptScope>();
             var resman = new System.Resources.ResourceManager("ShiftOS.Engine.Properties.Resources", typeof(Properties.Resources).Assembly);
             var provider = new CSharpCodeProvider();
-            var parameters = new CompilerParameters();
-            parameters.ReferencedAssemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Select(f => f.Location).ToArray());
-            parameters.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
-            parameters.GenerateInMemory = false; // We need to keep the temporary file around long enough to copy it to the cache.
-            parameters.GenerateExecutable = false;
+            var refs = AppDomain.CurrentDomain.GetAssemblies().Select(f => f.Location).Concat(new string[] { "Microsoft.CSharp.dll" }).ToArray();
             var types = new List<Type>();
             var sha = new SHA512Managed();
             var oldcache = new Dictionary<string, AsmCacheEntry>();
@@ -203,6 +199,7 @@ namespace ShiftOS.Engine
                 {
                     Console.WriteLine("[dev] Failed to execute Python script " + fname);
                     Console.WriteLine(ex.ToString());
+                    continue;
                 }
                 if (oldcache.ContainsKey(fname))
                 {
@@ -229,6 +226,10 @@ namespace ShiftOS.Engine
                 int pos = 0;
                 var entry = new AsmCacheEntry();
                 entry.checksum = checksum;
+                var parameters = new CompilerParameters();
+                parameters.ReferencedAssemblies.AddRange(refs);
+                parameters.GenerateInMemory = false; // We need to keep the temporary file around long enough to copy it to the cache.
+                parameters.GenerateExecutable = false;
                 try
                 {
                     while (pos < scriptlines.Length)
@@ -264,7 +265,6 @@ namespace ShiftOS.Engine
                         }
                         types.AddRange(results.CompiledAssembly.GetTypes()); // We did it!
                         entry.asms.Add(File.ReadAllBytes(results.PathToAssembly));
-                        File.Delete(results.PathToAssembly);
                         pos++; // keep scanning the file for more classes
                     }
                 }

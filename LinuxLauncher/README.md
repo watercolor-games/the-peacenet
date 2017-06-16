@@ -13,6 +13,9 @@ make an AUR package of this script if all goes to plan.
 enable properly
 * text input boxes are white on white
 * the terminal puts an extra newline after displaying the prompt
+* Aiden Nirh's cutscene has weird overlapping text
+* ShiftLetters seems to have no available word lists. Clicking Play
+crashes the game.
 * the ShiftOS desktop can go in front of applications
 * there is a blue border from the Wine desktop (I want to change that
 to black, but I also don't want it showing through while the game is
