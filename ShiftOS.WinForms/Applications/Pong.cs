@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -69,7 +70,7 @@ namespace ShiftOS.WinForms.Applications
         bool doAi = true;
         bool doBallCalc = true;
 
-        private string header = "Pong - Technology Demo";
+        private string header = "";
 
         private string counter = "";
 
@@ -157,8 +158,7 @@ namespace ShiftOS.WinForms.Applications
                 //Player paddle:
                 if (ballRect.IntersectsWith(playerRect))
                 {
-                    //check if the ball x is greater than the player paddle's middle coordinate
-                    if (ballRect.Left >= playerRect.Left)
+                    if (ballRect.Left <= playerRect.Right)
                     {
                         //reverse x velocity to send the ball the other way
                         xVel = -xVel;
@@ -211,6 +211,15 @@ namespace ShiftOS.WinForms.Applications
         public void LevelComplete()
         {
             level++;
+            doAi = false;
+            doBallCalc = false;
+            counterTimer.Stop();
+            pnllevelwon.CenterParent();
+            pnllevelwon.Show();
+            pnllevelwon.BringToFront();
+            lbltitle.Text = "You've reached level " + level + "!";
+            lbltitle.Height = (int)CreateGraphics().MeasureString(lbltitle.Text, lbltitle.Font).Height;
+            codepointsToEarn += CalculateAIBeatCP() * 2;
             speedFactor += speedFactor / level;
             secondsleft = 60;
         }
@@ -332,8 +341,12 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            doAi = false;
+            doBallCalc = false;
+            pnlgamestart.Show();
+            pnlgamestart.BringToFront();
+            pnlgamestart.CenterParent();
             drawTimer.Start();
-            counterTimer.Start();
         }
 
         public void OnSkinLoad()
@@ -354,6 +367,36 @@ namespace ShiftOS.WinForms.Applications
         private void pnlcanvas_MouseMove(object sender, MouseEventArgs e)
         {
             playerY = linear(e.Y, 0, pnlcanvas.Height, -1, 1);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            pnllevelwon.Hide();
+            doAi = true;
+            doBallCalc = true;
+            counterTimer.Start();
+        }
+
+        private void btncashout_Click(object sender, EventArgs e)
+        {
+            pnllevelwon.Hide();
+            SaveSystem.CurrentSave.Codepoints += (ulong)codepointsToEarn;
+            level = 1;
+            speedFactor = 0.0125;
+            Infobox.Show("Codepoints transferred.", "Pong has transferred " + codepointsToEarn + " Codepoints to your system.");
+            codepointsToEarn = 0;
+            pnlgamestart.Show();
+            pnlgamestart.BringToFront();
+            pnlgamestart.CenterParent();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            counterTimer.Start();
+            doAi = true;
+            doBallCalc = true;
+            pnlgamestart.Hide();
         }
     }
 }

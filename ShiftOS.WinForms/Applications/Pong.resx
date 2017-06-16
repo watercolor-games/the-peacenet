@@ -117,4 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Pong is the modern-day recreation of the classic 70s game called, you guessed it, Pong.
+
+In Pong, you must try your best to keep the fast-moving ball from going past your side of the screen using your mouse to move your paddle in the way of the ball, while getting the ball to go past the opponent's paddle.
+
+Once you start Pong, you have 60 seconds to beat the opponent and survive as much as possible. The game will get faster as you play, and the more 60-second levels you play, the more Codepoints you'll earn. If you lose the level, you will start back at Level 1 with 0 Codepoints. At the end of the level, you may choose to cash out or play on.</value>
+  </data>
 </root>
