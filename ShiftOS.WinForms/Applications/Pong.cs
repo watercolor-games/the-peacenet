@@ -65,6 +65,10 @@ namespace ShiftOS.WinForms.Applications
         private double xVel = 1;
         private double yVel = 1;
 
+        private double aiXVel = 1;
+        private double aiYVel = 1;
+
+
         private int paddleWidth;
 
         Timer counterTimer = null;
@@ -89,7 +93,7 @@ namespace ShiftOS.WinForms.Applications
             xVel = -xVel;
 
             // adjust y velocity based on where the ball hit the paddle
-            yVel += linear((ball.Top + (ball.Height / 2)), paddle.Top, paddle.Bottom, -1, 1);
+            yVel = linear((ball.Top + (ball.Height / 2)), paddle.Top, paddle.Bottom, -1, 1);
         }
 
         public void UpdateBall()
@@ -127,6 +131,10 @@ namespace ShiftOS.WinForms.Applications
                 if (ballRect.Top <= 0 || ballRect.Bottom >= pnlcanvas.Height)
                     yVel = -yVel; //reverse the Y velocity
 
+                //top and bottom walls - ai
+                if (aiBallRect.Top <= 0 || aiBallRect.Bottom >= pnlcanvas.Height)
+                    aiYVel = -aiYVel; //reverse the Y velocity
+
 
                 //Left wall
                 if (ballRect.Left <= 0)
@@ -151,6 +159,8 @@ namespace ShiftOS.WinForms.Applications
                     if (ballRect.Right >= opponentRect.Left)
                     {
                         Bounce(ballRect, opponentRect);
+                        aiXVel = xVel;
+                        aiYVel = yVel;
                         doAi = false;
                     }
 
@@ -175,6 +185,8 @@ namespace ShiftOS.WinForms.Applications
                     if (ballRect.Left <= playerRect.Right)
                     {
                         Bounce(ballRect, playerRect);
+                        aiXVel = xVel;
+                        aiYVel = yVel;
 
                         //reset the ai location
                         aiBallX = ballX;
@@ -191,8 +203,8 @@ namespace ShiftOS.WinForms.Applications
                 ballX += xVel * speedFactor;
                 ballY += yVel * speedFactor;
 
-                aiBallX += xVel * (speedFactor * 2);
-                aiBallY += yVel * (speedFactor * 2);
+                aiBallX += aiXVel * (speedFactor * 1.5);
+                aiBallY += aiYVel * (speedFactor * 1.5);
 
                 if (doAi == true)
                 {
@@ -201,12 +213,12 @@ namespace ShiftOS.WinForms.Applications
                         if (opponentY < aiBallY)
                         {
                             if (opponentY < 0.9)
-                                opponentY += speedFactor;
+                                opponentY += speedFactor * level;
                         }
                         else
                         {
                             if (opponentY > -0.9)
-                                opponentY -= speedFactor;
+                                opponentY -= speedFactor * level;
                         }
                     }
                 }
@@ -287,10 +299,12 @@ namespace ShiftOS.WinForms.Applications
             xVel = 1;
             aiBallX = 0;
             aiBallY = 0;
+            aiXVel = xVel;
+            aiYVel = yVel;
             doAi = true;
         }
 
-        private bool drawAiBall = false;
+        private bool drawAiBall = true;
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
         {

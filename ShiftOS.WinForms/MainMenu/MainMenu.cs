@@ -47,7 +47,7 @@ namespace ShiftOS.WinForms.MainMenu
             flmenu.BringToFront();
             flmenu.CenterParent();
             currentMenu = flmenu;
-            CategoryText = "Main menu";
+            CategoryText = Localization.Parse("{MAINMENU_TITLE}");
         }
 
         public string CategoryText
@@ -108,7 +108,7 @@ namespace ShiftOS.WinForms.MainMenu
             tickerreset.Start();
 
             currentMenu = flmenu;
-            CategoryText = "Main menu";
+            CategoryText = Localization.Parse("{MAINMENU_TITLE}");
 
         }
 
@@ -134,7 +134,7 @@ namespace ShiftOS.WinForms.MainMenu
             flcampaign.BringToFront();
             flcampaign.CenterParent();
             currentMenu = flcampaign;
-            CategoryText = "Campaign";
+            CategoryText = Localization.Parse("{MAINMENU_CAMPAIGN}");
 
         }
 
@@ -161,7 +161,7 @@ namespace ShiftOS.WinForms.MainMenu
             pnloptions.BringToFront();
             pnloptions.CenterParent();
             currentMenu = pnloptions;
-            CategoryText = "Settings";
+            CategoryText = Localization.Parse("{GEN_SETTINGS}");
 
         }
 
@@ -198,7 +198,7 @@ namespace ShiftOS.WinForms.MainMenu
             flmenu.BringToFront();
             flmenu.CenterParent();
             currentMenu = flmenu;
-            CategoryText = "Main menu";
+            CategoryText = Localization.Parse("{MAINMENU_TITLE}");
         }
 
         private void btncontinue_Click(object sender, EventArgs e)
