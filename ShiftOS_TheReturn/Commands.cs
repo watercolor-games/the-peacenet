@@ -242,17 +242,20 @@ namespace ShiftOS.Engine
             }
         }
 
-        [Command("help", "{COMMAND_HELP_USAGE", "{COMMAND_HELP_DESCRIPTION}")]
-        public static bool Help()
+        [Command("commands", "", "{COMMAND_COMMANDS_DESCRIPTION}")]
+        public static bool Commands()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Retrieving help data.");
+            sb.AppendLine("Commands");
+            sb.AppendLine("=================");
+            sb.AppendLine();
             //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Where(x=>!(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false).OrderBy(x=>x.CommandInfo.name))
+            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false).OrderBy(x => x.CommandInfo.name))
             {
                 sb.Append(n.CommandInfo.name);
-                if (Shiftorium.UpgradeInstalled("help_descriptions"))
-                    sb.Append(" - " + n.CommandInfo.description);
+                if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
+                    if (Shiftorium.UpgradeInstalled("help_descriptions"))
+                        sb.Append(" - " + n.CommandInfo.description);
                 sb.AppendLine();
             }
 
@@ -260,6 +263,15 @@ namespace ShiftOS.Engine
 
             return true;
         }
+
+        [Command("help", description = "Type this command to list all the things you can do in ShiftOS.")]
+        public static bool Help()
+        {
+            Commands();
+            WindowCommands.Programs();
+            return true;
+        }
+
 
         [MultiplayerOnly]
         [Command("save")]
@@ -364,7 +376,8 @@ Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
         }
 
 
-        [Command("info")]
+        [Command("upgradeinfo", description ="Shows information about a specific upgrade.")]
+        [RequiresArgument("upgrade")]
         public static bool ViewInfo(Dictionary<string, object> userArgs)
         {
             try
@@ -401,7 +414,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             }
         }
 
-        [Command("categories")]
+        [Command("upgradecategories", description = "Shows all available Shiftorium upgrade categories, and how many upgrades are available in them.")]
         public static bool ListCategories()
         {
             foreach(var cat in Shiftorium.GetCategories())
@@ -491,7 +504,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
 
 
         [RemoteLock]
-        [Command("list")]
+        [Command("processes", description = "Shows all running applications.")]
         public static bool List()
         {
             Console.WriteLine("Window ID\tName");
@@ -503,62 +516,21 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             return true;
         }
 
-        [RemoteLock]
-        [Command("open")]
-        public static bool Open(Dictionary<string, object> args)
+        [Command("programs", description = "Lists all the programs installed in ShiftOS.")]
+        public static bool Programs()
         {
-            try
+            Console.WriteLine("Programs:");
+            Console.WriteLine("===============");
+            Console.WriteLine();
+            foreach(var cmd in TerminalBackend.Commands.Where(x=>x is TerminalBackend.WinOpenCommand && Shiftorium.UpgradeInstalled(x.Dependencies)).OrderBy(x => x.CommandInfo.name))
             {
-                if (args.ContainsKey("app"))
-                {
-                    var app = args["app"] as string;
-                    //ANNND now we start reflecting...
-                    foreach (var type in Array.FindAll(ReflectMan.Types, t => t.BaseType == typeof(UserControl)))
-                    {
-                        var attr = type.GetCustomAttributes(false).FirstOrDefault(a => a is WinOpenAttribute && app == (a as WinOpenAttribute).ID);
-                        if (attr != null)
-                        {
-                            if (SaveSystem.CurrentSave.Upgrades.ContainsKey(app))
-                            {
-                                if (Shiftorium.UpgradeInstalled(app))
-                                {
-                                    IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
-                                    AppearanceManager.SetupWindow(frm);
-                                    return true;
-                                }
-                                else
-                                {
-                                    throw new Exception($"{app} was not found on your system! Try looking in the shiftorium...");
-                                }
-                            }
-                            else
-                            {
-                                IShiftOSWindow frm = Activator.CreateInstance(type) as IShiftOSWindow;
-                                AppearanceManager.SetupWindow(frm);
-                                return true;
-                            }
-                        }
-                    }
-
-                }
-                else
-                {
-                   
-                    foreach (var type in Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)) && Shiftorium.UpgradeAttributesUnlocked(t)))
-                        foreach (var attr in Array.FindAll(type.GetCustomAttributes(false), a => a is WinOpenAttribute))
-                            Console.WriteLine("win.open{app:\"" + (attr as WinOpenAttribute).ID + "\"}");
-
-
-                    return true;
-                }
-                Console.WriteLine("Couldn't find the specified app on your system.");
-                return true;
+                Console.Write(" - " + cmd.CommandInfo.name);
+                if (!string.IsNullOrWhiteSpace(cmd.CommandInfo.description))
+                    if (Shiftorium.UpgradeInstalled("help_descriptions"))
+                        Console.Write(": " + cmd.CommandInfo.description);
+                Console.WriteLine();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error running script:" + ex);
-                return false;
-            }
+            return true;
         }
 
         [RemoteLock]
