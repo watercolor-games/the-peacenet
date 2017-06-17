@@ -16,6 +16,7 @@ namespace ShiftOS.WinForms.MainMenu
         public Loading()
         {
             InitializeComponent();
+            label.Text = Localization.Parse(label.Text);
         }
 
         private void Loading_FormShown(object sender, EventArgs e)

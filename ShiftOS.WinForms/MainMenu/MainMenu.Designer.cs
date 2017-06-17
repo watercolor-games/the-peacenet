@@ -36,8 +36,6 @@
             this.button5 = new System.Windows.Forms.Button();
             this.lbticker = new System.Windows.Forms.Label();
             this.pnloptions = new System.Windows.Forms.Panel();
-            this.txtubase = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.txtdsport = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtdsaddress = new System.Windows.Forms.TextBox();
@@ -81,7 +79,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(181, 23);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Campaign";
+            this.button1.Text = "{MAINMENU_CAMPAIGN}";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -92,7 +90,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(181, 23);
             this.button2.TabIndex = 1;
-            this.button2.Text = "Sandbox";
+            this.button2.Text = "{MAINMENU_SANDBOX}";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -103,7 +101,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(181, 23);
             this.button3.TabIndex = 2;
-            this.button3.Text = "Settings";
+            this.button3.Text = "{GEN_SETTINGS}";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -114,7 +112,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(181, 23);
             this.button4.TabIndex = 3;
-            this.button4.Text = "About";
+            this.button4.Text = "{GEN_ABOUT}";
             this.button4.UseVisualStyleBackColor = true;
             // 
             // button5
@@ -124,7 +122,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(181, 23);
             this.button5.TabIndex = 4;
-            this.button5.Text = "Exit";
+            this.button5.Text = "{GEN_EXIT}";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -140,8 +138,6 @@
             // 
             // pnloptions
             // 
-            this.pnloptions.Controls.Add(this.txtubase);
-            this.pnloptions.Controls.Add(this.label3);
             this.pnloptions.Controls.Add(this.txtdsport);
             this.pnloptions.Controls.Add(this.label2);
             this.pnloptions.Controls.Add(this.txtdsaddress);
@@ -149,24 +145,8 @@
             this.pnloptions.Controls.Add(this.flowLayoutPanel1);
             this.pnloptions.Location = new System.Drawing.Point(49, 26);
             this.pnloptions.Name = "pnloptions";
-            this.pnloptions.Size = new System.Drawing.Size(432, 290);
+            this.pnloptions.Size = new System.Drawing.Size(432, 167);
             this.pnloptions.TabIndex = 2;
-            // 
-            // txtubase
-            // 
-            this.txtubase.Location = new System.Drawing.Point(146, 133);
-            this.txtubase.Name = "txtubase";
-            this.txtubase.Size = new System.Drawing.Size(225, 20);
-            this.txtubase.TabIndex = 6;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(22, 136);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(106, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Unite API base URL:";
             // 
             // txtdsport
             // 
@@ -180,9 +160,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(22, 88);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 13);
+            this.label2.Size = new System.Drawing.Size(125, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Digital Society Port:";
+            this.label2.Text = "{MAINMENU_DSPORT}";
             // 
             // txtdsaddress
             // 
@@ -196,9 +176,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(22, 57);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 13);
+            this.label1.Size = new System.Drawing.Size(147, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Digital Society Address:";
+            this.label1.Text = "{MAINMENU_DSADDRESS}";
             // 
             // flowLayoutPanel1
             // 
@@ -208,7 +188,7 @@
             this.flowLayoutPanel1.Controls.Add(this.btnsave);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 259);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 136);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(432, 31);
             this.flowLayoutPanel1.TabIndex = 0;
@@ -218,11 +198,11 @@
             this.opt_btncancel.AutoSize = true;
             this.opt_btncancel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.opt_btncancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.opt_btncancel.Location = new System.Drawing.Point(377, 3);
+            this.opt_btncancel.Location = new System.Drawing.Point(331, 3);
             this.opt_btncancel.Name = "opt_btncancel";
-            this.opt_btncancel.Size = new System.Drawing.Size(52, 25);
+            this.opt_btncancel.Size = new System.Drawing.Size(98, 25);
             this.opt_btncancel.TabIndex = 0;
-            this.opt_btncancel.Text = "Cancel";
+            this.opt_btncancel.Text = "{GEN_CANCEL}";
             this.opt_btncancel.UseVisualStyleBackColor = true;
             this.opt_btncancel.Click += new System.EventHandler(this.opt_btncancel_Click);
             // 
@@ -231,11 +211,11 @@
             this.btnsave.AutoSize = true;
             this.btnsave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnsave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnsave.Location = new System.Drawing.Point(327, 3);
+            this.btnsave.Location = new System.Drawing.Point(241, 3);
             this.btnsave.Name = "btnsave";
-            this.btnsave.Size = new System.Drawing.Size(44, 25);
+            this.btnsave.Size = new System.Drawing.Size(84, 25);
             this.btnsave.TabIndex = 1;
-            this.btnsave.Text = "Save";
+            this.btnsave.Text = "{GEN_SAVE}";
             this.btnsave.UseVisualStyleBackColor = true;
             this.btnsave.Click += new System.EventHandler(this.btnsave_Click);
             // 
@@ -259,7 +239,7 @@
             this.btnnewgame.Name = "btnnewgame";
             this.btnnewgame.Size = new System.Drawing.Size(181, 23);
             this.btnnewgame.TabIndex = 0;
-            this.btnnewgame.Text = "New Game";
+            this.btnnewgame.Text = "{MAINMENU_NEWGAME}";
             this.btnnewgame.UseVisualStyleBackColor = true;
             this.btnnewgame.Click += new System.EventHandler(this.btnnewgame_Click);
             // 
@@ -270,7 +250,7 @@
             this.btncontinue.Name = "btncontinue";
             this.btncontinue.Size = new System.Drawing.Size(181, 23);
             this.btncontinue.TabIndex = 1;
-            this.btncontinue.Text = "Continue";
+            this.btncontinue.Text = "{GEN_CONTINUE}";
             this.btncontinue.UseVisualStyleBackColor = true;
             this.btncontinue.Click += new System.EventHandler(this.btncontinue_Click);
             // 
@@ -281,7 +261,7 @@
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(181, 23);
             this.button10.TabIndex = 4;
-            this.button10.Text = "Back";
+            this.button10.Text = "{GEN_BACK}";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
@@ -357,8 +337,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button opt_btncancel;
         private System.Windows.Forms.Button btnsave;
-        private System.Windows.Forms.TextBox txtubase;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtdsport;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtdsaddress;

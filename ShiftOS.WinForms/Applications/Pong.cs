@@ -223,7 +223,7 @@ namespace ShiftOS.WinForms.Applications
             pnlgamestart.Show();
             pnlgamestart.BringToFront();
             pnlgamestart.CenterParent();
-            Infobox.Show("You lose.", "You lost the game! Guess you should've cashed out...");
+            Infobox.Show("{TITLE_PONG_YOULOSE}", "{PROMPT_PONGLOST}");
             doAi = false;
             doBallCalc = false;
         }
@@ -237,7 +237,10 @@ namespace ShiftOS.WinForms.Applications
             pnllevelwon.CenterParent();
             pnllevelwon.Show();
             pnllevelwon.BringToFront();
-            lbltitle.Text = "You've reached level " + level + "!";
+            lbltitle.Text = Localization.Parse("{PONG_LEVELREACHED}", new Dictionary<string, string>
+            {
+                ["%level"] = level.ToString()
+            });
             lbltitle.Height = (int)CreateGraphics().MeasureString(lbltitle.Text, lbltitle.Font).Height;
             codepointsToEarn += CalculateAIBeatCP() * 2;
             speedFactor += speedFactor / level;
@@ -251,8 +254,12 @@ namespace ShiftOS.WinForms.Applications
 
         public void Win()
         {
-            header = "You beat the AI! " + CalculateAIBeatCP() + " Codepoints!.";
+            header = Localization.Parse("{PONG_BEATAI}", new Dictionary<string, string>
+            {
+                ["%amount"] = CalculateAIBeatCP().ToString()
+            });
             InitializeCoordinates();
+            counterTimer.Stop();
             new System.Threading.Thread(() =>
             {
                 doBallCalc = false;
@@ -265,6 +272,10 @@ namespace ShiftOS.WinForms.Applications
                 doBallCalc = true;
                 header = "";
                 counter = "";
+                Desktop.InvokeOnWorkerThread(() =>
+                {
+                    counterTimer.Start();
+                });
             }).Start();
         }
 
@@ -322,7 +333,10 @@ namespace ShiftOS.WinForms.Applications
             //draw opponent
             e.Graphics.FillRectangle(new SolidBrush(pnlcanvas.ForeColor), new RectangleF((float)(pnlcanvas.Width - (paddleWidth*2)), (float)(opponentYLocal - (float)(paddleHeight / 2)), (float)paddleWidth, (float)paddleHeight));
 
-            string cp_text = Localization.Parse("{CODEPOINTS}: " + codepointsToEarn);
+            string cp_text = Localization.Parse("{PONG_STATUSCP}", new Dictionary<string, string>
+            {
+                ["%cp"] = codepointsToEarn.ToString()
+            });
 
             var tSize = e.Graphics.MeasureString(cp_text, SkinEngine.LoadedSkin.Header3Font);
 
@@ -346,7 +360,11 @@ namespace ShiftOS.WinForms.Applications
                 );
             e.Graphics.DrawString(header, SkinEngine.LoadedSkin.Header2Font, new SolidBrush(pnlcanvas.ForeColor), tLoc);
 
-            string l = Localization.Parse("{LEVEL}: " + level + " - " + secondsleft + " {SECONDS_LEFT}");
+            string l = Localization.Parse("{PONG_STATUSLEVEL}", new Dictionary<string, string>
+            {
+                ["%level"] = level.ToString(),
+                ["%time"] = secondsleft.ToString()
+            });
             tSize = e.Graphics.MeasureString(l, SkinEngine.LoadedSkin.Header3Font);
 
             tLoc = new PointF((pnlcanvas.Width - (int)tSize.Width) / 2,
@@ -412,7 +430,11 @@ namespace ShiftOS.WinForms.Applications
             SaveSystem.CurrentSave.Codepoints += (ulong)codepointsToEarn;
             level = 1;
             speedFactor = 0.0125;
-            Infobox.Show("Codepoints transferred.", "Pong has transferred " + codepointsToEarn + " Codepoints to your system.");
+            Infobox.Show("{TITLE_CODEPOINTSTRANSFERRED}", Localization.Parse("{PROMPT_CODEPOINTSTRANSFERRED}", new Dictionary<string, string>
+            {
+                ["%transferrer"] = "Pong",
+                ["%amount"] = codepointsToEarn.ToString()
+            }));
             codepointsToEarn = 0;
             pnlgamestart.Show();
             pnlgamestart.BringToFront();

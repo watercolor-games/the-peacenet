@@ -40,7 +40,7 @@
             this.label.Name = "label";
             this.label.Size = new System.Drawing.Size(284, 262);
             this.label.TabIndex = 0;
-            this.label.Text = "Loading...";
+            this.label.Text = "{GEN_LOADING}";
             this.label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Loading

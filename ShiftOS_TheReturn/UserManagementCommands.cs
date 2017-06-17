@@ -19,14 +19,14 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
-        [Command("add", description = "Add a user to the system.", usage ="name:")]
+        [Command("adduser", description = "{DESC_ADDUSER}")]
         [RequiresArgument("name")]
         public static bool AddUser(Dictionary<string, object> args)
         {
             string name = args["name"].ToString();
-            if(SaveSystem.CurrentSave.Users.FirstOrDefault(x=>x.Username==name) != null)
+            if (SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == name) != null)
             {
-                Console.WriteLine("Error: User already exists.");
+                Console.WriteLine("{ERR_USERFOUND}");
                 return true;
             }
 
@@ -37,7 +37,10 @@ namespace ShiftOS.Engine
                 Permissions = UserPermissions.User
             };
             SaveSystem.CurrentSave.Users.Add(user);
-            Console.WriteLine($"Creating new user \"{name}\" with no password and User permissions.");
+            Console.WriteLine(Localization.Parse("{RES_CREATINGUSER}", new Dictionary<string, string>
+            {
+                { "%name", name }
+            }));
             SaveSystem.SaveGame();
             return true;
         }
@@ -48,25 +51,28 @@ namespace ShiftOS.Engine
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
 
-        [Command("remove", description = "Remove a user from the system.", usage = "name:")]
+        [Command("removeuser", description = "{DESC_REMOVEUSER}")]
         [RequiresArgument("name")]
         public static bool RemoveUser(Dictionary<string, object> args)
         {
             string name = args["name"].ToString();
             if (SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == name) == null)
             {
-                Console.WriteLine("Error: User doesn't exist.");
+                Console.WriteLine("{ERR_NOUSER}");
                 return true;
             }
 
             var user = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == name);
-            if(user.Username != SaveSystem.CurrentUser.Username)
+            if (user.Username != SaveSystem.CurrentUser.Username)
             {
-                Console.WriteLine("Error: Cannot remove yourself.");
+                Console.WriteLine("{ERR_REMOVEYOU}");
                 return true;
             }
             SaveSystem.CurrentSave.Users.Remove(user);
-            Console.WriteLine($"Removing user \"{name}\" from system...");
+            Console.WriteLine(Localization.Parse("{RES_REMOVINGUSER}", new Dictionary<string, string>
+            {
+                ["%name"] = name
+            }));
             SaveSystem.SaveGame();
             return true;
         }
@@ -79,7 +85,7 @@ namespace ShiftOS.Engine
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
 
-        [Command("set_acl")]
+        [Command("setuserpermissions", description = "{DESC_SETUSERPERMISSIONS}")]
         [RequiresArgument("user")]
         [RequiresArgument("val")]
         public static bool SetUserPermission(Dictionary<string, object> args)
@@ -92,13 +98,13 @@ namespace ShiftOS.Engine
             }
             catch
             {
-                Console.WriteLine("Error: Permission value must be an integer.");
+                Console.WriteLine("{ERR_BADACL}");
                 return true;
             }
 
             if(SaveSystem.CurrentSave.Users.FirstOrDefault(x=>x.Username==username) == null)
             {
-                Console.WriteLine("Error: User not found.");
+                Console.WriteLine("{ERR_NOUSER}");
                 return true;
             }
 
@@ -119,26 +125,26 @@ namespace ShiftOS.Engine
                     uperm = UserPermissions.Root;
                     break;
                 default:
-                    Console.WriteLine("Permission value must be between 0 and 4.");
+                    Console.WriteLine("{ERR_BADACL}");
                     return true;
             }
 
             //Permissions are backwards... oops...
             if(uperm < SaveSystem.CurrentUser.Permissions)
             {
-                Console.WriteLine("Error: Cannot set user permissions to values greater than your own!");
+                Console.WriteLine("{ERR_ACLHIGHERVALUE}");
                 return true;
             }
 
             var oldperm = SaveSystem.Users.FirstOrDefault(x => x.Username == username).Permissions;
             if (SaveSystem.CurrentUser.Permissions > oldperm)
             {
-                Console.WriteLine("Error: Can't set the permission of this user. They have more rights than you.");
+                Console.WriteLine("{ERR_HIGHERPERMS}");
                 return true;
             }
 
             SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == username).Permissions = uperm;
-            Console.WriteLine("User permissions updated.");
+            Console.WriteLine("{RES_ACLUPDATED}");
             return true;
         }
 
@@ -148,7 +154,7 @@ namespace ShiftOS.Engine
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
 
-        [Command("users", description = "Get a list of all users on the system.")]
+        [Command("users", description = "{DESC_USERS}")]
         public static bool GetUsers()
         {
             foreach (var u in SaveSystem.CurrentSave.Users)
@@ -180,7 +186,7 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
-        [Command("login", description = "Log in as another user.")]
+        [Command("su", description = "{DESC_SU}")]
         [RequiresArgument("user")]
         [RequiresArgument("pass")]
         public static bool Login(Dictionary<string, object> args)
@@ -191,18 +197,18 @@ namespace ShiftOS.Engine
             var usr = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == user);
             if(usr==null)
             {
-                Console.WriteLine("Error: No such user.");
+                Console.WriteLine("{ERR_NOUSER}");
                 return true;
             }
 
             if (usr.Password != pass)
             {
-                Console.WriteLine("Access denied.");
+                Console.WriteLine("{RES_DENIED}");
                 return true;
             }
 
             SaveSystem.CurrentUser = usr;
-            Console.WriteLine("Access granted.");
+            Console.WriteLine("{RES_GRANTED}");
             return true;
         }
 
@@ -211,7 +217,7 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="args">Command arguments.</param>
         /// <returns>Command result.</returns>
-        [Command("setpass", description ="Allows you to set your password to a new value.", usage ="old:,new:")]
+        [Command("passwd", description ="{DESC_PASSWD}", usage ="old:,new:")]
         [RequiresArgument("old")]
         [RequiresArgument("new")]
         public static bool SetPassword(Dictionary<string, object> args)
@@ -223,12 +229,12 @@ namespace ShiftOS.Engine
             {
                 SaveSystem.CurrentUser.Password = newpass;
                 SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == SaveSystem.CurrentUser.Username).Password = newpass;
-                Console.WriteLine("Password set successfully.");
+                Console.WriteLine("{RES_PASSWD_SET}");
                 SaveSystem.SaveGame();
             }
             else
             {
-                Console.WriteLine("Passwords do not match.");
+                Console.WriteLine("{ERR_PASSWD_MISMATCH}");
             }
             return true;
         }

@@ -28,18 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Pong));
             this.pnlcanvas = new System.Windows.Forms.Panel();
             this.pnllevelwon = new System.Windows.Forms.Panel();
-            this.lbltitle = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btncashout = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.btncashout = new System.Windows.Forms.Button();
+            this.lbltitle = new System.Windows.Forms.Label();
             this.pnlgamestart = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnplay = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.pnllevelwon.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -68,17 +67,6 @@
             this.pnllevelwon.TabIndex = 0;
             this.pnllevelwon.Visible = false;
             // 
-            // lbltitle
-            // 
-            this.lbltitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lbltitle.Location = new System.Drawing.Point(0, 0);
-            this.lbltitle.Name = "lbltitle";
-            this.lbltitle.Size = new System.Drawing.Size(301, 13);
-            this.lbltitle.TabIndex = 0;
-            this.lbltitle.Tag = "header2";
-            this.lbltitle.Text = "You\'ve reached level 2!";
-            this.lbltitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
             // label1
             // 
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -86,8 +74,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(301, 139);
             this.label1.TabIndex = 1;
-            this.label1.Text = "You have survived this level of Pong. You now have a chance to cash out your Code" +
-    "points or play on for more.";
+            this.label1.Text = "{PONG_BEATLEVELDESC}";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel1
@@ -100,25 +87,36 @@
             this.panel1.Size = new System.Drawing.Size(301, 32);
             this.panel1.TabIndex = 2;
             // 
-            // btncashout
-            // 
-            this.btncashout.Location = new System.Drawing.Point(48, 6);
-            this.btncashout.Name = "btncashout";
-            this.btncashout.Size = new System.Drawing.Size(93, 23);
-            this.btncashout.TabIndex = 0;
-            this.btncashout.Text = "Cash out";
-            this.btncashout.UseVisualStyleBackColor = true;
-            this.btncashout.Click += new System.EventHandler(this.btncashout_Click);
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(159, 6);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(93, 23);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Play on";
+            this.button1.Text = "{PONG_PLAYON}";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btncashout
+            // 
+            this.btncashout.Location = new System.Drawing.Point(48, 6);
+            this.btncashout.Name = "btncashout";
+            this.btncashout.Size = new System.Drawing.Size(93, 23);
+            this.btncashout.TabIndex = 0;
+            this.btncashout.Text = "{PONG_CASHOUT}";
+            this.btncashout.UseVisualStyleBackColor = true;
+            this.btncashout.Click += new System.EventHandler(this.btncashout_Click);
+            // 
+            // lbltitle
+            // 
+            this.lbltitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbltitle.Location = new System.Drawing.Point(0, 0);
+            this.lbltitle.Name = "lbltitle";
+            this.lbltitle.Size = new System.Drawing.Size(301, 13);
+            this.lbltitle.TabIndex = 0;
+            this.lbltitle.Tag = "header2";
+            this.lbltitle.Text = "You\'ve reached level 2!";
+            this.lbltitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pnlgamestart
             // 
@@ -138,27 +136,27 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(301, 206);
             this.label2.TabIndex = 1;
-            this.label2.Text = resources.GetString("label2.Text");
+            this.label2.Text = "{PONG_DESC}";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button2);
+            this.panel3.Controls.Add(this.btnplay);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 248);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(301, 32);
             this.panel3.TabIndex = 2;
             // 
-            // button2
+            // btnplay
             // 
-            this.button2.Location = new System.Drawing.Point(100, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(116, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Play some Pong!";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnplay.Location = new System.Drawing.Point(100, 6);
+            this.btnplay.Name = "btnplay";
+            this.btnplay.Size = new System.Drawing.Size(116, 23);
+            this.btnplay.TabIndex = 1;
+            this.btnplay.Text = "{PONG_PLAY}";
+            this.btnplay.UseVisualStyleBackColor = true;
+            this.btnplay.Click += new System.EventHandler(this.button2_Click);
             // 
             // label3
             // 
@@ -168,7 +166,7 @@
             this.label3.Size = new System.Drawing.Size(301, 42);
             this.label3.TabIndex = 0;
             this.label3.Tag = "header2";
-            this.label3.Text = "Welcome to Pong.";
+            this.label3.Text = "{PONG_WELCOME}";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Pong
@@ -200,7 +198,7 @@
         private System.Windows.Forms.Panel pnlgamestart;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnplay;
         private System.Windows.Forms.Label label3;
     }
 }

@@ -35,7 +35,17 @@ namespace ShiftOS.WinForms.Applications
 
             public override long Length => box.Text.Length;
 
-            public override long Position { get => Length; set => throw new NotImplementedException(); }
+            public override long Position
+            {
+                get
+                {
+                    return Length;
+                }
+                set
+                {
+                    //nothing
+                }
+            }
 
             public override void Flush()
             {
