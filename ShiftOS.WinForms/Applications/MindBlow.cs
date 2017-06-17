@@ -27,15 +27,15 @@ namespace ShiftOS.WinForms.Applications
                 kc = new KeysConverter();
                 box = mybox;
             }
-            public override bool CanRead => true;
+            public override bool CanRead { get { return true; } }
 
-            public override bool CanSeek => false;
+            public override bool CanSeek { get { return false; } }
 
-            public override bool CanWrite => true;
+            public override bool CanWrite { get { return true; } }
 
-            public override long Length => box.Text.Length;
+            public override long Length { get { return box.Text.Length; } }
 
-            public override long Position { get => Length; set => throw new NotImplementedException(); }
+            public override long Position { get { return Length; } set { throw new NotImplementedException(); } }
 
             public override void Flush()
             {
