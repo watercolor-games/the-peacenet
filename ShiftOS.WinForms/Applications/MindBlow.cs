@@ -160,8 +160,15 @@ namespace ShiftOS.WinForms.Applications
         {
             new Thread(() =>
             {
-                Interpreter.Reset();
-                Interpreter.Execute(programinput.Text);
+                try
+                {
+                    Interpreter.Reset();
+                    Interpreter.Execute(programinput.Text);
+                }
+                catch (Exception ex)
+                {
+                    Desktop.InvokeOnWorkerThread(() => Infobox.Show("Program Error", "An error occurred while executing your program: " + ex.GetType().ToString()));
+                }
             }).Start();
         }
 
