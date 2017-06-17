@@ -824,7 +824,7 @@ namespace ShiftOS.WinForms
                         item.Text = Localization.Parse("{SHUTDOWN}");
                         item.Click += (o, a) =>
                         {
-                            TerminalBackend.InvokeCommand("sos.shutdown");
+                            TerminalBackend.InvokeCommand("shutdown");
                         };
                         apps.DropDownItems.Add(item);
                         if (Shiftorium.UpgradeInstalled("advanced_app_launcher"))
@@ -853,7 +853,7 @@ namespace ShiftOS.WinForms
                                 catbtn.Height = 24;
                                 flcategories.Controls.Add(catbtn);
                                 catbtn.Show();
-                                catbtn.Click += (o, a) => TerminalBackend.InvokeCommand("sos.shutdown");
+                                catbtn.Click += (o, a) => TerminalBackend.InvokeCommand("shutdown");
                             }
                         }
                     }
@@ -1109,7 +1109,7 @@ namespace ShiftOS.WinForms
 
         private void btnshutdown_Click(object sender, EventArgs e)
         {
-            TerminalBackend.InvokeCommand("sos.shutdown");
+            TerminalBackend.InvokeCommand("shutdown");
         }
 
         public void HideAppLauncher()

@@ -83,6 +83,15 @@ namespace ShiftOS.WinForms.Applications
 
         private string counter = "";
 
+        private void Bounce(Rectangle ball, Rectangle paddle)
+        {
+            // reverse x velocity to send the ball the other way
+            xVel = -xVel;
+
+            // adjust y velocity based on where the ball hit the paddle
+            yVel += linear((ball.Top + (ball.Height / 2)), paddle.Top, paddle.Bottom, -1, 1);
+        }
+
         public void UpdateBall()
         {
             if (doBallCalc)
@@ -141,11 +150,7 @@ namespace ShiftOS.WinForms.Applications
                     //check if the ball x is greater than the player paddle's middle coordinate
                     if (ballRect.Right >= opponentRect.Left)
                     {
-                        //reverse x velocity to send the ball the other way
-                        xVel = -xVel;
-
-                        //set y velocity based on where the ball hit the paddle
-                        yVel = linear((ballRect.Top + (ballRect.Height / 2)), opponentRect.Top, opponentRect.Bottom, -1, 1);
+                        Bounce(ballRect, opponentRect);
                         doAi = false;
                     }
 
@@ -169,11 +174,7 @@ namespace ShiftOS.WinForms.Applications
                 {
                     if (ballRect.Left <= playerRect.Right)
                     {
-                        //reverse x velocity to send the ball the other way
-                        xVel = -xVel;
-
-                        //set y velocity based on where the ball hit the paddle
-                        yVel = linear((ballRect.Top + (ballRect.Height / 2)), playerRect.Top, playerRect.Bottom, -1, 1);
+                        Bounce(ballRect, playerRect);
 
                         //reset the ai location
                         aiBallX = ballX;
@@ -255,15 +256,12 @@ namespace ShiftOS.WinForms.Applications
             new System.Threading.Thread(() =>
             {
                 doBallCalc = false;
-                counter = "3";
-                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
-                System.Threading.Thread.Sleep(1000);
-                counter = "2";
-                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
-                System.Threading.Thread.Sleep(1000);
-                counter = "1";
-                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
-                System.Threading.Thread.Sleep(1000);
+                for (int i = 3; i > 0; i--)
+                {
+					counter = i.ToString();
+					Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+					System.Threading.Thread.Sleep(1000);
+				}
                 doBallCalc = true;
                 header = "";
                 counter = "";
