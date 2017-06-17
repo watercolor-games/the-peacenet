@@ -10,7 +10,6 @@ namespace ShiftOS.Engine
     /// <summary>
     /// Administrative user management terminal commands.
     /// </summary>
-    [Namespace("admin")]
     [KernelMode]
     [RequiresUpgrade("mud_fundamentals")]
     public static class AdminUserManagementCommands
@@ -173,7 +172,6 @@ namespace ShiftOS.Engine
     /// <summary>
     /// Non-administrative user management terminal commands.
     /// </summary>
-    [Namespace("user")]
     [RequiresUpgrade("mud_fundamentals")]
     public static class UserManagementCommands
     {

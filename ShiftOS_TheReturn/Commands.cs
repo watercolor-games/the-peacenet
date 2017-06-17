@@ -44,7 +44,6 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.Engine
 {
-    [Namespace("infobox", hide = true)]
     [RequiresUpgrade("desktop;wm_free_placement")]
     public static class InfoboxDebugCommands
     {
@@ -107,7 +106,6 @@ namespace ShiftOS.Engine
 
     }
 
-    [Namespace("audio")]
     public static class AudioCommands
     {
         [Command("setvol", description = "Set the volume of the system audio to anywhere between 0 and 100.")]
@@ -129,79 +127,7 @@ namespace ShiftOS.Engine
         }
     }
 
-    [RequiresUpgrade("mud_fundamentals")]
-    [Namespace("mud")]
-    public static class MUDCommands
-    {
-        [MultiplayerOnly]
-        [Command("status")]
-        public static bool Status()
-        {
-            ServerManager.PrintDiagnostics();
-            return true;
-        }
-
-        [Command("connect")]
-        public static bool Connect(Dictionary<string, object> args)
-        {
-            try
-            {
-                string ip = (args.ContainsKey("addr") == true) ? args["addr"] as string : "michaeltheshifter.me";
-                int port = (args.ContainsKey("port") == true) ? Convert.ToInt32(args["port"] as string) : 13370;
-                try
-                {
-                    ServerManager.Initiate(ip, port);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("{ERROR}: " + ex.Message);
-                }
-
-                TerminalBackend.PrefixEnabled = false;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error running script:" + ex);
-                return false;
-            }
-        }
-
-        [Command("reconnect")]
-        [RequiresUpgrade("hacker101_deadaccts")]
-        public static bool Reconnect()
-        {
-            Console.WriteLine("--reconnecting to multi-user domain...");
-            KernelWatchdog.MudConnected = true;
-            Console.WriteLine("--done.");
-            return true;
-        }
-
-        [MultiplayerOnly]
-        [Command("disconnect")]
-        [RequiresUpgrade("hacker101_deadaccts")]
-        public static bool Disconnect()
-        {
-            Console.WriteLine("--connection to multi-user domain severed...");
-            KernelWatchdog.MudConnected = false;
-            return true;
-        }
-
-        [MultiplayerOnly]
-        [Command("sendmsg")]
-        [KernelMode]
-        [RequiresUpgrade("hacker101_deadaccts")]
-        [RequiresArgument("header")]
-        [RequiresArgument("body")]
-        public static bool SendMessage(Dictionary<string, object> args)
-        {
-            ServerManager.SendMessage(args["header"].ToString(), args["body"].ToString());
-            return true;
-        }
-    }
-
     [TutorialLock]
-    [Namespace("trm")]
     public static class TerminalCommands
     {
         [Command("clear")]
@@ -220,167 +146,6 @@ namespace ShiftOS.Engine
         }
     }
 
-#if DEVEL
-    internal class Rock : Exception
-    {
-        internal Rock() : base("Someone threw a rock at the window, and the Terminal shattered.")
-        {
-
-        }
-    }
-    
-    [MultiplayerOnly]
-    [Namespace("dev")]
-    public static class ShiftOSDevCommands
-    {
-        [Command("buy")]
-        public static bool UnlockUpgrade(Dictionary<string, object> args)
-        {
-            string upg = args["id"].ToString();
-            try
-            {
-                SaveSystem.CurrentSave.Upgrades[upg] = true;
-                Shiftorium.InvokeUpgradeInstalled();
-                SaveSystem.SaveGame();
-            }
-            catch
-            {
-                Console.WriteLine("Upgrade not found.");
-            }
-            return true;
-        }
-
-        [Command("rock", description = "A little surprise for unstable builds...")]
-        public static bool ThrowASandwichingRock()
-        {
-            Infobox.Show("He who lives in a glass house shouldn't throw stones...", new Rock().Message);
-            return false;
-        }
-
-
-        [Command("unbuy")]
-        [RequiresArgument("upgrade")]
-        public static bool UnbuyUpgrade(Dictionary<string, object> args)
-        {
-            try
-            {
-                SaveSystem.CurrentSave.Upgrades[args["upgrade"].ToString()] = false;
-                SaveSystem.SaveGame();
-                Desktop.PopulateAppLauncher();
-                Desktop.CurrentDesktop.SetupDesktop();
-            }
-            catch
-            {
-                Console.WriteLine("Upgrade not found.");
-            }
-            return true;
-        }
-
-        [Command("getallupgrades")]
-        public static bool GetAllUpgrades()
-        {
-            Console.WriteLine(JsonConvert.SerializeObject(SaveSystem.CurrentSave.Upgrades, Formatting.Indented));
-            return true;
-        }
-
-        [Command("multarg")]
-        [RequiresArgument("id")]
-        [RequiresArgument("name")]
-        [RequiresArgument("type")]
-        public static bool MultArg(Dictionary<string, object> args)
-        {
-            Console.WriteLine("Success! "+args.ToString());
-            return true;
-        }
-
-        [Command("restart")]
-        public static bool Restart()
-        {
-            SaveSystem.CurrentSave.Upgrades = new Dictionary<string, bool>();
-            SaveSystem.CurrentSave.Codepoints = 0;
-            SaveSystem.CurrentSave.StoriesExperienced.Clear();
-            SaveSystem.CurrentSave.StoriesExperienced.Add("mud_fundamentals");
-            SaveSystem.SaveGame();
-            Shiftorium.InvokeUpgradeInstalled();
-            return true;
-        }
-
-        [Command("freecp")]
-        public static bool FreeCodepoints(Dictionary<string, object> args)
-        {
-            if (args.ContainsKey("amount"))
-                try
-                {
-                    ulong codepointsToAdd = Convert.ToUInt64(args["amount"].ToString());
-                    SaveSystem.CurrentSave.Codepoints += codepointsToAdd;
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("{ERROR}: " + ex.Message);
-                    return true;
-                }
-
-            SaveSystem.CurrentSave.Codepoints += 1000;
-            return true;
-        }
-
-        [Command("unlockeverything")]
-        public static bool UnlockAllUpgrades()
-        {
-            foreach (var upg in Shiftorium.GetDefaults())
-            {
-                if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.ID))
-                    SaveSystem.CurrentSave.Upgrades.Add(upg.ID, true);
-                else
-                    SaveSystem.CurrentSave.Upgrades[upg.ID] = true;
-            }
-            Shiftorium.InvokeUpgradeInstalled();
-            SkinEngine.LoadSkin();
-            return true;
-        }
-
-        [Command("info")]
-        public static bool DevInformation()
-        {
-            Console.WriteLine("{SHIFTOS_PLUS_MOTTO}");
-            Console.WriteLine("{SHIFTOS_VERSION_INFO}" + Assembly.GetExecutingAssembly().GetName().Version);
-            return true;
-        }
-        [Command("pullfile")]
-        public static bool PullFile(Dictionary<string, object> args)
-        {
-            if (args.ContainsKey("physical") && args.ContainsKey("virtual"))
-            {
-                string file = (string)args["physical"];
-                string dest = (string)args["virtual"];
-                if (System.IO.File.Exists(file))
-                {
-                    Console.WriteLine("Pulling physical file to virtual drive...");
-                    byte[] filebytes = System.IO.File.ReadAllBytes(file);
-                    ShiftOS.Objects.ShiftFS.Utils.WriteAllBytes(dest, filebytes);
-                }
-                else
-                {
-                    Console.WriteLine("The specified file does not exist on the physical drive.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("You must supply a physical path.");
-            }
-            return true;
-        }
-        [Command("crash")]
-        public static bool CrashInstantly()
-        {
-            CrashHandler.Start(new Exception("ShiftOS was sent a command to forcefully crash."));
-            return true;
-        }
-    }
-#endif
-
-    [Namespace("sos")]
     public static class ShiftOSCommands
     {
 
@@ -478,38 +243,17 @@ namespace ShiftOS.Engine
         }
 
         [Command("help", "{COMMAND_HELP_USAGE", "{COMMAND_HELP_DESCRIPTION}")]
-        public static bool Help(Dictionary<string, object> args)
+        public static bool Help()
         {
             var sb = new StringBuilder();
             sb.AppendLine("Retrieving help data.");
-
-            if (args.ContainsKey("ns"))
+            //print all unique namespaces.
+            foreach (var n in TerminalBackend.Commands.Select(x => x.CommandInfo).Distinct().OrderBy(x=>x.name))
             {
-                string ns = args["ns"].ToString();
-                //First let's check for a command that has this namespace.
-                var cmdtest = TerminalBackend.Commands.FirstOrDefault(x => x.NamespaceInfo.name == ns);
-                if (cmdtest == null) //Namespace not found.
-                    sb.AppendLine("Error retrieving help for namespace \"" + ns + "\". Namespace not found.");
-                else
-                {
-                    //Now do the actual scan.
-                    sb.AppendLine("Namespace: " + ns);
-                    foreach(var cmd in TerminalBackend.Commands.Where(x => x.NamespaceInfo.name == ns))
-                    {
-                        string str = cmd.ToString();
-                        str = str.Replace(str.Substring(str.LastIndexOf("|")), "");
-                        sb.AppendLine(str);
-                    }
-                }
-            }
-            else
-            {
-                
-                //print all unique namespaces.
-                foreach(var n in TerminalBackend.Commands.Select(x => x.NamespaceInfo.name).Distinct())
-                {
-                    sb.AppendLine("sos.help{ns:\"" + n + "\"}");
-                }
+                sb.Append(n.name);
+                if (Shiftorium.UpgradeInstalled("help_descriptions"))
+                    sb.Append(" - " + n.description);
+                sb.AppendLine();
             }
 
             Console.WriteLine(sb.ToString());
@@ -565,7 +309,6 @@ Upgrades:         {SaveSystem.CurrentSave.CountUpgrades()} installed,
     }
 
     [MultiplayerOnly]
-    [Namespace("shiftorium")]
     public static class ShiftoriumCommands
     {
         [Command("buy")]
@@ -668,7 +411,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             return true;
         }
 
-        [Command("list")]
+        [Command("shiftorium", description ="Lists all available Shiftorium upgrades.")]
         public static bool ListAll(Dictionary<string, object> args)
         {
             try
@@ -742,7 +485,6 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
         }
     }
 
-    [Namespace("win")]
     public static class WindowCommands
     {
 

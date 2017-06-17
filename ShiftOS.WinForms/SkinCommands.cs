@@ -9,7 +9,6 @@ using ShiftOS.Objects.ShiftFS;
 
 namespace ShiftOS.WinForms
 {
-    [Namespace("skins")]
     public static class SkinCommands
     {
         [Command("reset")]

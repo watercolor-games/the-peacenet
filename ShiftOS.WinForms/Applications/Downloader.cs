@@ -216,7 +216,6 @@ namespace ShiftOS.WinForms.Applications
         public int Progress { get; set; }
     }
 
-    [Namespace("dev")]
     public static class DownloaderDebugCommands
     {
         [Command("setsubscription", description ="Use to set the current shiftnet subscription.", usage ="{value:int32}")]

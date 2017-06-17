@@ -104,7 +104,6 @@ namespace ShiftOS.Engine
     }
 
 #if DEBUG
-    [Namespace("dev")]
     public static class ReflectDebug
     {
         [Command("listalltypes", description = "List all types that were found by ReflectMan. Only present in DEBUG builds of ShiftOS.")]

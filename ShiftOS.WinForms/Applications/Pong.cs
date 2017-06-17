@@ -42,6 +42,15 @@ namespace ShiftOS.WinForms.Applications
                     LevelComplete();
                 }
             };
+#if DEBUG
+            this.KeyDown += (o, a) =>
+            {
+                if(a.KeyCode == Keys.D)
+                {
+                    drawAiBall = !drawAiBall;                
+                }
+            };
+#endif
         }
 
         private double ballX = 0.0f;
@@ -266,10 +275,13 @@ namespace ShiftOS.WinForms.Applications
             ballX = 0;
             ballY = 0;
             opponentY = 0;
+            xVel = 1;
             aiBallX = 0;
             aiBallY = 0;
             doAi = true;
         }
+
+        private bool drawAiBall = false;
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
         {
@@ -281,11 +293,22 @@ namespace ShiftOS.WinForms.Applications
             ballXLocal -= ((double)paddleWidth / 2);
             ballYLocal -= ((double)paddleWidth / 2);
 
+            double aiballXLocal = linear(aiBallX, -1.0, 1.0, 0, pnlcanvas.Width);
+            double aiballYLocal = linear(aiBallY, -1.0, 1.0, 0, pnlcanvas.Height);
+
+            aiballXLocal -= ((double)paddleWidth / 2);
+            aiballYLocal -= ((double)paddleWidth / 2);
+
 
             e.Graphics.Clear(pnlcanvas.BackColor);
 
+            //draw the ai ball
+            if (drawAiBall)
+                e.Graphics.FillEllipse(new SolidBrush(Color.Gray), new RectangleF((float)aiballXLocal, (float)aiballYLocal, (float)paddleWidth, (float)paddleWidth));
+
+
             //draw the ball
-            if(doBallCalc)
+            if (doBallCalc)
             e.Graphics.FillEllipse(new SolidBrush(pnlcanvas.ForeColor), new RectangleF((float)ballXLocal, (float)ballYLocal, (float)paddleWidth, (float)paddleWidth));
 
             double playerYLocal = linear(playerY, -1.0, 1.0, 0, pnlcanvas.Height);

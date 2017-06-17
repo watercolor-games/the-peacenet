@@ -32,7 +32,6 @@ using ShiftOS.Engine;
 
 namespace ModLauncher
 {
-    [Namespace("modlauncher")]
     public static class Program
     {
         /// <summary>
@@ -42,16 +41,6 @@ namespace ModLauncher
         static void Main()
         {
             ShiftOS.WinForms.Program.Main();
-        }
-
-        [Command("throwcrash")]
-        public static bool ThrowCrash()
-        {
-            new Thread(() =>
-            {
-                throw new Exception("User triggered crash using modlauncher.throwcrash command.");
-            }).Start();
-            return true;
         }
     }
 }

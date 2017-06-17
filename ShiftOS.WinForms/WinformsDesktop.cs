@@ -47,7 +47,6 @@ namespace ShiftOS.WinForms
     /// <summary>
     /// Winforms desktop.
     /// </summary>
-    [Namespace("desktop")]
     public partial class WinformsDesktop : Form, IDesktop
     {
         public MainMenu.MainMenu ParentMenu = null;

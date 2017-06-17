@@ -148,7 +148,6 @@ namespace ShiftOS.Engine
                 return hash;
             }
 
-            public Namespace NamespaceInfo { get; set; }
             public Command CommandInfo { get; set; }
 
             public List<string> RequiredArguments { get; set; }
@@ -161,16 +160,14 @@ namespace ShiftOS.Engine
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(this.NamespaceInfo.name);
-                sb.Append(".");
                 sb.Append(this.CommandInfo.name);
                 if (this.RequiredArguments.Count > 0)
                 {
-                    sb.Append("{");
+                    sb.Append(" ");
                     foreach (var arg in RequiredArguments)
                     {
-                        sb.Append(arg);
-                        sb.Append(":");
+                        sb.Append("--" + arg);
+                        sb.Append(" ");
                         if (RequiredArguments.IndexOf(arg) < RequiredArguments.Count - 1)
                             sb.Append(',');
                     }
@@ -295,41 +292,42 @@ namespace ShiftOS.Engine
         public static void PopulateTerminalCommands()
         {
             Commands = new List<TerminalCommand>();
-            foreach(var type in ReflectMan.Types)
+            foreach (var type in ReflectMan.Types)
             {
-                var ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
-                if(ns != null)
+                foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
-                    foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
+                    if (cmd != null)
                     {
-                        var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
-                        if(cmd != null)
+                        var tc = new TerminalCommand();
+                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+
+
+                        tc.CommandInfo = cmd as Command;
+                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                        tc.RequiredArguments = new List<string>();
+                        foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
                         {
-                            var tc = new TerminalCommand();
-                            tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
-
-                            tc.NamespaceInfo = ns;
-
-                            tc.CommandInfo = cmd as Command;
-                            tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
-                            tc.RequiredArguments = new List<string>();
-                            foreach (var arg in mth.GetCustomAttributes(false).Where(x=>x is RequiresArgument))
-                            {
-                                var rarg = arg as RequiresArgument;
-                                tc.RequiredArguments.Add(rarg.argument);
-                            }
-                            var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
-                            if (rupg != null)
-                                tc.Dependencies = rupg.Upgrade;
-                            else
-                                tc.Dependencies = "";
-                            tc.CommandType = type;
-                            tc.CommandHandler = mth;
-                            if (!Commands.Contains(tc))
-                                Commands.Add(tc);
+                            var rarg = arg as RequiresArgument;
+                            tc.RequiredArguments.Add(rarg.argument);
                         }
+                        var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                        if (rupg != null)
+                            tc.Dependencies = rupg.Upgrade;
+                        else
+                            tc.Dependencies = "";
+                        tc.CommandType = type;
+                        tc.CommandHandler = mth;
+
+                        var ambiguity = Commands.FirstOrDefault(x => x.CommandInfo.name == tc.CommandInfo.name);
+                        if (ambiguity != null)
+                            throw new Exception("Command ambiguity error. You can't have two commands with the same name: " + $"{tc} == {ambiguity}");
+
+                        if (!Commands.Contains(tc))
+                            Commands.Add(tc);
                     }
                 }
+
             }
             Console.WriteLine("[termdb] " + Commands.Count + " commands found.");
         }
@@ -465,7 +463,7 @@ namespace ShiftOS.Engine
 
 
             string[] split = text.Split('.');
-            var cmd = Commands.FirstOrDefault(x => x.NamespaceInfo.name == split[0] && x.CommandInfo.name == split[1]);
+            var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
             if (cmd == null)
                 return false;
             if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))

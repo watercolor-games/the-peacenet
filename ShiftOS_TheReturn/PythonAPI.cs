@@ -291,7 +291,6 @@ namespace ShiftOS.Engine
     }
 
 #if DEBUG
-    [Namespace("dev")]
     public static class PythonCmds
     {
         [Command("runpystring", description = "Run some Python code. (Only present in DEBUG builds of ShiftOS)")]

@@ -154,7 +154,6 @@ namespace ShiftOS.Modding.VirtualMachine
         }
     }
 
-    [Namespace("svm")]
     public static class Compiler
     {
         public static byte[] Compile(string prg)

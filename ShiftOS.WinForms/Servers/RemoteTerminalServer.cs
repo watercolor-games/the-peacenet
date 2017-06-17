@@ -10,7 +10,6 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Servers
 {
-    [Namespace("rts")]
     [Server("Remote Terminal Server", 21)]
     //[RequiresUpgrade("story_hacker101_breakingthebonds")] //Uncomment when story is implemented.
     public class RemoteTerminalServer : Server

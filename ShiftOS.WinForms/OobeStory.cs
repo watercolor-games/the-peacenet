@@ -13,7 +13,6 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms
 {
-    [Namespace("test")]
     public class OobeStory
     {
         [Command("test")]

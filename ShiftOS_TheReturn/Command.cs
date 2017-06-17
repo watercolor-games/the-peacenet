@@ -136,42 +136,6 @@ namespace ShiftOS.Engine
     }
 
     /// <summary>
-    /// Denotes a Terminal command namespace.
-    /// </summary>
-    public class Namespace : Attribute
-    {
-        /// <summary>
-        /// The namespace's name.
-        /// </summary>
-        public string name;
-        /// <summary>
-        /// Whether the namespace should be hidden from the help system. Overrides all child <see cref="Command"/>s' hide values. 
-        /// </summary>
-        public bool hide;
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="Namespace"/>. 
-        /// </summary>
-        /// <param name="n">The name of the namespace.</param>
-        public Namespace(string n)
-        {
-            name = n;
-        }
-
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="Namespace"/>. 
-        /// </summary>
-        /// <param name="n">The name of the namespace.</param>
-        /// <param name="hide">Whether this namespace should be hidden from the user.</param>
-        public Namespace(string n, bool hide)
-        {
-            name = n;
-            this.hide = hide;
-        }
-    }
-
-    /// <summary>
     /// Marks a Terminal command as obsolete.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
