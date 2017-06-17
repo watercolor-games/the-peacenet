@@ -26,7 +26,7 @@
   "{GEN_YES}": "Yes",
   "{GEN_NO}": "No",
   "{GEN_OK}": "OK",
-    "{GEN_SETTINGS}": "Settings",
+  "{GEN_SETTINGS}": "Settings",
   "{GEN_ABOUT}": "About",
   "{GEN_EXIT}": "Exit",
 
@@ -121,6 +121,16 @@
   "{PONG_CASHOUT}": "Cash out",
 
   //Main menu tip messages
+  "{MAINMENU_TIPTEXT_0}": "Press CTRL+T to open a Terminal from any application within ShiftOS.",
+  "{MAINMENU_TIPTEXT_1}": "Codepoints can be used in the Shiftorium to buy upgrades for your system using the \"buy\" command.",
+  "{MAINMENU_TIPTEXT_2}": "The Shifter is a VERY powerful application. Not only can you customize ShiftOS to look however you want, but you'll earn heaps of Codepoints while you do so.",
+  "{MAINMENU_TIPTEXT_3}": "Not the language you want? Head over to \"Settings\" to choose the proper language for you. You may need to head to the forums if your language isn't supported.",
+  "{MAINMENU_TIPTEXT_4}": "Sandbox Mode is a nice way to use ShiftOS without having to progress through the main campaign. There's no Codepoints, no upgrades, and everything's unlocked.",
+  "{MAINMENU_TIPTEXT_5}": "The Skin Loader is an essential application. It can load in skins from anywhere - from your personal collection and from the forums, and you can even generate your own sharable skins for others to use!",
+  "{MAINMENU_TIPTEXT_6}": "ArtPad not cutting it for you? You can use any image editor you like on your host system and just import the assets into the ShiftOS Shared Folder to use in your skins.",
+  "{MAINMENU_TIPTEXT_7}": "What is that \"System Color Key-OUt\" you speak of, Shifter? Well, when composing skin assets, use that color to mark areas to be rendered as transparent!",
+  "{MAINMENU_TIPTEXT_8}": "Use the Format Editor to change the way Terminal commands are interpreted.",
+  "{MAINMENU_TIPTEXT_9}": "The Shiftnet is a wonderland of applications, games and services - only available in ShiftOS. Feel free to explore!",
 
   //Main menu - Settings
   "{MAINMENU_DSADDRESS}": "Digital Society address: ",
