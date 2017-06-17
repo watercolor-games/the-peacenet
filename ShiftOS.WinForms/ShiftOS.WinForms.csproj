@@ -77,6 +77,12 @@
     <Compile Include="Applications\IconManager.Designer.cs">
       <DependentUpon>IconManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\MindBlow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\MindBlow.Designer.cs">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\Pong.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -395,6 +401,12 @@
     <Compile Include="ShiftnetSites\MainHomepage.Designer.cs">
       <DependentUpon>MainHomepage.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\MindBlow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\MindBlow.Designer.cs">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\ShiftGames.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -483,6 +495,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\IconManager.resx">
       <DependentUpon>IconManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\MindBlow.resx">
+      <DependentUpon>MindBlow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Pong.resx">
       <DependentUpon>Pong.cs</DependentUpon>
@@ -632,6 +647,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\MindBlow.resx">
+      <DependentUpon>MindBlow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
@@ -880,6 +898,7 @@
     <None Include="Resources\iconSpeaker.bmp" />
     <None Include="Resources\ShiftOSFull.png" />
     <Content Include="Resources\GuessTheNumber.py" />
+    <None Include="Resources\mindblow.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

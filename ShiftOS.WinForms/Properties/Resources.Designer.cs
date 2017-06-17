@@ -1061,6 +1061,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap mindblow {
+            get {
+                object obj = ResourceManager.GetObject("mindblow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap notestate_connection_full {
             get {
                 object obj = ResourceManager.GetObject("notestate_connection_full", resourceCulture);
