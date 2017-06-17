@@ -248,11 +248,11 @@ namespace ShiftOS.Engine
             var sb = new StringBuilder();
             sb.AppendLine("Retrieving help data.");
             //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Select(x => x.CommandInfo).Distinct().OrderBy(x=>x.name))
+            foreach (var n in TerminalBackend.Commands.Where(x=>!(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false).OrderBy(x=>x.CommandInfo.name))
             {
-                sb.Append(n.name);
+                sb.Append(n.CommandInfo.name);
                 if (Shiftorium.UpgradeInstalled("help_descriptions"))
-                    sb.Append(" - " + n.description);
+                    sb.Append(" - " + n.CommandInfo.description);
                 sb.AppendLine();
             }
 
@@ -411,7 +411,7 @@ shiftorium.buy{{upgrade:""{upg.ID}""}}");
             return true;
         }
 
-        [Command("shiftorium", description ="Lists all available Shiftorium upgrades.")]
+        [Command("upgrades", description ="Lists all available Shiftorium upgrades.")]
         public static bool ListAll(Dictionary<string, object> args)
         {
             try

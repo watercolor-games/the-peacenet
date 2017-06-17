@@ -180,7 +180,7 @@ namespace ShiftOS.Engine
 
             public bool RequiresElevation { get; set; }
 
-            public void Invoke(Dictionary<string, object> args)
+            public virtual void Invoke(Dictionary<string, object> args)
             {
                 List<string> errors = new List<string>();
                 bool requiresAuth = false;
@@ -235,6 +235,19 @@ namespace ShiftOS.Engine
                     CommandHandler.Invoke(null, null);
                 }
             }
+        }
+
+        public class WinOpenCommand : TerminalCommand
+        {
+            public Type ShiftOSWindow { get; set; }
+
+
+            public override void Invoke(Dictionary<string, object> args)
+            {
+                AppearanceManager.SetupWindow((IShiftOSWindow)Activator.CreateInstance(ShiftOSWindow, null));
+            }
+
+
         }
 
         public class MemoryTextWriter : System.IO.TextWriter
@@ -294,6 +307,27 @@ namespace ShiftOS.Engine
             Commands = new List<TerminalCommand>();
             foreach (var type in ReflectMan.Types)
             {
+                if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
+                {
+                    var winopenattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is WinOpenAttribute) as WinOpenAttribute;
+                    if(winopenattrib != null)
+                    {
+                        var winc = new WinOpenCommand();
+                        winc.CommandType = type;
+                        var rupg = type.GetCustomAttributes().FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                        if (rupg != null)
+                            winc.Dependencies = rupg.Upgrade;
+                        winc.CommandInfo = new Engine.Command(winopenattrib.ID, "", "Opens the \"" + winopenattrib.ID + " program.");
+                        winc.RequiredArguments = new List<string>();
+                        winc.RequiresElevation = false;
+                        winc.ShiftOSWindow = type;
+
+                        var ambiguity = Commands.FirstOrDefault(x => x.CommandInfo.name == winc.CommandInfo.name);
+                        if (ambiguity != null)
+                            throw new Exception("Ambiguity error. The program " + winc.CommandInfo.name + " collides with another program or terminal command with the same name. Please either change the already-existing program/command, or change this one's WinOpenAttribute value to compensate.");
+                        Commands.Add(winc);
+                    }
+                }
                 foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
                     var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
