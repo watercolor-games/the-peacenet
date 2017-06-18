@@ -50,11 +50,11 @@ namespace ShiftOS.WinForms.Applications
         {
             timer1.Start();
         }
-        
+
 
         public void OnSkinLoad()
         {
-            
+
         }
 
         public bool OnUnload()
@@ -64,7 +64,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
-            
+
         }
 
         // The Dynamic Display
@@ -82,13 +82,13 @@ namespace ShiftOS.WinForms.Applications
             int codePoints = Convert.ToInt32(Math.Round(cpUpDown.Value, 0));
             int difficulty = Convert.ToInt32(Math.Round(difUpDown.Value, 0));
 
-            if (SaveSystem.CurrentSave.Codepoints <= 9)
+            if (SaveSystem.CurrentSave.Codepoints < 10)
             {
                 Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to use ShiftLotto!");
             }
             else
             {
-                if (SaveSystem.CurrentSave.Codepoints - (codePoints * difficulty) <= 0)
+                if (SaveSystem.CurrentSave.Codepoints < (ulong)(codePoints * difficulty))
                 {
                     Infobox.Show("Not enough Codepoints", "You do not have enough Codepoints to gamble this amount!");
                 }
@@ -102,7 +102,7 @@ namespace ShiftOS.WinForms.Applications
                     int winningNumber = rnd.Next(0, difficulty);
 
                     // Multiply CodePoints * Difficulty
-                    int jackpot = codePoints * difficulty;
+                    ulong jackpot = (ulong)(codePoints * difficulty);
 
                     // Test the random ints
                     if (guessedNumber == winningNumber)
@@ -110,7 +110,7 @@ namespace ShiftOS.WinForms.Applications
                         // If you win
 
                         // Add Codepoints
-                        SaveSystem.TransferCodepointsFrom("shiftlotto", jackpot);
+                        SaveSystem.TransferCodepointsFrom("shiftlotto", (ulong)(codePoints * difficulty));
 
                         // Infobox
                         Infobox.Show("YOU WON!", "Good Job! " + jackpot.ToString() + " CP has been added to your account. ");
@@ -122,13 +122,13 @@ namespace ShiftOS.WinForms.Applications
                         // Remove Codepoints
                         SaveSystem.TransferCodepointsToVoid(jackpot);
 
-                        
+
 
                         // Infobox
                         Infobox.Show("YOU FAILED!", "Sorry! " + jackpot.ToString() + " CP has been removed from your account.");
                     }
-                } 
-            } 
+                }
+            }
         }
     }
 }

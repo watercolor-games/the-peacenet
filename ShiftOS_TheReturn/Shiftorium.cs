@@ -112,7 +112,7 @@ namespace ShiftOS.Engine
         /// <param name="id">The upgrade ID to buy</param>
         /// <param name="cost">The amount of Codepoints to deduct</param>
         /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Codepoints or the upgrade wasn' found.</returns>
-        public static bool Buy(string id, long cost)
+        public static bool Buy(string id, ulong cost)
         {
             if (SaveSystem.CurrentSave.Codepoints >= cost)
             {
@@ -214,23 +214,11 @@ namespace ShiftOS.Engine
         {
             upgDb = new List<ShiftoriumUpgrade>();
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
-            foreach (var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if (file.EndsWith(".exe") || file.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(file);
-                        foreach (var type in asm.GetTypes())
+                        foreach (var type in ReflectMan.Types)
                         {
                             if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
-                            {
-                                if (type.GetCustomAttributes().FirstOrDefault(x => x is ShiftoriumProviderAttribute) != null)
-                                {
-                                    var _p = Activator.CreateInstance(type, null) as IShiftoriumProvider;
-                                    upgDb.AddRange(_p.GetDefaults());
-                                }
-                            }
+                                if (type.GetCustomAttributes().Any(x => x is ShiftoriumProviderAttribute))
+                                    upgDb.AddRange((Activator.CreateInstance(type, null) as IShiftoriumProvider).GetDefaults());
 
 
                             ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
@@ -310,10 +298,6 @@ namespace ShiftOS.Engine
                             }
 
                         }
-                    }
-                    catch { }
-                }
-            }
 
 
 
@@ -365,7 +349,7 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="id">The upgrade ID to search</param>
         /// <returns>The codepoint value.</returns>
-        public static long GetCPValue(string id)
+        public static ulong GetCPValue(string id)
         {
             foreach (var upg in GetDefaults())
             {
@@ -429,6 +413,9 @@ namespace ShiftOS.Engine
         /// <returns>Whether the upgrade is installed.</returns>
         public static bool UpgradeInstalled(string id)
         {
+            if (SaveSystem.IsSandbox == true)
+                return true;
+
             if (string.IsNullOrWhiteSpace(id))
                 return true;
             if (SaveSystem.CurrentSave != null)
@@ -520,7 +507,7 @@ namespace ShiftOS.Engine
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public long Cost { get; set; }
+        public ulong Cost { get; set; }
         public string ID { get { return (this.Id != null ? this.Id : (Name.ToLower().Replace(" ", "_"))); } }
         public string Id { get; set; }
         public string Category { get; set; }
@@ -536,7 +523,7 @@ namespace ShiftOS.Engine
 
     public class ShiftoriumUpgradeAttribute : RequiresUpgradeAttribute
     {
-        public ShiftoriumUpgradeAttribute(string name, long cost, string desc, string dependencies, string category) : base(name.ToLower().Replace(" ", "_"))
+        public ShiftoriumUpgradeAttribute(string name, ulong cost, string desc, string dependencies, string category) : base(name.ToLower().Replace(" ", "_"))
         {
             Name = name;
             Description = desc;
@@ -547,7 +534,7 @@ namespace ShiftOS.Engine
 
         public string Name { get; private set; }
         public string Description { get; private set; }
-        public long Cost { get; private set; }
+        public ulong Cost { get; private set; }
         public string Dependencies { get; private set; }
         public string Category { get; private set; }
     }

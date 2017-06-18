@@ -207,15 +207,13 @@ namespace ShiftOS.Server
                 {
                     var save = JsonConvert.DeserializeObject<Save>(ReadEncFile(savefile));
 
-
-                    if (save.UniteAuthToken==token)
+                    if (save.UniteAuthToken == token)
                     {
                         if (save.ID == new Guid())
                         {
                             save.ID = Guid.NewGuid();
                             WriteEncFile(savefile, JsonConvert.SerializeObject(save));
                         }
-
 
                         Program.server.DispatchTo(new Guid(guid), new NetObject("mud_savefile", new ServerMessage
                         {
@@ -228,15 +226,11 @@ namespace ShiftOS.Server
                 }
                 catch { }
             }
-            try
+            Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
             {
-                Program.server.DispatchTo(new Guid(guid), new NetObject("auth_failed", new ServerMessage
-                {
-                    Name = "mud_login_denied",
-                    GUID = "server"
-                }));
-            }
-            catch { }
+                Name = "mud_login_denied",
+                GUID = "server"
+            }));
         }
 
         [MudRequest("delete_save", typeof(ClientSave))]
@@ -268,7 +262,7 @@ namespace ShiftOS.Server
             {
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
-                long cpAmount = (long)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -302,7 +296,7 @@ namespace ShiftOS.Server
                 args["username"] = args["username"].ToString().ToLower();
                 string userName = args["username"] as string;
                 string passw = args["password"] as string;
-                int cpAmount = (int)args["amount"];
+                ulong cpAmount = (ulong)args["amount"];
 
                 if (Directory.Exists("saves"))
                 {
@@ -315,7 +309,7 @@ namespace ShiftOS.Server
                             WriteEncFile(saveFile, JsonConvert.SerializeObject(saveFileContents, Formatting.Indented));
                             Program.ClientDispatcher.Broadcast("update_your_cp", new {
                                 username = userName,
-                                amount = -cpAmount
+                                amount = -(long)cpAmount
                             });
                             Program.ClientDispatcher.DispatchTo("update_your_cp", guid, new
                             {

@@ -47,19 +47,21 @@ namespace ShiftOS.WinForms.Applications
     public partial class ShiftoriumFrontend : UserControl, IShiftOSWindow
     {
         public int CategoryId = 0;
-        public static System.Timers.Timer timer100;
+        private string[] cats;
+        private ShiftoriumUpgrade[] avail;
 
+
+        public void updatecounter()
+        {
+            Desktop.InvokeOnWorkerThread(() => { lbcodepoints.Text = $"You have {SaveSystem.CurrentSave.Codepoints} Codepoints."; });
+        }
 
         public ShiftoriumFrontend()
         {
-            cp_update = new System.Windows.Forms.Timer();
-            cp_update.Tick += (o, a) =>
-            {
-                lbcodepoints.Text = $"You have {SaveSystem.CurrentSave.Codepoints} Codepoints."; 
-            };
-            cp_update.Interval = 100;
             InitializeComponent();
-            PopulateShiftorium();
+            updatecounter();
+            Populate();
+            SetList();
             lbupgrades.SelectedIndexChanged += (o, a) =>
             {
                 try
@@ -82,84 +84,62 @@ namespace ShiftOS.WinForms.Applications
         public void SelectUpgrade(string name)
         {
             btnbuy.Show();
-            var upg = upgrades[name];
+            var upg = upgrades[CategoryId][name];
             lbupgradetitle.Text = Localization.Parse(upg.Name);
             lbupgradedesc.Text = Localization.Parse(upg.Description);
         }
 
-        Dictionary<string, ShiftoriumUpgrade> upgrades = new Dictionary<string, ShiftoriumUpgrade>();
-
-        public void PopulateShiftorium()
+        Dictionary<string, ShiftoriumUpgrade>[] upgrades;
+        
+        private void Populate()
         {
-            var t = new Thread(() =>
+            cats = Shiftorium.GetCategories();
+            upgrades = new Dictionary<string, ShiftoriumUpgrade>[cats.Length];
+            int numComplete = 0;
+            avail = backend.GetAvailable();
+            foreach (var it in cats.Select((catName, catId) => new { catName, catId }))
             {
-                try
+                var upl = new Dictionary<string, ShiftoriumUpgrade>();
+                upgrades[it.catId] = upl;
+                var t = new Thread((tupobj) =>
                 {
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        lbnoupgrades.Hide();
-                        lbupgrades.Items.Clear();
-                        upgrades.Clear();
-                        Timer();
-                    });
+                    foreach (var upg in avail.Where(x => x.Category == it.catName))
+                        upl.Add(Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP", upg);
+                    numComplete++;
+                });
+                t.Start();
+            }
+            while (numComplete < cats.Length) { } // wait for all threads to finish their job
+        }
 
-                    foreach (var upg in backend.GetAvailable().Where(x => x.Category == backend.GetCategories()[CategoryId]))
-                    {
-                        string name = Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP";
-                        upgrades.Add(name, upg);
-                        Desktop.InvokeOnWorkerThread(() =>
-                        {
-                            lbupgrades.Items.Add(name);
-                        });
-                    }
-
-                    if (lbupgrades.Items.Count == 0)
-                    {
-                        Desktop.InvokeOnWorkerThread(() =>
-                        {
-                            lbnoupgrades.Show();
-                            lbnoupgrades.Location = new Point(
-                                (lbupgrades.Width - lbnoupgrades.Width) / 2,
-                                lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
-                                );
-                        });
-                    }
-                    else
-                    {
-                        Desktop.InvokeOnWorkerThread(() =>
-                        {
-                            lbnoupgrades.Hide();
-                        });
-                    }
-
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        try
-                        {
-                            lblcategorytext.Text = Shiftorium.GetCategories()[CategoryId];
-                            btncat_back.Visible = (CategoryId > 0);
-                            btncat_forward.Visible = (CategoryId < backend.GetCategories().Length - 1);
-                        }
-                        catch
-                        {
-
-                        }
-                    });
-                }
-                catch
-                {
-                    Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        lbnoupgrades.Show();
-                        lbnoupgrades.Location = new Point(
-                            (lbupgrades.Width - lbnoupgrades.Width) / 2,
-                            lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
-                            );
-                    });
-                }
-            });
-            t.IsBackground = true;
-            t.Start();
+        private void SetList()
+        {
+            lbupgrades.Items.Clear();
+            if (upgrades.Length == 0)
+                return;
+            lbnoupgrades.Hide();
+            if (CategoryId > upgrades.Length)
+                CategoryId = 0;
+            try
+            {
+                lbupgrades.Items.AddRange(upgrades[CategoryId].Keys.ToArray());
+            }
+            catch
+            {
+                Engine.Infobox.Show("Shiftorium Machine Broke", "Category ID " + CategoryId.ToString() + " is invalid, modulo is broken, and the world is doomed. Please tell Declan about this.");
+                return;
+            }
+            if (lbupgrades.Items.Count == 0)
+            {
+                lbnoupgrades.Show();
+                lbnoupgrades.Location = new Point(
+                    (lbupgrades.Width - lbnoupgrades.Width) / 2,
+                    lbupgrades.Top + (lbupgrades.Height - lbnoupgrades.Height) / 2
+                    );
+            }
+            else
+                lbnoupgrades.Hide();
+            lblcategorytext.Text = cats[CategoryId];
         }
 
         public static bool UpgradeInstalled(string upg)
@@ -213,13 +193,14 @@ namespace ShiftOS.WinForms.Applications
 
         private void btnbuy_Click(object sender, EventArgs e)
         {
-            long cpCost = 0;
+            ulong cpCost = 0;
             backend.Silent = true;
-            Dictionary<string, long> UpgradesToBuy = new Dictionary<string, long>(); 
+            Dictionary<string, ulong> UpgradesToBuy = new Dictionary<string, ulong>(); 
             foreach (var itm in lbupgrades.SelectedItems)
             {
-                cpCost += upgrades[itm.ToString()].Cost;
-                UpgradesToBuy.Add(upgrades[itm.ToString()].ID, upgrades[itm.ToString()].Cost);
+                var upg = upgrades[CategoryId][itm.ToString()];
+                cpCost += upg.Cost;
+                UpgradesToBuy.Add(upg.ID, upg.Cost);
             }
             if (SaveSystem.CurrentSave.Codepoints < cpCost)
             {
@@ -230,7 +211,6 @@ namespace ShiftOS.WinForms.Applications
             {
                 foreach(var upg in UpgradesToBuy)
                 {
-                    SaveSystem.CurrentSave.Codepoints -= upg.Value;
                     if (SaveSystem.CurrentSave.Upgrades.ContainsKey(upg.Key))
                     {
                         SaveSystem.CurrentSave.Upgrades[upg.Key] = true;
@@ -242,20 +222,15 @@ namespace ShiftOS.WinForms.Applications
                     SaveSystem.SaveGame();
                     backend.InvokeUpgradeInstalled();
                 }
+                SaveSystem.CurrentSave.Codepoints -= cpCost;
             }
 
                 backend.Silent = false;
-            PopulateShiftorium();
             btnbuy.Hide();
-        }
-
-        private void Shiftorium_Load(object sender, EventArgs e) {
-
         }
 
         public void OnLoad()
         {
-            cp_update.Start();
             lbnoupgrades.Hide();
         }
 
@@ -264,12 +239,8 @@ namespace ShiftOS.WinForms.Applications
 
         }
 
-        System.Windows.Forms.Timer cp_update = new System.Windows.Forms.Timer();
-
         public bool OnUnload()
         {
-            cp_update.Stop();
-            cp_update = null;
             return true;
         }
 
@@ -277,44 +248,27 @@ namespace ShiftOS.WinForms.Applications
         {
             lbupgrades.SelectionMode = (UpgradeInstalled("shiftorium_gui_bulk_buy") == true) ? SelectionMode.MultiExtended : SelectionMode.One;
             lbcodepoints.Visible = Shiftorium.UpgradeInstalled("shiftorium_gui_codepoints_display");
+            Populate();
+            SetList();
         }
 
-        private void lbcodepoints_Click(object sender, EventArgs e)
+        private void moveCat(short direction) // direction is -1 to move backwards or 1 to move forwards
         {
-
-        }
-
-        void Timer()
-        {
-            timer100 = new System.Timers.Timer();
-            timer100.Interval = 2000;
-            //CLARIFICATION: What is this supposed to do? - Michael
-            //timer100.Elapsed += ???;
-            timer100.AutoReset = true;
-            timer100.Enabled = true;
+            if (cats.Length == 0) return;
+            CategoryId += direction;
+            CategoryId %= cats.Length;
+            if (CategoryId < 0) CategoryId += cats.Length; // fix modulo on negatives
+            SetList();
         }
 
         private void btncat_back_Click(object sender, EventArgs e)
         {
-            if(CategoryId > 0)
-            {
-                CategoryId--;
-                PopulateShiftorium();
-            }
+            moveCat(-1);
         }
 
         private void btncat_forward_Click(object sender, EventArgs e)
         {
-            if(CategoryId < backend.GetCategories().Length - 1)
-            {
-                CategoryId++;
-                PopulateShiftorium();
-            }
-        }
-
-        private void lblcategorytext_Click(object sender, EventArgs e)
-        {
-
+            moveCat(1);
         }
     }
 }

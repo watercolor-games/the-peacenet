@@ -50,6 +50,22 @@ namespace ShiftOS.WinForms
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
             SkinEngine.SetPostProcessor(new DitheringSkinPostProcessor());
+            LoginManager.Init(new GUILoginFrontend());
+            CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
+            SkinEngine.SetIconProber(new ShiftOSIconProvider());
+            TerminalBackend.TerminalRequested += () =>
+            {
+                AppearanceManager.SetupWindow(new Applications.Terminal());
+            };
+            Localization.RegisterProvider(new WFLanguageProvider());
+            Infobox.Init(new Dialog());
+            LoginManager.Init(new WinForms.GUILoginFrontend());
+            FileSkimmerBackend.Init(new WinformsFSFrontend());
+            var desk = new WinformsDesktop();
+            Desktop.Init(desk);
+            OutOfBoxExperience.Init(new Oobe());
+            AppearanceManager.Initiate(new WinformsWindowManager());
+#if OLD
             SaveSystem.PreDigitalSocietyConnection += () =>
             {
                 Action completed = null;
@@ -63,25 +79,11 @@ namespace ShiftOS.WinForms
                 Engine.AudioManager.PlayStream(Properties.Resources.dial_up_modem_02);
 
             };
-            LoginManager.Init(new GUILoginFrontend());
-            CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
-            SkinEngine.SetIconProber(new ShiftOSIconProvider());
-            ShiftOS.Engine.AudioManager.Init(new ShiftOSAudioProvider());
-            Localization.RegisterProvider(new WFLanguageProvider());
             
-            TutorialManager.RegisterTutorial(new Oobe());
-
-            TerminalBackend.TerminalRequested += () =>
-            {
-                AppearanceManager.SetupWindow(new Applications.Terminal());
-            };
-            Infobox.Init(new Dialog());
-            FileSkimmerBackend.Init(new WinformsFSFrontend());
-            var desk = new WinformsDesktop();
-            Desktop.Init(desk);
-            OutOfBoxExperience.Init(new Oobe());
-            AppearanceManager.Initiate(new WinformsWindowManager());
             Application.Run(desk);
+#else
+            Application.Run(new MainMenu.MainMenu(desk));
+#endif
         }
     }
 
@@ -112,53 +114,39 @@ namespace ShiftOS.WinForms
         {
             var defaultList = JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
 
-            foreach(var exe in Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in ReflectMan.Types)
             {
-                if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                var attribs = type.GetCustomAttributes(false);
+                var attrib = attribs.FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                if (attrib != null)
                 {
-                    try
+                    var upgrade = new ShiftoriumUpgrade
                     {
-                        var asm = Assembly.LoadFile(exe);
-                        foreach (var type in asm.GetTypes())
-                        {
-                            var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
-                            if (attrib != null)
-                            {
-                                var upgrade = new ShiftoriumUpgrade
-                                {
-                                    Id = attrib.Name.ToLower().Replace(" ", "_"),
-                                    Name = attrib.Name,
-                                    Description = attrib.Description,
-                                    Cost = attrib.Cost,
-                                    Category = attrib.Category,
-                                    Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
-                                };
-                                defaultList.Add(upgrade);
-                            }
-
-                            var sattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is StpContents) as StpContents;
-                            if (sattrib != null)
-                            {
-                                var upgrade = new ShiftoriumUpgrade
-                                {
-                                    Id = sattrib.Upgrade,
-                                    Name = sattrib.Name,
-                                    Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
-                                    Cost = 0,
-                                    Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
-                                    Dependencies = "dummy_nodisplay"
-                                };
-                                defaultList.Add(upgrade);
-                            }
-
-                        }
-
-
-
-
-                    }
-                    catch { }
+                        Id = attrib.Name.ToLower().Replace(" ", "_"),
+                        Name = attrib.Name,
+                        Description = attrib.Description,
+                        Cost = attrib.Cost,
+                        Category = attrib.Category,
+                        Dependencies = (string.IsNullOrWhiteSpace(attrib.DependencyString)) ? "appscape_handled_nodisplay" : "appscape_handled_nodisplay;" + attrib.DependencyString
+                    };
+                    defaultList.Add(upgrade);
                 }
+
+                var sattrib = attribs.FirstOrDefault(x => x is StpContents) as StpContents;
+                if (sattrib != null)
+                {
+                    var upgrade = new ShiftoriumUpgrade
+                    {
+                        Id = sattrib.Upgrade,
+                        Name = sattrib.Name,
+                        Description = "This is a hidden dummy upgrade for the .stp file installation attribute \"" + sattrib.Name + "\".",
+                        Cost = 0,
+                        Category = "If this is shown, there's a bug in the Shiftorium Provider or the user is a supreme Shifter.",
+                        Dependencies = "dummy_nodisplay"
+                    };
+                    defaultList.Add(upgrade);
+                }
+
             }
             return defaultList;
         }

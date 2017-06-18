@@ -94,6 +94,15 @@ namespace ShiftOS.Engine
 
         }
 
+        public static string SaveDirectory
+        {
+            get
+            {
+                string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                return System.IO.Path.Combine(appdata, "ShiftOS", "saves");
+            }
+        }
+
         /// <summary>
         /// Gets all full paths without their keynames.
         /// </summary>

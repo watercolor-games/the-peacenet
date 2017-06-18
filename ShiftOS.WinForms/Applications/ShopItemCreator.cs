@@ -73,7 +73,7 @@ namespace ShiftOS.WinForms.Applications
                 Infobox.Show("No file chosen.", "Please select a file to sell.");
                 return;
             }
-            Item.Cost = Convert.ToInt32(txtcost.Text);
+            Item.Cost = Convert.ToUInt64(txtcost.Text);
             Item.Description = txtdescription.Text;
             Item.Name = txtitemname.Text;
             Callback?.Invoke(Item);
@@ -101,7 +101,7 @@ namespace ShiftOS.WinForms.Applications
         {
             try
             {
-                Item.Cost = Convert.ToInt32(txtcost.Text);
+                Item.Cost = Convert.ToUInt64(txtcost.Text);
             }
             catch
             {

@@ -55,6 +55,7 @@ namespace ShiftOS.WinForms
             this.desktoppanel = new System.Windows.Forms.Panel();
             this.pnlnotifications = new System.Windows.Forms.Panel();
             this.flnotifications = new System.Windows.Forms.FlowLayoutPanel();
+            this.ntconnectionstatus = new System.Windows.Forms.PictureBox();
             this.lbtime = new System.Windows.Forms.Label();
             this.panelbuttonholder = new System.Windows.Forms.FlowLayoutPanel();
             this.sysmenuholder = new System.Windows.Forms.Panel();
@@ -63,7 +64,6 @@ namespace ShiftOS.WinForms
             this.pnlscreensaver = new System.Windows.Forms.Panel();
             this.pnlssicon = new System.Windows.Forms.Panel();
             this.pnlwidgetlayer = new System.Windows.Forms.Panel();
-            this.ntconnectionstatus = new System.Windows.Forms.PictureBox();
             this.pnlnotificationbox = new System.Windows.Forms.Panel();
             this.lbnotemsg = new System.Windows.Forms.Label();
             this.lbnotetitle = new System.Windows.Forms.Label();
@@ -77,10 +77,10 @@ namespace ShiftOS.WinForms
             this.desktoppanel.SuspendLayout();
             this.pnlnotifications.SuspendLayout();
             this.flnotifications.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).BeginInit();
             this.sysmenuholder.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.pnlscreensaver.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).BeginInit();
             this.pnlnotificationbox.SuspendLayout();
             this.pnladvancedal.SuspendLayout();
             this.pnlalsystemactions.SuspendLayout();
@@ -121,6 +121,18 @@ namespace ShiftOS.WinForms
             this.flnotifications.Name = "flnotifications";
             this.flnotifications.Size = new System.Drawing.Size(22, 24);
             this.flnotifications.TabIndex = 1;
+            this.flnotifications.WrapContents = false;
+            // 
+            // ntconnectionstatus
+            // 
+            this.ntconnectionstatus.Image = global::ShiftOS.WinForms.Properties.Resources.notestate_connection_full;
+            this.ntconnectionstatus.Location = new System.Drawing.Point(3, 3);
+            this.ntconnectionstatus.Name = "ntconnectionstatus";
+            this.ntconnectionstatus.Size = new System.Drawing.Size(16, 16);
+            this.ntconnectionstatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.ntconnectionstatus.TabIndex = 0;
+            this.ntconnectionstatus.TabStop = false;
+            this.ntconnectionstatus.Tag = "digitalsociety";
             // 
             // lbtime
             // 
@@ -199,17 +211,6 @@ namespace ShiftOS.WinForms
             this.pnlwidgetlayer.Name = "pnlwidgetlayer";
             this.pnlwidgetlayer.Size = new System.Drawing.Size(1296, 714);
             this.pnlwidgetlayer.TabIndex = 1;
-            // 
-            // ntconnectionstatus
-            // 
-            this.ntconnectionstatus.Image = global::ShiftOS.WinForms.Properties.Resources.notestate_connection_full;
-            this.ntconnectionstatus.Location = new System.Drawing.Point(3, 3);
-            this.ntconnectionstatus.Name = "ntconnectionstatus";
-            this.ntconnectionstatus.Size = new System.Drawing.Size(16, 16);
-            this.ntconnectionstatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.ntconnectionstatus.TabIndex = 0;
-            this.ntconnectionstatus.TabStop = false;
-            this.ntconnectionstatus.Tag = "digitalsociety";
             // 
             // pnlnotificationbox
             // 
@@ -341,12 +342,12 @@ namespace ShiftOS.WinForms
             this.pnlnotifications.PerformLayout();
             this.flnotifications.ResumeLayout(false);
             this.flnotifications.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).EndInit();
             this.sysmenuholder.ResumeLayout(false);
             this.sysmenuholder.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.pnlscreensaver.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ntconnectionstatus)).EndInit();
             this.pnlnotificationbox.ResumeLayout(false);
             this.pnlnotificationbox.PerformLayout();
             this.pnladvancedal.ResumeLayout(false);

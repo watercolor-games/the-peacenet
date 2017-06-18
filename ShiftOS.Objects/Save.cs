@@ -26,47 +26,23 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace ShiftOS.Objects
 {
     //Better to store this stuff server-side so we can do some neat stuff with hacking...
     public class Save
     {
-
-        public int MusicVolume { get; set; }
-        public int SfxVolume { get; set; }
+        public bool MusicEnabled = true;
+        public bool SoundEnabled = true;
+        public int MusicVolume = 100;
 
         [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
         public string Username { get; set; }
 
-        private long _cp = 0;
+        public bool IsSandbox = false;
 
-        public long Codepoints
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
-                {
-                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
-                    return uc.GetCodepoints();
-                }
-                else
-                    return _cp;
-            }
-            set
-            {
-                if (!string.IsNullOrWhiteSpace(UniteAuthToken))
-                {
-                    var uc = new ShiftOS.Unite.UniteClient("", UniteAuthToken);
-                    uc.SetCodepoints(value);
-                }
-                else
-                    _cp = value;
-
-            }
-        }
+        public ulong Codepoints { get; set; }
 
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
@@ -127,6 +103,11 @@ namespace ShiftOS.Objects
         }
 
         public List<ClientSave> Users { get; set; }
+
+        /// <summary>
+        /// DO NOT MODIFY THIS. EVER. YOU WILL BREAK THE STORYLINE. Let the engine do it's job. 
+        /// </summary>
+        public string PickupPoint { get; set; }
     }
 
     public class SettingsObject : DynamicObject

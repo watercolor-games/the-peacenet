@@ -55,17 +55,6 @@ namespace ShiftOS.Server
 	public class Program
 	{
 		/// <summary>
-		/// The admin username.
-		/// </summary>
-		public static string AdminUsername = "admin";
-
-		/// <summary>
-		/// The admin password.
-		/// </summary>
-		public static string AdminPassword = "admin";
-
-
-		/// <summary>
 		/// The server.
 		/// </summary>
 		public static NetObjectServer server;
@@ -98,11 +87,16 @@ namespace ShiftOS.Server
             {
                 if (server.IsOnline)
                 {
-                    server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+
+                    try
                     {
-                        Name = "heartbeat",
-                        GUID = "server"
-                    }));
+                        server.DispatchAll(new NetObject("heartbeat", new ServerMessage
+                        {
+                            Name = "heartbeat",
+                            GUID = "server"
+                        }));
+                    }
+                    catch { }
                 }
             };
 			if (!Directory.Exists("saves"))
@@ -161,13 +155,7 @@ namespace ShiftOS.Server
                 Console.WriteLine("FUCK. Something HORRIBLE JUST HAPPENED.");
             };
 
-            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
-            {
-                if(server.IsOnline == true)
-                    server.Stop();
-                System.Diagnostics.Process.Start("ShiftOS.Server.exe");
-            };
-				
+            	
 			server.OnReceived += (o, a) =>
 			{
 				var obj = a.Data.Object;
@@ -214,7 +202,6 @@ namespace ShiftOS.Server
             task.Wait();
             */
 
-            RandomUserGenerator.StartThread();
 
             while (server.IsOnline)
             {

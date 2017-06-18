@@ -92,36 +92,25 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Invokes a ShiftOS terminal command.
         /// </summary>
-        /// <param name="ns">The command's namespace.</param>
         /// <param name="command">The command name.</param>
         /// <param name="arguments">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
-        public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false)
+        public static void InvokeCommand(string command, Dictionary<string, string> arguments, bool isRemote = false)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(ns))
-                    return;
+                bool commandWasClient = RunClient(command, arguments, isRemote);
 
-
-                bool commandWasClient = RunClient(ns, command, arguments, isRemote);
-
-                if (!commandWasClient && !string.IsNullOrWhiteSpace(ns))
+                if (!commandWasClient)
                 {
-                    PrefixEnabled = false;
-
-                    ServerManager.SendMessage("script", $@"{{
-    user: ""{ns}"",
-    script: ""{command}"",
-    args: ""{GetSentArgs(arguments)}""
-}}");
+                    Console.WriteLine("{ERR_COMMANDNOTFOUND}");
                 }
 
-                CommandProcessed?.Invoke(ns + "." + command, JsonConvert.SerializeObject(arguments));
+                CommandProcessed?.Invoke(command, JsonConvert.SerializeObject(arguments));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Command parse error: {ex.Message}"); // This shouldn't ever be called now
+                Console.WriteLine("{ERR_SYNTAXERROR}");
                 PrefixEnabled = true;
 
             }
@@ -154,7 +143,6 @@ namespace ShiftOS.Engine
                 return hash;
             }
 
-            public Namespace NamespaceInfo { get; set; }
             public Command CommandInfo { get; set; }
 
             public List<string> RequiredArguments { get; set; }
@@ -167,16 +155,14 @@ namespace ShiftOS.Engine
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(this.NamespaceInfo.name);
-                sb.Append(".");
                 sb.Append(this.CommandInfo.name);
                 if (this.RequiredArguments.Count > 0)
                 {
-                    sb.Append("{");
+                    sb.Append(" ");
                     foreach (var arg in RequiredArguments)
                     {
-                        sb.Append(arg);
-                        sb.Append(":");
+                        sb.Append("--" + arg);
+                        sb.Append(" ");
                         if (RequiredArguments.IndexOf(arg) < RequiredArguments.Count - 1)
                             sb.Append(',');
                     }
@@ -189,7 +175,7 @@ namespace ShiftOS.Engine
 
             public bool RequiresElevation { get; set; }
 
-            public void Invoke(Dictionary<string, object> args)
+            public virtual void Invoke(Dictionary<string, object> args)
             {
                 List<string> errors = new List<string>();
                 bool requiresAuth = false;
@@ -244,6 +230,19 @@ namespace ShiftOS.Engine
                     CommandHandler.Invoke(null, null);
                 }
             }
+        }
+
+        public class WinOpenCommand : TerminalCommand
+        {
+            public Type ShiftOSWindow { get; set; }
+
+
+            public override void Invoke(Dictionary<string, object> args)
+            {
+                AppearanceManager.SetupWindow((IShiftOSWindow)Activator.CreateInstance(ShiftOSWindow, null));
+            }
+
+
         }
 
         public class MemoryTextWriter : System.IO.TextWriter
@@ -301,55 +300,63 @@ namespace ShiftOS.Engine
         public static void PopulateTerminalCommands()
         {
             Commands = new List<TerminalCommand>();
-            foreach(var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            foreach (var type in ReflectMan.Types)
             {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+                if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
                 {
-                    try
+                    var winopenattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is WinOpenAttribute) as WinOpenAttribute;
+                    if(winopenattrib != null)
                     {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes())
-                        {
-                            var ns = type.GetCustomAttributes(false).FirstOrDefault(x => x is Namespace) as Namespace;
-                            if(ns != null)
-                            {
-                                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                                {
-                                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
-                                    if(cmd != null)
-                                    {
-                                        var tc = new TerminalCommand();
-                                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                        var winc = new WinOpenCommand();
+                        winc.CommandType = type;
+                        var rupg = type.GetCustomAttributes().FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                        if (rupg != null)
+                            winc.Dependencies = rupg.Upgrade;
+                        winc.CommandInfo = new Engine.Command(winopenattrib.ID, "", "Opens the \"" + winopenattrib.ID + " program.");
+                        winc.RequiredArguments = new List<string>();
+                        winc.RequiresElevation = false;
+                        winc.ShiftOSWindow = type;
 
-                                        tc.NamespaceInfo = ns;
-
-                                        tc.CommandInfo = cmd as Command;
-                                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
-                                        tc.RequiredArguments = new List<string>();
-                                        foreach (var arg in mth.GetCustomAttributes(false).Where(x=>x is RequiresArgument))
-                                        {
-                                            var rarg = arg as RequiresArgument;
-                                            tc.RequiredArguments.Add(rarg.argument);
-                                        }
-                                        var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
-                                        if (rupg != null)
-                                            tc.Dependencies = rupg.Upgrade;
-                                        else
-                                            tc.Dependencies = "";
-                                        tc.CommandType = type;
-                                        tc.CommandHandler = mth;
-                                        if (!Commands.Contains(tc))
-                                            Commands.Add(tc);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine("[termdb] Error: " + e.ToString());
+                        var ambiguity = Commands.FirstOrDefault(x => x.CommandInfo.name == winc.CommandInfo.name);
+                        if (ambiguity != null)
+                            throw new Exception("Ambiguity error. The program " + winc.CommandInfo.name + " collides with another program or terminal command with the same name. Please either change the already-existing program/command, or change this one's WinOpenAttribute value to compensate.");
+                        Commands.Add(winc);
                     }
                 }
+                foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
+                    if (cmd != null)
+                    {
+                        var tc = new TerminalCommand();
+                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+
+
+                        tc.CommandInfo = cmd as Command;
+                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                        tc.RequiredArguments = new List<string>();
+                        foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
+                        {
+                            var rarg = arg as RequiresArgument;
+                            tc.RequiredArguments.Add(rarg.argument);
+                        }
+                        var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
+                        if (rupg != null)
+                            tc.Dependencies = rupg.Upgrade;
+                        else
+                            tc.Dependencies = "";
+                        tc.CommandType = type;
+                        tc.CommandHandler = mth;
+
+                        var ambiguity = Commands.FirstOrDefault(x => x.CommandInfo.name == tc.CommandInfo.name);
+                        if (ambiguity != null)
+                            throw new Exception("Command ambiguity error. You can't have two commands with the same name: " + $"{tc} == {ambiguity}");
+
+                        if (!Commands.Contains(tc))
+                            Commands.Add(tc);
+                    }
+                }
+
             }
             Console.WriteLine("[termdb] " + Commands.Count + " commands found.");
         }
@@ -369,27 +376,14 @@ namespace ShiftOS.Engine
             {
                 var args = GetArgs(ref text);
 
-                Stopwatch debugger = new Stopwatch();
-                debugger.Start();
                 bool commandWasClient = RunClient(text, args, isRemote);
 
                 if (!commandWasClient)
                 {
-                    Console.WriteLine("Command not found.");
-                    debugger.Stop();
-                    return;
+                    Console.WriteLine("Error: Command not found.");
+                    
                 }
                 CommandProcessed?.Invoke(text, GetSentArgs(args));
-                debugger.Stop();
-                ConsoleEx.ForegroundColor = ConsoleColor.White;
-                Console.Write("<");
-                ConsoleEx.Bold = true;
-                ConsoleEx.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("debugger");
-                ConsoleEx.ForegroundColor = ConsoleColor.White;
-                ConsoleEx.Bold = false;
-                Console.Write("> ");
-                Console.WriteLine("Command " + text + " took " + debugger.Elapsed.ToString() + " to execute.");
             }
             catch (Exception ex)
             {
@@ -498,7 +492,7 @@ namespace ShiftOS.Engine
 
 
             string[] split = text.Split('.');
-            var cmd = Commands.FirstOrDefault(x => x.NamespaceInfo.name == split[0] && x.CommandInfo.name == split[1]);
+            var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
             if (cmd == null)
                 return false;
             if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))

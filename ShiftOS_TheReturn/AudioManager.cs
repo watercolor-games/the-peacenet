@@ -83,21 +83,28 @@ namespace ShiftOS.Engine
         /// <param name="file">The file to play.</param>
         public static void Play(string file)
         {
-            try
+            bool play = true;
+            float volume = 1f;
+            if (SaveSystem.CurrentSave != null)
             {
-                _reader = new AudioFileReader(file);
-                _out = new WaveOut();
-                _out.Init(_reader);
-                _out.Play();
-                if (SaveSystem.CurrentSave == null)
-                    _out.Volume = 1.0f;
-                else
-                    _out.Volume = (float)SaveSystem.CurrentSave.MusicVolume / 100;
-                _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
+                play = (SaveSystem.CurrentSave.SoundEnabled);
+                volume = (float)SaveSystem.CurrentSave.MusicVolume / 100f;
             }
-            catch(Exception ex)
+            if (play)
             {
-                Console.WriteLine("Audio error: " + ex.Message);
+                try
+                {
+                    _reader = new AudioFileReader(file);
+                    _out = new WaveOut();
+                    _out.Init(_reader);
+                    _out.Volume = volume;
+                    _out.Play();
+                    _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Audio error: " + ex.Message);
+                }
             }
         }
 
@@ -107,15 +114,31 @@ namespace ShiftOS.Engine
         /// <param name="str">The stream to read from.</param>
         public static void PlayStream(Stream str)
         {
-            var bytes = new byte[str.Length];
-            str.Read(bytes, 0, bytes.Length);
-            ShiftOS.Engine.AudioManager.Stop();
-            if (File.Exists("snd.wav"))
-                File.Delete("snd.wav");
-            File.WriteAllBytes("snd.wav", bytes);
-
-            ShiftOS.Engine.AudioManager.Play("snd.wav");
-
+            try
+            {
+                bool play = true;
+                float volume = 1f;
+                if (SaveSystem.CurrentSave != null)
+                {
+                    play = (SaveSystem.CurrentSave.SoundEnabled);
+                    volume = (float)SaveSystem.CurrentSave.MusicVolume / 100f;
+                }
+                if (play)
+                {
+                    while(_out.PlaybackState == PlaybackState.Playing)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    ShiftOS.Engine.AudioManager.Stop();
+                    _out = new WaveOut();
+                    var mp3 = new WaveFileReader(str);
+                    _out.Init(mp3);
+                    _out.Volume = volume;
+                    _out.Play();
+                    _out.PlaybackStopped += (o, a) => { PlayCompleted?.Invoke(); };
+                }
+            }
+            catch { }
         }
 
         public static event Action PlayCompleted;

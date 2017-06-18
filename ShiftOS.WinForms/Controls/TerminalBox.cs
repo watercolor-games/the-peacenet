@@ -63,6 +63,7 @@ namespace ShiftOS.WinForms.Controls
 
         public void Write(string text)
         {
+            Thread.Sleep(5);
             this.HideSelection = true;
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);
             this.SelectionBackColor = ControlManager.ConvertColor(ConsoleEx.BackgroundColor);
@@ -86,6 +87,7 @@ namespace ShiftOS.WinForms.Controls
 
         public void WriteLine(string text)
         {
+            Thread.Sleep(5);
             Engine.AudioManager.PlayStream(Properties.Resources.writesound);
             this.HideSelection = true;
             this.SelectionColor = ControlManager.ConvertColor(ConsoleEx.ForegroundColor);

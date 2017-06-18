@@ -35,12 +35,12 @@ namespace ShiftOS.WinForms
 {
     public class AcquireCodepointsJobTask : JobTask
     {
-        public AcquireCodepointsJobTask(int amount)
+        public AcquireCodepointsJobTask(uint amount)
         {
             CodepointsRequired = SaveSystem.CurrentSave.Codepoints + amount;
         }
 
-        public long CodepointsRequired { get; private set; }
+        public ulong CodepointsRequired { get; private set; }
 
         public override bool IsComplete
         {

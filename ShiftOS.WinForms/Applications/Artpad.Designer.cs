@@ -72,6 +72,7 @@ namespace ShiftOS.WinForms.Applications
             this.picdrawingdisplay = new System.Windows.Forms.PictureBox();
             this.pnlbottompanel = new System.Windows.Forms.Panel();
             this.pnlpallet = new System.Windows.Forms.Panel();
+            this.label44 = new System.Windows.Forms.Label();
             this.flowcolours = new System.Windows.Forms.FlowLayoutPanel();
             this.colourpallet1 = new System.Windows.Forms.Panel();
             this.colourpallet2 = new System.Windows.Forms.Panel();
@@ -310,7 +311,6 @@ namespace ShiftOS.WinForms.Applications
             this.pullbottom = new System.Windows.Forms.Timer(this.components);
             this.pullside = new System.Windows.Forms.Timer(this.components);
             this.tmrsetupui = new System.Windows.Forms.Timer(this.components);
-            this.label44 = new System.Windows.Forms.Label();
             this.pgcontents.SuspendLayout();
             this.pnldrawingbackground.SuspendLayout();
             this.pnlinitialcanvassettings.SuspendLayout();
@@ -620,6 +620,16 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpallet.Name = "pnlpallet";
             this.pnlpallet.Size = new System.Drawing.Size(225, 124);
             this.pnlpallet.TabIndex = 0;
+            // 
+            // label44
+            // 
+            this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label44.Location = new System.Drawing.Point(0, 24);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(225, 27);
+            this.label44.TabIndex = 13;
+            this.label44.Text = "Left click to select, right click to change color";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // flowcolours
             // 
@@ -2960,6 +2970,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnpixelsetter.Name = "btnpixelsetter";
             this.btnpixelsetter.Size = new System.Drawing.Size(50, 50);
             this.btnpixelsetter.TabIndex = 2;
+            this.btnpixelsetter.Tag = "nobuttonskin";
             this.btnpixelsetter.UseVisualStyleBackColor = true;
             this.btnpixelsetter.Click += new System.EventHandler(this.btnpixelsetter_Click);
             // 
@@ -2974,6 +2985,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnpixelplacer.Name = "btnpixelplacer";
             this.btnpixelplacer.Size = new System.Drawing.Size(50, 50);
             this.btnpixelplacer.TabIndex = 4;
+            this.btnpixelplacer.Tag = "nobuttonskin";
             this.btnpixelplacer.UseVisualStyleBackColor = true;
             this.btnpixelplacer.Click += new System.EventHandler(this.btnpixelplacer_Click);
             // 
@@ -2988,6 +3000,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnpencil.Name = "btnpencil";
             this.btnpencil.Size = new System.Drawing.Size(50, 50);
             this.btnpencil.TabIndex = 7;
+            this.btnpencil.Tag = "nobuttonskin";
             this.btnpencil.Text = " ";
             this.btnpencil.UseVisualStyleBackColor = true;
             this.btnpencil.Click += new System.EventHandler(this.btnpencil_Click);
@@ -3003,6 +3016,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnfloodfill.Name = "btnfloodfill";
             this.btnfloodfill.Size = new System.Drawing.Size(50, 50);
             this.btnfloodfill.TabIndex = 11;
+            this.btnfloodfill.Tag = "nobuttonskin";
             this.btnfloodfill.UseVisualStyleBackColor = true;
             this.btnfloodfill.Click += new System.EventHandler(this.btnfill_Click);
             // 
@@ -3017,6 +3031,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnoval.Name = "btnoval";
             this.btnoval.Size = new System.Drawing.Size(50, 50);
             this.btnoval.TabIndex = 13;
+            this.btnoval.Tag = "nobuttonskin";
             this.btnoval.Text = " ";
             this.btnoval.UseVisualStyleBackColor = true;
             this.btnoval.Click += new System.EventHandler(this.btnoval_Click);
@@ -3032,6 +3047,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnsquare.Name = "btnsquare";
             this.btnsquare.Size = new System.Drawing.Size(50, 50);
             this.btnsquare.TabIndex = 12;
+            this.btnsquare.Tag = "nobuttonskin";
             this.btnsquare.Text = " ";
             this.btnsquare.UseVisualStyleBackColor = true;
             this.btnsquare.Click += new System.EventHandler(this.btnsquare_Click);
@@ -3047,6 +3063,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnlinetool.Name = "btnlinetool";
             this.btnlinetool.Size = new System.Drawing.Size(50, 50);
             this.btnlinetool.TabIndex = 15;
+            this.btnlinetool.Tag = "nobuttonskin";
             this.btnlinetool.Text = " ";
             this.btnlinetool.UseVisualStyleBackColor = true;
             this.btnlinetool.Click += new System.EventHandler(this.btnlinetool_Click);
@@ -3062,6 +3079,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnpaintbrush.Name = "btnpaintbrush";
             this.btnpaintbrush.Size = new System.Drawing.Size(50, 50);
             this.btnpaintbrush.TabIndex = 17;
+            this.btnpaintbrush.Tag = "nobuttonskin";
             this.btnpaintbrush.Text = " ";
             this.btnpaintbrush.UseVisualStyleBackColor = true;
             this.btnpaintbrush.Click += new System.EventHandler(this.btnpaintbrush_Click);
@@ -3077,6 +3095,7 @@ namespace ShiftOS.WinForms.Applications
             this.btntexttool.Name = "btntexttool";
             this.btntexttool.Size = new System.Drawing.Size(50, 50);
             this.btntexttool.TabIndex = 16;
+            this.btntexttool.Tag = "nobuttonskin";
             this.btntexttool.Text = " ";
             this.btntexttool.UseVisualStyleBackColor = true;
             this.btntexttool.Click += new System.EventHandler(this.btntexttool_Click);
@@ -3092,6 +3111,7 @@ namespace ShiftOS.WinForms.Applications
             this.btneracer.Name = "btneracer";
             this.btneracer.Size = new System.Drawing.Size(50, 50);
             this.btneracer.TabIndex = 14;
+            this.btneracer.Tag = "nobuttonskin";
             this.btneracer.Text = " ";
             this.btneracer.UseVisualStyleBackColor = true;
             this.btneracer.Click += new System.EventHandler(this.btneracer_Click);
@@ -3107,6 +3127,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnnew.Name = "btnnew";
             this.btnnew.Size = new System.Drawing.Size(50, 50);
             this.btnnew.TabIndex = 6;
+            this.btnnew.Tag = "nobuttonskin";
             this.btnnew.Text = " ";
             this.btnnew.UseVisualStyleBackColor = true;
             this.btnnew.Click += new System.EventHandler(this.btnnew_Click);
@@ -3122,6 +3143,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnmagnify.Name = "btnmagnify";
             this.btnmagnify.Size = new System.Drawing.Size(50, 50);
             this.btnmagnify.TabIndex = 3;
+            this.btnmagnify.Tag = "nobuttonskin";
             this.btnmagnify.Text = " ";
             this.btnmagnify.UseVisualStyleBackColor = true;
             this.btnmagnify.Click += new System.EventHandler(this.btnmagnify_Click);
@@ -3137,6 +3159,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnopen.Name = "btnopen";
             this.btnopen.Size = new System.Drawing.Size(50, 50);
             this.btnopen.TabIndex = 10;
+            this.btnopen.Tag = "nobuttonskin";
             this.btnopen.Text = " ";
             this.btnopen.UseVisualStyleBackColor = true;
             this.btnopen.Click += new System.EventHandler(this.btnopen_Click);
@@ -3152,6 +3175,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnsave.Name = "btnsave";
             this.btnsave.Size = new System.Drawing.Size(50, 50);
             this.btnsave.TabIndex = 5;
+            this.btnsave.Tag = "nobuttonskin";
             this.btnsave.Text = " ";
             this.btnsave.UseVisualStyleBackColor = true;
             this.btnsave.Click += new System.EventHandler(this.btnsave_Click);
@@ -3167,6 +3191,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnundo.Name = "btnundo";
             this.btnundo.Size = new System.Drawing.Size(50, 50);
             this.btnundo.TabIndex = 8;
+            this.btnundo.Tag = "nobuttonskin";
             this.btnundo.Text = " ";
             this.btnundo.UseVisualStyleBackColor = true;
             this.btnundo.Click += new System.EventHandler(this.btnundo_Click);
@@ -3182,6 +3207,7 @@ namespace ShiftOS.WinForms.Applications
             this.btnredo.Name = "btnredo";
             this.btnredo.Size = new System.Drawing.Size(50, 50);
             this.btnredo.TabIndex = 9;
+            this.btnredo.Tag = "nobuttonskin";
             this.btnredo.Text = " ";
             this.btnredo.UseVisualStyleBackColor = true;
             this.btnredo.Click += new System.EventHandler(this.btnredo_Click);
@@ -3279,16 +3305,6 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.tmrsetupui.Tick += new System.EventHandler(this.tmrsetupui_Tick);
             // 
-            // label44
-            // 
-            this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label44.Location = new System.Drawing.Point(0, 24);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(225, 27);
-            this.label44.TabIndex = 13;
-            this.label44.Text = "Left click to select, right click to change color";
-            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // Artpad
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3297,6 +3313,7 @@ namespace ShiftOS.WinForms.Applications
             this.MinimumSize = new System.Drawing.Size(502, 398);
             this.Name = "Artpad";
             this.Size = new System.Drawing.Size(802, 598);
+            this.Tag = "nobuttonskin";
             this.Load += new System.EventHandler(this.Template_Load);
             this.pgcontents.ResumeLayout(false);
             this.pnldrawingbackground.ResumeLayout(false);

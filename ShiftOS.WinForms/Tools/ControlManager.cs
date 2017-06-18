@@ -137,10 +137,14 @@ namespace ShiftOS.WinForms.Tools
         /// <param name="ctrl">The control to center (this is an extension method - you can call it on a control as though it was a method in that control)</param>
         public static void CenterParent(this Control ctrl)
         {
-            ctrl.Location = new Point(
-                    (ctrl.Parent.Width - ctrl.Width) / 2,
-                    (ctrl.Parent.Height - ctrl.Height) / 2
-                );
+            try
+            {
+                ctrl.Location = new Point(
+                        (ctrl.Parent.Width - ctrl.Width) / 2,
+                        (ctrl.Parent.Height - ctrl.Height) / 2
+                    );
+            }
+            catch { }
         }
 
         public static void SetupControl(Control ctrl)
@@ -157,6 +161,15 @@ namespace ShiftOS.WinForms.Tools
                             tag = ctrl.Tag.ToString();
                     }
                     catch { }
+
+                    if (!tag.Contains("ignoreal"))
+                    {
+                        ctrl.Click += (o, a) =>
+                        {
+                            Desktop.HideAppLauncher();
+                        };
+
+                    }
 
                     if (!tag.Contains("keepbg"))
                     {
@@ -206,50 +219,53 @@ namespace ShiftOS.WinForms.Tools
 
                     if (ctrl is Button)
                     {
-                        Button b = ctrl as Button;
-                        if (!tag.Contains("keepbg"))
+                        if (!tag.ToLower().Contains("nobuttonskin"))
                         {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            Button b = ctrl as Button;
+                            if (!tag.Contains("keepbg"))
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonBackgroundColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            }
+                            b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
+                            if (!tag.Contains("keepfg"))
+                            {
+                                b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                                b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
+                            }
+                            if (!tag.Contains("keepfont"))
+                                b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
+
+                            Color orig_bg = b.BackColor;
+
+                            b.MouseEnter += (o, a) =>
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonhover");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
+                            };
+                            b.MouseLeave += (o, a) =>
+                            {
+                                b.BackColor = orig_bg;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            };
+                            b.MouseUp += (o, a) =>
+                            {
+                                b.BackColor = orig_bg;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonidle");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
+                            };
+
+                            b.MouseDown += (o, a) =>
+                            {
+                                b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
+                                b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
+                                b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
+
+                            };
                         }
-                        b.FlatAppearance.BorderSize = SkinEngine.LoadedSkin.ButtonBorderWidth;
-                        if (!tag.Contains("keepfg"))
-                        {
-                            b.FlatAppearance.BorderColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                            b.ForeColor = SkinEngine.LoadedSkin.ButtonForegroundColor;
-                        }
-                        if (!tag.Contains("keepfont"))
-                            b.Font = SkinEngine.LoadedSkin.ButtonTextFont;
-
-                        Color orig_bg = b.BackColor;
-
-                        b.MouseEnter += (o, a) =>
-                        {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonHoverColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonhover");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonhover");
-                        };
-                        b.MouseLeave += (o, a) =>
-                        {
-                            b.BackColor = orig_bg;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
-                        };
-                        b.MouseUp += (o, a) =>
-                        {
-                            b.BackColor = orig_bg;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonidle");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonidle");
-                        };
-
-                        b.MouseDown += (o, a) =>
-                        {
-                            b.BackColor = SkinEngine.LoadedSkin.ButtonPressedColor;
-                            b.BackgroundImage = SkinEngine.GetImage("buttonpressed");
-                            b.BackgroundImageLayout = SkinEngine.GetImageLayout("buttonpressed");
-
-                        };
                     }
                 }
 
@@ -279,6 +295,8 @@ namespace ShiftOS.WinForms.Tools
                 {
                     (ctrl as WindowBorder).Setup();
                 }
+
+                
                 MakeDoubleBuffered(ctrl);
                 ControlSetup?.Invoke(ctrl);
             });
@@ -305,10 +323,6 @@ namespace ShiftOS.WinForms.Tools
 
         public static void SetupControls(Control frm, bool runInThread = true)
         {
-            frm.Click += (o, a) =>
-            {
-                Desktop.HideAppLauncher();
-            };
             var ctrls = frm.Controls.ToList();
             for (int i = 0; i < ctrls.Count(); i++)
             {

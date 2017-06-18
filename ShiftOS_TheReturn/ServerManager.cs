@@ -38,6 +38,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Net.NetworkInformation;
 
 namespace ShiftOS.Engine
 {
@@ -46,6 +47,29 @@ namespace ShiftOS.Engine
     /// </summary>
     public static class ServerManager
     {
+
+        public static bool ServerOnline
+        {
+            get
+            {
+                try
+                {
+                    Ping myPing = new Ping();
+                    String host = UserConfig.Get().DigitalSocietyAddress;
+                    byte[] buffer = new byte[32];
+                    int timeout = 1000;
+                    PingOptions pingOptions = new PingOptions();
+                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+                    return (reply.Status == IPStatus.Success);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+
         /// <summary>
         /// Print connection diagnostic information.
         /// </summary>
@@ -110,32 +134,19 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         {
             string[] split = msg.GUID.Split('|');
             bool finished = false;
-            foreach (var exec in Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(exec.ToLower().EndsWith(".exe") || exec.ToLower().EndsWith(".dll"))
+            if (split[0] == SaveSystem.CurrentSave.SystemName)
+                foreach(var type in Array.FindAll(ReflectMan.Types, x => x.GetInterfaces().Contains(typeof(Server)) && Shiftorium.UpgradeAttributesUnlocked(x)))
                 {
-                    try
+                    var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
+                    if(attrib != null)
                     {
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes().Where(x => x.GetInterfaces().Contains(typeof(Server))))
+                        if(split[1] == attrib.Port.ToString())
                         {
-                            var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
-                            if(attrib != null)
-                            {
-                                if(split[0] == SaveSystem.CurrentSave.SystemName && split[1] == attrib.Port.ToString())
-                                {
-                                    if (Shiftorium.UpgradeAttributesUnlocked(type))
-                                    {
-                                        type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(x => x.Name == "MessageReceived")?.Invoke(Activator.CreateInstance(type), null);
-                                        finished = true;
-                                    }
-                                }
-                            }
+                            type.GetMethods(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(x => x.Name == "MessageReceived")?.Invoke(Activator.CreateInstance(type), null);
+                            finished = true;
                         }
                     }
-                    catch { }
                 }
-            }
             if (finished == false)
             {
                 Forward(split[2], "Error", $"{split[0]}:{split[1]}: connection refused");
@@ -246,7 +257,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                     var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                     if(args["username"] as string == SaveSystem.CurrentUser.Username)
                     {
-                        SaveSystem.CurrentSave.Codepoints += (long)args["amount"];
+                        SaveSystem.CurrentSave.Codepoints += (ulong)args["amount"];
                         Desktop.InvokeOnWorkerThread(new Action(() =>
                         {
                             Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");
@@ -302,15 +313,17 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         /// <param name="contents">The message body</param>
         public static void SendMessage(string name, string contents)
         {
-            var sMsg = new ServerMessage
+            if (!SaveSystem.IsSandbox)
             {
-                Name = name,
-                Contents = contents,
-                GUID = thisGuid.ToString(),
-            };
-            PingTimer.Start();
-            client.Send(new NetObject("msg", sMsg));
-
+                var sMsg = new ServerMessage
+                {
+                    Name = name,
+                    Contents = contents,
+                    GUID = thisGuid.ToString(),
+                };
+                PingTimer.Start();
+                client.Send(new NetObject("msg", sMsg));
+            }
         }
 
         private static bool singleplayer = false;

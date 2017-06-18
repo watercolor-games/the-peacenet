@@ -207,33 +207,21 @@ namespace ShiftOS.WinForms.ShiftnetSites
                                 if (result == true)
                                 {
                                     SaveSystem.CurrentSave.Codepoints -= upg.Cost;
-                                    foreach (var exe in Directory.GetFiles(Environment.CurrentDirectory))
+                                    foreach (var type in ReflectMan.Types)
                                     {
-                                        if (exe.EndsWith(".exe") || exe.EndsWith(".dll"))
+                                        var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
+                                        if (attrib != null)
                                         {
-                                            try
+                                            if (attrib.Name == upg.Name)
                                             {
-                                                var asm = Assembly.LoadFile(exe);
-                                                foreach (var type in asm.GetTypes())
-                                                {
-                                                    var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppscapeEntryAttribute) as AppscapeEntryAttribute;
-                                                    if (attrib != null)
-                                                    {
-                                                        if (attrib.Name == upg.Name)
-                                                        {
-                                                            var installer = new Applications.Installer();
-                                                            var installation = new AppscapeInstallation(upg.Name, attrib.DownloadSize, upg.ID);
-                                                            AppearanceManager.SetupWindow(installer);
-                                                            installer.InitiateInstall(installation);
-                                                            return;
-                                                        }
-                                                    }
-                                                }
+                                                var installer = new Applications.Installer();
+                                                var installation = new AppscapeInstallation(upg.Name, attrib.DownloadSize, upg.ID);
+                                                AppearanceManager.SetupWindow(installer);
+                                                installer.InitiateInstall(installation);
+                                                return;
                                             }
-                                            catch { }
                                         }
                                     }
-
                                 }
                             });
                         }
@@ -372,7 +360,7 @@ namespace ShiftOS.WinForms
     /// </summary>
     public class AppscapeEntryAttribute : RequiresUpgradeAttribute
     {
-        public AppscapeEntryAttribute(string name, string description, int downloadSize, long cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
+        public AppscapeEntryAttribute(string name, string description, int downloadSize, ulong cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
         {
             Name = name;
             Description = description;
@@ -385,7 +373,7 @@ namespace ShiftOS.WinForms
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string Category { get; private set; }
-        public long Cost { get; private set; }
+        public ulong Cost { get; private set; }
         public string DependencyString { get; private set; }
         public int DownloadSize { get; private set; }
     }

@@ -242,38 +242,16 @@ namespace ShiftOS.Engine
         /// <returns>The resulting icon image.</returns>
         public static Image GetDefaultIcon(string id)
         {
-            if (_iconProber == null)
+            if (_iconProber != null)
             {
-                return new Bitmap(16, 16);
-            }
-            else
-            {
-                foreach (var f in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.Name == id))
                 {
-                    if (f.EndsWith(".exe") || f.EndsWith(".dll"))
-                    {
-                        try
-                        {
-                            var asm = Assembly.LoadFile(f);
-                            foreach (var type in asm.GetTypes())
-                            {
-                                if (type.Name == id)
-                                {
-                                    foreach (var attr in type.GetCustomAttributes(true))
-                                    {
-                                        if (attr is DefaultIconAttribute)
-                                        {
-                                            return _iconProber.GetIcon(attr as DefaultIconAttribute);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch { }
-                    }
+                    var attr = Array.Find(type.GetCustomAttributes(true), a => a is DefaultIconAttribute);
+                    if (attr != null)
+                        return _iconProber.GetIcon(attr as DefaultIconAttribute);
                 }
-                return new Bitmap(16, 16);
             }
+            return new Bitmap(16, 16);
         }
 
         /// <summary>
@@ -287,7 +265,15 @@ namespace ShiftOS.Engine
                 LoadedSkin.AppIcons.Add(id, null);
 
             if (LoadedSkin.AppIcons[id] == null)
-                return GetDefaultIcon(id);
+            {
+                var img = GetDefaultIcon(id);
+                using (var mstr = new MemoryStream())
+                {
+                    img.Save(mstr, System.Drawing.Imaging.ImageFormat.Png);
+                    LoadedSkin.AppIcons[id] = mstr.ToArray();
+                }
+                return img;
+            }
             else
             {
                 using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))
@@ -332,18 +318,18 @@ namespace ShiftOS.Engine
     public class Skin
     {
         //borrowing from the discourse theme for the default skin
-        private static readonly Color DefaultBackground = Color.FromArgb(0, 0x44, 0x00);
+        private static readonly Color DefaultBackground = Color.FromArgb(0x11, 0x11, 0x11);
         private static readonly Color DefaultForeground = Color.FromArgb(0xDD, 0xDD, 0xDD);
         private static readonly Color Accent1 = Color.FromArgb(0x66, 0x66, 0x66);
-        private static readonly Color Accent2 = Color.FromArgb(0x80, 0, 0);
-        private static readonly Color DesktopBG = Color.FromArgb(0x22, 0x22, 0x22);
+        private static readonly Color Accent2 = Color.FromArgb(0x0, 0x80, 0);
+        private static readonly Color DesktopBG = Color.FromArgb(0x00, 0x00, 0x00);
         private static readonly Font SysFont = new Font("Tahoma", 9F);
         private static readonly Font SysFont2 = new Font("Tahoma", 10F, FontStyle.Bold);
-        private static readonly Font Header1 = new Font("Helvetica", 20F, FontStyle.Bold);
-        private static readonly Font Header2 = new Font("Helvetica", 17.5F, FontStyle.Bold);
-        private static readonly Font Header3 = new Font("Tahoma", 15F, FontStyle.Bold);
+        private static readonly Font Header1 = new Font("Courier New", 20F, FontStyle.Bold);
+        private static readonly Font Header2 = new Font("Courier New", 17.5F, FontStyle.Bold);
+        private static readonly Font Header3 = new Font("Courier New", 15F, FontStyle.Bold);
 
-        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x11, 0x11);
+        private static readonly Color TitleBG = Color.FromArgb(0x11, 0x55, 0x11);
         private static readonly Color TitleFG = Color.FromArgb(0xaa, 0xaa, 0xaa);
 
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
@@ -642,7 +628,7 @@ namespace ShiftOS.Engine
         [ShifterName("Close Button Color")]
         [RequiresUpgrade("shift_title_buttons")]
         [ShifterDescription("The close button color")]
-        public Color CloseButtonColor = Accent2;
+        public Color CloseButtonColor = Color.FromArgb(0x80,0,0);
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
@@ -650,6 +636,9 @@ namespace ShiftOS.Engine
         [RequiresUpgrade("shift_title_buttons")]
         [ShifterDescription("The maximize button color")]
         public Color MaximizeButtonColor = Accent1;
+
+        [ShifterHidden]
+        public CommandParser CurrentParser = CommandParser.GenerateSample();
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]

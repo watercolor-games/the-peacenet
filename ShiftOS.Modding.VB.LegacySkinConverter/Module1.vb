@@ -14,7 +14,6 @@ Module Module1
 
 End Module
 
-<ShiftOS.Engine.Namespace("skinning")>
 Public Class SkinConverterCommands
 
 

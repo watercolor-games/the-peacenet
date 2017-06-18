@@ -85,10 +85,9 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="cdd">The command string to parse.</param>
         /// <returns>The parsed command, ready to be invoked.</returns>
-        public KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>> ParseCommand(string cdd)
+        public KeyValuePair<string, Dictionary<string, string>> ParseCommand(string cdd)
         {
             string command = "";
-            string ns = "";
             Dictionary<string, string> arguments = new Dictionary<string, string>();
 
             string text = cdd;
@@ -142,12 +141,7 @@ namespace ShiftOS.Engine
 
                 if (part is CommandFormatMarker)
                 {
-                    if (part is CommandFormatNamespace)
-                    {
-                        ns = res;
-                        help = -1;
-                    }
-                    else if (part is CommandFormatCommand)
+                    if (part is CommandFormatCommand)
                     {
                         command = res;
                         help = -1;
@@ -197,7 +191,7 @@ namespace ShiftOS.Engine
             if (command == "+FALSE+")
             {
                 //lblExampleCommand.Text = "Syntax Error";
-                return new KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>();
+                return new KeyValuePair<string, Dictionary<string, string>>();
             }
             else
             {
@@ -210,8 +204,23 @@ namespace ShiftOS.Engine
                 argvs += "}";
 
                 lblExampleCommand.Text = command + argvs;*/
-                return new KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>(new KeyValuePair<string, string>(ns, command), arguments);
+                return new KeyValuePair<string, Dictionary<string, string>>(command, arguments);
             }
+        }
+
+        internal static CommandParser GenerateSample()
+        {
+            var parser = new CommandParser();
+            parser.AddPart(new CommandFormatCommand());
+            parser.AddPart(new CommandFormatText(" --"));
+            parser.AddPart(new CommandFormatArgument());
+            parser.AddPart(new CommandFormatText(" "));
+            parser.AddPart(new CommandFormatValue());
+            parser.AddPart(new CommandFormatText(" --"));
+            parser.AddPart(new CommandFormatArgument());
+            parser.AddPart(new CommandFormatText(" "));
+            parser.AddPart(new CommandFormatValue());
+            return parser;
         }
     }
 

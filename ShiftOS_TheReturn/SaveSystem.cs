@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+// #define NOSAVE
 
 //#define ONLINEMODE
 
@@ -66,6 +67,7 @@ namespace ShiftOS.Engine
         /// Boolean representing whether the save system is ready to be used.
         /// </summary>
         public static bool Ready = false;
+        public static bool IsSandbox = false;
 
         /// <summary>
         /// Occurs before the save system connects to the ShiftOS Digital Society.
@@ -76,6 +78,7 @@ namespace ShiftOS.Engine
         /// Gets or sets the current server-side save file.
         /// </summary>
         public static Save CurrentSave { get; set; }
+
 
         /// <summary>
         /// Start the entire ShiftOS engine.
@@ -102,6 +105,9 @@ namespace ShiftOS.Engine
 
             Localization.SetupTHETRUEDefaultLocals();
             SkinEngine.Init();
+            Random rnd = new Random();
+            int loadingJoke1 = rnd.Next(10);
+            int loadingJoke2 = rnd.Next(10);
 
             TerminalBackend.OpenTerminal();
 
@@ -120,8 +126,9 @@ namespace ShiftOS.Engine
                 }
 
                 Thread.Sleep(350);
-                Console.WriteLine("ShiftKernel v0.4.2");
-                Console.WriteLine("(MIT) DevX 2017, Very Little Rights Reserved");
+                Console.WriteLine("{MISC_KERNELVERSION}");
+                Thread.Sleep(50);
+                Console.WriteLine("Copyright (c) 2018 DevX. Licensed under MIT.");
                 Console.WriteLine("");
                 Console.WriteLine("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
                 Console.WriteLine("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
@@ -132,70 +139,147 @@ namespace ShiftOS.Engine
                 Console.WriteLine("SOFTWARE.");
                 Console.WriteLine("");
                 Thread.Sleep(250);
-                Console.WriteLine("[init] Kernel boot complete.");
-                Console.WriteLine("[sfs] Loading SFS driver v3");
-                Thread.Sleep(100);
-                Console.WriteLine("[sfs] 4096 blocks read.");
-                Console.WriteLine("[simpl-conf] Reading configuration files (global-3.conf)");
-                Console.WriteLine("[termdb] Building command database from filesystem...");
+                Console.WriteLine("{MISC_KERNELBOOTED}");
+                Console.WriteLine("{MISC_SHIFTFSDRV}");
+                Thread.Sleep(350);
+                Console.WriteLine("{MISC_SHIFTFSBLOCKSREAD}");
+                Console.WriteLine("{LOADINGMSG1_" + loadingJoke1 + "}");
+                Thread.Sleep(500);
+                Console.WriteLine("{MISC_LOADINGCONFIG}");
+                Thread.Sleep(30);
+                Console.WriteLine("{MISC_BUILDINGCMDS}");
                 TerminalBackend.PopulateTerminalCommands();
-                Console.WriteLine("[inetd] Connecting to network...");
 
-                Ready = false;
-
-                if (PreDigitalSocietyConnection != null)
+                if (IsSandbox == false)
                 {
-                    PreDigitalSocietyConnection?.Invoke();
+                    Console.WriteLine("{MISC_CONNECTINGTONETWORK}");
 
-                    while (!Ready)
+                    Ready = false;
+
+                    if (PreDigitalSocietyConnection != null)
                     {
-                        Thread.Sleep(10);
+                        PreDigitalSocietyConnection?.Invoke();
+
+                        while (!Ready)
+                        {
+                            Thread.Sleep(10);
+                        }
                     }
-                }
 
-                
 
-                bool guidReceived = false;
-                ServerManager.GUIDReceived += (str) =>
-                {
+
+                    bool guidReceived = false;
+                    ServerManager.GUIDReceived += (str) =>
+                    {
                         //Connection successful! Stop waiting!
                         guidReceived = true;
-                    Console.WriteLine("[inetd] Connection successful.");
-                };
+                        Console.WriteLine("{MISC_CONNECTIONSUCCESSFUL}");
+                        Thread.Sleep(100);
+                        Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
+                        Thread.Sleep(500);
+                    };
 
-                try
-                {
-
-                    ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                    //This haults the client until the connection is successful.
-                    while (ServerManager.thisGuid == new Guid())
+                    try
                     {
-                        Thread.Sleep(10);
+                        if (ServerManager.ServerOnline)
+                        {
+                            ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
+                            //This haults the client until the connection is successful.
+                            while (ServerManager.thisGuid == new Guid())
+                            {
+                                Thread.Sleep(10);
+                            }
+                            Console.WriteLine("{MISC_DHCPHANDSHAKEFINISHED}");
+                            FinishBootstrap();
+                        }
+                        else
+                        {
+                            Console.WriteLine("{MISC_NONETWORK}");
+                            Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
+                            FinishBootstrap();
+                        }
                     }
-                    Console.WriteLine("[inetd] DHCP GUID recieved, finished setup");
-                    FinishBootstrap();
+                    catch (Exception ex)
+                    {
+                        //No errors, this never gets called.
+                        Console.WriteLine("[inetd] SEVERE: " + ex.Message);
+                        Thread.Sleep(3000);
+                        Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 4...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 3...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 2...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] 1...");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("[sys] Bye bye.");
+                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    }
+
+                    //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
                 }
-                catch (Exception ex)
+                else
                 {
-                    //No errors, this never gets called.
-                    Console.WriteLine("[inetd] SEVERE: " + ex.Message);
-                    Thread.Sleep(3000);
-                    Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 4...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 3...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 2...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] 1...");
-                    Thread.Sleep(1000);
-                    Console.WriteLine("[sys] Bye bye.");
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    Console.WriteLine("{MISC_SANDBOXMODE}");
+                    CurrentSave = new Save
+                    {
+                        IsSandbox = true,
+                        Username = "sandbox",
+                        Password = "sandbox",
+                        SystemName = "shiftos",
+                        Users = new List<ClientSave>
+                        {
+                            new ClientSave
+                            {
+                                Username = "user",
+                                Password = "",
+                                Permissions = 0
+                            }
+                        },
+                        Class = 0,
+                        ID = new Guid(),
+                        Upgrades = new Dictionary<string, bool>(),
+                        CurrentLegions = null,
+                        IsMUDAdmin = false,
+                        IsPatreon = false,
+                        Language = "english",
+                        LastMonthPaid = 0,
+                        MajorVersion = 1,
+                        MinorVersion = 0,
+                        MusicEnabled = false,
+                        MusicVolume = 100,
+                        MyShop = "",
+                        PasswordHashed = false,
+                        PickupPoint = "",
+                        RawReputation = 0.0f,
+                        Revision = 0,
+                        ShiftnetSubscription = 0,
+                        SoundEnabled = true,
+                        StoriesExperienced = null,
+                        StoryPosition = 0,
+                        UniteAuthToken = "",
+                    };
+
+                    CurrentUser = CurrentSave.Users.First();
+
+                    Localization.SetupTHETRUEDefaultLocals();
+
+                    Shiftorium.Init();
+
+                    TerminalBackend.InStory = false;
+                    TerminalBackend.PrefixEnabled = true;
+
+                    Desktop.InvokeOnWorkerThread(new Action(() =>
+                    {
+                        ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
+                    }));
+
+
+                    Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
+                    GameReady?.Invoke();
                 }
-
-                //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
-
 
             }));
             thread.IsBackground = true;
@@ -207,21 +291,27 @@ namespace ShiftOS.Engine
         /// </summary>
         private static void FinishBootstrap()
         {
-            KernelWatchdog.Log("mud_handshake", "handshake successful: kernel watchdog access code is \"" + ServerManager.thisGuid.ToString() + "\"");
-
             ServerMessageReceived savehandshake = null;
 
             savehandshake = (msg) =>
             {
                 if (msg.Name == "mud_savefile")
                 {
-                    CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
                     ServerManager.MessageReceived -= savehandshake;
-                }
+                    try
+                    {
+                        CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("{ENGINE_CANNOTLOADSAVE}");
+                        oobe.PromptForLogin();
+                    }
+                    }
                 else if (msg.Name == "mud_login_denied")
                 {
-                    oobe.PromptForLogin();
                     ServerManager.MessageReceived -= savehandshake;
+                    oobe.PromptForLogin();
                 }
             };
             ServerManager.MessageReceived += savehandshake;
@@ -234,8 +324,6 @@ namespace ShiftOS.Engine
                 Thread.Sleep(10);
             }
 
-            Localization.SetupTHETRUEDefaultLocals();
-
             Shiftorium.Init();
 
             while (CurrentSave.StoryPosition < 1)
@@ -246,7 +334,7 @@ namespace ShiftOS.Engine
             Thread.Sleep(75);
 
             Thread.Sleep(50);
-            Console.WriteLine("[usr-man] Accepting logins on local tty 1.");
+            Console.WriteLine("{MISC_ACCEPTINGLOGINS}");
 
             Sysname:
             bool waitingForNewSysName = false;
@@ -254,16 +342,16 @@ namespace ShiftOS.Engine
 
             if (string.IsNullOrWhiteSpace(CurrentSave.SystemName))
             {
-                Infobox.PromptText("Enter a system name", "Your system does not have a name. All systems within the digital society must have a name. Please enter one.", (name) =>
+                Infobox.PromptText("{TITLE_ENTERSYSNAME}", "{PROMPT_ENTERSYSNAME}", (name) =>
                 {
                     if (string.IsNullOrWhiteSpace(name))
-                        Infobox.Show("Invalid name", "Please enter a valid name.", () =>
+                        Infobox.Show("{TITLE_INVALIDNAME}", "{PROMPT_INVALIDNAME}.", () =>
                         {
                             gobacktosysname = true;
                             waitingForNewSysName = false;
                         });
                     else if (name.Length < 5)
-                        Infobox.Show("Value too small.", "Your system name must have at least 5 characters in it.", () =>
+                        Infobox.Show("{TITLE_VALUESMALL}", "{PROMPT_SMALLSYSNAME}", () =>
                         {
                             gobacktosysname = true;
                             waitingForNewSysName = false;
@@ -271,11 +359,6 @@ namespace ShiftOS.Engine
                     else
                     {
                         CurrentSave.SystemName = name;
-                        if (!string.IsNullOrWhiteSpace(CurrentSave.UniteAuthToken))
-                        {
-                            var unite = new Unite.UniteClient("http://getshiftos.ml", CurrentSave.UniteAuthToken);
-                            unite.SetSysName(name);
-                        }
                         SaveSystem.SaveGame();
                         gobacktosysname = false;
                         waitingForNewSysName = false;
@@ -302,18 +385,18 @@ namespace ShiftOS.Engine
                    `-:/++++::.`                   
               .+ydNMMMMMNNMMMMMNhs/.              
            /yNMMmy+:-` `````.-/ohNMMms-           
-        `oNMMh/.`:oydmNMMMMNmhs+- .+dMMm+`             Welcome to ShiftOS.
+        `oNMMh/.`:oydmNMMMMNmhs+- .+dMMm+`             {{GEN_WELCOME}}
       `oMMmo``+dMMMMMMMMMMMMMMMMMNh/`.sNMN+       
-     :NMN+ -yMMMMMMMNdhyssyyhdmNMMMMNs``sMMd.          SYSTEM STATUS:
+     :NMN+ -yMMMMMMMNdhyssyyhdmNMMMMNs``sMMd.          {{GEN_SYSTEMSTATUS}}
     oMMd.`sMMMMMMd+.            `/MMMMN+ -mMN:         ----------------------
    oMMh .mMMMMMM/     `-::::-.`  :MMMMMMh`.mMM:   
-  :MMd .NMMMMMMs    .dMMMMMMMMMNddMMMMMMMd`.NMN.        Codepoints:     {SaveSystem.CurrentSave.Codepoints}
-  mMM. dMMMMMMMo    -mMMMMMMMMMMMMMMMMMMMMs /MMy        Upgrades:       {SaveSystem.CurrentSave.CountUpgrades()} installed
- :MMh :MMMMMMMMm`     .+shmMMMMMMMMMMMMMMMN` NMN`                       {Shiftorium.GetAvailable().Count()} available
- oMM+ sMMMMMMMMMN+`        `-/smMMMMMMMMMMM: hMM:       Filesystems:    {Utils.Mounts.Count} filesystems mounted in memory.
+  :MMd .NMMMMMMs    .dMMMMMMMMMNddMMMMMMMd`.NMN.        {{GEN_CODEPOINTS}}:     {SaveSystem.CurrentSave.Codepoints}
+  mMM. dMMMMMMMo    -mMMMMMMMMMMMMMMMMMMMMs /MMy        
+ :MMh :MMMMMMMMm`     .+shmMMMMMMMMMMMMMMMN` NMN`                       
+ oMM+ sMMMMMMMMMN+`        `-/smMMMMMMMMMMM: hMM:       
  sMM+ sMMMMMMMMMMMMds/-`        .sMMMMMMMMM/ yMM/ 
- +MMs +MMMMMMMMMMMMMMMMMmhs:`     +MMMMMMMM- dMM-       System name:    {CurrentSave.SystemName.ToUpper()}
- .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        Users:          {Users.Count()} found.
+ +MMs +MMMMMMMMMMMMMMMMMmhs:`     +MMMMMMMM- dMM-       {{GEN_SYSTEMNAME}}:    {CurrentSave.SystemName.ToUpper()}
+ .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        {{GEN_USERS}}:          {Users.Count()}.
   hMM+ +MMMMMMmsdNMMMMMMMMMMN/    -MMMMMMN- yMM+        
   `NMN- oMMMMMd   `-/+osso+-     .mMMMMMN: +MMd   
    -NMN: /NMMMm`               :yMMMMMMm- oMMd`   
@@ -333,7 +416,7 @@ namespace ShiftOS.Engine
                     Password = "",
                     Permissions = UserPermissions.Root
                 });
-                Console.WriteLine("[usr-man] WARN: No users found. Creating new user with username \"root\", with no password.");
+                Console.WriteLine("{MISC_NOUSERS}");
             }
             TerminalBackend.InStory = false;
 
@@ -365,18 +448,21 @@ namespace ShiftOS.Engine
                 int progress = 0;
                 bool goback = false;
                 TextSentEventHandler ev = null;
+                string loginstr = Localization.Parse("{GEN_LPROMPT}", new Dictionary<string, string>
+                {
+                    ["%sysname"] = CurrentSave.SystemName
+                });
                 ev = (text) =>
                 {
                     if (progress == 0)
                     {
-                        string loginstr = CurrentSave.SystemName + " login: ";
                         string getuser = text.Remove(0, loginstr.Length);
                         if (!string.IsNullOrWhiteSpace(getuser))
                         {
                             if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("User not found.");
+                                Console.WriteLine("{ERR_NOUSER}");
                                 goback = true;
                                 progress++;
                                 TerminalBackend.TextSent -= ev;
@@ -388,7 +474,7 @@ namespace ShiftOS.Engine
                         else
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Username not provided.");
+                            Console.WriteLine("{ERR_NOUSER}");
                             TerminalBackend.TextSent -= ev;
                             goback = true;
                             progress++;
@@ -396,20 +482,20 @@ namespace ShiftOS.Engine
                     }
                     else if (progress == 1)
                     {
-                        string passwordstr = "password: ";
+                        string passwordstr = Localization.Parse("{GEN_PASSWORD}: ");
                         string getpass = text.Remove(0, passwordstr.Length);
                         var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
                         if (user.Password == getpass)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Welcome to ShiftOS.");
+                            Console.WriteLine("{GEN_WELCOME}");
                             CurrentUser = user;
                             progress++;
                         }
                         else
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Access denied.");
+                            Console.WriteLine("{RES_DENIED}");
                             goback = true;
                             progress++;
                         }
@@ -418,7 +504,7 @@ namespace ShiftOS.Engine
                 };
                 TerminalBackend.TextSent += ev;
                 Console.WriteLine();
-                Console.Write(CurrentSave.SystemName + " login: ");
+                Console.Write(loginstr);
                 ConsoleEx.Flush();
                 while (progress == 0)
                 {
@@ -427,7 +513,7 @@ namespace ShiftOS.Engine
                 if (goback)
                     goto Login;
                 Console.WriteLine();
-                Console.Write("password: ");
+                Console.Write("{GEN_PASSWORD}: ");
                 ConsoleEx.Flush();
                 while (progress == 1)
                     Thread.Sleep(10);
@@ -444,6 +530,18 @@ namespace ShiftOS.Engine
 
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
+
+            if (!string.IsNullOrWhiteSpace(CurrentSave.PickupPoint))
+            {
+                try
+                {
+                    if (Story.Context == null)
+                    {
+                        Story.Start(CurrentSave.PickupPoint);
+                    }
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -471,7 +569,7 @@ namespace ShiftOS.Engine
         /// Deducts a set amount of Codepoints from the save file... and sends them to a place where they'll never be seen again.
         /// </summary>
         /// <param name="amount">The amount of Codepoints to deduct.</param>
-        public static void TransferCodepointsToVoid(long amount)
+        public static void TransferCodepointsToVoid(ulong amount)
         {
             if (amount < 0)
                 throw new ArgumentOutOfRangeException("We see what you did there. Trying to pull Codepoints from the void? That won't work.");
@@ -494,14 +592,14 @@ namespace ShiftOS.Engine
         public static void ReadSave()
         {
             //Migrate old saves.
-            if(System.IO.Directory.Exists("C:\\ShiftOS2"))
+            if (System.IO.Directory.Exists("C:\\ShiftOS2"))
             {
                 Console.WriteLine("Old save detected. Migrating filesystem to MFS...");
                 foreach (string file in System.IO.Directory.EnumerateDirectories("C:\\ShiftOS2")
 .Select(d => new DirectoryInfo(d).FullName))
                 {
-                    if(!Utils.DirectoryExists(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/")))
-                    Utils.CreateDirectory(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"));
+                    if (!Utils.DirectoryExists(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/")))
+                        Utils.CreateDirectory(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"));
                 }
                 foreach (string file in System.IO.Directory.EnumerateFiles("C:\\ShiftOS2"))
                 {
@@ -513,24 +611,17 @@ namespace ShiftOS.Engine
 
             }
 
+            string path = Path.Combine(Paths.SaveDirectory, "autosave.save");
 
-            if (Utils.FileExists(Paths.SaveFileInner))
+            if (System.IO.File.Exists(Path.Combine(Paths.SaveDirectory, "autosave.save")))
             {
-                oobe.ShowSaveTransfer(JsonConvert.DeserializeObject<Save>(Utils.ReadAllText(Paths.SaveFileInner)));
+                CurrentSave = JsonConvert.DeserializeObject<Save>(System.IO.File.ReadAllText(path));
             }
             else
             {
-                if (Utils.FileExists(Paths.GetPath("user.dat")))
-                {
-                    string token = Utils.ReadAllText(Paths.GetPath("user.dat"));
-
-                    ServerManager.SendMessage("mud_token_login", token);
-                }
-                else
-                {
-                    NewSave();
-                }
+                NewSave();
             }
+
 
         }
 
@@ -554,17 +645,39 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void SaveGame()
         {
-            if(!Shiftorium.Silent)
-                Console.WriteLine("");
-            if(!Shiftorium.Silent)
-                Console.Write("{SE_SAVING}... ");
-            if (SaveSystem.CurrentSave != null)
+            if (!IsSandbox)
             {
-                Utils.WriteAllText(Paths.GetPath("user.dat"), CurrentSave.UniteAuthToken);                
-                ServerManager.SendMessage("mud_save", JsonConvert.SerializeObject(CurrentSave, Formatting.Indented));
+#if !NOSAVE
+                if (!Shiftorium.Silent)
+                    Console.WriteLine("");
+                if (!Shiftorium.Silent)
+                    Console.Write("{SE_SAVING}... ");
+                if (SaveSystem.CurrentSave != null)
+                {
+                    var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
+                    new Thread(() =>
+                    {
+                        try
+                        {
+                            // please don't do networking on the main thread if you're just going to
+                            // discard the response, it's extremely slow
+                            ServerManager.SendMessage("mud_save", serialisedSaveFile);
+                        }
+                        catch { }
+                    })
+                    { IsBackground = false }.Start();
+                    if (!System.IO.Directory.Exists(Paths.SaveDirectory))
+                    {
+                        System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
+
+                    }
+
+                    System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
+                }
+                if (!Shiftorium.Silent)
+                    Console.WriteLine(" ...{DONE}.");
+#endif
             }
-            if (!Shiftorium.Silent)
-                Console.WriteLine(" ...{DONE}.");
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }
 
@@ -573,7 +686,7 @@ namespace ShiftOS.Engine
         /// </summary>
         /// <param name="who">The character name</param>
         /// <param name="amount">The amount of Codepoints.</param>
-        public static void TransferCodepointsFrom(string who, long amount)
+        public static void TransferCodepointsFrom(string who, ulong amount)
         {
             if (amount < 0)
                 throw new ArgumentOutOfRangeException("We see what you did there... You can't just give a fake character Codepoints like that. It's better if you transfer them to the void.");

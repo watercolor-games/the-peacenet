@@ -35,51 +35,142 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.Engine
 {
+    public class StoryContext
+    {
+        public string Id { get; set; }
+        public MethodInfo Method { get; set; }
+        public bool AutoComplete = false;
+
+        public StoryContext()
+        {
+            AutoComplete = true;
+        }
+
+        public void MarkComplete()
+        {
+            SaveSystem.CurrentSave.StoriesExperienced.Add(Id);
+            OnComplete?.Invoke();
+        }
+
+        public event Action OnComplete;
+    }
+
+    public class Objective
+    {
+        private Func<bool> _completeFunc = null;
+
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public bool IsComplete
+        {
+            get
+            {
+                return (bool)_completeFunc?.Invoke();
+            }
+        }
+
+        public Objective(string name, string desc, Func<bool> completeFunc, Action onComplete)
+        {
+            _completeFunc = completeFunc;
+            Name = name;
+            Description = desc;
+            this.onComplete = onComplete;
+        }
+
+        private Action onComplete = null;
+
+        public void Complete()
+        {
+            onComplete?.Invoke();
+        }
+    }
+
     /// <summary>
     /// Storyline management class.
     /// </summary>
     public static class Story
     {
+        public static StoryContext Context { get; private set; }
+        public static event Action<string> StoryComplete;
+        public static List<Objective> CurrentObjectives { get; private set; }
+
+        public static void PushObjective(string name, string desc, Func<bool> completeFunc, Action onComplete)
+        {
+            if (CurrentObjectives == null)
+                CurrentObjectives = new List<Objective>();
+
+            var currentObjective = new Objective(name, desc, completeFunc, onComplete);
+            CurrentObjectives.Add(currentObjective);
+            var t = new Thread(() =>
+            {
+                var obj = currentObjective;
+                while (!obj.IsComplete)
+                {
+                    Thread.Sleep(5000);
+                }
+                Thread.Sleep(500);
+                CurrentObjectives.Remove(obj);
+                obj.Complete();
+            });
+            t.IsBackground = true;
+            t.Start();
+
+            Console.WriteLine();
+            ConsoleEx.ForegroundColor = ConsoleColor.Red;
+            ConsoleEx.Bold = true;
+            Console.WriteLine("NEW OBJECTIVE:");
+            Console.WriteLine();
+
+            ConsoleEx.ForegroundColor = ConsoleColor.White;
+            ConsoleEx.Bold = false;
+            Console.WriteLine("A new objective has been added to your system. Run sos.status to find out what you need to do.");
+            TerminalBackend.PrintPrompt();
+        }
+        
+        
         /// <summary>
         /// Starts the storyline with the specified Storyline ID.
         /// </summary>
         /// <param name="stid">The storyline ID to start.</param>
         public static void Start(string stid)
         {
-            foreach (var exec in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
+            if (SaveSystem.CurrentSave.StoriesExperienced == null)
+                SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
+            foreach (var type in ReflectMan.Types)
             {
-                if(exec.EndsWith(".exe") || exec.EndsWith(".dll"))
+                foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
-                    try
+                    foreach (var attrib in Array.FindAll(mth.GetCustomAttributes(false), a => a is StoryAttribute))
                     {
-                        if (SaveSystem.CurrentSave.StoriesExperienced == null)
-                            SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
-                        var asm = Assembly.LoadFile(exec);
-                        foreach(var type in asm.GetTypes())
+                        var story = attrib as StoryAttribute;
+                        if (story.StoryID == stid)
                         {
-                            foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                            new Thread(() =>
                             {
-                                foreach(var attrib in mth.GetCustomAttributes(false))
+                                Context = new Engine.StoryContext
                                 {
-                                    if(attrib is StoryAttribute)
-                                    {
-                                        var story = attrib as StoryAttribute;
-                                        if(story.StoryID == stid)
-                                        {
-                                            new Thread(() =>
-                                            {
-                                                mth.Invoke(null, null);
-                                                SaveSystem.CurrentSave.StoriesExperienced.Add(stid);
-                                            }).Start();
-                                            return;
-                                        }
-                                    }
+                                    Id = stid,
+                                    Method = mth,
+                                    AutoComplete = true,
+                                };
+                                SaveSystem.CurrentSave.PickupPoint = Context.Id;
+                                Context.OnComplete += () =>
+                                {
+                                    StoryComplete?.Invoke(stid);
+                                    SaveSystem.CurrentSave.PickupPoint = null;
+                                };
+                                mth.Invoke(null, null);
+                                if (Context.AutoComplete)
+                                {
+                                    Context.MarkComplete();
                                 }
-                            }
+                            }).Start();
+                            return;
                         }
                     }
-                    catch (Exception ex) { throw ex; }
                 }
+
             }
 #if DEBUG
             throw new ArgumentException("Story ID not found: " + stid + " - Talk to Michael. NOW.");

@@ -13,7 +13,6 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms
 {
-    [Namespace("test")]
     public class OobeStory
     {
         [Command("test")]
@@ -85,32 +84,45 @@ namespace ShiftOS.WinForms
             ConsoleEx.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(@"We'll now begin formatting your drive. Please be patient.");
             Console.WriteLine();
-            var dinf = new DriveInfo("C:\\");
-            decimal bytesFree = ((dinf.AvailableFreeSpace / 1024) / 1024) / 1024;
-            decimal totalBytes = ((dinf.TotalSize / 1024) / 1024) / 1024;
-            string type = dinf.DriveType.ToString();
-            string name = dinf.Name;
-            ConsoleEx.Bold = true;
-            Console.Write("Drive name: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(name);
-            ConsoleEx.Bold = true;
-            Console.Write("Drive type: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(type);
-            ConsoleEx.Bold = true;
-            Console.Write("Total space: ");
-            ConsoleEx.Bold = false;
-            Console.WriteLine(totalBytes.ToString() + " GB");
-            ConsoleEx.Bold = true;
-            Console.Write("Free space: ");
-            Console.WriteLine(bytesFree.ToString() + " GB");
-            Console.WriteLine();
-
+            double bytesFree, totalBytes;
+            string type, name;
+            dynamic dinf;
+            try
+            {
+                if (Lunix.InWine)
+                    dinf = new Lunix.DFDriveInfo("/");
+                else
+                    dinf = new DriveInfo("C:\\");
+                bytesFree = dinf.AvailableFreeSpace / 1073741824.0;
+                totalBytes = dinf.TotalSize / 1073741824.0;
+                type = dinf.DriveFormat.ToString();
+                name = dinf.Name;
+                ConsoleEx.Bold = true;
+                Console.Write("Drive name: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(name);
+                ConsoleEx.Bold = true;
+                Console.Write("Drive type: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(type);
+                ConsoleEx.Bold = true;
+                Console.Write("Total space: ");
+                ConsoleEx.Bold = false;
+                Console.WriteLine(String.Format("{0:F1}", totalBytes) + " GB");
+                ConsoleEx.Bold = true;
+                Console.Write("Free space: ");
+                Console.WriteLine(String.Format("{0:F1}", bytesFree) + " GB");
+                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             ConsoleEx.Bold = false;
             ConsoleEx.BackgroundColor = ConsoleColor.Black;
             Console.Write("Formatting: [");
+            ConsoleEx.OnFlush?.Invoke();
             int formatProgress = 3;
             while (formatProgress <= 100)
             {
@@ -118,6 +130,7 @@ namespace ShiftOS.WinForms
                 {
                     ConsoleEx.BackgroundColor = ConsoleColor.White;
                     Console.Write(" ");
+                    ConsoleEx.OnFlush?.Invoke();
                     ConsoleEx.BackgroundColor = ConsoleColor.Black;
                 }
                 Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.typesound));
@@ -141,7 +154,37 @@ namespace ShiftOS.WinForms
             Console.WriteLine();
             Console.WriteLine("Next, let's get user information.");
             Console.WriteLine();
-            ShiftOS.Engine.OutOfBoxExperience.PromptForLogin();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                var uSignUpDialog = new UniteSignupDialog((result) =>
+                {
+                    var sve = new Save();
+                    sve.SystemName = result.SystemName;
+                    sve.Codepoints = 0;
+                    sve.Upgrades = new Dictionary<string, bool>();
+                    sve.ID = Guid.NewGuid();
+                    sve.StoriesExperienced = new List<string>();
+                    sve.StoriesExperienced.Add("mud_fundamentals");
+                    sve.Users = new List<ClientSave>
+                    {
+                    new ClientSave
+                    {
+                        Username = "root",
+                        Password = result.RootPassword,
+                        Permissions = 0
+                    }
+                    };
+
+                    sve.StoryPosition = 8675309;
+                    SaveSystem.CurrentSave = sve;
+                    Shiftorium.Silent = true;
+                    SaveSystem.SaveGame();
+                    Shiftorium.Silent = false;
+
+
+                });
+                AppearanceManager.SetupDialog(uSignUpDialog);
+            });
         }
 
         private static bool isValid(string text, string chars)

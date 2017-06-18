@@ -37,6 +37,7 @@
       <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.2.22, Culture=neutral, PublicKeyToken=7f709c5b713576e1" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
@@ -69,6 +70,24 @@
     </Compile>
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\IconManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\IconManager.Designer.cs">
+      <DependentUpon>IconManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\MindBlow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\MindBlow.Designer.cs">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Applications\Pong.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Pong.Designer.cs">
+      <DependentUpon>Pong.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\TriPresent.cs">
       <SubType>UserControl</SubType>
@@ -117,12 +136,6 @@
     </Compile>
     <Compile Include="Applications\Chat.Designer.cs">
       <DependentUpon>Chat.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\CoherenceOverlay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\CoherenceOverlay.Designer.cs">
-      <DependentUpon>CoherenceOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\ColorPicker.cs">
       <SubType>UserControl</SubType>
@@ -189,12 +202,6 @@
     </Compile>
     <Compile Include="Applications\Notifications.Designer.cs">
       <DependentUpon>Notifications.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\Pong.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\Pong.Designer.cs">
-      <DependentUpon>Pong.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Shifter.cs">
       <SubType>UserControl</SubType>
@@ -350,6 +357,18 @@
     <Compile Include="HackerCommands.cs" />
     <Compile Include="IDesktopWidget.cs" />
     <Compile Include="JobTasks.cs" />
+    <Compile Include="MainMenu\Loading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainMenu\Loading.Designer.cs">
+      <DependentUpon>Loading.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainMenu\MainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainMenu\MainMenu.Designer.cs">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -382,15 +401,52 @@
     <Compile Include="ShiftnetSites\MainHomepage.Designer.cs">
       <DependentUpon>MainHomepage.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\MindBlow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\MindBlow.Designer.cs">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\ShiftGames.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
       <DependentUpon>ShiftGames.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft.Designer.cs">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftSoft_Ping.Designer.cs">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftOSAudioProvider.cs" />
     <Compile Include="ShiftOSConfigFile.cs" />
     <Compile Include="SkinCommands.cs" />
+    <Compile Include="StatusIcons\ShiftnetStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\ShiftnetStatus.Designer.cs">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusIcons\TestStatus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\TestStatus.Designer.cs">
+      <DependentUpon>TestStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatusIcons\Volume.Designer.cs">
+      <DependentUpon>Volume.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Stories\DevXSkinningStory.cs" />
     <Compile Include="Stories\LegionStory.cs" />
     <Compile Include="TestCommandsForUpgrades.cs" />
     <Compile Include="Tools\ColorPickerDataBackend.cs" />
@@ -436,6 +492,15 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\IconManager.resx">
+      <DependentUpon>IconManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\MindBlow.resx">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Pong.resx">
+      <DependentUpon>Pong.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\TriPresent.resx">
       <DependentUpon>TriPresent.cs</DependentUpon>
@@ -493,9 +558,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Notifications.resx">
       <DependentUpon>Notifications.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\Pong.resx">
-      <DependentUpon>Pong.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
@@ -563,6 +625,12 @@
     <EmbeddedResource Include="GUILogin.resx">
       <DependentUpon>GUILogin.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainMenu\Loading.resx">
+      <DependentUpon>Loading.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainMenu\MainMenu.resx">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Oobe.resx">
       <DependentUpon>Oobe.cs</DependentUpon>
     </EmbeddedResource>
@@ -580,8 +648,26 @@
     <EmbeddedResource Include="ShiftnetSites\MainHomepage.resx">
       <DependentUpon>MainHomepage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\MindBlow.resx">
+      <DependentUpon>MindBlow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft.resx">
+      <DependentUpon>ShiftSoft.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftSoft_Ping.resx">
+      <DependentUpon>ShiftSoft_Ping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\ShiftnetStatus.resx">
+      <DependentUpon>ShiftnetStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\TestStatus.resx">
+      <DependentUpon>TestStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusIcons\Volume.resx">
+      <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UniteLoginDialog.resx">
       <DependentUpon>UniteLoginDialog.cs</DependentUpon>
@@ -809,6 +895,10 @@
     <None Include="Resources\writesound.wav" />
     <None Include="Resources\SuperDesk screenshot.png" />
     <None Include="Resources\notestate_connection_full.bmp" />
+    <None Include="Resources\iconSpeaker.bmp" />
+    <None Include="Resources\ShiftOSFull.png" />
+    <Content Include="Resources\GuessTheNumber.py" />
+    <None Include="Resources\mindblow.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

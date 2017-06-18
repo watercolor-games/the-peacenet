@@ -58,25 +58,7 @@ namespace ShiftOS.Engine
         //HEY LETS FIND THE WINDOWS
         public static IEnumerable<Type> GetAllWindowTypes()
         {
-            List<Type> types = new List<Type>();
-            foreach(var file in System.IO.Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                // hey if a thing is an exe or a dll show up plz kthx
-                if(file.EndsWith(".exe") || file.EndsWith(".dll"))
-                {
-                    try
-                    {
-                        var asm = Assembly.LoadFile(file);
-                        foreach(var type in asm.GetTypes())
-                        {
-                            if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
-                                types.Add(type);
-                        }
-                    }
-                    catch { }
-                }
-            }
-            return types;
+            return Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)));
         }
 
         // hey you know that window we just made appear? well give it its title
@@ -124,6 +106,7 @@ namespace ShiftOS.Engine
                 throw new EngineModuleDisabledException();
             winmgr.Maximize(form);
         }
+
 
 
         // Provides a list of all open ShiftOS windows.
@@ -183,7 +166,7 @@ namespace ShiftOS.Engine
         public static event EmptyEventHandler OnExit;
 
         // Starts the engine's exit routine, firing the OnExit event.
-        internal static void Exit()
+        public static void Exit()
         {
             OnExit?.Invoke();
             //disconnect from MUD
