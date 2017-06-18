@@ -143,7 +143,7 @@ namespace ShiftOS.Engine
                 Console.WriteLine("{MISC_SHIFTFSDRV}");
                 Thread.Sleep(350);
                 Console.WriteLine("{MISC_SHIFTFSBLOCKSREAD}");
-                Console.WriteLine("{MISC_LOADINGMSG1_" + loadingJoke1 + "}");
+                Console.WriteLine("{LOADINGMSG1_" + loadingJoke1 + "}");
                 Thread.Sleep(500);
                 Console.WriteLine("{MISC_LOADINGCONFIG}");
                 Thread.Sleep(30);
@@ -173,9 +173,9 @@ namespace ShiftOS.Engine
                     {
                         //Connection successful! Stop waiting!
                         guidReceived = true;
-                        Console.WriteLine("{INIT_CONNECTIONSUCCESSFUL}");
+                        Console.WriteLine("{MISC_CONNECTIONSUCCESSFUL}");
                         Thread.Sleep(100);
-                        Console.WriteLine("{MISC_LOADINGMSG2_" + loadingJoke2 + "}");
+                        Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
                         Thread.Sleep(500);
                     };
 
@@ -195,6 +195,7 @@ namespace ShiftOS.Engine
                         else
                         {
                             Console.WriteLine("{MISC_NONETWORK}");
+                            Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
                             FinishBootstrap();
                         }
                     }

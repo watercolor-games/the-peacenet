@@ -102,11 +102,18 @@
   "{TITLE_PONG_YOULOSE}": "You lose",
   "{TITLE_CODEPOINTSTRANSFERRED}": "Codepoints transferred.",
   "{TITLE_INVALIDPORT}": "Invalid port number.",
+  "{TITLE_ENTERSYSNAME}": "Enter system name",
+  "{TITLE_INVALIDNAME}": "Invalid name",
+  "{TITLE_VALUETOOSMALL}": "Value too small.",
+
 
   //Infobox prompt messages
   "{PROMPT_PONGLOST}": "You lost this game of Pong. Guess you should've cashed out...",
   "{PROMPT_CODEPOINTSTRANSFERRED}": "%transferrer has transferred %amount Codepoints to your system.",
   "{PROMPT_INVALIDPORT}": "The Digital Society Port must be a valid whole number between 0 and 65535.",
+  "{PROMPT_ENTERSYSNAME}": "Please enter a system name for your computer.",
+  "{PROMPT_INVALIDNAME}": "The name you entered cannot be blank. Please enter another name.",
+  "{PROMPT_SMALLSYSNAME}": "Your system name must have at least 5 characters in it.",
 
   //Pong
   "{PONG_LEVELREACHED}": "You've reached level %level!",
@@ -141,4 +148,46 @@
   "{MAINMENU_CAMPAIGN}": "Campaign",
   "{MAINMENU_SANDBOX}": "Sandbox",
   "{MAINMENU_NEWGAME}": "New game",
+
+  //Miscelaneous strings
+  "{MISC_KERNELVERSION}": "ShiftKernel - v0.9.4",
+  "{MISC_KERNELBOOTED}": "[sys] Kernel startup completed.",
+  "{MISC_SHIFTFSDRV}": "[sfs] ShiftFS core driver, version 2.7",
+  "{MISC_SHIFTFSBLOCKSREAD}": "[sfs] Driver initiated. 4096 blocks read.",
+  "{MISC_LOADINGCONFIG}": "[confd] Loading system configuration... success",
+  "{MISC_BUILDINGCMDS}": "[termdb] Terminal database is being parsed...",
+  "{MISC_CONNECTINGTONETWORK}": "[inetd] Connecting to network...",
+  "{MISC_CONNECTIONSUCCESSFUL}": "[inetd] Connection successful.",
+  "{MISC_DHCPHANDSHAKEFINISHED}": "[inetd] DHCP handshake finished.",
+  "{MISC_NONETWORK}": "[inetd] No network access points found.",
+  "{MISC_SANDBOXMODE}": "[sos] Sandbox Mode initiating...",
+  "{MISC_ACCEPTINGLOGINS}": "[systemd] Accepting logins on local tty1.",
+
+  //ShiftOS engine strings
+  "{ENGINE_CANNOTLOADSAVE}": "[sos] Error. Cannot load user save file.",
+
+  //Pre-connection loading messages
+  "{LOADINGMSG1_0}": "[systemd] The light is so bright...",
+  "{LOADINGMSG1_1}": "[systemd] Hold your colors...",
+  "{LOADINGMSG1_2}": "[systemd] Time to shift it my way...",
+  "{LOADINGMSG1_3}": "[systemd] Does anybody even read this?",
+  "{LOADINGMSG1_4}": "[systemd] I....just wanna play it right... We're....gonna get there tonight...",
+  "{LOADINGMSG1_5}": "[systemd] I'm a computer.",
+  "{LOADINGMSG1_6}": "[systemd] What ya gonna do, what ya gonna do, when DevX comes for you?",
+  "{LOADINGMSG1_7}": "[systemd] Artificial intelligence do everything now.",
+  "{LOADINGMSG1_8}": "[systemd] Nobody is really here.",
+  "{LOADINGMSG1_9}": "[systemd] I so want a giant cake for breakfast.",
+
+  //Post-connection loading messages
+  "{LOADINGMSG2_0}": "[systemd] It's all yours, Shifter.",
+  "{LOADINGMSG2_1}": "[systemd] That's a nice network you got there...",
+  "{LOADINGMSG2_2}": "[systemd] Leave me alone and go earn some Codepoints.",
+  "{LOADINGMSG2_3}": "[systemd] I'm hungry... Cake would be appreciated.",
+  "{LOADINGMSG2_4}": "[systemd] SEVERE: CAKE NOT FOUND. PLEASE INSERT CAKE INTO DRIVE 1:/ AND PRESS ANY KEY TO CONTINUE.",
+  "{LOADINGMSG2_5}": "[systemd] Now SCREAM!",
+  "{LOADINGMSG2_6}": "[systemd] Yes, I'd like to order a giant 6-mile-long tripple-chocolate ice cream cake?",
+  "{LOADINGMSG2_7}": "[systemd] There's no antidote...",
+  "{LOADINGMSG2_8}": "[systemd] Can I at least have a muffin?",
+  "{LOADINGMSG2_9}": "[systemd] System initiated, but I still want a cake.",
+
 }
