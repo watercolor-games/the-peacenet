@@ -637,6 +637,9 @@ namespace ShiftOS.Engine
         [ShifterDescription("The maximize button color")]
         public Color MaximizeButtonColor = Accent1;
 
+        [ShifterHidden]
+        public CommandParser CurrentParser = CommandParser.GenerateSample();
+
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
         [ShifterName("Minimize Button Color")]

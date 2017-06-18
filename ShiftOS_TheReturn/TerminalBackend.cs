@@ -92,30 +92,25 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Invokes a ShiftOS terminal command.
         /// </summary>
-        /// <param name="ns">The command's namespace.</param>
         /// <param name="command">The command name.</param>
         /// <param name="arguments">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
-        public static void InvokeCommand(string ns, string command, Dictionary<string, string> arguments, bool isRemote = false)
+        public static void InvokeCommand(string command, Dictionary<string, string> arguments, bool isRemote = false)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(ns))
-                    return;
+                bool commandWasClient = RunClient(command, arguments, isRemote);
 
-
-                bool commandWasClient = RunClient(ns, command, arguments, isRemote);
-
-                if (!commandWasClient && !string.IsNullOrWhiteSpace(ns))
+                if (!commandWasClient)
                 {
-                    Console.WriteLine("Error: Command not found.");
+                    Console.WriteLine("{ERR_COMMANDNOTFOUND}");
                 }
 
-                CommandProcessed?.Invoke(ns + "." + command, JsonConvert.SerializeObject(arguments));
+                CommandProcessed?.Invoke(command, JsonConvert.SerializeObject(arguments));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Command parse error: {ex.Message}"); // This shouldn't ever be called now
+                Console.WriteLine("{ERR_SYNTAXERROR}");
                 PrefixEnabled = true;
 
             }

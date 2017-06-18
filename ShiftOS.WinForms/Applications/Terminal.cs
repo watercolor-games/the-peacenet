@@ -260,23 +260,17 @@ namespace ShiftOS.WinForms.Applications
                                 }
                                 else
                                 {
-                                    if (CurrentCommandParser.parser == null)
+                                    var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
+
+                                    if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
                                     {
-                                        TerminalBackend.InvokeCommand(text3);
+                                        Console.WriteLine("{ERR_SYNTAXERROR}");
                                     }
                                     else
                                     {
-                                        var result = CurrentCommandParser.parser.ParseCommand(text3);
-
-                                        if (result.Equals(default(KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>)))
-                                        {
-                                            Console.WriteLine("Syntax Error: Syntax Error");
-                                        }
-                                        else
-                                        {
-                                            TerminalBackend.InvokeCommand(result.Key.Key, result.Key.Value, result.Value);
-                                        }
+                                        TerminalBackend.InvokeCommand(result.Key, result.Value);
                                     }
+
                                 }
                             }
                             if (TerminalBackend.PrefixEnabled)
