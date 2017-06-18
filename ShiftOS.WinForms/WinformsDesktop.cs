@@ -265,40 +265,6 @@ namespace ShiftOS.WinForms
                 SetupDesktop();
             };
 
-            ulong lastcp = 0;
-
-            var storythread = new Thread(() =>
-            {
-                do
-                {
-                    while (SaveSystem.CurrentUser == null)
-                        Thread.Sleep(10);
-
-                    if (SaveSystem.CurrentSave != null)
-                    {
-                        if (SaveSystem.CurrentSave.Codepoints != lastcp)
-                            lastcp = SaveSystem.CurrentSave.Codepoints;
-                        if (lastcp >= 2500)
-                        {
-                            if (!Shiftorium.UpgradeInstalled("victortran_shiftnet"))
-                            {
-                                Story.Start("victortran_shiftnet");
-                            }
-                        }
-                        if(lastcp >= 5000)
-                        {
-                            if(Shiftorium.UpgradeInstalled("triwrite") && Shiftorium.UpgradeInstalled("simplesrc") && Shiftorium.UpgradeInstalled("victortran_shiftnet") && Shiftorium.UpgradeInstalled("story_hacker101_breakingthebonds"))
-                            {
-                                if (!Shiftorium.UpgradeInstalled("story_thefennfamily"))
-                                    Story.Start("story_thefennfamily");
-                            }
-                        }
-                    }
-                } while (!SaveSystem.ShuttingDown);
-            });
-            storythread.IsBackground = true;
-            storythread.Start();
-
             time.Tick += (o, a) =>
             {
                 if (Shiftorium.IsInitiated == true)
