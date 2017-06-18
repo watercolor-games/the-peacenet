@@ -124,7 +124,6 @@
     <Compile Include="AudioManager.cs" />
     <Compile Include="BFInterpreter.cs" />
     <Compile Include="CommandParser.cs" />
-    <Compile Include="Commands.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConsoleEx.cs" />
     <Compile Include="CrashHandler.cs" />

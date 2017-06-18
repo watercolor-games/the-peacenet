@@ -166,7 +166,7 @@ namespace ShiftOS.Engine
         public static event EmptyEventHandler OnExit;
 
         // Starts the engine's exit routine, firing the OnExit event.
-        internal static void Exit()
+        public static void Exit()
         {
             OnExit?.Invoke();
             //disconnect from MUD
