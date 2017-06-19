@@ -241,4 +241,15 @@
   "{FORMATEDITOR_ARGUMENT_LOWER}": "argument",
   "{FORMATEDITOR_VALUE_LOWER}": "value",
   "{FORMATEDITOR_ENTERSYNTAX}": "Enter syntax here",
+
+  //BIOS screen text
+  "{MISC_BIOSCOPYRIGHT}": "AMIBIOS (C) %year Australian Microtrends, Plc",
+  "{MISC_BIOSVERSION}": "Shiftsoft 480-L ACPI BIOS Revision 1002",
+  "{MISC_BIOSCPU}": "CPU : VTC 210-N %cores CPU 1.33GHz",
+  "{MISC_CLOCKSPEED}": "   Speed : 1.337Ghz",
+  "{MISC_RUNSETUP}": "Press DEL to run Setup",
+  "{MISC_BBSPOPUP}": "Press <F8> for BBS POPUP",
+  "{MISC_RAMFREQ}": "DDR3 Frequency 1337MHz, Dual Channel, Linear Mode",
+  "{MISC_CHECKINGNVRAM}": "Checking NVRAM",
+  "{MISC_RAM}": "1337 MB OK",
 }
