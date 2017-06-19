@@ -249,7 +249,7 @@
 
   //Program commands
   "{WO_ABOUT}": "about",
-  "{WO_ADDRESSBOOK}": "adress_book",
+  "{WO_ADDRESSBOOK}": "address_book",
   "{WO_ARTPAD}": "artpad",
   "{WO_AUDIOPLAYER}": "audio_player",
   "{WO_CALCULATOR}": "calculator",
