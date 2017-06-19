@@ -107,7 +107,7 @@ namespace ShiftOS.Engine
             SkinEngine.Init();
             Random rnd = new Random();
             int loadingJoke1 = rnd.Next(10);
-            int loadingJoke2 = rnd.Next(10);
+            int loadingJoke2 = rnd.Next(11);
 
             TerminalBackend.OpenTerminal();
 

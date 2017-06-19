@@ -65,6 +65,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
 
         public void OnSkinLoad()
         {
+            Tools.ControlManager.SetupControls(this);
         }
 
         public void OnUpgrade()

@@ -10,7 +10,7 @@ namespace ShiftOS.Objects
 {
     public class UserConfig
     {
-        public string UniteUrl { get; set; }
+        public string Language { get; set; }
         public string DigitalSocietyAddress { get; set; }
         public int DigitalSocietyPort { get; set; }
 
@@ -18,7 +18,7 @@ namespace ShiftOS.Objects
         {
             var conf = new UserConfig
             {
-                UniteUrl = "http://getshiftos.ml",
+                Language  = "english",
                 DigitalSocietyAddress = "michaeltheshifter.me",
                 DigitalSocietyPort = 13370
             };

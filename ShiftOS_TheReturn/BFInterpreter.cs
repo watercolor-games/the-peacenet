@@ -53,7 +53,9 @@ namespace ShiftOS.Engine
         private Stream str;
 
         public IBFListener lst = null;
-        
+
+        private static byte[] newline = Encoding.UTF8.GetBytes(Environment.NewLine);
+
         public BFInterpreter(Stream io, IBFListener listener = null, string program = "")
         {
             lck = new object();
@@ -62,22 +64,21 @@ namespace ShiftOS.Engine
             Reset();
             lst = listener;
         }
-        public void Execute()
+        public void Execute(string program, int offset = 0)
         {
+            int c = 0;
             lock (lck)
-                for (int iptr = 0; iptr < prg.Length; iptr++)
+                while (c < program.Length)
                 {
-                    if (lst != null)
-                        lst.IPtrMoved(iptr);
-                    switch (prg[iptr])
+                    switch (program[c++])
                     {
-                        case '>':
-                            ptr++;
+                        case '<':
+                            ptr--;
                             if (lst != null)
                                 lst.PointerMoved(ptr);
                             break;
-                        case '<':
-                            ptr--;
+                        case '>':
+                            ptr++;
                             if (lst != null)
                                 lst.PointerMoved(ptr);
                             break;
@@ -92,39 +93,45 @@ namespace ShiftOS.Engine
                                 lst.MemChanged(ptr, mem[ptr]);
                             break;
                         case '.':
-                            str.WriteByte(mem[ptr]);
+                            if (mem[ptr] == 10)
+                                str.Write(newline, 0, newline.Length); // normalise newline
+                            else
+                                str.WriteByte(mem[ptr]);
                             break;
                         case ',':
                             mem[ptr] = (byte)str.ReadByte();
+                            if (mem[ptr] == 13)
+                                mem[ptr] = 10; // normalise newline
                             if (lst != null)
                                 lst.MemChanged(ptr, mem[ptr]);
                             break;
                         case '[':
-                            if (mem[ptr] == 0)
-                                while (prg[iptr] != ']')
-                                {
-                                    iptr++;
-                                    if (lst != null)
-                                        lst.IPtrMoved(iptr);
-                                }
+                            int b;
+                            int oldc = c;
+                            for (b = 1; b != 0 && c < program.Length; c++)
+                            {
+                                if (program[c] == '[')
+                                    b++;
+                                else if (program[c] == ']')
+                                    b--;
+                            }
+                            if (b == 0)
+                            {
+                                string block = program.Substring(oldc, c - oldc - 1);
+                                while (mem[ptr] != 0)
+                                    Execute(block, offset + oldc);
+                            }
                             break;
                         case ']':
-                            if (mem[ptr] != 0)
-                                while (prg[iptr] != '[')
-                                {
-                                    iptr--;
-                                    if (lst != null)
-                                        lst.IPtrMoved(iptr);
-                                }
-                            break;
+                            throw new Exception("Unbalanced brackets");
                     }
+                    if (lst != null)
+                        lst.IPtrMoved(offset + c);
                 }
         }
-        public void Execute(string program)
+        public void Execute()
         {
-            lock (lck)
-                prg = program;
-            Execute();
+            Execute(prg);
         }
         public void Reset()
         {

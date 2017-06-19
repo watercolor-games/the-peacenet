@@ -23,7 +23,7 @@ namespace ShiftOS.Unite
         {
             get
             {
-                return UserConfig.Get().UniteUrl;
+                return "";
             }
         }
 
