@@ -35,10 +35,11 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Calculator", true, "al_calculator", "Accessories")]
+    [Launcher("{TITLE_CALCULATOR}", true, "al_calculator", "{AL_ACCESSORIES}")]
     [RequiresUpgrade("calculator")]
-    [WinOpen("calculator")]
+    [WinOpen("{WO_CALCULATOR}")]
     [DefaultIcon("iconCalculator")]
+    [DefaultTitle("{TITLE_CALCULATOR}")]
     public partial class Calculator : UserControl, IShiftOSWindow
     {
         public bool justopened = false;

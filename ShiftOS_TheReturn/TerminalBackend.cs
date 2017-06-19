@@ -448,19 +448,6 @@ namespace ShiftOS.Engine
         }
 
         /// <summary>
-        /// Runs a command on the client-side.
-        /// </summary>
-        /// <param name="ns">The command's namespace.</param>
-        /// <param name="cmd">The command name.</param>
-        /// <param name="args">The command's arguments.</param>
-        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
-        /// <returns>Whether the command ran successfully.</returns>
-        public static bool RunClient(string ns, string cmd, Dictionary<string, string> args, bool isRemote = false)
-        {
-            return RunClient(ns + "." + cmd, args, isRemote);
-        }
-
-        /// <summary>
         /// Runs a command on the client.
         /// </summary>
         /// <param name="text">The command text.</param>
@@ -491,8 +478,7 @@ namespace ShiftOS.Engine
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
 
 
-            string[] split = text.Split('.');
-            var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
+            var cmd = Commands.FirstOrDefault(x => Localization.Parse(x.CommandInfo.name) == text);
             if (cmd == null)
                 return false;
             if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))

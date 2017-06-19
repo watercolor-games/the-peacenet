@@ -43,10 +43,11 @@ using System.Diagnostics;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("Artpad", true, "al_artpad", "Graphics")]
+    [Launcher("{TIITLE_ARTPAD}", true, "al_artpad", "{AL_GRAPHICS}")]
     [RequiresUpgrade("artpad")]
-    [WinOpen("artpad")]
+    [WinOpen("{WO_ARTPAD}")]
     [DefaultIcon("iconArtpad")]
+    [DefaultTitle("{TITLE_ARTPAD}")]
     public partial class Artpad : UserControl, IShiftOSWindow
     {
         /// <summary>

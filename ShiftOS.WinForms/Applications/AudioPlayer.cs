@@ -37,10 +37,10 @@ using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [AppscapeEntry("Audio Player", "Play music and other sounds on your computer.", 3047, 1000, "file_skimmer", "Entertainment")]
-    [Launcher("Audio Player", false, null, "Entertainment")]
-    [WinOpen("audio_player")]
-    [DefaultTitle("Audio Player")]
+    [AppscapeEntry("{TITLE_AUDIOPLAYER}", "{DESC_AUDIOPLAYER}", 3047, 1000, "file_skimmer", "{AL_ENTERTAINMENT}")]
+    [Launcher("{TITLE_AUDIOPLAYER}", false, null, "{AL_ENTERTAINMENT}")]
+    [WinOpen("{WO_AUDIOPLAYER}")]
+    [DefaultTitle("{TITLE_AUDIOPLAYER}")]
     public partial class AudioPlayer : UserControl, IShiftOSWindow
     {
         public AudioPlayer()

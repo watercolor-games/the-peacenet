@@ -47,8 +47,9 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Terminal", false, null, "Utilities")]
-    [WinOpen("terminal")]
+    [Launcher("{TITLE_TERMINAL}", false, null, "{AL_UTILITIES}")]
+    [WinOpen("{WO_TERMINAL}")]
+    [DefaultTitle("{TITLE_TERMINAL}")]
     [DefaultIcon("iconTerminal")]
     public partial class Terminal : UserControl, IShiftOSWindow
     {

@@ -185,23 +185,11 @@
     <Compile Include="Applications\ShiftLetters.Designer.cs">
       <DependentUpon>ShiftLetters.cs</DependentUpon>
     </Compile>
-    <Compile Include="Applications\MUDControlCentre.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\MUDControlCentre.Designer.cs">
-      <DependentUpon>MUDControlCentre.cs</DependentUpon>
-    </Compile>
     <Compile Include="Applications\NameChanger.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Applications\NameChanger.Designer.cs">
       <DependentUpon>NameChanger.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\Notifications.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\Notifications.Designer.cs">
-      <DependentUpon>Notifications.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Shifter.cs">
       <SubType>UserControl</SubType>
@@ -238,12 +226,6 @@
     </Compile>
     <Compile Include="Applications\ShiftSweeper.Designer.cs">
       <DependentUpon>ShiftSweeper.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Applications\ShopItemCreator.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Applications\ShopItemCreator.Designer.cs">
-      <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </Compile>
     <Compile Include="Applications\Skin Loader.cs">
       <SubType>UserControl</SubType>
@@ -550,14 +532,8 @@
     <EmbeddedResource Include="Applications\ShiftLetters.resx">
       <DependentUpon>ShiftLetters.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Applications\MUDControlCentre.resx">
-      <DependentUpon>MUDControlCentre.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Applications\NameChanger.resx">
       <DependentUpon>NameChanger.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\Notifications.resx">
-      <DependentUpon>Notifications.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Shifter.resx">
       <DependentUpon>Shifter.cs</DependentUpon>
@@ -576,9 +552,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\ShiftSweeper.resx">
       <DependentUpon>ShiftSweeper.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Applications\ShopItemCreator.resx">
-      <DependentUpon>ShopItemCreator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Skin Loader.resx">
       <DependentUpon>Skin Loader.cs</DependentUpon>

@@ -258,11 +258,7 @@ namespace ShiftOS.Engine
             }
             else if (format is CommandFormatMarker)
             {
-                if (format is CommandFormatNamespace)
-                {
-                    type = "namespace";
-                }
-                else if (format is CommandFormatCommand)
+                if (format is CommandFormatCommand)
                 {
                     type = "command";
                 }
@@ -287,8 +283,6 @@ namespace ShiftOS.Engine
                     return new CommandFormatOptionalText(text);
                 case "regexText":
                     return new CommandFormatRegex(text);
-                case "namespace":
-                    return new CommandFormatNamespace();
                 case "command":
                     return new CommandFormatCommand();
                 case "argument":
@@ -303,10 +297,16 @@ namespace ShiftOS.Engine
     }
 
 
-    public interface CommandFormat
+    public class CommandFormat
     {
-        string CheckValidity(string check);
-        Control Draw();
+        public virtual string CheckValidity(string check)
+        {
+            return check;
+        }
+
+
+        //winforms use in engine - coding standard violation.
+        //Control Draw(); 
     }
     public class CommandFormatText : CommandFormat
     {
@@ -323,19 +323,9 @@ namespace ShiftOS.Engine
             this.str = str;
         }
 
-        public virtual string CheckValidity(string check)
+        public override string CheckValidity(string check)
         {
             return check.StartsWith(str) ? str : "+FALSE+";
-        }
-
-        public Control Draw()
-        {
-            textBox = new TextBox();
-            textBox.TextChanged += new EventHandler(TextChanged);
-            textBox.Location = new Point(0, 0);
-            textBox.Text = str;
-
-            return textBox;
         }
 
         void TextChanged(object sender, EventArgs e)
@@ -384,11 +374,11 @@ namespace ShiftOS.Engine
         {
         }
 
-        public virtual string CheckValidity(string check)
+        public override string CheckValidity(string check)
         {
             string res = string.Empty;
-            string alphanumeric = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm"; // not using regex for performance reasons
-
+            string alphanumeric = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-_0123456789"; // not using regex for performance reasons
+            //You said "alphanumeric" for that variable name... but it only had the alphabet in it. Rectified. - Michael
             foreach (char c in check)
             {
                 if (alphanumeric.IndexOf(c) > -1)
@@ -403,45 +393,16 @@ namespace ShiftOS.Engine
 
             return res;
         }
-
-        public virtual Control Draw()
-        {
-            button = new Button();
-            button.Location = new Point(0, 0);
-            button.Text = "Marker";
-
-            return button;
-        }
     }
 
     public class CommandFormatCommand : CommandFormatMarker
     {
-        public override Control Draw()
-        {
-            Button draw = (Button)base.Draw();
-            draw.Text = "Command";
-            return draw;
-        }
-    }
-
-    public class CommandFormatNamespace : CommandFormatMarker
-    {
-        public override Control Draw()
-        {
-            Button draw = (Button)base.Draw();
-            draw.Text = "Namespace";
-            return draw;
-        }
+        //stub
     }
 
     public class CommandFormatArgument : CommandFormatMarker
     {
-        public override Control Draw()
-        {
-            Button draw = (Button)base.Draw();
-            draw.Text = "Argument";
-            return draw;
-        }
+        //stub
     }
 
     public class CommandFormatValue : CommandFormatMarker
@@ -476,13 +437,6 @@ namespace ShiftOS.Engine
                 done = true;
             }
             return done ? res : "+FALSE+";
-        }
-
-        public override Control Draw()
-        {
-            Button draw = (Button)base.Draw();
-            draw.Text = "\"Value\"";
-            return draw;
         }
     }
 }

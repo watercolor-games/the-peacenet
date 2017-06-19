@@ -76,7 +76,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Gets or sets this item's category.
         /// </summary>
-        public string Category { get; private set; }
+        public string Category { get; internal set; }
 
         /// <summary>
         /// Gets whether or not the required upgrade is installed.

@@ -12,9 +12,9 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("Pong", true, "al_pong", "Games")]
-    [WinOpen("pong")]
-    [DefaultTitle("Pong")]
+    [Launcher("{TITLE_PONG}", true, "al_pong", "{AL_GAMES}")]
+    [WinOpen("{WO_PONG}")]
+    [DefaultTitle("{TITLE_PONG}")]
     [DefaultIcon("iconPong")]
     public partial class Pong : UserControl, IShiftOSWindow
     {

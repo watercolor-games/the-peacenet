@@ -13,10 +13,10 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [WinOpen("address_book")]
-    [AppscapeEntry("Address Book", "Add and edit your contacts within the digital society in an easy-to-use application.", 1024, 750, null, "Office")]
-    [DefaultTitle("Address Book")]
-    [Launcher("Address Book", false, null, "Office")]
+    [WinOpen("{WO_ADDRESSBOOK}")]
+    [AppscapeEntry("{TITLE_ADDRESSBOOK}", "{DESC_ADDRESSBOOK}", 1024, 750, null, "{AL_OFFICE}")]
+    [DefaultTitle("{TITLE_ADDRESSBOOK}")]
+    [Launcher("{TITLE_ADDRESSBOOK}", false, null, "{AL_OFFICE}")]
     public partial class AddressBook : UserControl, IShiftOSWindow
     {
         public AddressBook()

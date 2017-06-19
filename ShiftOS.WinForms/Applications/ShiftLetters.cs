@@ -37,9 +37,9 @@ using System.Windows.Forms;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("ShiftLetters", false, null, "Games")]
-    [AppscapeEntry("ShiftLetters", "Let's see how much you know about ShiftOS by playing this tiny little Hangman game! Shiftorium Upgrades exist to allow you to buy different word sets!", 300, 150, null, "Games")]
-    [WinOpen("shiftletters")]
+    [Launcher("{TITLE_SHIFTLETTERS}", false, null, "{AL_GAMES}")]
+    [AppscapeEntry("{TITLE_SHIFTLETTERS}", "{DESC_SHIFTLETTERS}", 300, 150, null, "{AL_GAMES}")]
+    [WinOpen("{WO_SHIFTLETTERS}")]
     [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow
     {

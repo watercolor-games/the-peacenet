@@ -71,7 +71,12 @@ namespace ShiftOS.Engine
                         {
                             var launch = attr as LauncherAttribute;
                             if (launch.UpgradeInstalled)
-                                win.Add(new LauncherItem { DisplayData = launch, LaunchType = type });
+                            {
+                                var data = new LauncherItem { DisplayData = launch, LaunchType = type };
+                                data.DisplayData.Category = Localization.Parse(data.DisplayData.Category);
+                                data.DisplayData.Name = Localization.Parse(data.DisplayData.Name);
+                                win.Add(data);
+                            }
                         }
             }
 
