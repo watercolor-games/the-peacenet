@@ -352,6 +352,16 @@ namespace ShiftOS.WinForms.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap austmicrotrends {
+            get {
+                object obj = ResourceManager.GetObject("austmicrotrends", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DefaultMouse {
             get {
                 object obj = ResourceManager.GetObject("DefaultMouse", resourceCulture);
@@ -1104,7 +1114,7 @@ namespace ShiftOS.WinForms.Properties {
         ///		Name: &quot;NetXtreme Hyper Edition&quot;,
         ///		CostPerMonth: 150,
         ///		DownloadSpeed: 524288, //512 kb/s
-        ///		Description: &quot;It&apos;s time to supercharge your Shiftnet experience. [rest of string was truncated]&quot;;.
+        ///		Description: &quot;It&apos;s time to supercharge your Shift [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ShiftnetServices {
             get {
@@ -1126,8 +1136,7 @@ namespace ShiftOS.WinForms.Properties {
         ///		Name: &quot;Icon Manager&quot;,
         ///		Cost: 450,
         ///		Description: &quot;This tool allows you to add and edit application icons within ShiftOS for the small prive of 450 Codepoints!&quot;,
-        ///		Dependencies: &quot;skinning&quot;,
-        ///		Category [rest of string was truncated]&quot;;.
+        ///		Dependencies: &quot;skinning [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {
@@ -1137,7 +1146,7 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff0\deff0\stshfdbch31505\stshfloch31506\stshfhich31506\stshfbi0\deflang1033\deflangfe1033\themelang1033\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}
-        ///{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\f38\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0302020204030204}Calibri Light;}{\flo [rest of string was truncated]&quot;;.
+        ///{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\f38\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0302020204030204}Calibri Light;}{\fl [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ShiftOS {
             get {
@@ -1286,8 +1295,7 @@ namespace ShiftOS.WinForms.Properties {
         ///Eine kurze Erklärung wie du das Terminal benutzt lautet wiefolgt. Du kannst das command &apos;sos.help&apos; benutzen um eine Liste aller commands aufzurufen. Schreib es
         ///einfach in das Terminal und drücke &lt;enter&gt; um alle commands anzuzeigen.
         /// 
-        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Beispiel:
-        /// [rest of string was truncated]&quot;;.
+        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Be [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string strings_de {
             get {
@@ -1296,18 +1304,23 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {
-        ///	&quot;{SUBMIT}&quot;:&quot;Submit&quot;,
+        ///   Looks up a localized string similar to /*
+        /// * ShiftOS English Language Pack
+        /// *
+        /// * This is the default language pack distributed within the game.
+        /// */
         ///
-        ///&quot;{TERMINAL_TUTORIAL_1}&quot;:&quot;Welcome to the ShiftOS terminal. This is where you will spend the bulk of your time within ShiftOS.
-        ///	
-        ///A brief rundown of how to use the terminal is as follows. You can use the &apos;sos.help&apos; command to show a list of all commands. Simply type it in and strike &lt;enter&gt; to view all commands.
-        ///	
-        ///Commands can be sent arguments by specifying a key-value pair inside a {} block at the end of the command. For example:
-        ///	
-        ///some.command{print:\&quot;hello\&quot;}
-        ///math.add{op1:1,op2:2}
-        /// [rest of string was truncated]&quot;;.
+        ///{
+        ///  //General strings
+        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
+        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Programs&quot;,
+        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Commands&quot;,
+        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Objectives&quot;,
+        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Current processes&quot;,
+        ///  &quot;{GEN_WELCOME}&quot;: &quot;Welcome to ShiftOS.&quot;,
+        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;System name&quot;,
+        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Password&quot;,
+        ///  &quot;{GEN_LPROMPT [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string strings_en {
             get {
@@ -1495,7 +1508,7 @@ namespace ShiftOS.WinForms.Properties {
         ///		&quot;Before you can begin with ShiftOS, you&apos;ll need to know a few things about it.&quot;,
         ///		&quot;One: Terminal command syntax.&quot;,
         ///		&quot;Inside ShiftOS, the bulk of your time is going to be spent within the Terminal.&quot;,
-        ///		&quot;The Terminal is an application that starts up when you turn on your computer. It allows you to execute system commands, open program [rest of string was truncated]&quot;;.
+        ///		&quot;The Terminal is an application that starts up when you turn on your computer. It allows you to execute system commands, ope [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sys_shiftoriumstory {
             get {
