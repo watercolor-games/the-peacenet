@@ -62,60 +62,65 @@ namespace ShiftOS.Engine
             Reset();
             lst = listener;
         }
-        public void Execute(string program)
+        public void Execute(string program, int offset = 0)
         {
             int c = 0;
             lock (lck)
-            while (c < program.Length)
-                switch (program[c++])
+                while (c < program.Length)
                 {
-                    case '<':
-                        ptr--;
-                        if (lst != null)
-                            lst.PointerMoved(ptr);
-                        break;
-                    case '>':
-                        ptr++;
-                        if (lst != null)
-                            lst.PointerMoved(ptr);
-                        break;
-                    case '+':
-                        mem[ptr]++;
-                        if (lst != null)
-                            lst.MemChanged(ptr, mem[ptr]);
-                        break;
-                    case '-':
-                        mem[ptr]--;
-                        if (lst != null)
-                            lst.MemChanged(ptr, mem[ptr]);
-                        break;
-                    case '.':
-                        str.WriteByte(mem[ptr]);
-                        break;
-                    case ',':
-                        mem[ptr] = (byte)str.ReadByte();
-                        if (lst != null)
-                            lst.MemChanged(ptr, mem[ptr]);
-                        break;
-                    case '[':
-                        int b;
-                        int oldc = c;
-                        for (b = 1; b != 0 && c < program.Length; c++)
-                        {
-                            if (program[c] == '[')
-                                b++;
-                            else if (program[c] == ']')
-                                b--;
-                        }
-                        if (b == 0)
-                        {
-                            string block = program.Substring(oldc, c - oldc - 1);
-                            while (mem[ptr] != 0)
-                                Execute(block);
-                        }
-                        break;
-                    case ']':
-                        throw new Exception("Unbalanced brackets");
+                    switch (program[c++])
+                    {
+                        case '<':
+                            ptr--;
+                            if (lst != null)
+                                lst.PointerMoved(ptr);
+                            break;
+                        case '>':
+                            ptr++;
+                            if (lst != null)
+                                lst.PointerMoved(ptr);
+                            break;
+                        case '+':
+                            mem[ptr]++;
+                            if (lst != null)
+                                lst.MemChanged(ptr, mem[ptr]);
+                            break;
+                        case '-':
+                            mem[ptr]--;
+                            if (lst != null)
+                                lst.MemChanged(ptr, mem[ptr]);
+                            break;
+                        case '.':
+                            str.WriteByte(mem[ptr]);
+                            break;
+                        case ',':
+                            mem[ptr] = (byte)str.ReadByte();
+                            if (lst != null)
+                                lst.MemChanged(ptr, mem[ptr]);
+                            break;
+                        case '[':
+                            int b;
+                            int oldc = c;
+                            for (b = 1; b != 0 && c < program.Length; c++)
+                            {
+                                if (program[c] == '[')
+                                    b++;
+                                else if (program[c] == ']')
+                                    b--;
+                            }
+                            if (b == 0)
+                            {
+                                string block = program.Substring(oldc, c - oldc - 1);
+                                while (mem[ptr] != 0)
+                                    Execute(block, offset + oldc);
+
+                            }
+                            break;
+                        case ']':
+                            throw new Exception("Unbalanced brackets");
+                    }
+                    if (lst != null)
+                        lst.IPtrMoved(offset + c);
                 }
         }
         public void Execute()

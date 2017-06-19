@@ -22,6 +22,7 @@ namespace ShiftOS.WinForms.Applications
         {
             private TextBox box;
             private KeysConverter kc;
+            public KeyPressEventHandler handler;
             public TextBoxStream(TextBox mybox)
             {
                 kc = new KeysConverter();
@@ -55,7 +56,7 @@ namespace ShiftOS.WinForms.Applications
             {
                 object lck = new object();
                 int ptr = offset;
-                KeyPressEventHandler handler = (o, a) =>
+                handler = (o, a) =>
                 {
                     lock (lck)
                     {
@@ -98,6 +99,7 @@ namespace ShiftOS.WinForms.Applications
         private static string[] DefaultMem;
         private BFInterpreter Interpreter;
         private Thread InterpreterThread;
+        private TextBoxStream consolestr;
         private void DoLayout()
         {
             memlist.Left = 0;
@@ -121,7 +123,8 @@ namespace ShiftOS.WinForms.Applications
             for (ushort i = 0; i < 30000; i++)
                 DefaultMem[i] = "0";
             memlist.Items.AddRange(DefaultMem);
-            Interpreter = new BFInterpreter(new TextBoxStream(consoleout), this);
+            consolestr = new TextBoxStream(consoleout);
+            Interpreter = new BFInterpreter(consolestr, this);
         }
 
         public void IPtrMoved(int newval)
@@ -212,6 +215,7 @@ namespace ShiftOS.WinForms.Applications
                     InterpreterThread.Abort();
                 }
                 catch { }
+                consoleout.KeyPress -= consolestr.handler;
         }
 
         private void reset_Click(object sender, EventArgs e)
