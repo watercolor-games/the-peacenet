@@ -900,6 +900,7 @@
     <None Include="Resources\ShiftOSFull.png" />
     <Content Include="Resources\GuessTheNumber.py" />
     <None Include="Resources\mindblow.png" />
+    <None Include="Resources\shiftoes.png" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
