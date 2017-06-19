@@ -53,7 +53,9 @@ namespace ShiftOS.Engine
         private Stream str;
 
         public IBFListener lst = null;
-        
+
+        private static byte[] newline = Encoding.UTF8.GetBytes(Environment.NewLine);
+
         public BFInterpreter(Stream io, IBFListener listener = null, string program = "")
         {
             lck = new object();
@@ -91,10 +93,15 @@ namespace ShiftOS.Engine
                                 lst.MemChanged(ptr, mem[ptr]);
                             break;
                         case '.':
-                            str.WriteByte(mem[ptr]);
+                            if (mem[ptr] == 10)
+                                str.Write(newline, 0, newline.Length); // normalise newline
+                            else
+                                str.WriteByte(mem[ptr]);
                             break;
                         case ',':
                             mem[ptr] = (byte)str.ReadByte();
+                            if (mem[ptr] == 13)
+                                mem[ptr] = 10; // normalise newline
                             if (lst != null)
                                 lst.MemChanged(ptr, mem[ptr]);
                             break;
@@ -113,7 +120,6 @@ namespace ShiftOS.Engine
                                 string block = program.Substring(oldc, c - oldc - 1);
                                 while (mem[ptr] != 0)
                                     Execute(block, offset + oldc);
-
                             }
                             break;
                         case ']':
