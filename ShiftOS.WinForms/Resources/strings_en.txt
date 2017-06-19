@@ -245,7 +245,7 @@
 
   //Program commands
   "{WO_ABOUT}": "about",
-  "{WO_ADRESSBOOK}": "adress_book",
+  "{WO_ADDRESSBOOK}": "adress_book",
   "{WO_ARTPAD}": "artpad",
   "{WO_AUDIOPLAYER}": "audio_player",
   "{WO_CALCULATOR}": "calculator",
