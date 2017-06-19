@@ -889,6 +889,7 @@
     <None Include="Resources\Ambient7.mp3" />
     <None Include="Resources\Ambient8.mp3" />
     <None Include="Resources\Ambient9.mp3" />
+    <None Include="Resources\austmicrotrends.png" />
     <Content Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />
