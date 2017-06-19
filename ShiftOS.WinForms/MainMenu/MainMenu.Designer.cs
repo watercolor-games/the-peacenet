@@ -50,6 +50,8 @@
             this.lbcurrentui = new System.Windows.Forms.Label();
             this.shiftos = new System.Windows.Forms.PictureBox();
             this.lbbuilddetails = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cblanguage = new System.Windows.Forms.ComboBox();
             this.flmenu.SuspendLayout();
             this.pnloptions.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -138,6 +140,8 @@
             // 
             // pnloptions
             // 
+            this.pnloptions.Controls.Add(this.cblanguage);
+            this.pnloptions.Controls.Add(this.label3);
             this.pnloptions.Controls.Add(this.txtdsport);
             this.pnloptions.Controls.Add(this.label2);
             this.pnloptions.Controls.Add(this.txtdsaddress);
@@ -145,7 +149,7 @@
             this.pnloptions.Controls.Add(this.flowLayoutPanel1);
             this.pnloptions.Location = new System.Drawing.Point(49, 26);
             this.pnloptions.Name = "pnloptions";
-            this.pnloptions.Size = new System.Drawing.Size(432, 167);
+            this.pnloptions.Size = new System.Drawing.Size(432, 198);
             this.pnloptions.TabIndex = 2;
             // 
             // txtdsport
@@ -188,7 +192,7 @@
             this.flowLayoutPanel1.Controls.Add(this.btnsave);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 136);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 167);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(432, 31);
             this.flowLayoutPanel1.TabIndex = 0;
@@ -295,6 +299,23 @@
             this.lbbuilddetails.TabIndex = 6;
             this.lbbuilddetails.Text = "label4";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(25, 117);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "{MAINMENU_LANGUAGE}";
+            // 
+            // cblanguage
+            // 
+            this.cblanguage.FormattingEnabled = true;
+            this.cblanguage.Location = new System.Drawing.Point(146, 117);
+            this.cblanguage.Name = "cblanguage";
+            this.cblanguage.Size = new System.Drawing.Size(225, 21);
+            this.cblanguage.TabIndex = 6;
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -348,5 +369,7 @@
         private System.Windows.Forms.Label lbcurrentui;
         private System.Windows.Forms.PictureBox shiftos;
         private System.Windows.Forms.Label lbbuilddetails;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox cblanguage;
     }
 }

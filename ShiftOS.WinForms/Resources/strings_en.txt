@@ -140,7 +140,8 @@
   "{TITLE_SHIFTSWEEPER}": "ShiftSweeper",
   "{TITLE_TERMINAL}": "Terminal",
   "{TITLE_TEXTPAD}": "TextPad",
-
+  "{TITLE_RESTARTREQUIRED}": "Restart required.",
+  
 
   //App Launcher categories
   "{AL_PROGRAMMING}": "Programming",
@@ -160,6 +161,7 @@
   "{PROMPT_ENTERSYSNAME}": "Please enter a system name for your computer.",
   "{PROMPT_INVALIDNAME}": "The name you entered cannot be blank. Please enter another name.",
   "{PROMPT_SMALLSYSNAME}": "Your system name must have at least 5 characters in it.",
+  "{PROMPT_RESTARTREQUIRED}": "For the changes you made to take effect, a restart of ShiftOS is required.",
 
   //Pong
   "{PONG_LEVELREACHED}": "You've reached level %level!",
@@ -188,6 +190,7 @@
   //Main menu - Settings
   "{MAINMENU_DSADDRESS}": "Digital Society address: ",
   "{MAINMENU_DSPORT": "Digital Society port: ",
+  "{MAINMENU_LANGUAGE}": "Language:",
 
   //Main Menu - General text
   "{MAINMENU_TITLE}": "Main menu",

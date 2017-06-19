@@ -1,0 +1,9 @@
+/*
+ * French translation
+ * 
+ * Made by Michael VanOverbeek with his grade 9 french skills because why not.
+ *
+ */
+
+{
+}

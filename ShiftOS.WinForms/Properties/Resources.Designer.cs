@@ -1329,6 +1329,23 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /*
+        /// * French translation
+        /// * 
+        /// * Made by Michael VanOverbeek with his grade 9 french skills because why not.
+        /// *
+        /// */
+        ///
+        ///{
+        ///}.
+        /// </summary>
+        internal static string strings_fr {
+            get {
+                return ResourceManager.GetString("strings_fr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap SuperDesk_screenshot {

@@ -156,6 +156,15 @@ namespace ShiftOS.WinForms.MainMenu
             txtdsaddress.Text = conf.DigitalSocietyAddress;
             txtdsport.Text = conf.DigitalSocietyPort.ToString();
 
+            cblanguage.Items.Clear();
+            foreach(var lang in Localization.GetAllLanguages())
+            {
+                var finf = new System.IO.FileInfo(lang);
+                int nameindex = finf.Name.Length - 5;
+                cblanguage.Items.Add(finf.Name.Remove(nameindex, 5));
+            }
+
+            cblanguage.Text = conf.Language;
 
             pnloptions.Show();
             pnloptions.BringToFront();
@@ -186,9 +195,20 @@ namespace ShiftOS.WinForms.MainMenu
 
             conf.DigitalSocietyPort = p;
 
+            bool requiresRestart = (conf.Language != cblanguage.Text);
+            conf.Language = cblanguage.Text;
+            
+
             System.IO.File.WriteAllText("servers.json", Newtonsoft.Json.JsonConvert.SerializeObject(conf, Newtonsoft.Json.Formatting.Indented));
 
             HideOptions();
+            if(requiresRestart == true)
+            {
+                Infobox.Show("{TITLE_RESTARTREQUIRED}", "{PROMPT_RESTARTREQUIRED}", () =>
+                {
+                    Application.Restart();
+                });
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)

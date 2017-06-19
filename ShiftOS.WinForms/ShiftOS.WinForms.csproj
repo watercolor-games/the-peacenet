@@ -436,12 +436,6 @@
     <Compile Include="Tools\DitheringEngine.cs" />
     <Compile Include="Tools\ShiftOSMenuRenderer.cs" />
     <Compile Include="TrailerCommands.cs" />
-    <Compile Include="UniteLoginDialog.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UniteLoginDialog.Designer.cs">
-      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UniteSignupDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -641,9 +635,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StatusIcons\Volume.resx">
       <DependentUpon>Volume.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UniteLoginDialog.resx">
-      <DependentUpon>UniteLoginDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UniteSignupDialog.resx">
       <DependentUpon>UniteSignupDialog.cs</DependentUpon>
@@ -873,6 +864,7 @@
     <None Include="Resources\ShiftOSFull.png" />
     <Content Include="Resources\GuessTheNumber.py" />
     <None Include="Resources\mindblow.png" />
+    <None Include="Resources\strings_fr.txt" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />

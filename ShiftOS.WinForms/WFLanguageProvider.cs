@@ -35,46 +35,86 @@ namespace ShiftOS.WinForms
 {
     public class WFLanguageProvider : ILanguageProvider
     {
+        private string resourcesPath
+        {
+            get
+            {
+                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ShiftOS", "languages");
+            }
+        }
+
         public string[] GetAllLanguages()
         {
-            return JsonConvert.DeserializeObject<string[]>(Properties.Resources.languages);
+            if (!System.IO.Directory.Exists(resourcesPath))
+            {
+                System.IO.Directory.CreateDirectory(resourcesPath);
+            }
+            return System.IO.Directory.GetFiles(resourcesPath).Where(x => x.ToLower().EndsWith(".lang")).ToArray();
+            
         }
 
         public string GetCurrentTranscript()
         {
-            try
+            string lang = ShiftOS.Objects.UserConfig.Get().Language;
+            if (string.IsNullOrWhiteSpace(lang))
             {
-                        return getDefault();
+                lang = "english";
+                var conf = Objects.UserConfig.Get();
+                conf.Language = lang;
+                System.IO.File.WriteAllText("servers.json", JsonConvert.SerializeObject(conf, Formatting.Indented));
             }
-            catch (NullReferenceException)
+            string foundPath = GetAllLanguages().FirstOrDefault(x => x.ToLower().EndsWith(lang + ".lang"));
+            //Update the english file.
+            System.IO.File.WriteAllText(System.IO.Path.Combine(resourcesPath, "english.lang"), Properties.Resources.strings_en);
+            //Update the french language pack.
+            System.IO.File.WriteAllText(System.IO.Path.Combine(resourcesPath, "french.lang"), Properties.Resources.strings_fr);
+
+            if (!System.IO.File.Exists(foundPath))
             {
-                return getDefault();
+                lang = "english";
+                var conf = Objects.UserConfig.Get();
+                conf.Language = lang;
+                System.IO.File.WriteAllText("servers.json", JsonConvert.SerializeObject(conf, Formatting.Indented));
+                return Properties.Resources.strings_en;
             }
+            else
+            {
+                return System.IO.File.ReadAllText(foundPath);
+            }
+
         }
 
         public string GetLanguagePath()
         {
-            switch (SaveSystem.CurrentSave.Language)
+            var lang = Objects.UserConfig.Get().Language;
+            if(string.IsNullOrWhiteSpace(lang) || !System.IO.File.Exists(System.IO.Path.Combine(resourcesPath, lang + ".lang")))
             {
-                case "deutsch":
-                    return Paths.GetPath("deutsch.local");
-                default:
-                    return Paths.GetPath("english.local");
-
+                lang = "english";
+                var conf = Objects.UserConfig.Get();
+                conf.Language = lang;
+                System.IO.File.WriteAllText("servers.json", JsonConvert.SerializeObject(conf, Formatting.Indented));
+                System.IO.File.WriteAllText(System.IO.Path.Combine(resourcesPath, lang + ".lang"), Properties.Resources.strings_en);
             }
+            return GetAllLanguages().FirstOrDefault(x => x.ToLower().EndsWith(lang + ".lang"));
         }
 
         public List<string> GetJSONTranscripts()
         {
             var strings = new List<string>();
-            strings.Add(Properties.Resources.strings_en);
-            strings.Add(Properties.Resources.strings_de);
+            foreach (var path in GetAllLanguages())
+                strings.Add(System.IO.File.ReadAllText(path));
             return strings;
         }
 
         public void WriteDefaultTranscript()
         {
-            Utils.WriteAllText(Paths.GetPath("english.local"), getDefault());
+            if (!System.IO.Directory.Exists(resourcesPath))
+                System.IO.Directory.CreateDirectory(resourcesPath);
+
+            //Update the english file.
+            System.IO.File.WriteAllText(System.IO.Path.Combine(resourcesPath, "english.lang"), Properties.Resources.strings_en);
+            //Update the french language pack.
+            System.IO.File.WriteAllText(System.IO.Path.Combine(resourcesPath, "french.lang"), Properties.Resources.strings_fr);
         }
 
         public void WriteTranscript()
