@@ -521,7 +521,7 @@ and only a few small programs to use to earn very little amounts of Codepoints.
 
 Now, let's get you your first Shiftorium upgrade!");
 
-                Story.PushObjective("First Steps: The Shiftorium", "Buy your first Shiftorium upgrade with your new Codepoints using shiftorium.list, shiftorium.info and shiftorium.buy.",
+                Story.PushObjective("First Steps: The Shiftorium", "Buy your first Shiftorium upgrade with your new Codepoints using upgrades, upgradeinfo and buy.",
                     () =>
                     {
                         return SaveSystem.CurrentSave.CountUpgrades() > 0;
