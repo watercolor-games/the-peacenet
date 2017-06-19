@@ -32,16 +32,16 @@
             this.console = new System.Windows.Forms.TabPage();
             this.consoleout = new System.Windows.Forms.TextBox();
             this.program = new System.Windows.Forms.TabPage();
+            this.stop = new System.Windows.Forms.Button();
             this.run = new System.Windows.Forms.Button();
             this.save = new System.Windows.Forms.Button();
             this.load = new System.Windows.Forms.Button();
             this.programinput = new System.Windows.Forms.TextBox();
             this.monitor = new System.Windows.Forms.TabPage();
+            this.reset = new System.Windows.Forms.Button();
             this.memlist = new System.Windows.Forms.ListBox();
             this.instptr = new System.Windows.Forms.Label();
             this.memptr = new System.Windows.Forms.Label();
-            this.stop = new System.Windows.Forms.Button();
-            this.reset = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.console.SuspendLayout();
             this.program.SuspendLayout();
@@ -79,6 +79,7 @@
             this.consoleout.Multiline = true;
             this.consoleout.Name = "consoleout";
             this.consoleout.ReadOnly = true;
+            this.consoleout.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.consoleout.Size = new System.Drawing.Size(378, 237);
             this.consoleout.TabIndex = 0;
             // 
@@ -96,6 +97,16 @@
             this.program.TabIndex = 1;
             this.program.Text = "Program";
             this.program.UseVisualStyleBackColor = true;
+            // 
+            // stop
+            // 
+            this.stop.Location = new System.Drawing.Point(303, 217);
+            this.stop.Name = "stop";
+            this.stop.Size = new System.Drawing.Size(75, 23);
+            this.stop.TabIndex = 4;
+            this.stop.Text = "Stop";
+            this.stop.UseVisualStyleBackColor = true;
+            this.stop.Click += new System.EventHandler(this.stop_Click);
             // 
             // run
             // 
@@ -132,6 +143,7 @@
             this.programinput.Location = new System.Drawing.Point(3, 0);
             this.programinput.Multiline = true;
             this.programinput.Name = "programinput";
+            this.programinput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.programinput.Size = new System.Drawing.Size(378, 218);
             this.programinput.TabIndex = 0;
             // 
@@ -147,6 +159,17 @@
             this.monitor.TabIndex = 2;
             this.monitor.Text = "Monitor";
             this.monitor.UseVisualStyleBackColor = true;
+            // 
+            // reset
+            // 
+            this.reset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.reset.Location = new System.Drawing.Point(306, 8);
+            this.reset.Name = "reset";
+            this.reset.Size = new System.Drawing.Size(75, 23);
+            this.reset.TabIndex = 3;
+            this.reset.Text = "Reset";
+            this.reset.UseVisualStyleBackColor = true;
+            this.reset.Click += new System.EventHandler(this.reset_Click);
             // 
             // memlist
             // 
@@ -175,27 +198,6 @@
             this.memptr.Size = new System.Drawing.Size(56, 13);
             this.memptr.TabIndex = 0;
             this.memptr.Text = "Memory: 0";
-            // 
-            // stop
-            // 
-            this.stop.Location = new System.Drawing.Point(303, 217);
-            this.stop.Name = "stop";
-            this.stop.Size = new System.Drawing.Size(75, 23);
-            this.stop.TabIndex = 4;
-            this.stop.Text = "Stop";
-            this.stop.UseVisualStyleBackColor = true;
-            this.stop.Click += new System.EventHandler(this.stop_Click);
-            // 
-            // reset
-            // 
-            this.reset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.reset.Location = new System.Drawing.Point(306, 8);
-            this.reset.Name = "reset";
-            this.reset.Size = new System.Drawing.Size(75, 23);
-            this.reset.TabIndex = 3;
-            this.reset.Text = "Reset";
-            this.reset.UseVisualStyleBackColor = true;
-            this.reset.Click += new System.EventHandler(this.reset_Click);
             // 
             // MindBlow
             // 

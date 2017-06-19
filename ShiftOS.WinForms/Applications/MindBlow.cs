@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using ShiftOS.Engine;
 using System.IO;
 using System.Threading;
+using System.Collections;
+using System.Collections.Concurrent;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -18,6 +20,12 @@ namespace ShiftOS.WinForms.Applications
     [RequiresUpgrade("mindblow")]
     public partial class MindBlow : UserControl, IShiftOSWindow, IBFListener
     {
+        private bool running = true;
+        private Action updateMemPtr = null, updateIPtr = null;
+        private Action[] updateMem = new Action[30000];
+        private AutoResetEvent evwaiting = new AutoResetEvent(false);
+        private object evlock = new object();
+
         private class TextBoxStream : Stream
         {
             private TextBox box;
@@ -54,26 +62,20 @@ namespace ShiftOS.WinForms.Applications
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                object lck = new object();
                 int ptr = offset;
+                var hnd = new AutoResetEvent(false);
                 handler = (o, a) =>
                 {
-                    lock (lck)
+                    if (ptr < offset + count)
                     {
-                        if (ptr < offset + count)
-                        {
-                            buffer[ptr] = (byte)a.KeyChar;
-                            ptr++;
-                        }
+                        buffer[ptr] = (byte)a.KeyChar;
+                        ptr++;
                     }
+                    if (ptr >= offset + count)
+                        hnd.Set();
                 };
                 Desktop.InvokeOnWorkerThread(() => box.KeyPress += handler);
-                while (true)
-                {
-                    lock (lck)
-                        if (ptr >= offset + count)
-                            break;
-                }
+                hnd.WaitOne();
                 Desktop.InvokeOnWorkerThread(() => box.KeyPress -= handler);
                 return count;
             }
@@ -129,12 +131,23 @@ namespace ShiftOS.WinForms.Applications
 
         public void IPtrMoved(int newval)
         {
-            Desktop.InvokeOnWorkerThread(() => instptr.Text = "Instruction: " + newval.ToString());
+            lock (evlock)
+            {
+                updateIPtr = () => instptr.Text = "Instruction: " + newval.ToString();
+                evwaiting.Set();
+            }
         }
 
         public void MemChanged(ushort pos, byte newval)
         {
-            Desktop.InvokeOnWorkerThread(() => memlist.Items[pos] = newval.ToString());
+            lock (evlock)
+            {
+                updateMem[pos] = () =>
+                {
+                    memlist.Items[pos] = newval.ToString();
+                };
+                evwaiting.Set();
+            }
         }
 
         public void MemReset()
@@ -149,6 +162,36 @@ namespace ShiftOS.WinForms.Applications
         public void OnLoad()
         {
             DoLayout();
+            new Thread(() =>
+            {
+                while (running)
+                {
+                    evwaiting.WaitOne();
+                    try
+                    {
+                        lock (evlock)
+                        {
+                            if (updateIPtr != null)
+                            {
+                                Desktop.InvokeOnWorkerThread(updateIPtr);
+                                updateIPtr = null;
+                            }
+                            if (updateMemPtr != null)
+                            {
+                                Desktop.InvokeOnWorkerThread(updateMemPtr);
+                                updateMemPtr = null;
+                            }
+                            for (int i = 0; i < updateMem.Length; i++)
+                                if (updateMem[i] != null)
+                                {
+                                    Desktop.InvokeOnWorkerThread(updateMem[i]);
+                                    updateMem[i] = null;
+                                }
+                        }
+                    } catch { }
+                    evwaiting.Reset();
+                }
+            }).Start();
         }
 
         public void OnSkinLoad()
@@ -157,6 +200,9 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            running = false;
+            evwaiting.Set(); // allow the display loop to die of old age
+            KillThread(); // mercilessly slaughter the interpreter thread
             return true;
         }
 
@@ -166,7 +212,11 @@ namespace ShiftOS.WinForms.Applications
 
         public void PointerMoved(ushort newval)
         {
-            Desktop.InvokeOnWorkerThread(() => memptr.Text = "Memory: " + newval.ToString());
+            lock (evlock)
+            {
+                updateMemPtr = () => memptr.Text = "Memory: " + newval.ToString();
+                evwaiting.Set();
+            }
         }
 
         private void MindBlow_Resize(object sender, EventArgs e)
@@ -207,7 +257,7 @@ namespace ShiftOS.WinForms.Applications
             AppearanceManager.SetupDialog(new FileDialog(new string[] { ".bf" }, FileOpenerStyle.Save, new Action<string>((file) => Objects.ShiftFS.Utils.WriteAllText(file, programinput.Text))));
         }
 
-        private void stop_Click(object sender, EventArgs e)
+        private void KillThread()
         {
             if (InterpreterThread != null)
                 try
@@ -215,7 +265,12 @@ namespace ShiftOS.WinForms.Applications
                     InterpreterThread.Abort();
                 }
                 catch { }
-                consoleout.KeyPress -= consolestr.handler;
+            consoleout.KeyPress -= consolestr.handler;
+        }
+
+        private void stop_Click(object sender, EventArgs e)
+        {
+            KillThread();
         }
 
         private void reset_Click(object sender, EventArgs e)
