@@ -119,7 +119,7 @@ namespace ShiftOS.WinForms
 
         public void WriteTranscript()
         {
-            Utils.WriteAllText(GetLanguagePath(), GetCurrentTranscript());
+            System.IO.File.WriteAllText(GetLanguagePath(), GetCurrentTranscript());
         }
 
         private string getDefault()
