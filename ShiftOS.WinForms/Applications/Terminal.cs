@@ -432,19 +432,9 @@ namespace ShiftOS.WinForms.Applications
                 Thread.Sleep(2000);
                 Console.WriteLine("Ahh, that reminds me. I suppose you don't know how to use the Terminal yet, do you...");
                 Thread.Sleep(2000);
-                Console.WriteLine("Well, the ShiftOS terminal is similar to a regular Linux terminal, however things are a bit... how you say.... primitive.");
+                Console.WriteLine("Well, you know what you say, things are best learned by doing them!");
                 Thread.Sleep(2000);
-                Console.WriteLine("Let's just say.... I've been focusing more on function than form with this one.... Anyways, here's how the terminal works.");
-                Thread.Sleep(2000);
-                Console.WriteLine("Each command is categorized into a \"Namespace\". All a namespace is, is a nice way of distinguishing between commands.");
-                Thread.Sleep(2000);
-                Console.WriteLine("...For example you may have a bunch of commands for managing files, and others for opening/closing programs.");
-                Thread.Sleep(2000);
-                Console.WriteLine("The three main namespaces you'll be using for the next while are the \"sos\", \"shiftorium\", and \"win\" namespaces.");
-                Thread.Sleep(2000);
-                Console.WriteLine("To run a command, simply type its namespace, followed by a period/full-stop, followed by the command name.");
-                Thread.Sleep(2000);
-                Console.WriteLine("Give it a try! Type \"sos.help\" in the following prompt to view a list of all ShiftOS commands.");
+                Console.WriteLine("Give it a try! Type \"help\" in the following prompt to view a list of all ShiftOS commands.");
                 Thread.Sleep(2000);
                 TerminalBackend.InStory = false;
                 TerminalBackend.PrefixEnabled = true;
@@ -452,7 +442,7 @@ namespace ShiftOS.WinForms.Applications
                 bool help_entered = false;
                 TerminalBackend.CommandProcessed += (text, args) =>
                 {
-                    if (text.EndsWith("sos.help") && help_entered == false)
+                    if (text.EndsWith("help") && help_entered == false)
                         help_entered = true;
                 };
                 while (help_entered == false)
@@ -460,45 +450,15 @@ namespace ShiftOS.WinForms.Applications
                 TerminalBackend.InStory = true;
                 TerminalBackend.PrefixEnabled = false;
                 Thread.Sleep(2000);
-                Console.WriteLine("Good job! Next, we will look at how to pass data to a command, such as win.open.");
+                Console.WriteLine("Good job! Next, we will look at how to pass data to a command, such as buy.");
                 Thread.Sleep(2000);
-                Console.WriteLine("In ShiftOS, passing data to a command is quite simple! After the command name, place an opening and closing curly brace, like so: \"win.open{}\".");
+                Console.WriteLine("In ShiftOS, passing data to a command is quite simple! All you have to do is put --, and then the name of the argument! For example, you could do \"buy --upgrade \"name_of_upgrade\"\"!");
                 Thread.Sleep(2000);
-                Console.WriteLine("Everything between those two curly braces is treated as command data.");
-                Thread.Sleep(2000);
-                Console.WriteLine("However, you can't just spam a bunch of 1s and 0s and call it a day, nonono!");
-                Thread.Sleep(2000);
-                Console.WriteLine("Command data is split into a list of keys and values.");
-                Thread.Sleep(2000);
-                Console.WriteLine("The key tells the command the name of the data, and the value is what the command will see when it looks at the key.");
+                Console.WriteLine("However, you can't just spam a bunch of 1s and 0s and call it a day, nonono! You have to give it a value!");
                 Thread.Sleep(2000);
                 Console.WriteLine("There are three main types of values. Booleans, which can be either \"true\" or \"false\", Numbers, which can be any integer number, positive or negative, and Strings - any piece of text as long as it is surrounded by double-quotes.");
-                Thread.Sleep(2000);
-                Console.WriteLine("For example, we could write every programmer's first program - by typing \"trm.echo{msg:\"Hello, world!\"}\". Running this will cause the Terminal to print, well, \"Hello, world!\"");
-                Thread.Sleep(2000);
-                Console.WriteLine("To open an application in ShiftOS, you can use this principle with the \"win.open\" command.");
-                Thread.Sleep(2000);
-                Console.WriteLine("First, type \"win.open\" with no data to see a list of all installed programs.");
-                Thread.Sleep(2000);
-                TerminalBackend.InStory = false;
-                bool winopenEntered = false;
-                TerminalBackend.PrefixEnabled = true;
-                TerminalBackend.PrintPrompt();
-                TerminalBackend.CommandProcessed += (text, args) =>
-                {
-                    if (help_entered == true)
-                        if (text.EndsWith("win.open") && winopenEntered == false)
-                            winopenEntered = true;
-                };
-                while (winopenEntered == false)
-                    Thread.Sleep(10);
-                TerminalBackend.InStory = true;
-                TerminalBackend.PrefixEnabled = false;
-
-                Thread.Sleep(2000);
-                Console.WriteLine("Pretty cool, it gave you a nice list of other win.open commands that will let you open each program.");
-                Thread.Sleep(2000);
-                Console.WriteLine("You've got the just of using ShiftOS. Now, for your goal.");
+                Thread.Sleep(10000);
+                Console.WriteLine("Now that you've got the gist of using ShiftOS, I have a goal for you.");
                 Thread.Sleep(2000);
                 Console.WriteLine("As you know, ShiftOS doesn't have very many features.");
                 Thread.Sleep(2000);
