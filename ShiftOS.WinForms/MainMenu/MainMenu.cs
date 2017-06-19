@@ -110,14 +110,6 @@ namespace ShiftOS.WinForms.MainMenu
             currentMenu = flmenu;
             CategoryText = Localization.Parse("{MAINMENU_TITLE}");
 
-            //ShiftOeS easter egg
-            Random rnd = new Random();
-            int RandomNum = rnd.Next(1,100);
-            if (RandomNum == 42) //if we find the answer to life, universe and everything than set the logo to shiftoes
-            {
-                shiftos.Image = Properties.Resources.shiftoes;
-            }
-
         }
 
         private Random rnd = new Random();
