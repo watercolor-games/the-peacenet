@@ -54,6 +54,7 @@
   "{ERR_HIGHERPERMS}": "That user has more rights than you!",
   "{ERR_PASSWD_MISMATCH}": "Passwords don't match!",
   "{ERR_SYNTAXERROR}": "Syntax error.",
+  "{ERR_COMMANDNOTFOUND}": "Command not found.",
 
   //Command results
   "{RES_ACLUPDATED}": "User permissions updated.",
@@ -245,6 +246,28 @@
   "{FORMATEDITOR_ARGUMENT_LOWER}": "argument",
   "{FORMATEDITOR_VALUE_LOWER}": "value",
   "{FORMATEDITOR_ENTERSYNTAX}": "Enter syntax here",
+
+  //Program commands
+  "{WO_ABOUT}": "about",
+  "{WO_ADDRESSBOOK}": "adress_book",
+  "{WO_ARTPAD}": "artpad",
+  "{WO_AUDIOPLAYER}": "audio_player",
+  "{WO_CALCULATOR}": "calculator",
+  "{WO_DOWNLOADER}": "downloader",
+  "{WO_FILESKIMMER}": "file_skimmer",
+  "{WO_INSTALLER}": "installer",
+  "{WO_MINDBLOW}": "mindblow",
+  "{WO_NAMECHANGER}": "name_changer",
+  "{WO_PONG}": "pong",
+  "{WO_SHIFTER}": "shifter",
+  "{WO_SHIFTLETTERS}": "shiftletters",
+  "{WO_SHIFTLOTTO}": "shiftlotto",
+  "{WO_SHIFTNET}": "shiftnet",
+  "{WO_SHIFTORIUM}": "shiftorium",
+  "{WO_SHIFTSWEEPER}": "shiftsweeper",
+  "{WO_SIMPLESRC}": "simplesrc",
+  "{WO_TERMINAL}": "terminal",
+  "{WO_TEXTPAD}": "textpad",
 
   //BIOS screen text
   "{MISC_BIOSCOPYRIGHT}": "AMIBIOS (C) %year Australian Microtrends, Plc",
