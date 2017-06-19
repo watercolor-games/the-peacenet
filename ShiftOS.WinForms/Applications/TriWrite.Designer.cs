@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TriWrite));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.addContactToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvcontacts = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtbody = new System.Windows.Forms.Label();
@@ -48,37 +45,15 @@
             this.strikethrough = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.fonts = new System.Windows.Forms.ToolStripComboBox();
-            this.size = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.left = new System.Windows.Forms.ToolStripButton();
             this.center = new System.Windows.Forms.ToolStripButton();
             this.right = new System.Windows.Forms.ToolStripButton();
-            this.menuStrip1.SuspendLayout();
+            this.size = new System.Windows.Forms.ToolStripTextBox();
             this.panel1.SuspendLayout();
             this.menuStrip2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addContactToolStripMenuItem,
-            this.removeToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(872, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // addContactToolStripMenuItem
-            // 
-            this.addContactToolStripMenuItem.Name = "addContactToolStripMenuItem";
-            this.addContactToolStripMenuItem.Size = new System.Drawing.Size(12, 20);
-            // 
-            // removeToolStripMenuItem
-            // 
-            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(12, 20);
             // 
             // tvcontacts
             // 
@@ -162,6 +137,7 @@
             this.txtcontents.TabIndex = 4;
             this.txtcontents.Text = "";
             this.txtcontents.SelectionChanged += new System.EventHandler(this.txtcontents_SelectionChanged);
+            this.txtcontents.TextChanged += new System.EventHandler(this.txtcontents_TextChanged);
             // 
             // toolStrip1
             // 
@@ -194,6 +170,7 @@
             this.bold.Size = new System.Drawing.Size(23, 22);
             this.bold.Text = "B";
             this.bold.CheckedChanged += new System.EventHandler(this.bold_CheckedChanged);
+            this.bold.Click += new System.EventHandler(this.bold_Click);
             // 
             // italic
             // 
@@ -206,6 +183,7 @@
             this.italic.Size = new System.Drawing.Size(23, 22);
             this.italic.Text = "I";
             this.italic.CheckedChanged += new System.EventHandler(this.bold_CheckedChanged);
+            this.italic.Click += new System.EventHandler(this.italic_Click);
             // 
             // underline
             // 
@@ -242,14 +220,6 @@
             this.fonts.Name = "fonts";
             this.fonts.Size = new System.Drawing.Size(121, 25);
             this.fonts.SelectedIndexChanged += new System.EventHandler(this.fonts_SelectedIndexChanged);
-            // 
-            // size
-            // 
-            this.size.AutoSize = false;
-            this.size.MaxLength = 3;
-            this.size.Name = "size";
-            this.size.Size = new System.Drawing.Size(40, 25);
-            this.size.TextChanged += new System.EventHandler(this.size_Click);
             // 
             // toolStripSeparator2
             // 
@@ -289,6 +259,15 @@
             this.right.Text = "Right";
             this.right.Click += new System.EventHandler(this.right_Click);
             // 
+            // size
+            // 
+            this.size.AutoSize = false;
+            this.size.MaxLength = 3;
+            this.size.Name = "size";
+            this.size.Size = new System.Drawing.Size(40, 25);
+            this.size.Click += new System.EventHandler(this.size_Click_1);
+            this.size.TextChanged += new System.EventHandler(this.size_Click);
+            // 
             // TriWrite
             // 
             this.Controls.Add(this.txtcontents);
@@ -296,8 +275,6 @@
             this.Controls.Add(this.menuStrip2);
             this.Name = "TriWrite";
             this.Size = new System.Drawing.Size(652, 414);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.menuStrip2.ResumeLayout(false);
@@ -310,10 +287,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem addContactToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.TreeView tvcontacts;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label txtbody;
@@ -330,10 +303,10 @@
         private System.Windows.Forms.ToolStripButton strikethrough;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripComboBox fonts;
-        private System.Windows.Forms.ToolStripTextBox size;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton left;
         private System.Windows.Forms.ToolStripButton center;
         private System.Windows.Forms.ToolStripButton right;
+        private System.Windows.Forms.ToolStripTextBox size;
     }
 }

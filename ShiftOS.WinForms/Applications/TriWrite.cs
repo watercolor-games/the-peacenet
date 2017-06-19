@@ -178,5 +178,25 @@ namespace ShiftOS.WinForms.Applications
                 UpdateUI();
             }
         }
+
+        private void txtcontents_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void bold_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void italic_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void size_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
