@@ -235,6 +235,7 @@
   "{LOADINGMSG2_7}": "[systemd] There's no antidote...",
   "{LOADINGMSG2_8}": "[systemd] Can I at least have a muffin?",
   "{LOADINGMSG2_9}": "[systemd] System initiated, but I still want a cake.",
+  "{LOADINGMSG2_10}": "[sysvinit] Your init system has been upgraded.",
 
   //Format editor
   "{FORMATEDITOR_COMMAND_LOWER}": "command",
