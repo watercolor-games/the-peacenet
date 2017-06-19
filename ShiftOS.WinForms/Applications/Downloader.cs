@@ -42,10 +42,10 @@ using System.IO.Compression;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("Downloader", true, "al_downloader", "Networking")]
+    [Launcher("{TITLE_DOWNLOADER}", true, "al_downloader", "{AL_NETWORKING}")]
     [DefaultIcon("iconDownloader")]
-    [WinOpen("downloader")]
-    [DefaultTitle("Downloader")]
+    [WinOpen("{WO_DOWNLOADER}")]
+    [DefaultTitle("{TITLE_DOWNLOADER}")]
     [RequiresUpgrade("downloader")]
     public partial class Downloader : UserControl, IShiftOSWindow
     {

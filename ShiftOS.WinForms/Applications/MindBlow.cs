@@ -13,8 +13,8 @@ using System.Threading;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [WinOpen("mindblow")]
-    [Launcher("MindBlow", false, null, "Utilities")]
+    [WinOpen("{WO_MINDBLOW}")]
+    [Launcher("{TITLE_MINDBLOW}", false, null, "{AL_PROGRAMMING}")]
     [RequiresUpgrade("mindblow")]
     public partial class MindBlow : UserControl, IShiftOSWindow, IBFListener
     {

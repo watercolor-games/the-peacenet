@@ -38,10 +38,10 @@ using System.Threading;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [WinOpen("simplesrc")]
-    [Launcher("SimpleSRC Client", false, null, "Networking")]
-    [DefaultTitle("SimpleSRC Client")]
-    [AppscapeEntry("SimpleSRC", "A simple ShiftOS Relay Chat client that allows you to talk with other ShiftOS users from all over the world.", 300, 145, "file_skimmer", "Networking")]
+    [WinOpen("{WO_SIMPLESRC}")]
+    [Launcher("{TITLE_SIMPLESRC}", false, null, "{AL_NETWORKING}")]
+    [DefaultTitle("{TITLE_SIMPLESRC}")]
+    [AppscapeEntry("{TITLE_SIMPLESRC}", "{DESC_SIMPLESRC}", 300, 145, "file_skimmer", "{AL_NETWORKING}")]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat()

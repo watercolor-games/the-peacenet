@@ -41,7 +41,7 @@ namespace ShiftOS.WinForms.Applications
     /// <summary>
     /// 
     /// </summary>
-    [DefaultTitle("Choose file")]
+    [DefaultTitle("{TITLE_FILEDIALOG}")]
     [DefaultIcon("iconFileSkimmer")]
     public partial class FileDialog : UserControl, IShiftOSWindow
     {
@@ -103,7 +103,7 @@ namespace ShiftOS.WinForms.Applications
                             }
                             else
                             {
-                                Infobox.Show("{FILE_NOT_FOUND}", "{FILE_NOT_FOUND_EXP}");
+                                Infobox.Show("{TITLE_FILENOTFOUND}", "{PROMPT_FILENOTFOUND}");
                             }
 
                         }

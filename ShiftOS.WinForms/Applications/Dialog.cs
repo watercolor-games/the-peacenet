@@ -35,10 +35,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.Devices;
 using ShiftOS.Engine;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [DefaultTitle("Information")]
+    [DefaultTitle("{TITLE_INFOBOX}")]
     [DefaultIcon("iconInfoBox")]
     public partial class Dialog : UserControl, IShiftOSWindow, IInfobox
     {
@@ -51,13 +52,21 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
-            AppearanceManager.SetWindowTitle(this, this.Title);
+            if(!string.IsNullOrWhiteSpace(Title))
+                AppearanceManager.SetWindowTitle(this, this.Title);
             ShiftOS.Engine.AudioManager.PlayStream(Properties.Resources.infobox);
         }
 
         public void OnSkinLoad()
         {
-            AppearanceManager.SetWindowTitle(this, this.Title);
+            if(!string.IsNullOrWhiteSpace(Title))
+                AppearanceManager.SetWindowTitle(this, this.Title);
+
+            int top = btnok.Top;
+            btnok.CenterParent();
+            btnyes.Parent.CenterParent();
+            btnok.Top = top;
+            btnyes.Parent.Top = top;
         }
 
         public bool OnUnload()

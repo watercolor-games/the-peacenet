@@ -34,11 +34,11 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("ShiftLotto", true, "al_shiftlotto", "Games")]
+    [Launcher("{TITLE_SHIFTLOTTO}", true, "al_shiftlotto", "{AL_GAMES}")]
     [MultiplayerOnly]
     [DefaultIcon("iconShiftLotto")]
     [RequiresUpgrade("shiftlotto")]
-    [WinOpen("shiftlotto")]
+    [WinOpen("{WO_SHIFTLOTTO}")]
     public partial class ShiftLotto : UserControl, IShiftOSWindow
     {
         public ShiftLotto()

@@ -39,10 +39,10 @@ using ShiftOS.WinForms.Tools;
 namespace ShiftOS.WinForms.Applications {
 
     [MultiplayerOnly]
-    [Launcher("Name Changer", false, null, "Customization")]
-    [AppscapeEntry("Name Changer", "Want to change the names of applications within ShiftOS? This application lets you do just that.", 342, 500, "skinning;file_skimmer;wm_titlebar", "Customization")]
-    [WinOpen("name_changer")]
-    [DefaultTitle("Name Changer")]
+    [Launcher("{TITLE_NAMECHANGER}", false, null, "{AL_CUSTOMIZATION}")]
+    [AppscapeEntry("{TITLE_NAMECHANGER}", "{DESC_NAMECHANGER}", 342, 500, "skinning;file_skimmer;wm_titlebar", "{AL_CUSTOMIZATION}")]
+    [WinOpen("{WO_NAMECHANGER}")]
+    [DefaultTitle("{TITLE_NAMECHANGER}")]
     [DefaultIcon("iconNameChanger")]
     public partial class NameChanger : UserControl, IShiftOSWindow
     {
@@ -62,37 +62,41 @@ namespace ShiftOS.WinForms.Applications {
         public void SetupUI()
         {
             flnames.Controls.Clear();
-            foreach(var name in names)
+            foreach(var type in ReflectMan.Types.Where(x => Shiftorium.UpgradeAttributesUnlocked(x) && x.GetInterfaces().Contains(typeof(IShiftOSWindow))))
             {
-                var pnl = new Panel();
-                var lbl = new Label();
-                var txt = new TextBox();
-                pnl.Controls.Add(lbl);
-                lbl.Show();
-                pnl.Controls.Add(txt);
-                txt.Show();
-
-                ControlManager.SetupControls(pnl);
-
-                pnl.Width = flnames.Width - 10;
-                pnl.Height = 50;
-                lbl.Left = 10;
-                lbl.Width = (pnl.Width / 4) - 10;
-                lbl.Text = name.Key;
-                lbl.Top = (pnl.Height - lbl.Height) / 2;
-                lbl.TextAlign = ContentAlignment.MiddleLeft;
-                
-                txt.Text = name.Value;
-                
-                txt.TextChanged += (o, a) =>
+                var title = type.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultTitleAttribute) as DefaultTitleAttribute;
+                if(title != null)
                 {
-                    names[name.Key] = txt.Text;
-                };
-                txt.Width = pnl.Width - (pnl.Width / 4) - 20;
-                txt.Left = lbl.Width + 20;
-                txt.Top = (pnl.Height - txt.Height) / 2;
-                flnames.Controls.Add(pnl);
-                pnl.Show();
+                    var lbl = new Label();
+                    lbl.AutoSize = true;
+                    lbl.Text = Localization.Parse(title.Title);
+                    lbl.Tag = "header3";
+                    ControlManager.SetupControl(lbl);
+                    flnames.Controls.Add(lbl);
+                    lbl.Show();
+                    flnames.SetFlowBreak(lbl, true);
+
+                    var txt = new TextBox();
+                    ControlManager.SetupControl(txt);
+                    if (!names.ContainsKey(type.Name))
+                        names.Add(type.Name, title.Title);
+                    txt.Text = Localization.Parse(names[type.Name]);
+                    txt.TextChanged += (o, a) =>
+                    {
+                        if(txt.Text == Localization.Parse(title.Title))
+                        {
+                            names[type.Name] = title.Title;
+                        }
+                        else
+                        {
+                            names[type.Name] = txt.Text;
+                        }
+                    };
+                    flnames.Controls.Add(txt);
+                    txt.Show();
+                    txt.Width = flnames.Width - 10;
+                    flnames.SetFlowBreak(txt, true);
+                }
             }
         }
 
@@ -121,7 +125,7 @@ namespace ShiftOS.WinForms.Applications {
 
         private void btnloaddefault_Click(object sender, EventArgs e)
         {
-            names = NameChangerBackend.GetDefault();
+            names = new Dictionary<string, string>();
             SetupUI();
         }
 
@@ -153,15 +157,7 @@ namespace ShiftOS.WinForms.Applications {
     {
         public static Dictionary<string, string> GetDefault()
         {
-            var dict = new Dictionary<string, string>();
-            foreach(var winType in AppearanceManager.GetAllWindowTypes())
-            {
-                if (dict.ContainsKey(winType.Name))
-                    dict[winType.Name] = AppearanceManager.GetDefaultTitle(winType);
-                else
-                    dict.Add(winType.Name, AppearanceManager.GetDefaultTitle(winType));
-            }
-            return dict;
+            return new Dictionary<string, string>();
         }
 
         public static Dictionary<string,string> GetCurrent()
@@ -171,12 +167,6 @@ namespace ShiftOS.WinForms.Applications {
 
             if (SkinEngine.LoadedSkin.AppNames == null)
                 SkinEngine.LoadedSkin.AppNames = GetDefault();
-
-            foreach(var def in GetDefault())
-            {
-                if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(def.Key))
-                    SkinEngine.LoadedSkin.AppNames.Add(def.Key, def.Value);
-            }
 
             return SkinEngine.LoadedSkin.AppNames;
         }
@@ -195,7 +185,7 @@ namespace ShiftOS.WinForms.Applications {
                 SkinEngine.LoadedSkin.AppNames = GetDefault();
 
             if (!SkinEngine.LoadedSkin.AppNames.ContainsKey(type.Name))
-                SkinEngine.LoadedSkin.AppNames.Add(type.Name, AppearanceManager.GetDefaultTitle(type));
+                return Localization.Parse(AppearanceManager.GetDefaultTitle(type));
 
             return SkinEngine.LoadedSkin.AppNames[type.Name];
         }

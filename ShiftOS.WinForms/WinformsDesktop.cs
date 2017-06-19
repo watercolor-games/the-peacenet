@@ -1035,11 +1035,6 @@ namespace ShiftOS.WinForms
             return this.Size;
         }
 
-        private void btnnotifications_Click(object sender, EventArgs e)
-        {
-            AppearanceManager.SetupWindow(new Applications.Notifications());
-        }
-
         private void desktoppanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;

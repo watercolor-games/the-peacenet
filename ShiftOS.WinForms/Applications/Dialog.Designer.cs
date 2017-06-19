@@ -53,16 +53,16 @@ namespace ShiftOS.WinForms.Applications
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.pbicon = new System.Windows.Forms.PictureBox();
-            this.btnok = new System.Windows.Forms.Button();
-            this.flyesno = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnno = new System.Windows.Forms.Button();
-            this.btnyes = new System.Windows.Forms.Button();
-            this.lbmessage = new System.Windows.Forms.Label();
             this.txtinput = new System.Windows.Forms.TextBox();
+            this.lbmessage = new System.Windows.Forms.Label();
+            this.flyesno = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnyes = new System.Windows.Forms.Button();
+            this.btnno = new System.Windows.Forms.Button();
+            this.btnok = new System.Windows.Forms.Button();
+            this.pbicon = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbicon)).BeginInit();
             this.flyesno.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbicon)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -78,66 +78,14 @@ namespace ShiftOS.WinForms.Applications
             this.panel1.Size = new System.Drawing.Size(341, 177);
             this.panel1.TabIndex = 0;
             // 
-            // pbicon
+            // txtinput
             // 
-            this.pbicon.Location = new System.Drawing.Point(14, 19);
-            this.pbicon.Name = "pbicon";
-            this.pbicon.Size = new System.Drawing.Size(64, 64);
-            this.pbicon.TabIndex = 0;
-            this.pbicon.TabStop = false;
-            // 
-            // btnok
-            // 
-            this.btnok.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtinput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnok.AutoSize = true;
-            this.btnok.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnok.Location = new System.Drawing.Point(149, 140);
-            this.btnok.Name = "btnok";
-            this.btnok.Size = new System.Drawing.Size(32, 23);
-            this.btnok.TabIndex = 1;
-            this.btnok.Text = "OK";
-            this.btnok.UseVisualStyleBackColor = true;
-            // 
-            // flyesno
-            // 
-            this.flyesno.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flyesno.AutoSize = true;
-            this.flyesno.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flyesno.Controls.Add(this.btnyes);
-            this.flyesno.Controls.Add(this.btnno);
-            this.flyesno.Location = new System.Drawing.Point(129, 134);
-            this.flyesno.Name = "flyesno";
-            this.flyesno.Size = new System.Drawing.Size(78, 29);
-            this.flyesno.TabIndex = 2;
-            this.flyesno.WrapContents = false;
-            // 
-            // btnno
-            // 
-            this.btnno.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnno.AutoSize = true;
-            this.btnno.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnno.Location = new System.Drawing.Point(44, 3);
-            this.btnno.Name = "btnno";
-            this.btnno.Size = new System.Drawing.Size(31, 23);
-            this.btnno.TabIndex = 3;
-            this.btnno.Text = "No";
-            this.btnno.UseVisualStyleBackColor = true;
-            // 
-            // btnyes
-            // 
-            this.btnyes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnyes.AutoSize = true;
-            this.btnyes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnyes.Location = new System.Drawing.Point(3, 3);
-            this.btnyes.Name = "btnyes";
-            this.btnyes.Size = new System.Drawing.Size(35, 23);
-            this.btnyes.TabIndex = 4;
-            this.btnyes.Text = "Yes";
-            this.btnyes.UseVisualStyleBackColor = true;
+            this.txtinput.Location = new System.Drawing.Point(88, 116);
+            this.txtinput.Name = "txtinput";
+            this.txtinput.Size = new System.Drawing.Size(250, 20);
+            this.txtinput.TabIndex = 4;
             // 
             // lbmessage
             // 
@@ -151,14 +99,66 @@ namespace ShiftOS.WinForms.Applications
             this.lbmessage.Text = "label1";
             this.lbmessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // txtinput
+            // flyesno
             // 
-            this.txtinput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.flyesno.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtinput.Location = new System.Drawing.Point(88, 116);
-            this.txtinput.Name = "txtinput";
-            this.txtinput.Size = new System.Drawing.Size(250, 20);
-            this.txtinput.TabIndex = 4;
+            this.flyesno.AutoSize = true;
+            this.flyesno.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flyesno.Controls.Add(this.btnyes);
+            this.flyesno.Controls.Add(this.btnno);
+            this.flyesno.Location = new System.Drawing.Point(129, 134);
+            this.flyesno.Name = "flyesno";
+            this.flyesno.Size = new System.Drawing.Size(157, 29);
+            this.flyesno.TabIndex = 2;
+            this.flyesno.WrapContents = false;
+            // 
+            // btnyes
+            // 
+            this.btnyes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnyes.AutoSize = true;
+            this.btnyes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnyes.Location = new System.Drawing.Point(3, 3);
+            this.btnyes.Name = "btnyes";
+            this.btnyes.Size = new System.Drawing.Size(75, 23);
+            this.btnyes.TabIndex = 4;
+            this.btnyes.Text = "{GEN_YES}";
+            this.btnyes.UseVisualStyleBackColor = true;
+            // 
+            // btnno
+            // 
+            this.btnno.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnno.AutoSize = true;
+            this.btnno.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnno.Location = new System.Drawing.Point(84, 3);
+            this.btnno.Name = "btnno";
+            this.btnno.Size = new System.Drawing.Size(70, 23);
+            this.btnno.TabIndex = 3;
+            this.btnno.Text = "{GEN_NO}";
+            this.btnno.UseVisualStyleBackColor = true;
+            // 
+            // btnok
+            // 
+            this.btnok.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnok.AutoSize = true;
+            this.btnok.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnok.Location = new System.Drawing.Point(149, 140);
+            this.btnok.Name = "btnok";
+            this.btnok.Size = new System.Drawing.Size(69, 23);
+            this.btnok.TabIndex = 1;
+            this.btnok.Text = "{GEN_OK}";
+            this.btnok.UseVisualStyleBackColor = true;
+            // 
+            // pbicon
+            // 
+            this.pbicon.Location = new System.Drawing.Point(14, 19);
+            this.pbicon.Name = "pbicon";
+            this.pbicon.Size = new System.Drawing.Size(64, 64);
+            this.pbicon.TabIndex = 0;
+            this.pbicon.TabStop = false;
             // 
             // Dialog
             // 
@@ -169,9 +169,9 @@ namespace ShiftOS.WinForms.Applications
             this.Size = new System.Drawing.Size(341, 177);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbicon)).EndInit();
             this.flyesno.ResumeLayout(false);
             this.flyesno.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbicon)).EndInit();
             this.ResumeLayout(false);
 
         }

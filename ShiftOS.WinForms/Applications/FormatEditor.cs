@@ -33,154 +33,64 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ShiftOS.Engine;
 
-namespace ShiftOS.WinForms.Applications {
-    [MultiplayerOnly]
-    [Launcher("Format Editor", true, "al_format_editor", "Customization")]
-    [AppscapeEntry("Format Editor", "Edit the syntax of your Terminal to be however you like.", 740, 750, "file_skimmer", "Customization")]
-    [WinOpen("formateditor")]
-    [DefaultTitle("Format Editor")]
-    [DefaultIcon("iconFormatEditor")]
-    public partial class FormatEditor : UserControl, IShiftOSWindow {
+namespace ShiftOS.WinForms.Applications
+{
+    public partial class FormatEditor : UserControl, IShiftOSWindow
+    {
 
-        IList<CommandFormat> parts = new List<CommandFormat>();
-        CommandParser parser = new CommandParser();
-        IList<Panel> editorBoxes = new List<Panel>();
+        private CommandParser EditingParser = null;
 
-        string commandMode = "namespace";
-        int avcount = 0;
-
-        public FormatEditor() {
+        public FormatEditor()
+        {
             InitializeComponent();
         }
 
-        public void OnLoad() {
+        public void OnLoad()
+        {
+            EditingParser = CommandParser.Load(SkinEngine.LoadedSkin.CurrentParser.Save());
+            SetupUI();
             OnUpgrade();
+        }
+
+        public void SetupUI()
+        {
+            txtentersyntax.Text = "";
+            foreach(var part in EditingParser.parts)
+            {
+                if(part is CommandFormatCommand)
+                {
+                    txtentersyntax.Text += Localization.Parse("{FORMATEDITOR_COMMAND_LOWER}");
+                }
+                else if(part is CommandFormatText)
+                {
+                    txtentersyntax.Text += (part as CommandFormatText).str;
+                }
+                else if (part is CommandFormatOptionalText)
+                {
+                    txtentersyntax.Text += "[" + (part as CommandFormatOptionalText).str + "]";
+                }
+                else if(part is CommandFormatArgument)
+                {
+                    txtentersyntax.Text += Localization.Parse("{FORMATEDITOR_ARGUMENT_LOWER}");
+                }
+                else if(part is CommandFormatValue)
+                {
+                    txtentersyntax.Text += Localization.Parse("{FORMATEDITOR_VALUE_LOWER}");
+                }
+            }
         }
 
         public void OnSkinLoad() { }
 
         public bool OnUnload() { return true; }
 
-        public void OnUpgrade() {
+        public void OnUpgrade()
+        {
             btnAddOptionalText.Visible = ShiftoriumFrontend.UpgradeInstalled("format_editor_optional_text");
             btnAddRegexText.Visible = ShiftoriumFrontend.UpgradeInstalled("format_editor_regex");
             btnAddColor.Visible = ShiftoriumFrontend.UpgradeInstalled("format_editor_syntax_highlighting");
         }
 
-        private void addPart(CommandFormat part) {
-            parser.AddPart(part);
 
-            addPart(part.Draw());
-        }
-
-        private void addPart(Control part) {
-            Panel container = new Panel();
-
-            Control drawnPart = part;
-            container.Size = drawnPart.Size;
-            container.Controls.Add(drawnPart);
-
-            int woffset = 0;
-            if (editorBoxes.Count > 0) {
-                woffset = editorBoxes.Last().Width + editorBoxes.Last().Location.X;
-            } else {
-                woffset = 0;
-            }
-
-            container.Location = new Point(woffset, 0);
-            editorBoxes.Add(container);
-            panelEditor.Controls.Add(container);
-        }
-
-        private void btnAddText_Click(object sender, EventArgs e) {
-            addPart(new CommandFormatText());
-        }
-
-        private void btnAddOptionalText_Click(object sender, EventArgs e) {
-            addPart(new CommandFormatOptionalText());
-        }
-
-        private void btnAddRegexText_Click(object sender, EventArgs e) {
-            
-        }
-
-        private void btnAddColor_Click(object sender, EventArgs e) {
-
-        }
-
-        private void btnAddCommand_Click(object sender, EventArgs e) {
-            switch (commandMode) {
-                case "namespace":
-                    addPart(new CommandFormatNamespace());
-                    commandMode = "command";
-                    btnAddCommand.Text = "+ Command";
-                    break;
-                case "command":
-                    addPart(new CommandFormatCommand());
-                    commandMode = "argument";
-                    btnAddCommand.Text = "+ Argument";
-                    break;
-                case "argument":
-                    addPart(new CommandFormatArgument());
-                    commandMode = "value";
-                    btnAddCommand.Text = "+ \"Value\"";
-                    break;
-                case "value":
-                    addPart(new CommandFormatValue());
-                    avcount++;
-                    if (avcount >= 2) {
-                        commandMode = "";
-                        btnAddCommand.Text = "";
-                        btnAddCommand.Enabled = false;
-                    }else {
-                        commandMode = "argument";
-                        btnAddCommand.Text = "+ Argument";
-                    }
-                    break;
-            }
-        }
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e) {
-            var result = parser.ParseCommand(richTextBox1.Text);
-
-            if (result.Equals(default(KeyValuePair<KeyValuePair<string, string>, Dictionary<string, string>>))) {
-                lblExampleCommand.Text = "Syntax Error";
-            } else {
-                string argvs = "{";
-
-                foreach (KeyValuePair<string, string> entry in result.Value) {
-                    argvs += entry.Key + "=\"" + entry.Value + "\", ";
-                }
-
-                argvs += "}";
-
-                lblExampleCommand.Text = result.Key + argvs;
-            }
-        }
-
-        private void btnTest_Click(object sender, EventArgs e) {
-
-        }
-
-        private void btnSave_Click(object sender, EventArgs e) {
-            CurrentCommandParser.parser = parser;
-
-            FileSkimmerBackend.GetFile(new string[] { ".cf" }, FileOpenerStyle.Save, new Action<string>((result) => {
-                Objects.ShiftFS.Utils.WriteAllText(result, parser.Save());
-            }));
-        }
-
-        private void btnLoad_Click(object sender, EventArgs e) {
-            FileSkimmerBackend.GetFile(new string[] { ".cf" }, FileOpenerStyle.Open, new Action<string>((result) => {
-                parser = CommandParser.Load(Objects.ShiftFS.Utils.ReadAllText(result));
-                foreach(CommandFormat part in parser.parts) {
-                    addPart(part.Draw());
-                }
-            }));
-        }
-
-        private void btnApply_Click(object sender, EventArgs e) {
-            CurrentCommandParser.parser = parser;
-        }
     }
 }

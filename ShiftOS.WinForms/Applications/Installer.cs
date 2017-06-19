@@ -14,11 +14,11 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [WinOpen("installer")]
+    [WinOpen("{WO_INSTALLER}")]
     [RequiresUpgrade("installer")]
     [MultiplayerOnly]
-    [DefaultTitle("Installer")]
-    [Launcher("Installer", true, "al_installer", "Utilities")]
+    [DefaultTitle("{TITLE_INSTALLER}")]
+    [Launcher("{TITLE_INSTALLER}", true, "al_installer", "{AL_UTILITIES}")]
     public partial class Installer : UserControl, IShiftOSWindow
     {
         public Installer()

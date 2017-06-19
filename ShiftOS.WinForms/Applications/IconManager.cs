@@ -15,8 +15,8 @@ using Newtonsoft.Json;
 namespace ShiftOS.WinForms.Applications
 {
     [RequiresUpgrade("icon_manager")]
-    [Launcher("Icon Manager", true, "al_icon_manager", "Customization")]
-    [DefaultTitle("Icon Manager")]
+    [Launcher("{TITLE_ICONMANAGER}", true, "al_icon_manager", "{AL_CUSTOMIZATION}")]
+    [DefaultTitle("{TITLE_ICONMANAGER}")]
     [DefaultIcon("iconIconManager")]
     public partial class IconManager : UserControl, IShiftOSWindow
     {

@@ -36,9 +36,9 @@ using System.Reflection;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [WinOpen("about")]
-    [Launcher("About", false, null, "Accessories")]
-    [DefaultTitle("About ShiftOS")]
+    [WinOpen("{WO_ABOUT}")]
+    [Launcher("{TITLE_ABOUT}", false, null, "{AL_ACCESSORIES}")]
+    [DefaultTitle("{TITLE_ABOUT}")]
     public partial class About : UserControl, IShiftOSWindow
     {
         public About()

@@ -39,10 +39,10 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [Launcher("File Skimmer", true, "al_file_skimmer", "Utilities")]
+    [Launcher("{TITLE_FILESKIMMER}", true, "al_file_skimmer", "{AL_UTILITIES}")]
     [RequiresUpgrade("file_skimmer")]
-    [WinOpen("file_skimmer")]
-    [DefaultTitle("File Skimmer")]
+    [WinOpen("{WO_FILESKIMMER}")]
+    [DefaultTitle("{TITLE_FILESKIMMER}")]
     [DefaultIcon("iconFileSkimmer")]
     public partial class FileSkimmer : UserControl, IShiftOSWindow
     {

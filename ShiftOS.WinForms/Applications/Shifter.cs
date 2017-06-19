@@ -37,9 +37,10 @@ using System.Threading;
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
-    [Launcher("Shifter", true, "al_shifter", "Customization")]
+    [Launcher("{TITLE_SHIFTER}", true, "al_shifter", "{AL_CUSTOMIZATION}")]
     [RequiresUpgrade("shifter")]
-    [WinOpen("shifter")]
+    [WinOpen("{WO_SHIFTER}")]
+    [DefaultTitle("{TITLE_SHIFTER}")]
     [DefaultIcon("iconShifter")]
     public partial class Shifter : UserControl, IShiftOSWindow
     {

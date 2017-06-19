@@ -20,6 +20,10 @@
   "{GEN_CODEPOINTS}": "Codepoints",
   "{GEN_LOADING}": "Loading...",
   "{GEN_SAVE}": "Save",
+  "{GEN_LOAD}": "Load",
+  "{GEN_APPLY}": "Apply",
+  "{GEN_RESET}": "Reset",
+  "{GEN_LOADDEFAULT}": "Load default",
   "{GEN_CANCEL}": "Cancel",
   "{GEN_CONTINUE}": "Continue",
   "{GEN_BACK}": "Back",
@@ -29,6 +33,7 @@
   "{GEN_SETTINGS}": "Settings",
   "{GEN_ABOUT}": "About",
   "{GEN_EXIT}": "Exit",
+  "{GEN_CLOSE}": "Close",
 
   //General errors
   //Syntax errors, command errors, you name it..
@@ -48,6 +53,7 @@
   "{ERR_ACLHIGHERVALUE}": "You can't set a user's permissions to a value higher than your own.",
   "{ERR_HIGHERPERMS}": "That user has more rights than you!",
   "{ERR_PASSWD_MISMATCH}": "Passwords don't match!",
+  "{ERR_SYNTAXERROR}": "Syntax error.",
 
   //Command results
   "{RES_ACLUPDATED}": "User permissions updated.",
@@ -97,15 +103,55 @@
   "{DESC_USERS}": "Lists all users on your computer.",
   "{DESC_SU}": "Change your identity to another user's.",
   "{DESC_PASSWD}": "Change your user account password.",
+  "{DESC_NAMECHANGER}": "Change the name of virtually any program within ShiftOS!",
+  "{DESC_FILENOTFOUND}": "The file you requested could not be found.",
 
   //Window titles.
+  "{TITLE_FILENOTFOUND}": "File not found.",
   "{TITLE_PONG_YOULOSE}": "You lose",
   "{TITLE_CODEPOINTSTRANSFERRED}": "Codepoints transferred.",
   "{TITLE_INVALIDPORT}": "Invalid port number.",
   "{TITLE_ENTERSYSNAME}": "Enter system name",
   "{TITLE_INVALIDNAME}": "Invalid name",
   "{TITLE_VALUETOOSMALL}": "Value too small.",
+  "{TITLE_TEMPLATE}": "Template",
+  "{TITLE_SKINLOADER}": "Skin loader",
+  "{TITLE_NAMECHANGER}": "Name Changer",
+  "{TITLE_ADDRESSBOOK}": "Address Book",
+  "{TITLE_ARTPAD}": "ArtPad",
+  "{TITLE_SIMPLESRC}": "SimpleSRC Client",
+  "{TITLE_INFOBOX}": "Information",
+  "{TITLE_COLORPICKER}": "Choose color",
+  "{TITLE_AUDIOPLAYER}": "Audio Player",
+  "{TITLE_CALCULATOR}": "Calculator",
+  "{TITLE_DOWNLOADER}": "Downloader",
+  "{TITLE_ABOUT}": "About ShiftOS",
+  "{TITLE_FILESKIMMER}": "File Skimmer",
+  "{TITLE_CHOOSEGRAPHIC}": "Choose graphic",
+  "{TITLE_ICONMANAGER}": "Icon Manager",
+  "{TITLE_INSTALLER}": "Installer",
+  "{TITLE_MINDBLOW}": "MindBlow",
+  "{TITLE_PONG}": "Pong",
+  "{TITLE_SHIFTER}": "Shifter",
+  "{TITLE_SHIFTLETTERS}": "ShiftLetters",
+  "{TITLE_SHIFTLOTTO}": "ShiftLotto",
+  "{TITLE_SHIFTNET}": "Shiftnet",
+  "{TITLE_SHIFTORIUM}": "Shiftorium",
+  "{TITLE_SHIFTSWEEPER}": "ShiftSweeper",
+  "{TITLE_TERMINAL}": "Terminal",
+  "{TITLE_TEXTPAD}": "TextPad",
 
+
+  //App Launcher categories
+  "{AL_PROGRAMMING}": "Programming",
+  "{AL_CUSTOMIZATION}": "Customization",
+  "{AL_NETWORKING}": "Networking",
+  "{AL_UTILITIES}": "Utilities",
+  "{AL_GRAPHICS}": "Graphics",
+  "{AL_ACCESSORIES}": "Accessories",
+  "{AL_ENTERTAINMENT}": "Entertainment",
+  "{AL_OFFICE}": "Office",
+  "{AL_GAMES}": "Games",
 
   //Infobox prompt messages
   "{PROMPT_PONGLOST}": "You lost this game of Pong. Guess you should've cashed out...",
@@ -190,4 +236,9 @@
   "{LOADINGMSG2_8}": "[systemd] Can I at least have a muffin?",
   "{LOADINGMSG2_9}": "[systemd] System initiated, but I still want a cake.",
 
+  //Format editor
+  "{FORMATEDITOR_COMMAND_LOWER}": "command",
+  "{FORMATEDITOR_ARGUMENT_LOWER}": "argument",
+  "{FORMATEDITOR_VALUE_LOWER}": "value",
+  "{FORMATEDITOR_ENTERSYNTAX}": "Enter syntax here",
 }

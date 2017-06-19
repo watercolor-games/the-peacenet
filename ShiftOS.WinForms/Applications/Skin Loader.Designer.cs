@@ -153,30 +153,30 @@ namespace ShiftOS.WinForms.Applications
             // item1ToolStripMenuItem
             // 
             this.item1ToolStripMenuItem.Name = "item1ToolStripMenuItem";
-            this.item1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item1ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.item1ToolStripMenuItem.Text = "Item 1";
             // 
             // item2ToolStripMenuItem
             // 
             this.item2ToolStripMenuItem.Name = "item2ToolStripMenuItem";
-            this.item2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item2ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.item2ToolStripMenuItem.Text = "Item 2";
             // 
             // item3ToolStripMenuItem
             // 
             this.item3ToolStripMenuItem.Name = "item3ToolStripMenuItem";
-            this.item3ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item3ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.item3ToolStripMenuItem.Text = "Item 3";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(104, 6);
             // 
             // item4ToolStripMenuItem
             // 
             this.item4ToolStripMenuItem.Name = "item4ToolStripMenuItem";
-            this.item4ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.item4ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.item4ToolStripMenuItem.Text = "Item 4";
             // 
             // lbtime
@@ -363,9 +363,9 @@ namespace ShiftOS.WinForms.Applications
             this.btnclose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnclose.Location = new System.Drawing.Point(3, 3);
             this.btnclose.Name = "btnclose";
-            this.btnclose.Size = new System.Drawing.Size(60, 23);
+            this.btnclose.Size = new System.Drawing.Size(89, 23);
             this.btnclose.TabIndex = 0;
-            this.btnclose.Text = "{CLOSE}";
+            this.btnclose.Text = "{GEN_CLOSE}";
             this.btnclose.UseVisualStyleBackColor = true;
             this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
             // 
@@ -374,11 +374,11 @@ namespace ShiftOS.WinForms.Applications
             this.btnloaddefault.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.btnloaddefault.AutoSize = true;
             this.btnloaddefault.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnloaddefault.Location = new System.Drawing.Point(69, 3);
+            this.btnloaddefault.Location = new System.Drawing.Point(98, 3);
             this.btnloaddefault.Name = "btnloaddefault";
-            this.btnloaddefault.Size = new System.Drawing.Size(109, 23);
+            this.btnloaddefault.Size = new System.Drawing.Size(132, 23);
             this.btnloaddefault.TabIndex = 1;
-            this.btnloaddefault.Text = "{LOAD_DEFAULT}";
+            this.btnloaddefault.Text = "{GEN_LOADDEFAULT}";
             this.btnloaddefault.UseVisualStyleBackColor = true;
             this.btnloaddefault.Click += new System.EventHandler(this.btnloaddefault_Click);
             // 
@@ -386,11 +386,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.btnexport.AutoSize = true;
             this.btnexport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnexport.Location = new System.Drawing.Point(184, 3);
+            this.btnexport.Location = new System.Drawing.Point(236, 3);
             this.btnexport.Name = "btnexport";
-            this.btnexport.Size = new System.Drawing.Size(69, 23);
+            this.btnexport.Size = new System.Drawing.Size(82, 23);
             this.btnexport.TabIndex = 2;
-            this.btnexport.Text = "{EXPORT}";
+            this.btnexport.Text = "{GEN_SAVE}";
             this.btnexport.UseVisualStyleBackColor = true;
             this.btnexport.Click += new System.EventHandler(this.btnexport_Click);
             // 
@@ -398,11 +398,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.btnimport.AutoSize = true;
             this.btnimport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnimport.Location = new System.Drawing.Point(259, 3);
+            this.btnimport.Location = new System.Drawing.Point(324, 3);
             this.btnimport.Name = "btnimport";
-            this.btnimport.Size = new System.Drawing.Size(67, 23);
+            this.btnimport.Size = new System.Drawing.Size(83, 23);
             this.btnimport.TabIndex = 3;
-            this.btnimport.Text = "{IMPORT}";
+            this.btnimport.Text = "{GEN_LOAD}";
             this.btnimport.UseVisualStyleBackColor = true;
             this.btnimport.Click += new System.EventHandler(this.btnimport_Click);
             // 
@@ -410,11 +410,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.btnapply.AutoSize = true;
             this.btnapply.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnapply.Location = new System.Drawing.Point(332, 3);
+            this.btnapply.Location = new System.Drawing.Point(413, 3);
             this.btnapply.Name = "btnapply";
-            this.btnapply.Size = new System.Drawing.Size(59, 23);
+            this.btnapply.Size = new System.Drawing.Size(88, 23);
             this.btnapply.TabIndex = 4;
-            this.btnapply.Text = "{APPLY}";
+            this.btnapply.Text = "{GEN_APPLY}";
             this.btnapply.UseVisualStyleBackColor = true;
             this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
