@@ -59,8 +59,11 @@ namespace ShiftOS.WinForms.Applications
                 {
                     lock (lck)
                     {
-                        buffer[ptr] = (byte)a.KeyChar;
-                        ptr++;
+                        if (ptr < offset + count)
+                        {
+                            buffer[ptr] = (byte)a.KeyChar;
+                            ptr++;
+                        }
                     }
                 };
                 Desktop.InvokeOnWorkerThread(() => box.KeyPress += handler);
@@ -94,7 +97,7 @@ namespace ShiftOS.WinForms.Applications
         }
         private static string[] DefaultMem;
         private BFInterpreter Interpreter;
-
+        private Thread InterpreterThread;
         private void DoLayout()
         {
             memlist.Left = 0;
@@ -104,9 +107,11 @@ namespace ShiftOS.WinForms.Applications
             program.Left = 0;
             programinput.Width = program.Width;
             programinput.Height = program.Height - load.Height;
-            load.Top = save.Top = run.Top = programinput.Height;
-            load.Width = save.Width = run.Width = save.Left = program.Width / 3;
+            load.Top = save.Top = run.Top = stop.Top = programinput.Height;
+            load.Width = save.Width = run.Width = stop.Width = save.Left = program.Width / 4;
+            load.Left = 0;
             run.Left = save.Left * 2;
+            stop.Left = save.Left * 3;
         }
 
         public MindBlow()
@@ -168,18 +173,20 @@ namespace ShiftOS.WinForms.Applications
 
         private void run_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
+            InterpreterThread = new Thread(() =>
             {
                 try
                 {
                     Interpreter.Reset();
                     Interpreter.Execute(programinput.Text);
                 }
+                catch (ThreadAbortException) { } // ignore
                 catch (Exception ex)
                 {
                     Desktop.InvokeOnWorkerThread(() => Infobox.Show("Program Error", "An error occurred while executing your program: " + ex.GetType().ToString()));
                 }
-            }).Start();
+            });
+            InterpreterThread.Start();
         }
 
         private void tabs_Selected(object sender, TabControlEventArgs e)
@@ -195,6 +202,25 @@ namespace ShiftOS.WinForms.Applications
         private void save_Click(object sender, EventArgs e)
         {
             AppearanceManager.SetupDialog(new FileDialog(new string[] { ".bf" }, FileOpenerStyle.Save, new Action<string>((file) => Objects.ShiftFS.Utils.WriteAllText(file, programinput.Text))));
+        }
+
+        private void stop_Click(object sender, EventArgs e)
+        {
+            if (InterpreterThread != null)
+                try
+                {
+                    InterpreterThread.Abort();
+                }
+                catch { }
+        }
+
+        private void reset_Click(object sender, EventArgs e)
+        {
+            if (InterpreterThread != null)
+                if (InterpreterThread.IsAlive)
+                    Infobox.Show("Cannot Reset", "The program is still running.");
+                else
+                    Interpreter.Reset();
         }
     }
 }

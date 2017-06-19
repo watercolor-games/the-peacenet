@@ -62,69 +62,65 @@ namespace ShiftOS.Engine
             Reset();
             lst = listener;
         }
-        public void Execute()
-        {
-            lock (lck)
-                for (int iptr = 0; iptr < prg.Length; iptr++)
-                {
-                    if (lst != null)
-                        lst.IPtrMoved(iptr);
-                    switch (prg[iptr])
-                    {
-                        case '>':
-                            ptr++;
-                            if (lst != null)
-                                lst.PointerMoved(ptr);
-                            break;
-                        case '<':
-                            ptr--;
-                            if (lst != null)
-                                lst.PointerMoved(ptr);
-                            break;
-                        case '+':
-                            mem[ptr]++;
-                            if (lst != null)
-                                lst.MemChanged(ptr, mem[ptr]);
-                            break;
-                        case '-':
-                            mem[ptr]--;
-                            if (lst != null)
-                                lst.MemChanged(ptr, mem[ptr]);
-                            break;
-                        case '.':
-                            str.WriteByte(mem[ptr]);
-                            break;
-                        case ',':
-                            mem[ptr] = (byte)str.ReadByte();
-                            if (lst != null)
-                                lst.MemChanged(ptr, mem[ptr]);
-                            break;
-                        case '[':
-                            if (mem[ptr] == 0)
-                                while (prg[iptr] != ']')
-                                {
-                                    iptr++;
-                                    if (lst != null)
-                                        lst.IPtrMoved(iptr);
-                                }
-                            break;
-                        case ']':
-                            if (mem[ptr] != 0)
-                                while (prg[iptr] != '[')
-                                {
-                                    iptr--;
-                                    if (lst != null)
-                                        lst.IPtrMoved(iptr);
-                                }
-                            break;
-                    }
-                }
-        }
         public void Execute(string program)
         {
+            int c = 0;
             lock (lck)
-                prg = program;
-            Execute();
+            while (c < program.Length)
+                switch (program[c++])
+                {
+                    case '<':
+                        ptr--;
+                        if (lst != null)
+                            lst.PointerMoved(ptr);
+                        break;
+                    case '>':
+                        ptr++;
+                        if (lst != null)
+                            lst.PointerMoved(ptr);
+                        break;
+                    case '+':
+                        mem[ptr]++;
+                        if (lst != null)
+                            lst.MemChanged(ptr, mem[ptr]);
+                        break;
+                    case '-':
+                        mem[ptr]--;
+                        if (lst != null)
+                            lst.MemChanged(ptr, mem[ptr]);
+                        break;
+                    case '.':
+                        str.WriteByte(mem[ptr]);
+                        break;
+                    case ',':
+                        mem[ptr] = (byte)str.ReadByte();
+                        if (lst != null)
+                            lst.MemChanged(ptr, mem[ptr]);
+                        break;
+                    case '[':
+                        int b;
+                        int oldc = c;
+                        for (b = 1; b != 0 && c < program.Length; c++)
+                        {
+                            if (program[c] == '[')
+                                b++;
+                            else if (program[c] == ']')
+                                b--;
+                        }
+                        if (b == 0)
+                        {
+                            string block = program.Substring(oldc, c - oldc - 1);
+                            while (mem[ptr] != 0)
+                                Execute(block);
+                        }
+                        break;
+                    case ']':
+                        throw new Exception("Unbalanced brackets");
+                }
+        }
+        public void Execute()
+        {
+            Execute(prg);
         }
         public void Reset()
         {
