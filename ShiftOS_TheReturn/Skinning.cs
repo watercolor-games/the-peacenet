@@ -1192,6 +1192,14 @@ namespace ShiftOS.Engine
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]
+        [ShifterName("Titlebar inactive background image")]
+        [Image("titlebarinactive")]
+        [RequiresUpgrade("skinning;shift_titlebar;shift_states")]
+        public byte[] TitleBarInactiveBackground = null;
+
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Titlebar")]
         [RequiresUpgrade("shift_titlebar")]
         [ShifterName("Show title corners?")]
         [ShifterDescription("If checked, a left and a right section will appear on the titlebar which is useful for rounded corners, padding, or other useful properties.")]
@@ -1258,12 +1266,31 @@ namespace ShiftOS.Engine
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Titlebar")]
+        [RequiresUpgrade("skinning;shift_titlebar;shift_states")]
+        [ShifterFlag("ShowTitleCorners", true)]
+        [ShifterName("Title left corner inactive background image")]
+        [ShifterDescription("Select an image to appear as the background texture for the left titlebar corner when the window is inactive.")]
+        [Image("titleleftinactive")]
+        public byte[] TitleLeftInactiveBG = null;
+
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Titlebar")]
         [RequiresUpgrade("skinning;shift_titlebar")]
         [ShifterFlag("ShowTitleCorners", true)]
         [ShifterName("Title right corner background image")]
         [ShifterDescription("Select an image to appear as the background texture for the right titlebar corner.")]
         [Image("titleright")]
         public byte[] TitleRightBG = null;
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Titlebar")]
+        [RequiresUpgrade("skinning;shift_titlebar;shift_states")]
+        [ShifterFlag("ShowTitleCorners", true)]
+        [ShifterName("Title right corner inactive background image")]
+        [ShifterDescription("Select an image to appear as the background texture for the right titlebar corner when the window is inactive.")]
+        [Image("titlerightinactive")]
+        public byte[] TitleRightInactiveBG = null;
 
 
         [ShifterMeta("System")]
@@ -1282,6 +1309,15 @@ namespace ShiftOS.Engine
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Window border")]
+        [RequiresUpgrade("skinning;shift_window_borders;shift_states")]
+        [Image("bottomborderinactive")]
+        [ShifterName("Bottom Border Inactive Image")]
+        [ShifterDescription("Select an image to appear on the bottom border when the window is inactive. ")]
+        public byte[] BottomBorderInactiveBG = null;
+
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
         [RequiresUpgrade("skinning;shift_window_borders")]
         [Image("bottomrborder")]
         [ShifterName("Bottom Right Border Image")]
@@ -1295,6 +1331,25 @@ namespace ShiftOS.Engine
         [ShifterName("Bottom Left Border Image")]
         [ShifterDescription("Select an image to appear on the bottom left border.")]
         public byte[] BottomLBorderBG = null;
+
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
+        [RequiresUpgrade("skinning;shift_window_borders;shift_states")]
+        [Image("bottomrborderinactive")]
+        [ShifterName("Bottom Right Border Inactive Image")]
+        [ShifterDescription("Select an image to appear on the bottom right border when the window is inactive.")]
+        public byte[] BottomRBorderInactiveBG = null;
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
+        [RequiresUpgrade("skinning;shift_window_borders;shift_states")]
+        [Image("bottomlborderinactive")]
+        [ShifterName("Bottom Left Border Inactive Image")]
+        [ShifterDescription("Select an image to appear on the bottom left border when the window is inactive.")]
+        public byte[] BottomLBorderInactiveBG = null;
+
+
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Window border")]
@@ -1311,6 +1366,25 @@ namespace ShiftOS.Engine
         [ShifterName("Right Border Image")]
         [ShifterDescription("Select an image to appear on the right border.")]
         public byte[] RightBorderBG = null;
+
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
+        [RequiresUpgrade("skinning;shift_window_borders;shift_states")]
+        [Image("leftborderinactive")]
+        [ShifterName("Left Border Inactive Image")]
+        [ShifterDescription("Select an image to appear on the left border when the window is inactive.")]
+        public byte[] LeftBorderInactiveBG = null;
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
+        [RequiresUpgrade("skinning;shift_window_borders;shift_states")]
+        [Image("rightborderinactive")]
+        [ShifterName("Right Border Inactive Image")]
+        [ShifterDescription("Select an image to appear on the right border when the window is inactive.")]
+        public byte[] RightBorderInactiveBG = null;
+
+
 
         [ShifterMeta("Windows")]
         [ShifterCategory("Window border")]
