@@ -50,7 +50,6 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents = new System.Windows.Forms.Panel();
             this.pnldrawingbackground = new System.Windows.Forms.Panel();
             this.pnlinitialcanvassettings = new System.Windows.Forms.Panel();
-            this.btncancel = new System.Windows.Forms.Button();
             this.btncreate = new System.Windows.Forms.Button();
             this.Label11 = new System.Windows.Forms.Label();
             this.lbltotalpixels = new System.Windows.Forms.Label();
@@ -376,7 +375,6 @@ namespace ShiftOS.WinForms.Applications
             // pnlinitialcanvassettings
             // 
             this.pnlinitialcanvassettings.BackColor = System.Drawing.Color.White;
-            this.pnlinitialcanvassettings.Controls.Add(this.btncancel);
             this.pnlinitialcanvassettings.Controls.Add(this.btncreate);
             this.pnlinitialcanvassettings.Controls.Add(this.Label11);
             this.pnlinitialcanvassettings.Controls.Add(this.lbltotalpixels);
@@ -384,21 +382,10 @@ namespace ShiftOS.WinForms.Applications
             this.pnlinitialcanvassettings.Controls.Add(this.Label10);
             this.pnlinitialcanvassettings.Controls.Add(this.txtnewcanvaswidth);
             this.pnlinitialcanvassettings.Controls.Add(this.Label9);
-            this.pnlinitialcanvassettings.Location = new System.Drawing.Point(223, 178);
+            this.pnlinitialcanvassettings.Location = new System.Drawing.Point(194, 174);
             this.pnlinitialcanvassettings.Name = "pnlinitialcanvassettings";
             this.pnlinitialcanvassettings.Size = new System.Drawing.Size(223, 100);
             this.pnlinitialcanvassettings.TabIndex = 1;
-            // 
-            // btncancel
-            // 
-            this.btncancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btncancel.Location = new System.Drawing.Point(7, 66);
-            this.btncancel.Name = "btncancel";
-            this.btncancel.Size = new System.Drawing.Size(102, 28);
-            this.btncancel.TabIndex = 7;
-            this.btncancel.Text = "Cancel";
-            this.btncancel.UseVisualStyleBackColor = true;
-            this.btncancel.Click += new System.EventHandler(this.btncancel_Click);
             // 
             // btncreate
             // 
@@ -488,7 +475,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpalettesize.Controls.Add(this.Label42);
             this.pnlpalettesize.Controls.Add(this.txtcolorpalletwidth);
             this.pnlpalettesize.Controls.Add(this.Label43);
-            this.pnlpalettesize.Location = new System.Drawing.Point(207, 178);
+            this.pnlpalettesize.Location = new System.Drawing.Point(144, 303);
             this.pnlpalettesize.Name = "pnlpalettesize";
             this.pnlpalettesize.Size = new System.Drawing.Size(259, 100);
             this.pnlpalettesize.TabIndex = 2;
@@ -3240,28 +3227,28 @@ namespace ShiftOS.WinForms.Applications
             // gENNEWToolStripMenuItem
             // 
             this.gENNEWToolStripMenuItem.Name = "gENNEWToolStripMenuItem";
-            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.gENNEWToolStripMenuItem.Text = "{GEN_NEW}";
             this.gENNEWToolStripMenuItem.Click += new System.EventHandler(this.btnnew_Click);
             // 
             // gENLOADToolStripMenuItem
             // 
             this.gENLOADToolStripMenuItem.Name = "gENLOADToolStripMenuItem";
-            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.gENLOADToolStripMenuItem.Text = "{GEN_LOAD}";
             this.gENLOADToolStripMenuItem.Click += new System.EventHandler(this.btnopen_Click);
             // 
             // gENSAVEToolStripMenuItem
             // 
             this.gENSAVEToolStripMenuItem.Name = "gENSAVEToolStripMenuItem";
-            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.gENSAVEToolStripMenuItem.Text = "{GEN_SAVE}";
             this.gENSAVEToolStripMenuItem.Click += new System.EventHandler(this.btnsave_Click);
             // 
             // gENEXITToolStripMenuItem
             // 
             this.gENEXITToolStripMenuItem.Name = "gENEXITToolStripMenuItem";
-            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.gENEXITToolStripMenuItem.Text = "{GEN_EXIT}";
             // 
             // editToolStripMenuItem
@@ -3304,37 +3291,37 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripMenuItem5,
             this.moreControlsToolStripMenuItem});
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
             this.zoomToolStripMenuItem.Text = "Zoom";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem2.Text = "25%";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem3.Text = "50%";
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem4.Text = "100%";
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItem5.Text = "200%";
             // 
             // moreControlsToolStripMenuItem
             // 
             this.moreControlsToolStripMenuItem.Name = "moreControlsToolStripMenuItem";
-            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.moreControlsToolStripMenuItem.Text = "More controls";
             this.moreControlsToolStripMenuItem.Click += new System.EventHandler(this.btnmagnify_Click);
             // 
@@ -3534,7 +3521,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.TextBox txtcolorpalletwidth;
         internal System.Windows.Forms.Label Label43;
         internal System.Windows.Forms.Panel pnlinitialcanvassettings;
-        internal System.Windows.Forms.Button btncancel;
         internal System.Windows.Forms.Button btncreate;
         internal System.Windows.Forms.Label Label11;
         internal System.Windows.Forms.Label lbltotalpixels;

@@ -785,7 +785,7 @@ namespace ShiftOS.WinForms.Applications
         // ERROR: Handles clauses are not supported in C#
         private void txtnewcanvaswidth_TextChanged(object sender, EventArgs e)
         {
-            if (txtnewcanvaswidth.Text == "" | txtnewcanvasheight.Text == "")
+            if (txtnewcanvaswidth.Text == "" || txtnewcanvasheight.Text == "")
             {
                 if (txtnewcanvasheight.Text == "")
                 {
@@ -803,7 +803,7 @@ namespace ShiftOS.WinForms.Applications
                     lbltotalpixels.Text = (Convert.ToInt32(txtnewcanvaswidth.Text) * Convert.ToInt32(txtnewcanvasheight.Text)).ToString();
                     if (ShiftoriumFrontend.UpgradeInstalled("artpad_limitless_pixels") == true)
                     {
-                        lbltotalpixels.ForeColor = Color.Black;
+                        lbltotalpixels.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
                     }
                     else
                     {
@@ -813,7 +813,7 @@ namespace ShiftOS.WinForms.Applications
                         }
                         else
                         {
-                            lbltotalpixels.ForeColor = Color.Black;
+                            lbltotalpixels.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
                         }
                     }
                 }
