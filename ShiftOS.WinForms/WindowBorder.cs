@@ -262,6 +262,74 @@ namespace ShiftOS.WinForms
             }
         }
 
+        public void SetDefaultBorders()
+        {
+            pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
+            pnltitle.BackgroundImage = GetImage("titlebar");
+            pnltitleleft.BackColor = LoadedSkin.TitleLeftCornerBackground;
+            pnltitleright.BackColor = LoadedSkin.TitleRightCornerBackground;
+            pnltitleleft.BackgroundImage = GetImage("titleleft");
+            pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleft");
+            pnltitleright.BackgroundImage = GetImage("titleright");
+            pnltitleright.BackgroundImageLayout = GetImageLayout("titleright");
+            pnltitle.BackgroundImageLayout = GetImageLayout("titlebar"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
+
+            pnlleft.BackColor = LoadedSkin.BorderLeftBackground;
+            pnlleft.BackgroundImage = GetImage("leftborder");
+            pnlleft.BackgroundImageLayout = GetImageLayout("leftborder");
+
+            pnlright.BackColor = LoadedSkin.BorderRightBackground;
+            pnlright.BackgroundImage = GetImage("rightborder");
+            pnlright.BackgroundImageLayout = GetImageLayout("rightborder");
+
+            pnlbottom.BackColor = LoadedSkin.BorderBottomBackground;
+            pnlbottom.BackgroundImage = GetImage("bottomborder");
+            pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborder");
+
+            pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
+            pnlbottomr.BackgroundImage = GetImage("bottomrborder");
+            pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
+
+            pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
+            pnlbottoml.BackgroundImage = GetImage("bottomlborder");
+            pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+
+        }
+
+        public void SetInactiveBorders()
+        {
+            pnltitle.BackColor = LoadedSkin.TitleInactiveBackgroundColor;
+            pnltitle.BackgroundImage = GetImage("titlebarinactive");
+            pnltitleleft.BackColor = LoadedSkin.TitleInactiveLeftCornerBackground;
+            pnltitleright.BackColor = LoadedSkin.TitleInactiveRightCornerBackground;
+            pnltitleleft.BackgroundImage = GetImage("titleleftinactive");
+            pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleftinactive");
+            pnltitleright.BackgroundImage = GetImage("titlerightinactive");
+            pnltitleright.BackgroundImageLayout = GetImageLayout("titlerightinactive");
+            pnltitle.BackgroundImageLayout = GetImageLayout("titlebarinactive"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
+
+            pnlleft.BackColor = LoadedSkin.BorderInactiveLeftBackground;
+            pnlleft.BackgroundImage = GetImage("leftborderinactive");
+            pnlleft.BackgroundImageLayout = GetImageLayout("leftborderinactive");
+
+            pnlright.BackColor = LoadedSkin.BorderInactiveRightBackground;
+            pnlright.BackgroundImage = GetImage("rightborderinactive");
+            pnlright.BackgroundImageLayout = GetImageLayout("rightborderinactive");
+
+            pnlbottom.BackColor = LoadedSkin.BorderInactiveBottomBackground;
+            pnlbottom.BackgroundImage = GetImage("bottomborderinactive");
+            pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborderinactive");
+
+            pnlbottomr.BackColor = LoadedSkin.BorderInactiveBottomRightBackground;
+            pnlbottomr.BackgroundImage = GetImage("bottomrborderinactive");
+            pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborderinactive");
+
+            pnlbottoml.BackColor = LoadedSkin.BorderInactiveBottomLeftBackground;
+            pnlbottoml.BackgroundImage = GetImage("bottomlborderinactive");
+            pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborderinactive");
+
+        }
+
         /// <summary>
         /// Setups the skin.
         /// </summary>
@@ -271,68 +339,14 @@ namespace ShiftOS.WinForms
             //Border colors and images...
             if (IsFocused)
             {
-                pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
-                pnltitle.BackgroundImage = GetImage("titlebar");
-                pnltitleleft.BackColor = LoadedSkin.TitleLeftCornerBackground;
-                pnltitleright.BackColor = LoadedSkin.TitleRightCornerBackground;
-                pnltitleleft.BackgroundImage = GetImage("titleleft");
-                pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleft");
-                pnltitleright.BackgroundImage = GetImage("titleright");
-                pnltitleright.BackgroundImageLayout = GetImageLayout("titleright");
-                pnltitle.BackgroundImageLayout = GetImageLayout("titlebar"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
-
-                pnlleft.BackColor = LoadedSkin.BorderLeftBackground;
-                pnlleft.BackgroundImage = GetImage("leftborder");
-                pnlleft.BackgroundImageLayout = GetImageLayout("leftborder");
-
-                pnlright.BackColor = LoadedSkin.BorderRightBackground;
-                pnlright.BackgroundImage = GetImage("rightborder");
-                pnlright.BackgroundImageLayout = GetImageLayout("rightborder");
-
-                pnlbottom.BackColor = LoadedSkin.BorderBottomBackground;
-                pnlbottom.BackgroundImage = GetImage("bottomborder");
-                pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborder");
-
-                pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
-                pnlbottomr.BackgroundImage = GetImage("bottomrborder");
-                pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
-
-                pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
-                pnlbottoml.BackgroundImage = GetImage("bottomlborder");
-                pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+                SetDefaultBorders();
             }
             else
             {
-                pnltitle.BackColor = LoadedSkin.TitleInactiveBackgroundColor;
-                pnltitle.BackgroundImage = GetImage("titlebarinactive");
-                pnltitleleft.BackColor = LoadedSkin.TitleInactiveLeftCornerBackground;
-                pnltitleright.BackColor = LoadedSkin.TitleInactiveRightCornerBackground;
-                pnltitleleft.BackgroundImage = GetImage("titleleftinactive");
-                pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleftinactive");
-                pnltitleright.BackgroundImage = GetImage("titlerightinactive");
-                pnltitleright.BackgroundImageLayout = GetImageLayout("titlerightinactive");
-                pnltitle.BackgroundImageLayout = GetImageLayout("titlebarinactive"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
-
-                pnlleft.BackColor = LoadedSkin.BorderInactiveLeftBackground;
-                pnlleft.BackgroundImage = GetImage("leftborderinactive");
-                pnlleft.BackgroundImageLayout = GetImageLayout("leftborderinactive");
-
-                pnlright.BackColor = LoadedSkin.BorderInactiveRightBackground;
-                pnlright.BackgroundImage = GetImage("rightborderinactive");
-                pnlright.BackgroundImageLayout = GetImageLayout("rightborderinactive");
-
-                pnlbottom.BackColor = LoadedSkin.BorderInactiveBottomBackground;
-                pnlbottom.BackgroundImage = GetImage("bottomborderinactive");
-                pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborderinactive");
-
-                pnlbottomr.BackColor = LoadedSkin.BorderInactiveBottomRightBackground;
-                pnlbottomr.BackgroundImage = GetImage("bottomrborderinactive");
-                pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborderinactive");
-
-                pnlbottoml.BackColor = LoadedSkin.BorderInactiveBottomLeftBackground;
-                pnlbottoml.BackgroundImage = GetImage("bottomlborderinactive");
-                pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborderinactive");
-
+                if (LoadedSkin.RenderInactiveBorders)
+                    SetInactiveBorders();
+                else
+                    SetDefaultBorders();
             }
 
 

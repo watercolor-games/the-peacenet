@@ -634,6 +634,13 @@ namespace ShiftOS.Engine
         [ShifterDescription("The background color for the bottom border when the window is inactive.")]
         public Color BorderInactiveBottomBackground = DefaultBackground;
 
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Window border")]
+        [ShifterName("Use Inactive Border Assets?")]
+        [RequiresUpgrade("shift_window_borders;shift_states")]
+        [ShifterDescription("Do you want to use separate colors and images for inactive Window Borders?")]
+        public bool RenderInactiveBorders = false;
+
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("Panel buttons")]

@@ -2058,7 +2058,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label4.TabIndex = 11;
             this.Label4.Text = "Colors";
             this.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Label4.Click += new System.EventHandler(this.Label4_Click);
             // 
             // line6
             // 
