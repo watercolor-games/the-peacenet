@@ -292,12 +292,6 @@ namespace ShiftOS.WinForms.Applications
             this.btnpaintbrush = new System.Windows.Forms.Button();
             this.btntexttool = new System.Windows.Forms.Button();
             this.btneracer = new System.Windows.Forms.Button();
-            this.btnnew = new System.Windows.Forms.Button();
-            this.btnmagnify = new System.Windows.Forms.Button();
-            this.btnopen = new System.Windows.Forms.Button();
-            this.btnsave = new System.Windows.Forms.Button();
-            this.btnundo = new System.Windows.Forms.Button();
-            this.btnredo = new System.Windows.Forms.Button();
             this.line1 = new System.Windows.Forms.Panel();
             this.pnltoolpreview = new System.Windows.Forms.Panel();
             this.Label13 = new System.Windows.Forms.Label();
@@ -311,6 +305,22 @@ namespace ShiftOS.WinForms.Applications
             this.pullbottom = new System.Windows.Forms.Timer(this.components);
             this.pullside = new System.Windows.Forms.Timer(this.components);
             this.tmrsetupui = new System.Windows.Forms.Timer(this.components);
+            this.msTools = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gENNEWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gENLOADToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gENSAVEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gENEXITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.moreControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pgcontents.SuspendLayout();
             this.pnldrawingbackground.SuspendLayout();
             this.pnlinitialcanvassettings.SuspendLayout();
@@ -335,6 +345,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolpositioner.SuspendLayout();
             this.pnltoolpreview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picpreview)).BeginInit();
+            this.msTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // pgcontents
@@ -344,9 +355,9 @@ namespace ShiftOS.WinForms.Applications
             this.pgcontents.Controls.Add(this.pnlbottompanel);
             this.pgcontents.Controls.Add(this.pnltools);
             this.pgcontents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pgcontents.Location = new System.Drawing.Point(0, 0);
+            this.pgcontents.Location = new System.Drawing.Point(0, 24);
             this.pgcontents.Name = "pgcontents";
-            this.pgcontents.Size = new System.Drawing.Size(802, 598);
+            this.pgcontents.Size = new System.Drawing.Size(802, 574);
             this.pgcontents.TabIndex = 20;
             // 
             // pnldrawingbackground
@@ -359,7 +370,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnldrawingbackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnldrawingbackground.Location = new System.Drawing.Point(120, 0);
             this.pnldrawingbackground.Name = "pnldrawingbackground";
-            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 474);
+            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 450);
             this.pnldrawingbackground.TabIndex = 2;
             // 
             // pnlinitialcanvassettings
@@ -602,7 +613,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbottompanel.Controls.Add(this.pnlpallet);
             this.pnlbottompanel.Controls.Add(this.pnltoolproperties);
             this.pnlbottompanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbottompanel.Location = new System.Drawing.Point(120, 474);
+            this.pnlbottompanel.Location = new System.Drawing.Point(120, 450);
             this.pnlbottompanel.Name = "pnlbottompanel";
             this.pnlbottompanel.Size = new System.Drawing.Size(682, 124);
             this.pnlbottompanel.TabIndex = 1;
@@ -2933,7 +2944,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnltools.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnltools.Location = new System.Drawing.Point(0, 0);
             this.pnltools.Name = "pnltools";
-            this.pnltools.Size = new System.Drawing.Size(120, 598);
+            this.pnltools.Size = new System.Drawing.Size(120, 574);
             this.pnltools.TabIndex = 0;
             // 
             // pnltoolpositioner
@@ -2948,16 +2959,10 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolpositioner.Controls.Add(this.btnpaintbrush);
             this.pnltoolpositioner.Controls.Add(this.btntexttool);
             this.pnltoolpositioner.Controls.Add(this.btneracer);
-            this.pnltoolpositioner.Controls.Add(this.btnnew);
-            this.pnltoolpositioner.Controls.Add(this.btnmagnify);
-            this.pnltoolpositioner.Controls.Add(this.btnopen);
-            this.pnltoolpositioner.Controls.Add(this.btnsave);
-            this.pnltoolpositioner.Controls.Add(this.btnundo);
-            this.pnltoolpositioner.Controls.Add(this.btnredo);
             this.pnltoolpositioner.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnltoolpositioner.Location = new System.Drawing.Point(0, 0);
             this.pnltoolpositioner.Name = "pnltoolpositioner";
-            this.pnltoolpositioner.Size = new System.Drawing.Size(119, 498);
+            this.pnltoolpositioner.Size = new System.Drawing.Size(119, 474);
             this.pnltoolpositioner.TabIndex = 2;
             // 
             // btnpixelsetter
@@ -3116,109 +3121,13 @@ namespace ShiftOS.WinForms.Applications
             this.btneracer.UseVisualStyleBackColor = true;
             this.btneracer.Click += new System.EventHandler(this.btneracer_Click);
             // 
-            // btnnew
-            // 
-            this.btnnew.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadnew;
-            this.btnnew.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnnew.FlatAppearance.BorderSize = 0;
-            this.btnnew.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnnew.Location = new System.Drawing.Point(6, 286);
-            this.btnnew.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnnew.Name = "btnnew";
-            this.btnnew.Size = new System.Drawing.Size(50, 50);
-            this.btnnew.TabIndex = 6;
-            this.btnnew.Tag = "nobuttonskin";
-            this.btnnew.Text = " ";
-            this.btnnew.UseVisualStyleBackColor = true;
-            this.btnnew.Click += new System.EventHandler(this.btnnew_Click);
-            // 
-            // btnmagnify
-            // 
-            this.btnmagnify.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadmagnify;
-            this.btnmagnify.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnmagnify.FlatAppearance.BorderSize = 0;
-            this.btnmagnify.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnmagnify.Location = new System.Drawing.Point(62, 286);
-            this.btnmagnify.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnmagnify.Name = "btnmagnify";
-            this.btnmagnify.Size = new System.Drawing.Size(50, 50);
-            this.btnmagnify.TabIndex = 3;
-            this.btnmagnify.Tag = "nobuttonskin";
-            this.btnmagnify.Text = " ";
-            this.btnmagnify.UseVisualStyleBackColor = true;
-            this.btnmagnify.Click += new System.EventHandler(this.btnmagnify_Click);
-            // 
-            // btnopen
-            // 
-            this.btnopen.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadopen;
-            this.btnopen.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnopen.FlatAppearance.BorderSize = 0;
-            this.btnopen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnopen.Location = new System.Drawing.Point(6, 342);
-            this.btnopen.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnopen.Name = "btnopen";
-            this.btnopen.Size = new System.Drawing.Size(50, 50);
-            this.btnopen.TabIndex = 10;
-            this.btnopen.Tag = "nobuttonskin";
-            this.btnopen.Text = " ";
-            this.btnopen.UseVisualStyleBackColor = true;
-            this.btnopen.Click += new System.EventHandler(this.btnopen_Click);
-            // 
-            // btnsave
-            // 
-            this.btnsave.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadsave;
-            this.btnsave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnsave.FlatAppearance.BorderSize = 0;
-            this.btnsave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnsave.Location = new System.Drawing.Point(62, 342);
-            this.btnsave.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnsave.Name = "btnsave";
-            this.btnsave.Size = new System.Drawing.Size(50, 50);
-            this.btnsave.TabIndex = 5;
-            this.btnsave.Tag = "nobuttonskin";
-            this.btnsave.Text = " ";
-            this.btnsave.UseVisualStyleBackColor = true;
-            this.btnsave.Click += new System.EventHandler(this.btnsave_Click);
-            // 
-            // btnundo
-            // 
-            this.btnundo.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadundo;
-            this.btnundo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnundo.FlatAppearance.BorderSize = 0;
-            this.btnundo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnundo.Location = new System.Drawing.Point(6, 398);
-            this.btnundo.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnundo.Name = "btnundo";
-            this.btnundo.Size = new System.Drawing.Size(50, 50);
-            this.btnundo.TabIndex = 8;
-            this.btnundo.Tag = "nobuttonskin";
-            this.btnundo.Text = " ";
-            this.btnundo.UseVisualStyleBackColor = true;
-            this.btnundo.Click += new System.EventHandler(this.btnundo_Click);
-            // 
-            // btnredo
-            // 
-            this.btnredo.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadredo;
-            this.btnredo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnredo.FlatAppearance.BorderSize = 0;
-            this.btnredo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnredo.Location = new System.Drawing.Point(62, 398);
-            this.btnredo.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
-            this.btnredo.Name = "btnredo";
-            this.btnredo.Size = new System.Drawing.Size(50, 50);
-            this.btnredo.TabIndex = 9;
-            this.btnredo.Tag = "nobuttonskin";
-            this.btnredo.Text = " ";
-            this.btnredo.UseVisualStyleBackColor = true;
-            this.btnredo.Click += new System.EventHandler(this.btnredo_Click);
-            // 
             // line1
             // 
             this.line1.BackColor = System.Drawing.Color.Black;
             this.line1.Dock = System.Windows.Forms.DockStyle.Right;
             this.line1.Location = new System.Drawing.Point(119, 0);
             this.line1.Name = "line1";
-            this.line1.Size = new System.Drawing.Size(1, 498);
+            this.line1.Size = new System.Drawing.Size(1, 474);
             this.line1.TabIndex = 1;
             // 
             // pnltoolpreview
@@ -3229,7 +3138,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolpreview.Controls.Add(this.line4);
             this.pnltoolpreview.Controls.Add(this.line2);
             this.pnltoolpreview.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnltoolpreview.Location = new System.Drawing.Point(0, 498);
+            this.pnltoolpreview.Location = new System.Drawing.Point(0, 474);
             this.pnltoolpreview.Name = "pnltoolpreview";
             this.pnltoolpreview.Size = new System.Drawing.Size(120, 100);
             this.pnltoolpreview.TabIndex = 0;
@@ -3305,11 +3214,136 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.tmrsetupui.Tick += new System.EventHandler(this.tmrsetupui_Tick);
             // 
+            // msTools
+            // 
+            this.msTools.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.viewToolStripMenuItem});
+            this.msTools.Location = new System.Drawing.Point(0, 0);
+            this.msTools.Name = "msTools";
+            this.msTools.Size = new System.Drawing.Size(802, 24);
+            this.msTools.TabIndex = 3;
+            this.msTools.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gENNEWToolStripMenuItem,
+            this.gENLOADToolStripMenuItem,
+            this.gENSAVEToolStripMenuItem,
+            this.gENEXITToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // gENNEWToolStripMenuItem
+            // 
+            this.gENNEWToolStripMenuItem.Name = "gENNEWToolStripMenuItem";
+            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENNEWToolStripMenuItem.Text = "{GEN_NEW}";
+            this.gENNEWToolStripMenuItem.Click += new System.EventHandler(this.btnnew_Click);
+            // 
+            // gENLOADToolStripMenuItem
+            // 
+            this.gENLOADToolStripMenuItem.Name = "gENLOADToolStripMenuItem";
+            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENLOADToolStripMenuItem.Text = "{GEN_LOAD}";
+            this.gENLOADToolStripMenuItem.Click += new System.EventHandler(this.btnopen_Click);
+            // 
+            // gENSAVEToolStripMenuItem
+            // 
+            this.gENSAVEToolStripMenuItem.Name = "gENSAVEToolStripMenuItem";
+            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENSAVEToolStripMenuItem.Text = "{GEN_SAVE}";
+            this.gENSAVEToolStripMenuItem.Click += new System.EventHandler(this.btnsave_Click);
+            // 
+            // gENEXITToolStripMenuItem
+            // 
+            this.gENEXITToolStripMenuItem.Name = "gENEXITToolStripMenuItem";
+            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENEXITToolStripMenuItem.Text = "{GEN_EXIT}";
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoToolStripMenuItem,
+            this.redoToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.btnundo_Click);
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.btnredo_Click);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zoomToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // zoomToolStripMenuItem
+            // 
+            this.zoomToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem4,
+            this.toolStripMenuItem5,
+            this.moreControlsToolStripMenuItem});
+            this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.zoomToolStripMenuItem.Text = "Zoom";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem2.Text = "25%";
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem3.Text = "50%";
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem4.Text = "100%";
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem5.Text = "200%";
+            // 
+            // moreControlsToolStripMenuItem
+            // 
+            this.moreControlsToolStripMenuItem.Name = "moreControlsToolStripMenuItem";
+            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.moreControlsToolStripMenuItem.Text = "More controls";
+            this.moreControlsToolStripMenuItem.Click += new System.EventHandler(this.btnmagnify_Click);
+            // 
             // Artpad
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pgcontents);
+            this.Controls.Add(this.msTools);
             this.MinimumSize = new System.Drawing.Size(502, 398);
             this.Name = "Artpad";
             this.Size = new System.Drawing.Size(802, 598);
@@ -3349,7 +3383,10 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolpositioner.ResumeLayout(false);
             this.pnltoolpreview.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picpreview)).EndInit();
+            this.msTools.ResumeLayout(false);
+            this.msTools.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
         internal System.Windows.Forms.Panel pgcontents;
@@ -3369,7 +3406,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Button btnpixelsettersetpixel;
         internal System.Windows.Forms.TextBox txtpixelsetterycoordinate;
         internal System.Windows.Forms.TextBox txtpixelsetterxcoordinate;
-        internal System.Windows.Forms.Button btnmagnify;
         internal System.Windows.Forms.Panel colourpallet32;
         internal System.Windows.Forms.Panel colourpallet31;
         internal System.Windows.Forms.Panel colourpallet30;
@@ -3415,7 +3451,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Label lblpixelplacerhelp;
         internal System.Windows.Forms.Label Label6;
         internal System.Windows.Forms.Label Label5;
-        internal System.Windows.Forms.Button btnnew;
         internal System.Windows.Forms.FlowLayoutPanel flowcolours;
         internal System.Windows.Forms.Button btnpencil;
         internal System.Windows.Forms.Panel pnlpencilsettings;
@@ -3454,10 +3489,6 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Label lbltoolselected;
         internal System.Windows.Forms.Panel line4;
         internal System.Windows.Forms.Panel line2;
-        internal System.Windows.Forms.Button btnopen;
-        internal System.Windows.Forms.Button btnsave;
-        internal System.Windows.Forms.Button btnundo;
-        internal System.Windows.Forms.Button btnredo;
         internal System.Windows.Forms.Button btneracer;
         internal System.Windows.Forms.Button btnlinetool;
         internal System.Windows.Forms.Panel pnllinetoolsettings;
@@ -3616,5 +3647,21 @@ namespace ShiftOS.WinForms.Applications
         internal System.Windows.Forms.Timer pullside;
         private System.Windows.Forms.Timer tmrsetupui;
         private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.MenuStrip msTools;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gENNEWToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gENLOADToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gENSAVEToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gENEXITToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem moreControlsToolStripMenuItem;
     }
 }

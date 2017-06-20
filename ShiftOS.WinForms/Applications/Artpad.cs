@@ -57,11 +57,7 @@ namespace ShiftOS.WinForms.Applications
         {
             try
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 InitializeComponent();
-                sw.Stop();
-                Console.WriteLine("ArtPad construction timespan:" + sw.Elapsed.ToString());
             }
             catch (Exception ex)
             {
@@ -169,6 +165,17 @@ namespace ShiftOS.WinForms.Applications
         //PHILCODE: I just reduced this function's amount of Windows Forms calls by 66%.
         public void setuptoolbox()
         {
+            gENSAVEToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("artpad_save");
+            gENLOADToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("artpad_open");
+            gENNEWToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("artpad_new");
+
+            undoToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("artpad_undo");
+            redoToolStripMenuItem.Visible = Shiftorium.UpgradeInstalled("artpad_redo");
+
+            editToolStripMenuItem.Visible = (undoToolStripMenuItem.Visible || redoToolStripMenuItem.Visible);
+
+
+
             btnpixelplacer.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_pixel_placer") == true);
             btnpencil.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_pencil") == true);
             btnfloodfill.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_fill_tool") == true);
@@ -178,11 +185,6 @@ namespace ShiftOS.WinForms.Applications
             btnpaintbrush.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_paintbrush") == true);
             btntexttool.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_text_tool") == true);
             btneracer.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_eraser") == true);
-            btnnew.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_new") == true);
-            btnopen.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_load") == true);
-            btnsave.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_save") == true);
-            btnundo.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_undo") == true);
-            btnredo.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_redo") == true);
             btnpixelplacermovementmode.Visible = (ShiftoriumFrontend.UpgradeInstalled("artpad_pp_movement_mode") == true);
         }
 
