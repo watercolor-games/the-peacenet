@@ -369,7 +369,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnldrawingbackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnldrawingbackground.Location = new System.Drawing.Point(120, 0);
             this.pnldrawingbackground.Name = "pnldrawingbackground";
-            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 450);
+            this.pnldrawingbackground.Size = new System.Drawing.Size(682, 474);
             this.pnldrawingbackground.TabIndex = 2;
             // 
             // pnlinitialcanvassettings
@@ -382,17 +382,17 @@ namespace ShiftOS.WinForms.Applications
             this.pnlinitialcanvassettings.Controls.Add(this.Label10);
             this.pnlinitialcanvassettings.Controls.Add(this.txtnewcanvaswidth);
             this.pnlinitialcanvassettings.Controls.Add(this.Label9);
-            this.pnlinitialcanvassettings.Location = new System.Drawing.Point(194, 174);
+            this.pnlinitialcanvassettings.Location = new System.Drawing.Point(144, 137);
             this.pnlinitialcanvassettings.Name = "pnlinitialcanvassettings";
-            this.pnlinitialcanvassettings.Size = new System.Drawing.Size(223, 100);
+            this.pnlinitialcanvassettings.Size = new System.Drawing.Size(326, 160);
             this.pnlinitialcanvassettings.TabIndex = 1;
             // 
             // btncreate
             // 
             this.btncreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btncreate.Location = new System.Drawing.Point(114, 66);
+            this.btncreate.Location = new System.Drawing.Point(196, 93);
             this.btncreate.Name = "btncreate";
-            this.btncreate.Size = new System.Drawing.Size(102, 28);
+            this.btncreate.Size = new System.Drawing.Size(115, 50);
             this.btncreate.TabIndex = 6;
             this.btncreate.Text = "Create";
             this.btncreate.UseVisualStyleBackColor = true;
@@ -401,19 +401,19 @@ namespace ShiftOS.WinForms.Applications
             // Label11
             // 
             this.Label11.AutoSize = true;
-            this.Label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label11.Location = new System.Drawing.Point(124, 9);
+            this.Label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.Label11.Location = new System.Drawing.Point(200, 7);
             this.Label11.Name = "Label11";
-            this.Label11.Size = new System.Drawing.Size(88, 20);
+            this.Label11.Size = new System.Drawing.Size(106, 24);
             this.Label11.TabIndex = 5;
             this.Label11.Text = "Total Pixels";
             // 
             // lbltotalpixels
             // 
-            this.lbltotalpixels.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbltotalpixels.Location = new System.Drawing.Point(114, 30);
+            this.lbltotalpixels.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F);
+            this.lbltotalpixels.Location = new System.Drawing.Point(181, 31);
             this.lbltotalpixels.Name = "lbltotalpixels";
-            this.lbltotalpixels.Size = new System.Drawing.Size(106, 29);
+            this.lbltotalpixels.Size = new System.Drawing.Size(143, 56);
             this.lbltotalpixels.TabIndex = 4;
             this.lbltotalpixels.Text = "0";
             this.lbltotalpixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -422,11 +422,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.txtnewcanvasheight.BackColor = System.Drawing.Color.White;
             this.txtnewcanvasheight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtnewcanvasheight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtnewcanvasheight.Location = new System.Drawing.Point(59, 37);
+            this.txtnewcanvasheight.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtnewcanvasheight.Location = new System.Drawing.Point(82, 93);
             this.txtnewcanvasheight.MaxLength = 4;
             this.txtnewcanvasheight.Name = "txtnewcanvasheight";
-            this.txtnewcanvasheight.Size = new System.Drawing.Size(54, 22);
+            this.txtnewcanvasheight.Size = new System.Drawing.Size(54, 26);
             this.txtnewcanvasheight.TabIndex = 3;
             this.txtnewcanvasheight.Text = "0";
             this.txtnewcanvasheight.TextChanged += new System.EventHandler(this.txtnewcanvaswidth_TextChanged);
@@ -434,10 +434,10 @@ namespace ShiftOS.WinForms.Applications
             // Label10
             // 
             this.Label10.AutoSize = true;
-            this.Label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label10.Location = new System.Drawing.Point(8, 40);
+            this.Label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.Label10.Location = new System.Drawing.Point(7, 91);
             this.Label10.Name = "Label10";
-            this.Label10.Size = new System.Drawing.Size(50, 16);
+            this.Label10.Size = new System.Drawing.Size(74, 25);
             this.Label10.TabIndex = 2;
             this.Label10.Text = "Height:";
             // 
@@ -445,11 +445,11 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.txtnewcanvaswidth.BackColor = System.Drawing.Color.White;
             this.txtnewcanvaswidth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtnewcanvaswidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtnewcanvaswidth.Location = new System.Drawing.Point(59, 9);
+            this.txtnewcanvaswidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txtnewcanvaswidth.Location = new System.Drawing.Point(82, 41);
             this.txtnewcanvaswidth.MaxLength = 4;
             this.txtnewcanvaswidth.Name = "txtnewcanvaswidth";
-            this.txtnewcanvaswidth.Size = new System.Drawing.Size(54, 22);
+            this.txtnewcanvaswidth.Size = new System.Drawing.Size(54, 26);
             this.txtnewcanvaswidth.TabIndex = 1;
             this.txtnewcanvaswidth.Text = "0";
             this.txtnewcanvaswidth.TextChanged += new System.EventHandler(this.txtnewcanvaswidth_TextChanged);
@@ -457,10 +457,10 @@ namespace ShiftOS.WinForms.Applications
             // Label9
             // 
             this.Label9.AutoSize = true;
-            this.Label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label9.Location = new System.Drawing.Point(8, 12);
+            this.Label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.Label9.Location = new System.Drawing.Point(7, 39);
             this.Label9.Name = "Label9";
-            this.Label9.Size = new System.Drawing.Size(45, 16);
+            this.Label9.Size = new System.Drawing.Size(69, 25);
             this.Label9.TabIndex = 0;
             this.Label9.Text = "Width:";
             // 
@@ -602,9 +602,9 @@ namespace ShiftOS.WinForms.Applications
             this.pnlbottompanel.Controls.Add(this.pnlpallet);
             this.pnlbottompanel.Controls.Add(this.pnltoolproperties);
             this.pnlbottompanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlbottompanel.Location = new System.Drawing.Point(120, 450);
+            this.pnlbottompanel.Location = new System.Drawing.Point(120, 474);
             this.pnlbottompanel.Name = "pnlbottompanel";
-            this.pnlbottompanel.Size = new System.Drawing.Size(682, 124);
+            this.pnlbottompanel.Size = new System.Drawing.Size(682, 100);
             this.pnlbottompanel.TabIndex = 1;
             // 
             // pnlpallet
@@ -618,15 +618,15 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpallet.Controls.Add(this.line6);
             this.pnlpallet.Location = new System.Drawing.Point(457, 0);
             this.pnlpallet.Name = "pnlpallet";
-            this.pnlpallet.Size = new System.Drawing.Size(225, 124);
+            this.pnlpallet.Size = new System.Drawing.Size(225, 100);
             this.pnlpallet.TabIndex = 0;
             // 
             // label44
             // 
             this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label44.Location = new System.Drawing.Point(0, 24);
+            this.label44.Location = new System.Drawing.Point(0, 16);
             this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(225, 27);
+            this.label44.Size = new System.Drawing.Size(225, 11);
             this.label44.TabIndex = 13;
             this.label44.Text = "Left click to select, right click to change color";
             this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -762,7 +762,7 @@ namespace ShiftOS.WinForms.Applications
             this.flowcolours.Controls.Add(this.colourpallet127);
             this.flowcolours.Controls.Add(this.colourpallet128);
             this.flowcolours.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowcolours.Location = new System.Drawing.Point(0, 51);
+            this.flowcolours.Location = new System.Drawing.Point(0, 27);
             this.flowcolours.Name = "flowcolours";
             this.flowcolours.Padding = new System.Windows.Forms.Padding(1, 1, 0, 0);
             this.flowcolours.Size = new System.Drawing.Size(225, 73);
@@ -2054,10 +2054,11 @@ namespace ShiftOS.WinForms.Applications
             this.Label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label4.Location = new System.Drawing.Point(0, 1);
             this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(225, 23);
+            this.Label4.Size = new System.Drawing.Size(225, 15);
             this.Label4.TabIndex = 11;
-            this.Label4.Text = "Colours";
+            this.Label4.Text = "Colors";
             this.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Label4.Click += new System.EventHandler(this.Label4_Click);
             // 
             // line6
             // 
@@ -2174,7 +2175,7 @@ namespace ShiftOS.WinForms.Applications
             this.btneracersquare.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadsquarerubberselected;
             this.btneracersquare.FlatAppearance.BorderSize = 0;
             this.btneracersquare.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btneracersquare.Location = new System.Drawing.Point(75, 21);
+            this.btneracersquare.Location = new System.Drawing.Point(75, 15);
             this.btneracersquare.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
             this.btneracersquare.Name = "btneracersquare";
             this.btneracersquare.Size = new System.Drawing.Size(60, 50);
@@ -2188,7 +2189,7 @@ namespace ShiftOS.WinForms.Applications
             this.btneracercircle.BackgroundImage = global::ShiftOS.WinForms.Properties.Resources.ArtPadcirclerubber;
             this.btneracercircle.FlatAppearance.BorderSize = 0;
             this.btneracercircle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btneracercircle.Location = new System.Drawing.Point(9, 21);
+            this.btneracercircle.Location = new System.Drawing.Point(9, 15);
             this.btneracercircle.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
             this.btneracercircle.Name = "btneracercircle";
             this.btneracercircle.Size = new System.Drawing.Size(60, 50);
@@ -2200,9 +2201,9 @@ namespace ShiftOS.WinForms.Applications
             // Label24
             // 
             this.Label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label24.Location = new System.Drawing.Point(141, 29);
+            this.Label24.Location = new System.Drawing.Point(141, 25);
             this.Label24.Name = "Label24";
-            this.Label24.Size = new System.Drawing.Size(314, 38);
+            this.Label24.Size = new System.Drawing.Size(314, 35);
             this.Label24.TabIndex = 15;
             this.Label24.Text = "Choose a shape and size for your eracer then rub out unwanted parts of your drawi" +
     "ng with the mouse.";
@@ -2213,7 +2214,7 @@ namespace ShiftOS.WinForms.Applications
             this.txteracersize.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txteracersize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txteracersize.ForeColor = System.Drawing.Color.Black;
-            this.txteracersize.Location = new System.Drawing.Point(198, 70);
+            this.txteracersize.Location = new System.Drawing.Point(198, 69);
             this.txteracersize.Name = "txteracersize";
             this.txteracersize.Size = new System.Drawing.Size(73, 26);
             this.txteracersize.TabIndex = 12;
@@ -2234,7 +2235,7 @@ namespace ShiftOS.WinForms.Applications
             this.Label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label27.Location = new System.Drawing.Point(6, 3);
             this.Label27.Name = "Label27";
-            this.Label27.Size = new System.Drawing.Size(444, 23);
+            this.Label27.Size = new System.Drawing.Size(444, 18);
             this.Label27.TabIndex = 0;
             this.Label27.Text = "Eraser Tool Settings";
             this.Label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2946,8 +2947,8 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolpositioner.Controls.Add(this.btnsquare);
             this.pnltoolpositioner.Controls.Add(this.btnlinetool);
             this.pnltoolpositioner.Controls.Add(this.btnpaintbrush);
-            this.pnltoolpositioner.Controls.Add(this.btntexttool);
             this.pnltoolpositioner.Controls.Add(this.btneracer);
+            this.pnltoolpositioner.Controls.Add(this.btntexttool);
             this.pnltoolpositioner.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnltoolpositioner.Location = new System.Drawing.Point(0, 0);
             this.pnltoolpositioner.Name = "pnltoolpositioner";
@@ -3084,7 +3085,7 @@ namespace ShiftOS.WinForms.Applications
             this.btntexttool.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btntexttool.FlatAppearance.BorderSize = 0;
             this.btntexttool.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btntexttool.Location = new System.Drawing.Point(6, 230);
+            this.btntexttool.Location = new System.Drawing.Point(62, 230);
             this.btntexttool.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
             this.btntexttool.Name = "btntexttool";
             this.btntexttool.Size = new System.Drawing.Size(50, 50);
@@ -3100,7 +3101,7 @@ namespace ShiftOS.WinForms.Applications
             this.btneracer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btneracer.FlatAppearance.BorderSize = 0;
             this.btneracer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btneracer.Location = new System.Drawing.Point(62, 230);
+            this.btneracer.Location = new System.Drawing.Point(6, 230);
             this.btneracer.Margin = new System.Windows.Forms.Padding(6, 6, 0, 0);
             this.btneracer.Name = "btneracer";
             this.btneracer.Size = new System.Drawing.Size(50, 50);
@@ -3223,34 +3224,34 @@ namespace ShiftOS.WinForms.Applications
             this.gENSAVEToolStripMenuItem,
             this.gENEXITToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // gENNEWToolStripMenuItem
             // 
             this.gENNEWToolStripMenuItem.Name = "gENNEWToolStripMenuItem";
-            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.gENNEWToolStripMenuItem.Text = "{GEN_NEW}";
             this.gENNEWToolStripMenuItem.Click += new System.EventHandler(this.btnnew_Click);
             // 
             // gENLOADToolStripMenuItem
             // 
             this.gENLOADToolStripMenuItem.Name = "gENLOADToolStripMenuItem";
-            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.gENLOADToolStripMenuItem.Text = "{GEN_LOAD}";
             this.gENLOADToolStripMenuItem.Click += new System.EventHandler(this.btnopen_Click);
             // 
             // gENSAVEToolStripMenuItem
             // 
             this.gENSAVEToolStripMenuItem.Name = "gENSAVEToolStripMenuItem";
-            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.gENSAVEToolStripMenuItem.Text = "{GEN_SAVE}";
             this.gENSAVEToolStripMenuItem.Click += new System.EventHandler(this.btnsave_Click);
             // 
             // gENEXITToolStripMenuItem
             // 
             this.gENEXITToolStripMenuItem.Name = "gENEXITToolStripMenuItem";
-            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.gENEXITToolStripMenuItem.Text = "{GEN_EXIT}";
             // 
             // editToolStripMenuItem
@@ -3259,20 +3260,20 @@ namespace ShiftOS.WinForms.Applications
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.btnundo_Click);
             // 
             // redoToolStripMenuItem
             // 
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.redoToolStripMenuItem.Text = "Redo";
             this.redoToolStripMenuItem.Click += new System.EventHandler(this.btnredo_Click);
             // 
@@ -3281,7 +3282,7 @@ namespace ShiftOS.WinForms.Applications
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zoomToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // zoomToolStripMenuItem
@@ -3293,41 +3294,41 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripMenuItem5,
             this.moreControlsToolStripMenuItem});
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
             this.zoomToolStripMenuItem.Text = "Zoom";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(138, 22);
             this.toolStripMenuItem2.Text = "25%";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(138, 22);
             this.toolStripMenuItem3.Text = "50%";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(138, 22);
             this.toolStripMenuItem4.Text = "100%";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(138, 22);
             this.toolStripMenuItem5.Text = "200%";
             this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItem5_Click);
             // 
             // moreControlsToolStripMenuItem
             // 
             this.moreControlsToolStripMenuItem.Name = "moreControlsToolStripMenuItem";
-            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.moreControlsToolStripMenuItem.Text = "More controls";
             this.moreControlsToolStripMenuItem.Click += new System.EventHandler(this.btnmagnify_Click);
             // 
