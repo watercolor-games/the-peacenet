@@ -36,11 +36,10 @@ namespace ShiftOS.WinForms.Applications
 
         public void ResetFonts()
         {
+#if YALL_GOT_ANY_MORE_OF_THEM_NONEXISTENT_CONTROLS
             fonts.Items.Clear();
-            foreach (var font in FontFamily.Families)
-            {
-                fonts.Items.Add(font.Name);
-            }
+            fonts.Items.AddRange(FontFamily.Families.Select(f => f.Name));
+#endif
             UpdateUI();
         }
 
