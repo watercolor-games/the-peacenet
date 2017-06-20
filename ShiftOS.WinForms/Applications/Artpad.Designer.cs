@@ -204,6 +204,11 @@ namespace ShiftOS.WinForms.Applications
             this.Label4 = new System.Windows.Forms.Label();
             this.line6 = new System.Windows.Forms.Panel();
             this.pnltoolproperties = new System.Windows.Forms.Panel();
+            this.pnlmagnifiersettings = new System.Windows.Forms.Panel();
+            this.btnzoomout = new System.Windows.Forms.Button();
+            this.btnzoomin = new System.Windows.Forms.Button();
+            this.lblzoomlevel = new System.Windows.Forms.Label();
+            this.Label7 = new System.Windows.Forms.Label();
             this.pnleracertoolsettings = new System.Windows.Forms.Panel();
             this.Label28 = new System.Windows.Forms.Label();
             this.btneracersquare = new System.Windows.Forms.Button();
@@ -254,11 +259,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label3 = new System.Windows.Forms.Label();
             this.Label2 = new System.Windows.Forms.Label();
             this.Label1 = new System.Windows.Forms.Label();
-            this.pnlmagnifiersettings = new System.Windows.Forms.Panel();
-            this.btnzoomout = new System.Windows.Forms.Button();
-            this.btnzoomin = new System.Windows.Forms.Button();
-            this.lblzoomlevel = new System.Windows.Forms.Label();
-            this.Label7 = new System.Windows.Forms.Label();
             this.pnlfloodfillsettings = new System.Windows.Forms.Panel();
             this.Label12 = new System.Windows.Forms.Label();
             this.Label15 = new System.Windows.Forms.Label();
@@ -329,6 +329,7 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpallet.SuspendLayout();
             this.flowcolours.SuspendLayout();
             this.pnltoolproperties.SuspendLayout();
+            this.pnlmagnifiersettings.SuspendLayout();
             this.pnleracertoolsettings.SuspendLayout();
             this.pnlpixelplacersettings.SuspendLayout();
             this.pnlovaltoolsettings.SuspendLayout();
@@ -336,7 +337,6 @@ namespace ShiftOS.WinForms.Applications
             this.pnlpaintbrushtoolsettings.SuspendLayout();
             this.pnltexttoolsettings.SuspendLayout();
             this.pnlpixelsettersettings.SuspendLayout();
-            this.pnlmagnifiersettings.SuspendLayout();
             this.pnlfloodfillsettings.SuspendLayout();
             this.pnlsquaretoolsettings.SuspendLayout();
             this.pnlpencilsettings.SuspendLayout();
@@ -428,6 +428,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewcanvasheight.Name = "txtnewcanvasheight";
             this.txtnewcanvasheight.Size = new System.Drawing.Size(54, 22);
             this.txtnewcanvasheight.TabIndex = 3;
+            this.txtnewcanvasheight.Text = "0";
             this.txtnewcanvasheight.TextChanged += new System.EventHandler(this.txtnewcanvaswidth_TextChanged);
             // 
             // Label10
@@ -450,6 +451,7 @@ namespace ShiftOS.WinForms.Applications
             this.txtnewcanvaswidth.Name = "txtnewcanvaswidth";
             this.txtnewcanvaswidth.Size = new System.Drawing.Size(54, 22);
             this.txtnewcanvaswidth.TabIndex = 1;
+            this.txtnewcanvaswidth.Text = "0";
             this.txtnewcanvaswidth.TextChanged += new System.EventHandler(this.txtnewcanvaswidth_TextChanged);
             // 
             // Label9
@@ -2068,6 +2070,7 @@ namespace ShiftOS.WinForms.Applications
             // 
             // pnltoolproperties
             // 
+            this.pnltoolproperties.Controls.Add(this.pnlmagnifiersettings);
             this.pnltoolproperties.Controls.Add(this.pnleracertoolsettings);
             this.pnltoolproperties.Controls.Add(this.pnlpixelplacersettings);
             this.pnltoolproperties.Controls.Add(this.pnlovaltoolsettings);
@@ -2075,7 +2078,6 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolproperties.Controls.Add(this.pnlpaintbrushtoolsettings);
             this.pnltoolproperties.Controls.Add(this.pnltexttoolsettings);
             this.pnltoolproperties.Controls.Add(this.pnlpixelsettersettings);
-            this.pnltoolproperties.Controls.Add(this.pnlmagnifiersettings);
             this.pnltoolproperties.Controls.Add(this.pnlfloodfillsettings);
             this.pnltoolproperties.Controls.Add(this.pnlsquaretoolsettings);
             this.pnltoolproperties.Controls.Add(this.pnlpencilsettings);
@@ -2087,6 +2089,60 @@ namespace ShiftOS.WinForms.Applications
             this.pnltoolproperties.Name = "pnltoolproperties";
             this.pnltoolproperties.Size = new System.Drawing.Size(457, 100);
             this.pnltoolproperties.TabIndex = 1;
+            // 
+            // pnlmagnifiersettings
+            // 
+            this.pnlmagnifiersettings.Controls.Add(this.btnzoomout);
+            this.pnlmagnifiersettings.Controls.Add(this.btnzoomin);
+            this.pnlmagnifiersettings.Controls.Add(this.lblzoomlevel);
+            this.pnlmagnifiersettings.Controls.Add(this.Label7);
+            this.pnlmagnifiersettings.Location = new System.Drawing.Point(78, 50);
+            this.pnlmagnifiersettings.Name = "pnlmagnifiersettings";
+            this.pnlmagnifiersettings.Size = new System.Drawing.Size(67, 44);
+            this.pnlmagnifiersettings.TabIndex = 6;
+            this.pnlmagnifiersettings.Visible = false;
+            // 
+            // btnzoomout
+            // 
+            this.btnzoomout.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnzoomout.Location = new System.Drawing.Point(16, 33);
+            this.btnzoomout.Name = "btnzoomout";
+            this.btnzoomout.Size = new System.Drawing.Size(129, 56);
+            this.btnzoomout.TabIndex = 11;
+            this.btnzoomout.Text = "-";
+            this.btnzoomout.UseVisualStyleBackColor = true;
+            this.btnzoomout.Click += new System.EventHandler(this.btnzoomout_Click);
+            // 
+            // btnzoomin
+            // 
+            this.btnzoomin.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnzoomin.Location = new System.Drawing.Point(313, 33);
+            this.btnzoomin.Name = "btnzoomin";
+            this.btnzoomin.Size = new System.Drawing.Size(129, 56);
+            this.btnzoomin.TabIndex = 10;
+            this.btnzoomin.Text = "+";
+            this.btnzoomin.UseVisualStyleBackColor = true;
+            this.btnzoomin.Click += new System.EventHandler(this.btnzoomin_Click);
+            // 
+            // lblzoomlevel
+            // 
+            this.lblzoomlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblzoomlevel.Location = new System.Drawing.Point(151, 33);
+            this.lblzoomlevel.Name = "lblzoomlevel";
+            this.lblzoomlevel.Size = new System.Drawing.Size(156, 56);
+            this.lblzoomlevel.TabIndex = 1;
+            this.lblzoomlevel.Text = "1X";
+            this.lblzoomlevel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // Label7
+            // 
+            this.Label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Label7.Location = new System.Drawing.Point(6, 3);
+            this.Label7.Name = "Label7";
+            this.Label7.Size = new System.Drawing.Size(444, 23);
+            this.Label7.TabIndex = 0;
+            this.Label7.Text = "Magnifier Settings";
+            this.Label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pnleracertoolsettings
             // 
@@ -2659,60 +2715,6 @@ namespace ShiftOS.WinForms.Applications
             this.Label1.Text = "Pixel Setter Settings";
             this.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pnlmagnifiersettings
-            // 
-            this.pnlmagnifiersettings.Controls.Add(this.btnzoomout);
-            this.pnlmagnifiersettings.Controls.Add(this.btnzoomin);
-            this.pnlmagnifiersettings.Controls.Add(this.lblzoomlevel);
-            this.pnlmagnifiersettings.Controls.Add(this.Label7);
-            this.pnlmagnifiersettings.Location = new System.Drawing.Point(78, 50);
-            this.pnlmagnifiersettings.Name = "pnlmagnifiersettings";
-            this.pnlmagnifiersettings.Size = new System.Drawing.Size(67, 44);
-            this.pnlmagnifiersettings.TabIndex = 6;
-            this.pnlmagnifiersettings.Visible = false;
-            // 
-            // btnzoomout
-            // 
-            this.btnzoomout.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnzoomout.Location = new System.Drawing.Point(16, 33);
-            this.btnzoomout.Name = "btnzoomout";
-            this.btnzoomout.Size = new System.Drawing.Size(129, 56);
-            this.btnzoomout.TabIndex = 11;
-            this.btnzoomout.Text = "-";
-            this.btnzoomout.UseVisualStyleBackColor = true;
-            this.btnzoomout.Click += new System.EventHandler(this.btnzoomout_Click);
-            // 
-            // btnzoomin
-            // 
-            this.btnzoomin.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnzoomin.Location = new System.Drawing.Point(313, 33);
-            this.btnzoomin.Name = "btnzoomin";
-            this.btnzoomin.Size = new System.Drawing.Size(129, 56);
-            this.btnzoomin.TabIndex = 10;
-            this.btnzoomin.Text = "+";
-            this.btnzoomin.UseVisualStyleBackColor = true;
-            this.btnzoomin.Click += new System.EventHandler(this.btnzoomin_Click);
-            // 
-            // lblzoomlevel
-            // 
-            this.lblzoomlevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblzoomlevel.Location = new System.Drawing.Point(151, 33);
-            this.lblzoomlevel.Name = "lblzoomlevel";
-            this.lblzoomlevel.Size = new System.Drawing.Size(156, 56);
-            this.lblzoomlevel.TabIndex = 1;
-            this.lblzoomlevel.Text = "1X";
-            this.lblzoomlevel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // Label7
-            // 
-            this.Label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label7.Location = new System.Drawing.Point(6, 3);
-            this.Label7.Name = "Label7";
-            this.Label7.Size = new System.Drawing.Size(444, 23);
-            this.Label7.TabIndex = 0;
-            this.Label7.Text = "Magnifier Settings";
-            this.Label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // pnlfloodfillsettings
             // 
             this.pnlfloodfillsettings.Controls.Add(this.Label12);
@@ -3227,28 +3229,28 @@ namespace ShiftOS.WinForms.Applications
             // gENNEWToolStripMenuItem
             // 
             this.gENNEWToolStripMenuItem.Name = "gENNEWToolStripMenuItem";
-            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.gENNEWToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.gENNEWToolStripMenuItem.Text = "{GEN_NEW}";
             this.gENNEWToolStripMenuItem.Click += new System.EventHandler(this.btnnew_Click);
             // 
             // gENLOADToolStripMenuItem
             // 
             this.gENLOADToolStripMenuItem.Name = "gENLOADToolStripMenuItem";
-            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.gENLOADToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.gENLOADToolStripMenuItem.Text = "{GEN_LOAD}";
             this.gENLOADToolStripMenuItem.Click += new System.EventHandler(this.btnopen_Click);
             // 
             // gENSAVEToolStripMenuItem
             // 
             this.gENSAVEToolStripMenuItem.Name = "gENSAVEToolStripMenuItem";
-            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.gENSAVEToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.gENSAVEToolStripMenuItem.Text = "{GEN_SAVE}";
             this.gENSAVEToolStripMenuItem.Click += new System.EventHandler(this.btnsave_Click);
             // 
             // gENEXITToolStripMenuItem
             // 
             this.gENEXITToolStripMenuItem.Name = "gENEXITToolStripMenuItem";
-            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.gENEXITToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.gENEXITToolStripMenuItem.Text = "{GEN_EXIT}";
             // 
             // editToolStripMenuItem
@@ -3291,37 +3293,41 @@ namespace ShiftOS.WinForms.Applications
             this.toolStripMenuItem5,
             this.moreControlsToolStripMenuItem});
             this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.zoomToolStripMenuItem.Text = "Zoom";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem2.Text = "25%";
+            this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem3.Text = "50%";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem4.Text = "100%";
+            this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem5.Text = "200%";
+            this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItem5_Click);
             // 
             // moreControlsToolStripMenuItem
             // 
             this.moreControlsToolStripMenuItem.Name = "moreControlsToolStripMenuItem";
-            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.moreControlsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.moreControlsToolStripMenuItem.Text = "More controls";
             this.moreControlsToolStripMenuItem.Click += new System.EventHandler(this.btnmagnify_Click);
             // 
@@ -3348,6 +3354,7 @@ namespace ShiftOS.WinForms.Applications
             this.flowcolours.ResumeLayout(false);
             this.pnltoolproperties.ResumeLayout(false);
             this.pnltoolproperties.PerformLayout();
+            this.pnlmagnifiersettings.ResumeLayout(false);
             this.pnleracertoolsettings.ResumeLayout(false);
             this.pnleracertoolsettings.PerformLayout();
             this.pnlpixelplacersettings.ResumeLayout(false);
@@ -3361,7 +3368,6 @@ namespace ShiftOS.WinForms.Applications
             this.pnltexttoolsettings.PerformLayout();
             this.pnlpixelsettersettings.ResumeLayout(false);
             this.pnlpixelsettersettings.PerformLayout();
-            this.pnlmagnifiersettings.ResumeLayout(false);
             this.pnlfloodfillsettings.ResumeLayout(false);
             this.pnlsquaretoolsettings.ResumeLayout(false);
             this.pnlsquaretoolsettings.PerformLayout();

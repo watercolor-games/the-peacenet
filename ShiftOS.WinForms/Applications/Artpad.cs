@@ -93,8 +93,8 @@ namespace ShiftOS.WinForms.Applications
         Color canvascolor = Color.White;
 
         Bitmap previewcanvasbitmap;
-        int magnificationlevel = 1;
-        Rectangle magnifyRect;
+        float magnificationlevel = 1;
+        RectangleF magnifyRect;
         Graphics graphicsbitmap;
         public Color drawingcolour = Color.Black;
         string selectedtool = "Pixel Setter";
@@ -103,7 +103,7 @@ namespace ShiftOS.WinForms.Applications
         System.Drawing.Drawing2D.GraphicsPath mousePath = new System.Drawing.Drawing2D.GraphicsPath();
         int pencilwidth = 1;
         undo undo = new undo();
-        Point thisPoint;
+        PointF thisPoint;
         int eracerwidth = 15;
 
         string eracertype = "square";
@@ -373,8 +373,8 @@ namespace ShiftOS.WinForms.Applications
             undo.redoStack.Clear();
 
 
-            thisPoint.X = (int)(e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
-            thisPoint.Y = (int)(e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.X = (e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.Y = (e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
 
             if (selectedtool == "Pixel Placer")
             {
@@ -384,7 +384,7 @@ namespace ShiftOS.WinForms.Applications
                     {
                         if (thisPoint.Y < canvasbitmap.Height && thisPoint.Y > -1)
                         {
-                            canvasbitmap.SetPixel(thisPoint.X, thisPoint.Y, drawingcolour);
+                            canvasbitmap.SetPixel((int)thisPoint.X, (int)thisPoint.Y, drawingcolour);
                             //set the pixel on the canvas
                             picdrawingdisplay.Invalidate();
                             //refresh the picture from the canvas
@@ -410,7 +410,7 @@ namespace ShiftOS.WinForms.Applications
                     {
                         if (thisPoint.Y < canvasbitmap.Height && thisPoint.Y > -1)
                         {
-                            SafeFloodFill(canvasbitmap, thisPoint.X, thisPoint.Y, drawingcolour);
+                            SafeFloodFill(canvasbitmap, (int)thisPoint.X, (int)thisPoint.Y, drawingcolour);
                             graphicsbitmap = Graphics.FromImage(canvasbitmap);
                             picdrawingdisplay.Invalidate();
                         }
@@ -496,10 +496,10 @@ namespace ShiftOS.WinForms.Applications
         // ERROR: Handles clauses are not supported in C#
         private void picdrawingdisplay_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            Point lastpoint;
+            PointF lastpoint;
 
-            thisPoint.X = (int)(e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
-            thisPoint.Y = (int)(e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.X = (e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.Y = (e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
 
 
             if (e.Button == MouseButtons.Left)
@@ -514,7 +514,8 @@ namespace ShiftOS.WinForms.Applications
                     {
                         if (thisPoint.Y < canvasbitmap.Height && thisPoint.Y > -1)
                         {
-                            canvasbitmap.SetPixel(thisPoint.X, thisPoint.Y, drawingcolour);
+                            //NO, NO, NO... Please don't tell me you're using SetPixel()... Whatever...
+                            canvasbitmap.SetPixel((int)thisPoint.X, (int)thisPoint.Y, drawingcolour);
                             //set the pixel on the canvas
                             picdrawingdisplay.Invalidate();
                             //refresh the picture from the canvas
@@ -587,8 +588,8 @@ namespace ShiftOS.WinForms.Applications
         // ERROR: Handles clauses are not supported in C#
         private void picdrawingdisplay_MouseUp(object sender, MouseEventArgs e)
         {
-            thisPoint.X = (int)(e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
-            thisPoint.Y = (int)(e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.X = (e.Location.X - (magnificationlevel / 2)) / magnificationlevel;
+            thisPoint.Y = (e.Location.Y - (magnificationlevel / 2)) / magnificationlevel;
 
             if (selectedtool == "Pencil")
             {
@@ -689,7 +690,7 @@ namespace ShiftOS.WinForms.Applications
         // ERROR: Handles clauses are not supported in C#
         private void btnzoomout_Click(object sender, EventArgs e)
         {
-            if (magnificationlevel > 1)
+            if (magnificationlevel > 0)
             {
                 magnificationlevel /= 2;
                 pnldrawingbackground.AutoScrollPosition = new Point(0, 0);
@@ -704,16 +705,16 @@ namespace ShiftOS.WinForms.Applications
 
         private void setmagnification()
         {
-            magnifyRect.Width = (int)canvaswidth / magnificationlevel;
-            magnifyRect.Height = (int)canvasheight / magnificationlevel;
-            picdrawingdisplay.Size = new Size(canvaswidth * magnificationlevel, canvasheight * magnificationlevel);
+            magnifyRect.Width = canvaswidth / magnificationlevel;
+            magnifyRect.Height = canvasheight / magnificationlevel;
+            picdrawingdisplay.Size = new Size((int)(canvaswidth * magnificationlevel), (int)(canvasheight * magnificationlevel));
             if (picdrawingdisplay.Height > 468 && picdrawingdisplay.Width > 676)
             {
                 picdrawingdisplay.Location = new Point(0, 0);
             }
             else
             {
-                picdrawingdisplay.Location = new Point((pnldrawingbackground.Width - canvaswidth * magnificationlevel) / 2, (pnldrawingbackground.Height - canvasheight * magnificationlevel) / 2);
+                picdrawingdisplay.CenterParent();
             }
             picdrawingdisplay.Invalidate();
             lblzoomlevel.Text = magnificationlevel + "X";
@@ -1560,6 +1561,33 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnUpgrade()
         {
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            magnificationlevel = 0.25f;
+            setmagnification();
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            magnificationlevel = 0.5f;
+            setmagnification();
+
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            magnificationlevel = 1;
+            setmagnification();
+
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            magnificationlevel = 200f;
+            setmagnification();
+
         }
     }
 
