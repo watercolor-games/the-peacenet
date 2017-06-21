@@ -1585,7 +1585,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
-            magnificationlevel = 200f;
+            magnificationlevel = 2f;
             setmagnification();
 
         }
