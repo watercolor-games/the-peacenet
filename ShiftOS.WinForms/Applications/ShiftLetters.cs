@@ -180,6 +180,7 @@ namespace ShiftOS.WinForms.Applications
             if (Shiftorium.UpgradeInstalled("sl_operating_systems_wordlist")) comboBox1.Items.Add("Operating Systems");
             btnrestart.Visible = true;
             lblword.Left = (this.Width - lblword.Width) / 2;
+            comboBox1.SelectedIndex = 0;
         }
 
         public void OnUpgrade()
