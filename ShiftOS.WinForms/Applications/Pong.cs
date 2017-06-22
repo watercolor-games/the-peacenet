@@ -304,7 +304,7 @@ namespace ShiftOS.WinForms.Applications
             doAi = true;
         }
 
-        private bool drawAiBall = true;
+        private bool drawAiBall = false;
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
         {
