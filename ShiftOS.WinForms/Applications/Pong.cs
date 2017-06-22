@@ -402,6 +402,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            pnlgamestart.CenterParent();
             doAi = false;
             doBallCalc = false;
             pnlgamestart.Show();
