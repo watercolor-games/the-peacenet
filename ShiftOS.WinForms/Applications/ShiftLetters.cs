@@ -33,12 +33,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
     [Launcher("{TITLE_SHIFTLETTERS}", false, null, "{AL_GAMES}")]
-    [AppscapeEntry("{TITLE_SHIFTLETTERS}", "{DESC_SHIFTLETTERS}", 300, 150, null, "{AL_GAMES}")]
+    [AppscapeEntry("shiftletters", "{TITLE_SHIFTLETTERS}", "{DESC_SHIFTLETTERS}", 300, 150, null, "{AL_GAMES}")]
     [WinOpen("{WO_SHIFTLETTERS}")]
     [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow
@@ -181,6 +182,7 @@ namespace ShiftOS.WinForms.Applications
             btnrestart.Visible = true;
             lblword.Left = (this.Width - lblword.Width) / 2;
             comboBox1.SelectedIndex = 0;
+            this.tbguess.CenterParent();
         }
 
         public void OnUpgrade()

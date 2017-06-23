@@ -71,6 +71,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Clock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Clock.Designer.cs">
+      <DependentUpon>Clock.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\IconManager.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -468,6 +474,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Clock.resx">
+      <DependentUpon>Clock.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\IconManager.resx">
       <DependentUpon>IconManager.cs</DependentUpon>

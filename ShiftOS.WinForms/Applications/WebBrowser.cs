@@ -12,7 +12,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications
 {
     [WinOpen("web_browser")]
-    [AppscapeEntry("Web Browser", "We're going surfing on the Internet! This application allows you to break the bounds of the Digital Society and connect to the outer Internet inside ShiftOS.",
+    [AppscapeEntry("web_browser", "Web Browser", "We're going surfing on the Internet! This application allows you to break the bounds of the Digital Society and connect to the outer Internet inside ShiftOS.",
         4096, 10000, "color_depth_24_bits", "Networking")]
     [Launcher("Web Browser", false, null, "Networking")]
     [DefaultTitle("Web Browser")]

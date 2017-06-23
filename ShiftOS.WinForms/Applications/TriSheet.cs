@@ -15,7 +15,7 @@ using ShiftOS.Objects.ShiftFS;
 namespace ShiftOS.WinForms.Applications
 {
     [WinOpen("trisheet")]
-    [AppscapeEntry("TriSheet", "Part of the trilogy of office applications for enhancement of your system. TriSheet is easliy the best spreadsheet program out there for ShiftOS.", 1024, 750, "file_skimmer;textpad", "Office")]
+    [AppscapeEntry("trisheet", "TriSheet", "Part of the trilogy of office applications for enhancement of your system. TriSheet is easliy the best spreadsheet program out there for ShiftOS.", 1024, 750, "file_skimmer;textpad", "Office")]
     [DefaultTitle("TriSheet")]
     [Launcher("TriSheet", false, null, "Office")]
     public partial class TriSheet : UserControl, IShiftOSWindow
