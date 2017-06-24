@@ -49,7 +49,10 @@ namespace ShiftOS.Engine
         [Command("clear", description = "{DESC_CLEAR}")]
         public static bool Clear()
         {
-            AppearanceManager.ConsoleOut.Clear();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                AppearanceManager.ConsoleOut.Clear();
+            });
             return true;
         }
     }

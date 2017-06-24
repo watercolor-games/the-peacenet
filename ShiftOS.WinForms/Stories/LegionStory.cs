@@ -163,6 +163,20 @@ namespace ShiftOS.WinForms.Stories
                         }
                         VirtualEnvironments.Clear();
                         Applications.FileSkimmer.DisconnectRemote();
+                        WriteLine("Connections terminated I see.. Alright. Have fun with those dummy documents - you can keep them if you'd like. There's nothing important in them.");
+                        WriteLine("That's one thing you can do with brute and other hacking utilities. I'd recommend buying some of brute's Shiftorium upgrades to make it faster and more efficient.");
+                        WriteLine("Also, along the way, you're going to find a lot of new tricks. Some of them will require more than just brute to get into.");
+                        WriteLine("So be on the lookout on the Shiftnet for other hacking-related tools. You won't find any on Appscape, however...");
+                        WriteLine("That darn Aiden Nirh guy can't stand hackers.");
+                        WriteLine("Looking at your logs, I see he's contacted you before... Seriously... don't let him find out about brute. He'll report it directly to DevX.");
+                        WriteLine("Oh yeah, one more thing... that virus scanner... you may want to scan any files that you transfer from other systems with it.");
+                        WriteLine("You never know what sorts of digital filth is hidden within such innocent-looking files.");
+                        WriteLine("ALWAYS scan before opening - because if you open a file containing malicious code, it'll get run. It's just how ShiftOS's kernel works.");
+                        Console.WriteLine("User has disconnected.");
+                        Story.Context.MarkComplete();
+                        TerminalBackend.PrefixEnabled = true;
+                        SaveSystem.SaveGame();
+                        TerminalBackend.PrintPrompt();
                     });
                 });
         }
@@ -173,6 +187,8 @@ namespace ShiftOS.WinForms.Stories
             //just to annoy victor tran
         }
 
+        const string VALID_PASSWORD_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+
         public static string GenRandomPassword()
         {
             var rnd = new Random();
@@ -180,7 +196,8 @@ namespace ShiftOS.WinForms.Stories
             string pass = "";
             for(int i = 0; i < len; i++)
             {
-                pass += (char)rnd.Next(255);
+                char c = VALID_PASSWORD_CHARS[rnd.Next(VALID_PASSWORD_CHARS.Length)];
+                pass += c;
             }
             return pass;
         }

@@ -55,11 +55,14 @@ namespace ShiftOS.WinForms.Applications
 
         public static void DisconnectRemote()
         {
-            OnDisconnect?.Invoke();
-            CurrentRemoteUser = new Objects.ClientSave();
-            if (!string.IsNullOrWhiteSpace(OpenConnection.SystemName))
-                Infobox.Show("Connections terminated.", "All outbound File Skimmer connections have been terminated.");
-            OpenConnection = new ShiftOSEnvironment();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                OnDisconnect?.Invoke();
+                CurrentRemoteUser = new Objects.ClientSave();
+                if (!string.IsNullOrWhiteSpace(OpenConnection.SystemName))
+                    Infobox.Show("Connections terminated.", "All outbound File Skimmer connections have been terminated.");
+                OpenConnection = new ShiftOSEnvironment();
+            });
         }
 
         public FileSkimmer()
