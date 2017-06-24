@@ -41,7 +41,7 @@ namespace ShiftOS.WinForms.Applications
     [WinOpen("{WO_SIMPLESRC}")]
     [Launcher("{TITLE_SIMPLESRC}", false, null, "{AL_NETWORKING}")]
     [DefaultTitle("{TITLE_SIMPLESRC}")]
-    [AppscapeEntry("{TITLE_SIMPLESRC}", "{DESC_SIMPLESRC}", 300, 145, "file_skimmer", "{AL_NETWORKING}")]
+    [AppscapeEntry("simplesrc_client", "{TITLE_SIMPLESRC}", "{DESC_SIMPLESRC}", 300, 145, "file_skimmer", "{AL_NETWORKING}")]
     public partial class Chat : UserControl, IShiftOSWindow
     {
         public Chat()

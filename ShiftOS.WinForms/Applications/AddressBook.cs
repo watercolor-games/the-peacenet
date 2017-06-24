@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace ShiftOS.WinForms.Applications
 {
     [WinOpen("{WO_ADDRESSBOOK}")]
-    [AppscapeEntry("{TITLE_ADDRESSBOOK}", "{DESC_ADDRESSBOOK}", 1024, 750, null, "{AL_OFFICE}")]
+    [AppscapeEntry("address_book", "{TITLE_ADDRESSBOOK}", "{DESC_ADDRESSBOOK}", 1024, 750, null, "{AL_OFFICE}")]
     [DefaultTitle("{TITLE_ADDRESSBOOK}")]
     [Launcher("{TITLE_ADDRESSBOOK}", false, null, "{AL_OFFICE}")]
     public partial class AddressBook : UserControl, IShiftOSWindow

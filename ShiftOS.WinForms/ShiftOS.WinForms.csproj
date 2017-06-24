@@ -71,6 +71,12 @@
     <Compile Include="Applications\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Clock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Clock.Designer.cs">
+      <DependentUpon>Clock.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\IconManager.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -395,6 +401,12 @@
     <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
       <DependentUpon>ShiftGames.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftOSOnline.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftOSOnline.Designer.cs">
+      <DependentUpon>ShiftOSOnline.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\ShiftSoft.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -442,6 +454,7 @@
     <Compile Include="UniteSignupDialog.Designer.cs">
       <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="VirtualEnvironments.cs" />
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />
@@ -468,6 +481,9 @@
     <Compile Include="WinformsWindowManager.cs" />
     <EmbeddedResource Include="Applications\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Clock.resx">
+      <DependentUpon>Clock.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\IconManager.resx">
       <DependentUpon>IconManager.cs</DependentUpon>
@@ -620,6 +636,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftOSOnline.resx">
+      <DependentUpon>ShiftOSOnline.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftSoft.resx">
       <DependentUpon>ShiftSoft.cs</DependentUpon>
@@ -865,6 +884,7 @@
     <Content Include="Resources\GuessTheNumber.py" />
     <None Include="Resources\mindblow.png" />
     <None Include="Resources\strings_fr.txt" />
+    <None Include="Resources\PebcakDevelFS.txt" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
@@ -932,6 +952,7 @@
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

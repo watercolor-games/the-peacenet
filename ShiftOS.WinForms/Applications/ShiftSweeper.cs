@@ -35,7 +35,7 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications {
     [Launcher("{TITLE_SHIFTSWEEPER}", true, "al_shiftsweeper", "{AL_GAMES}")]
-    [AppscapeEntry("{TITLE_SHIFTSWEEPER}", "{DESC_SHIFTSWEEPER}", 1600, 800, "shiftletters", "{AL_GAMES}")]
+    [AppscapeEntry("shiftsweeper", "{TITLE_SHIFTSWEEPER}", "{DESC_SHIFTSWEEPER}", 1600, 800, "shiftletters", "{AL_GAMES}")]
     [MultiplayerOnly]
     [WinOpen("{WO_SHIFTSWEEPER}")]
     [DefaultIcon("iconShiftSweeper")]

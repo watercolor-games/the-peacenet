@@ -15,6 +15,13 @@
 		Category: "Application"
 	},
 	{
+		Name: "Shift States",
+		Cost: 325,
+		Description: "It's time to make ShiftOS more responsive. This upgrade adds various state-specific settings for window borders, title buttons, and more!",
+		Category: "Customizatuib & Scripting",
+		Dependencies: "shift_titlebar;shift_title_buttons;shift_panel_buttons;shift_window_borders",
+	},
+	{
 		Name: "AL Icon Manager",
 		Costs: 150,
 		Description: "Add an App Launcher entry for the Icon Manager.",

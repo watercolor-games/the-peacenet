@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Stories
@@ -80,6 +81,188 @@ namespace ShiftOS.WinForms.Stories
             Story.Start("aiden_shiftnet2");
         }
 
+        [Story("hacker101_breakingbonds_3")]
+        public static void BreakingTheBonds_Outro()
+        {
+            Story.Context.AutoComplete = false;
+            CharacterName = "hacker101";
+            SysName = "pebcak";
+
+            if (!terminalOpen())
+            {
+                var term = new Applications.Terminal();
+                AppearanceManager.SetupWindow(term);
+            }
+
+            WriteLine("Now let's teach you how to hack others' systems.");
+            WriteLine("I'll start up a safe virtual environment for you to mess with.");
+            VirtualEnvironments.Create("pebcak_devel", new List<Objects.ClientSave>
+            {
+                new Objects.ClientSave
+                {
+                    Username = "root",
+                    Password = GenRandomPassword(),
+                    Permissions = Objects.UserPermissions.Root
+                },
+                new Objects.ClientSave
+                {
+                    Username = "user",
+                    Password = "",
+                    Permissions = Objects.UserPermissions.Admin,
+                }
+            }, 6500l, JsonConvert.DeserializeObject<ShiftOS.Objects.ShiftFS.Directory>(Properties.Resources.PebcakDevelFS));
+            Thread.Sleep(2000);
+            WriteLine("It's all set up now. The system name for this environment is \"pebcak_devel\".");
+            WriteLine("This server allows FTP connections through your File Skimmer.");
+            WriteLine("Other systems can allow RTS connections (which allows you to control their terminals remotely), SMTP (mail transfer), etc. It depends on the system's role.");
+
+            bool isFsCopyInstalled = Shiftorium.UpgradeInstalled("fs_copy");
+            if (isFsCopyInstalled == false)
+            {
+                WriteLine("Before we can begin, one last thing. You need the FS Copy Shiftorium upgrade.");
+                Story.PushObjective("Breaking The Bonds: Preparations", "You need to buy the FS Copy upgrade from the Shiftorium.", () => { return Shiftorium.UpgradeInstalled("fs_copy"); }, () =>
+                {
+                    isFsCopyInstalled = true;
+                });
+            }
+            while (isFsCopyInstalled == false)
+                Thread.Sleep(10);
+
+            WriteLine("Alright, open your File Skimmer, click \"Start Remote Session\", and connect to the system name \"pebcak_devel\" with user name \"user\" and no password.");
+
+            Story.PushObjective("Breaking The Bonds: A little practice...", "hacker101 has set up a virtual environment for you to connect to. Its system name is \"pebcak_local\", and has an unsecured user account with the name \"user\". Log into that user using your File Skimmer.",
+                () => { return Applications.FileSkimmer.OpenConnection.SystemName == "pebcak_devel"; },
+                () =>
+                {
+                    WriteLine("Good work. You're in. This user only has Admin privileges, and doesn't have anything useful on it. This is where hacking comes in.");
+                    WriteLine("See that \"super private personal stuff\" folder? It can only be accessed as a root user. You'll need the root password for pebcak_devel to get in there.");
+                    WriteLine("I'll send you a password cracking utility that can use open ShiftOS connections to sniff out all the users on the system and allow you to brute-force into an account.");
+                    Console.WriteLine("New program unlocked: brute");
+                    SaveSystem.CurrentSave.StoriesExperienced.Add("brute");
+                    WriteLine("Go ahead and open it! Use it to breach the root user on pebcak_devel.");
+                    WriteLine("Once you've got the root password, click the Reauthenticate button in File Skimmer and it will ask you to log in as a new user.");
+                    WriteLine("Use the new credentials to log in.");
+                    Story.PushObjective("Breaking The Bonds: The Brute", "Use your new \"brute\" application to breach the root account on pebcak_local so you can access the super secret folder and download its contents.", () =>
+                    {
+                        return Applications.FileSkimmer.CurrentRemoteUser == Applications.FileSkimmer.OpenConnection.Users.FirstOrDefault(x => x.Username == "root");
+                    },
+                    () =>
+                    {
+                        WriteLine("Now, open the folder and you can copy files and folders from it to your system.");
+                        WriteLine("You've got 60 seconds before ShiftOS's internet daemon terminates this connection.");
+                        int counter = 60;
+                        while(counter > 0 && Applications.FileSkimmer.OpenConnection.SystemName == "pebcak_devel")
+                        {
+                            Thread.Sleep(1000);
+                            Console.WriteLine("Connection termination in " + counter + " seconds...");
+                            if (counter == 30 || counter == 15)
+                                Engine.AudioManager.PlayStream(Properties.Resources._3beepvirus);
+                            if (counter <= 10)
+                                Engine.AudioManager.PlayStream(Properties.Resources.writesound);
+                            counter--;
+                        }
+                        VirtualEnvironments.Clear();
+                        Applications.FileSkimmer.DisconnectRemote();
+                    });
+                });
+        }
+
+        [Story("brute")]
+        public static void BreakingBondsStubStory()
+        {
+            //just to annoy victor tran
+        }
+
+        public static string GenRandomPassword()
+        {
+            var rnd = new Random();
+            int len = rnd.Next(5, 15);
+            string pass = "";
+            for(int i = 0; i < len; i++)
+            {
+                pass += (char)rnd.Next(255);
+            }
+            return pass;
+        }
+
+        [Story("hacker101_breakingbonds_2")]
+        public static void BreakingTheBonds_Patchwork()
+        {
+            CharacterName = "hacker101";
+            SysName = "pebcak";
+
+            if (!terminalOpen())
+            {
+                var term = new Applications.Terminal();
+                AppearanceManager.SetupWindow(term);
+            }
+
+            WriteLine("hacker101@pebcak - user connecting to your system.", false);
+            Thread.Sleep(2000);
+            WriteLine("Alright, you've gotten the applications you need.");
+            WriteLine("Now, I know you're wondering, why do you need these three applications on your system?");
+            WriteLine("Well, you're going to be doing some shady things and we need secure ways of storing the things you learn.");
+            WriteLine("TriWrite is also needed so you can view rich-formatted text documents without them being garbled in TextPad.");
+            WriteLine("Address Book is a secure way of storing information about the people you meet and learn about in the Digital Society.");
+            WriteLine("And SimpleSRC is a chat system, much more advanced and secure than this remote terminal stuff you may have seen people doing to you.");
+            WriteLine("ALL further operations with me will be done on SimpleSRC. But, for now, let's get you set up with your task.");
+            WriteLine("You're going to be learning how to hack and crack systems in the Digital Society.");
+            WriteLine("And this ain't no hippy DDoS stuff. Pfft, that crap is boring as hell.");
+            WriteLine("I'm talking the ability to steal people's files remotely, read them on your system, and also, gain desktop-level and even root-level access to their ShiftOS installations, without them even knowing.");
+            WriteLine("You'll be able to steal documents, programs, Codepoints and even more.");
+            WriteLine("Of course, there's going to be defenses in place on other people's systems, such as secure passwords, advanced firewalls, network monitors, virus scanners, etc. You should get those kinds of things going on your system before we continue.");
+            Story.Context.AutoComplete = false;
+            WriteLine("I'll push out a sequence of objectives for you to follow to get your system secure.");
+            Story.PushObjective("Breaking The Bonds: Patchwork - Get a virus scanner.", "Viruses are programs with the intent to harm users. They spread across the Digital Society infecting whoever they can find. A virus scanner can help you fight them off. There's a minimal one in the Shiftorium. Go get it!",
+
+                () => { return Shiftorium.UpgradeInstalled("virus_scanner"); },
+                () =>
+                {
+                    WriteLine("Alright, you've got a virus scanning program.");
+                    WriteLine("Now, let's take care of your system's biggest vulnerability, your root account.");
+                    bool isRootVulnerable = false;
+                    if (string.IsNullOrWhiteSpace(SaveSystem.Users.FirstOrDefault(x => x.Username == "root").Password))
+                    {
+                        isRootVulnerable = true;
+                        WriteLine("I was able to authenticate as root on your system without a password. Use the passwd command when logged in as root to change that.");
+                        Story.PushObjective("Breaking The Bonds: Patchwork - Set a root password.", "If you aren't already, login as root using the su command. Then, Jesus Christ, set a root password!",
+                            () => { return string.IsNullOrWhiteSpace(SaveSystem.Users.FirstOrDefault(x => x.Username == "root").Password); },
+                            () => {
+                                WriteLine("Man, oh man. My connection got terminated. That means you did it.");
+                                WriteLine("Be lucky that was me and not someone who wanted to harm you.");
+                                WriteLine("In ShiftOS, as well as most other Unix-likes, the root account has full permissions to everything on your system, no matter what.");
+                                WriteLine("If someone gains access to your root system remotely, you must change its password immediately or you can call that system toast.");
+
+                                isRootVulnerable = false; });
+                    }
+                    while (isRootVulnerable)
+                        Thread.Sleep(10);
+
+                    WriteLine("Alright, now let's make you another user account.");
+                    WriteLine("This user account will have administrative permissions, but in order for you to use them, you'll need to type your root password to confirm any administrative task.");
+                    WriteLine("Use the adduser command to add a new user. Give it a name, log into it, set a password if you'd like, then log back into root using su...");
+                    WriteLine("Then, in root, run \"setuserpermissions --user \"yourusername\" --val 2\". This will give the specified user \"admin\" permissions.");
+                    Story.PushObjective("Breaking The Bonds: Patchwork - Create an admin user", "Your root account looks nice and safe, but it's good practice on any Unix-like operating system, including ShiftOS, to have a user with slightly lower permissions called an Admin user. This user can do all the things that root can, but it requires you to enter your root password to verify administrative tasks.",
+
+                        () =>
+                        {
+                            bool success = false;
+                            if(SaveSystem.Users.Count() > 1)
+                            {
+                                success = SaveSystem.Users.FirstOrDefault(x => x.Username != "root" && x.Permissions == Objects.UserPermissions.Admin) != null;
+                            }
+                            return success;
+                        },
+                        () =>
+                        {
+                            WriteLine("It's as secure as you need now. There are a few other things you'll want to do, like setting up a firewall and a network monitor, but we'll save that for later.");
+                            Story.Context.MarkComplete();
+                            Story.Start("hacker101_breakingbonds_3");
+                        });
+                });
+            
+        }
+
         [Story("hacker101_breakingbonds_1")]
         public static void BreakingTheBondsIntro()
         {
@@ -99,7 +282,6 @@ namespace ShiftOS.WinForms.Stories
             WriteLine("Before I can do that, however, I need you to do a few things.");
             WriteLine("I'll assign what I need you to do as an objective. When you're done, I'll tell you what you need to know.");
 
-            Story.Context.MarkComplete();
             TerminalBackend.PrefixEnabled = true;
 
             Story.PushObjective("Breaking the Bonds: Errand Boy", @"hacker101 has something he needs to show you, however before he can, you need to do the following:
@@ -110,7 +292,7 @@ namespace ShiftOS.WinForms.Stories
             {
                 bool flag1 = Shiftorium.UpgradeInstalled("address_book");
                 bool flag2 = Shiftorium.UpgradeInstalled("triwrite");
-                bool flag3 = Shiftorium.UpgradeInstalled("simplesrc");
+                bool flag3 = Shiftorium.UpgradeInstalled("simplesrc_client");
                 return flag1 && flag2 && flag3;
             }, () =>
             {

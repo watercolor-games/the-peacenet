@@ -122,7 +122,7 @@ namespace ShiftOS.WinForms
                 {
                     var upgrade = new ShiftoriumUpgrade
                     {
-                        Id = attrib.Name.ToLower().Replace(" ", "_"),
+                        Id = attrib.Upgrade,
                         Name = attrib.Name,
                         Description = attrib.Description,
                         Cost = attrib.Cost,

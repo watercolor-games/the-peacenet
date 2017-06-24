@@ -910,6 +910,7 @@ namespace ShiftOS.WinForms
         public void ShowWindow(IWindowBorder border)
         {
             var brdr = border as Form;
+            
             focused = border;
             brdr.GotFocus += (o, a) =>
             {

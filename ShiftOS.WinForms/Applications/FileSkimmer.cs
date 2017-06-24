@@ -36,6 +36,7 @@ using System.Windows.Forms;
 using static ShiftOS.Objects.ShiftFS.Utils;
 using ShiftOS.Engine;
 using Newtonsoft.Json;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
@@ -46,6 +47,21 @@ namespace ShiftOS.WinForms.Applications
     [DefaultIcon("iconFileSkimmer")]
     public partial class FileSkimmer : UserControl, IShiftOSWindow
     {
+
+        public static Objects.ClientSave CurrentRemoteUser = new Objects.ClientSave();
+        public static ShiftOSEnvironment OpenConnection = new ShiftOSEnvironment();
+
+        private static event Action OnDisconnect;
+
+        public static void DisconnectRemote()
+        {
+            OnDisconnect?.Invoke();
+            CurrentRemoteUser = new Objects.ClientSave();
+            if (!string.IsNullOrWhiteSpace(OpenConnection.SystemName))
+                Infobox.Show("Connections terminated.", "All outbound File Skimmer connections have been terminated.");
+            OpenConnection = new ShiftOSEnvironment();
+        }
+
         public FileSkimmer()
         {
             InitializeComponent();
@@ -53,6 +69,13 @@ namespace ShiftOS.WinForms.Applications
             {
                 ChangeDirectory(Paths.GetPath("root"));
             };
+            OnDisconnect += FileSkimmer_OnDisconnect;
+        }
+
+        private void FileSkimmer_OnDisconnect()
+        {
+            currentdir = "__system";
+            ResetList();
         }
 
         private void lvitems_DoubleClick(object sender, EventArgs e)
@@ -300,6 +323,7 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            OnDisconnect -= FileSkimmer_OnDisconnect;
             return true;
         }
 
@@ -496,6 +520,74 @@ namespace ShiftOS.WinForms.Applications
                 }
             }
             catch { }
+        }
+
+        private void connectToRemoteServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowConnectionBox();
+        }
+
+        public void ShowConnectionBox()
+        {
+            pnlconnect.Show();
+            pnlconnect.BringToFront();
+            pnlconnect.CenterParent();
+
+            //header
+            lbctitle.CenterParent();
+            lbctitle.Top = 5;
+
+            //description
+            lbcdesc.CenterParent();
+            lbcdesc.Top = lbctitle.Top + lbctitle.Height + 5;
+
+            //credentials
+            pnlcreds.CenterParent();
+            pnlcreds.Top = lbcdesc.Top + lbcdesc.Height + 5;
+            txtcsys.Text = OpenConnection.SystemName;
+            txtcuser.Text = CurrentRemoteUser.Username;
+            txtcpass.Text = CurrentRemoteUser.Password;
+
+            //controls
+            flcbuttons.CenterParent();
+            flcbuttons.Top = pnlcreds.Top + pnlcreds.Height + 5;
+        }
+
+        private void btncancel_Click(object sender, EventArgs e)
+        {
+            pnlconnect.Hide();
+        }
+
+        private void btnok_Click(object sender, EventArgs e)
+        {
+            var sys = VirtualEnvironments.Get(txtcsys.Text);
+
+            if(sys != null)
+            {
+                //user auth
+                var user = sys.Users.FirstOrDefault(x => x.Username == txtcuser.Text && x.Password == txtcpass.Text);
+                if(user != null)
+                {
+                    OpenConnection = sys;
+                    CurrentRemoteUser = user;
+                    if (Mounts.Count == 3)
+                        Mounts.RemoveAt(2);
+                    Mounts.Add(sys.Filesystem);
+                    ChangeDirectory("2:");
+                    pnlconnect.Hide();
+                    connectToRemoteServerToolStripMenuItem.Text = "Reauthenticate";
+                    return;
+                }
+                Infobox.Show("Access denied.", "Authentication failed for the specified user. Connection aborted.");
+                return;
+            }
+            var t = new System.Threading.Thread(() =>
+            {
+                System.Threading.Thread.Sleep(5000);
+                Infobox.Show("Connection timeout.", "Cannot connect to the specified system name...");
+            });
+            t.IsBackground = true;
+            t.Start();
         }
     }
 }
