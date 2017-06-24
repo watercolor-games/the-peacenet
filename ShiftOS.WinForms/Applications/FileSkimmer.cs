@@ -77,6 +77,8 @@ namespace ShiftOS.WinForms.Applications
 
         private void FileSkimmer_OnDisconnect()
         {
+            connectToRemoteServerToolStripMenuItem.Text = "Start Remote Session";
+            disconnectToolStripMenuItem.Visible = false;
             currentdir = "__system";
             ResetList();
         }
@@ -579,6 +581,7 @@ namespace ShiftOS.WinForms.Applications
                     ChangeDirectory("2:");
                     pnlconnect.Hide();
                     connectToRemoteServerToolStripMenuItem.Text = "Reauthenticate";
+                    disconnectToolStripMenuItem.Visible = true;
                     return;
                 }
                 Infobox.Show("Access denied.", "Authentication failed for the specified user. Connection aborted.");
@@ -591,6 +594,11 @@ namespace ShiftOS.WinForms.Applications
             });
             t.IsBackground = true;
             t.Start();
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DisconnectRemote();
         }
     }
 }
