@@ -141,7 +141,7 @@ namespace ShiftOS.Engine
             {
                 foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
-                    foreach (var attrib in Array.FindAll(mth.GetCustomAttributes(false), a => a is StoryAttribute))
+                    foreach (var attrib in Array.FindAll(mth.GetCustomAttributes(false), a => a is StoryAttribute || a is MissionAttribute))
                     {
                         var story = attrib as StoryAttribute;
                         if (story.StoryID == stid)
@@ -157,6 +157,17 @@ namespace ShiftOS.Engine
                                 SaveSystem.CurrentSave.PickupPoint = Context.Id;
                                 Context.OnComplete += () =>
                                 {
+                                    if(story is MissionAttribute)
+                                    {
+                                        var mission = story as MissionAttribute;
+                                        ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
+                                        ConsoleEx.Bold = true;
+                                        Console.WriteLine(" - mission complete - ");
+                                        ConsoleEx.Bold = false;
+                                        ConsoleEx.ForegroundColor = ConsoleColor.White;
+                                        Console.WriteLine($"{mission.Name} successfully finished. You have earned {mission.CodepointAward} Codepoints for your efforts.");
+                                        SaveSystem.CurrentSave.Codepoints += mission.CodepointAward;
+                                    }
                                     StoryComplete?.Invoke(stid);
                                     SaveSystem.CurrentSave.PickupPoint = null;
                                 };
@@ -209,5 +220,6 @@ namespace ShiftOS.Engine
         /// </summary>
         public string StoryID { get; private set; }
 
+        public ulong CodepointAward { get; protected set; }
     }
 }
