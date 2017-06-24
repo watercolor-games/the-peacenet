@@ -1089,6 +1089,37 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;Name&quot;: &quot;pebcak_devel&quot;,
+        ///  &quot;Files&quot;: [],
+        ///  &quot;Subdirectories&quot;: [
+        ///    {
+        ///      &quot;Name&quot;: &quot;home&quot;,
+        ///      &quot;Files&quot;: [],
+        ///      &quot;Subdirectories&quot;: [
+        ///        {
+        ///          &quot;Name&quot;: &quot;desktop&quot;,
+        ///          &quot;Files&quot;: [],
+        ///          &quot;Subdirectories&quot;: [],
+        ///          &quot;ReadAccessToLowUsers&quot;: false,
+        ///          &quot;permissions&quot;: 0
+        ///        },
+        ///        {
+        ///          &quot;Name&quot;: &quot;documents&quot;,
+        ///          &quot;Files&quot;: [],
+        ///          &quot;Subdirectories&quot;: [],
+        ///          &quot;ReadAccessToLowUsers&quot;: false,
+        ///          &quot;permissions&quot;: 0
+        ///        },
+        ///     [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PebcakDevelFS {
+            get {
+                return ResourceManager.GetString("PebcakDevelFS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap RegularDesktopGlyph {
@@ -1330,14 +1361,21 @@ namespace ShiftOS.WinForms.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to /*
-        /// * French translation
-        /// * 
-        /// * Made by Michael VanOverbeek with his grade 9 french skills because why not.
+        /// * ShiftOS French Language Pack
         /// *
+        /// * This is a default language pack distributed within the game.
         /// */
         ///
         ///{
-        ///}.
+        ///  //General strings
+        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
+        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Les programmes&quot;,
+        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Les ordres&quot;,
+        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Les objectifs&quot;,
+        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Les procèdures actuelles&quot;,
+        ///  &quot;{GEN_WELCOME}&quot;: &quot;Bienvenue au ShiftOS.&quot;,
+        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;Nom de système&quot;,
+        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Mot de  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string strings_fr {
             get {

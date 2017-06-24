@@ -135,9 +135,101 @@ System path: {tvfiles.SelectedNode.Tag.ToString()}";
 
         private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fCreator = new FileCreator(tvfiles.SelectedNode.Tag.ToString());
-            if(fCreator.ShowDialog() == DialogResult.OK)
+            var opener = new OpenFileDialog();
+            opener.Title = "Import file into ShiftFS";
+            opener.Filter = "All files|*.*";
+            opener.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (opener.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                var bytes = System.IO.File.ReadAllBytes(opener.FileName);
+                WriteAllBytes(tvfiles.SelectedNode.Tag.ToString() + "/" + opener.SafeFileName, bytes);
+                SetupTree();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Infobox.PromptText("Create filesystem", "Please name your file system.", (result) =>
+            {
+                if(string.IsNullOrWhiteSpace(result))
+                    MessageBox.Show(text: "ShiftFS does not allow blank volume names.", caption: "Volume name can't be blank", icon: MessageBoxIcon.Error, buttons:MessageBoxButtons.OK);
+                else
+                {
+                    var dir = new Directory();
+                    dir.Name = result;
+                    dir.permissions = Objects.UserPermissions.Guest;
+                    Mounts.Add(dir);
+                    SetupTree();
+                }
+            });
+        }
+
+        private void newDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DirectoryExists(tvfiles.SelectedNode.Tag.ToString()))
+            {
+                Infobox.PromptText("New directory", "Please name your directory.", (result) =>
+                {
+                    if (string.IsNullOrWhiteSpace(result))
+                        MessageBox.Show(text: "ShiftFS does not allow blank directory names.", caption: "Directory name can't be blank", icon: MessageBoxIcon.Error, buttons: MessageBoxButtons.OK);
+                    else
+                    {
+                        var dinf = GetDirectoryInfo(tvfiles.SelectedNode.Tag.ToString());
+                        dinf.AddDirectory(new Directory
+                        {
+                            Name = result,
+                            permissions = Objects.UserPermissions.Guest
+                        });
+                        SetupTree();
+                    }
+                });
+            }
+        }
+
+        public void Import(string win, string sfs)
+        {
+            foreach(var dir in System.IO.Directory.GetDirectories(win))
+            {
+                var dinf = new System.IO.DirectoryInfo(dir);
+                CreateDirectory(sfs + dinf.Name);
+                Import(dir, sfs + dinf.Name + "/");
+            }
+            foreach(var file in System.IO.Directory.GetFiles(win))
+            {
+                var finf = new System.IO.FileInfo(file);
+                WriteAllBytes(sfs + finf.Name, System.IO.File.ReadAllBytes(file));
+            }
+        }
+
+        private void exportToMFSFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = tvfiles.SelectedNode.Tag.ToString();
+            string[] split = path.Split('/');
+            int number = Convert.ToInt32(split[0].Replace(":", ""));
+            string json = ExportMount(number);
+            var saver = new SaveFileDialog();
+            saver.Filter = "MFS/ShiftFS file (Why the fuck do we also call it \".mfs\"?)|*.mfs";
+            saver.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (saver.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.File.WriteAllText(saver.FileName, json);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var picker = new FolderBrowserDialog();
+            if(picker.ShowDialog() == DialogResult.OK)
+            {
+                var inf = new System.IO.DirectoryInfo(picker.SelectedPath);
+                var dir = new Directory
+                {
+                    Name = inf.Name,
+                    permissions = Objects.UserPermissions.Guest,
+                };
+                Mounts.Add(dir);
+                string mpath = (Mounts.Count - 1) + ":/";
+                Import(inf.FullName, mpath);
                 SetupTree();
             }
         }

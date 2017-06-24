@@ -182,8 +182,16 @@ namespace ShiftOS.WinForms.Applications
             btnrestart.Visible = true;
             lblword.Left = (this.Width - lblword.Width) / 2;
             comboBox1.SelectedIndex = 0;
-            this.tbguess.CenterParent();
+            tmrcenter.Tick += (o, a) =>
+            {
+                this.tbguess.CenterParent();
+                this.tbguess.Parent.CenterParent();
+            };
+            tmrcenter.Interval = 50;
+            tmrcenter.Start();
         }
+
+        Timer tmrcenter = new Timer();
 
         public void OnUpgrade()
         {
@@ -192,6 +200,7 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            tmrcenter.Stop();
             return true;
         }
 

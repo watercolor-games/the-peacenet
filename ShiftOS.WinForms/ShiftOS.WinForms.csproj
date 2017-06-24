@@ -401,6 +401,12 @@
     <Compile Include="ShiftnetSites\ShiftGames.Designer.cs">
       <DependentUpon>ShiftGames.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftnetSites\ShiftOSOnline.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShiftnetSites\ShiftOSOnline.Designer.cs">
+      <DependentUpon>ShiftOSOnline.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShiftnetSites\ShiftSoft.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -448,6 +454,7 @@
     <Compile Include="UniteSignupDialog.Designer.cs">
       <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="VirtualEnvironments.cs" />
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />
@@ -629,6 +636,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftGames.resx">
       <DependentUpon>ShiftGames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShiftnetSites\ShiftOSOnline.resx">
+      <DependentUpon>ShiftOSOnline.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShiftnetSites\ShiftSoft.resx">
       <DependentUpon>ShiftSoft.cs</DependentUpon>
@@ -874,6 +884,7 @@
     <Content Include="Resources\GuessTheNumber.py" />
     <None Include="Resources\mindblow.png" />
     <None Include="Resources\strings_fr.txt" />
+    <None Include="Resources\PebcakDevelFS.txt" />
     <Content Include="SystemIcons\iconArtpad.png" />
     <Content Include="SystemIcons\iconAudioPlayer.png" />
     <Content Include="SystemIcons\iconBitnoteDigger.png" />
