@@ -66,7 +66,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Boolean representing whether the save system is ready to be used.
         /// </summary>
-        public static bool Ready = false;
+        public static AutoResetEvent Ready = new AutoResetEvent(false);
         public static bool IsSandbox = false;
 
         /// <summary>
@@ -154,25 +154,17 @@ namespace ShiftOS.Engine
                 {
                     Console.WriteLine("{MISC_CONNECTINGTONETWORK}");
 
-                    Ready = false;
+                    Ready.Reset();
 
                     if (PreDigitalSocietyConnection != null)
                     {
                         PreDigitalSocietyConnection?.Invoke();
-
-                        while (!Ready)
-                        {
-                            Thread.Sleep(10);
-                        }
+                        Ready.WaitOne();
                     }
 
-
-
-                    bool guidReceived = false;
                     ServerManager.GUIDReceived += (str) =>
                     {
                         //Connection successful! Stop waiting!
-                        guidReceived = true;
                         Console.WriteLine("{MISC_CONNECTIONSUCCESSFUL}");
                         Thread.Sleep(100);
                         Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
@@ -184,37 +176,25 @@ namespace ShiftOS.Engine
                         if (ServerManager.ServerOnline)
                         {
                             ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                            //This haults the client until the connection is successful.
-                            while (ServerManager.thisGuid == new Guid())
-                            {
-                                Thread.Sleep(10);
-                            }
+                            // This halts the client until the connection is successful.
+                            ServerManager.guidReceiveARE.WaitOne();
                             Console.WriteLine("{MISC_DHCPHANDSHAKEFINISHED}");
-                            FinishBootstrap();
                         }
                         else
                         {
                             Console.WriteLine("{MISC_NONETWORK}");
                             Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
-                            FinishBootstrap();
                         }
+                        FinishBootstrap();
                     }
                     catch (Exception ex)
                     {
-                        //No errors, this never gets called.
+                        // "No errors, this never gets called."
                         Console.WriteLine("[inetd] SEVERE: " + ex.Message);
+                        string dest = "Startup Exception " + DateTime.Now.ToString() + ".txt";
+                        System.IO.File.WriteAllText(dest, ex.ToString());
+                        Console.WriteLine("[inetd] Full exception details have been saved to: " + dest);
                         Thread.Sleep(3000);
-                        Console.WriteLine("[sys] SEVERE: Cannot connect to server. Shutting down in 5...");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("[sys] 4...");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("[sys] 3...");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("[sys] 2...");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("[sys] 1...");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("[sys] Bye bye.");
                         System.Diagnostics.Process.GetCurrentProcess().Kill();
                     }
 
@@ -571,8 +551,6 @@ namespace ShiftOS.Engine
         /// <param name="amount">The amount of Codepoints to deduct.</param>
         public static void TransferCodepointsToVoid(ulong amount)
         {
-            if (amount < 0)
-                throw new ArgumentOutOfRangeException("We see what you did there. Trying to pull Codepoints from the void? That won't work.");
             CurrentSave.Codepoints -= amount;
             NotificationDaemon.AddNotification(NotificationType.CodepointsSent, amount);
         }
@@ -591,36 +569,35 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void ReadSave()
         {
+            string path;
+
+            path = "C:\\ShiftOS2\\";
             //Migrate old saves.
-            if (System.IO.Directory.Exists("C:\\ShiftOS2"))
+            if (System.IO.Directory.Exists(path) && !System.IO.File.Exists(path + "havemigrated"))
             {
                 Console.WriteLine("Old save detected. Migrating filesystem to MFS...");
-                foreach (string file in System.IO.Directory.EnumerateDirectories("C:\\ShiftOS2")
-.Select(d => new DirectoryInfo(d).FullName))
+                foreach (string file in System.IO.Directory.EnumerateFileSystemEntries(path))
                 {
-                    if (!Utils.DirectoryExists(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/")))
-                        Utils.CreateDirectory(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"));
+                    string dest = file.Replace(path, "0:/").Replace("\\", "/");
+                    if (System.IO.File.GetAttributes(file).HasFlag(FileAttributes.Directory))
+                        if (!Utils.DirectoryExists(dest))
+                            Utils.CreateDirectory(dest);
+                    else
+                    {
+                        string rfile = Path.GetFileName(file);
+                        Utils.WriteAllBytes(dest, System.IO.File.ReadAllBytes(file));
+                        Console.WriteLine("Exported file " + file);
+                    }
                 }
-                foreach (string file in System.IO.Directory.EnumerateFiles("C:\\ShiftOS2"))
-                {
-
-                    string rfile = Path.GetFileName(file);
-                    Utils.WriteAllBytes(file.Replace("C:\\ShiftOS2\\", "0:/").Replace("\\", "/"), System.IO.File.ReadAllBytes(file));
-                    Console.WriteLine("Exported file " + file);
-                }
-
+                System.IO.File.WriteAllText(path + "havemigrated", "1.0 BETA");
             }
 
-            string path = Path.Combine(Paths.SaveDirectory, "autosave.save");
+            path = Path.Combine(Paths.SaveDirectory, "autosave.save");
 
-            if (System.IO.File.Exists(Path.Combine(Paths.SaveDirectory, "autosave.save")))
-            {
+            if (System.IO.File.Exists(path))
                 CurrentSave = JsonConvert.DeserializeObject<Save>(System.IO.File.ReadAllText(path));
-            }
             else
-            {
                 NewSave();
-            }
 
 
         }
@@ -667,10 +644,7 @@ namespace ShiftOS.Engine
                     })
                     { IsBackground = false }.Start();
                     if (!System.IO.Directory.Exists(Paths.SaveDirectory))
-                    {
                         System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
-
-                    }
 
                     System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
                 }
@@ -688,8 +662,6 @@ namespace ShiftOS.Engine
         /// <param name="amount">The amount of Codepoints.</param>
         public static void TransferCodepointsFrom(string who, ulong amount)
         {
-            if (amount < 0)
-                throw new ArgumentOutOfRangeException("We see what you did there... You can't just give a fake character Codepoints like that. It's better if you transfer them to the void.");
             NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
             CurrentSave.Codepoints += amount;
         }
