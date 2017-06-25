@@ -167,6 +167,8 @@ namespace ShiftOS.Engine
                                         ConsoleEx.ForegroundColor = ConsoleColor.White;
                                         Console.WriteLine($"{mission.Name} successfully finished. You have earned {mission.CodepointAward} Codepoints for your efforts.");
                                         SaveSystem.CurrentSave.Codepoints += mission.CodepointAward;
+                                        TerminalBackend.PrintPrompt();
+                                        TerminalBackend.PrefixEnabled = true;
                                     }
                                     StoryComplete?.Invoke(stid);
                                     SaveSystem.CurrentSave.PickupPoint = null;

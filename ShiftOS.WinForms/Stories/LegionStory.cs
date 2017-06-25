@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
+using ShiftOS.Objects;
 
 namespace ShiftOS.WinForms.Stories
 {
@@ -80,6 +81,166 @@ namespace ShiftOS.WinForms.Stories
             Story.Context.MarkComplete();
             Story.Start("aiden_shiftnet2");
         }
+        
+        [RequiresUpgrade("appscape_troubles")]
+        [Mission("appscape_troubles_end", "Appscape Troubles: Lifting The Ban", "Maureen's been banned from Appscape. Let's see if we can get Aiden to reverse that.", 1200l, "maureen_fenn")]
+        public static void AppscapeTroublesEnd()
+        {
+            Applications.Chat chat = null;
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                chat = OpenChat();
+            });
+            while (chat == null)
+                Thread.Sleep(10);
+            chat.ShowChat();
+            chat.ChatID = "maureen_fenn@trisys";
+            CurrentChat = chat;
+            SendChatMessage("maureen_fenn", "I just talked to hacker101 about our little issue here...");
+            SendChatMessage("maureen_fenn", "He tried to get Aiden to lighten up, but he's too hell-bent on making DevX happy.");
+            SendChatMessage("maureen_fenn", "But, I think we've gotten a plan.");
+            SendChatMessage("hacker101", "<user joined chat>");
+            chat.ChatID = "maureen_fenn@trisys, hacker101@pebcak";
+            SendChatMessage("hacker101", "We meet again, " + SaveSystem.CurrentUser.Username + "...");
+            SendChatMessage("hacker101", "Maureen tells me you've used your hacking skills to steal a document from Aiden Nirh.");
+            SendChatMessage("hacker101", "I hope he didn't find out about brute...");
+            SendChatMessage("maureen_fenn", "Ugh... brute? That thing? That's not hacking.");
+            SendChatMessage("maureen_fenn", "You're just turning " + SaveSystem.CurrentUser.Username + " into a script-kiddie.");
+            SendChatMessage("maureen_fenn", SaveSystem.CurrentUser.Username + ", you want REAL hacking? Why don't you come to me after we're done here. I'll show you how REAL sentiences get their way.");
+            SendChatMessage("hacker101", "HEY. You gotta give Brute some credit. It's good at cracking passwords.");
+            SendChatMessage("maureen_fenn", "Well, what happens if the user runs into a firewall block? Brute ain't going to help with that.");
+            SendChatMessage("hacker101", "....whatever. Let's just get on with this.");
+            SendChatMessage("hacker101", "We need to get rid of that cease and desist ban.");
+            SendChatMessage("hacker101", "Firstly, let's review the document.");
+            SendChatMessage("hacker101", "<sent a file: maureen_fenn.txt>");
+            var bytes = Convert.FromBase64String(Properties.Resources.AppscapeWantedFile);
+            chat.PostMessage("maureen_fenn.txt", chat.ChatID, Encoding.UTF8.GetString(bytes));
+            SendChatMessage("hacker101", "I ain't no lawyer but I can tell you right now that C&D is bull.");
+            SendChatMessage("hacker101", "Guess this is just DevX's way of saying he can't stand you, Maureen.");
+            SendChatMessage("hacker101", "I want you to know that unlike him, I can. I... I...");
+            SendChatMessage("maureen_fenn", "..Nope, nope. Let's not go there. You're getting a bit creepy, hacker.");
+            SendChatMessage("hacker101", "Whoops. Oh well... We need to show DevX who's boss.");
+            SendChatMessage("hacker101", "Maybe, " + SaveSystem.CurrentUser.Username + " can help us.");
+            SendChatMessage("maureen_fenn", "Maybe they can... and meybe Aiden can as well.");
+            SendChatMessage("hacker101", "No, he's convinced that we're the bad guys.");
+            SendChatMessage("hacker101", "He's got me banned because of brute.");
+            SendChatMessage("maureen_fenn", "Lol, banned... for BRUTE? That little harmless tool? Bahahahaha.");
+            SendChatMessage(SaveSystem.CurrentUser.Username, "Will you two stop bickering at eachother about Brute and hacker101's love for Maureen and let us get on with this? I could be playing Pong right now.");
+            SendChatMessage("maureen_fenn", "Right. We need to gather as much evidence against DevX as possible.");
+            SendChatMessage("hacker101", "Then, we need to send it all to Aiden, right? We'll need " + SaveSystem.CurrentUser.Username + " to do that.");
+            SendChatMessage("maureen_fenn", "Alrighty, " + SaveSystem.CurrentUser.Username + ". You're on our team. We'll have any tasks we need you to do in your missions list.");
+            SendChatMessage("maureen_fenn", "Oh yeah, and here's a couple Codepoints as compensation for helping us out.");
+            Story.Context.MarkComplete();
+            Thread.Sleep(5000);
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                AppearanceManager.Close(chat);
+            });
+        }
+
+        [RequiresUpgrade("hacker101_breakingbonds_3")]
+        [Mission("appscape_troubles", "Appscape Troubles", "You know how to do some basic hacking, now you've got a chance to exercise it.", 750l, "maureen_fenn")]
+        public static void AppscapeTroubles()
+        {
+            Applications.Chat chat = null;
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                chat = OpenChat();
+            });
+            while (chat == null)
+                Thread.Sleep(10);
+            chat.ShowChat();
+            chat.ChatID = "maureen_fenn@trisys";
+            CurrentChat = chat;
+            SendChatMessage("maureen_fenn", "Hello there, " + SaveSystem.CurrentUser.Username + ". My name is Maureen.");
+            SendChatMessage("maureen_fenn", "I'm the developer of the various Tri apps you may've seen around the Shiftnet.");
+            Story.Context.AutoComplete = false;
+            SendChatMessage("maureen_fenn", "I have a bit of a problem that may need your assistance..");
+            SendChatMessage("maureen_fenn", "I struck a deal with Aiden Nirh to put my software on his site and split the profits in half with me and him.");
+            SendChatMessage("maureen_fenn", "But lately, even though many people have been buying my software, I've been getting nothing for it.");
+            SendChatMessage("maureen_fenn", "Now I have barely enough Codepoints to keep my development environment online...");
+            SendChatMessage("maureen_fenn", "My friend, you know him as hacker101, he's told me that you know how to hack.");
+            SendChatMessage("maureen_fenn", "Can you bust into Aiden's server and see if he's gotten any documents or anything indicating why he's not paying me?");
+            SendChatMessage("maureen_fenn", "He likes to document a lot of things about what he does and he likes to store those docs on his central Appscape server. Maybe there's something on there about me...");
+            SendChatMessage("maureen_fenn", "You can find connection details for his server on Appscape's Contact page.");
+            SendChatMessage("maureen_fenn", "The guy has pretty good security though... so be careful.");
+            SendChatMessage("maureen_fenn", "When you find the right file, I'd download it to your system and just send it through SimpleSRC.");
+
+
+            VirtualEnvironments.Create("appscape_main", new List<ClientSave>
+            {
+                new ClientSave
+                {
+                    Username = "aiden",
+                    Password = GenRandomPassword(),
+                    Permissions = UserPermissions.Root,
+                },
+                new ClientSave
+                {
+                    Username = "feedback",
+                    Password = "",
+                    Permissions = UserPermissions.Guest
+                }
+            }, 15000l, JsonConvert.DeserializeObject<ShiftOS.Objects.ShiftFS.Directory>(Properties.Resources.AppscapeServerFS));
+
+            bool validFileSent = false;
+            chat.FileSent += (file) =>
+            {
+                if (Convert.ToBase64String(file.Data) == Properties.Resources.AppscapeWantedFile)
+                    validFileSent = true;
+            };
+
+            Story.Context.AutoComplete = false;
+
+            Story.PushObjective("Appscape Troubles: The Secret", "Maureen has asked you to find out why Aiden Nirh, the maintainer of Appscape, isn't paying her half the profits for her TriOffice suite. Time to use your hacking skills... just like before.",
+                () => { return validFileSent; },
+                () =>
+                {
+                    SendChatMessage("maureen_fenn", "File received.");
+                    SendChatMessage("maureen_fenn", "Awwww, come on, man! You can't tell me I got banned due to a cease and desist from DevX... That bastard... DevX, I mean.");
+                    SendChatMessage("maureen_fenn", "Anyways, I'll talk to Aiden about that... if I can... or maybe you can? Either way, here's your Codepoints.");
+                    Story.Context.MarkComplete();
+                    Thread.Sleep(5000);
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        AppearanceManager.Close(chat);
+                    });
+
+                });
+
+
+        }
+
+        private static Applications.Chat CurrentChat;
+
+        public static void SendChatMessage(string who, string msg)
+        {
+            CurrentChat.Typing = who;
+            foreach(var c in msg)
+            {
+                Thread.Sleep(75);
+            }
+            CurrentChat?.PostMessage(who, CurrentChat?.ChatID, msg);
+            CurrentChat.Typing = "";
+            Thread.Sleep(500);
+        }
+
+        public static Applications.Chat OpenChat()
+        {
+            var chatbrd = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Applications.Chat);
+            Applications.Chat chat = null;
+            if(chatbrd == null)
+            {
+                chat = new Applications.Chat();
+                AppearanceManager.SetupWindow(chat);
+            }
+            else
+            {
+                chat = chatbrd.ParentWindow as Applications.Chat;
+            }
+            return chat;    
+        }
+
 
         [Mission("hacker101_breakingbonds_3", "Breaking the Bonds", "It's time you've learned how to hack.", 500l, "hacker101")]
         public static void BreakingTheBonds_Outro()

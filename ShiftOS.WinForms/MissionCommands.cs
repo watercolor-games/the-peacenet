@@ -20,9 +20,12 @@ namespace ShiftOS.WinForms
                     var attrib = method.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
                     if (attrib != null)
                     {
-                        if (!Shiftorium.UpgradeInstalled(attrib.StoryID))
+                        if (Shiftorium.UpgradeAttributesUnlocked(method))
                         {
-                            missions.Add(attrib);
+                            if (!Shiftorium.UpgradeInstalled(attrib.StoryID))
+                            {
+                                missions.Add(attrib);
+                            }
                         }
                     }
                 }
@@ -62,6 +65,36 @@ namespace ShiftOS.WinForms
                     Console.WriteLine("startmission --id " + missions.IndexOf(mission));
                 }
             }
+
+            Console.WriteLine();
+
+            Console.WriteLine("Story progress:");
+            ConsoleEx.Bold = true;
+            ConsoleEx.ForegroundColor = ConsoleColor.Cyan;
+            double percentage = GetMissionPercentage() * 100;
+            Console.WriteLine(percentage.ToString("#.##") + "%");
+        }
+
+        public static double GetMissionPercentage()
+        {
+            int missionsFound = 0;
+            int missionsComplete = 0;
+            foreach(var type in ReflectMan.Types)
+            {
+                foreach (var mth in type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+                {
+                    var missionAttrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
+                    if (missionAttrib != null)
+                    {
+                        missionsFound++;
+                        if (Shiftorium.UpgradeInstalled(missionAttrib.StoryID))
+                            missionsComplete++;
+                    }
+
+                }
+            }
+            double percentage = (double)missionsComplete / (double)missionsFound;
+            return percentage;
         }
 
         [Command("startmission", description = "Starts the specified mission.")]

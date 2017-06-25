@@ -65,9 +65,12 @@ namespace ShiftOS.WinForms.Applications
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tschatid = new System.Windows.Forms.ToolStripLabel();
             this.tsuserdata = new System.Windows.Forms.ToolStripLabel();
+            this.lbtyping = new System.Windows.Forms.ToolStripLabel();
             this.tsbottombar = new System.Windows.Forms.ToolStrip();
             this.txtuserinput = new System.Windows.Forms.ToolStripTextBox();
             this.btnsend = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnsendfile = new System.Windows.Forms.ToolStripButton();
             this.panel1.SuspendLayout();
             this.pnlstart.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -179,7 +182,10 @@ namespace ShiftOS.WinForms.Applications
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tschatid,
-            this.tsuserdata});
+            this.tsuserdata,
+            this.lbtyping,
+            this.toolStripSeparator1,
+            this.btnsendfile});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(633, 25);
@@ -197,6 +203,12 @@ namespace ShiftOS.WinForms.Applications
             this.tsuserdata.Name = "tsuserdata";
             this.tsuserdata.Size = new System.Drawing.Size(86, 22);
             this.tsuserdata.Text = "toolStripLabel1";
+            // 
+            // lbtyping
+            // 
+            this.lbtyping.Name = "lbtyping";
+            this.lbtyping.Size = new System.Drawing.Size(86, 22);
+            this.lbtyping.Text = "toolStripLabel1";
             // 
             // tsbottombar
             // 
@@ -226,6 +238,21 @@ namespace ShiftOS.WinForms.Applications
             this.btnsend.Size = new System.Drawing.Size(37, 22);
             this.btnsend.Text = "Send";
             this.btnsend.Click += new System.EventHandler(this.btnsend_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnsendfile
+            // 
+            this.btnsendfile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnsendfile.Image = ((System.Drawing.Image)(resources.GetObject("btnsendfile.Image")));
+            this.btnsendfile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnsendfile.Name = "btnsendfile";
+            this.btnsendfile.Size = new System.Drawing.Size(65, 22);
+            this.btnsendfile.Text = "Send a file";
+            this.btnsendfile.Click += new System.EventHandler(this.btnsendfile_Click);
             // 
             // Chat
             // 
@@ -265,5 +292,8 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TextBox txtchatid;
         private System.Windows.Forms.Button btnjoin;
+        private System.Windows.Forms.ToolStripLabel lbtyping;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnsendfile;
     }
 }

@@ -49,6 +49,41 @@ namespace ShiftOS.WinForms.Applications
             InitializeComponent();
         }
 
+        public event Action<ShiftOS.Objects.ShiftFS.File> FileSent;
+
+        public string Typing
+        {
+            get
+            {
+                return lbtyping.Text;
+            }
+            set
+            {
+                this.Invoke(new Action(() =>
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        lbtyping.Visible = false;
+                    }
+                    else
+                    {
+                        lbtyping.Text = value + " is typing...";
+                        lbtyping.Visible = true;
+                    }
+                }));
+            }
+        }
+
+        public void ShowChat()
+        {
+            this.Invoke(new Action(() =>
+            {
+                pnlstart.Hide();
+                rtbchat.Show();
+                rtbchat.BringToFront();
+            }));
+        }
+
         public void OnLoad()
         {
             AllInstances.Add(this);
@@ -86,7 +121,7 @@ namespace ShiftOS.WinForms.Applications
 
         private void txtuserinput_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
 
@@ -108,7 +143,7 @@ namespace ShiftOS.WinForms.Applications
 
         public static void SendMessage(string user, string destination, string msg)
         {
-            foreach(var chat in AllInstances)
+            foreach (var chat in AllInstances)
             {
                 chat.PostMessage(user, destination, msg);
             }
@@ -138,62 +173,14 @@ namespace ShiftOS.WinForms.Applications
             txtuserinput.Text = "";
         }
 
-        [Story("story_thefennfamily")]
-        public static void Story_TheFennFamily()
+        private void btnsendfile_Click(object sender, EventArgs e)
         {
-            bool complete = false;
-            Infobox.Show("SimpleSRC", "A direct message has been sent to you on SimpleSRC from user \"maureenfenn@trisys\".", () =>
+            FileSkimmerBackend.GetFile(new[] { "" }, FileOpenerStyle.Open, (file) =>
             {
-                string ch = "maureenfenn@trisys";
-                var c = new Chat();
-                c.ChatID = ch;
-                AppearanceManager.SetupWindow(c);
-                string you = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}";
-
-                var t = new Thread(() =>
-                {
-                    SendMessage(you, ch, "User has joined the chat.");
-                    Thread.Sleep(2000);
-                    SendMessage(ch, ch, "Hello, " + you + ". My name is Maureen. Maureen Fenn.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "I am the author of the various Tri applications you may see on Appscape.");
-                    Thread.Sleep(2000);
-                    SendMessage(ch, ch, "I need your help with something...");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "Firstly, a little backstory. There was a time in ShiftOS when none of us were connected.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "There wasn't a Digital Society, we didn't have chat applications or anything...");
-                    Thread.Sleep(2000);
-                    SendMessage(ch, ch, "All we had was the Shiftnet.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "However, in 2016, something happened called the \"connected revolution\". It was like, the invention of the Internet - it was huge for the world of ShiftOS.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "Before this, the only way you could earn Codepoints was through playing games in ShiftOS.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "I was the one who coded those games, and I would put them on a Shiftnet website that you can still access today, shiftnet/main/shiftgames.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "But when the Connected Revolution took place, things got difficult. My son, Nalyr Fenn, was born, and people stopped using my software and instead moved on to hacking eachother and stealing peoples' Codepoints.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "When Nalyr's sentience levels reached near human - i.e, he grew up, we decided to start TriOffice. It was a huge success, thanks to Aiden Nirh, the guy who runs Appscape.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "However... a few months ago he cut contact with us and we stopped receiving Codepoints from TriOffice.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "I'm running low - I can't afford to keep my system running much longer. You have to help!");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "Perhaps, you could breach Aiden's server and look for clues as to why he's against us? I'll reward you with the last Codepoints I have.");
-                    Thread.Sleep(2500);
-                    SendMessage(you, ch, "Alright, I'm in - but I don't know where to begin...");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "A little birdie tells me you know about the RTS exploits going around... Try using that on Aiden's server. You can find his systemname on Appscape under \"Contact Us.\" He has a mailserver on Appscape - and also has RTS on the same server.");
-                    Thread.Sleep(2500);
-                    SendMessage(ch, ch, "Good luck... My life depends on you!");
-                    complete = true;
-                });
-                t.IsBackground = true;
-                t.Start();
+                var finf = ShiftOS.Objects.ShiftFS.Utils.GetFileInfo(file);
+                PostMessage($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}", ChatID, "<user sent a file: " + finf.Name + ">");
+                FileSent?.Invoke(finf);
             });
-            while (!complete)
-                Thread.Sleep(10);
         }
     }
 }

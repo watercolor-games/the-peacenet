@@ -160,6 +160,35 @@ namespace ShiftOS.WinForms.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;Name&quot;: &quot;appscape_main&quot;,
+        ///  &quot;Files&quot;: [],
+        ///  &quot;Subdirectories&quot;: [
+        ///    {
+        ///      &quot;Name&quot;: &quot;bans&quot;,
+        ///      &quot;Files&quot;: [
+        ///        {
+        ///          &quot;Name&quot;: &quot;hacker101.txt&quot;,
+        ///          &quot;Data&quot;: &quot;RGF0ZTogMTAvMy8yMDE4DQpVc2VyOiBoYWNrZXIxMDENCg0KQmFuIHR5cGU6IEF1dG9tYXRlZA0KDQpEZXNjcmlwdGlvbjoNCg0KVGhpcyB1c2VyIGhhcyBiZWVuIGJhbm5lZCBieSB0aGUgYXV0b21hdGVkIGFudGktaGFja2luZyBzeXN0ZW0gZm9yIGNyZWF0aW9uIG9mIG1hbGljaW91cyBzb2Z0d2FyZSBhbmQgZXhwbG9pdGF0aW9uIHV0aWxpdGllcy4=&quot;,
+        ///          &quot;HeaderData&quot;: null,
+        ///          &quot;ReadAccessToLo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string AppscapeServerFS {
+            get {
+                return ResourceManager.GetString("AppscapeServerFS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RGF0ZTogMDQvMS8yMDE4DQpVc2VyOiBtYXVyZWVuX2Zlbm4NCg0KQmFuIHR5cGU6IENlYXNlIGFuZCBkZXNpc3QgKERldlgpDQoNCkRlc2NyaXB0aW9uOg0KDQpEZXZYIGhhcyBzZW50IGEgY2Vhc2UgYW5kIGRlc2lzdCByZXF1ZXN0IHRvIEFwcHNjYXBlIGZvciBob3N0aW5nIHRoaXMgdXNlcidzIGFwcGxpY2F0aW9ucyBhbmQgc2VuZGluZyBwcm9maXRzIG92ZXIuIFRoaXMgdXNlcidzIHNvZnR3YXJlIHdpbGwgbm90IGJlIHB1bGxlZCwgYnV0IGFsbCBDb2RlcG9pbnRzIGVhcm5lZCBmcm9tIGl0IHdpbGwgbm90IGJlIHJlZGlyZWN0ZWQgYW5kIHRoZSB1c2VyIHdpbGwgbm90IGJlIGFibGUgdG8gYWNjZXNzIHRoZWlyIGRldmVsb3BtZW50IHBhbmVsLg==.
+        /// </summary>
+        internal static string AppscapeWantedFile {
+            get {
+                return ResourceManager.GetString("AppscapeWantedFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ArtPadcirclerubber {

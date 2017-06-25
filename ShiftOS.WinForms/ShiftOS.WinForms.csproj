@@ -875,6 +875,7 @@
     <None Include="Resources\Ambient9.mp3" />
     <None Include="Resources\austmicrotrends.png" />
     <None Include="Resources\brute.mp3" />
+    <None Include="Resources\AppscapeServerFS.txt" />
     <Content Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\infobox.wav" />
     <None Include="Resources\typesound.wav" />
