@@ -81,7 +81,7 @@ namespace ShiftOS.WinForms.Stories
             Story.Start("aiden_shiftnet2");
         }
 
-        [Story("hacker101_breakingbonds_3")]
+        [Mission("hacker101_breakingbonds_3", "Breaking the Bonds", "It's time you've learned how to hack.", 500l, "hacker101")]
         public static void BreakingTheBonds_Outro()
         {
             Story.Context.AutoComplete = false;
@@ -172,7 +172,16 @@ namespace ShiftOS.WinForms.Stories
                         WriteLine("Oh yeah, one more thing... that virus scanner... you may want to scan any files that you transfer from other systems with it.");
                         WriteLine("You never know what sorts of digital filth is hidden within such innocent-looking files.");
                         WriteLine("ALWAYS scan before opening - because if you open a file containing malicious code, it'll get run. It's just how ShiftOS's kernel works.");
+                        WriteLine("Oh yeah, one last thing. Things are going to start getting pretty open in the Digital Society..");
+                        WriteLine("Multiple people are going to want you to help them out with multiple things.");
+                        WriteLine("I've written a little command-line utility that'll help you keep track of these missions and see how far you've gotten.");
+                        WriteLine("Use the missions command to list out all the available missions, then use the startmission command to start one.");
+                        WriteLine("When you complete a mission, you'll earn Codepoints depending on the mission.");
+                        WriteLine("Allow me to demonstrate...");
                         Console.WriteLine("User has disconnected.");
+
+
+
                         Story.Context.MarkComplete();
                         TerminalBackend.PrefixEnabled = true;
                         SaveSystem.SaveGame();

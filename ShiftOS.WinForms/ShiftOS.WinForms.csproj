@@ -357,7 +357,7 @@
     <Compile Include="MainMenu\MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
-    <Compile Include="MissionAttribute.cs" />
+    <Compile Include="MissionCommands.cs" />
     <Compile Include="Oobe.cs">
       <SubType>Form</SubType>
     </Compile>
