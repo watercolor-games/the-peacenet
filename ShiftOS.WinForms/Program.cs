@@ -71,7 +71,7 @@ namespace ShiftOS.WinForms
                 Action completed = null;
                 completed = () =>
                 {
-                    SaveSystem.Ready = true;
+                    SaveSystem.Ready.Set();
                     Engine.AudioManager.PlayCompleted -= completed;
                     AudioManager.StartAmbientLoop();
                 };

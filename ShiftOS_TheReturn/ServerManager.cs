@@ -89,6 +89,8 @@ Ping: {ServerManager.DigitalSocietyPing} ms
         /// </summary>
         public static Guid thisGuid { get; private set; }
 
+        public static AutoResetEvent guidReceiveARE = new AutoResetEvent(false);
+
         /// <summary>
         /// Gets the underlying NetSockets client for this connection.
         /// </summary>
@@ -241,6 +243,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                 {
                     thisGuid = new Guid(msg.Contents);
                     GUIDReceived?.Invoke(msg.Contents);
+                    guidReceiveARE.Set();
                     TerminalBackend.PrefixEnabled = true;
                     TerminalBackend.PrintPrompt();
                 }
