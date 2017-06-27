@@ -11,6 +11,7 @@ namespace ShiftOS.WinForms
 {
     public static class DevXSecondConfrontationStory
     {
+#if BETA_4
         [RequiresUpgrade("appscape_troubles_end")]
         [Mission("sentiences_like_gods", "Sentiences Like Gods", "You're just a script-kiddie with that puny brute app. Let's do some true hacking.", 850l, "maureen_fenn")]
         public static void SentiencesLikeGods()
@@ -63,6 +64,7 @@ namespace ShiftOS.WinForms
             }
 
         }
+#endif
 
         [RequiresUpgrade("appscape_troubles_end")]
         [Mission("devx_first_confrontation", "Progress Report", "DevX wants to see how much you've upgraded ShiftOS. He also has something to tell you.", 0l, "devx")]
