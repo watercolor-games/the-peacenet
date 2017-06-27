@@ -211,7 +211,7 @@ namespace ShiftOS.WinForms.Stories
 
         }
 
-        private static Applications.Chat CurrentChat;
+        public static Applications.Chat CurrentChat;
 
         public static void SendChatMessage(string who, string msg)
         {

@@ -100,25 +100,20 @@ Users: {con.Users.Count}");
                     else
                     {
                         Console.WriteLine(" - starting bruteforce attack on user: " + user.Username + " - ");
-                        var rnd = new Random();
-
+                        
                         char[] pass = new char[user.Password.Length];
                         for (int i = 0; i < pass.Length; i++)
                         {
                             if (cracked == true)
                                 break;
-                            while (pass[i] != user.Password[i])
+                            for(char c = (char)0; c < (char)255; c++)
                             {
-                                if (cracked == true)
+                                if (!char.IsLetterOrDigit(c))
+                                    continue;
+                                pass[i] = c;
+                                if (pass[i] == user.Password[i])
                                     break;
-                                char c = VALID_PASSWORD_CHARS[rnd.Next(VALID_PASSWORD_CHARS.Length)];
-                                if (char.IsLetterOrDigit(c))
-                                {
-                                    pass[i] = c;
-                                    Console.WriteLine(new string(pass));
-                                    Console.WriteLine();
-                                    Thread.Sleep(1);
-                                }
+                                Console.WriteLine(new string(pass));
                             }
                         }
                         if (cracked == false)

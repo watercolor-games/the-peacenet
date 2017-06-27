@@ -335,6 +335,7 @@
     <Compile Include="DesktopWidgets\UpgradePercentage.Designer.cs">
       <DependentUpon>UpgradePercentage.cs</DependentUpon>
     </Compile>
+    <Compile Include="DevXSecondConfrontationStory.cs" />
     <Compile Include="DownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
