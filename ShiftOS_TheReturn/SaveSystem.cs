@@ -191,7 +191,7 @@ namespace ShiftOS.Engine
                     {
                         // "No errors, this never gets called."
                         Console.WriteLine("[inetd] SEVERE: " + ex.Message);
-                        string dest = "Startup Exception " + DateTime.Now.ToString() + ".txt";
+                        string dest = "Startup Exception " + DateTime.Now.ToString().Replace("/", "-").Replace(":", "-") + ".txt";
                         System.IO.File.WriteAllText(dest, ex.ToString());
                         Console.WriteLine("[inetd] Full exception details have been saved to: " + dest);
                         Thread.Sleep(3000);

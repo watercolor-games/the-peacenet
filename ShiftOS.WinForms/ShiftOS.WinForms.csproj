@@ -463,6 +463,8 @@
       <DependentUpon>UniteSignupDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="VirtualEnvironments.cs" />
+    <Compile Include="Viruses\WindowsEverywhere.cs" />
+    <Compile Include="VirusTestCommands.cs" />
     <Compile Include="VisualBasicStuff.cs" />
     <Compile Include="WFLanguageProvider.cs" />
     <Compile Include="WidgetManager.cs" />

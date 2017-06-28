@@ -33,6 +33,8 @@ namespace ShiftOS.Objects
     //Better to store this stuff server-side so we can do some neat stuff with hacking...
     public class Save
     {
+        public List<ViralInfection> ViralInfections { get; set; }
+        
         public bool MusicEnabled = true;
         public bool SoundEnabled = true;
         public int MusicVolume = 100;
@@ -159,4 +161,11 @@ namespace ShiftOS.Objects
             return true;
         }
     }
+
+    public class ViralInfection
+    {
+        public string ID { get; set; }
+        public int ThreatLevel { get; set; }
+    }
+
 }

@@ -136,6 +136,7 @@
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />
     <Compile Include="IStatusIcon.cs" />
+    <Compile Include="IVirus.cs" />
     <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="LoginManager.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="TerminalTextWriter.cs" />
     <Compile Include="TutorialManager.cs" />
     <Compile Include="UserManagementCommands.cs" />
+    <Compile Include="VirusManager.cs" />
     <Compile Include="WinOpenAttribute.cs" />
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>

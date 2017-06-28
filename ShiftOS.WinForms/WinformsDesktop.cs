@@ -226,6 +226,7 @@ namespace ShiftOS.WinForms
 
             SaveSystem.GameReady += () =>
             {
+                VirusManager.Init();
                 this.Invoke(new Action(LoadIcons));
                 if (this.Visible == true)
                     this.Invoke(new Action(() => SetupDesktop()));
