@@ -107,6 +107,10 @@ namespace ShiftOS.WinForms
             this.pnlminimize.Size = new System.Drawing.Size(24, 24);
             this.pnlminimize.TabIndex = 3;
             this.pnlminimize.Click += new System.EventHandler(this.pnlminimize_Click);
+            this.pnlminimize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlminimize_MouseDown);
+            this.pnlminimize.MouseEnter += new System.EventHandler(this.pnlminimize_MouseEnter);
+            this.pnlminimize.MouseLeave += new System.EventHandler(this.pnlminimize_MouseLeave);
+            this.pnlminimize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlminimize_MouseUp);
             // 
             // pnlmaximize
             // 
@@ -117,6 +121,10 @@ namespace ShiftOS.WinForms
             this.pnlmaximize.Size = new System.Drawing.Size(24, 24);
             this.pnlmaximize.TabIndex = 2;
             this.pnlmaximize.Click += new System.EventHandler(this.pnlmaximize_Click);
+            this.pnlmaximize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlmaximize_MouseDown);
+            this.pnlmaximize.MouseEnter += new System.EventHandler(this.pnlmaximize_MouseEnter);
+            this.pnlmaximize.MouseLeave += new System.EventHandler(this.pnlmaximize_MouseLeave);
+            this.pnlmaximize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlmaximize_MouseUp);
             // 
             // pnlclose
             // 
@@ -127,6 +135,10 @@ namespace ShiftOS.WinForms
             this.pnlclose.Size = new System.Drawing.Size(24, 24);
             this.pnlclose.TabIndex = 1;
             this.pnlclose.Click += new System.EventHandler(this.pnlclose_Click);
+            this.pnlclose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlclose_MouseDown);
+            this.pnlclose.MouseEnter += new System.EventHandler(this.pnlclose_MouseEnter);
+            this.pnlclose.MouseLeave += new System.EventHandler(this.pnlclose_MouseLeave);
+            this.pnlclose.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlclose_MouseUp);
             // 
             // pnltitleleft
             // 

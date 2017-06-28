@@ -679,7 +679,7 @@ namespace ShiftOS.Engine
         [ShifterDescription("The background color for the bottom right border when the window is inactive.")]
         public Color BorderInactiveBottomRightBackground = DefaultBackground;
 
-
+        #region Windows -> Title Buttons -> Idle -> Colors
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
         [ShifterName("Close Button Color")]
@@ -694,15 +694,64 @@ namespace ShiftOS.Engine
         [ShifterDescription("The maximize button color")]
         public Color MaximizeButtonColor = Accent1;
 
-        [ShifterHidden]
-        public CommandParser CurrentParser = CommandParser.GenerateSample();
-
         [ShifterMeta("Windows")]
         [ShifterCategory("Title Buttons")]
         [ShifterName("Minimize Button Color")]
         [RequiresUpgrade("shift_title_buttons")]
         [ShifterDescription("The minimize button color")]
         public Color MinimizeButtonColor = Accent1;
+        #endregion
+
+        #region Windows -> Title Buttons -> Over -> Colors
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Close Button Mouse Over Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The close button color when the mouse hovers over it.")]
+        public Color CloseButtonOverColor = Color.FromArgb(0x80, 0, 0);
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Maximize Button Mouse Over Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The maximize button color when the mouse hovers over it.")]
+        public Color MaximizeButtonOverColor = Accent1;
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Minimize Button Mouse Over Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The minimize button color when the mouse hovers over it")]
+        public Color MinimizeButtonOverColor = Accent1;
+        #endregion
+
+        #region Windows -> Title Buttons -> Down -> Colors
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Close Button Mouse Down Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The close button color when the mouse clicks it.")]
+        public Color CloseButtonDownColor = Color.FromArgb(0x80, 0, 0);
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Maximize Button Mouse Down Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The maximize button color when the mouse clicks it.")]
+        public Color MaximizeButtonDownColor = Accent1;
+
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Minimize Button Mouse Down Color")]
+        [RequiresUpgrade("shift_title_buttons;shift_states")]
+        [ShifterDescription("The minimize button color when the mouse clicks it")]
+        public Color MinimizeButtonDownColor = Accent1;
+        #endregion
+
+
+        [ShifterHidden]
+        public CommandParser CurrentParser = CommandParser.GenerateSample();
+
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("Desktop Panel")]
@@ -825,6 +874,32 @@ namespace ShiftOS.Engine
         [ShifterDescription("The background color of the desktop.")]
         public Color DesktopColor = DesktopBG;
 
+        #region Menus -> Toolbars
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar Border")]
+        public Color Menu_ToolStripBorder = TitleBG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Dropdown background")]
+        public Color Menu_ToolStripDropDownBackground = DefaultBackground;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient start")]
+        public Color Menu_ToolStripGradientBegin = TitleBG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient middle")]
+        public Color Menu_ToolStripGradientMiddle = TitleBG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient end")]
+        public Color Menu_ToolStripGradientEnd = TitleBG;
+
         [ShifterMeta("Menus")]
         [ShifterCategory("Toolbars")]
         [ShifterName("Button select highlight")]
@@ -909,6 +984,38 @@ namespace ShiftOS.Engine
         [ShifterCategory("Toolbars")]
         [ShifterName("Button pressed gradient end")]
         public Color Menu_ButtonPressedGradientEnd = Accent1;
+        #endregion
+
+        #region Menus -> General
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Menu text color")]
+        public Color Menu_TextColor = DefaultForeground;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Menu selected text color")]
+        public Color Menu_SelectedTextColor = TitleFG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Rafter gradient start")]
+        public Color Menu_RaftingContainerGradientBegin = TitleBG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Rafter gradient end")]
+        public Color Menu_RaftingContainerGradientEnd = TitleBG;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Separator Color 1")]
+        public Color Menu_SeparatorDark = DefaultForeground;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Separator Color 2")]
+        public Color Menu_SeparatorLight = TitleFG;
 
         [ShifterMeta("Menus")]
         [ShifterCategory("General")]
@@ -924,6 +1031,34 @@ namespace ShiftOS.Engine
         [ShifterCategory("General")]
         [ShifterName("Check BG (Pressed)")]
         public Color Menu_CheckPressedBackground = Accent1;
+        #endregion
+
+        #region Menus -> Menu Bars
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient start")]
+        public Color Menu_MenuItemPressedGradientBegin = Accent1;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient middle")]
+        public Color Menu_MenuItemPressedGradientMiddle = Accent1;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient end")]
+        public Color Menu_MenuItemPressedGradientEnd = Accent1;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item selected gradient start")]
+        public Color Menu_MenuItemSelectedGradientBegin = Accent2;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item selected gradient end")]
+        public Color Menu_MenuItemSelectedGradientEnd = Accent2;
+
 
         [ShifterMeta("Menus")]
         [ShifterCategory("Menu bars")]
@@ -964,52 +1099,9 @@ namespace ShiftOS.Engine
         [ShifterCategory("Menu bars")]
         [ShifterName("Menu border")]
         public Color Menu_MenuBorder = DefaultBackground;
+        #endregion
 
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item selected gradient start")]
-        public Color Menu_MenuItemSelectedGradientBegin = Accent2;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item selected gradient end")]
-        public Color Menu_MenuItemSelectedGradientEnd = Accent2;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient start")]
-        public Color Menu_MenuItemPressedGradientBegin = Accent1;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient middle")]
-        public Color Menu_MenuItemPressedGradientMiddle = Accent1;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient end")]
-        public Color Menu_MenuItemPressedGradientEnd = Accent1;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Rafter gradient start")]
-        public Color Menu_RaftingContainerGradientBegin = TitleBG;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Rafter gradient end")]
-        public Color Menu_RaftingContainerGradientEnd = TitleBG;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Separator Color 1")]
-        public Color Menu_SeparatorDark = DefaultForeground;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Separator Color 2")]
-        public Color Menu_SeparatorLight = TitleFG;
-
+        #region Menus -> Status bars
         [ShifterMeta("Menus")]
         [ShifterCategory("Status bars")]
         [ShifterName("Status bar gradient start")]
@@ -1019,32 +1111,9 @@ namespace ShiftOS.Engine
         [ShifterCategory("Status bars")]
         [ShifterName("Status bar gradient end")]
         public Color Menu_StatusStripGradientEnd = TitleBG;
+        #endregion
 
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar Border")]
-        public Color Menu_ToolStripBorder = TitleBG;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Dropdown background")]
-        public Color Menu_ToolStripDropDownBackground = DefaultBackground;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient start")]
-        public Color Menu_ToolStripGradientBegin = TitleBG;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient middle")]
-        public Color Menu_ToolStripGradientMiddle = TitleBG;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient end")]
-        public Color Menu_ToolStripGradientEnd = TitleBG;
-
+        #region Menus -> Menu holders
         [ShifterMeta("Menus")]
         [ShifterCategory("Menu holders")]
         [ShifterName("Content panel gradient start")]
@@ -1064,19 +1133,9 @@ namespace ShiftOS.Engine
         [ShifterCategory("Menu holders")]
         [ShifterName("Panel gradient end")]
         public Color Menu_ToolStripPanelGradientEnd = TitleBG;
+        #endregion
 
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Menu text color")]
-        public Color Menu_TextColor = DefaultForeground;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Menu selected text color")]
-        public Color Menu_SelectedTextColor = TitleFG;
-
-
-
+        #region Windows -> Title Buttons -> Idle -> Images
         //Images
         [Image("closebutton")]
         [ShifterMeta("Windows")]
@@ -1101,7 +1160,64 @@ namespace ShiftOS.Engine
         [RequiresUpgrade("shift_title_buttons;skinning")]
         [ShifterDescription("Show an image on the Maximize Button using this setting.")]
         public byte[] MaximizeButtonImage = null;
+        #endregion
 
+        #region Windows -> Title Buttons -> Mouse Over -> Images
+        //Images
+        [Image("closebuttonover")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Close Button Mouse Over Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Close Button when the mouse hovers over it using this setting.")]
+        public byte[] CloseButtonOverImage = null;
+
+        [Image("minimizebuttonover")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Minimize Button Mouse Over Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Minimize Button when the mouse hovers over it using this setting.")]
+        public byte[] MinimizeButtonOverImage = null;
+
+        [Image("maximizebuttonover")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Maximize Button Mouse Over Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Maximize Button when the mouse hovers over it using this setting.")]
+        public byte[] MaximizeButtonOverImage = null;
+        #endregion
+
+        #region Windows -> Title Buttons -> Mouse Down -> Images
+        //Images
+        [Image("closebuttondown")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Close Button Mouse Down Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Close Button when the mouse clicks it using this setting.")]
+        public byte[] CloseButtonDownImage = null;
+
+        [Image("minimizebuttondown")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Minimize Button Mouse Down Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Minimize Button when the mouse clicks it using this setting.")]
+        public byte[] MinimizeButtonDownImage = null;
+
+        [Image("maximizebuttondown")]
+        [ShifterMeta("Windows")]
+        [ShifterCategory("Title Buttons")]
+        [ShifterName("Maximize Button Mouse Down Image")]
+        [RequiresUpgrade("shift_title_buttons;skinning;shift_states")]
+        [ShifterDescription("Show an image on the Maximize Button when the mouse clicks it using this setting.")]
+        public byte[] MaximizeButtonDownImage = null;
+        #endregion
+
+
+        #region Desktop -> Images
         [Image("desktopbackground")]
         [ShifterMeta("Desktop")]
         [ShifterCategory("General")]
@@ -1160,7 +1276,10 @@ namespace ShiftOS.Engine
         [Image("applauncher")]
         [RequiresUpgrade("skinning;shift_app_launcher")]
         public byte[] AppLauncherImage = null;
+        #endregion
 
+
+        #region System -> General
         [ShifterMeta("System")]
         [ShifterCategory("General")]
         [ShifterName("Terminal font")]
@@ -1175,6 +1294,7 @@ namespace ShiftOS.Engine
         [ShifterCategory("General")]
         [ShifterName("Terminal background color")]
         public ConsoleColor TerminalBackColorCC = ConsoleColor.Black;
+        #endregion
 
         [ShifterMeta("Desktop")]
         [ShifterCategory("Desktop Panel")]

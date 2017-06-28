@@ -686,5 +686,113 @@ namespace ShiftOS.WinForms
             }
 
         }
+
+        private void pnlclose_MouseDown(object sender, MouseEventArgs e)
+        {
+            pnlclose.BackColor = LoadedSkin.CloseButtonDownColor;
+            if(LoadedSkin.CloseButtonDownImage != null)
+            {
+                pnlclose.BackgroundImage = GetImage("closebuttondown");
+                pnlclose.BackgroundImageLayout = GetImageLayout("closebuttondown");
+            }
+        }
+
+        private void pnlclose_MouseEnter(object sender, EventArgs e)
+        {
+            pnlclose.BackColor = LoadedSkin.CloseButtonOverColor;
+            if (LoadedSkin.CloseButtonOverImage != null)
+            {
+                pnlclose.BackgroundImage = GetImage("closebuttonover");
+                pnlclose.BackgroundImageLayout = GetImageLayout("closebuttonover");
+            }
+
+        }
+
+        private void pnlclose_MouseLeave(object sender, EventArgs e)
+        {
+            pnlclose.BackColor = LoadedSkin.CloseButtonColor;
+            pnlclose.BackgroundImage = GetImage("closebutton");
+            pnlclose.BackgroundImageLayout = GetImageLayout("closebutton");
+        }
+
+        private void pnlclose_MouseUp(object sender, MouseEventArgs e)
+        {
+            pnlclose.BackColor = LoadedSkin.CloseButtonColor;
+            pnlclose.BackgroundImage = GetImage("closebutton");
+            pnlclose.BackgroundImageLayout = GetImageLayout("closebutton");
+
+        }
+
+        private void pnlmaximize_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            pnlmaximize.BackColor = LoadedSkin.MaximizeButtonDownColor;
+            if (LoadedSkin.MaximizeButtonDownImage != null)
+            {
+                pnlmaximize.BackgroundImage = GetImage("maximizebuttondown");
+                pnlmaximize.BackgroundImageLayout = GetImageLayout("maximizebuttondown");
+            }
+        }
+
+        private void pnlmaximize_MouseEnter(object sender, EventArgs e)
+        {
+            pnlmaximize.BackColor = LoadedSkin.MaximizeButtonOverColor;
+            if (LoadedSkin.MaximizeButtonOverImage != null)
+            {
+                pnlmaximize.BackgroundImage = GetImage("maximizebuttonover");
+                pnlmaximize.BackgroundImageLayout = GetImageLayout("maximizebuttonover");
+            }
+
+        }
+
+        private void pnlmaximize_MouseLeave(object sender, EventArgs e)
+        {
+            pnlmaximize.BackColor = LoadedSkin.MaximizeButtonColor;
+            pnlmaximize.BackgroundImage = GetImage("maximizebutton");
+            pnlmaximize.BackgroundImageLayout = GetImageLayout("maximizebutton");
+        }
+
+        private void pnlmaximize_MouseUp(object sender, MouseEventArgs e)
+        {
+            pnlmaximize.BackColor = LoadedSkin.MaximizeButtonColor;
+            pnlmaximize.BackgroundImage = GetImage("maximizebutton");
+            pnlmaximize.BackgroundImageLayout = GetImageLayout("maximizebutton");
+        }
+
+        private void pnlminimize_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            pnlminimize.BackColor = LoadedSkin.MinimizeButtonDownColor;
+            if (LoadedSkin.MinimizeButtonDownImage != null)
+            {
+                pnlminimize.BackgroundImage = GetImage("minimizebuttondown");
+                pnlminimize.BackgroundImageLayout = GetImageLayout("minimizebuttondown");
+            }
+        }
+
+        private void pnlminimize_MouseEnter(object sender, EventArgs e)
+        {
+            pnlminimize.BackColor = LoadedSkin.MinimizeButtonOverColor;
+            if (LoadedSkin.MinimizeButtonOverImage != null)
+            {
+                pnlminimize.BackgroundImage = GetImage("minimizebuttonover");
+                pnlminimize.BackgroundImageLayout = GetImageLayout("minimizebuttonover");
+            }
+
+        }
+
+        private void pnlminimize_MouseLeave(object sender, EventArgs e)
+        {
+            pnlminimize.BackColor = LoadedSkin.MinimizeButtonColor;
+            pnlminimize.BackgroundImage = GetImage("minimizebutton");
+            pnlminimize.BackgroundImageLayout = GetImageLayout("minimizebutton");
+        }
+
+        private void pnlminimize_MouseUp(object sender, MouseEventArgs e)
+        {
+            pnlminimize.BackColor = LoadedSkin.MinimizeButtonColor;
+            pnlminimize.BackgroundImage = GetImage("minimizebutton");
+            pnlminimize.BackgroundImageLayout = GetImageLayout("minimizebutton");
+        }
     }
 }
