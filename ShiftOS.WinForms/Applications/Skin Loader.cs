@@ -37,12 +37,13 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("ShiftOS Skin", ".skn", "fileiconskin")]
     [Launcher("{TITLE_SKINLOADER}", true, "al_skin_loader", "{AL_CUSTOMIZATION}")]
     [RequiresUpgrade("skinning")]
     [WinOpen("skin_loader")]
     [DefaultTitle("{TITLE_SKINLOADER}")]
     [DefaultIcon("iconSkinLoader")]
-    public partial class Skin_Loader : UserControl, IShiftOSWindow
+    public partial class Skin_Loader : UserControl, IShiftOSWindow, IFileHandler
     {
         public Skin_Loader()
         {
@@ -52,6 +53,13 @@ namespace ShiftOS.WinForms.Applications
             LoadedSkin = JsonConvert.DeserializeObject<Skin>(JsonConvert.SerializeObject(SkinEngine.LoadedSkin));
             this.Load += (o, a) => { SetupUI(); };
             
+        }
+
+        public void OpenFile(string file)
+        {
+            AppearanceManager.SetupWindow(this);
+            LoadedSkin = JsonConvert.DeserializeObject<Skin>(Objects.ShiftFS.Utils.ReadAllText(file));
+            SetupUI();
         }
 
         public void SetupControls(Control ctrl)

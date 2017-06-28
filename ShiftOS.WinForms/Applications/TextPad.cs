@@ -36,16 +36,23 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("Text File", ".txt", "fileicontext")]
     [Launcher("{TITLE_TEXTPAD}", true, "al_textpad", "{AL_ACCESSORIES}")]
     [RequiresUpgrade("textpad")]
     [WinOpen("{WO_TEXTPAD}")]
     [DefaultTitle("{TITLE_TEXTPAD}")]
     [DefaultIcon("iconTextPad")]
-    public partial class TextPad : UserControl, IShiftOSWindow
+    public partial class TextPad : UserControl, IShiftOSWindow, IFileHandler
     {
         public TextPad()
         {
             InitializeComponent();
+        }
+
+        public void OpenFile(string file)
+        {
+            AppearanceManager.SetupWindow(this);
+            LoadFile(file);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)

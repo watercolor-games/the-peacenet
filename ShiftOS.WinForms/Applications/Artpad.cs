@@ -42,13 +42,17 @@ using System.Diagnostics;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("Artpad Picture", ".pic", "fileiconpicture")]
+    [FileHandler("JPEG Picture", ".jpg", "fileiconpicture")]
+    [FileHandler("PNG Picture", ".png", "fileiconpicture")]
+    [FileHandler("Bitmap Picture", ".bmp", "fileiconpicture")]
     [MultiplayerOnly]
     [Launcher("{TIITLE_ARTPAD}", true, "al_artpad", "{AL_GRAPHICS}")]
     [RequiresUpgrade("artpad")]
     [WinOpen("{WO_ARTPAD}")]
     [DefaultIcon("iconArtpad")]
     [DefaultTitle("{TITLE_ARTPAD}")]
-    public partial class Artpad : UserControl, IShiftOSWindow
+    public partial class Artpad : UserControl, IShiftOSWindow, IFileHandler
     {
         /// <summary>
         /// artpad_'s GUI.
@@ -1588,6 +1592,12 @@ namespace ShiftOS.WinForms.Applications
             magnificationlevel = 2f;
             setmagnification();
 
+        }
+
+        public void OpenFile(string file)
+        {
+            AppearanceManager.SetupWindow(this);
+            LoadPicture(file);
         }
     }
 

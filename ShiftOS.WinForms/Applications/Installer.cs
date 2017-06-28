@@ -19,12 +19,20 @@ namespace ShiftOS.WinForms.Applications
     [MultiplayerOnly]
     [DefaultTitle("{TITLE_INSTALLER}")]
     [Launcher("{TITLE_INSTALLER}", true, "al_installer", "{AL_UTILITIES}")]
-    public partial class Installer : UserControl, IShiftOSWindow
+    [FileHandler("Name Pack", ".names", "fileiconnames")]
+    public partial class Installer : UserControl, IShiftOSWindow, IFileHandler
     {
         public Installer()
         {
             InitializeComponent();
             lbtitle.Text = "Select file";
+        }
+
+        public void OpenFile(string path)
+        {
+            var stpInstall = new StpInstallation(path);
+            AppearanceManager.SetupWindow(this);
+            InitiateInstall(stpInstall);
         }
 
         public void InitiateInstall(Installation install)

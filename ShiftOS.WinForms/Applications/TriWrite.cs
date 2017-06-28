@@ -12,16 +12,23 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("TriWrite Document", ".rtf", "fileicontext")]
     [WinOpen("triwrite")]
     [AppscapeEntry("triwrite", "TriWrite", "Part of the trilogy of office applications for enhancement of your system. TriWrite is easliy the best text editor out there for ShiftOS.", 1024, 750, "file_skimmer;textpad", "Office")]
     [DefaultTitle("TriWrite")]
     [Launcher("TriWrite", false, null, "Office")]
-    public partial class TriWrite : UserControl, IShiftOSWindow
+    public partial class TriWrite : UserControl, IShiftOSWindow, IFileHandler
     {
 
         public TriWrite()
         {
             InitializeComponent(); //From the library of babel: "FIRST COMMIT FROM A MAC WOOOO TURIANS ARE COOL"
+        }
+
+        public void OpenFile(string file)
+        {
+            AppearanceManager.SetupWindow(this);
+            LoadFile(file);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)

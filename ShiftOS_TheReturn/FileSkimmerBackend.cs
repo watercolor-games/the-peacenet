@@ -46,14 +46,20 @@ namespace ShiftOS.Engine
         /// <param name="path">The path to open.</param>
         public static void OpenFile(string path)
         {
-            _fs.OpenFile(path);
+            if (!Objects.ShiftFS.Utils.FileExists(path))
+                throw new System.IO.FileNotFoundException("ShiftFS could not find the file specified.", path);
+            foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IFileHandler)) && Shiftorium.UpgradeAttributesUnlocked(x)))
+            {
+                foreach(FileHandlerAttribute attrib in type.GetCustomAttributes(false).Where(x => x is FileHandlerAttribute))
+                {
+                    if (path.ToLower().EndsWith(attrib.Extension))
+                    {
+                        var obj = (IFileHandler)Activator.CreateInstance(type);
+                        obj.OpenFile(path);
+                    }
+                }
+            }
         }
-
-        /// <summary>
-        /// Gets the file type of a given path.
-        /// </summary>
-        /// <param name="path">The path to check</param>
-        /// <returns>The FileType of the path</returns>
         public static FileType GetFileType(string path)
         {
             

@@ -208,7 +208,7 @@ namespace ShiftOS.Engine
             }
         }
 
-        internal static CommandParser GenerateSample()
+        public static CommandParser GenerateSample()
         {
             var parser = new CommandParser();
             parser.AddPart(new CommandFormatCommand());

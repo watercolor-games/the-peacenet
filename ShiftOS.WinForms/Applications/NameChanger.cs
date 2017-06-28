@@ -37,18 +37,25 @@ using ShiftOS.Objects.ShiftFS;
 using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications {
-
+    [FileHandler("Name Pack", ".nme", "fileiconnames")]
     [MultiplayerOnly]
     [Launcher("{TITLE_NAMECHANGER}", false, null, "{AL_CUSTOMIZATION}")]
     [AppscapeEntry("name_changer", "{TITLE_NAMECHANGER}", "{DESC_NAMECHANGER}", 342, 500, "skinning;file_skimmer;wm_titlebar", "{AL_CUSTOMIZATION}")]
     [WinOpen("{WO_NAMECHANGER}")]
     [DefaultTitle("{TITLE_NAMECHANGER}")]
     [DefaultIcon("iconNameChanger")]
-    public partial class NameChanger : UserControl, IShiftOSWindow
+    public partial class NameChanger : UserControl, IShiftOSWindow, IFileHandler
     {
         public NameChanger()
         {
             InitializeComponent();
+        }
+
+        public void OpenFile(string file)
+        {
+            AppearanceManager.SetupWindow(this);
+            names = JsonConvert.DeserializeObject<Dictionary<string, string>>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(file));
+            SetupUI();
         }
 
         private Dictionary<string, string> names = new Dictionary<string, string>();

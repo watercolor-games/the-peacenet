@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="Desktop.cs" />
     <Compile Include="FileSkimmerBackend.cs" />
+    <Compile Include="IFileHandler.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />
     <Compile Include="IStatusIcon.cs" />

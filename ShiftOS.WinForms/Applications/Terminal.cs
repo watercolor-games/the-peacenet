@@ -47,12 +47,51 @@ using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("Shell script", ".trm", "fileicontrm")]
     [Launcher("{TITLE_TERMINAL}", false, null, "{AL_UTILITIES}")]
     [WinOpen("{WO_TERMINAL}")]
     [DefaultTitle("{TITLE_TERMINAL}")]
     [DefaultIcon("iconTerminal")]
-    public partial class Terminal : UserControl, IShiftOSWindow
+    public partial class Terminal : UserControl, IShiftOSWindow, IFileHandler
     {
+        public void OpenFile(string file)
+        {
+            int lastline = 0;
+            string lastlinetext = "";
+
+            try
+            {
+                var lines = new List<string>(ShiftOS.Objects.ShiftFS.Utils.ReadAllText(file).Split(new[] { Environment.NewLine.ToString() }, StringSplitOptions.RemoveEmptyEntries));
+                AppearanceManager.SetupWindow(this);
+                var parser = CommandParser.GenerateSample();
+                foreach (var line in lines)
+                {
+                    lastline = lines.IndexOf(line) + 1;
+                    lastlinetext = line;
+                    var command = parser.ParseCommand(line);
+                    TerminalBackend.InvokeCommand(command.Key, command.Value);
+                }
+            }
+            catch(Exception ex)
+            {
+                ConsoleEx.ForegroundColor = ConsoleColor.Red;
+                ConsoleEx.Bold = true;
+                Console.WriteLine("Script exception");
+                ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
+                ConsoleEx.Bold = false;
+                ConsoleEx.Italic = true;
+#if DEBUG
+                Console.WriteLine(ex.Message);
+#endif
+                Console.WriteLine(ex.StackTrace);
+                if(lastline > 0)
+                {
+                    Console.WriteLine(" at " + lastlinetext + " (line " + lastline + ") in " + file);
+                }
+            }
+            TerminalBackend.PrintPrompt();
+        }
+
         public static Stack<string> ConsoleStack = new Stack<string>();
 
         public static System.Windows.Forms.Timer ti = new System.Windows.Forms.Timer();
