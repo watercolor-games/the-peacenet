@@ -32,10 +32,10 @@
             this.btnclose = new System.Windows.Forms.Button();
             this.btnreset = new System.Windows.Forms.Button();
             this.btnapply = new System.Windows.Forms.Button();
-            this.flbody = new System.Windows.Forms.FlowLayoutPanel();
             this.lbcurrentpage = new System.Windows.Forms.Label();
             this.btnprev = new System.Windows.Forms.Button();
             this.btnnext = new System.Windows.Forms.Button();
+            this.flbody = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,16 +91,6 @@
             this.btnapply.UseVisualStyleBackColor = true;
             this.btnapply.Click += new System.EventHandler(this.btnapply_Click);
             // 
-            // flbody
-            // 
-            this.flbody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flbody.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flbody.Location = new System.Drawing.Point(0, 0);
-            this.flbody.Name = "flbody";
-            this.flbody.Size = new System.Drawing.Size(393, 416);
-            this.flbody.TabIndex = 1;
-            this.flbody.WrapContents = false;
-            // 
             // lbcurrentpage
             // 
             this.lbcurrentpage.AutoSize = true;
@@ -133,6 +123,16 @@
             this.btnnext.Text = "Next >";
             this.btnnext.UseVisualStyleBackColor = true;
             this.btnnext.Click += new System.EventHandler(this.btnnext_Click);
+            // 
+            // flbody
+            // 
+            this.flbody.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flbody.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flbody.Location = new System.Drawing.Point(0, 0);
+            this.flbody.Name = "flbody";
+            this.flbody.Size = new System.Drawing.Size(393, 416);
+            this.flbody.TabIndex = 1;
+            this.flbody.WrapContents = false;
             // 
             // IconManager
             // 

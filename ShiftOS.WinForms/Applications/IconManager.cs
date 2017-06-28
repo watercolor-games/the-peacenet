@@ -14,15 +14,25 @@ using Newtonsoft.Json;
 
 namespace ShiftOS.WinForms.Applications
 {
+    [FileHandler("Icon Pack", ".icons", "fileiconicons")]
     [RequiresUpgrade("icon_manager")]
     [Launcher("{TITLE_ICONMANAGER}", true, "al_icon_manager", "{AL_CUSTOMIZATION}")]
     [DefaultTitle("{TITLE_ICONMANAGER}")]
     [DefaultIcon("iconIconManager")]
-    public partial class IconManager : UserControl, IShiftOSWindow
+    public partial class IconManager : UserControl, IShiftOSWindow, IFileHandler
     {
         public IconManager()
         {
             InitializeComponent();
+        }
+
+        public void OpenFile(string file)
+        {
+            var contents = Objects.ShiftFS.Utils.ReadAllText(file);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, byte[]>>(contents);
+            AppearanceManager.SetupWindow(this);
+            Icons = dict;
+            SetupUI();
         }
 
         public void OnLoad()
