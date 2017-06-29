@@ -13,24 +13,27 @@ namespace ShiftOS.Engine
 
         public static void Init()
         {
-            ActiveInfections = new List<IVirus>();
-            if (SaveSystem.CurrentSave.ViralInfections == null)
-                SaveSystem.CurrentSave.ViralInfections = new List<ViralInfection>();
-            foreach(var virusdata in SaveSystem.CurrentSave.ViralInfections)
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                var virus = CreateVirus(virusdata.ID, virusdata.ThreatLevel);
-                var existing = ActiveInfections.FirstOrDefault(x => x.GetType() == virus.GetType());
-                if(existing != null)
+                ActiveInfections = new List<IVirus>();
+                if (SaveSystem.CurrentSave.ViralInfections == null)
+                    SaveSystem.CurrentSave.ViralInfections = new List<ViralInfection>();
+                foreach (var virusdata in SaveSystem.CurrentSave.ViralInfections)
                 {
-                    var eIndex = ActiveInfections.IndexOf(existing);
-                    ActiveInfections[eIndex] = virus;
-                    existing.Disinfect();
+                    var virus = CreateVirus(virusdata.ID, virusdata.ThreatLevel);
+                    var existing = ActiveInfections.FirstOrDefault(x => x.GetType() == virus.GetType());
+                    if (existing != null)
+                    {
+                        var eIndex = ActiveInfections.IndexOf(existing);
+                        ActiveInfections[eIndex] = virus;
+                        existing.Disinfect();
+                    }
+                    else
+                    {
+                        ActiveInfections.Add(virus);
+                    }
                 }
-                else
-                {
-                    ActiveInfections.Add(virus);
-                }
-            }
+            });
         }
 
         public static void Infect(string id, int threatlevel)
@@ -89,9 +92,6 @@ namespace ShiftOS.Engine
                         return virus;
                     }
                 }
-            }
-            {
-
             }
 
             throw new Exception("Cannot create virus.");
