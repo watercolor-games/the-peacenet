@@ -476,6 +476,7 @@
     </Compile>
     <Compile Include="VirtualEnvironments.cs" />
     <Compile Include="Viruses\BeeperVirus.cs" />
+    <Compile Include="Viruses\ConsoleGarble.cs" />
     <Compile Include="Viruses\CPLeach.cs" />
     <Compile Include="Viruses\WindowsEverywhere.cs" />
     <Compile Include="VirusTestCommands.cs" />

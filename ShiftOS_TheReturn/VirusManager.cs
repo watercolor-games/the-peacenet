@@ -50,6 +50,11 @@ namespace ShiftOS.Engine
                 {
                     infection.ThreatLevel = threatlevel;
                 }
+                else
+                {
+                    return;
+                    //no need to reinfect with a lower threatlevel
+                }
             }
             else
             {
