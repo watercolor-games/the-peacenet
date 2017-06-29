@@ -19,7 +19,7 @@ namespace ShiftOS.WinForms.Viruses
             Timer.Tick += (o, a) =>
             {
                 ulong codepointDecrease = (ulong)threatlevel * 4;
-                if (SaveSystem.CurrentSave.Codepoints <= codepointDecrease)
+                if (SaveSystem.CurrentSave.Codepoints > codepointDecrease)
                     SaveSystem.CurrentSave.Codepoints -= codepointDecrease;
                 else
                     SaveSystem.CurrentSave.Codepoints = 0;
