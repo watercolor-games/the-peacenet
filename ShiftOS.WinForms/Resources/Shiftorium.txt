@@ -1,4 +1,26 @@
 [
+//Virus Scanner Grades
+	{
+		Name: "Virus Scanner Grade 2",
+		Description: "Update the Virus Scanner database to include threatlevel 2 viruses.",
+		Dependencies: "virus_scanner",
+		Category: "Virus Scanner",
+		Cost: 75
+	},
+	{
+		Name: "Virus Scanner Grade 3",
+		Description: "Update the Virus Scanner database to include threatlevel 3 viruses.",
+		Dependencies: "virus_scanner_grade_2",
+		Category: "Virus Scanner",
+		Cost: 150
+	},
+	{
+		Name: "Virus Scanner Grade 4",
+		Description: "Update the Virus Scanner database to include threatlevel 4 viruses.",
+		Dependencies: "virus_scanner_grade_3",
+		Category: "Virus Scanner",
+		Cost: 225
+	},
 // SCREENSAVER
 	{
 		Name: "Screensavers",

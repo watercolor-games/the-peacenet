@@ -20,6 +20,14 @@ namespace ShiftOS.WinForms
 
             VirusManager.Infect(id, threatlevel);
         }
+        [Command("disinfect", description = "DEBUG: Disinfect the system, removing the specified virus.")]
+        [RequiresArgument("id")]
+        public static void Disinfect(Dictionary<string, object> args)
+        {
+            var id = args["id"].ToString();
+
+            VirusManager.Disinfect(id);
+        }
     }
 #endif
 }

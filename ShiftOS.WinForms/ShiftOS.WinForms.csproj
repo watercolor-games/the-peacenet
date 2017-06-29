@@ -281,6 +281,12 @@
     <Compile Include="Applications\VideoPlayer.Designer.cs">
       <DependentUpon>VideoPlayer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\VirusScanner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\VirusScanner.Designer.cs">
+      <DependentUpon>VirusScanner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\WebBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -603,6 +609,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\VideoPlayer.resx">
       <DependentUpon>VideoPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\VirusScanner.resx">
+      <DependentUpon>VirusScanner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\WebBrowser.resx">
       <DependentUpon>WebBrowser.cs</DependentUpon>

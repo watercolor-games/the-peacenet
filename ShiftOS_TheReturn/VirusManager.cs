@@ -96,5 +96,25 @@ namespace ShiftOS.Engine
 
             throw new Exception("Cannot create virus.");
         }
+
+        public static void Disinfect(string id)
+        {
+            foreach(var virus in ActiveInfections.ToArray())
+            {
+                var type = virus.GetType();
+                var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is VirusAttribute) as VirusAttribute;
+                if(attrib != null)
+                {
+                    if (attrib.ID == id)
+                    {
+                        ActiveInfections.Remove(virus);
+                        var inf = SaveSystem.CurrentSave.ViralInfections.FirstOrDefault(x => x.ID == id);
+                        if (inf != null)
+                            SaveSystem.CurrentSave.ViralInfections.Remove(inf);
+                        virus.Disinfect();
+                    }
+                }
+            }
+        }
     }
 }
