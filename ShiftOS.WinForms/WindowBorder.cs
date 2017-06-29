@@ -48,6 +48,8 @@ namespace ShiftOS.WinForms
 	/// </summary>
     public partial class WindowBorder : Form, IWindowBorder
     {
+        private bool IsFocused { get; set; }
+
 		/// <summary>
 		/// Raises the closing event.
 		/// </summary>
@@ -109,6 +111,17 @@ namespace ShiftOS.WinForms
         public WindowBorder(UserControl win)
         {
             InitializeComponent();
+            IsFocused = true;
+            this.Activated += (o, a) =>
+            {
+                IsFocused = true;
+                SetupSkin();
+            };
+            this.Deactivate += (o, a) =>
+            {
+                IsFocused = false;
+                SetupSkin();
+            };
             this._parentWindow = win;
             Shiftorium.Installed += () =>
             {
@@ -249,55 +262,113 @@ namespace ShiftOS.WinForms
             }
         }
 
-        /// <summary>
-        /// Setups the skin.
-        /// </summary>
-        /// <returns>The skin.</returns>
-        public void SetupSkin()
+        public void SetDefaultBorders()
         {
-            this.DoubleBuffered = true;
-            this.TransparencyKey = LoadedSkin.SystemKey;
-            pnlcontents.BackColor = this.TransparencyKey;
-            pnltitle.Height = LoadedSkin.TitlebarHeight;
             pnltitle.BackColor = LoadedSkin.TitleBackgroundColor;
             pnltitle.BackgroundImage = GetImage("titlebar");
-            pnltitleleft.Visible = LoadedSkin.ShowTitleCorners;
-            pnltitleright.Visible = LoadedSkin.ShowTitleCorners;
             pnltitleleft.BackColor = LoadedSkin.TitleLeftCornerBackground;
             pnltitleright.BackColor = LoadedSkin.TitleRightCornerBackground;
-            pnltitleleft.Width = LoadedSkin.TitleLeftCornerWidth;
-            pnltitleright.Width = LoadedSkin.TitleRightCornerWidth;
             pnltitleleft.BackgroundImage = GetImage("titleleft");
             pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleft");
             pnltitleright.BackgroundImage = GetImage("titleright");
             pnltitleright.BackgroundImageLayout = GetImageLayout("titleright");
             pnltitle.BackgroundImageLayout = GetImageLayout("titlebar"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
 
-            lbtitletext.BackColor = (pnltitle.BackgroundImage != null) ? Color.Transparent : LoadedSkin.TitleBackgroundColor;
-            lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
-            lbtitletext.Font = LoadedSkin.TitleFont;
-
             pnlleft.BackColor = LoadedSkin.BorderLeftBackground;
             pnlleft.BackgroundImage = GetImage("leftborder");
             pnlleft.BackgroundImageLayout = GetImageLayout("leftborder");
-            pnlleft.Width = LoadedSkin.LeftBorderWidth;
+
             pnlright.BackColor = LoadedSkin.BorderRightBackground;
             pnlright.BackgroundImage = GetImage("rightborder");
             pnlright.BackgroundImageLayout = GetImageLayout("rightborder");
-            pnlright.Width = LoadedSkin.RightBorderWidth;
 
             pnlbottom.BackColor = LoadedSkin.BorderBottomBackground;
             pnlbottom.BackgroundImage = GetImage("bottomborder");
             pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborder");
-            pnlbottom.Height = LoadedSkin.BottomBorderWidth;
 
             pnlbottomr.BackColor = LoadedSkin.BorderBottomRightBackground;
             pnlbottomr.BackgroundImage = GetImage("bottomrborder");
             pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborder");
-            pnlbottomr.Width = pnlright.Width;
+
             pnlbottoml.BackColor = LoadedSkin.BorderBottomLeftBackground;
             pnlbottoml.BackgroundImage = GetImage("bottomlborder");
             pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborder");
+
+        }
+
+        public void SetInactiveBorders()
+        {
+            pnltitle.BackColor = LoadedSkin.TitleInactiveBackgroundColor;
+            pnltitle.BackgroundImage = GetImage("titlebarinactive");
+            pnltitleleft.BackColor = LoadedSkin.TitleInactiveLeftCornerBackground;
+            pnltitleright.BackColor = LoadedSkin.TitleInactiveRightCornerBackground;
+            pnltitleleft.BackgroundImage = GetImage("titleleftinactive");
+            pnltitleleft.BackgroundImageLayout = GetImageLayout("titleleftinactive");
+            pnltitleright.BackgroundImage = GetImage("titlerightinactive");
+            pnltitleright.BackgroundImageLayout = GetImageLayout("titlerightinactive");
+            pnltitle.BackgroundImageLayout = GetImageLayout("titlebarinactive"); //RETARD ALERT. WHY WASN'T THIS THERE WHEN IMAGELAYOUTS WERE FIRST IMPLEMENTED?
+
+            pnlleft.BackColor = LoadedSkin.BorderInactiveLeftBackground;
+            pnlleft.BackgroundImage = GetImage("leftborderinactive");
+            pnlleft.BackgroundImageLayout = GetImageLayout("leftborderinactive");
+
+            pnlright.BackColor = LoadedSkin.BorderInactiveRightBackground;
+            pnlright.BackgroundImage = GetImage("rightborderinactive");
+            pnlright.BackgroundImageLayout = GetImageLayout("rightborderinactive");
+
+            pnlbottom.BackColor = LoadedSkin.BorderInactiveBottomBackground;
+            pnlbottom.BackgroundImage = GetImage("bottomborderinactive");
+            pnlbottom.BackgroundImageLayout = GetImageLayout("bottomborderinactive");
+
+            pnlbottomr.BackColor = LoadedSkin.BorderInactiveBottomRightBackground;
+            pnlbottomr.BackgroundImage = GetImage("bottomrborderinactive");
+            pnlbottomr.BackgroundImageLayout = GetImageLayout("bottomrborderinactive");
+
+            pnlbottoml.BackColor = LoadedSkin.BorderInactiveBottomLeftBackground;
+            pnlbottoml.BackgroundImage = GetImage("bottomlborderinactive");
+            pnlbottoml.BackgroundImageLayout = GetImageLayout("bottomlborderinactive");
+
+        }
+
+        /// <summary>
+        /// Setups the skin.
+        /// </summary>
+        /// <returns>The skin.</returns>
+        public void SetupSkin()
+        {
+            //Border colors and images...
+            if (IsFocused)
+            {
+                SetDefaultBorders();
+            }
+            else
+            {
+                if (LoadedSkin.RenderInactiveBorders)
+                    SetInactiveBorders();
+                else
+                    SetDefaultBorders();
+            }
+
+
+            this.DoubleBuffered = true;
+            this.TransparencyKey = LoadedSkin.SystemKey;
+            pnlcontents.BackColor = this.TransparencyKey;
+            pnltitle.Height = LoadedSkin.TitlebarHeight;
+            pnltitleleft.Visible = LoadedSkin.ShowTitleCorners;
+            pnltitleright.Visible = LoadedSkin.ShowTitleCorners;
+            pnltitleleft.Width = LoadedSkin.TitleLeftCornerWidth;
+            pnltitleright.Width = LoadedSkin.TitleRightCornerWidth;
+            
+            lbtitletext.BackColor = (pnltitle.BackgroundImage != null) ? Color.Transparent : LoadedSkin.TitleBackgroundColor;
+            lbtitletext.ForeColor = LoadedSkin.TitleTextColor;
+            lbtitletext.Font = LoadedSkin.TitleFont;
+
+            pnlleft.Width = LoadedSkin.LeftBorderWidth;
+            pnlright.Width = LoadedSkin.RightBorderWidth;
+
+            pnlbottom.Height = LoadedSkin.BottomBorderWidth;
+
+            pnlbottomr.Width = pnlright.Width;
             pnlbottoml.Width = pnlleft.Width;
 
             lbtitletext.ForeColor = LoadedSkin.TitleTextColor;

@@ -13,7 +13,7 @@ using ShiftOS.Engine;
 namespace ShiftOS.WinForms.Applications
 {
     [WinOpen("triwrite")]
-    [AppscapeEntry("TriWrite", "Part of the trilogy of office applications for enhancement of your system. TriWrite is easliy the best text editor out there for ShiftOS.", 1024, 750, "file_skimmer;textpad", "Office")]
+    [AppscapeEntry("triwrite", "TriWrite", "Part of the trilogy of office applications for enhancement of your system. TriWrite is easliy the best text editor out there for ShiftOS.", 1024, 750, "file_skimmer;textpad", "Office")]
     [DefaultTitle("TriWrite")]
     [Launcher("TriWrite", false, null, "Office")]
     public partial class TriWrite : UserControl, IShiftOSWindow

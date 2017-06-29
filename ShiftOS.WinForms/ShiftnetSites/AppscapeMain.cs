@@ -48,8 +48,8 @@ namespace ShiftOS.WinForms.ShiftnetSites
                 if (upgrades.Count() > 0)
                     foreach (var upg in upgrades)
                     {
-                        if (!cats.Contains(upg.Category))
-                            cats.Add(upg.Category);
+                        if (!cats.Contains(Localization.Parse(upg.Category)))
+                            cats.Add(Localization.Parse(upg.Category));
                     }
             }
             catch { }
@@ -63,9 +63,9 @@ namespace ShiftOS.WinForms.ShiftnetSites
             pnlappslist.Controls.Clear();
             pnlappslist.Show();
             pnlappslist.BringToFront();
-            Category = cat;
+            Category = Localization.Parse(cat);
             var upgrades = GetAllInCategory();
-            lbtitle.Text = cat;
+            lbtitle.Text = Localization.Parse(cat);
             if(upgrades.Length == 0)
             {
                 var err = new Label();
@@ -282,7 +282,7 @@ namespace ShiftOS.WinForms.ShiftnetSites
             if (Category == "All")
                 return upgrades.ToArray();
             else
-                return upgrades.Where(x => x.Category == Category).ToArray();
+                return upgrades.Where(x => Localization.Parse(x.Category) == Localization.Parse(Category)).ToArray();
         }
 
         public void Setup()
@@ -360,7 +360,7 @@ namespace ShiftOS.WinForms
     /// </summary>
     public class AppscapeEntryAttribute : RequiresUpgradeAttribute
     {
-        public AppscapeEntryAttribute(string name, string description, int downloadSize, ulong cost, string dependencies = "", string category = "Misc") : base(name.ToLower().Replace(' ', '_'))
+        public AppscapeEntryAttribute(string id, string name, string description, int downloadSize, ulong cost, string dependencies = "", string category = "Misc") : base(id)
         {
             Name = name;
             Description = description;

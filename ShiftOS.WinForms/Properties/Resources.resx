@@ -34618,4 +34618,20 @@
   <data name="strings_fr" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\strings_fr.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="AppscapeServerFS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AppscapeServerFS.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="AppscapeWantedFile" xml:space="preserve">
+    <value>RGF0ZTogMDQvMS8yMDE4DQpVc2VyOiBtYXVyZWVuX2Zlbm4NCg0KQmFuIHR5cGU6IENlYXNlIGFuZCBkZXNpc3QgKERldlgpDQoNCkRlc2NyaXB0aW9uOg0KDQpEZXZYIGhhcyBzZW50IGEgY2Vhc2UgYW5kIGRlc2lzdCByZXF1ZXN0IHRvIEFwcHNjYXBlIGZvciBob3N0aW5nIHRoaXMgdXNlcidzIGFwcGxpY2F0aW9ucyBhbmQgc2VuZGluZyBwcm9maXRzIG92ZXIuIFRoaXMgdXNlcidzIHNvZnR3YXJlIHdpbGwgbm90IGJlIHB1bGxlZCwgYnV0IGFsbCBDb2RlcG9pbnRzIGVhcm5lZCBmcm9tIGl0IHdpbGwgbm90IGJlIHJlZGlyZWN0ZWQgYW5kIHRoZSB1c2VyIHdpbGwgbm90IGJlIGFibGUgdG8gYWNjZXNzIHRoZWlyIGRldmVsb3BtZW50IHBhbmVsLg==</value>
+    <comment>The file that Maureen Fenn wants to see in the Appscape Troubles storyline.</comment>
+  </data>
+  <data name="brute" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\brute.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PebcakDevelFS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PebcakDevelFS.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="BlueBlueVerticalGradient" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueBlueVerticalGradient.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -56,6 +56,7 @@ namespace ShiftOS.MFSProfiler
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tvfiles = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.pnlfileinfo = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -71,6 +72,8 @@ namespace ShiftOS.MFSProfiler
             this.newFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToMFSFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -115,12 +118,24 @@ namespace ShiftOS.MFSProfiler
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(246, 30);
             this.panel1.TabIndex = 1;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(86, 4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "Create New";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
@@ -237,14 +252,15 @@ namespace ShiftOS.MFSProfiler
             this.ctxfileoptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFileToolStripMenuItem,
             this.newDirectoryToolStripMenuItem,
-            this.deleteToolStripMenuItem});
+            this.deleteToolStripMenuItem,
+            this.exportToMFSFileToolStripMenuItem});
             this.ctxfileoptions.Name = "ctxfileoptions";
-            this.ctxfileoptions.Size = new System.Drawing.Size(153, 92);
+            this.ctxfileoptions.Size = new System.Drawing.Size(171, 92);
             // 
             // newFileToolStripMenuItem
             // 
             this.newFileToolStripMenuItem.Name = "newFileToolStripMenuItem";
-            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.newFileToolStripMenuItem.Text = "New file";
             this.newFileToolStripMenuItem.Click += new System.EventHandler(this.newFileToolStripMenuItem_Click);
             // 
@@ -253,12 +269,30 @@ namespace ShiftOS.MFSProfiler
             this.newDirectoryToolStripMenuItem.Name = "newDirectoryToolStripMenuItem";
             this.newDirectoryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newDirectoryToolStripMenuItem.Text = "New directory";
+            this.newDirectoryToolStripMenuItem.Click += new System.EventHandler(this.newDirectoryToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
+            // 
+            // exportToMFSFileToolStripMenuItem
+            // 
+            this.exportToMFSFileToolStripMenuItem.Name = "exportToMFSFileToolStripMenuItem";
+            this.exportToMFSFileToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.exportToMFSFileToolStripMenuItem.Text = "Export To MFS File";
+            this.exportToMFSFileToolStripMenuItem.Click += new System.EventHandler(this.exportToMFSFileToolStripMenuItem_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(167, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "From Dir";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // Main
             // 
@@ -306,6 +340,9 @@ namespace ShiftOS.MFSProfiler
         private System.Windows.Forms.ToolStripMenuItem newFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolStripMenuItem exportToMFSFileToolStripMenuItem;
+        private System.Windows.Forms.Button button3;
     }
 }
 

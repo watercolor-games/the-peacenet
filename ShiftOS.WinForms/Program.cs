@@ -71,7 +71,7 @@ namespace ShiftOS.WinForms
                 Action completed = null;
                 completed = () =>
                 {
-                    SaveSystem.Ready = true;
+                    SaveSystem.Ready.Set();
                     Engine.AudioManager.PlayCompleted -= completed;
                     AudioManager.StartAmbientLoop();
                 };
@@ -122,7 +122,7 @@ namespace ShiftOS.WinForms
                 {
                     var upgrade = new ShiftoriumUpgrade
                     {
-                        Id = attrib.Name.ToLower().Replace(" ", "_"),
+                        Id = attrib.Upgrade,
                         Name = attrib.Name,
                         Description = attrib.Description,
                         Cost = attrib.Cost,

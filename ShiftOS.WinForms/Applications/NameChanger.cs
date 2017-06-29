@@ -40,7 +40,7 @@ namespace ShiftOS.WinForms.Applications {
 
     [MultiplayerOnly]
     [Launcher("{TITLE_NAMECHANGER}", false, null, "{AL_CUSTOMIZATION}")]
-    [AppscapeEntry("{TITLE_NAMECHANGER}", "{DESC_NAMECHANGER}", 342, 500, "skinning;file_skimmer;wm_titlebar", "{AL_CUSTOMIZATION}")]
+    [AppscapeEntry("name_changer", "{TITLE_NAMECHANGER}", "{DESC_NAMECHANGER}", 342, 500, "skinning;file_skimmer;wm_titlebar", "{AL_CUSTOMIZATION}")]
     [WinOpen("{WO_NAMECHANGER}")]
     [DefaultTitle("{TITLE_NAMECHANGER}")]
     [DefaultIcon("iconNameChanger")]

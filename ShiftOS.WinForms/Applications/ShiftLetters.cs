@@ -33,12 +33,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ShiftOS.WinForms.Tools;
 
 namespace ShiftOS.WinForms.Applications
 {
     [MultiplayerOnly]
     [Launcher("{TITLE_SHIFTLETTERS}", false, null, "{AL_GAMES}")]
-    [AppscapeEntry("{TITLE_SHIFTLETTERS}", "{DESC_SHIFTLETTERS}", 300, 150, null, "{AL_GAMES}")]
+    [AppscapeEntry("shiftletters", "{TITLE_SHIFTLETTERS}", "{DESC_SHIFTLETTERS}", 300, 150, null, "{AL_GAMES}")]
     [WinOpen("{WO_SHIFTLETTERS}")]
     [DefaultIcon("iconShiftLetters")]
     public partial class ShiftLetters : UserControl, IShiftOSWindow
@@ -180,7 +181,17 @@ namespace ShiftOS.WinForms.Applications
             if (Shiftorium.UpgradeInstalled("sl_operating_systems_wordlist")) comboBox1.Items.Add("Operating Systems");
             btnrestart.Visible = true;
             lblword.Left = (this.Width - lblword.Width) / 2;
+            comboBox1.SelectedIndex = 0;
+            tmrcenter.Tick += (o, a) =>
+            {
+                this.tbguess.CenterParent();
+                this.tbguess.Parent.CenterParent();
+            };
+            tmrcenter.Interval = 50;
+            tmrcenter.Start();
         }
+
+        Timer tmrcenter = new Timer();
 
         public void OnUpgrade()
         {
@@ -189,6 +200,7 @@ namespace ShiftOS.WinForms.Applications
 
         public bool OnUnload()
         {
+            tmrcenter.Stop();
             return true;
         }
 

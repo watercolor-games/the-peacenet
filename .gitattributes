@@ -61,3 +61,8 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# don't display Python? hopefully?
+ShiftOS.Engine/Lib/* linguist-vendored
+ResourceCompressor/res/Dependencies/* linguist-vendored
+*.py linguist-vendored

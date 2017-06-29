@@ -1,0 +1,52 @@
+{
+  "Name": "appscape_main",
+  "Files": [],
+  "Subdirectories": [
+    {
+      "Name": "bans",
+      "Files": [
+        {
+          "Name": "hacker101.txt",
+          "Data": "RGF0ZTogMTAvMy8yMDE4DQpVc2VyOiBoYWNrZXIxMDENCg0KQmFuIHR5cGU6IEF1dG9tYXRlZA0KDQpEZXNjcmlwdGlvbjoNCg0KVGhpcyB1c2VyIGhhcyBiZWVuIGJhbm5lZCBieSB0aGUgYXV0b21hdGVkIGFudGktaGFja2luZyBzeXN0ZW0gZm9yIGNyZWF0aW9uIG9mIG1hbGljaW91cyBzb2Z0d2FyZSBhbmQgZXhwbG9pdGF0aW9uIHV0aWxpdGllcy4=",
+          "HeaderData": null,
+          "ReadAccessToLowUsers": false,
+          "permissions": 0
+        },
+        {
+          "Name": "maureen_fenn.txt",
+          "Data": "RGF0ZTogMDQvMS8yMDE4DQpVc2VyOiBtYXVyZWVuX2Zlbm4NCg0KQmFuIHR5cGU6IENlYXNlIGFuZCBkZXNpc3QgKERldlgpDQoNCkRlc2NyaXB0aW9uOg0KDQpEZXZYIGhhcyBzZW50IGEgY2Vhc2UgYW5kIGRlc2lzdCByZXF1ZXN0IHRvIEFwcHNjYXBlIGZvciBob3N0aW5nIHRoaXMgdXNlcidzIGFwcGxpY2F0aW9ucyBhbmQgc2VuZGluZyBwcm9maXRzIG92ZXIuIFRoaXMgdXNlcidzIHNvZnR3YXJlIHdpbGwgbm90IGJlIHB1bGxlZCwgYnV0IGFsbCBDb2RlcG9pbnRzIGVhcm5lZCBmcm9tIGl0IHdpbGwgbm90IGJlIHJlZGlyZWN0ZWQgYW5kIHRoZSB1c2VyIHdpbGwgbm90IGJlIGFibGUgdG8gYWNjZXNzIHRoZWlyIGRldmVsb3BtZW50IHBhbmVsLg==",
+          "HeaderData": null,
+          "ReadAccessToLowUsers": false,
+          "permissions": 0
+        }
+      ],
+      "Subdirectories": [],
+      "ReadAccessToLowUsers": false,
+      "permissions": 3
+    },
+    {
+      "Name": "feedback",
+      "Files": [
+        {
+          "Name": "better_feedback_system.txt",
+          "Data": "VXNlcjogYW5vbnltb3VzDQpEYXRlOiAyNS8xMi8yMDE3DQpUaXRsZTogQmV0dGVyIGZlZWRiYWNrIHN5c3RlbS4NCg0KRGVzY3JpcHRpb246DQoNCldoeSBtdXN0IHdlIEZUUCBpbnRvIHlvdXIgc3lzdGVtIHRvIGxlYXZlIGZlZWRiYWNrIGZvciBBcHBzY2FwZT8gSSBrbm93IHRoYXQgeW91J3ZlIGdvdCB0aGlzIGFjY291bnQgdGlnaHRseSBsb2NrZWQgYW5kIGl0IGNhbiBvbmx5IGFjY2VzcyB0aGlzIHBhcnQgb2YgeW91ciBjb21wdXRlciwgYnV0IGl0J3MgdGhlIERpZ2l0YWwgU29jaWV0eS4gU29tZW9uZSdzIGdvbm5hIGJyZWFrIHRoaXMuIENhbid0IHdlIGF0IGxlYXN0IGhhdmUgYSBtb3JlIHNlY3VyZSBTTVRQLWJhc2VkIGZlZWRiYWNrIHN5c3RlbT8gT3IgZXZlbiBhIGZvcm0gb24gQXBwc2NhcGUncyB3ZWJzaXRlPw0KDQpSZXBseToNCg0KQ29tZSBvbiBtYW4hIEl0J3MgQ2hyaXN0bWFzLCB5b3UncmUgZ29ubmEgbWFrZSBtZSBjb2RlPyBJJ20gdHJ5aW5nIHRvIHNwZW5kIHRpbWUgd2l0aCB0aGUgZmFtaWx5IGhlcmUuLi4gd2FpdCBhIG1pbnV0ZS4uLiB1aGhoLi4uIG5ldmVybWluZC4gSSdtIGFjdHVhbGx5IHdvcmtpbmcgb24gdGhhdCBhcyB3ZSBzcGVhay4=",
+          "HeaderData": null,
+          "ReadAccessToLowUsers": false,
+          "permissions": 0
+        },
+        {
+          "Name": "screenshots.txt",
+          "Data": "VXNlcjogYW5vbnltb3VzDQpEYXRlOiAwNC8xMi8yMDE3DQpUaXRsZTogQnJpbmcgYmFjayBzY3JlZW5zaG90cy4NCg0KRGVzY3JpcHRpb246DQoNCkJhY2sgaW4gdGhlIG9sZGVuIGRheXMsIGJlZm9yZSB0aGUgRGlnaXRhbCBTb2NpZXR5LCBBcHBzY2FwZSBoYWQgZGVjZW50IHNjcmVlbnNob3RzIGZvciBpdHMgYXBwcy4gV2h5IGNhbid0IHdlIGhhdmUgdGhlbSBpbiBtb2Rlcm4gQXBwc2NhcGU/DQoNClJlcGx5Og0KDQpUaGUgU2hpZnRuZXQgaXMgaW4gaXRzIGVuZmFuY3kgYXQgdGhpcyB0aW1lLi4uIGV2ZXIgc2luY2UgRGV2WCBtYWRlIGl0IGFuIG9mZmljaWFsIHBhcnQgb2YgU2hpZnRPUyBhbmQgcmV3cm90ZSB0aGUgcGFnZSB0ZW1wbGF0aW5nIHN5c3RlbSwgSSBoYXZlbid0IGxlYXJuZWQgeWV0IGhvdyB0byBkZWFsIHdpdGggcGljdHVyZXMuIEknbGwgbG9vayBpbnRvIGl0IHRob3VnaC4gSSBzdXJlIGRvIG1pc3MgdGhlIG9sZGVyIFNoaWZ0bmV0Li4u",
+          "HeaderData": null,
+          "ReadAccessToLowUsers": false,
+          "permissions": 0
+        }
+      ],
+      "Subdirectories": [],
+      "ReadAccessToLowUsers": false,
+      "permissions": 0
+    }
+  ],
+  "ReadAccessToLowUsers": false,
+  "permissions": 3
+}

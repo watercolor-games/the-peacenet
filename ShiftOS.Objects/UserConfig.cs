@@ -14,24 +14,27 @@ namespace ShiftOS.Objects
         public string DigitalSocietyAddress { get; set; }
         public int DigitalSocietyPort { get; set; }
 
-        public static UserConfig Get()
-        {
-            var conf = new UserConfig
+        private static UserConfig def = new UserConfig
             {
                 Language  = "english",
                 DigitalSocietyAddress = "michaeltheshifter.me",
                 DigitalSocietyPort = 13370
             };
 
-            if (!File.Exists("servers.json"))
-            {
-                File.WriteAllText("servers.json", JsonConvert.SerializeObject(conf, Formatting.Indented));
-            }
+        public static UserConfig current = null;
+
+    public static UserConfig Get()
+        {
+            if (current != null)
+                return current;
+            if (File.Exists("servers.json"))
+                current = JsonConvert.DeserializeObject<UserConfig>(File.ReadAllText("servers.json"));
             else
             {
-                conf = JsonConvert.DeserializeObject<UserConfig>(File.ReadAllText("servers.json"));
+                File.WriteAllText("servers.json", JsonConvert.SerializeObject(def, Formatting.Indented));
+                current = def;
             }
-            return conf;
+            return current;
         }
     }
 }

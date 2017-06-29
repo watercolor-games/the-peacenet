@@ -52,6 +52,7 @@ namespace ShiftOS.WinForms.Applications
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileSkimmer));
             this.lvitems = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pinnedItems = new System.Windows.Forms.TreeView();
@@ -63,8 +64,25 @@ namespace ShiftOS.WinForms.Applications
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnlconnect = new System.Windows.Forms.Panel();
+            this.flcbuttons = new System.Windows.Forms.FlowLayoutPanel();
+            this.btncancel = new System.Windows.Forms.Button();
+            this.btnok = new System.Windows.Forms.Button();
+            this.pnlcreds = new System.Windows.Forms.Panel();
+            this.txtcpass = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtcuser = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtcsys = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lbcdesc = new System.Windows.Forms.Label();
+            this.lbctitle = new System.Windows.Forms.Label();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.pnlconnect.SuspendLayout();
+            this.flcbuttons.SuspendLayout();
+            this.pnlcreds.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvitems
@@ -114,6 +132,7 @@ namespace ShiftOS.WinForms.Applications
             this.newFolderToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.connectToRemoteServerToolStripMenuItem,
+            this.disconnectToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.moveToolStripMenuItem,
             this.pinToolStripMenuItem});
@@ -140,9 +159,9 @@ namespace ShiftOS.WinForms.Applications
             // connectToRemoteServerToolStripMenuItem
             // 
             this.connectToRemoteServerToolStripMenuItem.Name = "connectToRemoteServerToolStripMenuItem";
-            this.connectToRemoteServerToolStripMenuItem.Size = new System.Drawing.Size(153, 20);
-            this.connectToRemoteServerToolStripMenuItem.Text = "Connect to remote server";
-            this.connectToRemoteServerToolStripMenuItem.Visible = false;
+            this.connectToRemoteServerToolStripMenuItem.Size = new System.Drawing.Size(129, 20);
+            this.connectToRemoteServerToolStripMenuItem.Text = "Start Remote Session";
+            this.connectToRemoteServerToolStripMenuItem.Click += new System.EventHandler(this.connectToRemoteServerToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
@@ -165,10 +184,152 @@ namespace ShiftOS.WinForms.Applications
             this.pinToolStripMenuItem.Text = "Pin";
             this.pinToolStripMenuItem.Click += new System.EventHandler(this.pinToolStripMenuItem_Click);
             // 
+            // pnlconnect
+            // 
+            this.pnlconnect.Controls.Add(this.flcbuttons);
+            this.pnlconnect.Controls.Add(this.pnlcreds);
+            this.pnlconnect.Controls.Add(this.lbcdesc);
+            this.pnlconnect.Controls.Add(this.lbctitle);
+            this.pnlconnect.Location = new System.Drawing.Point(100, 27);
+            this.pnlconnect.Name = "pnlconnect";
+            this.pnlconnect.Size = new System.Drawing.Size(419, 306);
+            this.pnlconnect.TabIndex = 4;
+            this.pnlconnect.Visible = false;
+            // 
+            // flcbuttons
+            // 
+            this.flcbuttons.AutoSize = true;
+            this.flcbuttons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flcbuttons.Controls.Add(this.btncancel);
+            this.flcbuttons.Controls.Add(this.btnok);
+            this.flcbuttons.Location = new System.Drawing.Point(116, 256);
+            this.flcbuttons.Name = "flcbuttons";
+            this.flcbuttons.Size = new System.Drawing.Size(94, 29);
+            this.flcbuttons.TabIndex = 3;
+            // 
+            // btncancel
+            // 
+            this.btncancel.AutoSize = true;
+            this.btncancel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btncancel.Location = new System.Drawing.Point(3, 3);
+            this.btncancel.Name = "btncancel";
+            this.btncancel.Size = new System.Drawing.Size(50, 23);
+            this.btncancel.TabIndex = 0;
+            this.btncancel.Text = "Cancel";
+            this.btncancel.UseVisualStyleBackColor = true;
+            this.btncancel.Click += new System.EventHandler(this.btncancel_Click);
+            // 
+            // btnok
+            // 
+            this.btnok.AutoSize = true;
+            this.btnok.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnok.Location = new System.Drawing.Point(59, 3);
+            this.btnok.Name = "btnok";
+            this.btnok.Size = new System.Drawing.Size(32, 23);
+            this.btnok.TabIndex = 1;
+            this.btnok.Text = "OK";
+            this.btnok.UseVisualStyleBackColor = true;
+            this.btnok.Click += new System.EventHandler(this.btnok_Click);
+            // 
+            // pnlcreds
+            // 
+            this.pnlcreds.Controls.Add(this.txtcpass);
+            this.pnlcreds.Controls.Add(this.label3);
+            this.pnlcreds.Controls.Add(this.txtcuser);
+            this.pnlcreds.Controls.Add(this.label2);
+            this.pnlcreds.Controls.Add(this.txtcsys);
+            this.pnlcreds.Controls.Add(this.label1);
+            this.pnlcreds.Location = new System.Drawing.Point(25, 129);
+            this.pnlcreds.Name = "pnlcreds";
+            this.pnlcreds.Size = new System.Drawing.Size(300, 104);
+            this.pnlcreds.TabIndex = 2;
+            // 
+            // txtcpass
+            // 
+            this.txtcpass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtcpass.Location = new System.Drawing.Point(91, 62);
+            this.txtcpass.Name = "txtcpass";
+            this.txtcpass.Size = new System.Drawing.Size(196, 20);
+            this.txtcpass.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Password:";
+            // 
+            // txtcuser
+            // 
+            this.txtcuser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtcuser.Location = new System.Drawing.Point(91, 36);
+            this.txtcuser.Name = "txtcuser";
+            this.txtcuser.Size = new System.Drawing.Size(196, 20);
+            this.txtcuser.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Username:";
+            // 
+            // txtcsys
+            // 
+            this.txtcsys.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtcsys.Location = new System.Drawing.Point(91, 10);
+            this.txtcsys.Name = "txtcsys";
+            this.txtcsys.Size = new System.Drawing.Size(196, 20);
+            this.txtcsys.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "System name:";
+            // 
+            // lbcdesc
+            // 
+            this.lbcdesc.Location = new System.Drawing.Point(46, 51);
+            this.lbcdesc.Name = "lbcdesc";
+            this.lbcdesc.Size = new System.Drawing.Size(357, 54);
+            this.lbcdesc.TabIndex = 1;
+            this.lbcdesc.Text = resources.GetString("lbcdesc.Text");
+            this.lbcdesc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbctitle
+            // 
+            this.lbctitle.AutoSize = true;
+            this.lbctitle.Location = new System.Drawing.Point(13, 18);
+            this.lbctitle.Name = "lbctitle";
+            this.lbctitle.Size = new System.Drawing.Size(133, 13);
+            this.lbctitle.TabIndex = 0;
+            this.lbctitle.Tag = "header3";
+            this.lbctitle.Text = "Connect to Remote Server";
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Visible = false;
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            // 
             // FileSkimmer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pnlconnect);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "FileSkimmer";
@@ -177,6 +338,12 @@ namespace ShiftOS.WinForms.Applications
             this.panel1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.pnlconnect.ResumeLayout(false);
+            this.pnlconnect.PerformLayout();
+            this.flcbuttons.ResumeLayout(false);
+            this.flcbuttons.PerformLayout();
+            this.pnlcreds.ResumeLayout(false);
+            this.pnlcreds.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -195,5 +362,19 @@ namespace ShiftOS.WinForms.Applications
         private System.Windows.Forms.ToolStripMenuItem moveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pinToolStripMenuItem;
         private System.Windows.Forms.TreeView pinnedItems;
+        private System.Windows.Forms.Panel pnlconnect;
+        private System.Windows.Forms.FlowLayoutPanel flcbuttons;
+        private System.Windows.Forms.Button btncancel;
+        private System.Windows.Forms.Button btnok;
+        private System.Windows.Forms.Panel pnlcreds;
+        private System.Windows.Forms.TextBox txtcpass;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtcuser;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtcsys;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbcdesc;
+        private System.Windows.Forms.Label lbctitle;
+        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
     }
 }

@@ -304,7 +304,7 @@ namespace ShiftOS.WinForms.Applications
             doAi = true;
         }
 
-        private bool drawAiBall = true;
+        private bool drawAiBall = false;
 
         private void pnlcanvas_Paint(object sender, PaintEventArgs e)
         {
@@ -402,6 +402,7 @@ namespace ShiftOS.WinForms.Applications
 
         public void OnLoad()
         {
+            pnlgamestart.CenterParent();
             doAi = false;
             doBallCalc = false;
             pnlgamestart.Show();

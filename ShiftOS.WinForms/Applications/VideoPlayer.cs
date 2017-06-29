@@ -12,7 +12,7 @@ using System.IO;
 
 namespace ShiftOS.WinForms.Applications
 {
-    [AppscapeEntry("Video Player", "Play .mp4 files or .wmv files as videos inside ShiftOS! Perfect for a shifted movie night.", 1524, 1000, "file_skimmer", "Entertainment")]
+    [AppscapeEntry("video_player", "Video Player", "Play .mp4 files or .wmv files as videos inside ShiftOS! Perfect for a shifted movie night.", 1524, 1000, "file_skimmer", "Entertainment")]
     [DefaultTitle("Video Player")]
     [Launcher("Video Player", false, null, "Entertainment")]
     [WinOpen("video_player")]

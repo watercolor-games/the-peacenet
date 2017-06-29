@@ -49,7 +49,10 @@ namespace ShiftOS.Engine
         [Command("clear", description = "{DESC_CLEAR}")]
         public static bool Clear()
         {
-            AppearanceManager.ConsoleOut.Clear();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                AppearanceManager.ConsoleOut.Clear();
+            });
             return true;
         }
     }
@@ -157,7 +160,7 @@ namespace ShiftOS.Engine
             //print all unique namespaces.
             foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false).OrderBy(x => x.CommandInfo.name))
             {
-                sb.Append(n.CommandInfo.name);
+                sb.Append(" - " + n.CommandInfo.name);
                 if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
                     if (Shiftorium.UpgradeInstalled("help_description"))
                         sb.Append(" - " + n.CommandInfo.description);
