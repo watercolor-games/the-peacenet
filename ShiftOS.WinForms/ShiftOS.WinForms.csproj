@@ -83,6 +83,12 @@
     <Compile Include="Applications\Clock.Designer.cs">
       <DependentUpon>Clock.cs</DependentUpon>
     </Compile>
+    <Compile Include="Applications\Dodge.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Applications\Dodge.Designer.cs">
+      <DependentUpon>Dodge.cs</DependentUpon>
+    </Compile>
     <Compile Include="Applications\IconManager.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -498,6 +504,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\Clock.resx">
       <DependentUpon>Clock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Applications\Dodge.resx">
+      <DependentUpon>Dodge.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Applications\IconManager.resx">
       <DependentUpon>IconManager.cs</DependentUpon>
