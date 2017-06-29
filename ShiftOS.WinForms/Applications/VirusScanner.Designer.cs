@@ -35,23 +35,23 @@
             this.btnscanfile = new System.Windows.Forms.Button();
             this.btnexit = new System.Windows.Forms.Button();
             this.pnlbody = new System.Windows.Forms.Panel();
+            this.pnlsummary = new System.Windows.Forms.Panel();
+            this.flviruses = new System.Windows.Forms.FlowLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.pnlscanner = new System.Windows.Forms.Panel();
+            this.lbscanstatus = new System.Windows.Forms.Label();
+            this.pgscannerprogress = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
+            this.label2 = new System.Windows.Forms.Label();
             this.pnlintro = new System.Windows.Forms.Panel();
             this.lbintrotext = new System.Windows.Forms.Label();
             this.lbintrotitle = new System.Windows.Forms.Label();
             this.lbstatus = new System.Windows.Forms.Label();
-            this.pnlscanner = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lbscanstatus = new System.Windows.Forms.Label();
-            this.pnlsummary = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.flviruses = new System.Windows.Forms.FlowLayoutPanel();
-            this.pgscannerprogress = new ShiftOS.WinForms.Controls.ShiftedProgressBar();
             this.pnlsidebar.SuspendLayout();
             this.pnlbody.SuspendLayout();
-            this.pnlintro.SuspendLayout();
-            this.pnlscanner.SuspendLayout();
             this.pnlsummary.SuspendLayout();
+            this.pnlscanner.SuspendLayout();
+            this.pnlintro.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlsidebar
@@ -121,6 +121,97 @@
             this.pnlbody.Size = new System.Drawing.Size(498, 399);
             this.pnlbody.TabIndex = 2;
             // 
+            // pnlsummary
+            // 
+            this.pnlsummary.Controls.Add(this.flviruses);
+            this.pnlsummary.Controls.Add(this.label1);
+            this.pnlsummary.Controls.Add(this.label3);
+            this.pnlsummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlsummary.Location = new System.Drawing.Point(0, 0);
+            this.pnlsummary.Name = "pnlsummary";
+            this.pnlsummary.Size = new System.Drawing.Size(498, 399);
+            this.pnlsummary.TabIndex = 3;
+            // 
+            // flviruses
+            // 
+            this.flviruses.AutoScroll = true;
+            this.flviruses.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flviruses.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flviruses.Location = new System.Drawing.Point(0, 66);
+            this.flviruses.Margin = new System.Windows.Forms.Padding(0);
+            this.flviruses.Name = "flviruses";
+            this.flviruses.Padding = new System.Windows.Forms.Padding(10);
+            this.flviruses.Size = new System.Drawing.Size(498, 333);
+            this.flviruses.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 33);
+            this.label1.Name = "label1";
+            this.label1.Padding = new System.Windows.Forms.Padding(10);
+            this.label1.Size = new System.Drawing.Size(184, 33);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Below is a list of all viruses found.";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Name = "label3";
+            this.label3.Padding = new System.Windows.Forms.Padding(10);
+            this.label3.Size = new System.Drawing.Size(101, 33);
+            this.label3.TabIndex = 0;
+            this.label3.Tag = "header3";
+            this.label3.Text = "Scan complete.";
+            // 
+            // pnlscanner
+            // 
+            this.pnlscanner.Controls.Add(this.lbscanstatus);
+            this.pnlscanner.Controls.Add(this.pgscannerprogress);
+            this.pnlscanner.Controls.Add(this.label2);
+            this.pnlscanner.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlscanner.Location = new System.Drawing.Point(0, 0);
+            this.pnlscanner.Name = "pnlscanner";
+            this.pnlscanner.Size = new System.Drawing.Size(498, 399);
+            this.pnlscanner.TabIndex = 2;
+            // 
+            // lbscanstatus
+            // 
+            this.lbscanstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbscanstatus.Location = new System.Drawing.Point(0, 33);
+            this.lbscanstatus.Name = "lbscanstatus";
+            this.lbscanstatus.Padding = new System.Windows.Forms.Padding(10);
+            this.lbscanstatus.Size = new System.Drawing.Size(498, 343);
+            this.lbscanstatus.TabIndex = 2;
+            this.lbscanstatus.Text = "label1";
+            // 
+            // pgscannerprogress
+            // 
+            this.pgscannerprogress.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pgscannerprogress.Location = new System.Drawing.Point(0, 376);
+            this.pgscannerprogress.Maximum = 100;
+            this.pgscannerprogress.Name = "pgscannerprogress";
+            this.pgscannerprogress.Padding = new System.Windows.Forms.Padding(10);
+            this.pgscannerprogress.Size = new System.Drawing.Size(498, 23);
+            this.pgscannerprogress.TabIndex = 1;
+            this.pgscannerprogress.Text = "shiftedProgressBar1";
+            this.pgscannerprogress.Value = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Padding = new System.Windows.Forms.Padding(10);
+            this.label2.Size = new System.Drawing.Size(81, 33);
+            this.label2.TabIndex = 0;
+            this.label2.Tag = "header3";
+            this.label2.Text = "Scanning...";
+            // 
             // pnlintro
             // 
             this.pnlintro.Controls.Add(this.lbintrotext);
@@ -164,97 +255,6 @@
             this.lbstatus.TabIndex = 3;
             this.lbstatus.Text = "Grade: 1";
             // 
-            // pnlscanner
-            // 
-            this.pnlscanner.Controls.Add(this.lbscanstatus);
-            this.pnlscanner.Controls.Add(this.pgscannerprogress);
-            this.pnlscanner.Controls.Add(this.label2);
-            this.pnlscanner.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlscanner.Location = new System.Drawing.Point(0, 0);
-            this.pnlscanner.Name = "pnlscanner";
-            this.pnlscanner.Size = new System.Drawing.Size(498, 399);
-            this.pnlscanner.TabIndex = 2;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Padding = new System.Windows.Forms.Padding(10);
-            this.label2.Size = new System.Drawing.Size(81, 33);
-            this.label2.TabIndex = 0;
-            this.label2.Tag = "header3";
-            this.label2.Text = "Scanning...";
-            // 
-            // lbscanstatus
-            // 
-            this.lbscanstatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbscanstatus.Location = new System.Drawing.Point(0, 33);
-            this.lbscanstatus.Name = "lbscanstatus";
-            this.lbscanstatus.Padding = new System.Windows.Forms.Padding(10);
-            this.lbscanstatus.Size = new System.Drawing.Size(498, 343);
-            this.lbscanstatus.TabIndex = 2;
-            this.lbscanstatus.Text = "label1";
-            // 
-            // pnlsummary
-            // 
-            this.pnlsummary.Controls.Add(this.flviruses);
-            this.pnlsummary.Controls.Add(this.label1);
-            this.pnlsummary.Controls.Add(this.label3);
-            this.pnlsummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlsummary.Location = new System.Drawing.Point(0, 0);
-            this.pnlsummary.Name = "pnlsummary";
-            this.pnlsummary.Size = new System.Drawing.Size(498, 399);
-            this.pnlsummary.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label3.Location = new System.Drawing.Point(0, 0);
-            this.label3.Name = "label3";
-            this.label3.Padding = new System.Windows.Forms.Padding(10);
-            this.label3.Size = new System.Drawing.Size(101, 33);
-            this.label3.TabIndex = 0;
-            this.label3.Tag = "header3";
-            this.label3.Text = "Scan complete.";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(0, 33);
-            this.label1.Name = "label1";
-            this.label1.Padding = new System.Windows.Forms.Padding(10);
-            this.label1.Size = new System.Drawing.Size(184, 33);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Below is a list of all viruses found.";
-            // 
-            // flviruses
-            // 
-            this.flviruses.AutoScroll = true;
-            this.flviruses.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flviruses.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flviruses.Location = new System.Drawing.Point(0, 66);
-            this.flviruses.Margin = new System.Windows.Forms.Padding(0);
-            this.flviruses.Name = "flviruses";
-            this.flviruses.Padding = new System.Windows.Forms.Padding(10);
-            this.flviruses.Size = new System.Drawing.Size(498, 333);
-            this.flviruses.TabIndex = 3;
-            // 
-            // pgscannerprogress
-            // 
-            this.pgscannerprogress.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pgscannerprogress.Location = new System.Drawing.Point(0, 376);
-            this.pgscannerprogress.Maximum = 100;
-            this.pgscannerprogress.Name = "pgscannerprogress";
-            this.pgscannerprogress.Padding = new System.Windows.Forms.Padding(10);
-            this.pgscannerprogress.Size = new System.Drawing.Size(498, 23);
-            this.pgscannerprogress.TabIndex = 1;
-            this.pgscannerprogress.Text = "shiftedProgressBar1";
-            this.pgscannerprogress.Value = 0;
-            // 
             // VirusScanner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -267,12 +267,12 @@
             this.Size = new System.Drawing.Size(650, 435);
             this.pnlsidebar.ResumeLayout(false);
             this.pnlbody.ResumeLayout(false);
-            this.pnlintro.ResumeLayout(false);
-            this.pnlintro.PerformLayout();
-            this.pnlscanner.ResumeLayout(false);
-            this.pnlscanner.PerformLayout();
             this.pnlsummary.ResumeLayout(false);
             this.pnlsummary.PerformLayout();
+            this.pnlscanner.ResumeLayout(false);
+            this.pnlscanner.PerformLayout();
+            this.pnlintro.ResumeLayout(false);
+            this.pnlintro.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
