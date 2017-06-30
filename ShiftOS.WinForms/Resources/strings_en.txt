@@ -109,6 +109,7 @@
 
   //Window titles.
   "{TITLE_FILENOTFOUND}": "File not found.",
+  "{TITLE_SKINAPPLIED}":"Shifter - Skin applied.",
   "{TITLE_PONG_YOULOSE}": "You lose",
   "{TITLE_CODEPOINTSTRANSFERRED}": "Codepoints transferred.",
   "{TITLE_INVALIDPORT}": "Invalid port number.",
@@ -156,6 +157,7 @@
   "{AL_GAMES}": "Games",
 
   //Infobox prompt messages
+  "{PROMPT_SKINAPPLIED}": "New skin values applied! You have earned %cp Codepoints.",
   "{PROMPT_PONGLOST}": "You lost this game of Pong. Guess you should've cashed out...",
   "{PROMPT_CODEPOINTSTRANSFERRED}": "%transferrer has transferred %amount Codepoints to your system.",
   "{PROMPT_INVALIDPORT}": "The Digital Society Port must be a valid whole number between 0 and 65535.",

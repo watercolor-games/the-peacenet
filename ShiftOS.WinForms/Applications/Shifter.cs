@@ -983,7 +983,10 @@ namespace ShiftOS.WinForms.Applications
             Utils.WriteAllText(Paths.GetPath("skin.json"), JsonConvert.SerializeObject(LoadedSkin));
             SkinEngine.LoadSkin();
             CodepointValue = CodepointValue / 4;
-            Infobox.Show("{SHIFTER_SKIN_APPLIED}", "{YOU_HAVE_EARNED} " + CodepointValue.ToString() + " {CODEPOINTS}.");
+            Infobox.Show("{TITLE_SKINAPPLIED}", Localization.Parse("{PROMPT_SKINAPPLIED}", new Dictionary<string, string>
+            {
+                ["%cp"] = CodepointValue.ToString()
+            }));
             ShiftOS.Engine.Shiftorium.Silent = true;
             SaveSystem.CurrentSave.Codepoints += CodepointValue;
             SaveSystem.SaveGame();
