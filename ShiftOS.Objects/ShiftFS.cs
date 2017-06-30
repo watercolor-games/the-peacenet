@@ -170,7 +170,7 @@ namespace ShiftOS.Objects.ShiftFS
         public static event Action<string> DirectoryDeleted;
         public static event Action<string> FileWritten;
         public static event Action<string> FileDeleted;
-
+        public static event Action<string> FileRead;
 
         public static void CreateDirectory(string path)
         {
@@ -206,7 +206,7 @@ namespace ShiftOS.Objects.ShiftFS
                 dir = dir.FindDirectoryByName(pathlist[i]);
             }
             var file = dir.FindFileByName(pathlist[pathlist.Length - 1]);
-
+            FileRead?.Invoke(path);
             return file.Data;
 
         }

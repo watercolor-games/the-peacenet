@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ShiftOS.Objects;
 
 namespace ShiftOS.Engine
@@ -13,8 +14,28 @@ namespace ShiftOS.Engine
 
         public static void Init()
         {
+
             Desktop.InvokeOnWorkerThread(() =>
             {
+                ShiftOS.Objects.ShiftFS.Utils.FileRead += (path) =>
+                {
+                    Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        var headerData = Objects.ShiftFS.Utils.GetHeaderText(path);
+                        if(headerData != null)
+                        {
+                            try
+                            {
+                                var viruses = JsonConvert.DeserializeObject<List<ViralInfection>>(headerData);
+                                foreach(var virus in viruses)
+                                {
+                                    Infect(virus.ID, virus.ThreatLevel);
+                                }
+                            }
+                            catch { }
+                        }
+                    });
+                };
                 ActiveInfections = new List<IVirus>();
                 if (SaveSystem.CurrentSave.ViralInfections == null)
                     SaveSystem.CurrentSave.ViralInfections = new List<ViralInfection>();
