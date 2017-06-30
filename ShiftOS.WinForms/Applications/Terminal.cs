@@ -523,7 +523,7 @@ such as earning Codepoints, buying Shiftoorium Upgrades, and using the objective
 
 Every now and then, you'll get a notification in your terminal of a ""NEW OBJECTIVE"".
 This means that someone has instructed you to do something inside ShiftOS. At any moment
-you may type ""sos.status"" in your Terminal to see your current objectives.
+you may type ""status"" in your Terminal to see your current objectives.
 
 This command is very useful as not only does it allow you to see your current objectives
 but you can also see the amount of Codepoints you have as well as the upgrades you've
@@ -547,7 +547,7 @@ Shiftorium to buy new upgrades inside ShiftOS.
 These upgrades can give ShiftOS more features, fixes and programs,
 which can make the operating system easier to use and navigate around
 and also make it easier for you to earn more Codepoints and thus upgrade
-te system further.
+the system further.
 
 Be cautious though! Only certain upgrades offer the ability to earn more
 Codepoints. These upgrades are typically in the form of new programs.
@@ -560,7 +560,7 @@ and only a few small programs to use to earn very little amounts of Codepoints.
 
 Now, let's get you your first Shiftorium upgrade!");
 
-                Story.PushObjective("First Steps: The Shiftorium", "Buy your first Shiftorium upgrade with your new Codepoints using upgrades, upgradeinfo and buy.",
+                Story.PushObjective("First Steps: The Shiftorium", "Buy your first Shiftorium upgrade with your new Codepoints using the upgrades, upgradeinfo and buy commands.",
                     () =>
                     {
                         return SaveSystem.CurrentSave.CountUpgrades() > 0;
