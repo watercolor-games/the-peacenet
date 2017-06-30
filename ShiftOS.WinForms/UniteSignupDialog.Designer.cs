@@ -43,7 +43,7 @@
             this.btnlogin.Name = "btnlogin";
             this.btnlogin.Size = new System.Drawing.Size(75, 23);
             this.btnlogin.TabIndex = 11;
-            this.btnlogin.Text = "{UI_SUBMIT}";
+            this.btnlogin.Text = "{GEN_OK}";
             this.btnlogin.UseVisualStyleBackColor = true;
             this.btnlogin.Click += new System.EventHandler(this.btnlogin_Click);
             // 
@@ -52,10 +52,10 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 36);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 13);
+            this.label1.Size = new System.Drawing.Size(172, 13);
             this.label1.TabIndex = 6;
             this.label1.Tag = "header2";
-            this.label1.Text = "{INIT_SYSTEM_PREPARATION}";
+            this.label1.Text = "{TITLE_SYSTEMPREPARATION}";
             // 
             // txtsys
             // 
@@ -71,9 +71,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(17, 103);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(116, 13);
+            this.label5.Size = new System.Drawing.Size(119, 13);
             this.label5.TabIndex = 14;
-            this.label5.Text = "{SE_SYSTEM_NAME}";
+            this.label5.Text = "{GEN_SYSTEMNAME}";
             // 
             // txtroot
             // 
@@ -83,15 +83,16 @@
             this.txtroot.Name = "txtroot";
             this.txtroot.Size = new System.Drawing.Size(424, 20);
             this.txtroot.TabIndex = 18;
+            this.txtroot.UseSystemPasswordChar = true;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(17, 129);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(135, 13);
+            this.label7.Size = new System.Drawing.Size(138, 13);
             this.label7.TabIndex = 17;
-            this.label7.Text = "{SE_ROOT_PASSWORD}";
+            this.label7.Text = "{GEN_ROOTPASSWORD}";
             // 
             // UniteSignupDialog
             // 

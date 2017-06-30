@@ -70,7 +70,7 @@ namespace ShiftOS.WinForms
                 SystemName = sys,
                 RootPassword = root
             });
-
+            AppearanceManager.Close(this);
         }
     }
 }
