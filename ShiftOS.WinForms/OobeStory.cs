@@ -15,6 +15,8 @@ namespace ShiftOS.WinForms
 {
     public class OobeStory
     {
+        private static readonly string[] doodads = new string[] { "\\", "|", "/", "-" };
+
         [Command("test")]
         [RequiresArgument("num")]
         public static bool TestThingy(Dictionary<string, object> args)
@@ -49,21 +51,19 @@ namespace ShiftOS.WinForms
                 Console.WriteLine();
                 Console.Write(" - ");
                 ConsoleEx.Bold = true;
-                Console.Write("Storage preparation");
+                Console.WriteLine("Storage preparation");
                 ConsoleEx.Bold = false;
-                Console.Write(" First, we have to prepare your computer's storage device for ShiftOS. This \r\nincludes formatting your drive with the ShiftFS file \r\nsystem, creating system directories, and generating system files.");
-                Console.WriteLine();
+                Console.WriteLine("\tFirst, we have to prepare your computer's storage device for ShiftOS. This \r\n\tincludes formatting your drive with the ShiftFS file \r\n\tsystem, creating system directories, and generating system files.");
                 Console.Write(" - ");
                 ConsoleEx.Bold = true;
-                Console.Write("User configuration");
+                Console.WriteLine("User configuration");
                 ConsoleEx.Bold = false;
-                Console.Write(" Next it's up to you to set up a system hostname, create a user account, and personalize it.");
-                Console.WriteLine();
+                Console.WriteLine("\tNext it's up to you to set up a system hostname, create a user account, and personalize it.");
                 Console.Write(" - ");
                 ConsoleEx.Bold = true;
-                Console.Write("System tutorial");
+                Console.WriteLine("System tutorial");
                 ConsoleEx.Bold = false;
-                Console.WriteLine("Finally, we'll teach you how to use ShiftOS.");
+                Console.WriteLine("\tFinally, we'll teach you how to use ShiftOS.");
 
                 Console.WriteLine();
 
@@ -71,7 +71,6 @@ namespace ShiftOS.WinForms
                 ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Let's get started!");
             });
-            int position = 0;
 
             Thread.Sleep(5000);
 
@@ -121,35 +120,34 @@ namespace ShiftOS.WinForms
 
             ConsoleEx.Bold = false;
             ConsoleEx.BackgroundColor = ConsoleColor.Black;
-            Console.Write("Formatting: [");
+            Console.Write("Formatting");
             ConsoleEx.OnFlush?.Invoke();
             int formatProgress = 3;
-            while (formatProgress <= 100)
+            int anim = 0;
+            while (formatProgress <= 50)
             {
                 if (formatProgress % 3 == 0)
                 {
-                    ConsoleEx.BackgroundColor = ConsoleColor.White;
-                    Console.Write(" ");
+                    // Console.Write("\b" + doodads[anim]); doesn't work with our terminal writer... FIXME
+                    Console.Write(".");
+                    anim++;
+                    anim %= doodads.Length;
                     ConsoleEx.OnFlush?.Invoke();
-                    ConsoleEx.BackgroundColor = ConsoleColor.Black;
+                    Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.typesound));
                 }
-                Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.typesound));
                 formatProgress++;
                 Thread.Sleep(175);
             }
-            Console.WriteLine("] ..done.");
+            Console.WriteLine("\r\nFormat complete.");
             Thread.Sleep(1000);
             ConsoleEx.Bold = true;
-            Console.WriteLine("Creating directories...");
+            Console.WriteLine("Copying system files");
             ConsoleEx.Bold = false;
-            foreach (var dir in Paths.GetAllWithoutKey())
+            foreach (var fname in Paths.GetAllWithoutKey().Where(f => f.StartsWith("0:/")))
             {
-                if (!dir.Contains(".") && dir.StartsWith("0:/"))
-                {
-                    Console.WriteLine("Creating: " + dir);
-                    Thread.Sleep(125);
-                    Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.writesound));
-                }
+                Console.WriteLine(fname);
+                Thread.Sleep(50);
+                Desktop.InvokeOnWorkerThread(() => Engine.AudioManager.PlayStream(Properties.Resources.writesound));
             }
             Console.WriteLine();
             Console.WriteLine("Next, let's get user information.");
@@ -169,13 +167,13 @@ namespace ShiftOS.WinForms
                     {
                     new ClientSave
                     {
-                        Username = "root",
+                        Username = result.Username,
                         Password = result.RootPassword,
                         Permissions = 0
                     }
                     };
 
-                    sve.StoryPosition = 8675309;
+                    sve.StoryPosition = 8675309; // I recognise that from music.
                     SaveSystem.CurrentSave = sve;
                     Shiftorium.Silent = true;
                     SaveSystem.SaveGame();

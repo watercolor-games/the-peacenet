@@ -124,7 +124,14 @@ namespace ShiftOS.Engine
 
             ConsoleEx.ForegroundColor = ConsoleColor.White;
             ConsoleEx.Bold = false;
-            Console.WriteLine("A new objective has been added to your system. Run status to find out what you need to do.");
+            Console.WriteLine("A new objective has been added to your system.");
+            ConsoleEx.Bold = true;
+            Console.WriteLine(name);
+            ConsoleEx.Bold = false;
+            Console.WriteLine();
+            Console.WriteLine(desc);
+            Console.WriteLine();
+            Console.WriteLine("Run 'status' at any time to view your current objectives.");
             TerminalBackend.PrintPrompt();
         }
         
