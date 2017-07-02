@@ -232,7 +232,6 @@ namespace ShiftOS.Engine
         }
     }
 
-    [MultiplayerOnly]
     public static class ShiftoriumCommands
     {
         [Command("buy", description = "{DESC_BUY}")]
