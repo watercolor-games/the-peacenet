@@ -50,7 +50,6 @@ namespace ShiftOS.WinForms
             Application.SetCompatibleTextRenderingDefault(false);
             //if ANYONE puts code before those two winforms config lines they will be declared a drunky. - Michael
             SkinEngine.SetPostProcessor(new DitheringSkinPostProcessor());
-            LoginManager.Init(new GUILoginFrontend());
             CrashHandler.SetGameMetadata(Assembly.GetExecutingAssembly());
             SkinEngine.SetIconProber(new ShiftOSIconProvider());
             TerminalBackend.TerminalRequested += () =>

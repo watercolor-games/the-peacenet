@@ -82,7 +82,17 @@ namespace ShiftOS.Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to /*
+        /// * MIT License
+        /// * 
+        /// * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
+        /// * 
+        /// * Permission is hereby granted, free of charge, to any person obtaining a copy
+        /// * of this software and associated documentation files (the &quot;Software&quot;), to deal
+        /// * in the Software without restriction, including without limitation the rights
+        /// * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        /// * copies of the Software, and to permit persons to whom the Software is
+        /// * furnished to do so, sub [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string pywintemplate {
             get {
@@ -108,8 +118,7 @@ namespace ShiftOS.Engine.Properties {
         ///	{
         ///		Name: &quot;WM 4 Windows&quot;,
         ///		Cost: 150,
-        ///		Description: &quot;Display up to 4 simultaneous windows on-screen in a 2x2 grid.&quot;,
-        ///	 [rest of string was truncated]&quot;;.
+        ///		Description: &quot;Display up to 4 simultaneous windows on-screen i [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Shiftorium {
             get {
@@ -138,8 +147,7 @@ namespace ShiftOS.Engine.Properties {
         ///Eine kurze Erklärung wie du das Terminal benutzt lautet wiefolgt. Du kannst das command &apos;sos.help&apos; benutzen um eine Liste aller commands aufzurufen. Schreib es
         ///einfach in das Terminal und drücke &lt;enter&gt; um alle commands anzuzeigen.
         /// 
-        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Beispiel:
-        /// [rest of string was truncated]&quot;;.
+        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Be [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string strings_de {
             get {
@@ -158,8 +166,7 @@ namespace ShiftOS.Engine.Properties {
         ///Commands can be sent arguments by specifying a key-value pair inside a {} block at the end of the command. For example:
         ///	
         ///some.command{print:\&quot;hello\&quot;}
-        ///math.add{op1:1,op2:2}
-        /// [rest of string was truncated]&quot;;.
+        ///math.add{op1 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string strings_en {
             get {
@@ -177,7 +184,7 @@ namespace ShiftOS.Engine.Properties {
         ///		&quot;Before you can begin with ShiftOS, you&apos;ll need to know a few things about it.&quot;,
         ///		&quot;One: Terminal command syntax.&quot;,
         ///		&quot;Inside ShiftOS, the bulk of your time is going to be spent within the Terminal.&quot;,
-        ///		&quot;The Terminal is an application that starts up when you turn on your computer. It allows you to execute system commands, open program [rest of string was truncated]&quot;;.
+        ///		&quot;The Terminal is an application that starts up when you turn on your computer. It allows you to execute system commands, ope [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sys_shiftoriumstory {
             get {
