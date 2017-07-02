@@ -231,10 +231,7 @@ namespace ShiftOS.WinForms
             this.DoubleBuffered = true;
             this.Left = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             this.Top = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
-            ParentWindow.OnLoad();
-            ParentWindow.OnSkinLoad();
-            ParentWindow.OnUpgrade();
-
+            
         }
 
         /// <summary>

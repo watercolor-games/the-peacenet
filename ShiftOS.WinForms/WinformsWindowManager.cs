@@ -121,6 +121,10 @@ namespace ShiftOS.WinForms
             wb.IsDialog = true;
 
             Desktop.ShowWindow(wb);
+            form.OnLoad();
+            form.OnSkinLoad();
+            form.OnUpgrade();
+
         }
 
         public override void SetupWindow(IShiftOSWindow form)
@@ -208,6 +212,10 @@ namespace ShiftOS.WinForms
             wb.FormClosed += onClose;
             Desktop.ShowWindow(wb);
             SetupWindows();
+            form.OnLoad();
+            form.OnSkinLoad();
+            form.OnUpgrade();
+
         }
 
         public void SetupWindows()
