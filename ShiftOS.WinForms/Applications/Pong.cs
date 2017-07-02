@@ -246,6 +246,10 @@ namespace ShiftOS.WinForms.Applications
             doAi = false;
             doBallCalc = false;
             counterTimer.Stop();
+            ballX = 0;
+            ballY = 0;
+            aiBallX = 0;
+            aiBallY = 0;
             pnllevelwon.CenterParent();
             pnllevelwon.Show();
             pnllevelwon.BringToFront();
