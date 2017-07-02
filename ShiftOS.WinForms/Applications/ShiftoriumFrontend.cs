@@ -109,7 +109,6 @@ namespace ShiftOS.WinForms.Applications
                 });
                 t.Start();
             }
-            while (numComplete < cats.Length) { } // wait for all threads to finish their job
         }
 
         private void SetList()

@@ -82,6 +82,7 @@ namespace ShiftOS.Engine
 
         public void Complete()
         {
+            Thread.Sleep(20);
             onComplete?.Invoke();
         }
     }

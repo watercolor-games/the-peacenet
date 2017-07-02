@@ -248,9 +248,7 @@ namespace ShiftOS.Engine
                 var upg = Shiftorium.GetAvailable().FirstOrDefault(x => x.ID == upgrade);
                 if(upg != null)
                 {
-                    if (Shiftorium.Buy(upg.ID, upg.Cost) == true)
-                        Console.WriteLine("{RES_UPGRADEINSTALLED}");
-                    else
+                    if (!Shiftorium.Buy(upg.ID, upg.Cost) == true)
                         Console.WriteLine("{ERR_NOTENOUGHCODEPOINTS}");
                 }
                 else
