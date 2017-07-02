@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -54,6 +56,11 @@ namespace ShiftOS.Frontend
             textControl.Height = 480;
             UIManager.AddTopLevel(textControl);
 
+            UIManager.AddTopLevel(framerate);
+            framerate.Width = 640;
+            framerate.Height = 480;
+            framerate.TextAlign = GUI.TextAlign.BottomRight;
+            
 
             base.Initialize();
 
@@ -92,9 +99,15 @@ namespace ShiftOS.Frontend
 
             //Now let's process it.
             UIManager.ProcessMouseState(mouseState);
-            
+
+            //set framerate
+            framerate.Text = "ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 ShiftOS\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds);
+
+
             base.Update(gameTime);
         }
+
+        private GUI.TextControl framerate = new GUI.TextControl();
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -109,6 +122,21 @@ namespace ShiftOS.Frontend
 
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawControls(graphics, spriteBatch);
+
+            //Draw a mouse cursor
+
+
+            var bmp = Properties.Resources.cursor_9x_pointer;
+            var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            byte[] rgb = new byte[Math.Abs(data.Stride) * data.Height];
+            Marshal.Copy(data.Scan0, rgb, 0, rgb.Length);
+            bmp.UnlockBits(data);
+            var mousepos = Mouse.GetState(this.Window).Position;
+            var tex2 = new Texture2D(graphics, bmp.Width, bmp.Height);
+            tex2.SetData<byte>(rgb);
+            spriteBatch.Draw(tex2, new Rectangle(mousepos.X, mousepos.Y, bmp.Width, bmp.Height), Color.White);
+
+
 
             spriteBatch.End();
             base.Draw(gameTime);

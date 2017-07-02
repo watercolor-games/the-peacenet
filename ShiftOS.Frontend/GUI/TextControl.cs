@@ -13,6 +13,30 @@ namespace ShiftOS.Frontend.GUI
         private TextAlign _textAlign = TextAlign.TopLeft;
         private Font _font = new Font("Tahoma", 9f);
 
+        public string Text
+        {
+            get { return _text; }
+            set { _text = value; }
+        }
+
+        public Font Font
+        {
+            get
+            {
+                return _font;
+            }
+            set
+            {
+                _font = value;
+            }
+        }
+
+        public TextAlign TextAlign
+        {
+            get { return _textAlign; }
+            set { _textAlign = value; }
+        }
+
         public override void Paint(Graphics gfx)
         {
             var sMeasure = gfx.MeasureString(_text, _font);
