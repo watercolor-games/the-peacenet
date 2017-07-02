@@ -105,6 +105,11 @@ namespace ShiftOS.WinForms.Applications
                 {
                     foreach (var upg in avail.Where(x => x.Category == it.catName))
                         upl.Add(Localization.Parse(upg.Name) + " - " + upg.Cost.ToString() + "CP", upg);
+                    if (it.catId == CategoryId)
+                        this.Invoke(new Action(() =>
+                        {
+                            SetList();
+                        }));
                     numComplete++;
                 });
                 t.Start();
@@ -248,7 +253,7 @@ namespace ShiftOS.WinForms.Applications
             lbupgrades.SelectionMode = (UpgradeInstalled("shiftorium_gui_bulk_buy") == true) ? SelectionMode.MultiExtended : SelectionMode.One;
             lbcodepoints.Visible = Shiftorium.UpgradeInstalled("shiftorium_gui_codepoints_display");
             Populate();
-            SetList();
+            
         }
 
         private void moveCat(short direction) // direction is -1 to move backwards or 1 to move forwards
