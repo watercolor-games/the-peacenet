@@ -21,7 +21,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static void LayoutUpdate()
         {
-            foreach (var toplevel in topLevels)
+            foreach (var toplevel in topLevels.ToArray())
                 toplevel.Layout();
         }
 
@@ -40,32 +40,26 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             t.Start();
         }
 
+        public static Dictionary<int, Texture2D> TextureCaches = new Dictionary<int, Texture2D>();
 
         public static void DrawControls(GraphicsDevice graphics, SpriteBatch batch)
         {
             foreach (var ctrl in topLevels.ToArray())
             {
-                using(var bmp = new System.Drawing.Bitmap(ctrl.Width, ctrl.Height))
+                int hc = ctrl.GetHashCode();
+                if (ctrl.RequiresPaint)
                 {
-                    var gfx = System.Drawing.Graphics.FromImage(bmp);
-                    ctrl.Paint(gfx);
-                    bmp.SetOpacity((float)ctrl.Opacity);
-                    //get the bits of the bitmap
-                    var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                    byte[] rgb = new byte[Math.Abs(data.Stride) * data.Height];
-                    Marshal.Copy(data.Scan0, rgb, 0, rgb.Length);
-                    bmp.UnlockBits(data);
-                    for(int i = 0; i < rgb.Length; i+=4)
+                    var bmp = new System.Drawing.Bitmap(ctrl.Width, ctrl.Height);
+                    ctrl.Paint(System.Drawing.Graphics.FromImage(bmp));
+                    if (TextureCaches.ContainsKey(hc))
                     {
-                        byte r = rgb[i];
-                        byte b = rgb[i + 2];
-                        rgb[i] = b;
-                        rgb[i + 2] = r;
+                        TextureCaches[hc].Dispose();
+                        TextureCaches.Remove(hc);
                     }
-                    var tex2 = new Texture2D(graphics, bmp.Width, bmp.Height);
-                    tex2.SetData<byte>(rgb);
-                    batch.Draw(tex2, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
+                    TextureCaches.Add(hc, new Texture2D(graphics, ctrl.Width, ctrl.Height));
+                    TextureCaches[hc].SetData<byte>(ctrl.PaintCache);
                 }
+                batch.Draw(TextureCaches[hc], new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
             }
         }
 
@@ -139,7 +133,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
     {
         public static char ToCharacter(this Keys key, bool shift)
         {
-            char c = ' ';
+            char c = '\0';
             switch (key)
             {
                 case Keys.Space:

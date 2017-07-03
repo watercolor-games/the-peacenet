@@ -25,6 +25,21 @@ namespace ShiftOS.Frontend.GUI
                     _index--;
                 
             }
+            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Back)
+            {
+                if(_index > 0)
+                {
+                    _text = _text.Remove(_index - 1, 1);
+                    _index--;
+                }
+            }
+            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Delete)
+            {
+                if(_index < _text.Length - 1)
+                {
+                    _text = _text.Remove(_index, 1);
+                }
+            }
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Right)
                 if (_index < _text.Length)
                     _index++;
@@ -36,52 +51,47 @@ namespace ShiftOS.Frontend.GUI
             Invalidate();
             base.OnKeyEvent(e);
         }
-
-        private int textInputOffset = 0;
-        private int maxCanFit = 5;
-        string visibleText = "";
+        
         float caretPos = 2f;
 
         protected void CalculateVisibleText()
         {
-            visibleText = "";
-            caretPos = -1f;
-            using (var gfx = Graphics.FromImage(new Bitmap(1, 1)))
+            using(var gfx = Graphics.FromImage(new Bitmap(1, 1)))
             {
-                for (int i = textInputOffset; i < _text.Length; i++)
+                string toCaret = _text.Substring(0, _index);
+                var measure = gfx.MeasureString(toCaret, _font);
+                caretPos = 2 + measure.Width;
+                while(caretPos - _textDrawOffset < 0)
                 {
-                    visibleText += _text[i];
-                    var measure = gfx.MeasureString(visibleText, _font);
-                    if (measure.Width > Width)
-                    {
-                        maxCanFit = visibleText.Length;
-                        if(_index < textInputOffset)
-                        {
-                            textInputOffset = MathHelper.Clamp(_index - (maxCanFit / 2), 0, _text.Length - 1);
-
-                        }
-                        if(_index > textInputOffset + maxCanFit)
-                        {
-                            textInputOffset = MathHelper.Clamp(_index + (maxCanFit / 2), 0, _text.Length - 1) - maxCanFit;
-                        }
-                        break;
-                    }
-                    Height = (int)measure.Height + 4;
+                    _textDrawOffset -= 0.01f;
                 }
+                while(caretPos - _textDrawOffset > Width)
+                {
+                    _textDrawOffset += 0.01f;
+                }
+
             }
         }
 
+        private float _textDrawOffset = 0;
         
         protected override void OnPaint(Graphics gfx)
         {
             gfx.Clear(LoadedSkin.ControlColor);
-            gfx.DrawString(visibleText, _font, new SolidBrush(LoadedSkin.ControlTextColor), 2, 2);
+            gfx.DrawString(_text, _font, new SolidBrush(LoadedSkin.ControlTextColor), 2 - _textDrawOffset, 2);
             if (IsFocusedControl)
             {
                 //Draw caret.
-                gfx.FillRectangle(new SolidBrush(LoadedSkin.ControlTextColor), new RectangleF(caretPos, 2, 2, Height - 4));
+                gfx.FillRectangle(new SolidBrush(LoadedSkin.ControlTextColor), new RectangleF(caretPos - _textDrawOffset, 2, 2, Height - 4));
             }
-            gfx.DrawRectangle(new Pen(new SolidBrush(LoadedSkin.ControlTextColor), 1), new Rectangle(0, 0, Width - 1, Height - 1));
+            else
+            {
+                if (string.IsNullOrEmpty(_text))
+                {
+                    gfx.DrawString(_label, _font, Brushes.Gray, 2, 2);
+                }
+            }
+            gfx.DrawRectangle(new Pen(new SolidBrush(LoadedSkin.ControlTextColor), 1), new System.Drawing.Rectangle(0, 0, Width - 1, Height - 1));
 
 
         }

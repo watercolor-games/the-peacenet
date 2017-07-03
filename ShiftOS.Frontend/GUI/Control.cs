@@ -10,6 +10,7 @@ using ShiftOS.Frontend.GraphicsSubsystem;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -36,6 +37,48 @@ namespace ShiftOS.Frontend.GUI
         private int _mouseX = 0;
         private int _mouseY = 0;
         private bool _captureMouse = false;
+        
+        public bool RequiresPaint
+        {
+            get
+            {
+                bool requires_child_repaint = false;
+                foreach (var child in _children)
+                {
+                    requires_child_repaint = child.RequiresPaint;
+                    if (requires_child_repaint)
+                        break;
+                }
+                return _invalidated || requires_child_repaint;
+            }
+        }
+
+        public Image TextureCache
+        {
+            get
+            {
+                return _texCache;
+            }
+        }
+
+        public byte[] PaintCache
+        {
+            get
+            {
+                var data = _texCache.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                var rgb = new byte[Math.Abs(data.Stride) * data.Height];
+                Marshal.Copy(data.Scan0, rgb, 0, rgb.Length);
+                for(int i = 0; i < rgb.Length; i += 4)
+                {
+                    byte r = rgb[i];
+                    byte b = rgb[i + 2];
+                    rgb[i] = b;
+                    rgb[i + 2] = r;
+                }
+                _texCache.UnlockBits(data);
+                return rgb;
+            }
+        }
 
         public bool CaptureMouse
         {
@@ -74,6 +117,9 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_anchor == value)
+                    return;
+
                 _anchor = value;
                 Invalidate();
             }
@@ -96,6 +142,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_opacity == value)
+                    return;
                 _opacity = value;
                 Invalidate();
             }
@@ -164,6 +212,9 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_visible == value)
+                    return;
+
                 _visible = value;
                 Invalidate();
             }
@@ -213,6 +264,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_x == value)
+                    return;
                 _x = value;
                 Invalidate();
             }
@@ -226,6 +279,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_y == value)
+                    return;
                 _y = value;
                 Invalidate();
             }
@@ -239,6 +294,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_w == value)
+                    return;
                 _w = value;
                 Invalidate();
             }
@@ -252,6 +309,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
+                if (_h == value)
+                    return;
                 _h = value;
                 Invalidate();
             }
@@ -329,7 +388,6 @@ namespace ShiftOS.Frontend.GUI
                     }
                     _invalidated = false;
                 }
-                gfx.DrawImage(_texCache, 0, 0);
                 foreach (var child in _children)
                 {
                     if (child.Visible)
@@ -339,6 +397,10 @@ namespace ShiftOS.Frontend.GUI
                             var cBmp = new Bitmap(child.Width, child.Height);
                             child.Paint(System.Drawing.Graphics.FromImage(cBmp));
                             cBmp.SetOpacity((float)child.Opacity);
+                            using(var cGfx = Graphics.FromImage(_texCache))
+                            {
+                                cGfx.DrawImage(child.TextureCache, child.X, child.Y);
+                            }
                             child._invalidated = false;
                             child._texCache = cBmp;
                             gfx.DrawImage(cBmp, new System.Drawing.Point(child.X, child.Y));
@@ -352,7 +414,7 @@ namespace ShiftOS.Frontend.GUI
                         }
                     }
                 }
-
+                gfx.DrawImage(_texCache, 0, 0);
             }
         }
 

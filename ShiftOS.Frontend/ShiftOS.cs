@@ -40,6 +40,8 @@ namespace ShiftOS.Frontend
         }
 
         private GUI.TextControl _titleLabel = null;
+        private Keys lastKey = Keys.None;
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -123,9 +125,15 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             textinput.Y = 0;
             UIManager.AddTopLevel(textinput);
 
+            framerate.Width = GraphicsDevice.PreferredBackBufferWidth;
+            framerate.Height = GraphicsDevice.PreferredBackBufferHeight;
+            framerate.TextAlign = GUI.TextAlign.BottomRight;
+            
             base.Initialize();
 
         }
+
+        private Texture2D MouseTexture = null;
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -137,6 +145,14 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            var bmp = Properties.Resources.cursor_9x_pointer;
+            var _lock = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            byte[] rgb = new byte[Math.Abs(_lock.Stride) * _lock.Height];
+            Marshal.Copy(_lock.Scan0, rgb, 0, rgb.Length);
+            bmp.UnlockBits(_lock);
+            MouseTexture = new Texture2D(GraphicsDevice.GraphicsDevice, bmp.Width, bmp.Height);
+            MouseTexture.SetData<byte>(rgb);
+            rgb = null;
         }
 
         /// <summary>
@@ -145,9 +161,11 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
         /// </summary>
         protected override void UnloadContent()
         {
+            MouseTexture = null;
             // TODO: Unload any non ContentManager content here
         }
 
+        
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -158,14 +176,14 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
 
-            //Now let's process it.
-            UIManager.ProcessMouseState(mouseState);
+                //Now let's process it.
+                UIManager.ProcessMouseState(mouseState);
 
             //Cause layout update on all elements
             UIManager.LayoutUpdate();
 
             //set framerate
-            framerate.Text = "ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 ShiftOS\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds);
+            framerate.Text = "ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 ShiftOS\r\nFPS: " + (1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
 
             //So we have mouse input, and the UI layout system working...
 
@@ -180,22 +198,34 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             var keys = keystate.GetPressedKeys();
             if (keys.Length > 0)
             {
-                //Of course, we need modifier keys...
-                //First for Control.
-                bool controlDown = keys.Contains(Keys.LeftControl) || keys.Contains(Keys.RightControl);
-                //Now SHIFT.
-                bool shiftDown = keys.Contains(Keys.LeftShift) || keys.Contains(Keys.RightShift);
-                //And ALT.
-                bool altDown = keys.Contains(Keys.LeftAlt) || keys.Contains(Keys.RightAlt);
-
-                foreach(var key in keys)
+                var key = keys.FirstOrDefault(x => x != Keys.LeftControl && x != Keys.RightControl && x != Keys.LeftShift && x != Keys.RightShift && x != Keys.LeftAlt && x != Keys.RightAlt);
+                if (lastKey != key)
                 {
-                    //This'll make it so we skip the modifier keys.
-                    if(key != Keys.LeftAlt && key != Keys.RightAlt && key != Keys.LeftControl && key != Keys.RightControl && key != Keys.LeftShift && key != Keys.RightShift)
+                    lastKey = key;
+                    //Of course, we need modifier keys...
+                    //First for Control.
+                    bool controlDown = keys.Contains(Keys.LeftControl) || keys.Contains(Keys.RightControl);
+                    //Now SHIFT.
+                    bool shiftDown = keys.Contains(Keys.LeftShift) || keys.Contains(Keys.RightShift);
+                    //And ALT.
+                    bool altDown = keys.Contains(Keys.LeftAlt) || keys.Contains(Keys.RightAlt);
+
+                    var keyevent = new KeyEvent(controlDown, altDown, shiftDown, key);
+                    var t = new System.Threading.Thread(() =>
                     {
-                        var keyevent = new KeyEvent(controlDown, altDown, shiftDown, key);
                         UIManager.ProcessKeyEvent(keyevent);
-                    }
+                        lastKey = Keys.None;
+                        System.Threading.Thread.Sleep(1000);
+                        if(lastKey == keyevent.Key)
+                        while (Keyboard.GetState().IsKeyDown(keyevent.Key))
+                        {
+                            UIManager.ProcessKeyEvent(keyevent);
+                            System.Threading.Thread.Sleep(75);
+                        }
+                        lastKey = Keys.None;
+                    });
+                    t.Start();
+
                 }
             }
 
@@ -221,15 +251,9 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             //Draw a mouse cursor
 
 
-            var bmp = Properties.Resources.cursor_9x_pointer;
-            var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            byte[] rgb = new byte[Math.Abs(data.Stride) * data.Height];
-            Marshal.Copy(data.Scan0, rgb, 0, rgb.Length);
-            bmp.UnlockBits(data);
+
             var mousepos = Mouse.GetState(this.Window).Position;
-            var tex2 = new Texture2D(graphics, bmp.Width, bmp.Height);
-            tex2.SetData<byte>(rgb);
-            spriteBatch.Draw(tex2, new Rectangle(mousepos.X, mousepos.Y, bmp.Width, bmp.Height), Color.White);
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
 
 
