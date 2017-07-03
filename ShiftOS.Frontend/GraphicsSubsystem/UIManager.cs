@@ -83,6 +83,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             FocusedControl?.ProcessKeyEvent(e);
         }
 
+        private static Texture2D DesktopBackground = null;
+
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
             if (SkinEngine.LoadedSkin == null)
@@ -91,9 +93,21 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             var desktopbg = SkinEngine.GetImage("desktopbackground");
             if(desktopbg != null)
             {
-                var tex2 = new Texture2D(graphics, desktopbg.Width, desktopbg.Height);
-                tex2.SetData<byte>(SkinEngine.LoadedSkin.DesktopBackgroundImage);
-                batch.Draw(tex2, new Rectangle(0, 0, width, height), Color.White);
+                var bmp = (System.Drawing.Bitmap)SkinEngine.GetImage("desktopbackground");
+                GUI.Control.ResizeImage(bmp, width, height);
+                var _lock = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                var rgb = new byte[Math.Abs(_lock.Stride) * _lock.Height];
+                Marshal.Copy(_lock.Scan0, rgb, 0, rgb.Length);
+                bmp.UnlockBits(_lock);
+                bmp.Dispose();
+                if(DesktopBackground == null)
+                {
+                    DesktopBackground = new Texture2D(graphics, width, height);
+                }
+                
+                DesktopBackground.SetData<byte>(rgb);
+
+                batch.Draw(DesktopBackground, new Rectangle(0, 0, width, height), Color.White);
             }
         }
 
