@@ -37,7 +37,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        public override void Paint(Graphics gfx)
+        protected override void OnPaint(Graphics gfx)
         {
             gfx.Clear(LoadedSkin.ProgressBarBackgroundColor);
             int w = (int)linear(_value, 0, _maximum, 0, Width);

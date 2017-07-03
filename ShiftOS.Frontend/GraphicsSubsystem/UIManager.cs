@@ -78,7 +78,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static void ProcessMouseState(MouseState state)
         {
-            foreach(var ctrl in topLevels)
+            foreach(var ctrl in topLevels.ToArray())
             {
                 ctrl.ProcessMouseState(state);
             }

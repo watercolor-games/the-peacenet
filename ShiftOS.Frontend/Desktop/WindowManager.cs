@@ -87,6 +87,12 @@ namespace ShiftOS.Frontend.Desktop
         private string _text = "ShiftOS window";
         private GUI.Control _hostedwindow = null;
 
+        public WindowBorder()
+        {
+            X = 720;
+            Y = 480;
+        }
+
         public IShiftOSWindow ParentWindow
         {
             get
@@ -99,6 +105,9 @@ namespace ShiftOS.Frontend.Desktop
                 _hostedwindow = (GUI.Control)value;
                 ClearControls();
                 AddControl(_hostedwindow);
+                Width = (LoadedSkin.LeftBorderWidth*2) + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
+                Height = LoadedSkin.BottomBorderWidth + _hostedwindow.Height + (LoadedSkin.TitlebarHeight*2);
+
             }
         }
 
@@ -123,14 +132,50 @@ namespace ShiftOS.Frontend.Desktop
             UIManager.StopHandling(this);
         }
 
-        public override void Paint(Graphics gfx)
+        private int lastmousex, lastmousey = 0;
+
+        protected override void OnLayout()
+        {
+            if (moving)
+            {
+                var screenpoint = PointToScreen(MouseX, MouseY);
+                this.X = lastmousex + screenpoint.X;
+                this.Y = lastmousey + screenpoint.Y;
+            }
+            int titlebarheight = Shiftorium.UpgradeInstalled("wm_titlebar") ? LoadedSkin.TitlebarHeight : 0;
+            int borderleft = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.LeftBorderWidth : 0;
+            int borderright = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.RightBorderWidth : 0;
+            int borderbottom = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
+            _hostedwindow.X = borderleft;
+            _hostedwindow.Y = titlebarheight;
+        }
+
+        private bool moving = false;
+
+        public override void MouseStateChanged()
+        {
+            if (Shiftorium.UpgradeInstalled("wm_titlebar"))
+            {
+                if(MouseY < LoadedSkin.TitlebarHeight)
+                {
+                    var screenpoint = PointToScreen(MouseX, MouseY);
+                    lastmousex = this.X - screenpoint.X;
+                    lastmousey = this.Y - screenpoint.Y;
+
+                    moving = MouseLeftDown;
+                    CaptureMouse = moving;
+                }
+            }
+        }
+
+        protected override void OnPaint(Graphics gfx)
         {
             int titleheight = LoadedSkin.TitlebarHeight;
             int leftborderwidth = LoadedSkin.LeftBorderWidth;
             int rightborderwidth = LoadedSkin.RightBorderWidth;
             int bottomborderwidth = LoadedSkin.BottomBorderWidth;
 
-            if (Shiftorium.UpgradeInstalled("wm_titlebar") || true)
+            if (Shiftorium.UpgradeInstalled("wm_titlebar"))
             {
                 var titlebarcolor = LoadedSkin.TitleBackgroundColor;
                 var titlefont = LoadedSkin.TitleFont;
@@ -138,7 +183,7 @@ namespace ShiftOS.Frontend.Desktop
                 var titletextleft = LoadedSkin.TitleTextLeft;
                 bool titletextcentered = LoadedSkin.TitleTextCentered;
 
-                var titlebarbg = GetImage("titlebar");
+                 var titlebarbg = GetImage("titlebar");
                 var titlebarlayout = GetImageLayout("titlebar");
 
                 var drawcorners = LoadedSkin.ShowTitleCorners;
@@ -213,13 +258,39 @@ namespace ShiftOS.Frontend.Desktop
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 
                 //Draw close button
-                if(Shiftorium.UpgradeInstalled("close_button") || true)
+                if(Shiftorium.UpgradeInstalled("close_button"))
                 {
                     var closebuttoncolor = LoadedSkin.CloseButtonColor;
                     var closebuttonsize = LoadedSkin.CloseButtonSize;
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
                     gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize)); 
+
+                }
+                //Draw maximize button
+                if (Shiftorium.UpgradeInstalled("maximize_button"))
+                {
+                    var closebuttoncolor = LoadedSkin.MaximizeButtonColor;
+                    var closebuttonsize = LoadedSkin.MaximizeButtonSize;
+                    var closebuttonright = LoadedSkin.MaximizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+
+                    gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+
+                }
+                //Draw minimize button
+                if (Shiftorium.UpgradeInstalled("minimize_button"))
+                {
+                    var closebuttoncolor = LoadedSkin.MinimizeButtonColor;
+                    var closebuttonsize = LoadedSkin.MinimizeButtonSize;
+                    var closebuttonright = LoadedSkin.MinimizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+
+                    gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
 
                 }
             }
@@ -230,30 +301,47 @@ namespace ShiftOS.Frontend.Desktop
 
             }
 
+            if (Shiftorium.UpgradeInstalled("window_borders"))
+            {
+                //Some variables we'll need...
+                int bottomlocy = Height - LoadedSkin.BottomBorderWidth;
+                int bottomlocx = leftborderwidth;
+                int bottomwidth = Width - bottomlocx - rightborderwidth;
+                int brightlocx = Width - rightborderwidth;
+
+                var borderleftcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderLeftBackground : LoadedSkin.BorderInactiveLeftBackground;
+                var borderrightcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderRightBackground : LoadedSkin.BorderInactiveRightBackground;
+                var borderbottomcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomBackground : LoadedSkin.BorderInactiveBottomBackground;
+                var borderbleftcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomLeftBackground : LoadedSkin.BorderInactiveBottomLeftBackground;
+                var borderbrightcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomRightBackground : LoadedSkin.BorderInactiveBottomRightBackground;
+
+
+                //draw border corners
+                //BOTTOM LEFT
+                gfx.FillRectangle(new SolidBrush(borderbleftcolor), new Rectangle(0, bottomlocy, leftborderwidth, bottomborderwidth));
+
+
+                //BOTTOM RIGHT
+                gfx.FillRectangle(new SolidBrush(borderbrightcolor), new Rectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth));
+
+                //BOTTOM
+                gfx.FillRectangle(new SolidBrush(borderbottomcolor), new Rectangle(bottomlocx, bottomlocy, bottomwidth, bottomborderwidth));
+
+                //LEFT
+                gfx.FillRectangle(new SolidBrush(borderleftcolor), new Rectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth));
+
+                //RIGHT
+                gfx.FillRectangle(new SolidBrush(borderrightcolor), new Rectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth));
+
+
+            }
+
             //So here's what we're gonna do now.
             //Now that we have a titlebar and window borders...
             //We're going to composite the hosted window
             //and draw it to the remaining area.
 
-            //First let's GET the window.
-            if(_hostedwindow != null)
-            {
-                var win = _hostedwindow;
-                //Now let's create a new bitmap to draw onto, the same size as the client area.
-                using(var bmp = new Bitmap(Width, Height - titleheight))
-                {
-                    //Now, let's create a graphics object.
-                    using(var cgfx = Graphics.FromImage(bmp))
-                    {
-                        //And composite...
-                        win.Paint(cgfx);
-
-                    }
-                    //Now draw the bitmap to our client area
-                    gfx.DrawImage(bmp, 0, titleheight);
-                    //We now have a full window.
-                }
-            }
+            //Painting of the canvas is done by the Paint() method.
         }
 
     }

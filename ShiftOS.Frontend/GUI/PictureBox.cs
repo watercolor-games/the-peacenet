@@ -50,7 +50,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        public override void Paint(Graphics gfx)
+        protected override void OnPaint(Graphics gfx)
         {
             if(img != null)
                 switch (_layout)

@@ -25,14 +25,13 @@ namespace ShiftOS.Frontend.GUI
                 using (var gfx = Graphics.FromImage(new Bitmap(1, 1)))
                 {
                     var measure = gfx.MeasureString(this.Text, this.Font);
-                    Width = borderwidth + (int)measure.Width + 4;
-                    Height = borderwidth + (int)measure.Height + 8;
+                    Width = borderwidth + (int)measure.Width + 16;
+                    Height = borderwidth + (int)measure.Height + 12;
                 }
             }
-            base.OnLayout();
         }
 
-        public override void Paint(Graphics gfx)
+        protected override void OnPaint(Graphics gfx)
         {
             Color bgCol = SkinEngine.LoadedSkin.ButtonBackgroundColor;
             Color fgCol = SkinEngine.LoadedSkin.ControlTextColor;
@@ -43,7 +42,7 @@ namespace ShiftOS.Frontend.GUI
 
             gfx.Clear(bgCol);
             gfx.DrawRectangle(new Pen(new SolidBrush(fgCol), SkinEngine.LoadedSkin.ButtonBorderWidth), new Rectangle(0, 0, Width, Height));
-            base.Paint(gfx);
+            base.OnPaint(gfx);
 
         }
     }

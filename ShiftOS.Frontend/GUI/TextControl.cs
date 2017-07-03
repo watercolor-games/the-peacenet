@@ -53,9 +53,9 @@ namespace ShiftOS.Frontend.GUI
             set { _textAlign = value; }
         }
 
-        public override void Paint(Graphics gfx)
+        protected override void OnPaint(Graphics gfx)
         {
-            var sMeasure = gfx.MeasureString(_text, _font);
+            var sMeasure = gfx.MeasureString(_text, _font, Width);
             PointF loc = new PointF(2, 2);
             float centerH = (Width - sMeasure.Width) / 2;
             float centerV = (Height - sMeasure.Height) / 2;

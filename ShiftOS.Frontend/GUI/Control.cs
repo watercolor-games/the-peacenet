@@ -30,6 +30,63 @@ namespace ShiftOS.Frontend.GUI
         private bool _focused = false;
         private bool _autoSize = false;
         private double _opacity = 1.0;
+        private bool _invalidated = true;
+        private Bitmap _texCache = null;
+        private Anchor _anchor = null;
+        private int _mouseX = 0;
+        private int _mouseY = 0;
+        private bool _captureMouse = false;
+
+        public bool CaptureMouse
+        {
+            get
+            {
+                return _captureMouse;
+            }
+            set
+            {
+                _captureMouse = value;
+            }
+        }
+
+        public int MouseX
+        {
+            get
+            {
+                return _mouseX;
+            }
+        }
+
+        public int MouseY
+        {
+            get
+            {
+                return _mouseY;
+            }
+        }
+
+
+        public Anchor Anchor
+        {
+            get
+            {
+                return _anchor;
+            }
+            set
+            {
+                _anchor = value;
+                Invalidate();
+            }
+        }
+
+        public void Invalidate()
+        {
+            _invalidated = true;
+            foreach(var child in _children)
+            {
+                child.Invalidate();
+            }
+        }
 
         public double Opacity
         {
@@ -39,7 +96,8 @@ namespace ShiftOS.Frontend.GUI
             }
             set
             {
-                _opacity = (double)MathHelper.Clamp((float)value, 0, 1);
+                _opacity = value;
+                Invalidate();
             }
         }
 
@@ -107,6 +165,7 @@ namespace ShiftOS.Frontend.GUI
             set
             {
                 _visible = value;
+                Invalidate();
             }
         }
 
@@ -116,6 +175,7 @@ namespace ShiftOS.Frontend.GUI
             {
                 ctrl._parent = this;
                 _children.Add(ctrl);
+                Invalidate();
             }
         }
 
@@ -154,6 +214,7 @@ namespace ShiftOS.Frontend.GUI
             set
             {
                 _x = value;
+                Invalidate();
             }
         }
 
@@ -166,6 +227,7 @@ namespace ShiftOS.Frontend.GUI
             set
             {
                 _y = value;
+                Invalidate();
             }
         }
 
@@ -178,6 +240,7 @@ namespace ShiftOS.Frontend.GUI
             set
             {
                 _w = value;
+                Invalidate();
             }
         }
 
@@ -190,6 +253,7 @@ namespace ShiftOS.Frontend.GUI
             set
             {
                 _h = value;
+                Invalidate();
             }
         }
 
@@ -229,6 +293,7 @@ namespace ShiftOS.Frontend.GUI
         public void ClearControls()
         {
             _children.Clear();
+            Invalidate();
         }
 
         public Point PointToLocal(int x, int y)
@@ -238,23 +303,56 @@ namespace ShiftOS.Frontend.GUI
 
         public virtual void MouseStateChanged() { }
 
-        public virtual void Paint(System.Drawing.Graphics gfx)
+        protected virtual void OnPaint(Graphics gfx)
+        {
+
+        }
+
+        public void InvalidateTopLevel()
+        {
+            var parent = this;
+            while (parent.Parent != null)
+                parent = parent.Parent;
+            parent.Invalidate();
+        }
+
+        public void Paint(System.Drawing.Graphics gfx)
         {
             if (_visible == true)
             {
-                if (_children.Count > 0)
+                if (_invalidated)
                 {
-                    foreach (var child in _children)
+                    _texCache = new Bitmap(Width, Height);
+                    using (var cGfx = Graphics.FromImage(_texCache))
                     {
-                        using (var cBmp = new System.Drawing.Bitmap(child.Width, child.Height))
+                        OnPaint(cGfx);
+                    }
+                    _invalidated = false;
+                }
+                gfx.DrawImage(_texCache, 0, 0);
+                foreach (var child in _children)
+                {
+                    if (child.Visible)
+                    {
+                        if (child._invalidated)
                         {
+                            var cBmp = new Bitmap(child.Width, child.Height);
                             child.Paint(System.Drawing.Graphics.FromImage(cBmp));
                             cBmp.SetOpacity((float)child.Opacity);
+                            child._invalidated = false;
+                            child._texCache = cBmp;
                             gfx.DrawImage(cBmp, new System.Drawing.Point(child.X, child.Y));
 
+
+
+                        }
+                        else
+                        {
+                            gfx.DrawImage(child._texCache, child.X, child.Y);
                         }
                     }
                 }
+
             }
         }
 
@@ -263,6 +361,11 @@ namespace ShiftOS.Frontend.GUI
             //Dock style
             if(_parent != null)
             {
+                if(_anchor != null)
+                {
+                    
+                }
+
                 switch (_dock)
                 {
                     case DockStyle.Top:
@@ -342,8 +445,10 @@ namespace ShiftOS.Frontend.GUI
 
             //Firstly, we get the mouse coordinates in the local space
             var coords = PointToLocal(state.Position.X, state.Position.Y);
+            _mouseX = coords.X;
+            _mouseY = coords.Y;
             //Now we check if the mouse is within the bounds of the control
-            if(coords.X > 0 && coords.Y > 0 && coords.X <= _w && coords.Y <= _h)
+            if(coords.X >= 0 && coords.Y >= 0 && coords.X <= _w && coords.Y <= _h)
             {
                 //We're in the local space. Let's fire the MouseMove event.
                 MouseMove?.Invoke(coords);
@@ -352,6 +457,7 @@ namespace ShiftOS.Frontend.GUI
                 {
                     _wasMouseInControl = true;
                     MouseEnter?.Invoke();
+                    Invalidate();
                 }
 
                 //Things are going to get a bit complicated.
@@ -389,9 +495,17 @@ namespace ShiftOS.Frontend.GUI
                         fire = true;
                     }
                     if (_leftState == true && ld == false)
+                    {
                         Click?.Invoke();
+                        Invalidate();
+                    }
                     if (_leftState == false && ld == true)
+                    {
+                        var focused = UIManager.FocusedControl;
                         UIManager.FocusedControl = this;
+                        focused?.InvalidateTopLevel();
+                        InvalidateTopLevel();
+                    }
                     _leftState = ld;
                     _middleState = md;
                     _rightState = rd;
@@ -407,12 +521,36 @@ namespace ShiftOS.Frontend.GUI
                 _middleState = false;
                 MouseStateChanged();
                 //If the mouse was in local space before, fire MouseLeave
-                if(_wasMouseInControl == true)
+                if (_wasMouseInControl == true)
                 {
-                    _wasMouseInControl = false;
-                    MouseLeave?.Invoke();
+                    if (CaptureMouse == true)
+                    {
+                        _wasMouseInControl = true;
+                        int newX = MathHelper.Clamp(state.X, X, X + Width);
+                        int newY = MathHelper.Clamp(state.Y, Y, Y + Height);
+                        Mouse.SetPosition(newX, newY);
+
+                    }
+                    else
+                    {
+                        _wasMouseInControl = false;
+                        MouseLeave?.Invoke();
+                        Invalidate();
+                    }
                 }
             }
+            if (CaptureMouse == true)
+            {
+                _mouseX = coords.X;
+                _mouseY = coords.Y;
+                Layout();
+                _wasMouseInControl = true;
+                int newX = MathHelper.Clamp(state.X, X, X + Width);
+                int newY = MathHelper.Clamp(state.Y, Y, Y + Height);
+                Mouse.SetPosition(newX, newY);
+                return true;
+            }
+
             //Mouse is not in the local space, don't do anything.
             return false;
         }
@@ -485,5 +623,20 @@ namespace ShiftOS.Frontend.GUI
             }
             return output;
         }
+    }
+
+    [Flags]
+    public enum AnchorStyle
+    {
+        Top,
+        Left,
+        Bottom,
+        Right
+    }
+
+    public class Anchor
+    {
+        public AnchorStyle Style { get; set; }
+        public int Distance { get; set; }
     }
 }

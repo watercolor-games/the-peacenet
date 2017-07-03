@@ -426,7 +426,7 @@ namespace ShiftOS.Engine
             try
             {
                 if (SaveSystem.CurrentSave == null)
-                    return false;
+                    return true;
 
                 if (SaveSystem.CurrentSave.StoriesExperienced == null)
                     SaveSystem.CurrentSave.StoriesExperienced = new List<string>();

@@ -52,7 +52,11 @@ namespace ShiftOS.Frontend
             flyesno.Visible = false;
             txtinput.Visible = false;
             btnok.Visible = true;
-            btnok.Click += callback;
+            btnok.Click += () =>
+            {
+                callback?.Invoke();
+                AppearanceManager.Close(this);
+            };
         }
 
         public void ShowYesNo(Action<bool> callback)
@@ -64,10 +68,12 @@ namespace ShiftOS.Frontend
             btnyes.Click += () =>
             {
                 callback?.Invoke(true);
+                AppearanceManager.Close(this);
             };
             btnno.Click += () =>
             {
                 callback?.Invoke(false);
+                AppearanceManager.Close(this);
             };
         }
 
@@ -118,7 +124,7 @@ namespace ShiftOS.Frontend
             // 
             this.lbmessage.X = 85;
             this.lbmessage.Y = 19;
-           this.lbmessage.Width = 253;
+           this.lbmessage.Width = 213;
             this.lbmessage.Height = 94;
             this.lbmessage.Text = "label1";
             this.lbmessage.TextAlign = TextAlign.MiddleLeft;
@@ -144,6 +150,8 @@ namespace ShiftOS.Frontend
             // btnok
             // 
             this.btnok.AutoSize = true;
+            this.btnok.X = 140;
+            this.btnok.Y = 140;
             this.btnok.Text = Localization.Parse("{GEN_OK}");
             // 
             // pbicon
@@ -152,11 +160,13 @@ namespace ShiftOS.Frontend
             this.pbicon.Y = 19;
             this.pbicon.Width = 64;
             this.pbicon.Height = 64;
+            this.pbicon.Image = Properties.Resources.justthes;
+            this.pbicon.ImageLayout = ImageLayout.Stretch;
             // 
             // Dialog
             // 
             this.Width = 341;
-            this.Height = 127;
+            this.Height = 157;
             this.AddControl(pbicon);
             this.AddControl(btnok);
             this.AddControl(flyesno);

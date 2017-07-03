@@ -37,7 +37,7 @@ namespace ShiftOS.Frontend.GUI
 
         private int _textOffset = 0;
 
-        public override void Paint(Graphics gfx)
+        protected override void OnPaint(Graphics gfx)
         {
             gfx.Clear(LoadedSkin.ControlColor);
 

@@ -73,6 +73,7 @@ namespace ShiftOS.Frontend
             justthes.Image = Properties.Resources.justthes;
             justthes.X = 15;
             justthes.Y = 15;
+            justthes.Opacity = 0.5;
             UIManager.AddTopLevel(justthes);
 
             _titleLabel = new GUI.TextControl();
