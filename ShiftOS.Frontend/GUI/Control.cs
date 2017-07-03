@@ -364,7 +364,7 @@ namespace ShiftOS.Frontend.GUI
 
         protected virtual void OnPaint(Graphics gfx)
         {
-
+            gfx.Clear(Engine.SkinEngine.LoadedSkin.ControlColor);
         }
 
         public void InvalidateTopLevel()

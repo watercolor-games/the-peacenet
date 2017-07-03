@@ -105,8 +105,8 @@ namespace ShiftOS.Frontend.Desktop
                 _hostedwindow = (GUI.Control)value;
                 ClearControls();
                 AddControl(_hostedwindow);
-                Width = (LoadedSkin.LeftBorderWidth*2) + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
-                Height = LoadedSkin.BottomBorderWidth + _hostedwindow.Height + (LoadedSkin.TitlebarHeight*2);
+                Width = LoadedSkin.LeftBorderWidth + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
+                Height = LoadedSkin.BottomBorderWidth + _hostedwindow.Height + LoadedSkin.TitlebarHeight;
 
             }
         }
@@ -148,6 +148,8 @@ namespace ShiftOS.Frontend.Desktop
             int borderbottom = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
             _hostedwindow.X = borderleft;
             _hostedwindow.Y = titlebarheight;
+            Width = _hostedwindow.X + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
+            Height = _hostedwindow.Y + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
         }
 
         private bool moving = false;
@@ -231,9 +233,10 @@ namespace ShiftOS.Frontend.Desktop
                     titlebarwidth -= titlebarleft;
                     titlebarwidth -= LoadedSkin.TitleRightCornerWidth;
 
+                    
                     //Let's get the left and right images.
-                    var leftimage = GetImage("titlebarleft");
-                    var rightimage = GetImage("titlebarright");
+                    var leftimage = GetImage("titleleft");
+                    var rightimage = GetImage("titleright");
                     //and the colors
                     var leftcolor = LoadedSkin.TitleLeftCornerBackground;
                     var rightcolor = LoadedSkin.TitleRightCornerBackground;
@@ -300,9 +303,16 @@ namespace ShiftOS.Frontend.Desktop
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-
-                    gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize)); 
-
+                    var img = GetImage("closebutton");
+                    if (img == null)
+                    {
+                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                    }
+                    else
+                    {
+                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
+                        gfx.DrawImage(resized, closebuttonright);
+                    }
                 }
                 //Draw maximize button
                 if (Shiftorium.UpgradeInstalled("maximize_button"))
@@ -314,6 +324,16 @@ namespace ShiftOS.Frontend.Desktop
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
                     gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                    var img = GetImage("maximizebutton");
+                    if (img == null)
+                    {
+                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                    }
+                    else
+                    {
+                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
+                        gfx.DrawImage(resized, closebuttonright);
+                    }
 
                 }
                 //Draw minimize button
@@ -324,8 +344,17 @@ namespace ShiftOS.Frontend.Desktop
                     var closebuttonright = LoadedSkin.MinimizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                    var img = GetImage("minimizebutton");
+                    if (img == null)
+                    {
+                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                    }
+                    else
+                    {
+                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
+                        gfx.DrawImage(resized, closebuttonright);
+                    }
 
-                    gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
 
                 }
             }
@@ -353,22 +382,60 @@ namespace ShiftOS.Frontend.Desktop
 
                 //draw border corners
                 //BOTTOM LEFT
-                gfx.FillRectangle(new SolidBrush(borderbleftcolor), new Rectangle(0, bottomlocy, leftborderwidth, bottomborderwidth));
-
+                var bottomlimg = GetImage("bottomlborder");
+                if (bottomlimg == null)
+                {
+                    gfx.FillRectangle(new SolidBrush(borderbleftcolor), new Rectangle(0, bottomlocy, leftborderwidth, bottomborderwidth));
+                }
+                else
+                {
+                    bottomlimg = ResizeImage(bottomlimg, leftborderwidth, bottomborderwidth);
+                    gfx.DrawImage(bottomlimg, 0, bottomlocy);
+                }
 
                 //BOTTOM RIGHT
-                gfx.FillRectangle(new SolidBrush(borderbrightcolor), new Rectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth));
+                var bottomrimg = GetImage("bottomrborder");
+                if (bottomrimg == null)
+                {
+                    gfx.FillRectangle(new SolidBrush(borderbrightcolor), new Rectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth));
+                }
+                else
+                {
+                    bottomrimg = ResizeImage(bottomrimg, rightborderwidth, bottomborderwidth);
+                    gfx.DrawImage(bottomrimg, brightlocx, bottomlocy);
+                }
 
                 //BOTTOM
-                gfx.FillRectangle(new SolidBrush(borderbottomcolor), new Rectangle(bottomlocx, bottomlocy, bottomwidth, bottomborderwidth));
+                var bottomimg = GetImage("bottomborder");
+                if (bottomimg == null)
+                    gfx.FillRectangle(new SolidBrush(borderbottomcolor), new Rectangle(bottomlocx, bottomlocy, bottomwidth, bottomborderwidth));
+                else
+                {
+                    bottomimg = ResizeImage(bottomimg, bottomwidth, bottomborderwidth);
+                    gfx.DrawImage(bottomimg, bottomlocx, bottomlocy);
+                }
 
                 //LEFT
-                gfx.FillRectangle(new SolidBrush(borderleftcolor), new Rectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth));
+                var leftimg = GetImage("leftborder");
+                if (leftimg == null)
+                    gfx.FillRectangle(new SolidBrush(borderleftcolor), new Rectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth));
+                else
+                {
+                    leftimg = ResizeImage(leftimg, leftborderwidth, Height - bottomborderwidth - titleheight);
+                    gfx.DrawImage(leftimg, 0, titleheight);
+                }
 
                 //RIGHT
-                gfx.FillRectangle(new SolidBrush(borderrightcolor), new Rectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth));
-
-
+                var rightimg = GetImage("rightborder");
+                if (rightimg == null)
+                {
+                    gfx.FillRectangle(new SolidBrush(borderrightcolor), new Rectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth));
+                }
+                else
+                {
+                    rightimg = ResizeImage(rightimg, rightborderwidth, Height - titleheight - bottomborderwidth);
+                    gfx.DrawImage(rightimg, brightlocx, titleheight);
+                }
             }
 
             //So here's what we're gonna do now.

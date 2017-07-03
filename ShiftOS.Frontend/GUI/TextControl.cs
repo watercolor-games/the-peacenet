@@ -89,11 +89,11 @@ namespace ShiftOS.Frontend.GUI
                     loc.Y = (Height - sMeasure.Height);
                     loc.X = (Width - sMeasure.Width);
                     break;
-                    
 
             }
 
-            gfx.DrawString(_text, _font, new SolidBrush(Color.White), new RectangleF(loc.X, loc.Y, sMeasure.Width, sMeasure.Height));
+            base.OnPaint(gfx);
+            gfx.DrawString(_text, _font, new SolidBrush(Engine.SkinEngine.LoadedSkin.ControlTextColor), new RectangleF(loc.X, loc.Y, sMeasure.Width, sMeasure.Height));
         }
     }
 
