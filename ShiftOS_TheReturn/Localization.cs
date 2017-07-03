@@ -99,63 +99,65 @@ namespace ShiftOS.Engine
 
         public static string Parse(string original, Dictionary<string, string> replace)
         {
-            Dictionary<string, string> localizationStrings = new Dictionary<string, string>();
-
-
             try
             {
-                localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(_provider.GetCurrentTranscript());
-            }
-            catch
-            {
-                localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(Paths.GetPath("english.local"))); //if no provider fall back to english
-            }
+                Dictionary<string, string> localizationStrings = new Dictionary<string, string>();
 
-            foreach (var kv in localizationStrings.Where(x=>original.Contains(x.Key)))
-            {
-                original = original.Replace(kv.Key, kv.Value); // goes through and replaces all the localization blocks
-            }
 
-            //string original2 = Parse(original);
-
-            string usernameReplace = "";
-            string domainReplace = "";
-
-            // if the user has saved then store their username and systemname in these string variables please
-            if (SaveSystem.CurrentSave != null)
-            {
                 try
                 {
-                    usernameReplace = SaveSystem.CurrentUser.Username;
+                    localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(_provider.GetCurrentTranscript());
                 }
                 catch
                 {
+                    localizationStrings = JsonConvert.DeserializeObject<Dictionary<string, string>>(Utils.ReadAllText(Paths.GetPath("english.local"))); //if no provider fall back to english
+                }
+
+                foreach (var kv in localizationStrings.Where(x => original.Contains(x.Key)))
+                {
+                    original = original.Replace(kv.Key, kv.Value); // goes through and replaces all the localization blocks
+                }
+
+                //string original2 = Parse(original);
+
+                string usernameReplace = "";
+                string domainReplace = "";
+
+                // if the user has saved then store their username and systemname in these string variables please
+                if (SaveSystem.CurrentSave != null)
+                {
+                    try
+                    {
+                        usernameReplace = SaveSystem.CurrentUser.Username;
+                    }
+                    catch
+                    {
                         usernameReplace = "user";
+                    }
+
+                    try
+                    {
+                        domainReplace = SaveSystem.CurrentSave.SystemName;
+                    }
+                    catch
+                    {
+                        domainReplace = "system";
+                    }
+
                 }
 
-                try
+                string namespaceReplace = "";
+                string commandReplace = "";
+
+                // if the user did a command in the terminal and it had a period in it then split it up into the part before the period and the part after and then store them into these two string variables please 
+                if (TerminalBackend.latestCommmand != "" && TerminalBackend.latestCommmand.IndexOf('.') > -1)
                 {
-                    domainReplace = SaveSystem.CurrentSave.SystemName;
+                    namespaceReplace = TerminalBackend.latestCommmand.Split('.')[0];
+                    commandReplace = TerminalBackend.latestCommmand.Split('.')[1];
                 }
-                catch
-                {
-                    domainReplace = "system";
-                }
-                
-            }
 
-            string namespaceReplace = "";
-            string commandReplace = "";
-
-            // if the user did a command in the terminal and it had a period in it then split it up into the part before the period and the part after and then store them into these two string variables please 
-            if (TerminalBackend.latestCommmand != "" && TerminalBackend.latestCommmand.IndexOf('.') > -1)
-            {
-                namespaceReplace = TerminalBackend.latestCommmand.Split('.')[0];
-                commandReplace = TerminalBackend.latestCommmand.Split('.')[1];
-            }
-
-            // if you see these then replace them with what you need to
-            Dictionary<string, string> defaultReplace = new Dictionary<string, string>() {
+                // if you see these then replace them with what you need to
+                Dictionary<string, string> defaultReplace = new Dictionary<string, string>() {
                 {"%username", usernameReplace},
                 {"%domain", domainReplace},
                 {"%ns", namespaceReplace},
@@ -165,19 +167,24 @@ namespace ShiftOS.Engine
 #endif
             };
 
-            // actually do the replacement
-            foreach (KeyValuePair<string, string> replacement in replace.Where(x => original.Contains(x.Key)))
-            {
-                original = original.Replace(replacement.Key, Parse(replacement.Value));
-            }
+                // actually do the replacement
+                foreach (KeyValuePair<string, string> replacement in replace.Where(x => original.Contains(x.Key)))
+                {
+                    original = original.Replace(replacement.Key, Parse(replacement.Value));
+                }
 
-            // do the replacement but default
-            foreach (KeyValuePair<string, string> replacement in defaultReplace.Where(x => original.Contains(x.Key)))
-            {
-                original = original.Replace(replacement.Key, replacement.Value);
-            }
+                // do the replacement but default
+                foreach (KeyValuePair<string, string> replacement in defaultReplace.Where(x => original.Contains(x.Key)))
+                {
+                    original = original.Replace(replacement.Key, replacement.Value);
+                }
 
-            return original; // returns the now replaced string
+                return original; // returns the now replaced string
+            }
+            catch
+            {
+                return original;
+            }
         }
 
         // a few things are defined here

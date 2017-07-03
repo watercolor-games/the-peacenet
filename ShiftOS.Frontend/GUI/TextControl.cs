@@ -13,6 +13,22 @@ namespace ShiftOS.Frontend.GUI
         private TextAlign _textAlign = TextAlign.TopLeft;
         private Font _font = new Font("Tahoma", 9f);
 
+        protected override void OnLayout()
+        {
+            if (AutoSize)
+            {
+                using (var bmp = new Bitmap(1, 1))
+                {
+                    using(var gfx = Graphics.FromImage(bmp))
+                    {
+                        var measure = gfx.MeasureString(_text, _font);
+                        Width = (int)measure.Width;
+                        Height = (int)measure.Height;
+                    }
+                }
+            }
+        }
+
         public string Text
         {
             get { return _text; }

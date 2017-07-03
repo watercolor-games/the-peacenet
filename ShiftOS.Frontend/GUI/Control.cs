@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Drawing;
+using ShiftOS.Frontend.GraphicsSubsystem;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using Microsoft.Xna.Framework;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -21,6 +26,77 @@ namespace ShiftOS.Frontend.GUI
         private bool _rightState = false;
         private bool _middleState = false;
         private bool _visible = true;
+        private DockStyle _dock = DockStyle.None;
+        private bool _focused = false;
+        private bool _autoSize = false;
+        private double _opacity = 1.0;
+
+        public double Opacity
+        {
+            get
+            {
+                return _opacity;
+            }
+            set
+            {
+                _opacity = (double)MathHelper.Clamp((float)value, 0, 1);
+            }
+        }
+
+        public bool AutoSize
+        {
+            get
+            {
+                return _autoSize;
+            }
+            set
+            {
+                _autoSize = value;
+            }
+        }
+
+        //Thank you, StackOverflow.
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new System.Drawing.Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        public DockStyle Dock
+        {
+            get
+            {
+                return _dock;
+            }
+            set
+            {
+                _dock = value;
+            }
+        }
+
+        public bool ContainsMouse
+        {
+            get { return _wasMouseInControl; }
+        }
 
         public bool Visible
         {
@@ -150,6 +226,11 @@ namespace ShiftOS.Frontend.GUI
             return parentCoords;
         }
 
+        public void ClearControls()
+        {
+            _children.Clear();
+        }
+
         public Point PointToLocal(int x, int y)
         {
             return new GUI.Point(x - _x, y - _y);
@@ -168,9 +249,86 @@ namespace ShiftOS.Frontend.GUI
                         using (var cBmp = new System.Drawing.Bitmap(child.Width, child.Height))
                         {
                             child.Paint(System.Drawing.Graphics.FromImage(cBmp));
+                            cBmp.SetOpacity((float)child.Opacity);
                             gfx.DrawImage(cBmp, new System.Drawing.Point(child.X, child.Y));
+
                         }
                     }
+                }
+            }
+        }
+
+        public void Layout()
+        {
+            //Dock style
+            if(_parent != null)
+            {
+                switch (_dock)
+                {
+                    case DockStyle.Top:
+                        X = 0;
+                        Y = 0;
+                        Width = _parent.Width;
+                        break;
+                    case DockStyle.Left:
+                        X = 0;
+                        Y = 0;
+                        Height = _parent.Height;
+                        break;
+                    case DockStyle.Right:
+                        Y = 0;
+                        X = _parent.Width - Width;
+                        Height = _parent.Height;
+                        break;
+                    case DockStyle.Bottom:
+                        X = 0;
+                        Y = _parent.Height - Height;
+                        Width = _parent.Width;
+                        break;
+                    case DockStyle.Fill:
+                        X = 0;
+                        Y = 0;
+                        Width = _parent.Width;
+                        Height = _parent.Height;
+                        break;
+                }
+            }
+            OnLayout();
+            foreach (var child in _children)
+                child.Layout();
+        }
+
+        protected virtual void OnLayout()
+        {
+            //do nothing
+        }
+
+        public bool IsFocusedControl
+        {
+            get
+            {
+                return UIManager.FocusedControl == this;
+            }
+        }
+
+        public bool ContainsFocusedControl
+        {
+            get
+            {
+                if (UIManager.FocusedControl == null)
+                    return false;
+                else
+                {
+                    bool contains = false;
+
+                    var ctrl = UIManager.FocusedControl;
+                    while(ctrl.Parent != null)
+                    {
+                        ctrl = ctrl.Parent;
+                        if (ctrl == this)
+                            contains = true;
+                    }
+                    return contains;
                 }
             }
         }
@@ -230,6 +388,10 @@ namespace ShiftOS.Frontend.GUI
                     {
                         fire = true;
                     }
+                    if (_leftState == true && ld == false)
+                        Click?.Invoke();
+                    if (_leftState == false && ld == true)
+                        UIManager.FocusedControl = this;
                     _leftState = ld;
                     _middleState = md;
                     _rightState = rd;
@@ -240,6 +402,10 @@ namespace ShiftOS.Frontend.GUI
             }
             else
             {
+                _leftState = false;
+                _rightState = false;
+                _middleState = false;
+                MouseStateChanged();
                 //If the mouse was in local space before, fire MouseLeave
                 if(_wasMouseInControl == true)
                 {
@@ -251,9 +417,22 @@ namespace ShiftOS.Frontend.GUI
             return false;
         }
 
+        protected virtual void OnKeyEvent(KeyEvent e)
+        {
+
+        }
+
+        public void ProcessKeyEvent(KeyEvent e)
+        {
+            OnKeyEvent(e);
+            KeyEvent?.Invoke(e);
+        }
+
         public event Action<Point> MouseMove;
         public event Action MouseEnter;
         public event Action MouseLeave;
+        public event Action Click;
+        public event Action<KeyEvent> KeyEvent;
     }
 
     public struct Point
@@ -268,4 +447,43 @@ namespace ShiftOS.Frontend.GUI
         public int Y { get; set; }
     }
 
+    public enum DockStyle
+    {
+        None,
+        Top,
+        Bottom,
+        Left,
+        Right,
+        Fill
+    }
+
+    //Thanks, StackOverflow.
+    public static class BitmapExtensions
+    {
+        public static Image SetOpacity(this Image image, float opacity)
+        {
+            var colorMatrix = new ColorMatrix();
+            colorMatrix.Matrix33 = opacity;
+            var imageAttributes = new ImageAttributes();
+            imageAttributes.SetColorMatrix(
+                colorMatrix,
+                ColorMatrixFlag.Default,
+                ColorAdjustType.Bitmap);
+            var output = new Bitmap(image.Width, image.Height);
+            using (var gfx = Graphics.FromImage(output))
+            {
+                gfx.SmoothingMode = SmoothingMode.AntiAlias;
+                gfx.DrawImage(
+                    image,
+                    new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
+                    0,
+                    0,
+                    image.Width,
+                    image.Height,
+                    GraphicsUnit.Pixel,
+                    imageAttributes);
+            }
+            return output;
+        }
+    }
 }

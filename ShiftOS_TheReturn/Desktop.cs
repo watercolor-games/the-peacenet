@@ -246,7 +246,14 @@ namespace ShiftOS.Engine
 
         public static void InvokeOnWorkerThread(Action act)
         {
-            _desktop.InvokeOnWorkerThread(act);
+            try
+            {
+                _desktop.InvokeOnWorkerThread(act);
+            }
+            catch
+            {
+                act?.Invoke();
+            }
         }
 
         public static void ResetPanelButtons()
