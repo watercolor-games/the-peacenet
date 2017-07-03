@@ -65,24 +65,63 @@ namespace ShiftOS.Frontend
             //Let's give it a try.
             Engine.Infobox.Show("Welcome to ShiftOS!", "This is a test infobox. Clicking OK will dismiss it.");
 
-            //Let's set up the Main Menu UI.
+            //Let's initiate the engine just for a ha.
 
-            var justthes = new GUI.PictureBox();
-            justthes.AutoSize = true;
-            justthes.ImageLayout = GUI.ImageLayout.Stretch;
-            justthes.Image = Properties.Resources.justthes;
-            justthes.X = 15;
-            justthes.Y = 15;
-            justthes.Opacity = 0.5;
-            UIManager.AddTopLevel(justthes);
+            //We'll create a few UI elements when the save system loads
+            SaveSystem.GameReady += () =>
+            {
+                var headerLabel = new GUI.TextControl();
+                headerLabel.Font = SkinEngine.LoadedSkin.HeaderFont;
+                headerLabel.AutoSize = true;
+                headerLabel.Text = "ShiftOS engine startup stats";
+                headerLabel.X = 30;
+                headerLabel.Y = 30;
+                UIManager.AddTopLevel(headerLabel);
 
-            _titleLabel = new GUI.TextControl();
-            _titleLabel.Text = " - main menu - ";
-            _titleLabel.AutoSize = true;
-            _titleLabel.X = justthes.X;
-            _titleLabel.Y = justthes.Y + justthes.Height + 15;
-            _titleLabel.Font = SkinEngine.LoadedSkin.HeaderFont;
-            UIManager.AddTopLevel(_titleLabel);
+                var statslabel = new GUI.TextControl();
+                statslabel.AutoSize = true;
+                statslabel.X = 30;
+                statslabel.Y = headerLabel.Y + headerLabel.Height + 30;
+                UIManager.AddTopLevel(statslabel);
+                statslabel.Text = $@"Save System
+=======================
+
+System name: {SaveSystem.CurrentSave.SystemName}
+Users: {SaveSystem.CurrentSave.Users.Count}
+
+Current user: {SaveSystem.CurrentUser.Username}
+
+Sandbox mode: {SaveSystem.IsSandbox}
+Installed upgrades: {SaveSystem.CurrentSave.CountUpgrades()} - may be inaccurate if in sandbox mode
+Available upgrades: {Shiftorium.GetAvailable().Count()}
+Total upgrades: {Shiftorium.GetDefaults().Count()}
+
+ShiftFS
+============================
+
+Mounted file systems: {Objects.ShiftFS.Utils.Mounts.Count}
+
+Reflection Manager
+=====================
+
+Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime types that ShiftOS can reflect over.
+
+
+";
+                statslabel.Layout();
+            };
+
+            //We'll use sandbox mode
+            SaveSystem.IsSandbox = true;
+
+            SaveSystem.Begin();
+
+            var textinput = new GUI.TextInput();
+            textinput.Width = 250;
+            textinput.Height = 20;
+            textinput.X = 0;
+            textinput.Y = 0;
+            UIManager.AddTopLevel(textinput);
 
             base.Initialize();
 

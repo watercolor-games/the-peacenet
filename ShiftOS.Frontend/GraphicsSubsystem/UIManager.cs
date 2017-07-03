@@ -43,7 +43,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static void DrawControls(GraphicsDevice graphics, SpriteBatch batch)
         {
-            foreach (var ctrl in topLevels)
+            foreach (var ctrl in topLevels.ToArray())
             {
                 using(var bmp = new System.Drawing.Bitmap(ctrl.Width, ctrl.Height))
                 {

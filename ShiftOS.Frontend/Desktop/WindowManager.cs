@@ -156,7 +156,42 @@ namespace ShiftOS.Frontend.Desktop
         {
             if (Shiftorium.UpgradeInstalled("wm_titlebar"))
             {
-                if(MouseY < LoadedSkin.TitlebarHeight)
+                if (Shiftorium.UpgradeInstalled("close_button"))
+                {
+                    var closebuttonsize = LoadedSkin.CloseButtonSize;
+                    var closebuttonloc = LoadedSkin.CloseButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
+                    if(MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
+                    {
+                        Close();
+                    }
+                }
+                if (Shiftorium.UpgradeInstalled("minimize_button"))
+                {
+                    var closebuttonsize = LoadedSkin.MinimizeButtonSize;
+                    var closebuttonloc = LoadedSkin.MinimizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
+                    if (MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
+                    {
+                        if (IsFocusedControl || ContainsFocusedControl)
+                            UIManager.FocusedControl = null;
+                        Visible = false;
+                    }
+                }
+                if (Shiftorium.UpgradeInstalled("maximize_button"))
+                {
+                    var closebuttonsize = LoadedSkin.MaximizeButtonSize;
+                    var closebuttonloc = LoadedSkin.MaximizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
+                    if (MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
+                    {
+                        AppearanceManager.Maximize(this);
+                    }
+                }
+                if (MouseY < LoadedSkin.TitlebarHeight)
                 {
                     var screenpoint = PointToScreen(MouseX, MouseY);
                     lastmousex = this.X - screenpoint.X;
