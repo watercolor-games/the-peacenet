@@ -172,7 +172,7 @@ namespace ShiftOS.Engine
                 {
                     if (dir.StartsWith("1:/"))
                     {
-                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        string real = dir.Replace('/', System.IO.Path.DirectorySeparatorChar).Replace("1:", SharedFolder);
                         if (!System.IO.Directory.Exists(real))
                             System.IO.Directory.CreateDirectory(real);
                     }
@@ -186,7 +186,8 @@ namespace ShiftOS.Engine
                 {
                     if (dir.StartsWith("1:/"))
                     {
-                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        string real = dir.Replace('/', System.IO.Path.DirectorySeparatorChar).Replace("1:", SharedFolder);
+                        
                         if (System.IO.Directory.Exists(real))
                             System.IO.Directory.Delete(real, true);
                     }
@@ -200,7 +201,7 @@ namespace ShiftOS.Engine
                 {
                     if (dir.StartsWith("1:/"))
                     {
-                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        string real = dir.Replace('/', System.IO.Path.DirectorySeparatorChar).Replace("1:", SharedFolder);
                         System.IO.File.WriteAllBytes(real, ReadAllBytes(dir));
                     }
                 }
@@ -213,7 +214,7 @@ namespace ShiftOS.Engine
                 {
                     if (dir.StartsWith("1:/"))
                     {
-                        string real = dir.Replace("/", "\\").Replace("1:", SharedFolder);
+                        string real = dir.Replace('/', System.IO.Path.DirectorySeparatorChar).Replace("1:", SharedFolder);
                         if (System.IO.File.Exists(real))
                             System.IO.File.Delete(real);
                     }
@@ -254,12 +255,12 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Gets the ShiftOS shared folder.
         /// </summary>
-        public static string SharedFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ShiftOS_Shared"; } }
+        public static string SharedFolder { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ShiftOS_Shared"); } }
 
         /// <summary>
         /// Gets the location of the ShiftOS.mfs file.
         /// </summary>
-        public static string SaveFile { get { return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ShiftOS.mfs"; } }
+        public static string SaveFile { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ShiftOS.mfs"); } }
 
         /// <summary>
         /// Gets the path of the inner save file.
