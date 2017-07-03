@@ -165,7 +165,8 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             // TODO: Unload any non ContentManager content here
         }
 
-        
+        private double kb_elapsedms = 0;
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -199,36 +200,29 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
             if (keys.Length > 0)
             {
                 var key = keys.FirstOrDefault(x => x != Keys.LeftControl && x != Keys.RightControl && x != Keys.LeftShift && x != Keys.RightShift && x != Keys.LeftAlt && x != Keys.RightAlt);
-                if (lastKey != key)
+                if(lastKey != key)
                 {
+                    kb_elapsedms = 0;
                     lastKey = key;
-                    //Of course, we need modifier keys...
-                    //First for Control.
-                    bool controlDown = keys.Contains(Keys.LeftControl) || keys.Contains(Keys.RightControl);
-                    //Now SHIFT.
-                    bool shiftDown = keys.Contains(Keys.LeftShift) || keys.Contains(Keys.RightShift);
-                    //And ALT.
-                    bool altDown = keys.Contains(Keys.LeftAlt) || keys.Contains(Keys.RightAlt);
-
-                    var keyevent = new KeyEvent(controlDown, altDown, shiftDown, key);
-                    var t = new System.Threading.Thread(() =>
-                    {
-                        UIManager.ProcessKeyEvent(keyevent);
-                        lastKey = Keys.None;
-                        System.Threading.Thread.Sleep(1000);
-                        if(lastKey == keyevent.Key)
-                        while (Keyboard.GetState().IsKeyDown(keyevent.Key))
-                        {
-                            UIManager.ProcessKeyEvent(keyevent);
-                            System.Threading.Thread.Sleep(75);
-                        }
-                        lastKey = Keys.None;
-                    });
-                    t.Start();
-
                 }
             }
+            if (keystate.IsKeyDown(lastKey))
+            {
+                if (kb_elapsedms == 0 || kb_elapsedms >= 500)
+                {
+                    var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
+                    var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
+                    var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
 
+                    var e = new KeyEvent(control, alt, shift, lastKey);
+                    UIManager.ProcessKeyEvent(e);
+                }
+                kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+            else
+            {
+                kb_elapsedms = 0;
+            }
             base.Update(gameTime);
         }
 
