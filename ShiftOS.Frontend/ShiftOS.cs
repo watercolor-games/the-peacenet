@@ -22,6 +22,10 @@ namespace ShiftOS.Frontend
             GraphicsDevice = new GraphicsDeviceManager(this);
             GraphicsDevice.PreferredBackBufferHeight = 1080;
             GraphicsDevice.PreferredBackBufferWidth = 1920;
+            UIManager.Viewport = new System.Drawing.Size(
+                    GraphicsDevice.PreferredBackBufferWidth,
+                    GraphicsDevice.PreferredBackBufferHeight
+                );
 
             Content.RootDirectory = "Content";
             
@@ -64,55 +68,8 @@ namespace ShiftOS.Frontend
             Engine.Infobox.Init(new Infobox());
 
 
-            //Let's give it a try.
-            Engine.Infobox.Show("Welcome to ShiftOS!", "This is a test infobox. Clicking OK will dismiss it.");
-
             //Let's initiate the engine just for a ha.
-
-            //We'll create a few UI elements when the save system loads
-            SaveSystem.GameReady += () =>
-            {
-                var headerLabel = new GUI.TextControl();
-                headerLabel.Font = SkinEngine.LoadedSkin.HeaderFont;
-                headerLabel.AutoSize = true;
-                headerLabel.Text = "ShiftOS engine startup stats";
-                headerLabel.X = 30;
-                headerLabel.Y = 30;
-                UIManager.AddTopLevel(headerLabel);
-
-                var statslabel = new GUI.TextControl();
-                statslabel.AutoSize = true;
-                statslabel.X = 30;
-                statslabel.Y = headerLabel.Y + headerLabel.Height + 30;
-                UIManager.AddTopLevel(statslabel);
-                statslabel.Text = $@"Save System
-=======================
-
-System name: {SaveSystem.CurrentSave.SystemName}
-Users: {SaveSystem.CurrentSave.Users.Count}
-
-Current user: {SaveSystem.CurrentUser.Username}
-
-Sandbox mode: {SaveSystem.IsSandbox}
-Installed upgrades: {SaveSystem.CurrentSave.CountUpgrades()} - may be inaccurate if in sandbox mode
-Available upgrades: {Shiftorium.GetAvailable().Count()}
-Total upgrades: {Shiftorium.GetDefaults().Count()}
-
-ShiftFS
-============================
-
-Mounted file systems: {Objects.ShiftFS.Utils.Mounts.Count}
-
-Reflection Manager
-=====================
-
-Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime types that ShiftOS can reflect over.
-
-
-";
-                statslabel.Layout();
-            };
-
+            
             TerminalBackend.TerminalRequested += () =>
             {
                 AppearanceManager.SetupWindow(new Apps.Terminal());
@@ -123,17 +80,6 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
 
             SaveSystem.Begin(true);
 
-            var textinput = new GUI.TextInput();
-            textinput.Width = 250;
-            textinput.Height = 20;
-            textinput.X = 0;
-            textinput.Y = 0;
-            UIManager.AddTopLevel(textinput);
-
-            framerate.Width = GraphicsDevice.PreferredBackBufferWidth;
-            framerate.Height = GraphicsDevice.PreferredBackBufferHeight;
-            framerate.TextAlign = GUI.TextAlign.BottomRight;
-            
             base.Initialize();
 
         }

@@ -32,9 +32,7 @@ namespace ShiftOS.Frontend.GUI
                     _index = 0;
                     return;
                 }
-                _index = MathHelper.Clamp(value, 0, _text.Length - 1);
-                if (_text[_index] == '\n')
-                    _index++;
+                _index = MathHelper.Clamp(value, 0, _text.Length);
                 Invalidate();
             }
         }

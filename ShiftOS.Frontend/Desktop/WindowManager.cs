@@ -60,12 +60,31 @@ namespace ShiftOS.Frontend.Desktop
             win.OnSkinLoad();
         }
 
+        private int MaxCount
+        {
+            get
+            {
+                if (Shiftorium.UpgradeInstalled("wm_unlimited_windows"))
+                    return int.MaxValue;
+                if (Shiftorium.UpgradeInstalled("wm_4_windows"))
+                    return 4;
+                if (Shiftorium.UpgradeInstalled("wm_2_windows"))
+                    return 2;
+                return 1;
+            }
+        }
+
         public override void SetupWindow(IShiftOSWindow win)
         {
             if (!Shiftorium.UpgradeAttributesUnlocked(win.GetType()))
             {
                 Console.WriteLine("Application not found on system.");
                 return;
+            }
+            while(AppearanceManager.OpenForms.Count > MaxCount)
+            {
+                AppearanceManager.OpenForms[0].Close();
+                AppearanceManager.OpenForms.RemoveAt(0);
             }
             var wb = new WindowBorder();
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
@@ -78,7 +97,23 @@ namespace ShiftOS.Frontend.Desktop
             win.OnLoad();
             win.OnUpgrade();
             win.OnSkinLoad();
+            if (!Shiftorium.UpgradeInstalled("wm_free_placement"))
+            {
+                TileWindows();
+            }
+        }
 
+        public void TileWindows()
+        {
+            if (AppearanceManager.OpenForms.Count == 0)
+                return;
+            else if(AppearanceManager.OpenForms.Count == 1)
+            {
+                var wb = (WindowBorder)AppearanceManager.OpenForms[0];
+                wb.X = 0;
+                wb.Y = 0;
+                wb.ResizeWindow(UIManager.Viewport.Width, UIManager.Viewport.Height);
+            }
         }
     }
 
@@ -86,6 +121,19 @@ namespace ShiftOS.Frontend.Desktop
     {
         private string _text = "ShiftOS window";
         private GUI.Control _hostedwindow = null;
+
+        public void ResizeWindow(int width, int height)
+        {
+            int titleheight = Shiftorium.UpgradeInstalled("wm_titlebar") ? LoadedSkin.TitlebarHeight : 0;
+            int leftwidth = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.LeftBorderWidth : 0;
+            int bottomheight = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
+            int rightwidth = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.RightBorderWidth : 0;
+            _hostedwindow.Width = width - leftwidth - rightwidth;
+            _hostedwindow.Height = width - bottomheight - titleheight;
+            Width = width;
+            Height = height;
+
+        }
 
         public WindowBorder()
         {

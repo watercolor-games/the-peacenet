@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Input;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using static ShiftOS.Engine.SkinEngine;
@@ -58,11 +61,17 @@ namespace ShiftOS.Frontend.Apps
 
     public class TerminalControl : GUI.TextInput, ITerminalWidget
     {
+        public TerminalControl()
+        {
+            Dock = GUI.DockStyle.Fill;
+            
+        }
+
         public string[] Lines
         {
             get
             {
-                return Text.Split(new[] { "\n" }, StringSplitOptions.None);
+                return Text.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
             }
         }
@@ -87,8 +96,8 @@ namespace ShiftOS.Frontend.Apps
         {
             Engine.Desktop.InvokeOnWorkerThread(() =>
             {
+                Text += text;
                 SelectBottom();
-                Text = Text.Insert(Index, text);
                 Index += text.Length;
                 RecalculateLayout();
                 InvalidateTopLevel();
@@ -126,19 +135,24 @@ namespace ShiftOS.Frontend.Apps
             {
                 var cursorpos = GetPointAtIndex(gfx);
                     var caretSize = gfx.SmartMeasureString(Text.ToString(), LoadedSkin.TerminalFont, Width - 4);
-                    float initial = ((caretSize.Height) - cursorpos.Y) - _vertOffset;
+                    float initial = (((float)Math.Floor(caretSize.Height)) + cursorpos.Y) - _vertOffset;
                     if (initial < 0)
                 {
                     float difference = initial - Height;
-                    _vertOffset += initial + difference;
+                    _vertOffset = initial + difference;
                 }
                 if (initial > Height)
                 {
                     float difference = initial - Height;
-                    _vertOffset -= initial - difference;
+                    _vertOffset = initial - difference;
                 }
 
             }
+        }
+
+        protected override void OnLayout()
+        {
+            
         }
 
         /// <summary>
@@ -146,46 +160,143 @@ namespace ShiftOS.Frontend.Apps
         /// </summary>
         /// <param name="gfx">A <see cref="System.Drawing.Graphics"/> object used for font measurements</param>
         /// <returns>An absolute fucking mess. Seriously, can someone fix this method so it uhh WORKS PROPERLY?</returns>
-        public PointF GetPointAtIndex(Graphics gfx)
+        public Point GetPointAtIndex(Graphics gfx)
         {
-            float vertMeasure = 2.0f;
-            float horizMeasure = 2.0f;
-            int lineindexes = 0;
-            for (int l = 0; l <= GetCurrentLine(); l++)
-            { 
-                var measure = gfx.SmartMeasureString(Lines[l], LoadedSkin.TerminalFont, Width - 4);
-                vertMeasure += measure.Width;
-                if(l == GetCurrentLine())
+            int vertMeasure = 2;
+            int horizMeasure = 2;
+            var textSize = gfx.SmartMeasureString(Text, LoadedSkin.TerminalFont, Width - 4);
+            for(int i = 0; i <= Index && i < Text.Length; i++)
+            {
+                 var size = gfx.SmartMeasureString((Text[i] == '\n') ? " " : Text[i].ToString(), LoadedSkin.TerminalFont);
+                if (Text[i] == '\n' || horizMeasure > Width - 4)
                 {
-                    string _linetext = Text.Substring(lineindexes, Index - lineindexes);
-                    var lMeasure = gfx.SmartMeasureString(_linetext, LoadedSkin.TerminalFont);
-                    horizMeasure = lMeasure.Width;
-                    if (horizMeasure > Width - 4)
-                        horizMeasure -= (Width-4);
+                    horizMeasure = 2;
+                    vertMeasure += (int)Math.Ceiling(size.Height);
+                    continue;
                 }
-                else
-                {
-                    lineindexes += Lines[l].Length;
-                }
+
+                horizMeasure += (int)Math.Floor(size.Width);
             }
-            return new PointF(horizMeasure, vertMeasure);
+            return new Point(horizMeasure, vertMeasure);
         }
 
-        protected override void OnKeyEvent(KeyEvent e)
+        protected override void OnKeyEvent(KeyEvent a)
         {
-            if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+            if (a.Key == Keys.Enter)
             {
-                Text = Text.Insert(Index, "\r\n");
-                Index++;
+                try
+                {
+                    if (!TerminalBackend.PrefixEnabled)
+                    {
+                        string textraw = Lines[Lines.Length - 1];
+                        TerminalBackend.SendText(textraw);
+                        return;
+                    }
+                    var text = Lines;
+                    var text2 = text[text.Length - 1];
+                    var text3 = "";
+                    var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
+
+                    {
+                        if (TerminalBackend.PrefixEnabled)
+                        {
+                            text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                        }
+                        TerminalBackend.LastCommand = text3;
+                        TerminalBackend.SendText(text4);
+                        if (TerminalBackend.InStory == false)
+                        {
+                            {
+                                var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
+
+                                if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
+                                {
+                                    Console.WriteLine("{ERR_SYNTAXERROR}");
+                                }
+                                else
+                                {
+                                    TerminalBackend.InvokeCommand(result.Key, result.Value);
+                                }
+
+                            }
+                        }
+                        if (TerminalBackend.PrefixEnabled)
+                        {
+                            TerminalBackend.PrintPrompt();
+                        }
+                    }
+                }
+                catch
+                {
+                }
             }
-            base.OnKeyEvent(e);
-            RecalculateLayout();
-            InvalidateTopLevel();
+            else if (a.Key == Keys.Back)
+            {
+                try
+                {
+                    var tostring3 = Lines[Lines.Length - 1];
+                    var tostringlen = tostring3.Length + 1;
+                    var workaround = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var derp = workaround.Length + 1;
+                    if (tostringlen != derp)
+                    {
+                        AppearanceManager.CurrentPosition--;
+                        base.OnKeyEvent(a);
+                        RecalculateLayout();
+                        InvalidateTopLevel();
+                    }
+                }
+                catch
+                {
+                    Debug.WriteLine("Drunky alert in terminal.");
+                }
+            }
+            else if (a.Key == Keys.Left)
+            {
+                if (SaveSystem.CurrentSave != null)
+                {
+                    var getstring = Lines[Lines.Length - 1];
+                    var stringlen = getstring.Length + 1;
+                    var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var headerlen = header.Length + 1;
+                    var selstart = Index;
+                    var remstrlen = Text.Length - stringlen;
+                    var finalnum = selstart - remstrlen;
+
+                    if (finalnum != headerlen)
+                    {
+                        AppearanceManager.CurrentPosition--;
+                        base.OnKeyEvent(a);
+                    }
+                }
+            }
+            else if (a.Key == Keys.Up)
+            {
+                var tostring3 = Lines[Lines.Length - 1];
+                if (tostring3 == $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
+                    Console.Write(TerminalBackend.LastCommand);
+                ConsoleEx.OnFlush?.Invoke();
+                return;
+
+            }
+            else
+            {
+                if (TerminalBackend.InStory)
+                {
+                    return;
+                }
+                if (a.KeyChar != '\0')
+                {
+                    base.OnKeyEvent(a);
+                    AppearanceManager.CurrentPosition++;
+                    RecalculateLayout();
+                    InvalidateTopLevel();
+                }
+            }
         }
 
         protected override void OnPaint(Graphics gfx)
-        {
-            RecalculateLayout();
+        { 
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor());
             if (!string.IsNullOrEmpty(Text))
             {
@@ -257,7 +368,8 @@ namespace ShiftOS.Frontend.Apps
             var textformat = new StringFormat(StringFormat.GenericTypographic);
             textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             textformat.Trimming = StringTrimming.None;
-            return gfx.MeasureString(s, font, width, textformat);
+            var measure = gfx.MeasureString(s, font, width, textformat);
+            return new SizeF((float)Math.Floor(measure.Width), (float)Math.Floor(measure.Height));
         }
 
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
@@ -267,7 +379,8 @@ namespace ShiftOS.Frontend.Apps
             var textformat = new StringFormat(StringFormat.GenericTypographic);
             textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             textformat.Trimming = StringTrimming.None;
-            return gfx.MeasureString(s, font, int.MaxValue, textformat);
+            var measure = gfx.MeasureString(s, font, int.MaxValue, textformat);
+            return new SizeF((float)Math.Floor(measure.Width), (float)Math.Floor(measure.Height));
         }
 
     }
