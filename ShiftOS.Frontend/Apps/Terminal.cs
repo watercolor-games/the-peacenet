@@ -36,6 +36,16 @@ namespace ShiftOS.Frontend.Apps
             _terminal.Layout();
             AppearanceManager.ConsoleOut = _terminal;
             AppearanceManager.StartConsoleOut();
+            TerminalBackend.PrintPrompt();
+            SaveSystem.GameReady += () =>
+            {
+                if (Shiftorium.UpgradeInstalled("desktop"))
+                {
+                    AppearanceManager.Close(this);
+                }
+                else
+                    TerminalBackend.PrintPrompt();
+            };
         }
 
         protected override void OnLayout()
@@ -287,7 +297,8 @@ namespace ShiftOS.Frontend.Apps
                 }
                 if (a.KeyChar != '\0')
                 {
-                    base.OnKeyEvent(a);
+                    Text = Text.Insert(Index, a.KeyChar.ToString());
+                    Index++;
                     AppearanceManager.CurrentPosition++;
                     RecalculateLayout();
                     InvalidateTopLevel();
