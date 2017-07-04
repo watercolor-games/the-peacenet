@@ -26,7 +26,7 @@ namespace ShiftOS.Frontend.Desktop
 
         public override void InvokeAction(Action act)
         {
-            act?.Invoke();
+            UIManager.CrossThreadOperations.Enqueue(act);
         }
 
         public override void Maximize(IWindowBorder border)

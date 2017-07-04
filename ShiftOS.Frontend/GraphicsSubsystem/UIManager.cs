@@ -85,6 +85,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         private static Texture2D DesktopBackground = null;
 
+        public static Queue<Action> CrossThreadOperations = new Queue<Action>();
+
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
             if (SkinEngine.LoadedSkin == null)

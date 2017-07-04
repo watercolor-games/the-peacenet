@@ -92,7 +92,6 @@ namespace ShiftOS.Frontend.GUI
 
             }
 
-            base.OnPaint(gfx);
             gfx.DrawString(_text, _font, new SolidBrush(Engine.SkinEngine.LoadedSkin.ControlTextColor), new RectangleF(loc.X, loc.Y, sMeasure.Width, sMeasure.Height));
         }
     }

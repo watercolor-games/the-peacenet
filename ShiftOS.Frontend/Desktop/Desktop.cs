@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShiftOS.Engine;
+using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.Desktop
 {
@@ -35,7 +36,7 @@ namespace ShiftOS.Frontend.Desktop
 
         public void InvokeOnWorkerThread(Action act)
         {
-            act?.Invoke();
+            UIManager.CrossThreadOperations.Enqueue(act);
         }
 
         public void KillWindow(IWindowBorder border)

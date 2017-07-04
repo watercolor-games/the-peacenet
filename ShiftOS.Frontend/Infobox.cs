@@ -79,10 +79,15 @@ namespace ShiftOS.Frontend
 
         public void ShowText(Action<string> callback)
         {
-            Title = "Not yet implemented.";
-            lbmessage.Text = "This feature hasn't yet been implemented.";
-            ShowPrompt(null);
-
+            AppearanceManager.SetupDialog(this);
+            flyesno.Visible = false;
+            btnok.Visible = true;
+            txtinput.Visible = true;
+            btnok.Click += () =>
+            {
+                callback?.Invoke(txtinput.Text);
+                AppearanceManager.Close(this);
+            };
         }
 
         public void OnSkinLoad()

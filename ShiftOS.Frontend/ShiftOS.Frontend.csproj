@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />

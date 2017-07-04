@@ -113,10 +113,15 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
                 statslabel.Layout();
             };
 
-            //We'll use sandbox mode
-            SaveSystem.IsSandbox = true;
+            TerminalBackend.TerminalRequested += () =>
+            {
+                AppearanceManager.SetupWindow(new Apps.Terminal());
+            };
 
-            SaveSystem.Begin();
+            //We'll use sandbox mode
+            SaveSystem.IsSandbox = false;
+
+            SaveSystem.Begin(true);
 
             var textinput = new GUI.TextInput();
             textinput.Width = 250;
@@ -174,6 +179,12 @@ Reflection manager found {ReflectMan.Types.Count()} Common Language Runtime type
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (UIManager.CrossThreadOperations.Count > 0)
+            {
+                var action = UIManager.CrossThreadOperations.Dequeue();
+                action?.Invoke();
+            }
+
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
 

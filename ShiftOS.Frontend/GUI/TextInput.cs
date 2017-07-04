@@ -17,6 +17,48 @@ namespace ShiftOS.Frontend.GUI
         private int _index = 0;
         private Font _font = new Font("Tahoma", 9f);
 
+        public int Index
+        {
+            get
+            {
+                return _index;
+            }
+            set
+            {
+                if (_index == value)
+                    return;
+                if(_text.Length == 0)
+                {
+                    _index = 0;
+                    return;
+                }
+                _index = MathHelper.Clamp(value, 0, _text.Length - 1);
+                if (_text[_index] == '\n')
+                    _index++;
+                Invalidate();
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                if (_text == value)
+                    return;
+
+                _text = value;
+                if(_index >= _text.Length)
+                {
+                    _index = _text.Length - 1;
+                }
+                Invalidate();
+            }
+        }
+
         protected override void OnKeyEvent(KeyEvent e)
         {
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Left)
