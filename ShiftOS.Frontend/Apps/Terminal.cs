@@ -90,6 +90,7 @@ namespace ShiftOS.Frontend.Apps
         {
             Text = "";
             Index = 0;
+            _vertOffset = 0;
             Invalidate();
         }
 
@@ -106,7 +107,7 @@ namespace ShiftOS.Frontend.Apps
         {
             Engine.Desktop.InvokeOnWorkerThread(() =>
             {
-                Text += text;
+                Text += Localization.Parse(text);
                 SelectBottom();
                 Index += text.Length;
                 RecalculateLayout();
@@ -175,20 +176,25 @@ namespace ShiftOS.Frontend.Apps
             int vertMeasure = 2;
             int horizMeasure = 2;
             var textSize = gfx.SmartMeasureString(Text, LoadedSkin.TerminalFont, Width - 4);
-            for(int i = 0; i <= Index && i < Text.Length; i++)
+            int lineindex = 0;
+            int line = GetCurrentLine();
+            for (int l = 0; l < line; l++)
             {
-                 var size = gfx.SmartMeasureString((Text[i] == '\n') ? " " : Text[i].ToString(), LoadedSkin.TerminalFont);
-                if (Text[i] == '\n' || horizMeasure > Width - 4)
-                {
-                    horizMeasure = 2;
-                    vertMeasure += (int)Math.Ceiling(size.Height);
-                    continue;
-                }
+                lineindex += Lines[l].Length;
+                var stringMeasure = gfx.SmartMeasureString(Lines[l], LoadedSkin.TerminalFont, Width - 4);
+                vertMeasure += (int)stringMeasure.Height;
 
-                horizMeasure += (int)Math.Floor(size.Width);
             }
+            var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), LoadedSkin.TerminalFont);
+            int w = (int)Math.Floor(lnMeasure.Width);
+            if (w > Width - 4)
+                w = w - (Width - 4);
+            horizMeasure = w;
             return new Point(horizMeasure, vertMeasure);
         }
+
+        private PointF CaretPosition = new PointF(2, 2);
+        private Size CaretSize = new Size(2, 15);
 
         protected override void OnKeyEvent(KeyEvent a)
         {
@@ -206,7 +212,7 @@ namespace ShiftOS.Frontend.Apps
                     var text2 = text[text.Length - 1];
                     var text3 = "";
                     var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-
+                    WriteLine("");
                     {
                         if (TerminalBackend.PrefixEnabled)
                         {
@@ -300,28 +306,25 @@ namespace ShiftOS.Frontend.Apps
                     Text = Text.Insert(Index, a.KeyChar.ToString());
                     Index++;
                     AppearanceManager.CurrentPosition++;
-                    RecalculateLayout();
+//                    RecalculateLayout();
                     InvalidateTopLevel();
                 }
             }
         }
 
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         { 
-            gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor());
+            gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
             if (!string.IsNullOrEmpty(Text))
             {
                 //Draw the caret.
-                var caretPos = GetPointAtIndex(gfx);
-                var caretSize = gfx.SmartMeasureString(Text[Index - 1].ToString(), LoadedSkin.TerminalFont);
                 if (IsFocusedControl)
                 {
-                    gfx.FillRectangle(new SolidBrush(LoadedSkin.TerminalForeColorCC.ToColor()), new RectangleF(new PointF(caretPos.X, caretPos.Y - _vertOffset), new SizeF(2, caretSize.Height)));
+//                    gfx.FillRectangle(new SolidBrush(LoadedSkin.TerminalForeColorCC.ToColor()), new RectangleF(new PointF(CaretPosition.X, CaretPosition.Y - _vertOffset), new SizeF(2, CaretSize.Height)));
                 }//Draw the text
-                var textMeasure = gfx.MeasureString(Text, LoadedSkin.TerminalFont, Width - 4);
-                gfx.DrawString(Text, LoadedSkin.TerminalFont, new SolidBrush(LoadedSkin.TerminalForeColorCC.ToColor()), 2, 2 - _vertOffset);
-                
 
+
+                gfx.DrawString(Text, 2, 2 - (int)Math.Floor(_vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), LoadedSkin.TerminalFont, Width - 4);
             }
         }
 
@@ -380,7 +383,7 @@ namespace ShiftOS.Frontend.Apps
             textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             textformat.Trimming = StringTrimming.None;
             var measure = gfx.MeasureString(s, font, width, textformat);
-            return new SizeF((float)Math.Floor(measure.Width), (float)Math.Floor(measure.Height));
+            return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Ceiling(measure.Height));
         }
 
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
@@ -391,7 +394,7 @@ namespace ShiftOS.Frontend.Apps
             textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             textformat.Trimming = StringTrimming.None;
             var measure = gfx.MeasureString(s, font, int.MaxValue, textformat);
-            return new SizeF((float)Math.Floor(measure.Width), (float)Math.Floor(measure.Height));
+            return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Floor(measure.Height));
         }
 
     }

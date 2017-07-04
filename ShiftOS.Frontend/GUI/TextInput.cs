@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace ShiftOS.Frontend.GUI
         private string _label = "Type here!";
         private string _text = "";
         private int _index = 0;
-        private Font _font = new Font("Tahoma", 9f);
+        private System.Drawing.Font _font = new System.Drawing.Font("Tahoma", 9f);
 
         public int Index
         {
@@ -96,7 +96,7 @@ namespace ShiftOS.Frontend.GUI
 
         protected void CalculateVisibleText()
         {
-            using(var gfx = Graphics.FromImage(new Bitmap(1, 1)))
+            using(var gfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
             {
                 string toCaret = _text.Substring(0, _index);
                 var measure = gfx.MeasureString(toCaret, _font);
@@ -115,25 +115,24 @@ namespace ShiftOS.Frontend.GUI
 
         private float _textDrawOffset = 0;
         
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         {
-            gfx.Clear(LoadedSkin.ControlColor);
-            gfx.DrawString(_text, _font, new SolidBrush(LoadedSkin.ControlTextColor), 2 - _textDrawOffset, 2);
+            gfx.Clear(LoadedSkin.ControlColor.ToMonoColor());
+            gfx.DrawString(_text, 2 - (int)Math.Floor(_textDrawOffset), 2, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
             if (IsFocusedControl)
             {
                 //Draw caret.
-                gfx.FillRectangle(new SolidBrush(LoadedSkin.ControlTextColor), new RectangleF(caretPos - _textDrawOffset, 2, 2, Height - 4));
+
+                
+                gfx.DrawRectangle((int)(Math.Floor(caretPos) - Math.Floor(_textDrawOffset)), 2, 2, Height - 4, LoadedSkin.ControlTextColor.ToMonoColor());
             }
             else
             {
                 if (string.IsNullOrEmpty(_text))
                 {
-                    gfx.DrawString(_label, _font, Brushes.Gray, 2, 2);
+                    gfx.DrawString(_label, 2, 2, Color.Gray, _font);
                 }
             }
-            gfx.DrawRectangle(new Pen(new SolidBrush(LoadedSkin.ControlTextColor), 1), new System.Drawing.Rectangle(0, 0, Width - 1, Height - 1));
-
-
         }
     }
 }

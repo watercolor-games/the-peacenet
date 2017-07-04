@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShiftOS.Engine;
+using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -31,19 +32,17 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         {
-            Color bgCol = SkinEngine.LoadedSkin.ButtonBackgroundColor;
-            Color fgCol = SkinEngine.LoadedSkin.ControlTextColor;
+            var bgCol = SkinEngine.LoadedSkin.ButtonBackgroundColor.ToMonoColor();
+            var fgCol = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
             if (ContainsMouse)
-                bgCol = SkinEngine.LoadedSkin.ButtonHoverColor;
+                bgCol = SkinEngine.LoadedSkin.ButtonHoverColor.ToMonoColor();
             if (MouseLeftDown)
-                bgCol = SkinEngine.LoadedSkin.ButtonPressedColor;
+                bgCol = SkinEngine.LoadedSkin.ButtonPressedColor.ToMonoColor();
 
-            gfx.Clear(bgCol);
-            gfx.DrawRectangle(new Pen(new SolidBrush(fgCol), SkinEngine.LoadedSkin.ButtonBorderWidth), new Rectangle(0, 0, Width, Height));
             base.OnPaint(gfx);
-
+            base.OnPaint(gfx);
         }
     }
 }

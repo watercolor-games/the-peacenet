@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using static ShiftOS.Engine.SkinEngine;
@@ -252,8 +255,8 @@ namespace ShiftOS.Frontend.Desktop
                 }
             }
         }
-
-        protected override void OnPaint(Graphics gfx)
+        [DebuggerStepThrough]
+        protected override void OnPaint(GraphicsContext gfx)
         {
             int titleheight = LoadedSkin.TitlebarHeight;
             int leftborderwidth = LoadedSkin.LeftBorderWidth;
@@ -298,48 +301,44 @@ namespace ShiftOS.Frontend.Desktop
                     //draw left corner
                     if(leftimage != null)
                     {
-                        var resized = ResizeImage(leftimage, leftwidth, titleheight);
-                        gfx.DrawImage(resized, 0, 0);
+                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftimage.ToTexture2D(gfx.Device));
                     }
                     else
                     {
-                        gfx.FillRectangle(new SolidBrush(leftcolor), new Rectangle(0, 0, leftwidth, titleheight));
+                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftcolor.ToMonoColor());
                     }
 
                     //draw right corner
                     if (rightimage != null)
                     {
-                        var resized = ResizeImage(rightimage, rightwidth, titleheight);
-                        gfx.DrawImage(resized, titlebarleft+titlebarwidth, 0);
+                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightimage.ToTexture2D(gfx.Device));
                     }
                     else
                     {
-                        gfx.FillRectangle(new SolidBrush(rightcolor), new Rectangle(titlebarleft+titlebarwidth, 0, rightwidth, titleheight));
+                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightcolor.ToMonoColor());
                     }
                 }
 
                 if (titlebarbg == null)
                 {
                     //draw the title bg
-                    gfx.FillRectangle(new SolidBrush(titlebarcolor), new Rectangle(titlebarleft, 0, titlebarwidth, titleheight));
-
+                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarcolor.ToMonoColor());
 
                 }
                 else
                 {
-                    var resized = ResizeImage(titlebarbg, titlebarwidth, titleheight);
-                    gfx.DrawImage(resized, titlebarleft, 0);
+                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarbg.ToTexture2D(gfx.Device));
                 }
                 //Now we draw the title text.
                 var textMeasure = gfx.MeasureString(_text, titlefont);
                 PointF textloc;
                 if (titletextcentered)
-                    textloc = new PointF((titlebarwidth - textMeasure.Width) / 2,
+                    textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
                         titletextleft.Y);
                 else
                     textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
 
-                gfx.DrawString(_text, titlefont, new SolidBrush(titletextcolor), textloc);
+                gfx.DrawString(_text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
 
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 
@@ -354,12 +353,11 @@ namespace ShiftOS.Frontend.Desktop
                     var img = GetImage("closebutton");
                     if (img == null)
                     {
-                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
-                        gfx.DrawImage(resized, closebuttonright);
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
                     }
                 }
                 //Draw maximize button
@@ -371,16 +369,14 @@ namespace ShiftOS.Frontend.Desktop
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
-                    gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
                     var img = GetImage("maximizebutton");
                     if (img == null)
                     {
-                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
-                        gfx.DrawImage(resized, closebuttonright);
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
                     }
 
                 }
@@ -395,12 +391,11 @@ namespace ShiftOS.Frontend.Desktop
                     var img = GetImage("minimizebutton");
                     if (img == null)
                     {
-                        gfx.FillRectangle(new SolidBrush(closebuttoncolor), new Rectangle(closebuttonright, closebuttonsize));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        var resized = ResizeImage(img, closebuttonsize.Width, closebuttonsize.Height);
-                        gfx.DrawImage(resized, closebuttonright);
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
                     }
 
 
@@ -433,59 +428,60 @@ namespace ShiftOS.Frontend.Desktop
                 var bottomlimg = GetImage("bottomlborder");
                 if (bottomlimg == null)
                 {
-                    gfx.FillRectangle(new SolidBrush(borderbleftcolor), new Rectangle(0, bottomlocy, leftborderwidth, bottomborderwidth));
+                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor.ToMonoColor());
                 }
                 else
                 {
-                    bottomlimg = ResizeImage(bottomlimg, leftborderwidth, bottomborderwidth);
-                    gfx.DrawImage(bottomlimg, 0, bottomlocy);
+                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, bottomlimg.ToTexture2D(gfx.Device));
                 }
 
                 //BOTTOM RIGHT
                 var bottomrimg = GetImage("bottomrborder");
                 if (bottomrimg == null)
                 {
-                    gfx.FillRectangle(new SolidBrush(borderbrightcolor), new Rectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth));
+                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor.ToMonoColor());
                 }
                 else
                 {
-                    bottomrimg = ResizeImage(bottomrimg, rightborderwidth, bottomborderwidth);
-                    gfx.DrawImage(bottomrimg, brightlocx, bottomlocy);
+                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, bottomrimg.ToTexture2D(gfx.Device));
                 }
 
                 //BOTTOM
                 var bottomimg = GetImage("bottomborder");
                 if (bottomimg == null)
-                    gfx.FillRectangle(new SolidBrush(borderbottomcolor), new Rectangle(bottomlocx, bottomlocy, bottomwidth, bottomborderwidth));
+                {
+                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor.ToMonoColor());
+                }
                 else
                 {
-                    bottomimg = ResizeImage(bottomimg, bottomwidth, bottomborderwidth);
-                    gfx.DrawImage(bottomimg, bottomlocx, bottomlocy);
+                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, bottomimg.ToTexture2D(gfx.Device));
                 }
 
                 //LEFT
                 var leftimg = GetImage("leftborder");
                 if (leftimg == null)
-                    gfx.FillRectangle(new SolidBrush(borderleftcolor), new Rectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth));
+                {
+                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, borderleftcolor.ToMonoColor());
+                }
                 else
                 {
-                    leftimg = ResizeImage(leftimg, leftborderwidth, Height - bottomborderwidth - titleheight);
-                    gfx.DrawImage(leftimg, 0, titleheight);
+                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, leftimg.ToTexture2D(gfx.Device));
                 }
 
                 //RIGHT
                 var rightimg = GetImage("rightborder");
                 if (rightimg == null)
                 {
-                    gfx.FillRectangle(new SolidBrush(borderrightcolor), new Rectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth));
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor.ToMonoColor());
                 }
                 else
                 {
-                    rightimg = ResizeImage(rightimg, rightborderwidth, Height - titleheight - bottomborderwidth);
-                    gfx.DrawImage(rightimg, brightlocx, titleheight);
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, rightimg.ToTexture2D(gfx.Device));
                 }
+
             }
 
+            gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, LoadedSkin.ControlColor.ToMonoColor());
             //So here's what we're gonna do now.
             //Now that we have a titlebar and window borders...
             //We're going to composite the hosted window
@@ -494,5 +490,27 @@ namespace ShiftOS.Frontend.Desktop
             //Painting of the canvas is done by the Paint() method.
         }
 
+    }
+
+    public static class ImageExtensioons
+    {
+        public static Texture2D ToTexture2D(this Image image, GraphicsDevice device)
+        {
+            var bmp = (Bitmap)image;
+            var lck = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var data = new byte[Math.Abs(lck.Stride) * lck.Height];
+            Marshal.Copy(lck.Scan0, data, 0, data.Length);
+            bmp.UnlockBits(lck);
+            for(int i = 0; i < data.Length; i += 4)
+            {
+                byte r = data[i];
+                byte b = data[i + 2];
+                data[i] = b;
+                data[i + 2] = r;
+            }
+            var tex2 = new Texture2D(device, bmp.Width, bmp.Height);
+            tex2.SetData<byte>(data);
+            return tex2;
+        }
     }
 }

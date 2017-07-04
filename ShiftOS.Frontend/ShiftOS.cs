@@ -16,7 +16,7 @@ namespace ShiftOS.Frontend
     {
         GraphicsDeviceManager GraphicsDevice;
         SpriteBatch spriteBatch;
-        
+
         public ShiftOS()
         {
             GraphicsDevice = new GraphicsDeviceManager(this);
@@ -28,7 +28,7 @@ namespace ShiftOS.Frontend
                 );
 
             Content.RootDirectory = "Content";
-            
+
 
             //Make window borderless
             Window.IsBorderless = false;
@@ -36,7 +36,7 @@ namespace ShiftOS.Frontend
             //Set the title
             Window.Title = "ShiftOS";
 
-            
+
 
             //Fullscreen
             GraphicsDevice.IsFullScreen = false;
@@ -57,6 +57,9 @@ namespace ShiftOS.Frontend
         {
             //Before we do ANYTHING, we've got to initiate the ShiftOS engine.
 
+            //Let's get localization going.
+            Localization.RegisterProvider(new MonoGameLanguageProvider());
+
             //First things first, let's initiate the window manager.
             AppearanceManager.Initiate(new Desktop.WindowManager());
             //Cool. Now the engine's window management system talks to us.
@@ -69,7 +72,7 @@ namespace ShiftOS.Frontend
 
 
             //Let's initiate the engine just for a ha.
-            
+
             TerminalBackend.TerminalRequested += () =>
             {
                 AppearanceManager.SetupWindow(new Apps.Terminal());
@@ -77,7 +80,7 @@ namespace ShiftOS.Frontend
 
             //We'll use sandbox mode
             SaveSystem.IsSandbox = false;
-
+            Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 
             base.Initialize();
@@ -86,7 +89,7 @@ namespace ShiftOS.Frontend
 
         private Texture2D MouseTexture = null;
 
-        /// <summary>
+         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
@@ -118,6 +121,7 @@ namespace ShiftOS.Frontend
 
         private double kb_elapsedms = 0;
 
+        private MouseState LastMouseState;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -133,15 +137,11 @@ namespace ShiftOS.Frontend
 
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
-
-                //Now let's process it.
-                UIManager.ProcessMouseState(mouseState);
-
-            //Cause layout update on all elements
-            UIManager.LayoutUpdate();
-
-            //set framerate
-            framerate.Text = "ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 ShiftOS\r\nFPS: " + (1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
+            if(LastMouseState != mouseState)
+            {
+                LastMouseState = mouseState;
+                UIManager.ProcessMouseState(LastMouseState);
+            }
 
             //So we have mouse input, and the UI layout system working...
 
@@ -167,19 +167,31 @@ namespace ShiftOS.Frontend
             {
                 if (kb_elapsedms == 0 || kb_elapsedms >= 500)
                 {
-                    var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
-                    var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
-                    var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
+                    if (lastKey == Keys.F11)
+                    {
+                        GraphicsDevice.IsFullScreen = !GraphicsDevice.IsFullScreen;
+                        GraphicsDevice.ApplyChanges();
+                    }
+                    else
+                    {
+                        var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
+                        var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
+                        var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
 
-                    var e = new KeyEvent(control, alt, shift, lastKey);
-                    UIManager.ProcessKeyEvent(e);
-                }
+                        var e = new KeyEvent(control, alt, shift, lastKey);
+                        UIManager.ProcessKeyEvent(e);
+                    }
+                }                
                 kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
             }
             else
             {
                 kb_elapsedms = 0;
             }
+
+            //Cause layout update on all elements
+            UIManager.LayoutUpdate();
+
             base.Update(gameTime);
         }
 
@@ -191,13 +203,14 @@ namespace ShiftOS.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            UIManager.DrawControlsToTargets(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0);
+
             this.spriteBatch.Begin();
             //Draw the desktop BG.
-            var graphics = GraphicsDevice.GraphicsDevice;
-            UIManager.DrawBackgroundLayer(graphics, spriteBatch, 640, 480);
+            UIManager.DrawBackgroundLayer(GraphicsDevice.GraphicsDevice, spriteBatch, 640, 480);
 
             //The desktop is drawn, now we can draw the UI.
-            UIManager.DrawControls(graphics, spriteBatch);
+            UIManager.DrawTArgets(spriteBatch);
 
             //Draw a mouse cursor
 

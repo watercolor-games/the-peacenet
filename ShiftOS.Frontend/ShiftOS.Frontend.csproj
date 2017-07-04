@@ -46,6 +46,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
+    <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\Control.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="GUI\TextControl.cs" />
     <Compile Include="GUI\TextInput.cs" />
     <Compile Include="Infobox.cs" />
+    <Compile Include="MonoGameLanguageProvider.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -151,6 +153,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\justthes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strings_en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strings_fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\strings_de.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

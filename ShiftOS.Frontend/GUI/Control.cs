@@ -362,9 +362,9 @@ namespace ShiftOS.Frontend.GUI
 
         public virtual void MouseStateChanged() { }
 
-        protected virtual void OnPaint(Graphics gfx)
+        protected virtual void OnPaint(GraphicsContext gfx)
         {
-            gfx.Clear(Engine.SkinEngine.LoadedSkin.ControlColor);
+            gfx.Clear(Engine.SkinEngine.LoadedSkin.ControlColor.ToMonoColor());
         }
 
         public void InvalidateTopLevel()
@@ -375,46 +375,29 @@ namespace ShiftOS.Frontend.GUI
             parent.Invalidate();
         }
 
-        public void Paint(System.Drawing.Graphics gfx)
+        public void Paint(GraphicsContext gfx)
         {
             if (_visible == true)
             {
-                if (_invalidated)
+                OnPaint(gfx);
+                int draw_x = gfx.X;
+                int draw_y = gfx.Y;
+                int draw_width = gfx.Width;
+                int draw_height = gfx.Height;
+                foreach (var ctrl in _children)
                 {
-                    _texCache = new Bitmap(Width, Height);
-                    using (var cGfx = Graphics.FromImage(_texCache))
+                    if (ctrl.Visible == true)
                     {
-                        OnPaint(cGfx);
+                        gfx.X = draw_x + ctrl.X;
+                        gfx.Y = draw_y + ctrl.Y;
+                        gfx.Width = ctrl.Width;
+                        gfx.Height = ctrl.Height;
+                        ctrl.Paint(gfx);
                     }
-                    _invalidated = false;
+                    gfx.Width = draw_width;
+                    gfx.Height = draw_height;
                 }
-                foreach (var child in _children)
-                {
-                    if (child.Visible)
-                    {
-                        if (child._invalidated)
-                        {
-                            var cBmp = new Bitmap(child.Width, child.Height);
-                            child.Paint(System.Drawing.Graphics.FromImage(cBmp));
-                            cBmp.SetOpacity((float)child.Opacity);
-                            using(var cGfx = Graphics.FromImage(_texCache))
-                            {
-                                cGfx.DrawImage(child.TextureCache, child.X, child.Y);
-                            }
-                            child._invalidated = false;
-                            child._texCache = cBmp;
-                            gfx.DrawImage(cBmp, new System.Drawing.Point(child.X, child.Y));
-
-
-
-                        }
-                        else
-                        {
-                            gfx.DrawImage(child._texCache, child.X, child.Y);
-                        }
-                    }
-                }
-                gfx.DrawImage(_texCache, 0, 0);
+                _invalidated = false;
             }
         }
 

@@ -79,5 +79,71 @@ namespace ShiftOS.Frontend.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	&quot;{SUBMIT}&quot;:&quot;Bestätigen&quot;,
+        ///
+        ///&quot;{TERMINAL_TUTORIAL_1}&quot;:&quot;Wilkommen zum ShiftOS Terminal. Hier wirst du die meiste Zeit in ShiftOS verbringen.
+        ///  
+        ///Eine kurze Erklärung wie du das Terminal benutzt lautet wiefolgt. Du kannst das command &apos;sos.help&apos; benutzen um eine Liste aller commands aufzurufen. Schreib es
+        ///einfach in das Terminal und drücke &lt;enter&gt; um alle commands anzuzeigen.
+        /// 
+        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Be [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string strings_de {
+            get {
+                return ResourceManager.GetString("strings_de", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        /// * ShiftOS English Language Pack
+        /// *
+        /// * This is the default language pack distributed within the game.
+        /// */
+        ///
+        ///{
+        ///  //General strings
+        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
+        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Programs&quot;,
+        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Commands&quot;,
+        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Objectives&quot;,
+        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Current processes&quot;,
+        ///  &quot;{GEN_WELCOME}&quot;: &quot;Welcome to ShiftOS.&quot;,
+        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;System name&quot;,
+        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Password&quot;,
+        ///  &quot;{GEN_LPROMPT [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string strings_en {
+            get {
+                return ResourceManager.GetString("strings_en", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        /// * ShiftOS French Language Pack
+        /// *
+        /// * This is a default language pack distributed within the game.
+        /// */
+        ///
+        ///{
+        ///  //General strings
+        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
+        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Les programmes&quot;,
+        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Les ordres&quot;,
+        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Les objectifs&quot;,
+        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Les procèdures actuelles&quot;,
+        ///  &quot;{GEN_WELCOME}&quot;: &quot;Bienvenue au ShiftOS.&quot;,
+        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;Nom de système&quot;,
+        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Mot de  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string strings_fr {
+            get {
+                return ResourceManager.GetString("strings_fr", resourceCulture);
+            }
+        }
     }
 }

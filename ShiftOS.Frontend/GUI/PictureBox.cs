@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ShiftOS.Engine;
 using System.Drawing.Imaging;
+using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -50,38 +51,8 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         {
-            if(img != null)
-                switch (_layout)
-                {
-                    case ImageLayout.None:
-                        //Just draw the image.
-                        gfx.DrawImage(img, new PointF(0, 0));
-                        break;
-                    case ImageLayout.Stretch:
-                        //Stretch the image, with no regard for aspect ratio.
-                        var stretched = ResizeImage(img, Width, Height);
-                        gfx.DrawImage(stretched, 0, 0);
-                        break;
-                    case ImageLayout.Fit:
-                        //Resize image to fit the control but keep aspect ratio.
-                        var fitted = FixedSize(img, Width, Height);
-                        gfx.DrawImage(fitted, 0, 0);
-                        break;
-                    case ImageLayout.Tile:
-                        //Keep original size but tile the image.
-
-                        for(int x = 0; x < Width; x += img.Width)
-                        {
-                            for (int y = 0; y < Height; y += img.Height)
-                            {
-                                gfx.DrawImage(img, x, y);
-                            }
-                        }
-
-                        break;
-                }
         }
 
         //Again, thanks StackOverflow

@@ -40,26 +40,56 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             t.Start();
         }
 
-        public static Dictionary<int, Texture2D> TextureCaches = new Dictionary<int, Texture2D>();
+        public static Dictionary<int, RenderTarget2D> TextureCaches = new Dictionary<int, RenderTarget2D>();
 
-        public static void DrawControls(GraphicsDevice graphics, SpriteBatch batch)
+        public static void DrawTArgets(SpriteBatch batch)
         {
-            foreach (var ctrl in topLevels.ToArray())
+            foreach(var ctrl in topLevels)
             {
+                if (ctrl.Visible == true)
+                {
+                    int hc = ctrl.GetHashCode();
+                    var _target = TextureCaches[hc];
+                    batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
+                }
+            }
+        }
+
+        public static void DrawControlsToTargets(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
+        {
+            foreach (var ctrl in topLevels.ToArray().Where(x=>x.Visible==true))
+            {
+                RenderTarget2D _target;
                 int hc = ctrl.GetHashCode();
+                if (!TextureCaches.ContainsKey(hc))
+                {
+                    _target = new RenderTarget2D(
+                                    graphics,
+                                    ctrl.Width,
+                                    ctrl.Height,
+                                    false,
+                                    graphics.PresentationParameters.BackBufferFormat,
+                                    DepthFormat.Depth24);
+                    TextureCaches.Add(hc, _target);
+                }
+                else
+                {
+                    _target = TextureCaches[hc];
+                }
                 if (ctrl.RequiresPaint)
                 {
-                    var bmp = new System.Drawing.Bitmap(ctrl.Width, ctrl.Height);
-                    ctrl.Paint(System.Drawing.Graphics.FromImage(bmp));
-                    if (TextureCaches.ContainsKey(hc))
-                    {
-                        TextureCaches[hc].Dispose();
-                        TextureCaches.Remove(hc);
-                    }
-                    TextureCaches.Add(hc, new Texture2D(graphics, ctrl.Width, ctrl.Height));
-                    TextureCaches[hc].SetData<byte>(ctrl.PaintCache);
+                    graphics.SetRenderTarget(_target);
+                    graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+                    batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                                    SamplerState.LinearClamp, DepthStencilState.Default,
+                                    RasterizerState.CullNone);
+                    var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
+                    ctrl.Paint(gfxContext);
+                    
+                    graphics.SetRenderTarget(null);
+                    TextureCaches[hc] = _target;
+                    batch.End();
                 }
-                batch.Draw(TextureCaches[hc], new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
             }
         }
 

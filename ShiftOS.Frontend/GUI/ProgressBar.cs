@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ShiftOS.Frontend.GraphicsSubsystem;
 using static ShiftOS.Engine.SkinEngine;
 
 namespace ShiftOS.Frontend.GUI
@@ -37,11 +38,11 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         {
-            gfx.Clear(LoadedSkin.ProgressBarBackgroundColor);
+            gfx.Clear(LoadedSkin.ProgressBarBackgroundColor.ToMonoColor());
             int w = (int)linear(_value, 0, _maximum, 0, Width);
-            gfx.FillRectangle(new SolidBrush(LoadedSkin.ProgressColor), new Rectangle(0, 0, w, Height));
+            gfx.DrawRectangle(0, 0, w, Height, LoadedSkin.ProgressColor.ToMonoColor());
         }
 
         static public double linear(double x, double x0, double x1, double y0, double y1)

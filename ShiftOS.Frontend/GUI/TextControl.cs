@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -53,19 +54,19 @@ namespace ShiftOS.Frontend.GUI
             set { _textAlign = value; }
         }
 
-        protected override void OnPaint(Graphics gfx)
+        protected override void OnPaint(GraphicsContext gfx)
         {
             var sMeasure = gfx.MeasureString(_text, _font, Width);
             PointF loc = new PointF(2, 2);
-            float centerH = (Width - sMeasure.Width) / 2;
-            float centerV = (Height - sMeasure.Height) / 2;
+            float centerH = (Width - sMeasure.X) / 2;
+            float centerV = (Height - sMeasure.Y) / 2;
             switch (_textAlign)
             {
                 case TextAlign.TopCenter:
                     loc.X = centerH;
                     break;
                 case TextAlign.TopRight:
-                    loc.X = Width - sMeasure.Width;
+                    loc.X = Width - sMeasure.X;
                     break;
                 case TextAlign.MiddleLeft:
                     loc.Y = centerV;
@@ -76,23 +77,23 @@ namespace ShiftOS.Frontend.GUI
                     break;
                 case TextAlign.MiddleRight:
                     loc.Y = centerV;
-                    loc.X = (Width - sMeasure.Width);
+                    loc.X = (Width - sMeasure.Y);
                     break;
                 case TextAlign.BottomLeft:
-                    loc.Y = (Height - sMeasure.Height);
+                    loc.Y = (Height - sMeasure.Y);
                     break;
                 case TextAlign.BottomCenter:
-                    loc.Y = (Height - sMeasure.Height);
+                    loc.Y = (Height - sMeasure.Y);
                     loc.X = centerH;
                     break;
                 case TextAlign.BottomRight:
-                    loc.Y = (Height - sMeasure.Height);
-                    loc.X = (Width - sMeasure.Width);
+                    loc.Y = (Height - sMeasure.Y);
+                    loc.X = (Width - sMeasure.X);
                     break;
 
             }
 
-            gfx.DrawString(_text, _font, new SolidBrush(Engine.SkinEngine.LoadedSkin.ControlTextColor), new RectangleF(loc.X, loc.Y, sMeasure.Width, sMeasure.Height));
+            gfx.DrawString(_text, 0, 0, Engine.SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), _font, this.Width);
         }
     }
 
