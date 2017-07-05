@@ -65,6 +65,7 @@ namespace ShiftOS.Frontend
         protected override void Initialize()
         {
             //Before we do ANYTHING, we've got to initiate the ShiftOS engine.
+            UIManager.GraphicsDevice = GraphicsDevice.GraphicsDevice;
 
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
@@ -89,7 +90,7 @@ namespace ShiftOS.Frontend
             };
 
             //We'll use sandbox mode
-            SaveSystem.IsSandbox = true;
+            SaveSystem.IsSandbox = false;
             Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 
@@ -191,8 +192,11 @@ namespace ShiftOS.Frontend
                         if (control && lastKey == Keys.D)
                         {
                             DisplayDebugInfo = !DisplayDebugInfo;
-
                         }
+                        else if(control && lastKey == Keys.E)
+                        {
+                            UIManager.ExperimentalEffects = !UIManager.ExperimentalEffects;
+                        }                        
                         else
                         {
                             var e = new KeyEvent(control, alt, shift, lastKey);
@@ -237,12 +241,25 @@ namespace ShiftOS.Frontend
 
 
             var mousepos = Mouse.GetState(this.Window).Position;
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+
             if (DisplayDebugInfo)
             {
                 var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
 
-                gfxContext.DrawString("ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI\r\nThis is an unstable build.\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds).ToString(), 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+                gfxContext.DrawString($@"ShiftOS 1.0 Beta 4
+Copyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI
+This is an unstable build.
+FPS: {(1 / gameTime.ElapsedGameTime.TotalSeconds)}
+
+UI render target count: {UIManager.TextureCaches.Count}
+Skin texture caches: {UIManager.SkinTextures.Count}
+Open windows (excluding dialog boxes): {AppearanceManager.OpenForms.Count}
+
+Experimental effects enabled: {UIManager.ExperimentalEffects}
+Fullscreen: {GraphicsDevice.IsFullScreen}
+Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
             spriteBatch.End();

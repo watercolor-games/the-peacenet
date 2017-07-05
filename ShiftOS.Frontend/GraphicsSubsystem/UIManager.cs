@@ -44,7 +44,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static void DrawTArgets(SpriteBatch batch)
         {
-            foreach(var ctrl in topLevels)
+            foreach(var ctrl in topLevels.ToArray())
             {
                 if (ctrl.Visible == true)
                 {
@@ -55,12 +55,13 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         continue;
                     }
                     var _target = TextureCaches[hc];
-                    var gfxContext = new GraphicsContext(batch.GraphicsDevice, batch, ctrl.X, ctrl.Y, ctrl.Width + 5, ctrl.Height + 5);
-                    gfxContext.DrawRectangle(ctrl.Width, 0, 1, ctrl.Height, Color.Black);
-                    gfxContext.DrawRectangle(ctrl.Width + 1, 0, 1, ctrl.Height, Color.Black * 0.75f);
-                    gfxContext.DrawRectangle(ctrl.Width + 2, 0, 1, ctrl.Height, Color.Black * 0.5f);
-                    gfxContext.DrawRectangle(ctrl.Width + 3, 0, 1, ctrl.Height, Color.Black * 0.25f);
-
+                    if (ExperimentalEffects)
+                    {
+                        for (int i = 5; i > 0; i--)
+                        {
+                            batch.Draw(_target, new Rectangle(ctrl.X + i, ctrl.Y + i, ctrl.Width, ctrl.Height), new Color(Color.Black, 255 / (i * 2)));
+                        }
+                    }
 
                     batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
                 }
@@ -178,12 +179,21 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                     }
                 }
             }
+
+            foreach(var colorfield in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(System.Drawing.Color)))
+            {
+                var color = (System.Drawing.Color)colorfield.GetValue(SkinEngine.LoadedSkin);
+                var tex2 = new Texture2D(graphics, 1, 1);
+                tex2.SetData<byte>(new[] { color.B, color.G, color.R, color.A });
+                SkinTextures.Add(colorfield.Name, tex2);
+            }
         }
 
 
         public static bool ExperimentalEffects = true;
 
         public static Queue<Action> CrossThreadOperations = new Queue<Action>();
+        internal static GraphicsDevice GraphicsDevice;
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
@@ -205,6 +215,14 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         {
             if (topLevels.Contains(ctrl))
                 topLevels.Remove(ctrl);
+
+            int hc = ctrl.GetHashCode();
+            if (TextureCaches.ContainsKey(hc))
+            {
+                TextureCaches[hc].Dispose();
+                TextureCaches.Remove(hc);
+            }
+
             ctrl = null;
         }
     }

@@ -149,7 +149,36 @@ namespace ShiftOS.Frontend.Desktop
         {
             X = 720;
             Y = 480;
+            MouseDown += () =>
+            {
+                var scnloc = PointToScreen(MouseX, MouseY);
+                mouseprevx = scnloc.X;
+                mouseprevy = scnloc.Y;
+                moving = true;
+            };
+            MouseMove += (loc) =>
+            {
+                if (moving == true)
+                {
+                    var scnloc = PointToScreen(MouseX, MouseY);
+                    int differencex = scnloc.X - mouseprevx;
+                    int differencey = scnloc.Y - mouseprevy;
+                    X -= differencex;
+                    Y -= differencey;
+                    mouseprevx = scnloc.X;
+                    mouseprevy = scnloc.Y;
+                }
+            };
+            MouseUp += () =>
+            {
+                moving = false;
+            };
         }
+
+        private bool moving = false;
+        private int mouseprevx = 0;
+        private int mouseprevy = 0;
+        
 
         public IShiftOSWindow ParentWindow
         {
@@ -210,59 +239,8 @@ namespace ShiftOS.Frontend.Desktop
             Height = _hostedwindow.Y + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
         }
 
-        private bool moving = false;
 
-        public override void MouseStateChanged()
-        {
-            if (Shiftorium.UpgradeInstalled("wm_titlebar"))
-            {
-                if (Shiftorium.UpgradeInstalled("close_button"))
-                {
-                    var closebuttonsize = LoadedSkin.CloseButtonSize;
-                    var closebuttonloc = LoadedSkin.CloseButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
-                    if(MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
-                    {
-                        Close();
-                    }
-                }
-                if (Shiftorium.UpgradeInstalled("minimize_button"))
-                {
-                    var closebuttonsize = LoadedSkin.MinimizeButtonSize;
-                    var closebuttonloc = LoadedSkin.MinimizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
-                    if (MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
-                    {
-                        if (IsFocusedControl || ContainsFocusedControl)
-                            UIManager.FocusedControl = null;
-                        Visible = false;
-                    }
-                }
-                if (Shiftorium.UpgradeInstalled("maximize_button"))
-                {
-                    var closebuttonsize = LoadedSkin.MaximizeButtonSize;
-                    var closebuttonloc = LoadedSkin.MaximizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonloc = new Point(Width - closebuttonsize.Width - closebuttonloc.X, closebuttonloc.Y);
-                    if (MouseX > closebuttonloc.X && MouseY > closebuttonloc.Y && MouseX < closebuttonloc.X + closebuttonsize.Width && MouseY < closebuttonloc.Y + closebuttonsize.Height)
-                    {
-                        AppearanceManager.Maximize(this);
-                    }
-                }
-                if (MouseY < LoadedSkin.TitlebarHeight)
-                {
-                    var screenpoint = PointToScreen(MouseX, MouseY);
-                    lastmousex = this.X - screenpoint.X;
-                    lastmousey = this.Y - screenpoint.Y;
 
-                    moving = MouseLeftDown;
-                    CaptureMouse = moving;
-                }
-            }
-        }
-        [DebuggerStepThrough]
         protected override void OnPaint(GraphicsContext gfx)
         {
             int titleheight = LoadedSkin.TitlebarHeight;
@@ -272,7 +250,7 @@ namespace ShiftOS.Frontend.Desktop
 
             if (Shiftorium.UpgradeInstalled("wm_titlebar"))
             {
-                var titlebarcolor = LoadedSkin.TitleBackgroundColor;
+                var titlebarcolor = UIManager.SkinTextures["TitleBackgroundColor"];
                 var titlefont = LoadedSkin.TitleFont;
                 var titletextcolor = LoadedSkin.TitleTextColor;
                 var titletextleft = LoadedSkin.TitleTextLeft;
@@ -290,11 +268,9 @@ namespace ShiftOS.Frontend.Desktop
 
                     
                     //Let's get the left and right images.
-                    var leftimage = GetImage("titleleft");
-                    var rightimage = GetImage("titleright");
                     //and the colors
-                    var leftcolor = LoadedSkin.TitleLeftCornerBackground;
-                    var rightcolor = LoadedSkin.TitleRightCornerBackground;
+                    var leftcolor = UIManager.SkinTextures["TitleLeftCornerBackground"];
+                    var rightcolor = UIManager.SkinTextures["TitleRightCornerBackground"];
                     //and the widths
                     var leftwidth = LoadedSkin.TitleLeftCornerWidth;
                     var rightwidth = LoadedSkin.TitleRightCornerWidth;
@@ -306,7 +282,7 @@ namespace ShiftOS.Frontend.Desktop
                     }
                     else
                     {
-                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftcolor.ToMonoColor());
+                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftcolor);
                     }
 
                     //draw right corner
@@ -316,14 +292,14 @@ namespace ShiftOS.Frontend.Desktop
                     }
                     else
                     {
-                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightcolor.ToMonoColor());
+                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightcolor);
                     }
                 }
 
                 if (!UIManager.SkinTextures.ContainsKey("titlebar"))
                 {
                     //draw the title bg
-                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarcolor.ToMonoColor());
+                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarcolor);
 
                 }
                 else

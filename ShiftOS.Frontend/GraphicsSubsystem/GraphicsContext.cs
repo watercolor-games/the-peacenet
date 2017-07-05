@@ -165,6 +165,14 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 System.Runtime.InteropServices.Marshal.Copy(lck.Scan0, data, 0, data.Length);
                 bmp.UnlockBits(lck);
                 var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height);
+                for(int i = 0; i < data.Length; i += 4)
+                {
+                    byte r = data[i];
+                    byte b = data[i + 2];
+                    data[i] = b;
+                    data[i + 2] = r;
+                }
+
                 tex2.SetData<byte>(data);
                 _spritebatch.Draw(tex2, new Rectangle(x, y, bmp.Width, bmp.Height), Color.White);
             }

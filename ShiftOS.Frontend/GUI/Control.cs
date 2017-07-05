@@ -364,7 +364,7 @@ namespace ShiftOS.Frontend.GUI
 
         protected virtual void OnPaint(GraphicsContext gfx)
         {
-            gfx.Clear(Engine.SkinEngine.LoadedSkin.ControlColor.ToMonoColor());
+            gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlColor"]);
         }
 
         public void SendToBack()
@@ -558,6 +558,7 @@ namespace ShiftOS.Frontend.GUI
                     {
                         Click?.Invoke();
                         Invalidate();
+                        MouseUp?.Invoke();
                     }
                     if (_leftState == false && ld == true)
                     {
@@ -565,6 +566,8 @@ namespace ShiftOS.Frontend.GUI
                         UIManager.FocusedControl = this;
                         focused?.InvalidateTopLevel();
                         InvalidateTopLevel();
+                        MouseDown?.Invoke();
+
                     }
                     _leftState = ld;
                     _middleState = md;
@@ -631,6 +634,8 @@ namespace ShiftOS.Frontend.GUI
         public event Action MouseLeave;
         public event Action Click;
         public event Action<KeyEvent> KeyEvent;
+        public event Action MouseDown;
+        public event Action MouseUp;
     }
 
     public struct Point

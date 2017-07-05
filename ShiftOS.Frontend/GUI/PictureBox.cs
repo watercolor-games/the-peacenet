@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using ShiftOS.Engine;
 using System.Drawing.Imaging;
 using ShiftOS.Frontend.GraphicsSubsystem;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ShiftOS.Frontend.GUI
 {
     public class PictureBox : Control
     {
-        private System.Drawing.Image img = null;
+        private Texture2D img = null;
         private ImageLayout _layout = ImageLayout.Fit;
 
         public ImageLayout ImageLayout
@@ -28,7 +29,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        public System.Drawing.Image Image
+        public Texture2D Image
         {
             get
             {
@@ -53,6 +54,16 @@ namespace ShiftOS.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx)
         {
+            switch (_layout)
+            {
+                case ImageLayout.Stretch:
+                    gfx.DrawRectangle(0, 0, Width, Height, Image);
+                    break;
+                case ImageLayout.None:
+                    gfx.DrawRectangle(0, 0, Image.Width, Image.Height, Image);
+                    break;
+            }
+
         }
 
         //Again, thanks StackOverflow

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShiftOS.Engine;
+using ShiftOS.Frontend.Desktop;
+using ShiftOS.Frontend.GraphicsSubsystem;
 using ShiftOS.Frontend.GUI;
 
 namespace ShiftOS.Frontend
@@ -165,7 +167,7 @@ namespace ShiftOS.Frontend
             this.pbicon.Y = 19;
             this.pbicon.Width = 64;
             this.pbicon.Height = 64;
-            this.pbicon.Image = Properties.Resources.justthes;
+            this.pbicon.Image = Properties.Resources.justthes.ToTexture2D(UIManager.GraphicsDevice);
             this.pbicon.ImageLayout = ImageLayout.Stretch;
             // 
             // Dialog

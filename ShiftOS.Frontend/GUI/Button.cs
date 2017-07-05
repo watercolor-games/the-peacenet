@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
 
@@ -34,15 +35,22 @@ namespace ShiftOS.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx)
         {
-            var bgCol = SkinEngine.LoadedSkin.ButtonBackgroundColor.ToMonoColor();
+            var bgCol = UIManager.SkinTextures["ButtonBackgroundColor"];
             var fgCol = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
             if (ContainsMouse)
-                bgCol = SkinEngine.LoadedSkin.ButtonHoverColor.ToMonoColor();
+                bgCol = UIManager.SkinTextures["ButtonHoverColor"];
             if (MouseLeftDown)
-                bgCol = SkinEngine.LoadedSkin.ButtonPressedColor.ToMonoColor();
+                bgCol = UIManager.SkinTextures["ButtonPressedColor"];
 
-            base.OnPaint(gfx);
-            base.OnPaint(gfx);
+            gfx.DrawRectangle(0, 0, Width, Height, fgCol);
+            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, bgCol);
+
+            var measure = gfx.MeasureString(Text, Font);
+
+            var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
+
+            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font);
+
         }
     }
 }

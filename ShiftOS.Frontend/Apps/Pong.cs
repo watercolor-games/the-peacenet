@@ -73,12 +73,12 @@ namespace ShiftOS.Frontend.Apps
             aiballYLocal -= ((double)paddleWidth / 2);
 
 
-            gfx.Clear(SkinEngine.LoadedSkin.ControlColor.ToMonoColor());
+            base.OnPaint(gfx);
 
             //draw the ball
             if (doBallCalc)
             {
-                gfx.DrawRectangle((int)ballXLocal, (int)ballYLocal, paddleWidth, paddleWidth, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+                gfx.DrawRectangle((int)ballXLocal, (int)ballYLocal, paddleWidth, paddleWidth, UIManager.SkinTextures["ControlTextColor"]);
             }
             double playerYLocal = linear(playerY, -1.0, 1.0, 0, Height);
             double opponentYLocal = linear(opponentY, -1.0, 1.0, 0, Height);
@@ -88,11 +88,11 @@ namespace ShiftOS.Frontend.Apps
             int paddleStart = paddleWidth;
 
             //draw player paddle
-            gfx.DrawRectangle(paddleWidth, (int)playerYLocal - (paddleHeight / 2), paddleWidth, paddleHeight, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+            gfx.DrawRectangle(paddleWidth, (int)playerYLocal - (paddleHeight / 2), paddleWidth, paddleHeight, UIManager.SkinTextures["ControlTextColor"]);
 
 
             //draw opponent
-            gfx.DrawRectangle(Width - (paddleWidth*2), (int)opponentYLocal - (paddleHeight / 2), paddleWidth, paddleHeight, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+            gfx.DrawRectangle(Width - (paddleWidth*2), (int)opponentYLocal - (paddleHeight / 2), paddleWidth, paddleHeight, UIManager.SkinTextures["ControlTextColor"]);
 
             string cp_text = Localization.Parse("{PONG_STATUSCP}", new Dictionary<string, string>
             {
