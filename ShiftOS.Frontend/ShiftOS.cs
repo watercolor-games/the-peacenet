@@ -19,6 +19,8 @@ namespace ShiftOS.Frontend
         GraphicsDeviceManager GraphicsDevice;
         SpriteBatch spriteBatch;
 
+        private bool DisplayDebugInfo = false;
+
         public ShiftOS()
         {
             GraphicsDevice = new GraphicsDeviceManager(this);
@@ -186,8 +188,16 @@ namespace ShiftOS.Frontend
                         var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
                         var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
 
-                        var e = new KeyEvent(control, alt, shift, lastKey);
-                        UIManager.ProcessKeyEvent(e);
+                        if (control && lastKey == Keys.D)
+                        {
+                            DisplayDebugInfo = !DisplayDebugInfo;
+
+                        }
+                        else
+                        {
+                            var e = new KeyEvent(control, alt, shift, lastKey);
+                            UIManager.ProcessKeyEvent(e);
+                        }
                     }
                 }                
                 kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -213,7 +223,9 @@ namespace ShiftOS.Frontend
         {
             UIManager.DrawControlsToTargets(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0);
 
-            this.spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearClamp, DepthStencilState.Default,
+                            RasterizerState.CullNone);
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice.GraphicsDevice, spriteBatch, 640, 480);
 
@@ -226,11 +238,12 @@ namespace ShiftOS.Frontend
 
             var mousepos = Mouse.GetState(this.Window).Position;
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+            if (DisplayDebugInfo)
+            {
+                var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
 
-            var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0,0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
-
-            gfxContext.DrawString("ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI\r\nThis is an unstable build.\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds).ToString(), 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
-
+                gfxContext.DrawString("ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI\r\nThis is an unstable build.\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds).ToString(), 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);

@@ -367,6 +367,19 @@ namespace ShiftOS.Frontend.GUI
             gfx.Clear(Engine.SkinEngine.LoadedSkin.ControlColor.ToMonoColor());
         }
 
+        public void SendToBack()
+        {
+            if(_parent != null)
+            {
+                _parent._children.Remove(this);
+                _parent._children.Insert(0, this);
+            }
+            else
+            {
+                UIManager.SendToBack(this);
+            }
+        }
+
         public void InvalidateTopLevel()
         {
             var parent = this;

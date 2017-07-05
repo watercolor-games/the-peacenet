@@ -49,10 +49,21 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 if (ctrl.Visible == true)
                 {
                     int hc = ctrl.GetHashCode();
+                    if (!TextureCaches.ContainsKey(hc))
+                    {
+                        ctrl.Invalidate();
+                        continue;
+                    }
                     var _target = TextureCaches[hc];
                     batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
                 }
             }
+        }
+
+        public static void SendToBack(Control ctrl)
+        {
+            topLevels.Remove(ctrl);
+            topLevels.Insert(0, ctrl);
         }
 
         public static void DrawControlsToTargets(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
@@ -80,9 +91,10 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 {
                     graphics.SetRenderTarget(_target);
                     graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-                    batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                                     SamplerState.LinearClamp, DepthStencilState.Default,
                                     RasterizerState.CullNone);
+                    graphics.Clear(Color.Transparent);
                     var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
                     ctrl.Paint(gfxContext);
                     
@@ -169,24 +181,9 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             if (SkinEngine.LoadedSkin == null)
                 SkinEngine.Init();
             graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());
-            var desktopbg = SkinEngine.GetImage("desktopbackground");
-            if(desktopbg != null)
+            if (SkinTextures.ContainsKey("desktopbackground"))
             {
-                var bmp = (System.Drawing.Bitmap)SkinEngine.GetImage("desktopbackground");
-                GUI.Control.ResizeImage(bmp, width, height);
-                var _lock = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                var rgb = new byte[Math.Abs(_lock.Stride) * _lock.Height];
-                Marshal.Copy(_lock.Scan0, rgb, 0, rgb.Length);
-                bmp.UnlockBits(_lock);
-                bmp.Dispose();
-                if(DesktopBackground == null)
-                {
-                    DesktopBackground = new Texture2D(graphics, width, height);
-                }
-                
-                DesktopBackground.SetData<byte>(rgb);
-
-                batch.Draw(DesktopBackground, new Rectangle(0, 0, width, height), Color.White);
+                batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
             }
         }
 
