@@ -21,6 +21,13 @@ namespace ShiftOS.Frontend.Desktop
             if (brdr != null)
             {
                 brdr.Close();
+                RunningBorders.Remove(brdr);
+                if (AppearanceManager.OpenForms.Contains(brdr))
+                {
+                    AppearanceManager.OpenForms.Remove(brdr);
+                    TileWindows();
+                    Engine.Desktop.ResetPanelButtons();
+                }
                 win = null;
             }
         }
@@ -324,7 +331,7 @@ namespace ShiftOS.Frontend.Desktop
                     gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"]);
                 }
                 //Now we draw the title text.
-                var textMeasure = gfx.MeasureString(_text, titlefont);
+                var textMeasure = gfx.MeasureString(Text, titlefont);
                 PointF textloc;
                 if (titletextcentered)
                     textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
@@ -332,7 +339,7 @@ namespace ShiftOS.Frontend.Desktop
                 else
                     textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
 
-                gfx.DrawString(_text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
+                gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
 
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 

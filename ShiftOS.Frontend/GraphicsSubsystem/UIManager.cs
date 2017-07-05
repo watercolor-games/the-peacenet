@@ -55,6 +55,13 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         continue;
                     }
                     var _target = TextureCaches[hc];
+                    var gfxContext = new GraphicsContext(batch.GraphicsDevice, batch, ctrl.X, ctrl.Y, ctrl.Width + 5, ctrl.Height + 5);
+                    gfxContext.DrawRectangle(ctrl.Width, 0, 1, ctrl.Height, Color.Black);
+                    gfxContext.DrawRectangle(ctrl.Width + 1, 0, 1, ctrl.Height, Color.Black * 0.75f);
+                    gfxContext.DrawRectangle(ctrl.Width + 2, 0, 1, ctrl.Height, Color.Black * 0.5f);
+                    gfxContext.DrawRectangle(ctrl.Width + 3, 0, 1, ctrl.Height, Color.Black * 0.25f);
+
+
                     batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
                 }
             }
@@ -173,6 +180,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             }
         }
 
+
+        public static bool ExperimentalEffects = true;
 
         public static Queue<Action> CrossThreadOperations = new Queue<Action>();
 
