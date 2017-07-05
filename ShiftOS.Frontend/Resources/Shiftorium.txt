@@ -1,0 +1,1089 @@
+[
+//Virus Scanner Grades
+	{
+		Name: "Virus Scanner Grade 2",
+		Description: "Update the Virus Scanner database to include threatlevel 2 viruses.",
+		Dependencies: "virus_scanner",
+		Category: "Virus Scanner",
+		Cost: 75
+	},
+	{
+		Name: "Virus Scanner Grade 3",
+		Description: "Update the Virus Scanner database to include threatlevel 3 viruses.",
+		Dependencies: "virus_scanner_grade_2",
+		Category: "Virus Scanner",
+		Cost: 150
+	},
+	{
+		Name: "Virus Scanner Grade 4",
+		Description: "Update the Virus Scanner database to include threatlevel 4 viruses.",
+		Dependencies: "virus_scanner_grade_3",
+		Category: "Virus Scanner",
+		Cost: 225
+	},
+// SCREENSAVER
+	{
+		Name: "Screensavers",
+		Cost: 750,
+		Description: "Like to leave your PC idle for long periods of time? Save some energy and keep your screen from being tired by hiding the desktop behind a black screen with an image on it.",
+		Dependencies: "desktop",
+		Category: "Enhancements",
+	},
+	{
+		Name: "Icon Manager",
+		Cost: 450,
+		Description: "This tool allows you to add and edit application icons within ShiftOS for the small prive of 450 Codepoints!",
+		Dependencies: "skinning",
+		Category: "Application"
+	},
+	{
+		Name: "Shift States",
+		Cost: 325,
+		Description: "It's time to make ShiftOS more responsive. This upgrade adds various state-specific settings for window borders, title buttons, and more!",
+		Category: "Customizatuib & Scripting",
+		Dependencies: "shift_titlebar;shift_title_buttons;shift_panel_buttons;shift_window_borders",
+	},
+	{
+		Name: "AL Icon Manager",
+		Costs: 150,
+		Description: "Add an App Launcher entry for the Icon Manager.",
+		Dependencies: "icon_manager;app_launcher",
+		Category: "Customization"
+	},
+	{
+		Name: "Shift Progress Bar",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS Progress Bars? Buy this upgrade today and you'll get the ability to set the foreground and background color of the progress bar, and many more things!.",
+		Dependencies: "shifter;shift_buttons",
+		Category: "Customization"
+	},
+	{
+		Name: "Shift Buttons",
+		Cost: 150,
+		Description: "Want to customize the look of all ShiftOS buttons? This Shifter upgrade gives you a new \"Buttons\" category in the System category to do just that.",
+		Dependencies: "shifter",
+		Category: "Customization"
+	},
+	{
+		Name: "GUI Based Login Screen",
+		Cost: 500,
+		Description: "Tired of using the text-based login screen in ShiftOS? Well, we have a functioning window manager, and a functioning desktop, why not use these tools to create a functioning and awesome-looking login screen?",
+		Dependencies: "skinning;desktop;wm_free_placement",
+		Category: "Kernel & System"
+	},
+	{
+		Name: "Shift Screensavers",
+		Cost: 100,
+		Description: "This Shifter upgrade will allow you to customize the screensaver.",
+		Dependencies: "screensavers;shifter",
+		Category: "Customization"
+	},
+	{
+		Name: "Resizable Windows",
+		Cost: 250,
+		Dependencies: "draggable_windows",
+		Description: "We can drag windows around, which is nice, but what if you want to give a window more working space? This upgrade allows you to resize windows.",
+		Category: "Enhancements"
+	},
+
+// CALCULATOR UPGRADES
+	{
+		Name: "Calculator",
+		Cost: 1000,
+		Dependencies: "wm_free_placement;desktop",
+		Description: "Crazy math problems getting you down? Well, this calculator will take care of that!",
+		Category: "Applications"
+	},
+	{
+		Name: "AL Calculator",
+		Cost: 150,
+		Dependencies: "calculator;app_launcher",
+		Description: "Add an App Launcher Entry for the Calculator!",
+		Category: "GUI",
+	},
+	{
+		Name: "Calc Equals Button",
+		Cost: 600,
+		Dependencies: "calculator",
+		Category: "Enhancements",
+		Description: "Right now, you can only type numbers, but this equals button opens the door to solving equations!"
+	},
+	{
+		Name: "Calc Decimal Button",
+		Cost: 600,
+		Dependencies: "calculator",
+		Category: "Enhancements",
+		Description: "Whole numbers can get boring. With this button, you can type decimal numbers!"
+	},
+	{
+		Name: "Calc Plus Button",
+		Cost: 700,
+		Dependencies: "calc_equals_button",
+		Category: "Enhancements",
+		Description: "With this extra button, your calculator can now do addition problems!"
+	},
+	{
+		Name: "Calc Minus Button",
+		Cost: 700,
+		Dependencies: "calc_equals_button",
+		Category: "Enhancements",
+		Description: "With this extra button, your calculator can now do subtraction problems!"
+	},
+	{
+		Name: "Calc Multiply Button",
+		Cost: 800,
+		Dependencies: "calc_plus_button",
+		Category: "Enhancements",
+		Description: "You can add numbers together, but it must be tiring to add the same number over and over. This multiplication button will make it easier for you!"
+	},
+	{
+		Name: "FS Copy",
+		Cost: 75,
+		Dependencies: "file_skimmer",
+		Description: "It is cool to be able to browse your files, but what if you need a new copy of a file? This upgrade adds a button to the File Skimmer that allows you to copy single files to new locations.",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Move",
+		Cost: 75,
+		Dependencies: "file_skimmer",
+		Description: "Want to move files from one place to another? This upgrade adds a button to the File Skimmer that does just that!",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Copy Folder",
+		Cost: 100,
+		Dependencies: "fs_copy",
+		Description: "You can copy single files, but what if you have a lot of files in a folder that you need to get copied over? This upgrade adds the ability to copy a folder to a new location in the File Skimmer.",
+		Category: "Enhancements"
+	},
+	{
+		Name: "FS Move Folder",
+		Cost: 100,
+		Dependencies: "fs_move",
+		Description: "Being able to move single files is great, but it takes time to move all the files in a folder to a new location. This upgrade will cut down on that time!",
+		Category: "Enhancements"
+	},
+	{
+		Name: "Calc Divide Button",
+		Cost: 800,
+		Dependencies: "calc_multiply_button",
+		Category: "Enhancements",
+		Description: "You can multiply, but what about reversing multiplication? This divide button will sort that out!"
+	},
+	{
+		Name: "Calc Clear Button",
+		Cost: 750,
+		Dependencies: "calc_equals_button",
+		Category: "Enhancements",
+		Description: "Typed the wrong number? No worries! With this Clear button, you can clear the number field, without messing up the equation you're trying to solve!"
+	},
+	{
+		Name: "Calc CE Button",
+		Cost: 750,
+		Dependencies: "calc_clear_button",
+		Category: "Enhancements",
+		Description: "Wanna start all over with a new equation? With this CE (Clear Everything) button, you get rid of not only the numbers in the number field, but also the equation!"
+	},
+	{
+		Name: "AL Notifications",
+		Cost: 150,
+		Dependencies: "app_launcher",
+		Category: "GUI",
+		Description: "Want to open the Notifications application from within the App Launcher? This upgrade is for you."
+	},
+
+	// SHIFTLETTERS AND WORDLISTS
+	{
+		Name: "AL ShiftLetters",
+		Cost: 150,
+		Dependencies: "app_launcher;shiftletters",
+		Category: "GUI",
+		Description: "This upgrade allows you to find ShiftLetters in your App Launcher."
+	},
+	{
+		Name: "SL Contributors Wordlist",
+		Cost: 250,
+		Dependencies: "shiftletters",
+		Category: "Enhancements",
+		Description: "This nice wordlist lets you find out the people who contributed to the development of ShiftOS!"
+	},
+	{
+		Name: "SL Operating Systems Wordlist",
+		Cost: 500,
+		Dependencies: "shiftletters",
+		Category: "Enhancements",
+		Description: "Know a lot about computer operating systems? This upgrade adds a wordlist to ShiftLetters, full of various Linux distros, Windows codenames and other OS names. All for the low price of 500 Codepoints! It's an incredible value but it's true! Upgrade today... except out of ShiftOS!"
+	},
+	{
+		Name: "Panel Notifications",
+		Cost: 150,
+		Description: "It's good to know what time it is, but how about knowing how many notifications you have? After all, notifications are a great way to tell what's going on! This upgrade adds a button that displays how many notifications you have. If you click it, you will open the Notifications app!",
+		Category: "GUI",
+		Dependencies: "desktop_clock_widget"
+	},
+	{
+		Name: "Audio Volume",
+		Cost: 80,
+		Category: "Kernel & System",
+		Description: "Want to adjust the volume of ShiftOS's audio? This upgrade will let you."
+	},
+
+	//SHIFTLOTTO UPGRADES
+	{
+		Name: "ShiftLotto",
+		Cost: 200,
+		Dependencies: null,
+		Category: "Applications",
+		Description: "Are you feeling lucky? Spend some money on this upgrade! If you have any left, go ahead and bet your money in ShiftLotto!"
+	},
+	{
+		Name: "AL ShiftLotto",
+		Cost: 150,
+		Dependencies: "app_launcher;shiftlotto",
+		Category: "GUI",
+		Description: "This upgrade allows you to find ShiftLotto in your App Launcher."
+	},
+	//STORY-DRIVEN AL UPGRADES
+	{
+		Name: "AL Shiftnet",
+		Cost: 150,
+		Dependencies: "app_launcher;victortran_shiftnet",
+		Category: "GUI",
+		Description: "This upgrade puts a Shiftnet entry into your app launcher - you know, for those times when you just feel like surfing the net."
+	},
+	{
+		Name: "AL Installer",
+		Cost: 150,
+		Dependencies: "installer;app_launcher",
+		Category: "GUI",
+		Description: "Got a new .stp file and want to set it up, from your App Launcher? This upgrade is for you! It adds an AL entry for the Installer."
+	},
+	{
+		Name: "AL Downloader",
+		Cost: 150,
+		Dependencies: "app_launcher;downloader",
+		Category: "GUI",
+		Description: "The Downloader is an easy, central way to check all your downloads' progress. This upgrade adds an app launcher entry for it."
+	},
+	// COLOR DEPTH AND DITHERING
+
+	{
+		Name: "Color Depth Dithering",
+		Cost: 1000,
+		Category: "Device Drivers",
+		Description: "Right now, if you try to display images on the screen, with a low color depth like we have, the image will be totally unrecognizable! With this upgrade, we can adapt a simple 1-dimensional dithering algorithm into the video driver to hopefully smooth out the transition between colors.",
+	},
+	{
+		Name: "Color Depth Floyd-Steinberg Dithering",
+		Cost: 2000,
+		Description: "So your images look... alright... with the new dithering algorithm, but let's take things even further and get rid of the jagged lines in the image using a 2-dimensional algorithm called the Floyd-Steinberg algorithm. It'll sure make things look better.",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_dithering"
+	},
+	{
+		Name: "Shift Advanced App Launcher",
+		Cost: 150,
+		Description: "So you got yourself one of those fancy Advanced App Launchers. Well, it ain't so advanced if it can't be customized! This upgrade will add some settings to the Shifter so you can customize the Advanced App Launcher and its behaviour.",
+		Dependencies: "advanced_app_launcher;shifter",
+		Category: "Customization"
+	},
+	{
+		Name: "Color Depth 2 bits",
+		Cost: 2000,
+		Category: "Device Drivers",
+		Description: "We can only display black and white - 0 or 1 in binary. Let's take it even further by adding an extra bit to our binary notation - making black, white, dark gray and light gray possible!",
+	},
+	{
+		Name: "Color Depth 4 bits",
+		Cost: 4000,
+		Description: "4 colors is nice - but let's take it even further. With our dithering algorithm in place, let's make our images even smoother by giving a 16-color palette to the video driver!",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_2_bits;color_depth_dithering"
+	},
+	{
+		Name: "Color Depth 6 bits",
+		Cost: 6000,
+		Description: "Let's extend our color range into the depths of 6 bits! This'll make up to 64 different shades of gray possible! We're getting even closer to modern-day color...",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_4_bits"
+	},
+	{
+		Name: "Color Depth 8 bits",
+		Cost: 8000,
+		Description: "What do you get when you bite your food? You get perhaps a yummy taste. What do you get when you take a byte of memory? 256 shades of gray, of course!",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_6_bits"
+	},
+	{
+		Name: "Color Depth 16 bits",
+		Cost: 16000,
+		Description: "If we were just given another byte... we could divide the two up into three channels and allow mixing and matching of the channels to create colors other than gray! Let's do it.",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_8_bits"
+	},
+	{
+		Name: "AL Widget Manager",
+		Cost: 125,
+		Description: "Desktop Widgets are a huge advancement in ShiftOS technology, allowing access to system information, and quick control of your system, without even opening a window. However, we still need to be able to modify each widget. This upgrade adds an App Launcher entry for the Desktop Widget Manager.",
+		Dependencies: "app_launcher;desktop_widgets",
+		Category: "GUI"
+	},
+	{
+		Name: "FS Delete",
+		Cost: 75,
+		Description: "Got some files that you want to get rid of? This upgrade adds a button to the File Skimmer for doing just that.",
+		Dependencies: "file_skimmer",
+		Category: "Enhancements",
+	},
+	{
+		Name: "FS Recursive Delete",
+		Cost: 100,
+		Description: "Deleting files is great, but what if you have an entire folder you need to get rid of? This upgrade allows the deletion of folders and all files and folders inside them. Just, don't delete your system folder!",
+		Dependencies: "fs_delete",
+		Category: "Enhancements"
+	},
+	{
+		Name: "Color Depth 24 Bits",
+		Cost: 24000,
+		Description: "Having actual color is nice for our images as we can truly see detail in our images - but if we had a third byte, each channel could have up to 256 values - adding up to almost 17 million different colors! Our eyes can't even distinguish that many.",
+		Category: "Device Drivers",
+		Dependencies: "color_depth_16_bits"
+	},
+	{
+		Name: "AL MUD Control Centre",
+		Cost: 150,
+		Dependencies: "mud_control_centre;app_launcher",
+		Category: "Device Drivers",
+		Description: "Want to access your MUD profile, legions, jobs and shops, but don't want to open your Terminal? This upgrade is for you!"
+	},
+	{
+		Name: "Kernel Coherence",
+		Cost: 10000,
+		Dependencies: "wm_free_placement",
+		Category: "Device Drivers",
+		Description: "With the free placement upgrade, you can place windows of any size anywhere on the desktop, which means theoretically you could add kernel coherence between ShiftOS and another GUI-based operating system and run their applications inside ShiftOS. This upgrade unlocks that.",
+	},
+	{
+		Name: "WM 4 Windows",
+		Cost: 150,
+		Description: "Display up to 4 simultaneous windows on-screen in a 2x2 grid.",
+		Category: "Enhancements",
+		Dependencies: "window_manager"
+	},
+	{
+		Name: "Virus Scanner",
+		Cost: 2000,
+		Description: "Being inside the multi-user domain comes with many risks, one of which being viruses. The Virus Scanner can mitigate this threat by allowing you to scan the files on your system for any viruses and delete them for you.",
+		Category: "Applications",
+		Dependencies: "mud_fundamentals;file_skimmer"
+	},
+	{
+		Name: "AL Virus Scanner",
+		Cost: 150,
+		Description: "Add an App Launcher entry for the Virus Scanner.",
+		Category: "GUI",
+		Dependencies: "virus_scanner;app_launcher"
+	},
+	{
+		Name: "WM Panel Buttons",
+		Cost: 200,
+		Description: "Sometimes it's useful to have a list of windows that are open on your system so you can easily switch between them.",
+		Category: "GUI",
+		Dependencies: "desktop;wm_unlimited_windows"
+	},
+	{
+		Name: "AL Skin Loader",
+		Cost: 150,
+		Description: "Buy this upgrade to add an entry for the Skin Loader to the App Launcher.",
+		Category: "GUI",
+		Dependencies: "app_launcher;skinning"
+	},
+	{
+		Name: "Shift Panel Buttons",
+		Cost: 150,
+		Description: "Want to customize your panel buttons? This Shifter category is for you!",
+		Category: "Customization",
+		Dependencies: "wm_panel_buttons"
+	},
+	{
+		Name: "TextPad Lua Support",
+		Cost: 450,
+		Description: "Use TextPad to write Lua scripts!",
+		Category: "Enhancements",
+		Dependencies: "textpad;file_skimmer",
+	},
+	{
+		Name: "App Launcher",
+		Cost: 7500,
+		Description: "It may be expensive, but having an easy-access menu to all your apps is very valuable.",
+		Category: "GUI",
+		Dependencies:"desktop;wm_unlimited_windows"
+	},
+	{
+		Name: "Format Editor Optional Text",
+		Cost: 150,
+		Description: "Allows you to add an optional text to commands",
+		Category: "Enhancements",
+		Dependencies: "format_editor"
+	},
+	{
+		Name: "Format Editor Regex",
+		Cost: 150,
+		Description: "Allows you to customize your commands with regexes.",
+		Category: "Enhancements",
+		Dependencies: "format_editor_optional_text"
+	},
+	{
+		Name: "Format Editor Syntax Highligting",
+		Cost: 150,
+		Description: "Allows you to give color to commands as the user types them.",
+		Category: "Enhancements",
+		Dependencies: "format_editor_regex"
+	},
+	{
+		Name: "AL Format Editor",
+		Cost: 150,
+		Description: "Add a launcher item for the Format Editor.",
+		Category: "GUI",
+		Dependencies: "format_editor;app_launcher"
+	},
+	{
+		Name: "Textpad",
+		Cost: 2500,
+		Description: "\"Write, save and open a text document.\"",
+		Category: "Applications",
+		Dependencies: "file_skimmer"
+	},
+	{
+		Name: "Shifter",
+		Cost: 10000,
+		Description: "Tired of the green and black look that is ShiftOS's default skin? Use the Shifter to shift it your way.",
+		Category: "Applications",
+		Dependencies: "desktop;wm_unlimited_windows",
+	},
+	{
+		Name: "AL Shifter",
+		Cost: 150,
+		Description: "Launch the Shifter from the app launcher.",
+		Category: "GUI",
+		Dependencies: "app_launcher;shifter"
+	},
+	{
+		Name: "AL Pong",
+		Cost: 150,
+		Description: "Launch Pong from the app launcher.",
+		Category: "GUI",
+		Dependencies: "app_launcher"
+	},
+	{
+		Name: "AL Textpad",
+		Cost: 150,
+		Description: "Write, save and open text documents from the App Launcher.",
+		Category: "GUI",
+		Dependencies:"app_launcher;textpad"
+	},
+	{
+		Name: "AL File Skimmer",
+		Cost: 150,
+		Description: "Open the File Skimmer from your App Launcher.",
+		Category: "GUI",
+		Dependencies:"app_launcher;file_skimmer"
+	},
+	{
+		Name: "WM Free Placement",
+		Cost: 2000,
+		Description: "Disable the grid system and allow windows to be freely positioned, moved, and overlapped.",
+		Category: "Enhancements",
+		Dependencies: "wm_4_windows"
+	},
+	{
+		Name: "Desktop",
+		Cost: 9000,
+		Description: "Use a fully customizable desktop in place of the terminal to control ShiftOS.",
+		Category: "GUI",
+		Dependencies: "window_manager"
+	},
+	{
+		Name: "App Icons",
+		Cost: 400,
+		Description: "So you have a titlebar, well, let's add an icon to it to hopefully make it easier to tell which app is which.",
+		Category: "GUI",
+		Dependencies: "wm_titlebar;skinning"
+	},
+	{
+		Name: "Close command",
+		Cost: 150,
+		Description: "Add a win.close script to allow you to close windows.",
+		Category: "Kernel & System",
+		Dependencies: "mud_fundamentals",
+	},
+	{
+		Name: "WM Unlimited Windows",
+		Cost: 5000,
+		Description: "Break the limit of windows that can be run. Perfect for high-maintenance tasks.",
+		Category: "Enhancements",
+		Dependencies: "wm_free_placement;close_command"
+	},
+	{
+		Name: "Minimize Command",
+		Cost: 1250,
+		Description: "Use the win.mini{id} command to minimize/restore windows.",
+		Category: "Kernel & System",
+		Dependencies: "useful_panel_buttons"
+	},
+	{
+		Name: "Useful Panel Buttons",
+		Cost: 250,
+		Description: "Minimize and restore windows by clicking their Panel Button!",
+		Category: "Enhancements",
+		Dependencies: "desktop;wm_panel_buttons"
+	},
+	{
+		Name: "Maximize Command",
+		Cost: 1250,
+		Description: "Use the win.max{id} command to maximize windows.",
+		Category: "Kernel & System",
+		Dependencies: "wm_titlebar;desktop;wm_free_placement"
+	},
+	{
+		Name: "Close Button",
+		Cost: 1000,
+		Description: "Add a close button to the titlebar to easily close applications.",
+		Category: "GUI",
+		Dependencies: "wm_titlebar;close_command"
+	},
+	{
+		Name: "Minimize Button",
+		Cost: 1000,
+		Description: "Minimize windows using a button on the titlebar",
+		Category: "GUI",
+		Dependencies: "wm_titlebar;minimize_command"
+	},
+	{
+		Name: "Shiftorium Bulk Buy",
+		Cost: 2000,
+		Category: "Enhancements",
+		Description:"Tired of typing shiftorium.buy{} all the time? This upgrade will add a bulk buy command which allows you to specify a comma-separated list of upgrades to buy."
+	},
+	{
+		Name: "Shiftorium GUI Bulk Buy",
+		Cost: 3000,
+		Category: "GUI",
+		Description: "Tired of the repetition of selecting an upgrade and hitting \"Buy\" a hundred times when binging? Using the bulkbuy command, we can make the Shiftorium GUI allow you to buy in bulk!",
+		Dependencies: "shiftorium_gui;shiftorium_bulk_buy"
+	},
+	{
+		Name: "File Skimmer",
+		Cost: 500,
+		Description: "View the files on your computer using File Skimmer.",
+		Category: "Applications",
+		Dependencies: null
+	},
+	{
+		Name: "Maximize Button",
+		Cost: 500,
+		Description: "Maximize windows using a button on the titlebar",
+		Category: "GUI",
+		Dependencies: "wm_titlebar;maximize_command"
+	},	
+	{
+		Name: "Clock",
+		Cost: 100,
+		Description: "Adds a script that shows the amount of seconds that have passed since Midnight. Use 'sys.clock' to activate it.",
+		Category: "Applications",
+		Dependencies: "mud_fundamentals"
+	},
+	{
+		Name: "WM Titlebar",
+		Cost: 250,
+		Description: "Display a title on each window.",
+		Category: "GUI",
+		Dependencies: "window_manager"
+	},
+	{
+		Name: "Clock Minutes",
+		Cost: 250,
+		Description: "Upgrade the sys.clock command to show minutes since midnight with a {type:\"m\"} argument.",
+		Category: "Enhancements",
+		Dependencies: "clock"
+	},
+	{
+		Name: "Clock Hours",
+		Cost: 225,
+		Description: "Upgrade the sys.clock command to show hours since midnight with a {type:\"h\"} argument.",
+		Category: "Enhancements",
+		Dependencies: "clock_minutes"
+	},
+		{
+		Name: "Clock AM and PM",
+		Cost: 75,
+		Description: "Change the clock to be 12-hour based, showing whether the current time is ante-meridiem or post-meridiem.",
+		Category: "Enhancements",
+		Dependencies: "clock_hours",
+	},
+	{
+		Name: "Full Precision Time",
+		Cost: 500,
+		Description: "Show full-precision time by default when using sys.clock.",
+		Category: "Enhancements",
+		Dependencies: "clock_am_and_pm"
+	},
+	{
+		Name: "Desktop Clock Widget",
+		Cost: 1000,
+		Description: "Add a widget to the desktop which shows the results of sys.clock as text on the desktop.",
+		Category: "GUI",
+		Dependencies: "clock;desktop"
+	},
+	{
+		Name: "App Launcher Categories",
+		Cost: 1000,
+		Dependencies: "app_launcher",
+		Category: "Enhancements",
+		Description: "Is your App Launcher getting full of items? Perhaps a little too full? Are you having trouble finding things? This upgrade should help - it'll sort all App Launcher items into categories for you."
+	},
+	{
+		Name: "Draggable windows",
+		Cost: 400,
+		Description: "Allows you to drag windows around with the mouse using the title bar.",
+		Category: "Enhancements",
+		Dependencies: "wm_titlebar;wm_free_placement"
+	},
+	{
+		Name: "Window Manager",
+		Cost: 100,
+		Description: "Allows you to run two windows simultaneously within ShiftOS.",
+		Category: "Kernel & System",
+		Dependencies: "mud_fundamentals"
+	},
+	{
+		Name: "Pong Upgrade",
+		Cost: 4000,
+		Description: "This upgrade makes pong double the codepoints you get from it so you can spend less time grinding!",
+		Category: "Enhancements",
+		Dependencies: "mud_fundamentals;window_manager"
+	},
+	{
+		Name: "Pong Upgrade 2",
+		Cost: 8000,
+		Description: "So you lost in pong, it must be sad to lose all the codepoints you've gained. With this upgrade you can save 1 percent of the loss, so at least you get something for losing!",
+		Category: "Enhancements",
+		Dependencies: "mud_fundamentals;window_manager;pong_upgrade"
+	},
+	{
+		Name: "Audio Player AL",
+		Cost: 150,
+		Description: "Just another app launcher, making it easier to listen to your favorite songs!",
+		Category: "GUI",
+		Dependencies: "desktop;wm_free_placement;audio_player"
+	},
+
+	//SHIFTER SUBCATEGORIES
+
+	{
+		Name: "Shift Titlebar",
+		Cost: 200,
+		Description: "Customize the Titlebar within the Shifter.",
+		Category: "Customization",
+		Dependencies: "shifter;wm_titlebar"
+	},
+	{
+		Name: "Shift Title Text",
+		Cost: 200,
+		Description: "Title text looking boring? This upgrade lets you customize the font, color, and position of the Title Text.",
+		Category: "Customization",
+		Dependencies: "shift_titlebar"
+	},
+	{
+		Name: "Shift Window Borders",
+		Cost: 200,
+		Description: "Want to customize the look of the ShiftOS window borders? Buy this upgrade and you can customize the color and thickness of the borders.",
+		Category: "Customization",
+		Dependencies: "shifter"
+	},
+	{
+		Name: "Shift Desktop Panel",
+		Cost: 200,
+		Description: "Not liking your desktop panel the way it is? Buy this upgrade to allow you to change the color, height, and position of the desktop panel.",
+		Category: "Customization",
+		Dependencies: "shifter;desktop"
+	},
+	{
+		Name: "Shift App Launcher",
+		Cost: 200,
+		Description: "You've made your desktop panel look very nice, but your app launcher looks kinda out of place. This upgrade will fix that, allowing you to change the position, size, and appearance of the app launcher button.",
+		Category: "Customization",
+		Dependencies: "shift_desktop_panel;app_launcher"
+	},
+	{
+		Name: "Shift Panel Clock",
+		Cost: 200,
+		Dependencies: "shift_desktop_panel;desktop_clock_widget",
+		Category: "Customization",
+		Description: "That clock is very simple - let's shift it! This upgrade allows you to customize the font and color of the panel clock."
+	},
+	{
+		Name: "Shift Title Buttons",
+		Cost: 200,
+		Dependencies: "close_button;minimize_button;maximize_button;shift_titlebar",
+		Category: "Customization",
+		Description: "Those title buttons look very similar and primitive - with this upgrade you can change the size, position, and color of each button."
+	},
+
+	//SKINNING STUFF
+
+	{
+		Name: "Skinning",
+		Cost: 10000,
+		Description: "It may be expensive, but with this upgrade, you can break the limitations of using just solid colors and gradients for your skin and start using images!",
+		Category: "Customization",
+		Dependencies: "shifter"
+	},
+
+
+	//ARTPAD
+	{
+		Name: "Artpad",
+		Cost: 7500,
+		Category: "Applications",
+		Description: "ArtPad is a very extensible tool that allows you to draw images within ShiftOS. Buy this upgrade to gain access to it through win.open{}!",
+		Dependencies: "color_depth_8_bits"
+	},
+	{
+		Name: "AL Artpad",
+		Cost: 150,
+		Description: "Add an App Launcher Entry for Artpad!",
+		Category: "GUI",
+		Dependencies: "artpad;app_launcher"
+	},
+
+
+
+
+	//ARTPAD PIXEL LIMITS
+
+	{
+		Name: "Artpad Pixel Limit 4",
+		Cost: 100,
+		Dependencies: "artpad",
+		Category: "Enhancements",
+		Description: "Having ArtPad is great, but there's not much you can draw with only 2 pixels. Buy this upgrade to increase the breathing room your imagination can have."
+	},
+	{
+		Name: "Artpad Pixel Limit 8",
+		Cost: 150,
+		Dependencies: "artpad_pixel_limit_4",
+		Category: "Enhancements",
+		Description: "With a 4 pixel limit, you can do some simple patterns and such, but it's still not great. Buy this upgrade to double the pixel limit and add even more possibilities!"
+	},
+	{
+		Name: "Artpad Pixel Limit 16",
+		Cost: 200,
+		Dependencies:"artpad_pixel_limit_8",
+		Category: "Enhancements",
+		Description: "Now we can have 8-pixel images, but we still can't do much more than simple patterns and icons. Use this upgrade to double the max image size yet again and allow even more images!"
+	},
+	{
+		Name: "Artpad Pixel Limit 64",
+		Cost: 600,
+		Dependencies: "artpad_pixel_limit_16",
+		Category: "Enhancements",
+		Description: "Alright. Now it's time to kick it into high-gear. Patterns and icons are fun, but let's increase the image size even more to allow higher-detail icons/patterns and small sprites!"
+	},
+	{
+		Name: "Artpad Pixel Limit 256",
+		Cost: 1000,
+		Dependencies: "artpad_pixel_limit_64",
+		Category: "Enhancements",
+		Description: "We can create high resolution icons and patterns, but we still can't really do too much more than that. Buy this upgrade and you'll be able to have up to 256 pixels in an image!"
+	},
+	{
+		Name: "Artpad Pixel Limit 1024",
+		Cost: 1250,
+		Dependencies: "artpad_pixel_limit_256",
+		Category: "Enhancements",
+		Description: "Let's make things even higher quality! With this upgrade, we'll be able to increase the image size by 4 times! ArtPad is really starting to advance."
+	},
+	{
+		Name: "Artpad Pixel Limit 4096",
+		Cost: 2600,
+		Dependencies: "artpad_pixel_limit_1024",
+		Category: "Enhancements",
+		Description: "Now we can do 1024-pixel images, but how about increasing the limit by 4 times yet again? That'll leave even more room for imagination and drawings!"
+	},
+	{
+		Name: "Artpad Pixel Limit 16384",
+		Cost: 4800,
+		Dependencies: "artpad_pixel_limit_4096",
+		Category: "Enhancements",
+		Description: "We're ever-so-slightly approaching limitless possibilities. With this upgrade, images in ArtPad will be able to have up to 16384 pixels. We can make desktop backgrounds for small monitors!"
+	},
+	{
+		Name: "Artpad Pixel Limit 65536",
+		Cost: 7000,
+		Dependencies: "artpad_pixel_limit_16384",
+		Category: "Enhancements",
+		Description: "Wow! This might be the last time we'll have to deal with pixel limits. It's amazing how far we've came since 2-pixel gradients. Now let's go even further."
+	},
+	{
+		Name: "Artpad Limitless Pixels",
+		Cost: 12000,
+		Dependencies: "artpad_pixel_limit_65536",
+		Category: "Enhancements",
+		Description: "We have a pretty high pixel limit, but with this upgrade, pixel limits are no more! With limitless pixels comes limitless creativity. Have fun!"
+	},
+
+	{
+		Name: "AL Shutdown",
+		Cost: 300,
+		Dependencies: "app_launcher",
+		Category: "GUI",
+		Description: "Want to shut down ShiftOS from your app launcher? This is the perfect upgrade for you."
+	},
+
+	{
+		Name: "Help Description",
+		Id: "help_description",
+		Cost: 150,
+		Dependencies: "",
+		Category: "Enhancements",
+		Description: "Dont understand what some commands do in the terminal? With this upgrade, it adds a handy little description to almost every command when you run the command sos.help!"
+	},
+	{
+		Name: "Help Usage",
+		Cost: 150,
+		Dependencies: "help_description",
+		Category: "Enhancements",
+		Description: "You got descriptions on what some commands do in the terminal, but wouldn't it be handy to also see what the proper usage is for? Now you can with this upgrade!"
+	},
+
+	//ARTPAD TOOLS
+	{
+		Name: "Artpad Pixel Placer",
+		Dependencies: "artpad",
+		Cost: 750,
+		Category: "Enhancements",
+		Description: "This tool extends the Pixel Setter to allow you to use your mouse to place pixels by clicking on the canvas."
+	},
+	{
+		Name: "Artpad PP Movement Mode",
+		Dependencies: "artpad_pixel_placer",
+		Cost: 500,
+		Category: "Enhancements",
+		Description: "This tool extends the Pixel Placer and allows you to drag your mouse while the button is held down to draw pixels on the canvas."
+	},
+	{
+		Name: "Artpad Pencil",
+		Dependencies: "artpad_pp_movement_mode",
+		Cost: 1000,
+		Category: "Enhancements",
+		Description: "Using the power of the Pixel Placer's movement mode, the Pencil can draw strokes of different thicknesses. Most tools will extend this tool."
+	},
+	{
+		Name: "Artpad Paintbrush",
+		Cost: 1000,
+		Dependencies: "artpad_pencil",
+		Category: "Enhancements",
+		Description: "The Paintbrush allows you to draw more thick strokes on the canvas than the Pencil does."
+	},
+	{
+		Name: "Artpad Eraser",
+		Cost: 500,
+		Dependencies: "artpad_paintbrush;artpad_undo",
+		Category: "Enhancements",
+		Description: "Undo not effective? Want to only erase a select bit of the canvas? Use this tool to get an eraser!"
+	},
+	{
+		Name: "Artpad Load",
+		Cost: 350,
+		Dependencies: "artpad;file_skimmer",
+		Category: "Enhancements",
+		Description: "Want to start off from an existing masterpiece? This tool is for you. Select any .pic file and it'll be loaded onto the canvas!"
+	},
+	{
+		Name: "Artpad Line Tool",
+		Cost: 800,
+		Dependencies: "artpad_pp_movement_mode",
+		Category: "Enhancements",
+		Description: "Using the power of linear interpolation and the Pixel Placer Movement Mode, the Line tool can help you draw straight lines from one point to another."
+	},
+	{
+		Name: "Artpad Rectangle Tool",
+		Cost: 400,
+		Dependencies: "artpad_line_tool",
+		Category: "Enhancements",
+		Description: "With the line tool we are able to figure out the distance from point A to point B. Let's use that basic framework to draw rectangles!"
+	},
+	{
+		Name: "Artpad Oval Tool",
+		Cost: 401,
+		Dependencies: "artpad_line_tool",
+		Category: "Enhancements",
+		Description: "Want to draw some ovals? With this tool, you can! It uses the data from the line tool to construct a circle as you drag the mouse."
+	},
+	{
+		Name: "Artpad Fill Tool",
+		Cost: 1000,
+		Dependencies: "artpad_pixel_placer",
+		Category: "Enhancements",
+		Description: "The Pixel Placer is useful because we can grab pixel coordinates from the mouse, and determine how we can fill the area with a certain color - let's do that!"
+	},
+	{
+		Name: "Artpad Text Tool",
+		Cost: 1500,
+		Category: "Enhancements",
+		Dependencies: "artpad_pixel_placer",
+		Description: "Want to place text on your canvas? Use the Text Tool to do so!"
+	},
+	{
+		Name: "Artpad New",
+		Dependencies: "artpad",
+		Cost: 500,
+		Category: "Enhancements",
+		Description: "Made a mistake? Want a blank canvas? This tool gives you just that."
+	},
+	{
+		Name: "Artpad Open",
+		Dependencies: "artpad;file_skimmer",
+		Cost: 600,
+		Category: "Enhancements",
+		Description: "Want to edit an artpad picture? If you have the File Skimmer, then this tool is for you!"
+	},
+	{
+		Name: "Artpad Save",
+		Dependencies: "artpad;file_skimmer",
+		Cost: 1000,
+		Category: "Enhancements",
+		Description: "Have you been working extra-hard on a masterpiece in ArtPad and want to save? This upgrade is a must-have!"
+	},
+	{
+		Name: "Artpad Undo",
+		Dependencies: "artpad_new",
+		Cost: 59,
+		Category: "Enhancements",
+		Description: "Mistakes happen - but if you have to clear the canvas every time you mess up one single pixel it can get annoying. This tool will help mitigate that - you'll be able to make your last change magically disappear!"
+	},
+	{
+		Name: "Artpad Redo",
+		Dependencies: "artpad_undo",
+		Cost: 50,
+		Category: "Enhancements",
+		Description: "Did you change your mind about that mistake you've undone? Want it back? This tool is for you. Note that the second you add something new after an undo, the undone change is wiped forever!"
+	},
+
+
+
+	//ARTPAD COLOR PALETTES
+
+	{
+		Name: "Artpad 4 Color Palettes",
+		Dependencies: "artpad",
+		Cost: 150,
+		Category: "Enhancements",
+		Description: "Want to add an extra 2 colors to your palette? Buy this upgrade to do so!"
+	},
+	{
+		Name: "Artpad 8 Color Palettes",
+		Dependencies: "artpad_4_color_palettes",
+		Cost: 400,
+		Category: "Enhancements",
+		Description: "Want to add an extra 4 color palette entries to your Artpad to have even more colors used at once? Buy this upgrade, and that will happen!"
+	},
+	{
+		Name: "Artpad 16 Color Palettes",
+		Dependencies: "artpad_8_color_palettes",
+		Cost: 600,
+		Category: "Enhancements",
+		Description: "With this upgrade, you can have up to 16 different colors in your ArtPad palette. Good for drawing intense scenes without constantly selecting different colors."
+	},
+	{
+		Name: "Artpad 32 Color Palettes",
+		Dependencies: "artpad_16_color_palettes",
+		Cost: 850,
+		Category: "Enhancements",
+		Description: "Having 16 different color palettes is nice, but you know what's nicer? Having 32!"
+	},
+	{
+		Name: "Artpad 64 Color Palettes",
+		Dependencies: "artpad_32_color_palettes",
+		Cost: 1700,
+		Category: "Enhancements",
+		Description: "Well then. We have 32 color palettes - let's double that."
+	},
+	{
+		Name: "Artpad 128 Color Palettes",
+		Dependencies: "artpad_128_color_palettes",
+		Cost: 3400,
+		Category: "Enhancements",
+		Description: "With this upgrade we'll be able to have 128 simultaneous colors in our palette. It may get a bit glitchy though... maybe a window manager upgrade could help?"
+	},
+
+
+
+	//SHIFTORIUM UPGRADES FOR THE SHIFTORIUM ITSELF
+
+	{
+		Name: "Shiftorium GUI",
+		Cost: 100,
+		Category: "Applications",
+		Description: "You may spend lots of time in your terminal - executing scripts, chatting, etc, but why make it so difficult and repetitive to upgrade your system? With this upgrade, a GUI will be added to the Shiftorium, and will be accessible using win.open{app:\"shiftorium\"}."
+	},
+	{
+		Name: "AL Shiftorium",
+		Cost: 150,
+		Dependencies: "shiftorium_gui;app_launcher",
+		Category: "GUI",
+		Description: "Add an App Launcher Entry for the Shiftorium!"
+	},
+	{
+       Name: "Shiftorium GUI Codepoints Display",
+       Cost: 2500,
+       Dependencies: "shiftorium_gui",
+		Category: "Enhancements",
+       Description: "In the shiftorium GUI but dont know what you can spend because you can't see how many code points are on hand? Well shop easy, because with this upgrade that is now possible! You have to restart the shiftorium for it to work."
+    },
+
+	//ADVANCED APP LAUNCHER
+	{
+		Name: "Advanced App Launcher",
+		Cost: 10000,
+		Description: "The app launcher can categorize items and is quite clean, but let's make it even more advanced by adding more than just a traditional menu as the app launcher.",
+		Dependencies: "app_launcher_categories",
+		Category: "GUI"
+	},
+
+    //UPDATE MANAGER
+	{
+		Name: "AL Update Manager",
+		Cost: 150,
+		Description: "Want to get the latest features of ShiftOS, right from your App Launcher? This upgrade is for you!",
+		Dependencies: "app_launcher",
+		Category: "GUI"
+	},
+
+
+	// SHIFTSWEEPER
+
+	{
+		Name: "AL ShiftSweeper",
+		Cost: 100,
+		Dependencies: "app_launcher;shiftsweeper",
+		Category: "GUI",
+		Description: "Play ShiftSweeper quickly with this dandy applauncher!"
+	},
+	{
+		Name: "ShiftSweeper Medium",
+		Cost: 900,
+		Dependencies: "shiftsweeper",
+		Category: "Enhancements",
+		Description: "ShiftSweeper getting too easy? Obviously, since you can only play Easy difficulty! However, with this Medium button, you can get a better challenge, and more codepoints!"
+	},
+	{
+		Name: "ShiftSweeper Hard",
+		Cost: 900,
+		Dependencies: "shiftsweeper_medium",
+		Category: "Enhancements",
+		Description: "Is ShiftSweeper still too easy for you? Buy the Hard difficulty and you can try to find 99 mines! It may be extremely difficult, but the reward is massive!"
+	}
+]

@@ -203,10 +203,8 @@ namespace ShiftOS.Engine
             {
                 LoadSkin();
             }
-            if (SaveSystem.CurrentSave != null)
-            {
-                SkinLoaded?.Invoke();
-            }
+            SkinLoaded?.Invoke();
+
         }
 
         /// <summary>

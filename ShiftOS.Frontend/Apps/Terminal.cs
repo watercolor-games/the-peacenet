@@ -144,21 +144,19 @@ namespace ShiftOS.Frontend.Apps
             if(!string.IsNullOrEmpty(Text))
             using (var gfx = Graphics.FromImage(new Bitmap(1, 1)))
             {
-                var cursorpos = GetPointAtIndex(gfx);
-                    var caretSize = gfx.SmartMeasureString(Text.ToString(), LoadedSkin.TerminalFont, Width - 4);
-                    float initial = (((float)Math.Floor(caretSize.Height)) + cursorpos.Y) - _vertOffset;
-                    if (initial < 0)
-                {
-                    float difference = initial - Height;
-                    _vertOffset = initial + difference;
+                    var textsize = gfx.SmartMeasureString(Text, LoadedSkin.TerminalFont, Width);
+                    float initial = textsize.Height - _vertOffset;
+                    if(initial > Height)
+                    {
+                        float difference = Height - initial;
+                        _vertOffset = initial - difference;
+                    }
+                    else if(initial < 0)
+                    {
+                        float difference = Height - initial;
+                        _vertOffset = initial + difference;
+                    }
                 }
-                if (initial > Height)
-                {
-                    float difference = initial - Height;
-                    _vertOffset = initial - difference;
-                }
-
-            }
         }
 
         protected override void OnLayout()
@@ -181,7 +179,7 @@ namespace ShiftOS.Frontend.Apps
             for (int l = 0; l < line; l++)
             {
                 lineindex += Lines[l].Length;
-                var stringMeasure = gfx.SmartMeasureString(Lines[l], LoadedSkin.TerminalFont, Width - 4);
+                var stringMeasure = gfx.SmartMeasureString(Lines[l] == "\r" ? " " : Lines[l], LoadedSkin.TerminalFont, Width - 4);
                 vertMeasure += (int)stringMeasure.Height;
 
             }
@@ -320,7 +318,14 @@ namespace ShiftOS.Frontend.Apps
                 //Draw the caret.
                 if (IsFocusedControl)
                 {
-//                    gfx.FillRectangle(new SolidBrush(LoadedSkin.TerminalForeColorCC.ToColor()), new RectangleF(new PointF(CaretPosition.X, CaretPosition.Y - _vertOffset), new SizeF(2, CaretSize.Height)));
+                    PointF cursorPos;
+                    using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+                    {
+                        cursorPos = GetPointAtIndex(cgfx);
+                        
+                    }
+                    var cursorSize = gfx.MeasureString(Text[Index-1].ToString(), LoadedSkin.TerminalFont);
+                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }//Draw the text
 
 
@@ -382,19 +387,16 @@ namespace ShiftOS.Frontend.Apps
             var textformat = new StringFormat(StringFormat.GenericTypographic);
             textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             textformat.Trimming = StringTrimming.None;
+            textformat.FormatFlags |= StringFormatFlags.NoClip;
+            
+            gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
             var measure = gfx.MeasureString(s, font, width, textformat);
             return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Ceiling(measure.Height));
         }
 
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
         {
-            if (string.IsNullOrEmpty(s))
-                s = " ";
-            var textformat = new StringFormat(StringFormat.GenericTypographic);
-            textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
-            textformat.Trimming = StringTrimming.None;
-            var measure = gfx.MeasureString(s, font, int.MaxValue, textformat);
-            return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Floor(measure.Height));
+            return SmartMeasureString(gfx, s, font, int.MaxValue);
         }
 
     }

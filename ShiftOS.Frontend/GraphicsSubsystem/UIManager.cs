@@ -100,6 +100,14 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             ctrl.Layout();
         }
 
+        public static void InvalidateAll()
+        {
+            foreach(var ctrl in topLevels)
+            {
+                ctrl.Invalidate();
+            }
+        }
+
         public static void ProcessMouseState(MouseState state)
         {
             foreach(var ctrl in topLevels.ToArray())
@@ -110,10 +118,49 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static void ProcessKeyEvent(KeyEvent e)
         {
+            if (e.ControlDown && e.Key == Keys.T)
+            {
+                AppearanceManager.SetupWindow(new Apps.Terminal());
+                return;
+            }
             FocusedControl?.ProcessKeyEvent(e);
         }
 
         private static Texture2D DesktopBackground = null;
+
+        public static Dictionary<string, Texture2D> SkinTextures = new Dictionary<string, Texture2D>();
+
+        public static void ResetSkinTextures(GraphicsDevice graphics)
+        {
+            SkinTextures.Clear();
+            foreach(var byteArray in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(byte[])))
+            {
+                var imgAttrib = byteArray.GetCustomAttributes(false).FirstOrDefault(x => x is ImageAttribute) as ImageAttribute;
+                if(imgAttrib != null)
+                {
+                    var img = SkinEngine.GetImage(imgAttrib.Name);
+                    if(img != null)
+                    {
+                        var bmp = (System.Drawing.Bitmap)img;
+                        var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                        var data = new byte[Math.Abs(lck.Stride) * lck.Height];
+                        Marshal.Copy(lck.Scan0, data, 0, data.Length);
+                        bmp.UnlockBits(lck);
+                        var tex2 = new Texture2D(graphics, bmp.Width, bmp.Height);
+                        for(int i = 0; i < data.Length; i += 4)
+                        {
+                            byte r = data[i];
+                            byte b = data[i + 2];
+                            data[i] = b;
+                            data[i + 2] = r;
+                        }
+                        tex2.SetData<byte>(data);
+                        SkinTextures.Add(imgAttrib.Name, tex2);
+                    }
+                }
+            }
+        }
+
 
         public static Queue<Action> CrossThreadOperations = new Queue<Action>();
 

@@ -84,7 +84,7 @@ namespace ShiftOS.Frontend.Desktop
                 Console.WriteLine("Application not found on system.");
                 return;
             }
-            while(AppearanceManager.OpenForms.Count > MaxCount)
+            while(AppearanceManager.OpenForms.Count >= MaxCount)
             {
                 AppearanceManager.OpenForms[0].Close();
                 AppearanceManager.OpenForms.RemoveAt(0);
@@ -132,7 +132,7 @@ namespace ShiftOS.Frontend.Desktop
             int bottomheight = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
             int rightwidth = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.RightBorderWidth : 0;
             _hostedwindow.Width = width - leftwidth - rightwidth;
-            _hostedwindow.Height = width - bottomheight - titleheight;
+            _hostedwindow.Height = height - bottomheight - titleheight;
             Width = width;
             Height = height;
 
@@ -271,9 +271,6 @@ namespace ShiftOS.Frontend.Desktop
                 var titletextleft = LoadedSkin.TitleTextLeft;
                 bool titletextcentered = LoadedSkin.TitleTextCentered;
 
-                 var titlebarbg = GetImage("titlebar");
-                var titlebarlayout = GetImageLayout("titlebar");
-
                 var drawcorners = LoadedSkin.ShowTitleCorners;
                 int titlebarleft = 0;
                 int titlebarwidth = Width;
@@ -291,17 +288,14 @@ namespace ShiftOS.Frontend.Desktop
                     //and the colors
                     var leftcolor = LoadedSkin.TitleLeftCornerBackground;
                     var rightcolor = LoadedSkin.TitleRightCornerBackground;
-                    //and the layouts...
-                    var leftlayout = GetImageLayout("titlebarleft");
-                    var rightlayout = GetImageLayout("titlebarright");
                     //and the widths
                     var leftwidth = LoadedSkin.TitleLeftCornerWidth;
                     var rightwidth = LoadedSkin.TitleRightCornerWidth;
 
                     //draw left corner
-                    if(leftimage != null)
+                    if(UIManager.SkinTextures.ContainsKey("titleleft"))
                     {
-                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftimage.ToTexture2D(gfx.Device));
+                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, UIManager.SkinTextures["titleleft"]);
                     }
                     else
                     {
@@ -309,9 +303,9 @@ namespace ShiftOS.Frontend.Desktop
                     }
 
                     //draw right corner
-                    if (rightimage != null)
+                    if (UIManager.SkinTextures.ContainsKey("titleright"))
                     {
-                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightimage.ToTexture2D(gfx.Device));
+                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, UIManager.SkinTextures["titleright"]);
                     }
                     else
                     {
@@ -319,7 +313,7 @@ namespace ShiftOS.Frontend.Desktop
                     }
                 }
 
-                if (titlebarbg == null)
+                if (!UIManager.SkinTextures.ContainsKey("titlebar"))
                 {
                     //draw the title bg
                     gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarcolor.ToMonoColor());
@@ -327,7 +321,7 @@ namespace ShiftOS.Frontend.Desktop
                 }
                 else
                 {
-                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarbg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"]);
                 }
                 //Now we draw the title text.
                 var textMeasure = gfx.MeasureString(_text, titlefont);
@@ -350,14 +344,13 @@ namespace ShiftOS.Frontend.Desktop
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                    var img = GetImage("closebutton");
-                    if (img == null)
+                    if (!UIManager.SkinTextures.ContainsKey("closebutton"))
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"]);
                     }
                 }
                 //Draw maximize button
@@ -369,16 +362,14 @@ namespace ShiftOS.Frontend.Desktop
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
-                    var img = GetImage("maximizebutton");
-                    if (img == null)
+                    if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"]);
                     }
-
                 }
                 //Draw minimize button
                 if (Shiftorium.UpgradeInstalled("minimize_button"))
@@ -388,16 +379,14 @@ namespace ShiftOS.Frontend.Desktop
                     var closebuttonright = LoadedSkin.MinimizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                    var img = GetImage("minimizebutton");
-                    if (img == null)
+                    if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
                     }
                     else
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, img.ToTexture2D(gfx.Device));
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"]);
                     }
-
 
                 }
             }
@@ -425,58 +414,53 @@ namespace ShiftOS.Frontend.Desktop
 
                 //draw border corners
                 //BOTTOM LEFT
-                var bottomlimg = GetImage("bottomlborder");
-                if (bottomlimg == null)
+                if (!UIManager.SkinTextures.ContainsKey("bottomlborder"))
                 {
                     gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor.ToMonoColor());
                 }
                 else
                 {
-                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, bottomlimg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomlborder"]);
                 }
 
                 //BOTTOM RIGHT
-                var bottomrimg = GetImage("bottomrborder");
-                if (bottomrimg == null)
+                if (!UIManager.SkinTextures.ContainsKey("bottomrborder"))
                 {
                     gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor.ToMonoColor());
                 }
                 else
                 {
-                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, bottomrimg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomrborder"]);
                 }
 
                 //BOTTOM
-                var bottomimg = GetImage("bottomborder");
-                if (bottomimg == null)
+                if (!UIManager.SkinTextures.ContainsKey("bottomborder"))
                 {
                     gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor.ToMonoColor());
                 }
                 else
                 {
-                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, bottomimg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, UIManager.SkinTextures["bottomborder"]);
                 }
 
                 //LEFT
-                var leftimg = GetImage("leftborder");
-                if (leftimg == null)
+                if (!UIManager.SkinTextures.ContainsKey("leftborder"))
                 {
                     gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, borderleftcolor.ToMonoColor());
                 }
                 else
                 {
-                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, leftimg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"]);
                 }
 
                 //RIGHT
-                var rightimg = GetImage("rightborder");
-                if (rightimg == null)
+                if (!UIManager.SkinTextures.ContainsKey("rightborder"))
                 {
                     gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor.ToMonoColor());
                 }
                 else
                 {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, rightimg.ToTexture2D(gfx.Device));
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"]);
                 }
 
             }

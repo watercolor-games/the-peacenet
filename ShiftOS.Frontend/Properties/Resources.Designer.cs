@@ -81,6 +81,33 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [
+        /////Virus Scanner Grades
+        ///	{
+        ///		Name: &quot;Virus Scanner Grade 2&quot;,
+        ///		Description: &quot;Update the Virus Scanner database to include threatlevel 2 viruses.&quot;,
+        ///		Dependencies: &quot;virus_scanner&quot;,
+        ///		Category: &quot;Virus Scanner&quot;,
+        ///		Cost: 75
+        ///	},
+        ///	{
+        ///		Name: &quot;Virus Scanner Grade 3&quot;,
+        ///		Description: &quot;Update the Virus Scanner database to include threatlevel 3 viruses.&quot;,
+        ///		Dependencies: &quot;virus_scanner_grade_2&quot;,
+        ///		Category: &quot;Virus Scanner&quot;,
+        ///		Cost: 150
+        ///	},
+        ///	{
+        ///		Name: &quot;Virus Scanner Grade 4&quot;,
+        ///		Description: &quot;Update the [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Shiftorium {
+            get {
+                return ResourceManager.GetString("Shiftorium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///	&quot;{SUBMIT}&quot;:&quot;Bestätigen&quot;,
         ///

@@ -393,6 +393,8 @@ namespace ShiftOS.Frontend.GUI
                         gfx.Width = ctrl.Width;
                         gfx.Height = ctrl.Height;
                         ctrl.Paint(gfx);
+                        gfx.X = draw_x;
+                        gfx.Y = draw_y;
                     }
                     gfx.Width = draw_width;
                     gfx.Height = draw_height;

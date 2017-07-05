@@ -89,7 +89,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public void Clear(Color c)
         {
-            DrawRectangle(_startx, _starty, _maxwidth, _maxheight, c);
+            DrawRectangle(0, 0, _maxwidth, _maxheight, c);
         }
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2)
@@ -152,7 +152,13 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             {
                 using(var gfx = System.Drawing.Graphics.FromImage(bmp))
                 {
-                    gfx.DrawString(text, font, new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B)), 0, 0);
+                    var textformat = new System.Drawing.StringFormat(System.Drawing.StringFormat.GenericTypographic);
+                    textformat.FormatFlags = System.Drawing.StringFormatFlags.MeasureTrailingSpaces;
+                    textformat.Trimming = System.Drawing.StringTrimming.None;
+                    textformat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
+
+                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+                    gfx.DrawString(text, font, new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B)), 0, 0, textformat);
                 }
                 var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 var data = new byte[Math.Abs(lck.Stride) * lck.Height];

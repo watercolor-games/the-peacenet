@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
 
@@ -22,6 +24,11 @@ namespace ShiftOS.Frontend
             GraphicsDevice = new GraphicsDeviceManager(this);
             GraphicsDevice.PreferredBackBufferHeight = 1080;
             GraphicsDevice.PreferredBackBufferWidth = 1920;
+            SkinEngine.SkinLoaded += () =>
+            {
+                UIManager.ResetSkinTextures(GraphicsDevice.GraphicsDevice);
+                UIManager.InvalidateAll();
+            };
             UIManager.Viewport = new System.Drawing.Size(
                     GraphicsDevice.PreferredBackBufferWidth,
                     GraphicsDevice.PreferredBackBufferHeight
@@ -70,6 +77,7 @@ namespace ShiftOS.Frontend
             //Now we can initiate the Infobox subsystem
             Engine.Infobox.Init(new Infobox());
 
+            
 
             //Let's initiate the engine just for a ha.
 
@@ -79,7 +87,7 @@ namespace ShiftOS.Frontend
             };
 
             //We'll use sandbox mode
-            SaveSystem.IsSandbox = false;
+            SaveSystem.IsSandbox = true;
             Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 
@@ -97,6 +105,9 @@ namespace ShiftOS.Frontend
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
+
+            UIManager.ResetSkinTextures(GraphicsDevice.GraphicsDevice);
+
 
             // TODO: use this.Content to load your game content here
             var bmp = Properties.Resources.cursor_9x_pointer;
@@ -137,12 +148,9 @@ namespace ShiftOS.Frontend
 
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
-            if(LastMouseState != mouseState)
-            {
                 LastMouseState = mouseState;
                 UIManager.ProcessMouseState(LastMouseState);
-            }
-
+            
             //So we have mouse input, and the UI layout system working...
 
             //But an OS isn't useful without the keyboard!
@@ -219,10 +227,22 @@ namespace ShiftOS.Frontend
             var mousepos = Mouse.GetState(this.Window).Position;
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
+            var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0,0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
+
+            gfxContext.DrawString("ShiftOS 1.0 Beta 4\r\nCopyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI\r\nThis is an unstable build.\r\nFPS: " + (1 / gameTime.ElapsedGameTime.TotalSeconds).ToString(), 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
 
 
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+    }
+
+    [ShiftoriumProvider]
+    public class MonoGameShiftoriumProvider : IShiftoriumProvider
+    {
+        public List<ShiftoriumUpgrade> GetDefaults()
+        {
+            return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
         }
     }
 }
