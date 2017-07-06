@@ -59,7 +59,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                     {
                         for (int i = 5; i > 0; i--)
                         {
-                            batch.Draw(_target, new Rectangle(ctrl.X + i, ctrl.Y + i, ctrl.Width, ctrl.Height), new Color(Color.Black, 255 / (i * 2)));
+                            batch.Draw(_target, new Rectangle(ctrl.X - i, ctrl.Y - i, ctrl.Width+(i*2), ctrl.Height+(i*2)), new Color(Color.Black, 255 / (i * 2)));
                         }
                     }
 
@@ -69,7 +69,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         }
 
         public static void SendToBack(Control ctrl)
-        {
+       { 
             topLevels.Remove(ctrl);
             topLevels.Insert(0, ctrl);
         }
@@ -171,6 +171,10 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         {
                             byte r = data[i];
                             byte b = data[i + 2];
+                            if (r == 1 && b == 1 && data[i + 1] == 1)
+                            {
+                                data[i + 3] = 0;
+                            }
                             data[i] = b;
                             data[i + 2] = r;
                         }
@@ -187,6 +191,9 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 tex2.SetData<byte>(new[] { color.B, color.G, color.R, color.A });
                 SkinTextures.Add(colorfield.Name, tex2);
             }
+
+            
+
         }
 
 

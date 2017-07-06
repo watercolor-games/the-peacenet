@@ -90,7 +90,7 @@ namespace ShiftOS.Frontend
             };
 
             //We'll use sandbox mode
-            SaveSystem.IsSandbox = false;
+            SaveSystem.IsSandbox = true;
             Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 
@@ -227,9 +227,13 @@ namespace ShiftOS.Frontend
         {
             UIManager.DrawControlsToTargets(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0);
 
+            var rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            rasterizerState.MultiSampleAntiAlias = true;
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearClamp, DepthStencilState.Default,
-                            RasterizerState.CullNone);
+                            rasterizerState);
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice.GraphicsDevice, spriteBatch, 640, 480);
 
@@ -247,11 +251,27 @@ namespace ShiftOS.Frontend
             if (DisplayDebugInfo)
             {
                 var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
-
+                var color = Color.White;
+                double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+                if (fps <= 20)
+                    color = Color.Red;
                 gfxContext.DrawString($@"ShiftOS 1.0 Beta 4
 Copyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI
 This is an unstable build.
-FPS: {(1 / gameTime.ElapsedGameTime.TotalSeconds)}
+FPS: {(fps)}
+An FPS below 20 can cause glitches in keyboard and mouse handling. It is advised that if you are getting these
+framerates, press CTRL+E to disable fancy effects, close any apps you are not using, and try running in windowed mode
+or in a lower resolution.
+
+If all else fails, you can set a breakpoint somewhere in the ShiftOS.Update() or ShiftOS.Draw() methods in the game's source
+code and use Visual Studio's debugger to step through the code to find bottlenecks.
+
+If a method takes more than 30 milliseconds to complete, that is a sign that it is bottlenecking the game and may need to be
+optimized.
+
+Try using the SkinTextures cache when rendering skin elements, and try using the GraphicsContext.DrawString() method when drawing
+text. In this build, we are aware that this method causes bottlenecking, we are working on a caching system for fonts so we do not need to
+use the System.Drawing.Graphics class to draw text.
 
 UI render target count: {UIManager.TextureCaches.Count}
 Skin texture caches: {UIManager.SkinTextures.Count}
@@ -259,7 +279,7 @@ Open windows (excluding dialog boxes): {AppearanceManager.OpenForms.Count}
 
 Experimental effects enabled: {UIManager.ExperimentalEffects}
 Fullscreen: {GraphicsDevice.IsFullScreen}
-Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
             spriteBatch.End();

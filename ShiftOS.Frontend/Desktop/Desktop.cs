@@ -141,7 +141,7 @@ namespace ShiftOS.Frontend.Desktop
             else
             {
                 //draw with a color
-                var color = LoadedSkin.DesktopPanelColor.ToMonoColor();
+                var color = UIManager.SkinTextures["DesktopPanelColor"];
                 gfx.DrawRectangle(0, dp_position, dp_width, dp_height, color);
             }
 
@@ -173,7 +173,7 @@ namespace ShiftOS.Frontend.Desktop
             else
             {
                 //draw using the bg color
-                var pcBGColor = LoadedSkin.DesktopPanelClockBackgroundColor.ToMonoColor();
+                var pcBGColor = UIManager.SkinTextures["DesktopPanelClockBackgroundColor"];
                 gfx.DrawRectangle(panelclockleft, dp_position, panelclockwidth, dp_height, pcBGColor);
             }
 
@@ -201,7 +201,7 @@ namespace ShiftOS.Frontend.Desktop
                 }
                 else
                 {
-                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, LoadedSkin.PanelButtonColor.ToMonoColor());
+                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonBackgroundColor"]);
                 }
 
                 //now we draw the text

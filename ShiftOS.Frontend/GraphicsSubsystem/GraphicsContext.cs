@@ -148,33 +148,35 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 measure = MeasureString(text, font);
             else
                 measure = MeasureString(text, font, wrapWidth);
-            using(var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
+            using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
             {
-                using(var gfx = System.Drawing.Graphics.FromImage(bmp))
+                using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                 {
                     var textformat = new System.Drawing.StringFormat(System.Drawing.StringFormat.GenericTypographic);
                     textformat.FormatFlags = System.Drawing.StringFormatFlags.MeasureTrailingSpaces;
                     textformat.Trimming = System.Drawing.StringTrimming.None;
                     textformat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
 
-                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel;
                     gfx.DrawString(text, font, new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B)), 0, 0, textformat);
                 }
                 var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 var data = new byte[Math.Abs(lck.Stride) * lck.Height];
                 System.Runtime.InteropServices.Marshal.Copy(lck.Scan0, data, 0, data.Length);
                 bmp.UnlockBits(lck);
-                var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height);
-                for(int i = 0; i < data.Length; i += 4)
+                using (var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height))
                 {
-                    byte r = data[i];
-                    byte b = data[i + 2];
-                    data[i] = b;
-                    data[i + 2] = r;
-                }
+                    for (int i = 0; i < data.Length; i += 4)
+                    {
+                        byte r = data[i];
+                        byte b = data[i + 2];
+                        data[i] = b;
+                        data[i + 2] = r;
+                    }
 
-                tex2.SetData<byte>(data);
-                _spritebatch.Draw(tex2, new Rectangle(x, y, bmp.Width, bmp.Height), Color.White);
+                    tex2.SetData<byte>(data);
+                    _spritebatch.Draw(tex2, new Rectangle(x, y, bmp.Width, bmp.Height), Color.White);
+                }
             }
         }
 
