@@ -42,7 +42,7 @@ namespace ShiftOS.Frontend.GUI
             if (MouseLeftDown)
                 bgCol = UIManager.SkinTextures["ButtonPressedColor"];
 
-            gfx.DrawRectangle(0, 0, Width, Height, fgCol);
+            gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, bgCol);
 
             var measure = gfx.MeasureString(Text, Font);

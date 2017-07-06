@@ -98,6 +98,8 @@ namespace ShiftOS.Frontend
 
         }
 
+        private double timeSinceLastPurge = 0;
+
         private Texture2D MouseTexture = null;
 
          /// <summary>
@@ -214,6 +216,14 @@ namespace ShiftOS.Frontend
             //Cause layout update on all elements
             UIManager.LayoutUpdate();
 
+            timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if(timeSinceLastPurge > 30)
+            {
+                GraphicsContext.StringCaches.Clear();
+                timeSinceLastPurge = 0;
+            }
+
             base.Update(gameTime);
         }
 
@@ -252,7 +262,7 @@ namespace ShiftOS.Frontend
             {
                 var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
                 var color = Color.White;
-                double fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+                double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
                     color = Color.Red;
                 gfxContext.DrawString($@"ShiftOS 1.0 Beta 4

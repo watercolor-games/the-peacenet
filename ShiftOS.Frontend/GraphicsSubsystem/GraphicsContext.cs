@@ -139,45 +139,48 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             }
         }
 
+        public static List<TextCache> StringCaches = new List<TextCache>();
+
         public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, int wrapWidth = 0)
         {
             x += _startx;
             y += _starty;
-            Vector2 measure;
-            if (wrapWidth == 0)
-                measure = MeasureString(text, font);
-            else
-                measure = MeasureString(text, font, wrapWidth);
-            using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
+            var fontcache = StringCaches.FirstOrDefault(z => z.Text == text && z.FontFamily == font&&z.WrapWidth == wrapWidth);
+            if (fontcache == null)
             {
-                using (var gfx = System.Drawing.Graphics.FromImage(bmp))
+                Vector2 measure;
+                if (wrapWidth == 0)
+                    measure = MeasureString(text, font);
+                else
+                    measure = MeasureString(text, font, wrapWidth);
+                using(var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
                 {
-                    var textformat = new System.Drawing.StringFormat(System.Drawing.StringFormat.GenericTypographic);
-                    textformat.FormatFlags = System.Drawing.StringFormatFlags.MeasureTrailingSpaces;
-                    textformat.Trimming = System.Drawing.StringTrimming.None;
-                    textformat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
-
-                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel;
-                    gfx.DrawString(text, font, new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B)), 0, 0, textformat);
-                }
-                var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                var data = new byte[Math.Abs(lck.Stride) * lck.Height];
-                System.Runtime.InteropServices.Marshal.Copy(lck.Scan0, data, 0, data.Length);
-                bmp.UnlockBits(lck);
-                using (var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height))
-                {
-                    for (int i = 0; i < data.Length; i += 4)
+                    using(var gfx = System.Drawing.Graphics.FromImage(bmp))
                     {
-                        byte r = data[i];
-                        byte b = data[i + 2];
-                        data[i] = b;
-                        data[i + 2] = r;
+                        var sFormat = System.Drawing.StringFormat.GenericTypographic;
+                        sFormat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
+
+                        gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                        gfx.DrawString(text, font, System.Drawing.Brushes.White, 0, 0, sFormat);
                     }
 
+                    var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    var data = new byte[Math.Abs(lck.Stride) * lck.Height];
+                    System.Runtime.InteropServices.Marshal.Copy(lck.Scan0, data, 0, data.Length);
+                    var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height);
                     tex2.SetData<byte>(data);
-                    _spritebatch.Draw(tex2, new Rectangle(x, y, bmp.Width, bmp.Height), Color.White);
+                    fontcache = new TextCache();
+                    fontcache.Text = text;
+                    fontcache.FontFamily = font;
+                    fontcache.WrapWidth = wrapWidth;
+                    fontcache.Cache = tex2;
+                    StringCaches.Add(fontcache);
                 }
             }
+            _spritebatch.Draw(fontcache.Cache, new Rectangle(x, y, fontcache.Cache.Width, fontcache.Cache.Height), color);
+           
+            
         }
 
         private float getRotation(float x, float y, float x2, float y2)
@@ -191,5 +194,13 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             res = MathHelper.ToRadians(res);
             return res;
         }
+    }
+
+    public class TextCache
+    {
+        public string Text { get; set; }
+        public System.Drawing.Font FontFamily { get; set; }
+        public Texture2D Cache { get; set; }
+        public int WrapWidth { get; set; }
     }
 }

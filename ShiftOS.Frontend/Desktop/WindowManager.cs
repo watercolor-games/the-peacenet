@@ -322,14 +322,13 @@ namespace ShiftOS.Frontend.Desktop
                 //Draw close button
                 if(Shiftorium.UpgradeInstalled("close_button"))
                 {
-                    var closebuttoncolor = LoadedSkin.CloseButtonColor;
                     var closebuttonsize = LoadedSkin.CloseButtonSize;
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
                     if (!UIManager.SkinTextures.ContainsKey("closebutton"))
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["CloseButtonColor"]);
                     }
                     else
                     {
@@ -339,7 +338,6 @@ namespace ShiftOS.Frontend.Desktop
                 //Draw maximize button
                 if (Shiftorium.UpgradeInstalled("maximize_button"))
                 {
-                    var closebuttoncolor = LoadedSkin.MaximizeButtonColor;
                     var closebuttonsize = LoadedSkin.MaximizeButtonSize;
                     var closebuttonright = LoadedSkin.MaximizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
@@ -347,7 +345,7 @@ namespace ShiftOS.Frontend.Desktop
 
                     if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
                     }
                     else
                     {
@@ -357,14 +355,13 @@ namespace ShiftOS.Frontend.Desktop
                 //Draw minimize button
                 if (Shiftorium.UpgradeInstalled("minimize_button"))
                 {
-                    var closebuttoncolor = LoadedSkin.MinimizeButtonColor;
                     var closebuttonsize = LoadedSkin.MinimizeButtonSize;
                     var closebuttonright = LoadedSkin.MinimizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
                     if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, closebuttoncolor.ToMonoColor());
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
                     }
                     else
                     {
@@ -388,18 +385,18 @@ namespace ShiftOS.Frontend.Desktop
                 int bottomwidth = Width - bottomlocx - rightborderwidth;
                 int brightlocx = Width - rightborderwidth;
 
-                var borderleftcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderLeftBackground : LoadedSkin.BorderInactiveLeftBackground;
-                var borderrightcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderRightBackground : LoadedSkin.BorderInactiveRightBackground;
-                var borderbottomcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomBackground : LoadedSkin.BorderInactiveBottomBackground;
-                var borderbleftcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomLeftBackground : LoadedSkin.BorderInactiveBottomLeftBackground;
-                var borderbrightcolor = (ContainsFocusedControl || IsFocusedControl) ? LoadedSkin.BorderBottomRightBackground : LoadedSkin.BorderInactiveBottomRightBackground;
+                var borderleftcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderLeftBackground"] : UIManager.SkinTextures["BorderInactiveLeftBackground"];
+                var borderrightcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderRightBackground"] : UIManager.SkinTextures["BorderInactiveRightBackground"];
+                var borderbottomcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomBackground"] : UIManager.SkinTextures["BorderInactiveBottomBackground"];
+                var borderbleftcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomLeftBackground"] : UIManager.SkinTextures["BorderInactiveBottomLeftBackground"];
+                var borderbrightcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomRightBackground"] : UIManager.SkinTextures["BorderInactiveBottomRightBackground"];
 
 
                 //draw border corners
                 //BOTTOM LEFT
                 if (!UIManager.SkinTextures.ContainsKey("bottomlborder"))
                 {
-                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor.ToMonoColor());
+                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor);
                 }
                 else
                 {
@@ -409,7 +406,7 @@ namespace ShiftOS.Frontend.Desktop
                 //BOTTOM RIGHT
                 if (!UIManager.SkinTextures.ContainsKey("bottomrborder"))
                 {
-                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor.ToMonoColor());
+                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor);
                 }
                 else
                 {
@@ -419,7 +416,7 @@ namespace ShiftOS.Frontend.Desktop
                 //BOTTOM
                 if (!UIManager.SkinTextures.ContainsKey("bottomborder"))
                 {
-                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor.ToMonoColor());
+                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor);
                 }
                 else
                 {
@@ -429,7 +426,7 @@ namespace ShiftOS.Frontend.Desktop
                 //LEFT
                 if (!UIManager.SkinTextures.ContainsKey("leftborder"))
                 {
-                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, borderleftcolor.ToMonoColor());
+                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, borderleftcolor);
                 }
                 else
                 {
@@ -439,7 +436,7 @@ namespace ShiftOS.Frontend.Desktop
                 //RIGHT
                 if (!UIManager.SkinTextures.ContainsKey("rightborder"))
                 {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor.ToMonoColor());
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
                 }
                 else
                 {
@@ -448,7 +445,7 @@ namespace ShiftOS.Frontend.Desktop
 
             }
 
-            gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, LoadedSkin.ControlColor.ToMonoColor());
+            gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["ControlColor"]);
             //So here's what we're gonna do now.
             //Now that we have a titlebar and window borders...
             //We're going to composite the hosted window

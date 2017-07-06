@@ -110,6 +110,8 @@ namespace ShiftOS.Frontend.Desktop
         {
         }
 
+        private string dateTimeString = "";
+
         protected override void OnLayout()
         {
             SendToBack();
@@ -117,7 +119,14 @@ namespace ShiftOS.Frontend.Desktop
             Y = 0;
             Width = GetSize().Width;
             Height = GetSize().Height;
-            Invalidate();
+            var now = DateTime.Now.TimeOfDay;
+            var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds}";
+            if(newDateTimeString != dateTimeString)
+            {
+                dateTimeString = newDateTimeString;
+                Invalidate();
+            }
+
         }
 
         private List<PanelButtonData> PanelButtons = new List<PanelButtonData>();
@@ -158,8 +167,7 @@ namespace ShiftOS.Frontend.Desktop
             var panelClockRight = LoadedSkin.DesktopPanelClockFromRight;
             var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
 
-            var dateTimeString = DateTime.Now.TimeOfDay.ToString();
-
+            
             var measure = gfx.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
 
             int panelclockleft = Width - (int)measure.X;
