@@ -28,6 +28,6 @@ No, you're wrong. We've actually disabled the Issues tab in place of our own in-
 
 See [`CONTRIBUTING.md`](https://github.com/shiftos-game/ShiftOS/blob/master/CONTRIBUTING.md)
 
-## Mushroom
+## `Mushroom`
 
-I'm a mushroom.
+`I'm a mushroom.`
