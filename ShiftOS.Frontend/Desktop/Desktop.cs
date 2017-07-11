@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShiftOS.Engine;
+using ShiftOS.Frontend.Apps;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using static ShiftOS.Engine.SkinEngine;
 
@@ -13,12 +14,46 @@ namespace ShiftOS.Frontend.Desktop
 {
     public class Desktop : GUI.Control, IDesktop
     {
+        bool alOpen = false;
+        int alX = 0;
+        int alY = 0;
+
         public Desktop()
         {
             SaveSystem.GameReady += () =>
             {
                 Show();
                 SetupDesktop();
+            };
+
+            MouseMove += (loc) =>
+            {
+                if(alOpen == true)
+                {
+                    if(loc.X >= alX && loc.Y >= alY)
+                    {
+                        int height = LauncherItems[0].Height * LauncherItems.Count;
+                        int width = LauncherItems[0].Width;
+                        if(loc.X <= alX + width && loc.Y <= alY + height)
+                        {
+                            foreach(var item in LauncherItems)
+                            {
+                                if(loc.X >= alX && loc.Y >= alY + item.Y && loc.X <= alX + width && loc.Y <= alY + item.Y + item.Height)
+                                {
+                                    alSelectedItem = LauncherItems.IndexOf(item);
+                                    Invalidate();
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            alSelectedItem = -1;
+                            Invalidate();
+                            return;
+                        }
+                    }
+                }
             };
         }
 
@@ -29,6 +64,8 @@ namespace ShiftOS.Frontend.Desktop
                 return "ShiftOS MonoGame Desktop";
             }
         }
+
+        private int alSelectedItem = -1;
 
         public void Close()
         {
@@ -42,7 +79,8 @@ namespace ShiftOS.Frontend.Desktop
 
         public void HideAppLauncher()
         {
-            
+            alOpen = false;
+            Invalidate();
         }
 
         public void InvokeOnWorkerThread(Action act)
@@ -64,10 +102,48 @@ namespace ShiftOS.Frontend.Desktop
 
         public void OpenAppLauncher(Point loc)
         {
+            alX = loc.X;
+            alY = loc.Y;
+            alOpen = true;
+            alSelectedItem = -1;
+            Invalidate();
         }
 
         public void PopulateAppLauncher(LauncherItem[] items)
         {
+            int y = 0;
+            int height = 0;
+            int[] widths = new int[items.Length];
+            using(var gfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+            {
+                LauncherItems.Clear();
+                for(int i = 0; i < items.Length; i++)
+                {
+                    string name = Localization.Parse(items[i].DisplayData.Name);
+                    var measure = gfx.SmartMeasureString(name, LoadedSkin.MainFont);
+                    if (height < (int)measure.Height)
+                        height = (int)measure.Height;
+                    widths[i] = 120 + (int)measure.Width;
+                    
+                }
+
+                int width = widths.Max();
+
+                foreach(var aitem in items)
+                {
+                    var item = new AppLauncherItem
+                    {
+                        Data = aitem,
+                        X = 0,
+                        Y = y,
+                        Height = height,
+                        Width = width
+                    };
+                    LauncherItems.Add(item);
+                    y += item.Height;
+                }
+                
+            }
             Invalidate();
         }
 
@@ -130,6 +206,41 @@ namespace ShiftOS.Frontend.Desktop
         }
 
         private List<PanelButtonData> PanelButtons = new List<PanelButtonData>();
+        private List<AppLauncherItem> LauncherItems = new List<AppLauncherItem>();
+
+        public override void MouseStateChanged()
+        {
+            //This statement closes the app launcher. If we do this after opening it, we can't open it at all as it instantly closes.
+            if (alOpen == true && MouseLeftDown == true)
+            {
+                alOpen = false;
+                Invalidate();
+                return;
+            }
+
+
+            var al_left = LoadedSkin.AppLauncherFromLeft;
+            var al_size = LoadedSkin.AppLauncherHolderSize;
+            if(MouseX >= al_left.X && MouseY >= al_left.Y && MouseX <= al_left.X + al_size.Width && MouseY <= al_left.Y + al_size.Height)
+            {
+                if(alOpen == false && MouseLeftDown == true)
+                {
+                    alX = 0;
+                    if(LoadedSkin.DesktopPanelPosition == 0)
+                    {
+                        alY = LoadedSkin.DesktopPanelHeight;
+                    }
+                    else
+                    {
+                        alY = (Height - LoadedSkin.DesktopPanelHeight) - (LauncherItems[0].Height * LauncherItems.Count);
+                    }
+                    alOpen = true;
+                    Invalidate();
+                }
+                
+            }
+
+        }
 
         protected override void OnPaint(GraphicsContext gfx)
         {
@@ -161,7 +272,10 @@ namespace ShiftOS.Frontend.Desktop
             {
                 gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"]);
             }
-
+            var altextmeasure = gfx.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont);
+            int altextx = (holderSize.Width - (int)altextmeasure.X) / 2;
+            int altexty = (holderSize.Height - (int)altextmeasure.Y) / 2;
+            gfx.DrawString(LoadedSkin.AppLauncherText, altextx, altexty, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont);
             //Panel clock.
 
             var panelClockRight = LoadedSkin.DesktopPanelClockFromRight;
@@ -209,7 +323,7 @@ namespace ShiftOS.Frontend.Desktop
                 }
                 else
                 {
-                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonBackgroundColor"]);
+                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonColor"]);
                 }
 
                 //now we draw the text
@@ -219,7 +333,21 @@ namespace ShiftOS.Frontend.Desktop
                 offset += LoadedSkin.PanelButtonSize.Width;
             }
 
+            if (alOpen)
+            {
+                int height = LauncherItems[0].Height * LauncherItems.Count;
+                int width = LauncherItems[0].Width;
+                gfx.DrawRectangle(alX, alY, width, height, UIManager.SkinTextures["Menu_ToolStripDropDownBackground"]);
 
+                foreach(var item in LauncherItems)
+                {
+                    if(LauncherItems.IndexOf(item) == alSelectedItem)
+                    {
+                        gfx.DrawRectangle(alX, alY + item.Y, item.Width, item.Y, UIManager.SkinTextures["Menu_MenuItemSelected"]);
+                    }
+                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 20, alY + item.Y, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
+                }
+            }
         }
     }
 
@@ -235,5 +363,15 @@ namespace ShiftOS.Frontend.Desktop
                 return Window.IsFocusedControl || Window.ContainsFocusedControl;
             }
         }
+    }
+    
+
+    public class AppLauncherItem
+    {
+        public Engine.LauncherItem Data { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }
