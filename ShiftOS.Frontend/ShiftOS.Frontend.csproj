@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\Pong.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Commands.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\ItemGroup.cs" />
+    <Compile Include="GUI\ListBox.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\TextControl.cs" />

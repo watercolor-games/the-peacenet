@@ -160,9 +160,9 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         var sFormat = System.Drawing.StringFormat.GenericTypographic;
                         sFormat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
 
-                        gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                        gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-                        gfx.DrawString(text, font, System.Drawing.Brushes.White, 0, 0, sFormat);
+                        gfx.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);
                     }
 
                     var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);

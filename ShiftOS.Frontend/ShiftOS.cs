@@ -90,7 +90,7 @@ namespace ShiftOS.Frontend
             };
 
             //We'll use sandbox mode
-            SaveSystem.IsSandbox = true;
+            SaveSystem.IsSandbox = false;
             Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 

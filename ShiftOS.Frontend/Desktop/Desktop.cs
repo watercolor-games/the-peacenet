@@ -213,6 +213,11 @@ namespace ShiftOS.Frontend.Desktop
             //This statement closes the app launcher. If we do this after opening it, we can't open it at all as it instantly closes.
             if (alOpen == true && MouseLeftDown == true)
             {
+                if(alSelectedItem != -1)
+                {
+                    var item = LauncherItems[alSelectedItem];
+                    AppearanceManager.SetupWindow((IShiftOSWindow)Activator.CreateInstance(item.Data.LaunchType, null));
+                }
                 alOpen = false;
                 Invalidate();
                 return;
@@ -335,17 +340,19 @@ namespace ShiftOS.Frontend.Desktop
 
             if (alOpen)
             {
-                int height = LauncherItems[0].Height * LauncherItems.Count;
-                int width = LauncherItems[0].Width;
-                gfx.DrawRectangle(alX, alY, width, height, UIManager.SkinTextures["Menu_ToolStripDropDownBackground"]);
+                int height = (LauncherItems[0].Height * LauncherItems.Count) + 2;
+                int width = LauncherItems[0].Width + 2;
+                gfx.DrawRectangle(alX, alY, width, height, UIManager.SkinTextures["Menu_MenuBorder"]);
+                gfx.DrawRectangle(alX+1, alY+1, width-2, height-2, UIManager.SkinTextures["Menu_ToolStripDropDownBackground"]);
+                gfx.DrawRectangle(alX+1, alY+1, 18, height-2, UIManager.SkinTextures["Menu_ImageMarginGradientBegin"]);
 
                 foreach(var item in LauncherItems)
                 {
                     if(LauncherItems.IndexOf(item) == alSelectedItem)
                     {
-                        gfx.DrawRectangle(alX, alY + item.Y, item.Width, item.Y, UIManager.SkinTextures["Menu_MenuItemSelected"]);
+                        gfx.DrawRectangle(alX+1, alY + item.Y+1, item.Width-2, item.Height, UIManager.SkinTextures["Menu_MenuItemSelected"]);
                     }
-                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 20, alY + item.Y, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y+1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
             }
         }

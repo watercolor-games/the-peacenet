@@ -94,6 +94,18 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 else
                 {
                     _target = TextureCaches[hc];
+                    if(_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+                    {
+                        _target = new RenderTarget2D(
+                graphics,
+                ctrl.Width,
+                ctrl.Height,
+                false,
+                graphics.PresentationParameters.BackBufferFormat,
+                DepthFormat.Depth24);
+                        TextureCaches[hc] = _target;
+
+                    }
                 }
                 if (ctrl.RequiresPaint)
                 {
@@ -188,7 +200,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             {
                 var color = (System.Drawing.Color)colorfield.GetValue(SkinEngine.LoadedSkin);
                 var tex2 = new Texture2D(graphics, 1, 1);
-                tex2.SetData<byte>(new[] { color.B, color.G, color.R, color.A });
+                tex2.SetData<byte>(new[] { color.R, color.G, color.B, color.A });
                 SkinTextures.Add(colorfield.Name, tex2);
             }
 
