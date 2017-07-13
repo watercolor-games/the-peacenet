@@ -39,12 +39,9 @@ namespace ShiftOS.Frontend.Apps
             TerminalBackend.PrintPrompt();
             SaveSystem.GameReady += () =>
             {
-                if (Shiftorium.UpgradeInstalled("desktop"))
-                {
-                    AppearanceManager.Close(this);
-                }
-                else
-                    TerminalBackend.PrintPrompt();
+                Console.WriteLine("[sessionmgr] Starting system UI...");
+                AppearanceManager.SetupWindow(new SystemStatus());
+                TerminalBackend.PrintPrompt();
             };
         }
 
@@ -214,7 +211,7 @@ namespace ShiftOS.Frontend.Apps
                     {
                         if (TerminalBackend.PrefixEnabled)
                         {
-                            text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
+                            text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                         }
                         TerminalBackend.LastCommand = text3;
                         TerminalBackend.SendText(text4);
@@ -250,7 +247,7 @@ namespace ShiftOS.Frontend.Apps
                 {
                     var tostring3 = Lines[Lines.Length - 1];
                     var tostringlen = tostring3.Length + 1;
-                    var workaround = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                     var derp = workaround.Length + 1;
                     if (tostringlen != derp)
                     {
@@ -271,7 +268,7 @@ namespace ShiftOS.Frontend.Apps
                 {
                     var getstring = Lines[Lines.Length - 1];
                     var stringlen = getstring.Length + 1;
-                    var header = $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var header = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
                     var headerlen = header.Length + 1;
                     var selstart = Index;
                     var remstrlen = Text.Length - stringlen;
@@ -287,7 +284,7 @@ namespace ShiftOS.Frontend.Apps
             else if (a.Key == Keys.Up)
             {
                 var tostring3 = Lines[Lines.Length - 1];
-                if (tostring3 == $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
+                if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
                     Console.Write(TerminalBackend.LastCommand);
                 ConsoleEx.OnFlush?.Invoke();
                 return;

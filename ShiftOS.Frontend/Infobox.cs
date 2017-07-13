@@ -182,6 +182,16 @@ namespace ShiftOS.Frontend
             this.Layout();
         }
 
+        protected override void OnLayout()
+        {
+            try
+            {
+                btnok.Y = this.Height - btnok.Height - 10;
+                flyesno.Y = this.Height - flyesno.Height - 10;
+            }
+            catch { }
+        }
+
 
         private Control panel1;
         private TextControl lbmessage;

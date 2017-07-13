@@ -38,6 +38,19 @@ namespace ShiftOS.Frontend.GUI
         private int _mouseY = 0;
         private bool _captureMouse = false;
         
+        public void BringToFront()
+        {
+            if(_parent != null)
+            {
+                _parent._children.Remove(this);
+                _parent.AddControl(this);
+            }
+            else
+            {
+                UIManager.BringToFront(this);
+            }
+        }
+
         public bool RequiresPaint
         {
             get

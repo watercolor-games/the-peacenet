@@ -19,6 +19,12 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
 
+        public static void BringToFront(GUI.Control ctrl)
+        {
+            topLevels.Remove(ctrl);
+            topLevels.Add(ctrl);
+        }
+
         public static void LayoutUpdate()
         {
             foreach (var toplevel in topLevels.ToArray())

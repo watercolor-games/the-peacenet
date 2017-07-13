@@ -13,8 +13,26 @@ using static ShiftOS.Engine.SkinEngine;
 
 namespace ShiftOS.Frontend.Desktop
 {
+    public static class ShiftOSWindowExtensions
+    {
+        public static bool IsSidePanel(this IWindowBorder border)
+        {
+            var win = border.ParentWindow.GetType();
+            var attr = win.GetCustomAttributes(false).FirstOrDefault(x => x is SidePanel);
+            return attr != null;
+        }
+    }
+
     public class WindowManager : Engine.WindowManager
     {
+        public int DesktopStart
+        {
+            get
+            {
+                return (LoadedSkin.DesktopPanelPosition == 1) ? 0 : LoadedSkin.DesktopPanelHeight;
+            }
+        }
+
         public override void Close(IShiftOSWindow win)
         {
             var brdr = RunningBorders.FirstOrDefault(x => x.ParentWindow == win);
@@ -91,10 +109,15 @@ namespace ShiftOS.Frontend.Desktop
                 Console.WriteLine("Application not found on system.");
                 return;
             }
-            while(AppearanceManager.OpenForms.Count >= MaxCount)
+            while (AppearanceManager.OpenForms.Where(x => !x.IsSidePanel()).Count() >= MaxCount)
             {
-                AppearanceManager.OpenForms[0].Close();
-                AppearanceManager.OpenForms.RemoveAt(0);
+                var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
+                if (brdr != null)
+                {
+                    brdr.Close();
+                    AppearanceManager.OpenForms.Remove(brdr);
+                }
+
             }
             var wb = new WindowBorder();
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
@@ -107,22 +130,31 @@ namespace ShiftOS.Frontend.Desktop
             win.OnLoad();
             win.OnUpgrade();
             win.OnSkinLoad();
-            if (!Shiftorium.UpgradeInstalled("wm_free_placement"))
-            {
-                TileWindows();
-            }
+            TileWindows();
         }
 
         public void TileWindows()
         {
+
             if (AppearanceManager.OpenForms.Count == 0)
                 return;
-            else if(AppearanceManager.OpenForms.Count == 1)
+            int start = 0;
+            var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => x.IsSidePanel()) as WindowBorder;
+            if (brdr != null)
             {
-                var wb = (WindowBorder)AppearanceManager.OpenForms[0];
-                wb.X = 0;
-                wb.Y = 0;
-                wb.ResizeWindow(UIManager.Viewport.Width, UIManager.Viewport.Height);
+                brdr.X = 0;
+                brdr.Y = DesktopStart;
+                brdr.ResizeWindow(UIManager.Viewport.Width / 4, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
+                start = UIManager.Viewport.Width / 4;
+            }
+
+
+            var wb = (WindowBorder)AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
+            if (wb != null)
+            {
+                wb.X = start;
+                wb.Y = DesktopStart;
+                wb.ResizeWindow(UIManager.Viewport.Width - start, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
             }
         }
     }
@@ -134,10 +166,10 @@ namespace ShiftOS.Frontend.Desktop
 
         public void ResizeWindow(int width, int height)
         {
-            int titleheight = Shiftorium.UpgradeInstalled("wm_titlebar") ? LoadedSkin.TitlebarHeight : 0;
-            int leftwidth = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.LeftBorderWidth : 0;
-            int bottomheight = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
-            int rightwidth = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.RightBorderWidth : 0;
+            int titleheight = LoadedSkin.TitlebarHeight;
+            int leftwidth = LoadedSkin.LeftBorderWidth;
+            int bottomheight = LoadedSkin.BottomBorderWidth;
+            int rightwidth = LoadedSkin.RightBorderWidth;
             _hostedwindow.Width = width - leftwidth - rightwidth;
             _hostedwindow.Height = height - bottomheight - titleheight;
             Width = width;
@@ -149,36 +181,7 @@ namespace ShiftOS.Frontend.Desktop
         {
             X = 720;
             Y = 480;
-            MouseDown += () =>
-            {
-                var scnloc = PointToScreen(MouseX, MouseY);
-                mouseprevx = scnloc.X;
-                mouseprevy = scnloc.Y;
-                moving = true;
-            };
-            MouseMove += (loc) =>
-            {
-                if (moving == true)
-                {
-                    var scnloc = PointToScreen(MouseX, MouseY);
-                    int differencex = scnloc.X - mouseprevx;
-                    int differencey = scnloc.Y - mouseprevy;
-                    X -= differencex;
-                    Y -= differencey;
-                    mouseprevx = scnloc.X;
-                    mouseprevy = scnloc.Y;
-                }
-            };
-            MouseUp += () =>
-            {
-                moving = false;
-            };
         }
-
-        private bool moving = false;
-        private int mouseprevx = 0;
-        private int mouseprevy = 0;
-        
 
         public IShiftOSWindow ParentWindow
         {
@@ -223,16 +226,10 @@ namespace ShiftOS.Frontend.Desktop
 
         protected override void OnLayout()
         {
-            if (moving)
-            {
-                var screenpoint = PointToScreen(MouseX, MouseY);
-                this.X = lastmousex + screenpoint.X;
-                this.Y = lastmousey + screenpoint.Y;
-            }
-            int titlebarheight = Shiftorium.UpgradeInstalled("wm_titlebar") ? LoadedSkin.TitlebarHeight : 0;
-            int borderleft = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.LeftBorderWidth : 0;
-            int borderright = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.RightBorderWidth : 0;
-            int borderbottom = Shiftorium.UpgradeInstalled("window_borders") ? LoadedSkin.BottomBorderWidth : 0;
+            int titlebarheight = LoadedSkin.TitlebarHeight;
+            int borderleft = LoadedSkin.LeftBorderWidth;
+            int borderright = LoadedSkin.RightBorderWidth;
+            int borderbottom = LoadedSkin.BottomBorderWidth;
             _hostedwindow.X = borderleft;
             _hostedwindow.Y = titlebarheight;
             Width = _hostedwindow.X + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
@@ -248,8 +245,6 @@ namespace ShiftOS.Frontend.Desktop
             int rightborderwidth = LoadedSkin.RightBorderWidth;
             int bottomborderwidth = LoadedSkin.BottomBorderWidth;
 
-            if (Shiftorium.UpgradeInstalled("wm_titlebar"))
-            {
                 var titlebarcolor = UIManager.SkinTextures["TitleBackgroundColor"];
                 var titlefont = LoadedSkin.TitleFont;
                 var titletextcolor = LoadedSkin.TitleTextColor;
@@ -320,8 +315,6 @@ namespace ShiftOS.Frontend.Desktop
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 
                 //Draw close button
-                if(Shiftorium.UpgradeInstalled("close_button"))
-                {
                     var closebuttonsize = LoadedSkin.CloseButtonSize;
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
@@ -334,13 +327,11 @@ namespace ShiftOS.Frontend.Desktop
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"]);
                     }
-                }
+                
                 //Draw maximize button
-                if (Shiftorium.UpgradeInstalled("maximize_button"))
-                {
-                    var closebuttonsize = LoadedSkin.MaximizeButtonSize;
-                    var closebuttonright = LoadedSkin.MaximizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
+                closebuttonsize = LoadedSkin.MaximizeButtonSize;
+                closebuttonright = LoadedSkin.MaximizeButtonFromSide;
+                if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
                     if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
@@ -351,34 +342,23 @@ namespace ShiftOS.Frontend.Desktop
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"]);
                     }
-                }
+                
                 //Draw minimize button
-                if (Shiftorium.UpgradeInstalled("minimize_button"))
-                {
-                    var closebuttonsize = LoadedSkin.MinimizeButtonSize;
-                    var closebuttonright = LoadedSkin.MinimizeButtonFromSide;
+                closebuttonsize = LoadedSkin.MinimizeButtonSize;
+                closebuttonright = LoadedSkin.MinimizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
                         closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                    if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"]);
-                    }
-
-                }
+            if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
             }
             else
             {
-                //Set the titleheight to 0.
-                titleheight = 0;
-
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"]);
             }
 
-            if (Shiftorium.UpgradeInstalled("window_borders"))
-            {
+                
+            
                 //Some variables we'll need...
                 int bottomlocy = Height - LoadedSkin.BottomBorderWidth;
                 int bottomlocx = leftborderwidth;
@@ -433,17 +413,17 @@ namespace ShiftOS.Frontend.Desktop
                     gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"]);
                 }
 
-                //RIGHT
-                if (!UIManager.SkinTextures.ContainsKey("rightborder"))
-                {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"]);
-                }
-
+            //RIGHT
+            if (!UIManager.SkinTextures.ContainsKey("rightborder"))
+            {
+                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
             }
+            else
+            {
+                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"]);
+            }
+
+            
 
             gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["ControlColor"]);
             //So here's what we're gonna do now.
@@ -476,5 +456,11 @@ namespace ShiftOS.Frontend.Desktop
             tex2.SetData<byte>(data);
             return tex2;
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class SidePanel : Attribute
+    {
+        
     }
 }

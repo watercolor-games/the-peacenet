@@ -59,11 +59,6 @@ namespace ShiftOS.Engine
         public static bool ShuttingDown = false;
 
         /// <summary>
-        /// Gets or sets the current logged in client-side user.
-        /// </summary>
-        public static ClientSave CurrentUser { get; set; }
-
-        /// <summary>
         /// Boolean representing whether the save system is ready to be used.
         /// </summary>
         public static AutoResetEvent Ready = new AutoResetEvent(false);
@@ -206,43 +201,20 @@ namespace ShiftOS.Engine
                     CurrentSave = new Save
                     {
                         IsSandbox = true,
-                        Username = "sandbox",
-                        Password = "sandbox",
+                        Username = "user",
                         SystemName = "shiftos",
-                        Users = new List<ClientSave>
-                        {
-                            new ClientSave
-                            {
-                                Username = "user",
-                                Password = "",
-                                Permissions = 0
-                            }
-                        },
-                        Class = 0,
                         ID = new Guid(),
                         Upgrades = new Dictionary<string, bool>(),
-                        CurrentLegions = null,
-                        IsMUDAdmin = false,
-                        IsPatreon = false,
                         Language = "english",
-                        LastMonthPaid = 0,
-                        MajorVersion = 1,
-                        MinorVersion = 0,
                         MusicEnabled = false,
                         MusicVolume = 100,
-                        MyShop = "",
-                        PasswordHashed = false,
                         PickupPoint = "",
-                        RawReputation = 0.0f,
-                        Revision = 0,
                         ShiftnetSubscription = 0,
                         SoundEnabled = true,
                         StoriesExperienced = null,
                         StoryPosition = 0,
-                        UniteAuthToken = "",
+                        
                     };
-
-                    CurrentUser = CurrentSave.Users.First();
 
                     Localization.SetupTHETRUEDefaultLocals();
 
@@ -358,8 +330,6 @@ namespace ShiftOS.Engine
                 goto Sysname;
             }
 
-            if (CurrentSave.Users == null)
-                CurrentSave.Users = new List<ClientSave>();
 
             Console.WriteLine($@"
                    `-:/++++::.`                   
@@ -376,7 +346,7 @@ namespace ShiftOS.Engine
  oMM+ sMMMMMMMMMN+`        `-/smMMMMMMMMMMM: hMM:       
  sMM+ sMMMMMMMMMMMMds/-`        .sMMMMMMMMM/ yMM/ 
  +MMs +MMMMMMMMMMMMMMMMMmhs:`     +MMMMMMMM- dMM-       {{GEN_SYSTEMNAME}}:    {CurrentSave.SystemName.ToUpper()}
- .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        {{GEN_USERS}}:          {Users.Count()}.
+ .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        
   hMM+ +MMMMMMmsdNMMMMMMMMMMN/    -MMMMMMN- yMM+        
   `NMN- oMMMMMd   `-/+osso+-     .mMMMMMN: +MMd   
    -NMN: /NMMMm`               :yMMMMMMm- oMMd`   
@@ -388,118 +358,7 @@ namespace ShiftOS.Engine
                `:+yhmNNMMMMNNdhs+-                
                        ````                       ");
 
-            if (CurrentSave.Users.Count == 0)
-            {
-                CurrentSave.Users.Add(new ClientSave
-                {
-                    Username = "root",
-                    Password = "",
-                    Permissions = UserPermissions.Root
-                });
-                Console.WriteLine("{MISC_NOUSERS}");
-            }
             TerminalBackend.InStory = false;
-
-            TerminalBackend.PrefixEnabled = false;
-
-            if (LoginManager.ShouldUseGUILogin)
-            {
-                Action<ClientSave> Completed = null;
-                Completed += (user) =>
-                {
-                    CurrentUser = user;
-                    LoginManager.LoginComplete -= Completed;
-                };
-                LoginManager.LoginComplete += Completed;
-                Desktop.InvokeOnWorkerThread(() =>
-                {
-                    LoginManager.PromptForLogin();
-                });
-                while (CurrentUser == null)
-                {
-                    Thread.Sleep(10);
-                }
-            }
-            else
-            {
-
-                Login:
-                string username = "";
-                int progress = 0;
-                bool goback = false;
-                TextSentEventHandler ev = null;
-                string loginstr = Localization.Parse("{GEN_LPROMPT}", new Dictionary<string, string>
-                {
-                    ["%sysname"] = CurrentSave.SystemName
-                });
-                ev = (text) =>
-                {
-                    if (progress == 0)
-                    {
-                        string getuser = text.Remove(0, loginstr.Length);
-                        if (!string.IsNullOrWhiteSpace(getuser))
-                        {
-                            if (CurrentSave.Users.FirstOrDefault(x => x.Username == getuser) == null)
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("{ERR_NOUSER}");
-                                goback = true;
-                                progress++;
-                                TerminalBackend.TextSent -= ev;
-                                return;
-                            }
-                            username = getuser;
-                            progress++;
-                        }
-                        else
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("{ERR_NOUSER}");
-                            TerminalBackend.TextSent -= ev;
-                            goback = true;
-                            progress++;
-                        }
-                    }
-                    else if (progress == 1)
-                    {
-                        string passwordstr = Localization.Parse("{GEN_PASSWORD}: ");
-                        string getpass = text.Remove(0, passwordstr.Length);
-                        var user = CurrentSave.Users.FirstOrDefault(x => x.Username == username);
-                        if (user.Password == getpass)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("{GEN_WELCOME}");
-                            CurrentUser = user;
-                            progress++;
-                        }
-                        else
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("{RES_DENIED}");
-                            goback = true;
-                            progress++;
-                        }
-                        TerminalBackend.TextSent -= ev;
-                    }
-                };
-                TerminalBackend.TextSent += ev;
-                Console.WriteLine();
-                Console.Write(loginstr);
-                ConsoleEx.Flush();
-                while (progress == 0)
-                {
-                    Thread.Sleep(10);
-                }
-                if (goback)
-                    goto Login;
-                Console.WriteLine();
-                Console.Write("{GEN_PASSWORD}: ");
-                ConsoleEx.Flush();
-                while (progress == 1)
-                    Thread.Sleep(10);
-                if (goback)
-                    goto Login;
-            }
             TerminalBackend.PrefixEnabled = true;
             Shiftorium.LogOrphanedUpgrades = true;
             Desktop.InvokeOnWorkerThread(new Action(() =>
@@ -528,17 +387,6 @@ namespace ShiftOS.Engine
         /// Delegate type for events with no caller objects or event arguments. You can use the () => {...} (C#) lambda expression with this delegate 
         /// </summary>
         public delegate void EmptyEventHandler();
-
-        /// <summary>
-        /// Gets a list of all client-side users.
-        /// </summary>
-        public static List<ClientSave> Users
-        {
-            get
-            {
-                return CurrentSave.Users;
-            }
-        }
 
         /// <summary>
         /// Occurs when the engine is loaded and the game can take over.

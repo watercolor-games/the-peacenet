@@ -39,8 +39,7 @@ namespace ShiftOS.Objects
         public bool SoundEnabled = true;
         public int MusicVolume = 100;
 
-        [Obsolete("This save variable is no longer used in Beta 2.4 and above of ShiftOS. Please use ShiftOS.Engine.SaveSystem.CurrentUser.Username to access the current user's username.")]
-        public string Username { get; set; }
+        public string Username = "user";
 
         public bool IsSandbox = false;
 
@@ -49,48 +48,9 @@ namespace ShiftOS.Objects
         public Dictionary<string, bool> Upgrades { get; set; }
         public int StoryPosition { get; set; }
         public string Language { get; set; }
-        public string MyShop { get; set; }
-        public List<string> CurrentLegions { get; set; }
-        public int MajorVersion { get; set; }
-        public int MinorVersion { get; set; }
-        public int Revision { get; set; }
-
-        public string UniteAuthToken { get; set; }
-
-        public bool IsPatreon { get; set; }
-
-        public UserClass Class { get; set; }
-        public double RawReputation { get; set; }
-
-        public Reputation Reputation
-        {
-            get
-            {
-                return (Reputation)((int)Math.Round(RawReputation));
-            }
-        }
-
-        public string Password { get; set; }
-        public bool PasswordHashed { get; set; }
         public string SystemName { get; set; }
-
-        private dynamic _settings = new SettingsObject();
-
         public int ShiftnetSubscription { get; set; }
-
         public Guid ID { get; set; }
-
-        public bool IsMUDAdmin { get; set; }
-
-        public dynamic Settings
-        {
-            get
-            {
-                return _settings;
-            }
-        }
-
-        public int LastMonthPaid { get; set; }
         public List<string> StoriesExperienced { get; set; }
 
         public int CountUpgrades()
@@ -103,8 +63,6 @@ namespace ShiftOS.Objects
             }
             return count;
         }
-
-        public List<ClientSave> Users { get; set; }
 
         /// <summary>
         /// DO NOT MODIFY THIS. EVER. YOU WILL BREAK THE STORYLINE. Let the engine do it's job. 

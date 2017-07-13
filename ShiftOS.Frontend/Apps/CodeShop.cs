@@ -8,6 +8,8 @@ using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.Apps
 {
+    [Launcher("Shiftorium", false, null, "Utilities")]
+    [DefaultTitle("Shiftorium")]
     [WinOpen("shiftorium")]
     public class CodeShop : GUI.Control, IShiftOSWindow
     {

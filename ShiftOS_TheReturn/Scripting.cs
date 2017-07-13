@@ -271,7 +271,7 @@ end");
             {
                 Console.WriteLine("");
                 Lua(lua);
-                Console.WriteLine($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
+                Console.WriteLine($"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
             }
             catch (Exception e)
             {
@@ -447,7 +447,7 @@ end");
         /// <returns>The user's username.</returns>
         public string getUsername()
         {
-            return SaveSystem.CurrentUser.Username;
+            return SaveSystem.CurrentSave.Username;
         }
 
         /// <summary>

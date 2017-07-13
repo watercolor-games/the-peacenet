@@ -135,13 +135,13 @@ namespace ShiftOS.Frontend.GUI
                 if(i == selectedIndex)
                 {
                     //draw the string as selected
-                    gfx.DrawRectangle(x, y, width, height, UIManager.SkinTextures["ControlTextColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y, LoadedSkin.ControlColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawRectangle(x, y+2, width, height, UIManager.SkinTextures["ControlTextColor"]);
+                    gfx.DrawString(items[i].ToString(), x, y+2, LoadedSkin.ControlColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
                 else
                 {
-                    gfx.DrawRectangle(x, y, width, height, UIManager.SkinTextures["ControlColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawRectangle(x, y+2, width, height, UIManager.SkinTextures["ControlColor"]);
+                    gfx.DrawString(items[i].ToString(), x, y+2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
 
                 }
             }

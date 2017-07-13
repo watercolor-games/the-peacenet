@@ -66,37 +66,9 @@ namespace ShiftOS.Engine
             }
         }
 
-        public static bool IsSafe(TerminalBackend.TerminalCommand cmd)
-        {
-            if (!cmd.RequiresElevation)
-                return true;
-            else
-            {
-                if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Root)
-                    return true;
-                else
-                    return false;
-            }
-        }
-
 
         static string regularUsername = ""; //put regular username in here later
 
-
-        public static void EnterKernelMode()
-        {
-            regularUsername = SaveSystem.CurrentUser.Username; // k for now put user's username in here for the time being
-            SaveSystem.CurrentUser = SaveSystem.Users.FirstOrDefault(x => x.Username == "root"); // now their username is root
-
-        }
-
-        public static void LeaveKernelMode()
-        {
-            var user = SaveSystem.Users.FirstOrDefault(x => x.Username == regularUsername); //finds username
-            if (user == null) 
-                throw new Exception("User not in root mode."); // fuck this means the user isnt root quick throw error
-            SaveSystem.CurrentUser = user;
-        }
 
         //determines if you can disconnect from mud if there are no applications that currently need to
         internal static bool CanRunOffline(Type method)

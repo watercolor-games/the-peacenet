@@ -178,14 +178,6 @@ namespace ShiftOS.Engine
             public virtual void Invoke(Dictionary<string, object> args)
             {
                 List<string> errors = new List<string>();
-                bool requiresAuth = false;
-                if (!KernelWatchdog.IsSafe(this))
-                {
-                    if (SaveSystem.CurrentUser.Permissions == Objects.UserPermissions.Admin)
-                        requiresAuth = true;
-                    else
-                        errors.Add("You can't run this command - you do not have permission.");
-                }
                 if (errors.Count > 0)
                 {
                     foreach (var error in errors)
@@ -194,33 +186,6 @@ namespace ShiftOS.Engine
                     }
                     return;
                 }
-                if (requiresAuth)
-                {
-                    Infobox.PromptText("Enter your password.", "This command requires you to have elevated permissions. Please enter your password to confirm this action.", (pass) =>
-                    {
-                        if (pass == SaveSystem.CurrentUser.Password)
-                        {
-                            var uname = SaveSystem.CurrentUser.Username;
-                            SaveSystem.CurrentUser = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == "root");
-                            try
-                            {
-                                var h = CommandHandler;
-                                h.Invoke(null, new[] { args });
-                            }
-                            catch
-                            {
-                                var h = CommandHandler;
-                                h.Invoke(null, null);
-                            }
-                            SaveSystem.CurrentUser = SaveSystem.CurrentSave.Users.FirstOrDefault(x => x.Username == uname);
-                        }
-                        else
-                        {
-                            Infobox.Show("Access denied.", "Incorrect password provided. The command will not run.");
-                        }
-                    }, true);
-                }
-
                 try
                 {
                     CommandHandler.Invoke(null, new[] { args });
@@ -512,7 +477,7 @@ namespace ShiftOS.Engine
         public static void PrintPrompt()
         {
             Console.WriteLine();
-            if (SaveSystem.CurrentSave != null && CurrentUser != null)
+            if (SaveSystem.CurrentSave != null)
             {
                     ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
                     ConsoleEx.Italic = false;
@@ -521,7 +486,7 @@ namespace ShiftOS.Engine
                     ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
                     ConsoleEx.Bold = true;
 
-                    Console.Write(SaveSystem.CurrentUser.Username);
+                    Console.Write(SaveSystem.CurrentSave.Username);
                     ConsoleEx.Bold = false;
                     ConsoleEx.ForegroundColor = ConsoleColor.Gray;
                     Console.Write("@");
@@ -545,63 +510,6 @@ namespace ShiftOS.Engine
                     Console.Write(" ");
                 ConsoleEx.Flush();
             }
-        }
-
-        /// <summary>
-        /// Static constructor for <see cref="TerminalBackend"/>. 
-        /// </summary>
-        static TerminalBackend()
-        {
-            ServerMessageReceived onMessageReceived = (msg) =>
-            {
-                if (msg.Name == "trm_invokecommand")
-                {
-                    string text3 = "";
-                    string text4 = msg.Contents;
-
-                    if (TerminalBackend.PrefixEnabled)
-                    {
-                        text3 = text4.Remove(0, $"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
-                    }
-                    IsForwardingConsoleWrites = true;
-                    if (TerminalBackend.InStory == false)
-                    {
-                        TerminalBackend.InvokeCommand(text3, true);
-                    }
-                    if (TerminalBackend.PrefixEnabled)
-                    {
-                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-                    }
-                    IsForwardingConsoleWrites = false;
-                }
-                else if (msg.Name == "pleasewrite")
-                {
-                    Console.Write(msg.Contents);
-                }
-                else if (msg.Name == "handshake_from")
-                {
-                    var a = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
-                    string uName = a["username"] as string;
-                    string pass = a["password"] as string;
-                    string sys = a["sysname"] as string;
-                    string guid = msg.GUID;
-                    if (SaveSystem.CurrentUser.Username == uName && SaveSystem.CurrentSave.Password == pass && CurrentSave.SystemName == sys)
-                    {
-                        ForwardGUID = guid;
-                        ServerManager.SendMessage("trm_handshake_accept", $@"{{
-    guid: ""{ServerManager.thisGuid}"",
-    target: ""{guid}""
-}}");
-
-                        IsForwardingConsoleWrites = true;
-                        InvokeCommand("sos.status");
-                        Console.Write($"{SaveSystem.CurrentUser.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ");
-                        IsForwardingConsoleWrites = false;
-                    }
-                }
-            };
-
-            ServerManager.MessageReceived += onMessageReceived;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.Apps
 {
-    [Launcher("{TITLE_PONG}", true, "al_pong", "{AL_GAMES}")]
+    [Launcher("{TITLE_PONG}", false, null, "{AL_GAMES}")]
     [WinOpen("{WO_PONG}")]
     [DefaultTitle("{TITLE_PONG}")]
     [DefaultIcon("iconPong")]

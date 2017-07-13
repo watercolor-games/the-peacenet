@@ -190,7 +190,10 @@ namespace ShiftOS.Frontend.Desktop
 
         protected override void OnLayout()
         {
-            SendToBack();
+            if (alOpen)
+                BringToFront();
+            else
+                SendToBack();
             X = 0;
             Y = 0;
             Width = GetSize().Width;

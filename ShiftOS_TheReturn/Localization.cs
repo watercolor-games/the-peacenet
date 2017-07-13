@@ -128,7 +128,7 @@ namespace ShiftOS.Engine
                 {
                     try
                     {
-                        usernameReplace = SaveSystem.CurrentUser.Username;
+                        usernameReplace = SaveSystem.CurrentSave.Username;
                     }
                     catch
                     {
