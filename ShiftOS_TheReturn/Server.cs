@@ -7,15 +7,17 @@ using ShiftOS.Objects;
 
 namespace ShiftOS.Engine
 {
+    [Obsolete("Old code.")]
     public interface Server
     {
         /// <summary>
         /// Occurs when someone sends a message to the server.
         /// </summary>
         /// <param name="msg">The message from the client.</param>
-        void MessageReceived(ServerMessage msg);
+        void MessageReceived(dynamic msg);
     }
 
+    [Obsolete("Old code.")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
     public class ServerAttribute : Attribute
     {

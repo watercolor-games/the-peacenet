@@ -38,25 +38,15 @@ namespace ShiftOS.Objects.ShiftFS
         public byte[] Data;
         public byte[] HeaderData;
         public bool ReadAccessToLowUsers;
-        public UserPermissions permissions;
         public System.IO.Stream GetStream()
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                return new System.IO.MemoryStream(Data);
-            }
-            else if (ReadAccessToLowUsers == true)
-            {
-                return new System.IO.MemoryStream(Data, false);
-            }
-            return null;
+            return new System.IO.MemoryStream(Data);
         }
 
-        public File(string name, byte[] data, bool ReadAccess_to_low_users, UserPermissions perm)
+        public File(string name, byte[] data, bool ReadAccess_to_low_users)
         {
             Name = name;
             Data = data;
-            permissions = perm;
             ReadAccessToLowUsers = ReadAccess_to_low_users;
         }
     }
@@ -66,71 +56,49 @@ namespace ShiftOS.Objects.ShiftFS
         public List<File> Files = new List<File>();
         public List<Directory> Subdirectories = new List<Directory>();
         public bool ReadAccessToLowUsers;
-        public UserPermissions permissions;
         public void AddFile(File file)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Files.Add(file);
-            }
+            Files.Add(file);
         }
+
         public void RemoveFile(string name)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Files.Remove(Files.Find(x => x.Name == name));
-            }
+            Files.Remove(Files.Find(x => x.Name == name));
         }
+
         public void RemoveFile(File file)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Files.Remove(file);
-            }
+            Files.Remove(file);
         }
+
         public File FindFileByName(string name)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                return Files.Find(x => x.Name == name);
-            }
-            return null;
+            return Files.Find(x => x.Name == name);
         }
+
         public void AddDirectory(Directory dir)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Subdirectories.Add(dir);
-            }
+            Subdirectories.Add(dir);
         }
+
         public void RemoveDirectory(string name)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Subdirectories.Remove(Subdirectories.Find(x => x.Name == name));
-            }
+            Subdirectories.Remove(Subdirectories.Find(x => x.Name == name));
         }
+
         public void RemoveDirectory(Directory dir)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                Subdirectories.Remove(dir);
-            }
+            Subdirectories.Remove(dir);
         }
+
         public Directory FindDirectoryByName(string name)
         {
-            if ((int)CurrentUser <= (int)permissions)
-            {
-                return Subdirectories.Find(x => x.Name == name);
-            }
-            return null;
+            return Subdirectories.Find(x => x.Name == name);
         }
     }
 
     public static class Utils
     {
-        public static UserPermissions CurrentUser { get; set; }
-
         public static List<Directory> Mounts { get; set; }
 
         static Utils()
@@ -186,7 +154,7 @@ namespace ShiftOS.Objects.ShiftFS
                 dir.AddDirectory(new Directory
                 {
                     Name = pathlist[pathlist.Length - 1],
-                    permissions = CurrentUser,
+
                 });
                 DirectoryCreated?.Invoke(path);
             }
@@ -225,7 +193,7 @@ namespace ShiftOS.Objects.ShiftFS
             {
                 try
                 {
-                    dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false, CurrentUser));
+                    dir.AddFile(new File(pathlist[pathlist.Length - 1], Encoding.UTF8.GetBytes(contents), false));
                 }
                 catch { }
             }
@@ -274,7 +242,7 @@ namespace ShiftOS.Objects.ShiftFS
 
             if (!FileExists(path))
             {
-                dir.AddFile(new File(pathlist[pathlist.Length - 1], contents, false, CurrentUser));
+                dir.AddFile(new File(pathlist[pathlist.Length - 1], contents, false));
             }
             else
             {

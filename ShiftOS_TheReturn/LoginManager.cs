@@ -35,7 +35,8 @@ namespace ShiftOS.Engine
             }
         }
 
-        public static event Action<ClientSave> LoginComplete;
+        [Obsolete("Old code.")]
+        public static event Action<dynamic> LoginComplete;
     }
 
     /// <summary>
@@ -57,7 +58,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Occurs when the login is complete.
         /// </summary>
-        event Action<ClientSave> LoginComplete;
+        event Action<dynamic> LoginComplete;
 
         
 

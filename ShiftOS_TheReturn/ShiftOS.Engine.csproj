@@ -133,6 +133,7 @@
     </Compile>
     <Compile Include="Desktop.cs" />
     <Compile Include="FileSkimmerBackend.cs" />
+    <Compile Include="Hacking.cs" />
     <Compile Include="IFileHandler.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="IShiftOSWindow.cs" />

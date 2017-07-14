@@ -77,6 +77,9 @@ namespace ShiftOS.Frontend
             //Also initiate the desktop
             Engine.Desktop.Init(new Desktop.Desktop());
 
+            //While we're having a damn initiation fuckfest, let's get the hacking engine running.
+            Hacking.Initiate();
+
             //Now we can initiate the Infobox subsystem
             Engine.Infobox.Init(new Infobox());
 
