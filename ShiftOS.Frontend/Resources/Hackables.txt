@@ -1,0 +1,21 @@
+/* ShiftOS hackables data file
+ *
+ * This file contains information about all hackable systems in the game's campaign.
+ *
+ */
+
+[
+	{
+		SystemName: "shiftsyndicate_main",
+		FriendlyName: "ShiftSyndicate file server",
+		Password: "h0ldy0urc0l0ur",
+		PasswordHint: "Prepare to hold your colour...",
+		WelcomeMessage: "Don't make fun of SpamSyndicate web design.",
+		FirewallStrength: 1,
+		LootRarity: 1,
+		LootAmount: 4,
+		ConnectionTimeoutLevel: 4,
+		SystemType: "FileServer, SSHServer",
+
+	}
+]

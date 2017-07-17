@@ -127,10 +127,10 @@ namespace ShiftOS.Frontend.Desktop
             UIManager.AddTopLevel(wb);
             AppearanceManager.OpenForms.Add(wb);
             RunningBorders.Add(wb);
+            TileWindows();
             win.OnLoad();
             win.OnUpgrade();
             win.OnSkinLoad();
-            TileWindows();
         }
 
         public void TileWindows()

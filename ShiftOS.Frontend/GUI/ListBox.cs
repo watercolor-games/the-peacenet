@@ -17,6 +17,27 @@ namespace ShiftOS.Frontend.GUI
         private int itemOffset = 0;
         private int itemsPerPage = 1;
 
+        public ListBox()
+        {
+            Click += () =>
+            {
+                //loop through the list of items on the screen
+                for(int i = itemOffset; i < itemOffset + itemsPerPage && i < items.Count; i++)
+                {
+                    int screeni = i - itemOffset;
+                    int loc = 1+screeni * fontheight;
+                    int height = 1+(screeni + 1) * fontheight;
+                    if(MouseY >= loc && MouseY <= height)
+                    {
+                        SelectedIndex = i;
+                        RecalculateItemsPerPage();
+                        return;
+                    }
+                }
+            };
+        }
+
+
         public int SelectedIndex
         {
             get
@@ -73,7 +94,7 @@ namespace ShiftOS.Frontend.GUI
         public void RecalculateItemsPerPage()
         {
             itemsPerPage = 0;
-           while(itemsPerPage * fontheight < Height && itemsPerPage < items.Count - 1)
+           while(itemsPerPage * fontheight < Height && itemsPerPage < items.Count)
             {
                 itemsPerPage++;
             }
@@ -102,7 +123,7 @@ namespace ShiftOS.Frontend.GUI
         {
             if(e.Key== Microsoft.Xna.Framework.Input.Keys.Down)
             {
-                if(selectedIndex < items.Count - 2)
+                if(selectedIndex < items.Count - 1)
                 {
                     selectedIndex++;
                     RecalculateItemsPerPage();
@@ -126,7 +147,7 @@ namespace ShiftOS.Frontend.GUI
         {
             gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
-            for(int i = itemOffset; i < items.Count - 1 && i < itemsPerPage; i++)
+            for(int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
             {
                 int x = 1;
                 int y = fontheight * (i - itemOffset);

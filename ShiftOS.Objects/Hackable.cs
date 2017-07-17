@@ -22,8 +22,8 @@ namespace ShiftOS.Objects
         public SystemType SystemType { get; set; }
 
         public string OnHackCompleteStoryEvent { get; set; }
+        public string OnHackFailedStoryEvent { get; set; }
         
-
         public string Dependencies { get; set; }
 
 
@@ -51,5 +51,24 @@ namespace ShiftOS.Objects
         public string Name { get; set; }
         public string GUID { get; set; }
         public string Contents { get; set; }
+    }
+
+    public class LootInfo
+    {
+        public string Filename { get; set; }
+        public string ResourceId { get; set; }
+        public int Rarity { get; set; }
+    }
+
+    public class Loot
+    {
+        public Loot(LootInfo info, byte[] data)
+        {
+            Data = data;
+            Info = info;
+        }
+
+        public LootInfo Info { get; private set; }
+        public byte[] Data { get; private set; }
     }
 }

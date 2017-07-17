@@ -509,7 +509,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        public virtual bool ProcessMouseState(MouseState state)
+        public virtual bool ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
             //If we aren't rendering the control, we aren't accepting input.
             if (_visible == false)
@@ -548,7 +548,7 @@ namespace ShiftOS.Frontend.GUI
 
                         var nstate = new MouseState(coords.X, coords.Y, state.ScrollWheelValue, state.LeftButton, state.MiddleButton, state.RightButton, state.XButton1, state.XButton2);
                         //pass that state to the process method, and set the _requiresMoreWork value to the opposite of the return value
-                        _requiresMoreWork = !control.ProcessMouseState(nstate);
+                        _requiresMoreWork = !control.ProcessMouseState(nstate, lastLeftClickMS);
                         //If it's false, break the loop.
                         if (_requiresMoreWork == false)
                             break;
@@ -575,6 +575,8 @@ namespace ShiftOS.Frontend.GUI
                     }
                     if (_leftState == false && ld == true)
                     {
+                        if (lastLeftClickMS <= 500 & lastLeftClickMS > 0)
+                            DoubleClick?.Invoke();
                         var focused = UIManager.FocusedControl;
                         UIManager.FocusedControl = this;
                         focused?.InvalidateTopLevel();
@@ -642,6 +644,7 @@ namespace ShiftOS.Frontend.GUI
             KeyEvent?.Invoke(e);
         }
 
+        public event Action DoubleClick;
         public event Action<Point> MouseMove;
         public event Action MouseEnter;
         public event Action MouseLeave;

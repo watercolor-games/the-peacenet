@@ -262,6 +262,16 @@ namespace ShiftOS.Frontend.Apps
                     Debug.WriteLine("Drunky alert in terminal.");
                 }
             }
+            else if(a.Key == Keys.Right)
+            {
+                if(Index < Text.Length)
+                {
+                    Index++;
+                    AppearanceManager.CurrentPosition++;
+                    RecalculateLayout();
+                    InvalidateTopLevel();
+                }
+            }
             else if (a.Key == Keys.Left)
             {
                 if (SaveSystem.CurrentSave != null)
@@ -274,7 +284,7 @@ namespace ShiftOS.Frontend.Apps
                     var remstrlen = Text.Length - stringlen;
                     var finalnum = selstart - remstrlen;
 
-                    if (finalnum != headerlen)
+                    if (finalnum > headerlen)
                     {
                         AppearanceManager.CurrentPosition--;
                         base.OnKeyEvent(a);

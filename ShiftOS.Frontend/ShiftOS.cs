@@ -92,9 +92,11 @@ namespace ShiftOS.Frontend
                 AppearanceManager.SetupWindow(new Apps.Terminal());
             };
 
+            FileSkimmerBackend.Init(new MGFSLayer());
+
+
             //We'll use sandbox mode
             SaveSystem.IsSandbox = false;
-            Engine.Infobox.Show("Test window", "This is a test window.");
             SaveSystem.Begin(true);
 
             base.Initialize();
@@ -139,6 +141,7 @@ namespace ShiftOS.Frontend
         }
 
         private double kb_elapsedms = 0;
+        private double mouseMS = 0;
 
         private MouseState LastMouseState;
         /// <summary>
@@ -157,8 +160,17 @@ namespace ShiftOS.Frontend
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
                 LastMouseState = mouseState;
-                UIManager.ProcessMouseState(LastMouseState);
             
+                UIManager.ProcessMouseState(LastMouseState, mouseMS);
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                mouseMS = 0;
+            }
+            else
+            {
+                mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            }
             //So we have mouse input, and the UI layout system working...
 
             //But an OS isn't useful without the keyboard!
@@ -227,6 +239,22 @@ namespace ShiftOS.Frontend
                 timeSinceLastPurge = 0;
             }
 
+
+            //Some hackables have a connection timeout applied to them.
+            //We must update timeout values here, and disconnect if the timeout
+            //hits zero.
+
+            if(Hacking.CurrentHackable != null)
+            {
+                if (Hacking.CurrentHackable.DoConnectionTimeout)
+                {
+                    Hacking.CurrentHackable.MillisecondsCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if(Hacking.CurrentHackable.MillisecondsCountdown <= 0)
+                    {
+                        Hacking.FailHack();
+                    }
+                }
+            }
             base.Update(gameTime);
         }
 
@@ -261,6 +289,17 @@ namespace ShiftOS.Frontend
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
+            if(Hacking.CurrentHackable != null)
+            {
+                if (Hacking.CurrentHackable.DoConnectionTimeout)
+                {
+                    string str = $"Connection TImeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
+                    var gfx = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
+                    var measure = gfx.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
+                    gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
+                }
+            }
+
             if (DisplayDebugInfo)
             {
                 var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
@@ -292,7 +331,14 @@ Open windows (excluding dialog boxes): {AppearanceManager.OpenForms.Count}
 
 Experimental effects enabled: {UIManager.ExperimentalEffects}
 Fullscreen: {GraphicsDevice.IsFullScreen}
-Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}
+
+Mouse state:
+X: {LastMouseState.X}
+Y: {LastMouseState.Y}
+Last left click MS: {mouseMS}
+
+", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
             spriteBatch.End();
@@ -308,4 +354,45 @@ Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.Prefe
             return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
         }
     }
+
+    public class MGFSLayer : IFileSkimmer
+    {
+        public string GetFileExtension(FileType fileType)
+        {
+            switch (fileType)
+            {
+                case FileType.CommandFormat:
+                    return ".cf";
+                case FileType.Executable:
+                    return ".saa";
+                case FileType.Filesystem:
+                    return ".mfs";
+                case FileType.Image:
+                    return ".png";
+                case FileType.JSON:
+                    return ".json";
+                case FileType.Lua:
+                    return ".lua";
+                case FileType.Python:
+                    return ".py";
+                case FileType.Skin:
+                    return ".skn";
+                case FileType.TextFile:
+                    return ".txt";
+                default:
+                    return ".scrtm";
+            }
+        }
+
+        public void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OpenDirectory(string path)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

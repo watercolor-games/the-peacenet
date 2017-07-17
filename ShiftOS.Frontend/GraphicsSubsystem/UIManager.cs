@@ -146,11 +146,12 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             }
         }
 
-        public static void ProcessMouseState(MouseState state)
+        public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
             foreach(var ctrl in topLevels.ToArray())
             {
-                ctrl.ProcessMouseState(state);
+                ctrl.ProcessMouseState(state, lastLeftClickMS);
+                
             }
         }
 

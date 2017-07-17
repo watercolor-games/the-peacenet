@@ -45,8 +45,8 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void Init()
         {
-            Locations = new Dictionary<string, string>();
-            Locations.Add("root", "0:");
+                Locations = new Dictionary<string, string>();
+                Locations.Add("root", "0:");
 
             AddPath("root", "system");
 
@@ -76,7 +76,10 @@ namespace ShiftOS.Engine
 
             CheckPathExistence();
 
-            CreateAndMountSharedFolder();
+            if (Mounts.Count < 2)
+            {
+                CreateAndMountSharedFolder();
+            }
         }
 
         /// <summary>

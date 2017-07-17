@@ -44,7 +44,8 @@ namespace ShiftOS.Engine
         /// Opens a file from the specified ShiftFS path.
         /// </summary>
         /// <param name="path">The path to open.</param>
-        public static void OpenFile(string path)
+        /// <returns>Whether or not the file could be opened.</returns>
+        public static bool OpenFile(string path)
         {
             if (!Objects.ShiftFS.Utils.FileExists(path))
                 throw new System.IO.FileNotFoundException("ShiftFS could not find the file specified.", path);
@@ -56,9 +57,11 @@ namespace ShiftOS.Engine
                     {
                         var obj = (IFileHandler)Activator.CreateInstance(type);
                         obj.OpenFile(path);
+                        return true;
                     }
                 }
             }
+            return false;
         }
         public static FileType GetFileType(string path)
         {
@@ -137,11 +140,6 @@ namespace ShiftOS.Engine
             _fs = fs;
         }
 
-        public static System.Drawing.Image GetImage(string filepath)
-        {
-            return _fs.GetImage(filepath);
-        }
-
         public static string GetFileExtension(FileType fileType)
         {
             return _fs.GetFileExtension(fileType);
@@ -153,10 +151,8 @@ namespace ShiftOS.Engine
     /// </summary>
     public interface IFileSkimmer
     {
-        void OpenFile(string filepath);
         void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback);
         void OpenDirectory(string path);
-        Image GetImage(string path);
         string GetFileExtension(FileType fileType);
     }
 

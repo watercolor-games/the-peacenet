@@ -71,6 +71,35 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /* ShiftOS hackables data file
+        /// *
+        /// * This file contains information about all hackable systems in the game&apos;s campaign.
+        /// *
+        /// */
+        ///
+        ///[
+        ///	{
+        ///		SystemName: &quot;shiftsyndicate_main&quot;,
+        ///		FriendlyName: &quot;ShiftSyndicate file server&quot;,
+        ///		Password: &quot;h0ldy0urc0l0ur&quot;,
+        ///		PasswordHint: &quot;Prepare to hold your colour...&quot;,
+        ///		WelcomeMessage: &quot;Don&apos;t make fun of SpamSyndicate web design.&quot;,
+        ///		FirewallStrength: 1,
+        ///		LootRarity: 1,
+        ///		LootAmount: 4,
+        ///		ConnectionTimeoutLevel: 4,
+        ///		SystemType: &quot;FileServer, SSHServer&quot;,
+        ///
+        ///	}
+        ///].
+        /// </summary>
+        internal static string Hackables {
+            get {
+                return ResourceManager.GetString("Hackables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap justthes {
@@ -81,25 +110,18 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [
-        /////Virus Scanner Grades
-        ///	{
-        ///		Name: &quot;Virus Scanner Grade 2&quot;,
-        ///		Description: &quot;Update the Virus Scanner database to include threatlevel 2 viruses.&quot;,
-        ///		Dependencies: &quot;virus_scanner&quot;,
-        ///		Category: &quot;Virus Scanner&quot;,
-        ///		Cost: 75
-        ///	},
-        ///	{
-        ///		Name: &quot;Virus Scanner Grade 3&quot;,
-        ///		Description: &quot;Update the Virus Scanner database to include threatlevel 3 viruses.&quot;,
-        ///		Dependencies: &quot;virus_scanner_grade_2&quot;,
-        ///		Category: &quot;Virus Scanner&quot;,
-        ///		Cost: 150
-        ///	},
-        ///	{
-        ///		Name: &quot;Virus Scanner Grade 4&quot;,
-        ///		Description: &quot;Update the [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to //Loot information table
+        ///
+        ///[].
+        /// </summary>
+        internal static string LootInfo {
+            get {
+                return ResourceManager.GetString("LootInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [].
         /// </summary>
         internal static string Shiftorium {
             get {
