@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.Desktop;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -48,7 +49,7 @@ namespace ShiftOS.Frontend.Apps
         {
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             _header.Font = SkinEngine.LoadedSkin.HeaderFont;
             _header.X = 20;

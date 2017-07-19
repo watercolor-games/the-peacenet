@@ -429,7 +429,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        public void Layout()
+        public void Layout(GameTime gameTime)
         {
             //Dock style
             if(_parent != null)
@@ -469,12 +469,12 @@ namespace ShiftOS.Frontend.GUI
                         break;
                 }
             }
-            OnLayout();
+            OnLayout(gameTime);
             foreach (var child in _children)
-                child.Layout();
+                child.Layout(gameTime);
         }
 
-        protected virtual void OnLayout()
+        protected virtual void OnLayout(GameTime gameTime)
         {
             //do nothing
         }
@@ -621,7 +621,6 @@ namespace ShiftOS.Frontend.GUI
             {
                 _mouseX = coords.X;
                 _mouseY = coords.Y;
-                Layout();
                 _wasMouseInControl = true;
                 int newX = MathHelper.Clamp(state.X, X, X + Width);
                 int newY = MathHelper.Clamp(state.Y, Y, Y + Height);

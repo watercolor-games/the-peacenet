@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.Apps;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -100,7 +101,7 @@ namespace ShiftOS.Frontend.Desktop
         {
         }
 
-        public void OpenAppLauncher(Point loc)
+        public void OpenAppLauncher(System.Drawing.Point loc)
         {
             alX = loc.X;
             alY = loc.Y;
@@ -188,7 +189,7 @@ namespace ShiftOS.Frontend.Desktop
 
         private string dateTimeString = "";
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if (alOpen)
                 BringToFront();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.Desktop;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -178,11 +179,9 @@ namespace ShiftOS.Frontend
             this.AddControl(btnok);
             this.AddControl(flyesno);
             this.AddControl(lbmessage);
-
-            this.Layout();
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             try
             {

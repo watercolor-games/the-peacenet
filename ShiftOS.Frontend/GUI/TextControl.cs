@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend.GUI
@@ -14,7 +15,7 @@ namespace ShiftOS.Frontend.GUI
         private TextAlign _textAlign = TextAlign.TopLeft;
         private Font _font = new Font("Tahoma", 9f);
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if (AutoSize)
             {

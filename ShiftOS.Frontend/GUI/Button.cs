@@ -18,7 +18,7 @@ namespace ShiftOS.Frontend.GUI
             Text = "Click me!";
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if(AutoSize == true)
             {

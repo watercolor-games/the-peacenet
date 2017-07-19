@@ -9,6 +9,7 @@ using ShiftOS.Engine;
 using System.Drawing.Imaging;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -43,7 +44,7 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if (AutoSize)
             {
@@ -109,8 +110,8 @@ namespace ShiftOS.Frontend.GUI
                     InterpolationMode.HighQualityBicubic;
 
             grPhoto.DrawImage(imgPhoto,
-                new Rectangle(destX, destY, destWidth, destHeight),
-                new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
+                new System.Drawing.Rectangle(destX, destY, destWidth, destHeight),
+                new System.Drawing.Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
                 GraphicsUnit.Pixel);
 
             grPhoto.Dispose();

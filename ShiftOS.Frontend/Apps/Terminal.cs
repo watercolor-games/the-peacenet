@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -33,7 +34,6 @@ namespace ShiftOS.Frontend.Apps
             _terminal = new Apps.TerminalControl();
             _terminal.Dock = GUI.DockStyle.Fill;
             AddControl(_terminal);
-            _terminal.Layout();
             AppearanceManager.ConsoleOut = _terminal;
             AppearanceManager.StartConsoleOut();
             TerminalBackend.PrintPrompt();
@@ -45,7 +45,7 @@ namespace ShiftOS.Frontend.Apps
             };
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if (ContainsFocusedControl || IsFocusedControl)
                 AppearanceManager.ConsoleOut = _terminal;
@@ -138,9 +138,18 @@ namespace ShiftOS.Frontend.Apps
         {
         }
 
-        protected override void OnLayout()
+        private bool blinkStatus = false;
+        private double blinkTime = 0.0;
+
+        protected override void OnLayout(GameTime gameTime)
         {
-            
+            blinkTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (blinkTime > 500.0)
+                blinkTime = 0;
+            bool prev = blinkStatus;
+            blinkStatus = blinkTime > 250.0;
+            if (prev != blinkStatus)
+                Invalidate();
         }
 
         /// <summary>
@@ -148,7 +157,7 @@ namespace ShiftOS.Frontend.Apps
         /// </summary>
         /// <param name="gfx">A <see cref="System.Drawing.Graphics"/> object used for font measurements</param>
         /// <returns>An absolute fucking mess. Seriously, can someone fix this method so it uhh WORKS PROPERLY?</returns>
-        public Point GetPointAtIndex(Graphics gfx)
+        public System.Drawing.Point GetPointAtIndex(Graphics gfx)
         {
             int vertMeasure = 2;
             int horizMeasure = 2;
@@ -169,7 +178,7 @@ namespace ShiftOS.Frontend.Apps
                 vertMeasure += (int)lnMeasure.Height;
             }
             horizMeasure += w;
-            return new Point(horizMeasure, vertMeasure);
+            return new System.Drawing.Point(horizMeasure, vertMeasure);
         }
 
         private PointF CaretPosition = new PointF(2, 2);
@@ -191,12 +200,14 @@ namespace ShiftOS.Frontend.Apps
                     var text2 = text[text.Length - 1];
                     var text3 = "";
                     var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-                    WriteLine("");
-                    {
+                        WriteLine("");
+
                         if (TerminalBackend.PrefixEnabled)
                         {
                             text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
                         }
+                    if (!string.IsNullOrWhiteSpace(text3))
+                    {
                         TerminalBackend.LastCommand = text3;
                         TerminalBackend.SendText(text4);
                         if (TerminalBackend.InStory == false)
@@ -215,15 +226,19 @@ namespace ShiftOS.Frontend.Apps
 
                             }
                         }
-                        if (TerminalBackend.PrefixEnabled)
-                        {
-                            TerminalBackend.PrintPrompt();
-                        }
-                        AppearanceManager.CurrentPosition = 0;
                     }
                 }
                 catch
                 {
+                }
+                finally
+                {
+                    if (TerminalBackend.PrefixEnabled)
+                    {
+                        TerminalBackend.PrintPrompt();
+                    }
+                    AppearanceManager.CurrentPosition = 0;
+
                 }
             }
             else if (a.Key == Keys.Back)
@@ -300,6 +315,8 @@ namespace ShiftOS.Frontend.Apps
                     InvalidateTopLevel();
                 }
             }
+            blinkStatus = true;
+            blinkTime = 250;
         }
 
         protected override void OnPaint(GraphicsContext gfx)
@@ -308,14 +325,24 @@ namespace ShiftOS.Frontend.Apps
             if (!string.IsNullOrEmpty(Text))
             {
                 //Draw the caret.
-                PointF cursorPos;
-                using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+                if (blinkStatus == true)
                 {
-                    cursorPos = GetPointAtIndex(cgfx);
+                    PointF cursorPos;
+                    using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+                    {
+                        cursorPos = GetPointAtIndex(cgfx);
 
+                    }
+                    var cursorSize = gfx.MeasureString(Text[Index - 1].ToString(), LoadedSkin.TerminalFont);
+
+                    var lineMeasure = gfx.MeasureString(Lines[GetCurrentLine()], LoadedSkin.TerminalFont);
+                    if (cursorPos.X > lineMeasure.X)
+                    {
+                        cursorPos.X = lineMeasure.X;
+                    }
+
+                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }
-                var cursorSize = gfx.MeasureString(Text[Index - 1].ToString(), LoadedSkin.TerminalFont);
-                gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 //Draw the text
 
 
@@ -327,44 +354,44 @@ namespace ShiftOS.Frontend.Apps
 
     public static class ConsoleColorExtensions
     {
-        public static Color ToColor(this ConsoleColor cc)
+        public static System.Drawing.Color ToColor(this ConsoleColor cc)
         {
             switch (cc)
             {
                 case ConsoleColor.Black:
-                    return Color.Black;
+                    return System.Drawing.Color.Black;
                 case ConsoleColor.Blue:
-                    return Color.Blue;
+                    return System.Drawing.Color.Blue;
                 case ConsoleColor.Cyan:
-                    return Color.Cyan;
+                    return System.Drawing.Color.Cyan;
                 case ConsoleColor.DarkBlue:
-                    return Color.DarkBlue;
+                    return System.Drawing.Color.DarkBlue;
                 case ConsoleColor.DarkCyan:
-                    return Color.DarkCyan;
+                    return System.Drawing.Color.DarkCyan;
                 case ConsoleColor.DarkGray:
-                    return Color.DarkGray;
+                    return System.Drawing.Color.DarkGray;
                 case ConsoleColor.DarkGreen:
-                    return Color.DarkGreen;
+                    return System.Drawing.Color.DarkGreen;
                 case ConsoleColor.DarkMagenta:
-                    return Color.DarkMagenta;
+                    return System.Drawing.Color.DarkMagenta;
                 case ConsoleColor.DarkRed:
-                    return Color.DarkRed;
+                    return System.Drawing.Color.DarkRed;
                 case ConsoleColor.DarkYellow:
-                    return Color.Orange;
+                    return System.Drawing.Color.Orange;
                 case ConsoleColor.Gray:
-                    return Color.Gray;
+                    return System.Drawing.Color.Gray;
                 case ConsoleColor.Green:
-                    return Color.Green;
+                    return System.Drawing.Color.Green;
                 case ConsoleColor.Magenta:
-                    return Color.Magenta;
+                    return System.Drawing.Color.Magenta;
                 case ConsoleColor.Red:
-                    return Color.Red;
+                    return System.Drawing.Color.Red;
                 case ConsoleColor.White:
-                    return Color.White;
+                    return System.Drawing.Color.White;
                 case ConsoleColor.Yellow:
-                    return Color.Yellow;
+                    return System.Drawing.Color.Yellow;
             }
-            return Color.Empty;
+            return System.Drawing.Color.Empty;
         }
     }
 
@@ -375,11 +402,11 @@ namespace ShiftOS.Frontend.Apps
             if (string.IsNullOrEmpty(s))
                 s = " ";
             var textformat = new StringFormat(StringFormat.GenericTypographic);
-            textformat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
-            textformat.Trimming = StringTrimming.None;
-            textformat.FormatFlags |= StringFormatFlags.NoClip;
+            textformat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+            //textformat.Trimming = StringTrimming.Character;
+            //textformat.FormatFlags |= StringFormatFlags.NoClip;
             
-            gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
             var measure = gfx.MeasureString(s, font, width, textformat);
             return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Ceiling(measure.Height));
         }

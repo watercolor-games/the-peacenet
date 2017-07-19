@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
 
@@ -24,7 +25,7 @@ namespace ShiftOS.Frontend.Apps
             Height = 480;
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             try
             {

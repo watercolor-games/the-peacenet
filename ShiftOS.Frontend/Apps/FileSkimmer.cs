@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ShiftOS.Engine;
 using static ShiftOS.Objects.ShiftFS.Utils;
 
@@ -133,11 +134,11 @@ namespace ShiftOS.Frontend.Apps
         }
 
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             try
             {
-                _currentdirtext.Layout();
+                _currentdirtext.Layout(gameTime);
                 _fList.X = 0;
                 _fList.Y = 0;
                 _fList.Width = Width;

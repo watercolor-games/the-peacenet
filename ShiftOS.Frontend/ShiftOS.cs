@@ -229,7 +229,7 @@ namespace ShiftOS.Frontend
             }
 
             //Cause layout update on all elements
-            UIManager.LayoutUpdate();
+            UIManager.LayoutUpdate(gameTime);
 
             timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
 

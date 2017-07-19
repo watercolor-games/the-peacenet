@@ -476,7 +476,6 @@ namespace ShiftOS.Engine
         /// </summary>
         public static void PrintPrompt()
         {
-            Console.WriteLine();
             if (SaveSystem.CurrentSave != null)
             {
                     ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;

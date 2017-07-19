@@ -168,14 +168,14 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if(fontheight != LoadedSkin.MainFont.Height)
             {
                 fontheight = LoadedSkin.MainFont.Height;
                 Invalidate();
             }
-            base.OnLayout();
+            base.OnLayout(gameTime);
         }
 
         public event Action SelectedIndexChanged;

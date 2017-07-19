@@ -25,10 +25,10 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             topLevels.Add(ctrl);
         }
 
-        public static void LayoutUpdate()
+        public static void LayoutUpdate(GameTime gameTime)
         {
             foreach (var toplevel in topLevels.ToArray())
-                toplevel.Layout();
+                toplevel.Layout(gameTime);
         }
 
         public static void Animate(object owner, System.Reflection.PropertyInfo prop, double from, double to, int timeMs)
@@ -135,7 +135,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         {
             if (!topLevels.Contains(ctrl))
                 topLevels.Add(ctrl);
-            ctrl.Layout();
+
         }
 
         public static void InvalidateAll()

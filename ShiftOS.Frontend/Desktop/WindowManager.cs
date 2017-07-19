@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -224,7 +225,7 @@ namespace ShiftOS.Frontend.Desktop
 
         private int lastmousex, lastmousey = 0;
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             int titlebarheight = LoadedSkin.TitlebarHeight;
             int borderleft = LoadedSkin.LeftBorderWidth;
@@ -318,7 +319,7 @@ namespace ShiftOS.Frontend.Desktop
                     var closebuttonsize = LoadedSkin.CloseButtonSize;
                     var closebuttonright = LoadedSkin.CloseButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
                     if (!UIManager.SkinTextures.ContainsKey("closebutton"))
                     {
                         gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["CloseButtonColor"]);
@@ -332,7 +333,7 @@ namespace ShiftOS.Frontend.Desktop
                 closebuttonsize = LoadedSkin.MaximizeButtonSize;
                 closebuttonright = LoadedSkin.MaximizeButtonFromSide;
                 if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
                     if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
                     {
@@ -347,7 +348,7 @@ namespace ShiftOS.Frontend.Desktop
                 closebuttonsize = LoadedSkin.MinimizeButtonSize;
                 closebuttonright = LoadedSkin.MinimizeButtonFromSide;
                     if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
             if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
             {
                 gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
@@ -441,7 +442,7 @@ namespace ShiftOS.Frontend.Desktop
         public static Texture2D ToTexture2D(this Image image, GraphicsDevice device)
         {
             var bmp = (Bitmap)image;
-            var lck = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var data = new byte[Math.Abs(lck.Stride) * lck.Height];
             Marshal.Copy(lck.Scan0, data, 0, data.Length);
             bmp.UnlockBits(lck);

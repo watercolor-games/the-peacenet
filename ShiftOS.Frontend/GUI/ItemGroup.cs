@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace ShiftOS.Frontend.GUI
 {
@@ -12,7 +13,7 @@ namespace ShiftOS.Frontend.GUI
         private FlowDirection _flowDir = FlowDirection.LeftToRight;
         private int _initialgap = 2;
 
-        protected override void OnLayout()
+        protected override void OnLayout(GameTime gameTime)
         {
             if (AutoSize)
             {
@@ -44,7 +45,6 @@ namespace ShiftOS.Frontend.GUI
                 ctrl.X = _x;
                 ctrl.Y = _y;
                 ctrl.Dock = DockStyle.None;
-                ctrl.Layout();
                 _x += ctrl.Width + _gap;
 
                 if (_maxYForRow < ctrl.Height + _gap)
