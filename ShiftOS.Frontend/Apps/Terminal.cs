@@ -161,6 +161,8 @@ namespace ShiftOS.Frontend.Apps
         {
             int vertMeasure = 2;
             int horizMeasure = 2;
+            if (string.IsNullOrEmpty(Text))
+                return new System.Drawing.Point(horizMeasure, vertMeasure);
             int lineindex = 0;
             int line = GetCurrentLine();
             for (int l = 0; l < line; l++)
@@ -245,13 +247,22 @@ namespace ShiftOS.Frontend.Apps
             {
                 try
                 {
-                    var tostring3 = Lines[Lines.Length - 1];
-                    var tostringlen = tostring3.Length + 1;
-                    var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
-                    var derp = workaround.Length + 1;
-                    if (tostringlen != derp)
+                    if (PerformTerminalBehaviours)
                     {
-                        AppearanceManager.CurrentPosition--;
+                        var tostring3 = Lines[Lines.Length - 1];
+                        var tostringlen = tostring3.Length + 1;
+                        var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var derp = workaround.Length + 1;
+                        if (tostringlen != derp)
+                        {
+                            AppearanceManager.CurrentPosition--;
+                            base.OnKeyEvent(a);
+                            RecalculateLayout();
+                            InvalidateTopLevel();
+                        }
+                    }
+                    else
+                    {
                         base.OnKeyEvent(a);
                         RecalculateLayout();
                         InvalidateTopLevel();
@@ -283,7 +294,8 @@ namespace ShiftOS.Frontend.Apps
                     var selstart = Index;
                     var remstrlen = Text.Length - stringlen;
                     var finalnum = selstart - remstrlen;
-
+                    if (!PerformTerminalBehaviours)
+                        headerlen = 0;
                     if (finalnum > headerlen)
                     {
                         AppearanceManager.CurrentPosition--;
@@ -291,7 +303,7 @@ namespace ShiftOS.Frontend.Apps
                     }
                 }
             }
-            else if (a.Key == Keys.Up)
+            else if (a.Key == Keys.Up && PerformTerminalBehaviours)
             {
                 var tostring3 = Lines[Lines.Length - 1];
                 if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
@@ -319,6 +331,8 @@ namespace ShiftOS.Frontend.Apps
             blinkTime = 250;
         }
 
+        public bool PerformTerminalBehaviours = true;
+
         protected override void OnPaint(GraphicsContext gfx)
         { 
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
@@ -333,7 +347,7 @@ namespace ShiftOS.Frontend.Apps
                         cursorPos = GetPointAtIndex(cgfx);
 
                     }
-                    var cursorSize = gfx.MeasureString(Text[Index - 1].ToString(), LoadedSkin.TerminalFont);
+                    var cursorSize = gfx.MeasureString("#", LoadedSkin.TerminalFont);
 
                     var lineMeasure = gfx.MeasureString(Lines[GetCurrentLine()], LoadedSkin.TerminalFont);
                     if (cursorPos.X > lineMeasure.X)
@@ -399,8 +413,6 @@ namespace ShiftOS.Frontend.Apps
     {
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font, int width)
         {
-            if (string.IsNullOrEmpty(s))
-                s = " ";
             var textformat = new StringFormat(StringFormat.GenericTypographic);
             textformat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
             //textformat.Trimming = StringTrimming.Character;
@@ -408,6 +420,8 @@ namespace ShiftOS.Frontend.Apps
             
             gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
             var measure = gfx.MeasureString(s, font, width, textformat);
+            if (string.IsNullOrEmpty(s))
+                measure.Width = 0;
             return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Ceiling(measure.Height));
         }
 

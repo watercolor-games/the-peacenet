@@ -19,6 +19,7 @@ namespace ShiftOS.Frontend.Apps
         {
             contentsLabel = new TerminalControl();
             contentsLabel.Dock = GUI.DockStyle.Fill;
+            contentsLabel.PerformTerminalBehaviours = false;
             AddControl(contentsLabel);
         }
 
@@ -42,7 +43,7 @@ namespace ShiftOS.Frontend.Apps
 
         public void OpenFile(string file)
         {
-            //contentsLabel.Text = Objects.ShiftFS.Utils.ReadAllText(file);
+            contentsLabel.Text = Objects.ShiftFS.Utils.ReadAllText(file);
             AppearanceManager.SetupWindow(this);
         }
     }
