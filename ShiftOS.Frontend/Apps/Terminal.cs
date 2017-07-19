@@ -121,39 +121,21 @@ namespace ShiftOS.Frontend.Apps
         public int GetCurrentLine()
         {
             int line = 0;
-            for(int i = 0; i < Text.Length; i++)
+            for(int i = 0; i < Index; i++)
             {
                 if(Text[i]=='\n')
                 {
                     line++;
                     continue;
                 }
-                if (i == Index)
-                    return line;
             }
-            return 0;
+            return line;
         }
 
         float _vertOffset = 0.0f;
 
         protected void RecalculateLayout()
         {
-            if(!string.IsNullOrEmpty(Text))
-            using (var gfx = Graphics.FromImage(new Bitmap(1, 1)))
-            {
-                    var textsize = gfx.SmartMeasureString(Text, LoadedSkin.TerminalFont, Width);
-                    float initial = textsize.Height - _vertOffset;
-                    if(initial > Height)
-                    {
-                        float difference = Height - initial;
-                        _vertOffset = initial - difference;
-                    }
-                    else if(initial < 0)
-                    {
-                        float difference = Height - initial;
-                        _vertOffset = initial + difference;
-                    }
-                }
         }
 
         protected override void OnLayout()
@@ -170,7 +152,6 @@ namespace ShiftOS.Frontend.Apps
         {
             int vertMeasure = 2;
             int horizMeasure = 2;
-            var textSize = gfx.SmartMeasureString(Text, LoadedSkin.TerminalFont, Width - 4);
             int lineindex = 0;
             int line = GetCurrentLine();
             for (int l = 0; l < line; l++)
@@ -182,9 +163,12 @@ namespace ShiftOS.Frontend.Apps
             }
             var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), LoadedSkin.TerminalFont);
             int w = (int)Math.Floor(lnMeasure.Width);
-            if (w > Width - 4)
+            while (w > Width - 4)
+            {
                 w = w - (Width - 4);
-            horizMeasure = w;
+                vertMeasure += (int)lnMeasure.Height;
+            }
+            horizMeasure += w;
             return new Point(horizMeasure, vertMeasure);
         }
 
@@ -235,6 +219,7 @@ namespace ShiftOS.Frontend.Apps
                         {
                             TerminalBackend.PrintPrompt();
                         }
+                        AppearanceManager.CurrentPosition = 0;
                     }
                 }
                 catch
@@ -323,17 +308,15 @@ namespace ShiftOS.Frontend.Apps
             if (!string.IsNullOrEmpty(Text))
             {
                 //Draw the caret.
-                if (IsFocusedControl)
+                PointF cursorPos;
+                using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
                 {
-                    PointF cursorPos;
-                    using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
-                    {
-                        cursorPos = GetPointAtIndex(cgfx);
-                        
-                    }
-                    var cursorSize = gfx.MeasureString(Text[Index-1].ToString(), LoadedSkin.TerminalFont);
-                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
-                }//Draw the text
+                    cursorPos = GetPointAtIndex(cgfx);
+
+                }
+                var cursorSize = gfx.MeasureString(Text[Index - 1].ToString(), LoadedSkin.TerminalFont);
+                gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+                //Draw the text
 
 
                 gfx.DrawString(Text, 2, 2 - (int)Math.Floor(_vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), LoadedSkin.TerminalFont, Width - 4);

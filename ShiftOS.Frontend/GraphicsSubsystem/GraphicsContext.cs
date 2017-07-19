@@ -159,7 +159,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                     {
                         var sFormat = System.Drawing.StringFormat.GenericTypographic;
                         sFormat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
-
+                        sFormat.FormatFlags |= System.Drawing.StringFormatFlags.DisplayFormatControl;
                         gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
                         gfx.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);

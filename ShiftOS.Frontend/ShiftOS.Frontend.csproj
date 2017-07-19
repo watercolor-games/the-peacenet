@@ -47,6 +47,7 @@
     <Compile Include="Apps\Pong.cs" />
     <Compile Include="Apps\SystemStatus.cs" />
     <Compile Include="Apps\Terminal.cs" />
+    <Compile Include="Apps\TextPad.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
