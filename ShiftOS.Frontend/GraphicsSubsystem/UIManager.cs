@@ -135,7 +135,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         {
             if (!topLevels.Contains(ctrl))
                 topLevels.Add(ctrl);
-
+            FocusedControl = ctrl;
         }
 
         public static void InvalidateAll()

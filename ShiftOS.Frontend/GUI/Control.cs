@@ -240,6 +240,7 @@ namespace ShiftOS.Frontend.GUI
                 ctrl._parent = this;
                 _children.Add(ctrl);
                 Invalidate();
+                UIManager.FocusedControl = ctrl;
             }
         }
 
