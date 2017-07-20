@@ -167,6 +167,12 @@ namespace ShiftOS.Frontend.Apps
             int line = GetCurrentLine();
             for (int l = 0; l < line; l++)
             {
+                if (string.IsNullOrEmpty(Lines[l]))
+                {
+                    vertMeasure += LoadedSkin.TerminalFont.Height;
+                    continue;
+                }
+
                 lineindex += Lines[l].Length;
                 var stringMeasure = gfx.SmartMeasureString(Lines[l] == "\r" ? " " : Lines[l], LoadedSkin.TerminalFont, Width - 4);
                 vertMeasure += (int)stringMeasure.Height;
