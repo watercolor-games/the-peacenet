@@ -90,8 +90,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 {
                     _target = new RenderTarget2D(
                                     graphics,
-                                    ctrl.Width,
-                                    ctrl.Height,
+                                    Math.Max(1,ctrl.Width),
+                                    Math.Max(1,ctrl.Height),
                                     false,
                                     graphics.PresentationParameters.BackBufferFormat,
                                     DepthFormat.Depth24);

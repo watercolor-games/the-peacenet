@@ -329,7 +329,8 @@ namespace ShiftOS.Engine
                 goto Sysname;
             }
 
-
+            //why the fuck is it crashing here of all places
+            //fucking fuckdrunk
             Console.WriteLine($@"
                    `-:/++++::.`                   
               .+ydNMMMMMNNMMMMMNhs/.              

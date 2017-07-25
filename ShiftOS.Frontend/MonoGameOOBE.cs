@@ -34,6 +34,8 @@ namespace ShiftOS.Frontend
         }
 
         private Apps.TerminalControl Console = null;
+        private GUI.ProgressBar progress = null;
+        private GUI.TextControl status = null;
 
         public void StartShowing(Save save)
         {
@@ -125,7 +127,6 @@ It's called ShiftOS.");
 
                 Thread.Sleep(5000);
 
-                GraphicsSubsystem.UIManager.StopHandling(term);
                 while(AppearanceManager.OpenForms.Count > 0)
                 {
                     AppearanceManager.OpenForms[0].Close();
@@ -142,7 +143,132 @@ It's called ShiftOS.");
                 _shiftos.Layout(new Microsoft.Xna.Framework.GameTime());
                 _shiftos.X = (GraphicsSubsystem.UIManager.Viewport.Width - _shiftos.Width) / 2;
 
+                status = new GUI.TextControl();
+                GraphicsSubsystem.UIManager.AddTopLevel(status);
+                status.Font = SkinEngine.LoadedSkin.MainFont;
+                status.AutoSize = true;
+                status.Text = "Beginning installation...";
+                status.Y = _shiftos.Y + _shiftos.Height + 5;
+                status.Layout(new Microsoft.Xna.Framework.GameTime());
+                status.X = (GraphicsSubsystem.UIManager.Viewport.Width - status.Width) / 2;
 
+                progress = new GUI.ProgressBar();
+                GraphicsSubsystem.UIManager.AddTopLevel(progress);
+                progress.Width = 150;
+                progress.Height = 10;
+                progress.Maximum = 250;
+                progress.Value = 0;
+                progress.Y = status.Y + status.Height + 15;
+                progress.X = (GraphicsSubsystem.UIManager.Viewport.Width - progress.Width) / 2;
+
+                term.Clear();
+                term.Width = 320;
+                term.Height = 200;
+                term.X = (GraphicsSubsystem.UIManager.Viewport.Width - term.Width) / 2;
+                term.Y = progress.Y + progress.Height + 15;
+                var nt = new Thread(() =>
+                {
+                    while(status != null)
+                    {
+                        try
+                        {
+                            if (term.Lines.Length > 0)
+                            {
+                                string txt = term.Lines[term.Lines.Length - 1];
+                                if (status.Text != txt + $" [{progress.Value}%]")
+                                {
+                                    status.Text = txt + $" [{progress.Value}%]";
+                                    status.Layout(new Microsoft.Xna.Framework.GameTime());
+                                    status.X = (GraphicsSubsystem.UIManager.Viewport.Width - status.Width) / 2;
+                                }
+                            }
+                            else
+                            {
+                                Thread.Sleep(10);
+                            }
+                        }
+                        catch { }
+                    }
+                });
+                nt.Start();
+                SlowWriteLine("Formatting storage device A with ShiftFS version 4.7...");
+
+                progress.Maximum = 100;
+                for (int i = 0; i < 100; i++)
+                {
+                    progress.Value = i;
+                    Thread.Sleep(25);
+                }
+                progress.Value = 0;
+                Console.WriteLine("Mounting storage device A to 0:/");
+                Thread.Sleep(135);
+                Console.WriteLine("Writing system files & directories to sentience...");
+                Thread.Sleep(450);
+                foreach (var dir in Paths.GetAllWithoutKey())
+                {
+                    try
+                    {
+                        if (dir.StartsWith("0:/"))
+                        {
+                            Console.WriteLine("Writing: " + dir);
+                            Thread.Sleep(30);
+                        }
+                    }
+                    catch { }
+                }
+                Thread.Sleep(1250);
+                Console.WriteLine("Generating system profile...");
+                Thread.Sleep(25);
+                Console.WriteLine("Codepoints: 0");
+                save.Codepoints = 0;
+                progress.Value = 10;
+                Thread.Sleep(25);
+                Console.WriteLine("Shiftorium cache generated...");
+                save.Upgrades = new Dictionary<string, bool>();
+                progress.Value = 20;
+                Console.WriteLine("Performing even more redundant tasks that have already been done for us by the backend because we're redundant programmers who don't know our own code... jesus christ this is a long string...");
+                save.ID = Guid.NewGuid();
+                save.IsSandbox = false;
+                save.Language = "english";
+                save.MusicEnabled = true;
+                save.MusicVolume = 100;
+                save.PickupPoint = "";
+                save.ShiftnetSubscription = 0;
+                save.SoundEnabled = true;
+                save.StoriesExperienced = new List<string>();
+                Thread.Sleep(2000);
+                Console.WriteLine("Far out. We haven't asked the user for a hostname.");
+                bool hostnameEntered = false;
+                Engine.Infobox.PromptText("Enter system hostname", "You need a hostname to exist within the Digital Society. Your hostname allows other sentiences to interact with you. Please enter one.", (hostname) =>
+                {
+                    hostnameEntered = true;
+                    save.SystemName = hostname;
+                });
+                int ticks = 0;
+                while(hostnameEntered == false)
+                {
+                    Thread.Sleep(10);
+                    ticks++;
+                    if(ticks == 1000)
+                    {
+                        Console.WriteLine("<kernel> [growls] COME ON. THE BOX IS RIGHT THERE. PICK A DARN HOSTNAME ALREADY.");
+                    }
+                    if(ticks == 1250)
+                    {
+                        Console.WriteLine("<kernel> [screaming expletives] WHAT ARE YOU WAITING FOR? WHAT DO YOU WANT?");
+                    }
+                    if(ticks == 1500)
+                    {
+                        Console.WriteLine("<kernel> [someone pissed in its cereal] For crying out loud I'm about ready to default you to localhost and prevent you from accessing the Digital Society.");
+                    }
+                }
+                progress.Value = 100;
+                save.ViralInfections = new List<ViralInfection>();
+                Console.WriteLine("<kernel> Setup complete. You're ready.");
+                Thread.Sleep(500);
+                save.StoryPosition = 123456789; //HERE. YOU DO THE MATH.
+                SaveSystem.CurrentSave = save;
+                SaveSystem.SaveGame();
             });
             t.Start();
         }
