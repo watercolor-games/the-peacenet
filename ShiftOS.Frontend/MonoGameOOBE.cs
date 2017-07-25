@@ -269,6 +269,11 @@ It's called ShiftOS.");
                 save.StoryPosition = 123456789; //HERE. YOU DO THE MATH.
                 SaveSystem.CurrentSave = save;
                 SaveSystem.SaveGame();
+                GraphicsSubsystem.UIManager.StopHandling(progress);
+                GraphicsSubsystem.UIManager.StopHandling(term);
+                GraphicsSubsystem.UIManager.StopHandling(status);
+                GraphicsSubsystem.UIManager.StopHandling(_shiftos);
+
             });
             t.Start();
         }
