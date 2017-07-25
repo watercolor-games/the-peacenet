@@ -96,9 +96,10 @@ namespace ShiftOS.Frontend
             FileSkimmerBackend.Init(new MGFSLayer());
 
 
-            //We'll use sandbox mode
-            SaveSystem.IsSandbox = false;
-            SaveSystem.Begin(true);
+
+            //Create a main menu
+            var mm = new MainMenu();
+            UIManager.AddTopLevel(mm);
 
             base.Initialize();
 

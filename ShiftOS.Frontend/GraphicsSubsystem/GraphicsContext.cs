@@ -118,7 +118,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             x += _startx;
             y += _starty;
             var tex2 = new Texture2D(_graphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            byte[] colordata = new byte[] { color.B, color.G, color.R, color.A };
+            byte[] colordata = new byte[] { 255, 255, 255, 255 };
             tex2.SetData<byte>(colordata);
             _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), color);
         }

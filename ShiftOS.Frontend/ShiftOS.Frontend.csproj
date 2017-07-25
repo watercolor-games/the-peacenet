@@ -64,6 +64,7 @@
     <Compile Include="HackableProvider.cs" />
     <Compile Include="HackerTestCommands.cs" />
     <Compile Include="Infobox.cs" />
+    <Compile Include="MainMenu.cs" />
     <Compile Include="MonoGameLanguageProvider.cs" />
     <Compile Include="MonoGameOOBE.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
