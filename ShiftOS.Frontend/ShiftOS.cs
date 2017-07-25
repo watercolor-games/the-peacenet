@@ -52,7 +52,6 @@ namespace ShiftOS.Frontend
 
         }
 
-        private GUI.TextControl _titleLabel = null;
         private Keys lastKey = Keys.None;
 
 
@@ -64,6 +63,8 @@ namespace ShiftOS.Frontend
         /// </summary>
         protected override void Initialize()
         {
+            OutOfBoxExperience.Init(new MonoGameOOBE());
+
             //Before we do ANYTHING, we've got to initiate the ShiftOS engine.
             UIManager.GraphicsDevice = GraphicsDevice.GraphicsDevice;
 

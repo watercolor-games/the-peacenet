@@ -79,10 +79,6 @@
       <Project>{ff0b1831-ac9f-4093-9747-ddae4467516a}</Project>
       <Name>ShiftOS.Modding.VirtualMachine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShiftOS.WinForms\ShiftOS.WinForms.csproj">
-      <Project>{2295d2e2-3a00-4e02-b66f-b961ac329fe6}</Project>
-      <Name>ShiftOS.WinForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ShiftOS_TheReturn\ShiftOS.Engine.csproj">
       <Project>{7C979B07-0585-4033-A110-E5555B9D6651}</Project>
       <Name>ShiftOS.Engine</Name>

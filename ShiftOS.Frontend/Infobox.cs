@@ -91,6 +91,7 @@ namespace ShiftOS.Frontend
                 callback?.Invoke(txtinput.Text);
                 AppearanceManager.Close(this);
             };
+            txtinput.BringToFront();
         }
 
         public void OnSkinLoad()
@@ -176,6 +177,7 @@ namespace ShiftOS.Frontend
             this.Width = 341;
             this.Height = 157;
             this.AddControl(pbicon);
+            this.AddControl(txtinput);
             this.AddControl(btnok);
             this.AddControl(flyesno);
             this.AddControl(lbmessage);
@@ -187,6 +189,14 @@ namespace ShiftOS.Frontend
             {
                 btnok.Y = this.Height - btnok.Height - 10;
                 flyesno.Y = this.Height - flyesno.Height - 10;
+                txtinput.Width = lbmessage.Width;
+                txtinput.X = lbmessage.X;
+                txtinput.Y = btnok.Y - txtinput.Height - 2;
+                if (txtinput.Visible)
+                {
+                    lbmessage.Height = (txtinput.Y - lbmessage.Y) - 2;
+                }
+                
             }
             catch { }
         }

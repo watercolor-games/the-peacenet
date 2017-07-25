@@ -152,6 +152,8 @@ namespace ShiftOS.Frontend.Apps
                 Invalidate();
         }
 
+        public bool ReadOnly = false;
+
         /// <summary>
         /// Gets the X and Y coordinates (in pixels) of the caret.
         /// </summary>
@@ -194,8 +196,17 @@ namespace ShiftOS.Frontend.Apps
 
         protected override void OnKeyEvent(KeyEvent a)
         {
-            if (a.Key == Keys.Enter)
+            if (a.Key == Keys.Enter && !ReadOnly)
             {
+                if (!PerformTerminalBehaviours)
+                {
+                    Text = Text.Insert(Index, Environment.NewLine);
+                    Index+=2;
+                    RecalculateLayout();
+                    Invalidate();
+                    return;
+                }
+
                 try
                 {
                     if (!TerminalBackend.PrefixEnabled)
@@ -249,7 +260,7 @@ namespace ShiftOS.Frontend.Apps
 
                 }
             }
-            else if (a.Key == Keys.Back)
+            else if (a.Key == Keys.Back && !ReadOnly)
             {
                 try
                 {
@@ -320,7 +331,7 @@ namespace ShiftOS.Frontend.Apps
             }
             else
             {
-                if (TerminalBackend.InStory)
+                if ((PerformTerminalBehaviours && TerminalBackend.InStory) || ReadOnly)
                 {
                     return;
                 }
@@ -428,7 +439,7 @@ namespace ShiftOS.Frontend.Apps
             var measure = gfx.MeasureString(s, font, width, textformat);
             if (string.IsNullOrEmpty(s))
                 measure.Width = 0;
-            return new SizeF((float)Math.Ceiling(measure.Width), (float)Math.Ceiling(measure.Height));
+            return new SizeF((float)Math.Ceiling(Math.Max(1,measure.Width)), (float)Math.Ceiling(Math.Max(1,measure.Height)));
         }
 
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
