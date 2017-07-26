@@ -45,6 +45,7 @@
     <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\Pong.cs" />
+    <Compile Include="Apps\SkinLoader.cs" />
     <Compile Include="Apps\SystemStatus.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Apps\TextPad.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\CheckBox.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\ItemGroup.cs" />
     <Compile Include="GUI\ListBox.cs" />

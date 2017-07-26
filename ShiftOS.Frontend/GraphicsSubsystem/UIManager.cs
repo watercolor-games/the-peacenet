@@ -18,6 +18,28 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         private static List<GUI.Control> topLevels = new List<GUI.Control>();
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
+        private static ShiftOS _game = null;
+
+        public static void Init(ShiftOS sentience)
+        {
+            _game = sentience;
+        }
+
+        public static bool Fullscreen
+        {
+            get
+            {
+                return _game.graphicsDevice.IsFullScreen;
+            }
+            set
+            {
+                var uconf = Objects.UserConfig.Get();
+                uconf.Fullscreen = value;
+                System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
+                _game.graphicsDevice.IsFullScreen = value;
+                _game.graphicsDevice.ApplyChanges();
+            }
+        }
 
         public static void BringToFront(GUI.Control ctrl)
         {

@@ -16,25 +16,25 @@ namespace ShiftOS.Frontend
     /// </summary>
     public class ShiftOS : Game
     {
-        GraphicsDeviceManager GraphicsDevice;
+        internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
         private bool DisplayDebugInfo = false;
 
         public ShiftOS()
         {
-            GraphicsDevice = new GraphicsDeviceManager(this);
+            graphicsDevice = new GraphicsDeviceManager(this);
             var uconf = Objects.UserConfig.Get();
-            GraphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
-            GraphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
+            graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
+            graphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
             SkinEngine.SkinLoaded += () =>
             {
-                UIManager.ResetSkinTextures(GraphicsDevice.GraphicsDevice);
+                UIManager.ResetSkinTextures(GraphicsDevice);
                 UIManager.InvalidateAll();
             };
             UIManager.Viewport = new System.Drawing.Size(
-                    GraphicsDevice.PreferredBackBufferWidth,
-                    GraphicsDevice.PreferredBackBufferHeight
+                    graphicsDevice.PreferredBackBufferWidth,
+                    graphicsDevice.PreferredBackBufferHeight
                 );
 
             Content.RootDirectory = "Content";
@@ -49,8 +49,8 @@ namespace ShiftOS.Frontend
 
 
             //Fullscreen
-            GraphicsDevice.IsFullScreen = false;
-
+            graphicsDevice.IsFullScreen = uconf.Fullscreen;
+            UIManager.Init(this);
         }
 
         private Keys lastKey = Keys.None;
@@ -67,7 +67,7 @@ namespace ShiftOS.Frontend
             OutOfBoxExperience.Init(new MonoGameOOBE());
 
             //Before we do ANYTHING, we've got to initiate the ShiftOS engine.
-            UIManager.GraphicsDevice = GraphicsDevice.GraphicsDevice;
+            UIManager.GraphicsDevice = GraphicsDevice;
 
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
@@ -119,7 +119,7 @@ namespace ShiftOS.Frontend
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
 
-            UIManager.ResetSkinTextures(GraphicsDevice.GraphicsDevice);
+            UIManager.ResetSkinTextures(GraphicsDevice);
 
 
             // TODO: use this.Content to load your game content here
@@ -128,7 +128,7 @@ namespace ShiftOS.Frontend
             byte[] rgb = new byte[Math.Abs(_lock.Stride) * _lock.Height];
             Marshal.Copy(_lock.Scan0, rgb, 0, rgb.Length);
             bmp.UnlockBits(_lock);
-            MouseTexture = new Texture2D(GraphicsDevice.GraphicsDevice, bmp.Width, bmp.Height);
+            MouseTexture = new Texture2D(GraphicsDevice, bmp.Width, bmp.Height);
             MouseTexture.SetData<byte>(rgb);
             rgb = null;
         }
@@ -200,8 +200,7 @@ namespace ShiftOS.Frontend
                 {
                     if (lastKey == Keys.F11)
                     {
-                        GraphicsDevice.IsFullScreen = !GraphicsDevice.IsFullScreen;
-                        GraphicsDevice.ApplyChanges();
+                        UIManager.Fullscreen = !UIManager.Fullscreen;
                     }
                     else
                     {
@@ -269,7 +268,7 @@ namespace ShiftOS.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            UIManager.DrawControlsToTargets(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0);
+            UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch, 0, 0);
 
             var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
@@ -279,7 +278,7 @@ namespace ShiftOS.Frontend
                             SamplerState.LinearClamp, DepthStencilState.Default,
                             rasterizerState);
             //Draw the desktop BG.
-            UIManager.DrawBackgroundLayer(GraphicsDevice.GraphicsDevice, spriteBatch, 640, 480);
+            UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
 
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawTArgets(spriteBatch);
@@ -297,7 +296,7 @@ namespace ShiftOS.Frontend
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
                     string str = $"Connection TImeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
-                    var gfx = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
+                    var gfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
                     var measure = gfx.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
                     gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
                 }
@@ -305,7 +304,7 @@ namespace ShiftOS.Frontend
 
             if (DisplayDebugInfo)
             {
-                var gfxContext = new GraphicsContext(GraphicsDevice.GraphicsDevice, spriteBatch, 0, 0, GraphicsDevice.PreferredBackBufferWidth, GraphicsDevice.PreferredBackBufferHeight);
+                var gfxContext = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
                 var color = Color.White;
                 double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
@@ -333,8 +332,8 @@ Skin texture caches: {UIManager.SkinTextures.Count}
 Open windows (excluding dialog boxes): {AppearanceManager.OpenForms.Count}
 
 Experimental effects enabled: {UIManager.ExperimentalEffects}
-Fullscreen: {GraphicsDevice.IsFullScreen}
-Game resolution: {GraphicsDevice.PreferredBackBufferWidth}x{GraphicsDevice.PreferredBackBufferHeight}
+Fullscreen: {UIManager.Fullscreen}
+Game resolution: {graphicsDevice.PreferredBackBufferWidth}x{graphicsDevice.PreferredBackBufferHeight}
 
 Mouse state:
 X: {LastMouseState.X}

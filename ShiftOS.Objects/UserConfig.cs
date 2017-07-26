@@ -15,12 +15,16 @@ namespace ShiftOS.Objects
         public int DigitalSocietyPort { get; set; }
         public int ScreenWidth = 1920;
         public int ScreenHeight = 1080;
+        public bool Fullscreen = true;
 
         private static UserConfig def = new UserConfig
-            {
-                Language  = "english",
-                DigitalSocietyAddress = "michaeltheshifter.me",
-                DigitalSocietyPort = 13370
+        {
+            Language = "english",
+            DigitalSocietyAddress = "michaeltheshifter.me",
+            DigitalSocietyPort = 13370,
+            Fullscreen = true,
+            ScreenWidth = 1920,
+            ScreenHeight = 1080,
             };
 
         public static UserConfig current = null;

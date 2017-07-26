@@ -22,6 +22,7 @@ namespace ShiftOS.Frontend
         private Button _resUp = new Button();
         private TextControl _resDisplay = new TextControl();
         private Button _optionsSave = new Button();
+        private CheckBox _fullscreen = new CheckBox();
 
         public MainMenu()
         {
@@ -39,6 +40,7 @@ namespace ShiftOS.Frontend
             AddControl(_resDown);
             AddControl(_resDisplay);
             AddControl(_optionsSave);
+            AddControl(_fullscreen);
 
             _optionsSave.Text = "Save sentience settings";
             _optionsSave.Width = (Width / 4) - 60;
@@ -62,6 +64,10 @@ namespace ShiftOS.Frontend
             _sandbox.Height = 6 + _campaign.Font.Height;
             _sandbox.Font = _campaign.Font;
             _sandbox.X = 30;
+
+            _fullscreen.X = 30;
+            _fullscreen.Y = _campaign.Y;
+
 
             _options.Text = "Options";
             _options.Width = 200;
@@ -138,22 +144,35 @@ namespace ShiftOS.Frontend
                 }
             };
 
+            _fullscreen.CheckedChanged += () =>
+            {
+                UIManager.Fullscreen = _fullscreen.Checked;
+            };
+
             _optionsSave.Click += () =>
             {
-                var uconf = Objects.UserConfig.Get();
 
-                Engine.Infobox.PromptYesNo("Confirm sentience edit", "Performing this operation requires your sentience to be re-established which may cause you to go unconscious. Do you wish to continue?", (sleep) =>
+                if (UIManager.Viewport != _screenResolutions[_resIndex])
                 {
-                    if (sleep == true)
+
+                    Engine.Infobox.PromptYesNo("Confirm sentience edit", "Performing this operation requires your sentience to be re-established which may cause you to go unconscious. Do you wish to continue?", (sleep) =>
                     {
-                        var res = _screenResolutions[_resIndex];
-                        uconf.ScreenWidth = res.Width;
-                        uconf.ScreenHeight = res.Height;
-                        System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
-                        System.Diagnostics.Process.Start("ShiftOS.Frontend.exe");
-                        Environment.Exit(-1);
-                    }
-                });
+                        if (sleep == true)
+                        {
+                            SaveOptions();
+                            System.Diagnostics.Process.Start("ShiftOS.Frontend.exe");
+                            Environment.Exit(-1);
+                        }
+                    });
+                }
+                else
+                {
+                    SaveOptions();
+                    _menuTitle.Text = "Main Menu";
+                    _campaign.Visible = true;
+                    _sandbox.Visible = true;
+                    _options.Visible = true;
+                }
             };
 
             foreach(var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.OrderBy(x=>x.Width * x.Height))
@@ -162,6 +181,17 @@ namespace ShiftOS.Frontend
                     if (UIManager.Viewport == _screenResolutions.Last())
                         _resIndex = _screenResolutions.Count - 1;
             }
+            _fullscreen.Y = _sandbox.Y;
+        }
+
+        public void SaveOptions()
+        {
+            var uconf = Objects.UserConfig.Get();
+            var res = _screenResolutions[_resIndex];
+            uconf.ScreenWidth = res.Width;
+            uconf.ScreenHeight = res.Height;
+            System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
+
         }
 
         public void ShowOptions()
@@ -272,6 +302,11 @@ namespace ShiftOS.Frontend
             _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);
             _resDisplay.Visible = _menuTitle.Text == "Options";
             _optionsSave.Visible = _resDisplay.Visible;
+            _fullscreen.Visible = _optionsSave.Visible;
+            if (_fullscreen.Visible)
+            {
+                _fullscreen.Checked = UIManager.Fullscreen;
+            }
 
             Invalidate();
         }
