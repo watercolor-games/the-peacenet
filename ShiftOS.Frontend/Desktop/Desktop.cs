@@ -229,8 +229,12 @@ namespace ShiftOS.Frontend.Desktop
 
 
             var al_left = LoadedSkin.AppLauncherFromLeft;
+
+            int al_top = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - LoadedSkin.DesktopPanelHeight;
+
+
             var al_size = LoadedSkin.AppLauncherHolderSize;
-            if(MouseX >= al_left.X && MouseY >= al_left.Y && MouseX <= al_left.X + al_size.Width && MouseY <= al_left.Y + al_size.Height)
+            if(MouseX >= al_left.X && MouseY >= al_left.Y + al_top && MouseX <= al_left.X + al_size.Width && MouseY <= al_left.Y + al_top + al_size.Height)
             {
                 if(alOpen == false && MouseLeftDown == true)
                 {
