@@ -221,6 +221,8 @@ namespace ShiftOS.Frontend
                     return "Welcome to the Digital Society. Do you wish to continue?";
                 case 8:
                     return "Open-source projects are pretty cool, you can use, modify, copy and redistribute the code without worrying too much about what lawyer you're gonna hire to act on your behalf. That's why ShiftOS is one of them. http://github.com/shiftos-game/ShiftOS";
+                case 9:
+                    return "Sure, you can toggle fullscreen in Options, but you can also use your F11 key to toggle it on and off in-game!";
                 default:
                     return "We ran out of things to say.";
             }
