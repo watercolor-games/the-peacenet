@@ -7,6 +7,7 @@ using ShiftOS.Engine;
 using ShiftOS.Frontend.GUI;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ShiftOS.Frontend
 {
@@ -16,6 +17,11 @@ namespace ShiftOS.Frontend
         private TextControl _menuTitle = new TextControl();
         private Button _campaign = new Button();
         private Button _sandbox = new Button();
+        private Button _options = new Button();
+        private Button _resDown = new Button();
+        private Button _resUp = new Button();
+        private TextControl _resDisplay = new TextControl();
+        private Button _optionsSave = new Button();
 
         public MainMenu()
         {
@@ -28,6 +34,18 @@ namespace ShiftOS.Frontend
             AddControl(_menuTitle);
             AddControl(_campaign);
             AddControl(_sandbox);
+            AddControl(_options);
+            AddControl(_resUp);
+            AddControl(_resDown);
+            AddControl(_resDisplay);
+            AddControl(_optionsSave);
+
+            _optionsSave.Text = "Save sentience settings";
+            _optionsSave.Width = (Width / 4) - 60;
+            _optionsSave.X = 30;
+            _optionsSave.Y = 300;
+           
+            _optionsSave.Height = 6 + _optionsSave.Font.Height;
 
             _campaign.Text = "Campaign";
             _campaign.Font = new System.Drawing.Font("Lucida Console", 10F);
@@ -35,11 +53,21 @@ namespace ShiftOS.Frontend
             _campaign.Height = 6 + _campaign.Font.Height;
             _campaign.X = 30;
 
+            _optionsSave.Font = _campaign.Font;
+            _optionsSave.Height = 6 + _optionsSave.Font.Height;
+
+
             _sandbox.Text = "Sandbox";
             _sandbox.Width = 200;
             _sandbox.Height = 6 + _campaign.Font.Height;
             _sandbox.Font = _campaign.Font;
             _sandbox.X = 30;
+
+            _options.Text = "Options";
+            _options.Width = 200;
+            _options.Height = 6 + _campaign.Font.Height;
+            _options.Font = _campaign.Font;
+            _options.X = 30;
 
             _mainTitle.X = 30;
             _mainTitle.Y = 30;
@@ -54,6 +82,7 @@ namespace ShiftOS.Frontend
 
             _campaign.Y = _menuTitle.Y + _menuTitle.Font.Height + 15;
             _sandbox.Y = _campaign.Y + _campaign.Font.Height + 15;
+            _options.Y = _sandbox.Y + _sandbox.Font.Height + 15;
             _campaign.Click += () =>
             {
                 SaveSystem.IsSandbox = false;
@@ -66,14 +95,90 @@ namespace ShiftOS.Frontend
                 SaveSystem.Begin(false);
                 Close();
             };
+            _options.Click += () =>
+            {
+                _menuTitle.Text = "Options";
+                ShowOptions();
+            };
+
+            _resDown.Text = "<<";
+            _resUp.Text = ">>";
+            _resDown.Font = _campaign.Font;
+            _resDown.Height = _campaign.Height;
+            _resDown.Width = 40;
+            _resUp.Font = _resDown.Font;
+            _resUp.Height = _resDown.Height;
+            _resUp.Width = _resDown.Width;
+            _resDown.Y = _campaign.Y;
+            _resUp.Y = _campaign.Y;
+            _resDown.X = 30;
+            _resUp.X = ((Width / 4) - _resUp.Width) - 30;
+            _resDisplay.X = _resDown.X + _resDown.Width;
+            _resDisplay.Width = (_resUp.X - _resDown.X);
+            _resDisplay.Y = _resDown.Y;
+            _resDisplay.Height = _resDown.Height;
+            _resDisplay.TextAlign = TextAlign.MiddleCenter;
+            _resDown.Click += () =>
+            {
+                if (_resIndex > 0)
+                {
+                    _resIndex--;
+                    var res = _screenResolutions[_resIndex];
+                    _resDisplay.Text = $"{res.Width}x{res.Height}";
+                }
+            };
+            _resUp.Click += () =>
+            {
+                if(_resIndex < _screenResolutions.Count - 1)
+                {
+                    _resIndex++;
+                    var res = _screenResolutions[_resIndex];
+                    _resDisplay.Text = $"{res.Width}x{res.Height}";
+
+                }
+            };
+
+            _optionsSave.Click += () =>
+            {
+                var uconf = Objects.UserConfig.Get();
+
+                Engine.Infobox.PromptYesNo("Confirm sentience edit", "Performing this operation requires your sentience to be re-established which may cause you to go unconscious. Do you wish to continue?", (sleep) =>
+                {
+                    if (sleep == true)
+                    {
+                        var res = _screenResolutions[_resIndex];
+                        uconf.ScreenWidth = res.Width;
+                        uconf.ScreenHeight = res.Height;
+                        System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
+                        System.Diagnostics.Process.Start("ShiftOS.Frontend.exe");
+                        Environment.Exit(-1);
+                    }
+                });
+            };
+
+            foreach(var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.OrderBy(x=>x.Width * x.Height))
+            {
+                    _screenResolutions.Add(new System.Drawing.Size(mode.Width, mode.Height));
+                    if (UIManager.Viewport == _screenResolutions.Last())
+                        _resIndex = _screenResolutions.Count - 1;
+            }
+        }
+
+        public void ShowOptions()
+        {
+            _campaign.Visible = false;
+            _sandbox.Visible = false;
+            _options.Visible = false;
+            var res = _screenResolutions[_resIndex];
+            _resDisplay.Text = $"{res.Width}x{res.Height}";
 
         }
 
         private string _tipText = "This is some tip text.";
         private float _tipFade = 0.0f;
         private int _tipTime = 0;
-
-
+        private List<System.Drawing.Size> _screenResolutions = new List<System.Drawing.Size>();
+        private int _resIndex = 0;
 
         public void Close()
         {
@@ -160,6 +265,11 @@ namespace ShiftOS.Frontend
                     }
                 }
             }
+
+            _resDown.Visible = (_menuTitle.Text == "Options" && _resIndex > 0);
+            _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);
+            _resDisplay.Visible = _menuTitle.Text == "Options";
+            _optionsSave.Visible = _resDisplay.Visible;
 
             Invalidate();
         }

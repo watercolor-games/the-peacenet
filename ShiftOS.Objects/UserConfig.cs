@@ -13,6 +13,8 @@ namespace ShiftOS.Objects
         public string Language { get; set; }
         public string DigitalSocietyAddress { get; set; }
         public int DigitalSocietyPort { get; set; }
+        public int ScreenWidth = 1920;
+        public int ScreenHeight = 1080;
 
         private static UserConfig def = new UserConfig
             {
@@ -27,11 +29,11 @@ namespace ShiftOS.Objects
         {
             if (current != null)
                 return current;
-            if (File.Exists("servers.json"))
-                current = JsonConvert.DeserializeObject<UserConfig>(File.ReadAllText("servers.json"));
+            if (File.Exists("config.json"))
+                current = JsonConvert.DeserializeObject<UserConfig>(File.ReadAllText("config.json"));
             else
             {
-                File.WriteAllText("servers.json", JsonConvert.SerializeObject(def, Formatting.Indented));
+                File.WriteAllText("config.json", JsonConvert.SerializeObject(def, Formatting.Indented));
                 current = def;
             }
             return current;

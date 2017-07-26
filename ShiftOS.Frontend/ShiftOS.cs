@@ -24,8 +24,9 @@ namespace ShiftOS.Frontend
         public ShiftOS()
         {
             GraphicsDevice = new GraphicsDeviceManager(this);
-            GraphicsDevice.PreferredBackBufferHeight = 1080;
-            GraphicsDevice.PreferredBackBufferWidth = 1920;
+            var uconf = Objects.UserConfig.Get();
+            GraphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
+            GraphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
             SkinEngine.SkinLoaded += () =>
             {
                 UIManager.ResetSkinTextures(GraphicsDevice.GraphicsDevice);
