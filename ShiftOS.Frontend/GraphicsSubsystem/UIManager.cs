@@ -233,7 +233,9 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 SkinTextures.Add(colorfield.Name, tex2);
             }
 
-            
+            var pureWhite = new Texture2D(graphics, 1, 1);
+            pureWhite.SetData<byte>(new byte[] { 255, 255, 255, 255 });
+            SkinTextures.Add("PureWhite", pureWhite);
 
         }
 

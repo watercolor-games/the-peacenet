@@ -23,6 +23,8 @@ namespace ShiftOS.Frontend
         private TextControl _resDisplay = new TextControl();
         private Button _optionsSave = new Button();
         private CheckBox _fullscreen = new CheckBox();
+        private Button _close = new Button();
+
 
         public MainMenu()
         {
@@ -170,6 +172,7 @@ namespace ShiftOS.Frontend
                     SaveOptions();
                     _menuTitle.Text = "Main Menu";
                     _campaign.Visible = true;
+                    _close.Visible = true;
                     _sandbox.Visible = true;
                     _options.Visible = true;
                 }
@@ -182,6 +185,19 @@ namespace ShiftOS.Frontend
                         _resIndex = _screenResolutions.Count - 1;
             }
             _fullscreen.Y = _sandbox.Y;
+
+            _close.X = 30;
+            _close.Font = _campaign.Font;
+            _close.Y = _options.Y + _options.Font.Height + 15;
+            _close.Text = "Close";
+            _close.Height = _campaign.Height;
+            _close.Width = _campaign.Width;
+            AddControl(_close);
+            _close.Click += () =>
+            {
+                SaveSystem.IsSandbox = true;
+                ShiftOSCommands.Shutdown();
+            };
         }
 
         public void SaveOptions()
@@ -199,6 +215,7 @@ namespace ShiftOS.Frontend
             _campaign.Visible = false;
             _sandbox.Visible = false;
             _options.Visible = false;
+            _close.Visible = false;
             var res = _screenResolutions[_resIndex];
             _resDisplay.Text = $"{res.Width}x{res.Height}";
 

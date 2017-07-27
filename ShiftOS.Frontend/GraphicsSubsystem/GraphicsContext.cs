@@ -105,22 +105,16 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         {
             x += _startx;
             y += _starty;
-            var tex2 = new Texture2D(_graphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            byte[] colordata = new byte[] { color.B, color.G, color.R, color.A };
-            tex2.SetData<byte>(colordata);
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
-            _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
+            _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
             x += _startx;
             y += _starty;
-            var tex2 = new Texture2D(_graphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            byte[] colordata = new byte[] { 255, 255, 255, 255 };
-            tex2.SetData<byte>(colordata);
-            _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), color);
+            _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, width, height), color);
         }
 
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2)

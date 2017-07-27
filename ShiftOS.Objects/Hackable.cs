@@ -14,10 +14,13 @@ namespace ShiftOS.Objects
         public string PasswordHint { get; set; }
         public string WelcomeMessage { get; set; }
 
+        public string Description { get; set; }
+
         public int FirewallStrength { get; set; }
         public int LootRarity { get; set; }
         public int LootAmount { get; set; }
         public int ConnectionTimeoutLevel { get; set; }
+        public int LockTier { get; set; }
 
         public SystemType SystemType { get; set; }
 
@@ -33,6 +36,11 @@ namespace ShiftOS.Objects
             {
                 return SystemName.ToLower().Replace(" ", "_");
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{FriendlyName} ({SystemName})";
         }
     }
     

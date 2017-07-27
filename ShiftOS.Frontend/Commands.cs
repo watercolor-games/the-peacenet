@@ -120,7 +120,8 @@ namespace ShiftOS.Frontend
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
         public static bool Shutdown()
         {
-            SaveSystem.SaveGame();
+            if(Objects.ShiftFS.Utils.Mounts.Count > 0)
+                SaveSystem.SaveGame();
             AppearanceManager.Exit();
             return true;
         }

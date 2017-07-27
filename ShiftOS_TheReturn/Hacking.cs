@@ -74,27 +74,64 @@ namespace ShiftOS.Engine
                 {
                     Value = 25,
                     Name = "SMTP mailserver (unencrypted)",
+                    Tier = hsys.Data.LockTier,
+                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
                 });
             if (data.SystemType.HasFlag(Objects.SystemType.FileServer))
                 hsys.PortsToUnlock.Add(new Port
                 {
                     Value = 22,
                     Name = "File Transfer Protocol",
+                    Tier = hsys.Data.LockTier,
+                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
                 });
             if (data.SystemType.HasFlag(Objects.SystemType.SSHServer))
                 hsys.PortsToUnlock.Add(new Port
                 {
                     Value = 21,
                     Name = "ShiftSSH server",
+                    Tier = hsys.Data.LockTier,
+                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
                 });
             if (data.SystemType.HasFlag(Objects.SystemType.Database))
                 hsys.PortsToUnlock.Add(new Port
                 {
                     Value = 3306,
                     Name = "MySQL database",
+                    Tier = hsys.Data.LockTier,
+                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
                 });
 
             CurrentHackable = hsys;
+        }
+
+        public static List<PortLock> GetLocks(int tier, int fwallstrength)
+        {
+            var locks = new List<PortLock>();
+            var lckTypes = new List<Type>();
+            foreach(var lck in ReflectMan.Types.Where(x=>x.BaseType == typeof(PortLock)))
+            {
+                var lckAttrib = lck.GetCustomAttributes(false).FirstOrDefault(x => x is LockAttribute) as LockAttribute;
+                if(lckAttrib != null)
+                {
+                    if(lckAttrib.Tier == tier)
+                    {
+                        lckTypes.Add(lck);
+                    }
+                }
+            }
+            if (lckTypes.Count > 0)
+            {
+                var rnd = new Random();
+                for (int i = 0; i < fwallstrength; i++)
+                {
+                    int _typeindex = rnd.Next(lckTypes.Count);
+                    var type = (PortLock)Activator.CreateInstance(lckTypes[_typeindex], lckTypes[_typeindex].GetCustomAttributes(false).FirstOrDefault(x => x is LockAttribute));
+                    lckTypes.RemoveAt(_typeindex);
+                    locks.Add(type);
+                }
+            }
+            return locks;
         }
 
         public static void FailHack()
@@ -180,5 +217,34 @@ namespace ShiftOS.Engine
     {
         public string Name { get; set; }
         public int Value { get; set; }
+        public int Tier { get; set; }
+        public List<PortLock> Locks { get; set; } //not a hackmud thing i promise
+    }
+
+    public abstract class PortLock
+    {
+        public PortLock(LockAttribute attrib)
+        {
+            Attribute = attrib;
+        }
+
+        public LockAttribute Attribute { get; private set; }
+
+        public abstract bool Evaluate(Dictionary<string, object> args);
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
+    public class LockAttribute : Attribute
+    {
+        public LockAttribute(string name, string company, int tier)
+        {
+            Name = name;
+            Company = company;
+            Tier = tier;
+        }
+
+        public int Tier { get; private set; }
+        public string Name { get; private set; }
+        public string Company { get; private set; }
     }
 }
