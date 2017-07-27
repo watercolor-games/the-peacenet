@@ -132,12 +132,12 @@
       <DependentUpon>CrashHandler.cs</DependentUpon>
     </Compile>
     <Compile Include="Desktop.cs" />
-    <Compile Include="FileSkimmerBackend.cs" />
+    <Compile Include="GUI\FileSkimmerBackend.cs" />
     <Compile Include="Hacking.cs" />
     <Compile Include="IFileHandler.cs" />
     <Compile Include="Infobox.cs" />
-    <Compile Include="IShiftOSWindow.cs" />
-    <Compile Include="IStatusIcon.cs" />
+    <Compile Include="GUI\IShiftOSWindow.cs" />
+    <Compile Include="GUI\IStatusIcon.cs" />
     <Compile Include="IVirus.cs" />
     <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
@@ -145,7 +145,7 @@
     <Compile Include="Lunix.cs" />
     <Compile Include="MissionAttribute.cs" />
     <Compile Include="NotificationDaemon.cs" />
-    <Compile Include="OutOfBoxExperience.cs" />
+    <Compile Include="GUI\OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -162,14 +162,14 @@
     <Compile Include="ServerManager.cs" />
     <Compile Include="ShiftnetSite.cs" />
     <Compile Include="Shiftorium.cs" />
-    <Compile Include="Skinning.cs" />
+    <Compile Include="GUI\Skinning.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
     <Compile Include="TerminalTextWriter.cs" />
-    <Compile Include="TutorialManager.cs" />
+    <Compile Include="GUI\TutorialManager.cs" />
     <Compile Include="UserManagementCommands.cs" />
     <Compile Include="VirusManager.cs" />
-    <Compile Include="WinOpenAttribute.cs" />
+    <Compile Include="GUI\WinOpenAttribute.cs" />
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>
     </EmbeddedResource>

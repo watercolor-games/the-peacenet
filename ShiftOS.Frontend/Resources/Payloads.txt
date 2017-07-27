@@ -6,7 +6,7 @@
 
 [
 	{
-		FriendlyName: "FTP Exploit",
+		FriendlyName: "FTP Payload",
 		PayloadName: "ftpull"
 		EffectiveAgainstFirewall: 1,
 		EffectiveAgainstPort: "FileServer",

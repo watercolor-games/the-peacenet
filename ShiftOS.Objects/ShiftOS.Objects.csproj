@@ -47,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EngineShiftnetSubscription.cs" />
-    <Compile Include="Hackable.cs" />
+    <Compile Include="Hacking\Payload.cs" />
+    <Compile Include="Hacking\Exploit.cs" />
+    <Compile Include="Hacking\Hackable.cs" />
     <Compile Include="MudAttributes.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

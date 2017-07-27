@@ -71,7 +71,19 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to /* ShiftOS Exploits data file
+        /// *
+        /// * This file contains information about all exploits in the game&apos;s campaign.
+        /// *
+        /// */
+        ///
+        ///[
+        ///	{
+        ///		FriendlyName: &quot;FTP Exploit&quot;,
+        ///		ExploitName: &quot;ftpwn&quot;
+        ///		EffectiveAgainstPort: &quot;FileServer&quot;,
+        ///	}
+        ///].
         /// </summary>
         public static string Exploits {
             get {
@@ -138,7 +150,7 @@ namespace ShiftOS.Frontend.Properties {
         ///
         ///[
         ///	{
-        ///		FriendlyName: &quot;FTP Exploit&quot;,
+        ///		FriendlyName: &quot;FTP Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;
         ///		EffectiveAgainstFirewall: 1,
         ///		EffectiveAgainstPort: &quot;FileServer&quot;,
