@@ -10,6 +10,8 @@ namespace ShiftOS.Engine
     {
         private static List<HackableSystem> _activeConnections = new List<HackableSystem>();
         private static List<Objects.Hackable> Hackables = new List<Objects.Hackable>();
+        private static List<Objects.Exploit> Exploits = new List<Objects.Exploit>();
+        private static List<Objects.Payload> Payloads = new List<Objects.Payload>();
         private static List<Objects.Loot> Loot = new List<Objects.Loot>();
 
         public static HackableSystem CurrentHackable { get; private set; } 
@@ -22,6 +24,21 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static Objects.Exploit[] AvailableExploits
+        {
+            get
+            {
+                return Exploits.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+            }
+        }
+
+        public static Objects.Payload[] AvailablePayloads
+        {
+            get
+            {
+                return Payloads.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+            }
+        }
 
         public static HackableSystem[] ActiveConnections
         {
@@ -178,10 +195,10 @@ namespace ShiftOS.Engine
     public class NaughtyDeveloperException : Exception
     {
         /// <summary>
-        /// Create a new instance of the <see cref="NaughtyDeveloperException"/>, with the specified message, which will cause Visual Studio to call the person who caused the exception a scrotem. 
+        /// Create a new instance of the <see cref="NaughtyDeveloperException"/>, with the specified message, which will cause Visual Studio to call the person who caused the exception a scrotum. 
         /// </summary>
         /// <param name="message">The message you want to yell at the user.</param>
-        public NaughtyDeveloperException(string message) : base(message + " - FIX IT, YOU SCROTEM")
+        public NaughtyDeveloperException(string message) : base(message + " - FIX IT, YOU SCROTUM")
         {
 
         }
@@ -198,6 +215,8 @@ namespace ShiftOS.Engine
     public interface IHackableProvider
     {
         Objects.Hackable[] GetHackables();
+        Objects.Exploit[] GetExploits();
+        Objects.Payload[] GetPayloads();
         Objects.LootInfo[] GetLootInfo();
         byte[] GetLootFromResource(string resId);
     }

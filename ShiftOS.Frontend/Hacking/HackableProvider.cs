@@ -16,6 +16,16 @@ namespace ShiftOS.Frontend
             return JsonConvert.DeserializeObject<Hackable[]>(Properties.Resources.Hackables);
         }
 
+        public Exploit[] GetExploits()
+        {
+            return JsonConvert.DeserializeObject<Exploit[]>(Properties.Resources.Exploits);
+        }
+
+        public Payload[] GetPayloads()
+        {
+            return JsonConvert.DeserializeObject<Payload[]>(Properties.Resources.Payloads);
+        }
+
         public byte[] GetLootFromResource(string resId)
         {
             return new byte[] { 0xDE, 0xAD, 0xBE, 0xEF }; //nyi

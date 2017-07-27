@@ -1,0 +1,14 @@
+﻿/* ShiftOS Payloads data file
+ *
+ * This file contains information about all payloads in the game's campaign.
+ *
+ */
+
+[
+	{
+		FriendlyName: "FTP Exploit",
+		PayloadName: "ftpull"
+		EffectiveAgainstFirewall: 1,
+		EffectiveAgainstPort: "FileServer",
+	}
+]
