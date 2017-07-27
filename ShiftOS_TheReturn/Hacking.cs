@@ -195,7 +195,7 @@ namespace ShiftOS.Engine
     public class NaughtyDeveloperException : Exception
     {
         /// <summary>
-        /// Create a new instance of the <see cref="NaughtyDeveloperException"/>, with the specified message, which will cause Visual Studio to call the person who caused the exception a scrotum. 
+        /// Create a new instance of the <see cref="NaughtyDeveloperException"/>, with the specified message, which will cause Visual Studio to call the person who caused the exception a scrotum (and tell them to fix it). 
         /// </summary>
         /// <param name="message">The message you want to yell at the user.</param>
         public NaughtyDeveloperException(string message) : base(message + " - FIX IT, YOU SCROTUM")
