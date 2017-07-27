@@ -80,7 +80,7 @@ namespace ShiftOS.Engine
             if (data.SystemType.HasFlag(Objects.SystemType.FileServer))
                 hsys.PortsToUnlock.Add(new Port
                 {
-                    Value = 22,
+                    Value = 21,
                     Name = "File Transfer Protocol",
                     Tier = hsys.Data.LockTier,
                     Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
@@ -88,7 +88,7 @@ namespace ShiftOS.Engine
             if (data.SystemType.HasFlag(Objects.SystemType.SSHServer))
                 hsys.PortsToUnlock.Add(new Port
                 {
-                    Value = 21,
+                    Value = 22,
                     Name = "ShiftSSH server",
                     Tier = hsys.Data.LockTier,
                     Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
