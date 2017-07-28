@@ -95,6 +95,8 @@ namespace ShiftOS.Engine
                 hsys.MillisecondsCountdown = 0;
             }
             hsys.PortsToUnlock = new List<Objects.Port>();
+            hsys.VectorsUnlocked = new List<Objects.SystemType>();
+            hsys.PayloadExecuted = new List<Objects.Payload>();
             foreach(Objects.Port porttocheck in Ports)
             {
                 if (data.SystemType.HasFlag(porttocheck.AttachTo))
@@ -109,10 +111,33 @@ namespace ShiftOS.Engine
                 throw new NaughtyDeveloperException("Someone tried to fail a non-existent hack.");
             if (CurrentHackable.IsPwn3d)
                 throw new NaughtyDeveloperException("A developer tried to un-pwn a pwn3d hackable.");
+            Console.WriteLine("[sploitset] [FAIL] disconnected - connection terminated by remote machine ");
             if (!string.IsNullOrWhiteSpace(CurrentHackable.Data.OnHackFailedStoryEvent))
                 Story.Start(CurrentHackable.Data.OnHackFailedStoryEvent);
             if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
                 Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
+            CurrentHackable = null;
+        }
+
+        public static void EndHack()
+        {
+            if (CurrentHackable == null)
+                throw new NaughtyDeveloperException("Someone tried to end a non-existent hack.");
+            if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
+                Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
+            Console.WriteLine("[sploitset] [FAIL] disconnected for unknown reason");
+            CurrentHackable = null;
+        }
+
+        public static void FinishHack()
+        {
+            if (CurrentHackable == null)
+                throw new NaughtyDeveloperException("Someone tried to finish a non-existent hack.");
+            if (!string.IsNullOrWhiteSpace(CurrentHackable.Data.OnHackCompleteStoryEvent))
+                Story.Start(CurrentHackable.Data.OnHackCompleteStoryEvent);
+            if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
+                Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
+            Console.WriteLine("[sploitset] disconnected with payload applied");
             CurrentHackable = null;
         }
 
@@ -188,6 +213,8 @@ namespace ShiftOS.Engine
     {
         public Objects.Hackable Data { get; set; }
         public List<Objects.Port> PortsToUnlock { get; set; }
+        public List<Objects.SystemType> VectorsUnlocked { get; set; }
+        public List<Objects.Payload> PayloadExecuted { get; set; }
         public bool FirewallCracked { get; set; }
         public Objects.ShiftFS.Directory Filesystem { get; set; }
         public double MillisecondsCountdown { get; set; }

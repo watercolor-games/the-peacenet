@@ -295,7 +295,7 @@ namespace ShiftOS.Frontend
             {
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
-                    string str = $"Connection TImeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
+                    string str = $"Timeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
                     var gfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
                     var measure = gfx.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
                     gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
@@ -310,7 +310,7 @@ namespace ShiftOS.Frontend
                 if (fps <= 20)
                     color = Color.Red;
                 gfxContext.DrawString($@"ShiftOS 1.0 Beta 4
-Copyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI
+Copyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI, william341
 This is an unstable build.
 FPS: {(fps)}
 An FPS below 20 can cause glitches in keyboard and mouse handling. It is advised that if you are getting these

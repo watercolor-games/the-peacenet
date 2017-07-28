@@ -64,8 +64,10 @@
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\TextControl.cs" />
     <Compile Include="GUI\TextInput.cs" />
+    <Compile Include="Hacking\HackingCommands.cs" />
     <Compile Include="Hacking\HackableProvider.cs" />
     <Compile Include="Hacking\HackerTestCommands.cs" />
+    <Compile Include="Hacking\PayloadFunc.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="MonoGameLanguageProvider.cs" />

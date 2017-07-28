@@ -11,7 +11,7 @@
 		Password: "h0ldy0urc0l0ur",
 		PasswordHint: "Prepare to hold your colour...",
 		WelcomeMessage: "Don't make fun of SpamSyndicate web design.",
-		FirewallStrength: 1,
+		FirewallStrength: 0,
 		LootRarity: 1,
 		LootAmount: 4,
 		ConnectionTimeoutLevel: 4,

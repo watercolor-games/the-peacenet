@@ -12,6 +12,7 @@ namespace ShiftOS.Objects
         public string PayloadName { get; set; }
         public int EffectiveAgainstFirewall { get; set; }
         public SystemType EffectiveAgainst { get; set; }
+        public int Function { get; set; }
         public string Dependencies { get; set; }
 
         public string ID

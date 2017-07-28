@@ -10,5 +10,11 @@
 		PayloadName: "ftpull",
 		EffectiveAgainstFirewall: 1,
 		EffectiveAgainst: "FileServer",
+	},
+	{
+		FriendlyName: "Ping Spam",
+		PayloadName: "keepalive",
+		EffectiveAgainstFirewall: 1,
+		EffectiveAgainst: "SSHServer",
 	}
 ]
