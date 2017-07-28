@@ -10,33 +10,6 @@ namespace ShiftOS.Frontend
 {
     public static class HackerTestCommands
     {
-        [Command("lshackables")]
-        public static void ListAllHackables()
-        {
-            foreach(var hackable in Hacking.AvailableToHack)
-            {
-                Console.WriteLine(hackable.ID + ": " + hackable.FriendlyName);
-            }
-        }
-
-        [Command("lsexploits")]
-        public static void ListAllExploits()
-        {
-            foreach (var exploit in Hacking.AvailableExploits)
-            {
-                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
-            }
-        }
-
-        [Command("lspayloads")]
-        public static void ListAllPayloads()
-        {
-            foreach (var exploit in Hacking.AvailablePayloads)
-            {
-                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
-            }
-        }
-
         [Command("lsports")]
         public static void ListAllPorts()
         {
@@ -46,7 +19,7 @@ namespace ShiftOS.Frontend
             }
         }
 
-        [Command("describebackable")]
+        [Command("describehackable")]
         [RequiresArgument("id")]
         public static void DescribeHackable(Dictionary<string, object> args)
         {
@@ -84,20 +57,6 @@ namespace ShiftOS.Frontend
             Console.WriteLine();
             Console.WriteLine("Port: " + port.Value.ToString());
             Console.WriteLine("Name: " + port.Name);
-        }
-
-        [Command("inithack")]
-        [RequiresArgument("id")]
-        public static void InitHack(Dictionary<string, object> args)
-        {
-            string id = args["id"].ToString();
-            var hackable = Hacking.AvailableToHack.FirstOrDefault(x => x.ID == id);
-            if (hackable == null)
-            {
-                Console.WriteLine("Hackable not found.");
-                return;
-            }
-            Hacking.InitHack(hackable);
         }
     }
 }
