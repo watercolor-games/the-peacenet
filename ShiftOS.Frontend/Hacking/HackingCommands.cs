@@ -25,7 +25,7 @@ namespace ShiftOS.Frontend
         }
 
         [Command("exploit")]
-        [RequiresArgument("exploit")]
+        [RequiresArgument("id")]
         [RequiresArgument("port")]
         public static void Exploit(Dictionary<string, object> args)
         {
@@ -34,22 +34,23 @@ namespace ShiftOS.Frontend
                 Console.WriteLine("[sploitset] not connected");
             }
             string Port = args["port"].ToString();
-            string ExploitName = args["exploit"].ToString();
-            var Exploit = Hacking.AvailableExploits.FirstOrDefault(x => x.ID == ExploitName);
-            if (Exploit == null)
+            string ExploitName = args["id"].ToString();
+            var ExploitID = Hacking.AvailableExploits.FirstOrDefault(x => x.ID == ExploitName);
+            Console.WriteLine(ExploitID.ExploitName);
+            if (ExploitID == null)
             {
                 Console.WriteLine("[sploitset] invalid exploit.");
                 return;
             }
-            var ExploitTarget = Hacking.CurrentHackable.PortsToUnlock.FirstOrDefault(x => x.AttachTo == Exploit.EffectiveAgainst);
+            var ExploitTarget = Hacking.CurrentHackable.PortsToUnlock.First(x => x.Value.ToString() == Port);
             if (ExploitTarget == null)
             {
-                Console.WriteLine("[sploitset] the connected machine doesn't have that service running.");
-                return;
-            }
-            if (ExploitTarget.Value.ToString() != Port)
-            {
                 Console.WriteLine("[sploitset] port not open");
+                return;
+            }   
+            if (!ExploitTarget.AttachTo.HasFlag(ExploitID.EffectiveAgainst))
+            {
+                Console.WriteLine("[sploitset] port not exploitable using this exploit");
                 return;
             }
             Hacking.CurrentHackable.VectorsUnlocked.Add(ExploitTarget.AttachTo);
@@ -57,28 +58,71 @@ namespace ShiftOS.Frontend
         }
 
         [Command("inject")]
-        [RequiresArgument("payload")]
+        [RequiresArgument("id")]
         public static void InjectPayload(Dictionary<string, object> args)
         {
             if (Hacking.CurrentHackable == null)
             {
                 Console.WriteLine("[sploitset] not connected");
             }
-            string PayloadName = args["payload"].ToString();
-            var Payload = Hacking.AvailablePayloads.FirstOrDefault(x => x.ID == PayloadName);
-            if (Payload == null)
+            string PayloadName = args["id"].ToString();
+            var PayloadID = Hacking.AvailablePayloads.FirstOrDefault(x => x.ID == PayloadName);
+            if (PayloadID == null)
             {
                 Console.WriteLine("[sploitset] invalid payload.");
                 return;
             }
-            if (!Hacking.CurrentHackable.VectorsUnlocked.Contains(Payload.EffectiveAgainst))
+            if (!Hacking.CurrentHackable.VectorsUnlocked.Contains(PayloadID.EffectiveAgainst))
             {
                 Console.WriteLine("[sploitset] the connected machine doesn't have that service exploited.");
                 return;
             }
-            PayloadFunc.DoHackFunction(Payload.Function);
-            Hacking.CurrentHackable.PayloadExecuted.Add(Payload);
+            PayloadFunc.DoHackFunction(PayloadID.Function);
+            Hacking.CurrentHackable.PayloadExecuted.Add(PayloadID);
             Console.WriteLine("[sploitset] injected payload");
+        }
+
+        [Command("listports")]
+        public static void ListPorts(Dictionary<string, object> args)
+        {
+            if (Hacking.CurrentHackable == null)
+            {
+                Console.WriteLine("[sploitset] not connected");
+            }
+            foreach (var port in Hacking.CurrentHackable.PortsToUnlock)
+            {
+                Console.WriteLine(port.Value + ": " + port.FriendlyName);
+            }
+        }
+
+        [Command("devicescan")]
+        public static void ScanDevices()
+        {
+            Console.WriteLine("[sploitset] found " + Hacking.AvailableToHack.Length + " devices on the network");
+            foreach (var hackable in Hacking.AvailableToHack)
+            {
+                Console.WriteLine(hackable.ID + ": " + hackable.FriendlyName);
+            }
+        }
+
+        [Command("exploits")]
+        public static void ScanExploits()
+        {
+            Console.WriteLine("[sploitset] found " + Hacking.AvailableExploits.Length + " exploits installed");
+            foreach (var exploit in Hacking.AvailableExploits)
+            {
+                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
+            }
+        }
+
+        [Command("payloads")]
+        public static void ListAllPayloads()
+        {
+            Console.WriteLine("[sploitset] found " + Hacking.AvailablePayloads.Length + " payloads");
+            foreach (var exploit in Hacking.AvailablePayloads)
+            {
+                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
+            }
         }
 
         [Command("disconnect")]

@@ -16,5 +16,6 @@
 		PayloadName: "keepalive",
 		EffectiveAgainstFirewall: 1,
 		EffectiveAgainst: "SSHServer",
+		Function: 1,
 	}
 ]
