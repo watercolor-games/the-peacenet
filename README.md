@@ -18,7 +18,9 @@ You may use the ShiftOS.Engine, ShiftOS.Objects, and ShiftOS.Server projects to 
 
 ## Compiling the code
 
-To compile the code, simply clone the repository, and open it in Visual Studio. Then, set `ShiftOS.WinForms` as your startup project by right-clicing it in **Solution Explorer**. Then, hit **F5** to compile and run the game.
+To compile the ShiftOS project, first, make sure you have Visual Studio Community installed (recommended version: 2015). Then, install **MonoGame 3.6** from [here](http://www.monogame.net/downloads/). After installing these dependencies, open up **`ShiftOS_TheReturn.sln`** in Visual Studio.
+
+Then, set the `ShiftOS.Frontend` project as your startup project, by right-clicking it in Solution Explorer and clicking "Set As StartUp Project". Then, fucking smash that F5 key and watch as ShiftOS comes to life.
 
 ## Where the hell is the **Issues** tab? This can't be GitHub!
 
