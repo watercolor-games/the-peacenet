@@ -81,7 +81,7 @@ namespace ShiftOS.Frontend.Apps
         {
             get
             {
-                return Text.Split(new[] { "\r\n" }, StringSplitOptions.None);
+                return Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             }
         }
