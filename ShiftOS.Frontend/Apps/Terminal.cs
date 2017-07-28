@@ -22,6 +22,7 @@ namespace ShiftOS.Frontend.Apps
     public class Terminal : GUI.Control, IShiftOSWindow
     {
         private TerminalControl _terminal = null;
+        
 
         public Terminal()
         {
@@ -68,6 +69,8 @@ namespace ShiftOS.Frontend.Apps
 
     public class TerminalControl : GUI.TextInput, ITerminalWidget
     {
+        private int _zoomFactor = 1;
+
         public TerminalControl()
         {
             Dock = GUI.DockStyle.Fill;
@@ -171,21 +174,21 @@ namespace ShiftOS.Frontend.Apps
             {
                 if (string.IsNullOrEmpty(Lines[l]))
                 {
-                    vertMeasure += LoadedSkin.TerminalFont.Height;
+                    vertMeasure += LoadedSkin.TerminalFont.Height * _zoomFactor;
                     continue;
                 }
 
                 lineindex += Lines[l].Length;
                 var stringMeasure = gfx.SmartMeasureString(Lines[l] == "\r" ? " " : Lines[l], LoadedSkin.TerminalFont, Width - 4);
-                vertMeasure += (int)stringMeasure.Height;
+                vertMeasure += (int)stringMeasure.Height * _zoomFactor;
 
             }
             var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), LoadedSkin.TerminalFont);
-            int w = (int)Math.Floor(lnMeasure.Width);
+            int w = (int)Math.Floor(lnMeasure.Width) * _zoomFactor;
             while (w > Width - 4)
             {
                 w = w - (Width - 4);
-                vertMeasure += (int)lnMeasure.Height;
+                vertMeasure += (int)lnMeasure.Height * _zoomFactor;
             }
             horizMeasure += w;
             return new System.Drawing.Point(horizMeasure, vertMeasure);
@@ -196,6 +199,23 @@ namespace ShiftOS.Frontend.Apps
 
         protected override void OnKeyEvent(KeyEvent a)
         {
+            if(a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
+            {
+                _zoomFactor *= 2;
+                RecalculateLayout();
+                Invalidate();
+                return;
+            }
+
+            if (a.ControlDown && (a.Key == Keys.OemMinus || a.Key == Keys.Subtract))
+            {
+                _zoomFactor = Math.Max(1, _zoomFactor/2);
+                RecalculateLayout();
+                Invalidate();
+                return;
+            }
+
+
             if (a.Key == Keys.Enter && !ReadOnly)
             {
                 if (!PerformTerminalBehaviours)
@@ -351,7 +371,8 @@ namespace ShiftOS.Frontend.Apps
         public bool PerformTerminalBehaviours = true;
 
         protected override void OnPaint(GraphicsContext gfx)
-        { 
+        {
+            var font = new System.Drawing.Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style); 
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
             if (!string.IsNullOrEmpty(Text))
             {
@@ -364,9 +385,9 @@ namespace ShiftOS.Frontend.Apps
                         cursorPos = GetPointAtIndex(cgfx);
 
                     }
-                    var cursorSize = gfx.MeasureString("#", LoadedSkin.TerminalFont);
+                    var cursorSize = gfx.MeasureString("#", font);
 
-                    var lineMeasure = gfx.MeasureString(Lines[GetCurrentLine()], LoadedSkin.TerminalFont);
+                    var lineMeasure = gfx.MeasureString(Lines[GetCurrentLine()], font);
                     if (cursorPos.X > lineMeasure.X)
                     {
                         cursorPos.X = lineMeasure.X;
@@ -377,7 +398,7 @@ namespace ShiftOS.Frontend.Apps
                 //Draw the text
 
 
-                gfx.DrawString(Text, 2, 2 - (int)Math.Floor(_vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), LoadedSkin.TerminalFont, Width - 4);
+                gfx.DrawString(Text, 2, 2 - (int)Math.Floor(_vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
             }
         }
 
