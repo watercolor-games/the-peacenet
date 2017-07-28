@@ -1,3 +1,20 @@
-//Loot information table
+/* ShiftOS Loot data file
+ *
+ * This file contains information about all loot in the game's campaign.
+ *
+ */
 
-[]
+[
+	{
+		FriendlyName: "Force Heartbeat",
+		LootName: "sploitset_keepalive",
+		Rarity: 1,
+		PointTo: "sploitset_keepalive",
+	},
+	{
+		FriendlyName: "SSHardline",
+		LootName: "sploitset_sshardline",
+		Rarity: 1,
+		PointTo: "sploitset_sshardline",
+	}
+]

@@ -9,13 +9,14 @@
 		FriendlyName: "FTP Payload",
 		PayloadName: "ftpull",
 		EffectiveAgainstFirewall: 1,
-		EffectiveAgainst: "FileServer",
+		EffectiveAgainst: "FileServer"
 	},
 	{
-		FriendlyName: "Ping Spam",
+		FriendlyName: "Force Heartbeat",
 		PayloadName: "keepalive",
 		EffectiveAgainstFirewall: 1,
 		EffectiveAgainst: "SSHServer",
 		Function: 1,
+		Dependencies: "sploitset_keepalive"
 	}
 ]

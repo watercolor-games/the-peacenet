@@ -71,27 +71,6 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS Exploits data file
-        /// *
-        /// * This file contains information about all exploits in the game&apos;s campaign.
-        /// *
-        /// */
-        ///
-        ///[
-        ///	{
-        ///		FriendlyName: &quot;FTP Exploit&quot;,
-        ///		ExploitName: &quot;ftpwn&quot;
-        ///		EffectiveAgainstPort: &quot;FileServer&quot;,
-        ///	}
-        ///].
-        /// </summary>
-        public static string Exploits {
-            get {
-                return ResourceManager.GetString("Exploits", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to /* ShiftOS hackables data file
         /// *
         /// * This file contains information about all hackable systems in the game&apos;s campaign.
@@ -105,7 +84,7 @@ namespace ShiftOS.Frontend.Properties {
         ///		Password: &quot;h0ldy0urc0l0ur&quot;,
         ///		PasswordHint: &quot;Prepare to hold your colour...&quot;,
         ///		WelcomeMessage: &quot;Don&apos;t make fun of SpamSyndicate web design.&quot;,
-        ///		FirewallStrength: 1,
+        ///		FirewallStrength: 0,
         ///		LootRarity: 1,
         ///		LootAmount: 4,
         ///		ConnectionTimeoutLevel: 4,
@@ -151,9 +130,16 @@ namespace ShiftOS.Frontend.Properties {
         ///[
         ///	{
         ///		FriendlyName: &quot;FTP Payload&quot;,
-        ///		PayloadName: &quot;ftpull&quot;
+        ///		PayloadName: &quot;ftpull&quot;,
         ///		EffectiveAgainstFirewall: 1,
         ///		EffectiveAgainst: &quot;FileServer&quot;,
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;Ping Spam&quot;,
+        ///		PayloadName: &quot;keepalive&quot;,
+        ///		EffectiveAgainstFirewall: 1,
+        ///		EffectiveAgainst: &quot;SSHServer&quot;,
+        ///		Function: 1,
         ///	}
         ///].
         /// </summary>
@@ -173,26 +159,26 @@ namespace ShiftOS.Frontend.Properties {
         ///[
         ///	{
         ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,
-        ///		AttachTo: &quot;EmailServer&quot;
+        ///		AttachTo: &quot;EmailServer&quot;,
         ///		Value: 25,
         ///		Name: &quot;smtp&quot;,
         ///	},
         ///	{
         ///		FriendlyName: &quot;File Transfer Protocol&quot;,
-        ///		AttachTo: &quot;FileServer&quot;
+        ///		AttachTo: &quot;FileServer&quot;,
         ///		Value: 21,
         ///		Name: &quot;ftp&quot;,
         ///	},
         ///	{
         ///		FriendlyName: &quot;ShiftSSH server&quot;,
-        ///		AttachTo: &quot;SSHServer&quot;
+        ///		AttachTo: &quot;SSHServer&quot;,
         ///		Value: 22,
         ///		Name: &quot;ssh&quot;,
         ///	},
         ///	{
         ///		FriendlyName: &quot;MySQL server&quot;,
-        ///		AttachTo: &quot;Database&quot;
-        ///		Val [rest of string was truncated]&quot;;.
+        ///		AttachTo: &quot;Database&quot;,
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Ports {
             get {
