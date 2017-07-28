@@ -427,17 +427,22 @@ namespace ShiftOS.Frontend
         [Command("programs", description = "{DESC_PROGRAMS}")]
         public static bool Programs()
         {
-            Console.WriteLine("{GEN_PROGRAMS}");
-            Console.WriteLine("===============");
-            Console.WriteLine();
-            foreach(var cmd in TerminalBackend.Commands.Where(x=>x is TerminalBackend.WinOpenCommand && Shiftorium.UpgradeInstalled(x.Dependencies)).OrderBy(x => x.CommandInfo.name))
+            var sb = new StringBuilder();
+            sb.AppendLine("{GEN_PROGRAMS}");
+            sb.AppendLine("===============");
+            sb.AppendLine();
+            //print all unique namespaces.
+            foreach(var n in TerminalBackend.Commands.Where(x => x is TerminalBackend.WinOpenCommand && Shiftorium.UpgradeInstalled(x.Dependencies)).OrderBy(x => x.CommandInfo.name))
             {
-                Console.Write(" - " + cmd.CommandInfo.name);
-                if (!string.IsNullOrWhiteSpace(cmd.CommandInfo.description))
+                sb.Append(" - " + n.CommandInfo.name);
+                if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
                     if (Shiftorium.UpgradeInstalled("help_description"))
-                        Console.Write(": " + cmd.CommandInfo.description);
-                Console.WriteLine();
+                        sb.Append(" - " + n.CommandInfo.description);
+                sb.AppendLine();
             }
+
+            Console.WriteLine(sb.ToString());
+
             return true;
         }
 
