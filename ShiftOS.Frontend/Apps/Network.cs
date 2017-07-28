@@ -128,7 +128,7 @@ namespace ShiftOS.Frontend.Apps
 
         protected override void OnLayout(GameTime gameTime)
         {
-            _title.X = 15;
+            /*_title.X = 15;
             _title.Y = 15;
 
             _subtitle.X = 15;
@@ -174,7 +174,7 @@ Loot rarity: {_current.Data.LootRarity}
 
                 }
             }
-            base.OnLayout(gameTime);
+            base.OnLayout(gameTime);*/
         }
 
         public class PortView : Control
@@ -198,21 +198,21 @@ Loot rarity: {_current.Data.LootRarity}
 
             protected override void OnLayout(GameTime gameTime)
             {
-                _start.Y = (Height - _start.Height) / 2;
+                /*_start.Y = (Height - _start.Height) / 2;
                 _start.X = (Width - _start.Width) - 15;
                 unlocked = _port.Locks.Count > 0;
-                base.OnLayout(gameTime);
+                base.OnLayout(gameTime);*/
             }
 
             protected override void OnPaint(GraphicsContext gfx)
             {
-                gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
+                /*gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
                 gfx.DrawRectangle(1, 1, Width - 2, Height - 2, LoadedSkin.ControlColor.ToMonoColor());
                 gfx.DrawString(_port.Name + " (" + _port.Value + ")", 15, 15, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.Header3Font);
                 string _status = "Tier: " + _port.Tier.ToString();
                 string lockstatus = (unlocked == true) ? "Unlocked" : $"{_port.Locks.Count} locks";
                 _status += " - " + lockstatus;
-                gfx.DrawString(_status, 15, 15 + LoadedSkin.Header3Font.Height + 5, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
+                gfx.DrawString(_status, 15, 15 + LoadedSkin.Header3Font.Height + 5, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);*/
             }
 
             public event Action<Port> ConnectionStarted;

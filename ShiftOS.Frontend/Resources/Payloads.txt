@@ -7,8 +7,8 @@
 [
 	{
 		FriendlyName: "FTP Payload",
-		PayloadName: "ftpull"
+		PayloadName: "ftpull",
 		EffectiveAgainstFirewall: 1,
-		EffectiveAgainstPort: "FileServer",
+		EffectiveAgainst: "FileServer",
 	}
 ]

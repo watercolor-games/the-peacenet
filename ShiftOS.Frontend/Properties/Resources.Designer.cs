@@ -153,13 +153,50 @@ namespace ShiftOS.Frontend.Properties {
         ///		FriendlyName: &quot;FTP Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;
         ///		EffectiveAgainstFirewall: 1,
-        ///		EffectiveAgainstPort: &quot;FileServer&quot;,
+        ///		EffectiveAgainst: &quot;FileServer&quot;,
         ///	}
         ///].
         /// </summary>
         public static string Payloads {
             get {
                 return ResourceManager.GetString("Payloads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /* ShiftOS Ports data file
+        /// *
+        /// * This file contains information about all ports in the game&apos;s campaign.
+        /// *
+        /// */
+        ///
+        ///[
+        ///	{
+        ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,
+        ///		AttachTo: &quot;EmailServer&quot;
+        ///		Value: 25,
+        ///		Name: &quot;smtp&quot;,
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;File Transfer Protocol&quot;,
+        ///		AttachTo: &quot;FileServer&quot;
+        ///		Value: 21,
+        ///		Name: &quot;ftp&quot;,
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;ShiftSSH server&quot;,
+        ///		AttachTo: &quot;SSHServer&quot;
+        ///		Value: 22,
+        ///		Name: &quot;ssh&quot;,
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;MySQL server&quot;,
+        ///		AttachTo: &quot;Database&quot;
+        ///		Val [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string Ports {
+            get {
+                return ResourceManager.GetString("Ports", resourceCulture);
             }
         }
         

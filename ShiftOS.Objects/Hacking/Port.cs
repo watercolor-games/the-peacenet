@@ -6,25 +6,24 @@ using System.Threading.Tasks;
 
 namespace ShiftOS.Objects
 {
-    public class Payload
+    public class Port
     {
+        public string Name { get; set; }
         public string FriendlyName { get; set; }
-        public string PayloadName { get; set; }
-        public int EffectiveAgainstFirewall { get; set; }
-        public SystemType EffectiveAgainst { get; set; }
-        public string Dependencies { get; set; }
+        public SystemType AttachTo { get; set; }
+        public int Value { get; set; }
 
         public string ID
         {
             get
             {
-                return PayloadName.ToLower().Replace(" ", "_");
+                return Name.ToLower().Replace(" ", "_");
             }
         }
 
         public override string ToString()
         {
-            return $"{FriendlyName} ({PayloadName})";
+            return Name;
         }
     }
 

@@ -12,6 +12,7 @@ namespace ShiftOS.Engine
         private static List<Objects.Hackable> Hackables = new List<Objects.Hackable>();
         private static List<Objects.Exploit> Exploits = new List<Objects.Exploit>();
         private static List<Objects.Payload> Payloads = new List<Objects.Payload>();
+        private static List<Objects.Port> Ports = new List<Objects.Port>();
         private static List<Objects.Loot> Loot = new List<Objects.Loot>();
 
         public static HackableSystem CurrentHackable { get; private set; } 
@@ -37,6 +38,14 @@ namespace ShiftOS.Engine
             get
             {
                 return Payloads.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+            }
+        }
+
+        public static Objects.Port[] AvailablePorts
+        {
+            get
+            {
+                return Ports.ToArray();
             }
         }
 
@@ -85,70 +94,13 @@ namespace ShiftOS.Engine
             {
                 hsys.MillisecondsCountdown = 0;
             }
-            hsys.PortsToUnlock = new List<Port>();
-            if (data.SystemType.HasFlag(Objects.SystemType.EmailServer))
-                hsys.PortsToUnlock.Add(new Port
-                {
-                    Value = 25,
-                    Name = "SMTP mailserver (unencrypted)",
-                    Tier = hsys.Data.LockTier,
-                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
-                });
-            if (data.SystemType.HasFlag(Objects.SystemType.FileServer))
-                hsys.PortsToUnlock.Add(new Port
-                {
-                    Value = 21,
-                    Name = "File Transfer Protocol",
-                    Tier = hsys.Data.LockTier,
-                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
-                });
-            if (data.SystemType.HasFlag(Objects.SystemType.SSHServer))
-                hsys.PortsToUnlock.Add(new Port
-                {
-                    Value = 22,
-                    Name = "ShiftSSH server",
-                    Tier = hsys.Data.LockTier,
-                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
-                });
-            if (data.SystemType.HasFlag(Objects.SystemType.Database))
-                hsys.PortsToUnlock.Add(new Port
-                {
-                    Value = 3306,
-                    Name = "MySQL database",
-                    Tier = hsys.Data.LockTier,
-                    Locks = GetLocks(hsys.Data.LockTier, hsys.Data.FirewallStrength),
-                });
-
+            hsys.PortsToUnlock = new List<Objects.Port>();
+            foreach(Objects.Port porttocheck in Ports)
+            {
+                if (data.SystemType.HasFlag(porttocheck.AttachTo))
+                    hsys.PortsToUnlock.Add(porttocheck);
+            }
             CurrentHackable = hsys;
-        }
-
-        public static List<PortLock> GetLocks(int tier, int fwallstrength)
-        {
-            var locks = new List<PortLock>();
-            var lckTypes = new List<Type>();
-            foreach(var lck in ReflectMan.Types.Where(x=>x.BaseType == typeof(PortLock)))
-            {
-                var lckAttrib = lck.GetCustomAttributes(false).FirstOrDefault(x => x is LockAttribute) as LockAttribute;
-                if(lckAttrib != null)
-                {
-                    if(lckAttrib.Tier == tier)
-                    {
-                        lckTypes.Add(lck);
-                    }
-                }
-            }
-            if (lckTypes.Count > 0)
-            {
-                var rnd = new Random();
-                for (int i = 0; i < fwallstrength; i++)
-                {
-                    int _typeindex = rnd.Next(lckTypes.Count);
-                    var type = (PortLock)Activator.CreateInstance(lckTypes[_typeindex], lckTypes[_typeindex].GetCustomAttributes(false).FirstOrDefault(x => x is LockAttribute));
-                    lckTypes.RemoveAt(_typeindex);
-                    locks.Add(type);
-                }
-            }
-            return locks;
         }
 
         public static void FailHack()
@@ -170,6 +122,9 @@ namespace ShiftOS.Engine
             {
                 var @interface = (IHackableProvider)Activator.CreateInstance(type, null);
                 Hackables.AddRange(@interface.GetHackables());
+                Ports.AddRange(@interface.GetPorts());
+                Payloads.AddRange(@interface.GetPayloads());
+                Exploits.AddRange(@interface.GetExploits());
                 var lootinfo = @interface.GetLootInfo();
                 foreach(var loot in lootinfo)
                 {
@@ -183,9 +138,16 @@ namespace ShiftOS.Engine
 
             var hackable = Hackables.FirstOrDefault(x => Hackables.Where(y => x.SystemName == y.SystemName).Count() > 1);
             if(hackable != null)
-            {
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more hackables were found with the same hostname \"" + hackable.SystemName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
-            }
+            var ports = Ports.FirstOrDefault(x => Ports.Where(y => x.Name == y.Name).Count() > 1);
+            if (hackable != null)
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more ports were found with the same name \"" + ports.Name + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+            var payloads = Payloads.FirstOrDefault(x => Payloads.Where(y => x.PayloadName == y.PayloadName).Count() > 1);
+            if (hackable != null)
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more payloads were found with the same name \"" + payloads.PayloadName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+            var exploits = Exploits.FirstOrDefault(x => Exploits.Where(y => x.ExploitName == y.ExploitName).Count() > 1);
+            if (hackable != null)
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more exploits were found with the same name \"" + exploits.ExploitName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
         }
     }
 
@@ -217,6 +179,7 @@ namespace ShiftOS.Engine
         Objects.Hackable[] GetHackables();
         Objects.Exploit[] GetExploits();
         Objects.Payload[] GetPayloads();
+        Objects.Port[] GetPorts();
         Objects.LootInfo[] GetLootInfo();
         byte[] GetLootFromResource(string resId);
     }
@@ -224,46 +187,11 @@ namespace ShiftOS.Engine
     public class HackableSystem
     {
         public Objects.Hackable Data { get; set; }
-        public List<Port> PortsToUnlock { get; set; }
+        public List<Objects.Port> PortsToUnlock { get; set; }
         public bool FirewallCracked { get; set; }
         public Objects.ShiftFS.Directory Filesystem { get; set; }
         public double MillisecondsCountdown { get; set; }
         public bool DoConnectionTimeout { get; set; }
         public bool IsPwn3d { get; set; }
-    }
-
-    public class Port
-    {
-        public string Name { get; set; }
-        public int Value { get; set; }
-        public int Tier { get; set; }
-        public List<PortLock> Locks { get; set; } //not a hackmud thing i promise
-    }
-
-    public abstract class PortLock
-    {
-        public PortLock(LockAttribute attrib)
-        {
-            Attribute = attrib;
-        }
-
-        public LockAttribute Attribute { get; private set; }
-
-        public abstract bool Evaluate(Dictionary<string, object> args);
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
-    public class LockAttribute : Attribute
-    {
-        public LockAttribute(string name, string company, int tier)
-        {
-            Name = name;
-            Company = company;
-            Tier = tier;
-        }
-
-        public int Tier { get; private set; }
-        public string Name { get; private set; }
-        public string Company { get; private set; }
     }
 }

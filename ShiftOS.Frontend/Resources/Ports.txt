@@ -1,0 +1,32 @@
+﻿/* ShiftOS Ports data file
+ *
+ * This file contains information about all ports in the game's campaign.
+ *
+ */
+
+[
+	{
+		FriendlyName: "SMTP mailserver (unencrypted)",
+		AttachTo: "EmailServer",
+		Value: 25,
+		Name: "smtp",
+	},
+	{
+		FriendlyName: "File Transfer Protocol",
+		AttachTo: "FileServer",
+		Value: 21,
+		Name: "ftp",
+	},
+	{
+		FriendlyName: "ShiftSSH server",
+		AttachTo: "SSHServer",
+		Value: 22,
+		Name: "ssh",
+	},
+	{
+		FriendlyName: "MySQL server",
+		AttachTo: "Database",
+		Value: 3306,
+		Name: "sql",
+	}
+]

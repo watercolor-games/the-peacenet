@@ -19,6 +19,33 @@ namespace ShiftOS.Frontend
             }
         }
 
+        [Command("lsexploits")]
+        public static void ListAllExploits()
+        {
+            foreach (var exploit in Hacking.AvailableExploits)
+            {
+                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
+            }
+        }
+
+        [Command("lspayloads")]
+        public static void ListAllPayloads()
+        {
+            foreach (var exploit in Hacking.AvailablePayloads)
+            {
+                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
+            }
+        }
+
+        [Command("lsports")]
+        public static void ListAllPorts()
+        {
+            foreach (var exploit in Hacking.AvailablePorts)
+            {
+                Console.WriteLine(exploit.ID + ": " + exploit.FriendlyName);
+            }
+        }
+
         [Command("describebackable")]
         [RequiresArgument("id")]
         public static void DescribeHackable(Dictionary<string, object> args)
@@ -39,6 +66,24 @@ namespace ShiftOS.Frontend
             Console.WriteLine("Connection timeout level: " + hackable.ConnectionTimeoutLevel);
             Console.WriteLine();
             Console.WriteLine(hackable.WelcomeMessage);
+        }
+
+        [Command("describeport")]
+        [RequiresArgument("id")]
+        public static void DescribePort(Dictionary<string, object> args)
+        {
+            string id = args["id"].ToString();
+            var port = Hacking.AvailablePorts.FirstOrDefault(x => x.ID == id);
+            if (port == null)
+            {
+                Console.WriteLine("Port not found.");
+                return;
+            }
+            Console.WriteLine(port.FriendlyName);
+            Console.WriteLine("------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Port: " + port.Value.ToString());
+            Console.WriteLine("Name: " + port.Name);
         }
 
         [Command("inithack")]
