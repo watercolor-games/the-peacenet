@@ -109,11 +109,11 @@ namespace ShiftOS.Engine
             List<Objects.Loot> loot = new List<Objects.Loot>();
             loot.AddRange(LootFiles.Where(x => x.Rarity <= hsys.Data.LootRarity));
             var amount = data.LootAmount;
-            for (int i = 0; i < amount && i < loot.Count - 1; i++)
+            for (int i = 0; i < amount; i++)
             {
-                var randomLoot = loot[rnd.Next(0, loot.Count - 1)];
-                hsys.ServerFTPLoot.Add(randomLoot);
-                loot.Remove(randomLoot);
+                int idx = rnd.Next(0, loot.Count - 1);
+                hsys.ServerFTPLoot.Add(loot[idx]);
+                loot.RemoveAt(idx);
             }
             CurrentHackable = hsys;
         }
