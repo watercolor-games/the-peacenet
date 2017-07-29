@@ -68,15 +68,4 @@ namespace ShiftOS.Objects
         public int Rarity { get; set; }
     }
 
-    public class Loot
-    {
-        public Loot(LootInfo info, byte[] data)
-        {
-            Data = data;
-            Info = info;
-        }
-
-        public LootInfo Info { get; private set; }
-        public byte[] Data { get; private set; }
-    }
 }

@@ -110,9 +110,26 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to //Loot information table
+        ///   Looks up a localized string similar to /* ShiftOS Loot data file
+        /// *
+        /// * This file contains information about all loot in the game&apos;s campaign.
+        /// *
+        /// */
         ///
-        ///[].
+        ///[
+        ///	{
+        ///		FriendlyName: &quot;Force Heartbeat&quot;,
+        ///		LootName: &quot;sploitset_keepalive&quot;,
+        ///		Rarity: 1,
+        ///		PointTo: &quot;sploitset_keepalive&quot;,
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;SSHardline&quot;,
+        ///		LootName: &quot;sploitset_sshardline&quot;,
+        ///		Rarity: 1,
+        ///		PointTo: &quot;sploitset_sshardline&quot;,
+        ///	}
+        ///].
         /// </summary>
         public static string LootInfo {
             get {
@@ -132,14 +149,15 @@ namespace ShiftOS.Frontend.Properties {
         ///		FriendlyName: &quot;FTP Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;,
         ///		EffectiveAgainstFirewall: 1,
-        ///		EffectiveAgainst: &quot;FileServer&quot;,
+        ///		EffectiveAgainst: &quot;FileServer&quot;
         ///	},
         ///	{
-        ///		FriendlyName: &quot;Ping Spam&quot;,
+        ///		FriendlyName: &quot;Force Heartbeat&quot;,
         ///		PayloadName: &quot;keepalive&quot;,
         ///		EffectiveAgainstFirewall: 1,
         ///		EffectiveAgainst: &quot;SSHServer&quot;,
         ///		Function: 1,
+        ///		Dependencies: &quot;sploitset_keepalive&quot;
         ///	}
         ///].
         /// </summary>
@@ -187,7 +205,20 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [].
+        ///   Looks up a localized string similar to [
+        ///	}
+        ///		Name: &quot;sploitset_keepalive&quot;,
+        ///		Cost: 1000000000,
+        ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
+        ///		Dependencies: &quot;thisupgradeshouldneverexistever;sploitset_sshardline&quot;,
+        ///	},
+        ///	}
+        ///		Name: &quot;sploitset_sshardline&quot;,
+        ///		Cost: 1000000000,
+        ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
+        ///		Dependencies: &quot;thisupgradeshouldneverexistever&quot;,
+        ///	}
+        ///].
         /// </summary>
         public static string Shiftorium {
             get {
