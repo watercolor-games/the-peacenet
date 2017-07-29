@@ -111,7 +111,7 @@ namespace ShiftOS.Engine
             var amount = data.LootAmount;
             for (int i = 0; i < amount; i++)
             {
-                int idx = rnd.Next(0, loot.Count - 1);
+                int idx = rnd.Next(0, loot.Count); //warning MV1224: Random.Next(min, max) - max is not inclusive, i.e the number will always be less than it and equal to or greater than min.
                 hsys.ServerFTPLoot.Add(loot[idx]);
                 loot.RemoveAt(idx);
             }
