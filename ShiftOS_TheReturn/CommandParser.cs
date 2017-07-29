@@ -13,17 +13,6 @@ using System.Windows.Forms;
 namespace ShiftOS.Engine
 {
     /// <summary>
-    /// Static abstraction layer for the current command parser
-    /// </summary>
-    public static class CurrentCommandParser
-    {
-        /// <summary>
-        /// The current parser
-        /// </summary>
-        public static CommandParser parser;
-    }
-
-    /// <summary>
     /// Provides functionality for parsing a Terminal command string
     /// </summary>
     public sealed class CommandParser
@@ -119,6 +108,8 @@ namespace ShiftOS.Engine
             int i = 0;
             string currentArgument = "";
             int help = -1;
+            bool id_found = false;
+            string id_text = "";
 
             while (position < text.Length)
             {
@@ -131,7 +122,21 @@ namespace ShiftOS.Engine
                 }
 
                 CommandFormat part = parts[i];
-                string res = part.CheckValidity(text.Substring(position));
+                string inp = text.Substring(position);
+                string res = part.CheckValidity(inp);
+                if(part is CommandFormatText)
+                {
+                    if(res == "+FALSE+")
+                    {
+                        if(id_found == false)
+                        {
+                            id_found = true;
+                            id_text = inp;
+                            res = "";
+                            arguments.Add("id", inp);
+                        }
+                    }
+                }
 
                 // ok so:
 
@@ -148,8 +153,17 @@ namespace ShiftOS.Engine
                     }
                     else if (part is CommandFormatArgument)
                     {
-                        currentArgument = res;
-                        help = -1;
+                        if (arguments.ContainsKey(res))
+                        {
+                            Console.WriteLine("Duplicate command-line argument detected: " + res);
+                            command = "+FALSE+";
+                            position = text.Length;
+                        }
+                        else
+                        {
+                            currentArgument = res;
+                            help = -1;
+                        }
                     }
                     else if (part is CommandFormatValue)
                     {

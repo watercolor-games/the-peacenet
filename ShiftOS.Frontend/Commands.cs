@@ -62,12 +62,12 @@ namespace ShiftOS.Frontend
     {
 
         [Command("setsfxenabled", description = "{DESC_SETSFXENABLED}")]
-        [RequiresArgument("value")]
+        [RequiresArgument("id")]
         public static bool SetSfxEnabled(Dictionary<string, object> args)
         {
             try
             {
-                bool value = Convert.ToBoolean(args["value"].ToString());
+                bool value = Convert.ToBoolean(args["id"].ToString());
                 SaveSystem.CurrentSave.SoundEnabled = value;
                 SaveSystem.SaveGame();
             }
@@ -81,12 +81,12 @@ namespace ShiftOS.Frontend
 
 
         [Command("setmusicenabled", description = "{DESC_SETMUSICENABLED}")]
-        [RequiresArgument("value")]
+        [RequiresArgument("id")]
         public static bool SetMusicEnabled(Dictionary<string, object> args)
         {
             try
             {
-                bool value = Convert.ToBoolean(args["value"].ToString());
+                bool value = Convert.ToBoolean(args["id"].ToString());
                 SaveSystem.CurrentSave.MusicEnabled = value;
                 SaveSystem.SaveGame();
             }
@@ -100,10 +100,10 @@ namespace ShiftOS.Frontend
         
 
         [Command("setvolume", description ="{DESC_SETVOLUME}")]
-        [RequiresArgument("value")]
+        [RequiresArgument("id")]
         public static bool SetSfxVolume(Dictionary<string, object> args)
         {
-            int value = int.Parse(args["value"].ToString());
+            int value = int.Parse(args["id"].ToString());
             if(value >= 0 && value <= 100)
             {
                 SaveSystem.CurrentSave.MusicVolume = value;
@@ -127,14 +127,14 @@ namespace ShiftOS.Frontend
         }
 
         [Command("lang", description = "{DESC_LANG}")]
-        [RequiresArgument("language")]
+        [RequiresArgument("id")]
         public static bool SetLanguage(Dictionary<string, object> userArgs)
         {
             try
             {
                 string lang = "";
 
-                lang = (string)userArgs["language"];
+                lang = (string)userArgs["id"];
                 
                 if (Localization.GetAllLanguages().Contains(lang))
                 {
@@ -231,14 +231,14 @@ namespace ShiftOS.Frontend
     public static class ShiftoriumCommands
     {
         [Command("buy", description = "{DESC_BUY}")]
-        [RequiresArgument("upgrade")]
+        [RequiresArgument("id")]
         public static bool BuyUpgrade(Dictionary<string, object> userArgs)
         {
             try
             {
                 string upgrade = "";
 
-                upgrade = (string)userArgs["upgrade"];
+                upgrade = (string)userArgs["id"];
 
                 var upg = Shiftorium.GetAvailable().FirstOrDefault(x => x.ID == upgrade);
                 if(upg != null)
@@ -261,12 +261,12 @@ namespace ShiftOS.Frontend
 
         [RequiresUpgrade("shiftorium_bulk_buy")]
         [Command("bulkbuy", description = "{DESC_BULKBUY}")]
-        [RequiresArgument("upgrades")]
+        [RequiresArgument("id")]
         public static bool BuyBulk(Dictionary<string, object> args)
         {
-            if (args.ContainsKey("upgrades"))
+            if (args.ContainsKey("id"))
             {
-                string[] upgrade_list = (args["upgrades"] as string).Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                string[] upgrade_list = (args["id"] as string).Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var upg in upgrade_list)
                 {
                     var dict = new Dictionary<string, object>();
@@ -279,14 +279,14 @@ namespace ShiftOS.Frontend
 
 
         [Command("upgradeinfo", description ="{DESC_UPGRADEINFO}")]
-        [RequiresArgument("upgrade")]
+        [RequiresArgument("id")]
         public static bool ViewInfo(Dictionary<string, object> userArgs)
         {
             try
             {
                 string upgrade = "";
 
-                upgrade = (string)userArgs["upgrade"];
+                upgrade = (string)userArgs["id"];
 
                 foreach (var upg in Shiftorium.GetDefaults())
                 {
@@ -441,14 +441,13 @@ namespace ShiftOS.Frontend
         }
 
         [RemoteLock]
-        [Command("close", usage = "{win:integer32}", description ="{DESC_CLOSE}")]
-        [RequiresArgument("win")]
-        [RequiresUpgrade("close_command")]
+        [Command("close", description ="{DESC_CLOSE}")]
+        [RequiresArgument("id")]
         public static bool CloseWindow(Dictionary<string, object> args)
         {
             int winNum = -1;
-            if (args.ContainsKey("win"))
-                winNum = Convert.ToInt32(args["win"].ToString());
+            if (args.ContainsKey("id"))
+                winNum = Convert.ToInt32(args["id"].ToString());
             string err = null;
 
             if (winNum < 0 || winNum >= AppearanceManager.OpenForms.Count)
