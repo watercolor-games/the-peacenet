@@ -47,6 +47,7 @@ namespace ShiftOS.Frontend
     [TutorialLock]
     public static class TerminalCommands
     {
+        [MetaCommand]
         [Command("clear", description = "{DESC_CLEAR}")]
         public static bool Clear()
         {
@@ -60,8 +61,15 @@ namespace ShiftOS.Frontend
 
     public static class ShiftOSCommands
     {
+#if DEBUG
+        [Command("debug")]
+        public static void EnterDebug()
+        {
+            TerminalBackend.SetShellOverride("shiftos_debug> ");
+        }
+#endif
 
-        [Command("setsfxenabled", description = "{DESC_SETSFXENABLED}")]
+    [Command("setsfxenabled", description = "{DESC_SETSFXENABLED}")]
         [RequiresArgument("id")]
         public static bool SetSfxEnabled(Dictionary<string, object> args)
         {
