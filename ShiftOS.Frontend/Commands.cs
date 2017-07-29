@@ -152,7 +152,8 @@ namespace ShiftOS.Frontend
             }
         }
 
-        [Command("commands", "", "{DESC_COMMANDS}")]
+        [MetaCommand]
+        [Command("help", "", "{DESC_COMMANDS}")]
         public static bool Commands()
         {
             var sb = new StringBuilder();
@@ -160,7 +161,7 @@ namespace ShiftOS.Frontend
             sb.AppendLine("=================");
             sb.AppendLine();
             //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false).OrderBy(x => x.CommandInfo.name))
+            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell() == true).OrderBy(x => x.CommandInfo.name))
             {
                 sb.Append(" - " + n.CommandInfo.name);
                 if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
@@ -174,13 +175,6 @@ namespace ShiftOS.Frontend
             return true;
         }
 
-        [Command("help", description = "{DESC_HELP}")]
-        public static bool Help()
-        {
-            Commands();
-            WindowCommands.Programs();
-            return true;
-        }
 
 
         [MultiplayerOnly]

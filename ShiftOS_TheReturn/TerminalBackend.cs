@@ -40,6 +40,29 @@ namespace ShiftOS.Engine
     /// </summary>
     public static class TerminalBackend
     {
+        private static string _shellOverrideString = "";
+
+        
+        /// <summary>
+        /// Gets the current shell prompt override string.
+        /// </summary>
+        public static string ShellOverride
+        {
+            get
+            {
+                return (string.IsNullOrWhiteSpace(_shellOverrideString) || SaveSystem.CurrentSave == null) ? $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ " : _shellOverrideString;
+            }
+        }
+
+        /// <summary>
+        /// Sets the shell override string to the specified value. Empty string or <see cref="null"/> to use the default ShiftOS string. 
+        /// </summary>
+        /// <param name="value">The string to use as a shell prompt.</param>
+        public static void SetShellOverride(string value)
+        {
+            _shellOverrideString = value;
+        }
+
         /// <summary>
         /// Occurs when a command is processed.
         /// </summary>
@@ -133,6 +156,17 @@ namespace ShiftOS.Engine
 
         public class TerminalCommand
         {
+            public virtual bool MatchShell()
+            {
+                if(ShellMatch != "metacmd")
+                {
+                    return (ShellMatch == _shellOverrideString);
+                }
+                return true;
+            }
+
+            public string ShellMatch { get; set; }
+
             public override int GetHashCode()
             {
                 int hash = 0;
@@ -178,11 +212,19 @@ namespace ShiftOS.Engine
             public virtual void Invoke(Dictionary<string, object> args)
             {
                 List<string> errors = new List<string>();
+                if (ShellMatch != "metacmd")
+                {
+                    if (ShellMatch != TerminalBackend._shellOverrideString)
+                    {
+                        errors.Add("Command not found.");
+                    }
+                }
+                
                 if (errors.Count > 0)
                 {
                     foreach (var error in errors)
                     {
-                        Console.WriteLine("Command error: " + error);
+                        Console.WriteLine(error);
                     }
                     return;
                 }
@@ -197,9 +239,27 @@ namespace ShiftOS.Engine
             }
         }
 
+        [MetaCommand]
+        [Command("exit")]
+        public static void Exit()
+        {
+            if (_shellOverrideString != "")
+                _shellOverrideString = "";
+            else
+            {
+                Console.WriteLine("error: cannot exit system shell");
+            }
+        }
+
+
         public class WinOpenCommand : TerminalCommand
         {
             public Type ShiftOSWindow { get; set; }
+
+            public override bool MatchShell()
+            {
+                return (_shellOverrideString == "");
+            }
 
 
             public override void Invoke(Dictionary<string, object> args)
@@ -296,6 +356,13 @@ namespace ShiftOS.Engine
                         var tc = new TerminalCommand();
                         tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
 
+                        var shellConstraint = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShellConstraintAttribute) as ShellConstraintAttribute;
+                        tc.ShellMatch = (shellConstraint == null) ? "" : shellConstraint.Shell;
+
+                        if(mth.GetCustomAttributes(false).FirstOrDefault(x=>x is MetaCommandAttribute) != null)
+                        {
+                            tc.ShellMatch = "metacmd";
+                        }
 
                         tc.CommandInfo = cmd as Command;
                         tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
@@ -471,42 +538,23 @@ namespace ShiftOS.Engine
             return true;
         }
 
+#if DEBUG
+        [Command("setshell", hide = true)]
+        [RequiresArgument("id")]
+        public static void Debug_SetShellOverrideCMD(Dictionary<string, object> args)
+        {
+            SetShellOverride(args["id"].ToString());
+        }
+#endif
+
         /// <summary>
         /// Prints the user prompt to the terminal.
         /// </summary>
         public static void PrintPrompt()
         {
-            if (SaveSystem.CurrentSave != null)
+            if (PrefixEnabled)
             {
-                    ConsoleEx.BackgroundColor = SkinEngine.LoadedSkin.TerminalBackColorCC;
-                    ConsoleEx.Italic = false;
-                    ConsoleEx.Underline = false;
-
-                    ConsoleEx.ForegroundColor = ConsoleColor.Magenta;
-                    ConsoleEx.Bold = true;
-
-                    Console.Write(SaveSystem.CurrentSave.Username);
-                    ConsoleEx.Bold = false;
-                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                    Console.Write("@");
-                    ConsoleEx.Italic = true;
-                    ConsoleEx.Bold = true;
-                    ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(SaveSystem.CurrentSave.SystemName);
-                    ConsoleEx.Italic = false;
-                    ConsoleEx.Bold = false;
-                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                    Console.Write(":~");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    ConsoleEx.Italic = true;
-                    if (KernelWatchdog.InKernelMode == true)
-                        Console.Write("#");
-                    else
-                        Console.Write("$");
-                    ConsoleEx.Italic = false;
-                    ConsoleEx.Bold = false;
-                    ConsoleEx.ForegroundColor = SkinEngine.LoadedSkin.TerminalForeColorCC;
-                    Console.Write(" ");
+                Console.Write(ShellOverride);
                 ConsoleEx.Flush();
             }
         }
@@ -535,5 +583,33 @@ namespace ShiftOS.Engine
             TextSent?.Invoke(text);
         }
 
+    }
+
+    /// <summary>
+    /// Marks this command so that it can be run in ANY shell.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class MetaCommandAttribute : Attribute
+    {
+
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ShellConstraintAttribute : Attribute
+    {
+        /// <summary>
+        /// Instructs the terminal command interpreter to disallow running of this command unless the user shell override matches up with the value provided here.
+        /// </summary>
+        /// <param name="shell">The required shell string. Null or whitespace to match with the default ShiftOS shell.</param>
+        public ShellConstraintAttribute(string shell)
+        {
+            Shell = shell;
+        }
+
+
+        /// <summary>
+        /// Gets the required shell string for the command.
+        /// </summary>
+        public string Shell { get; private set; }
     }
 }

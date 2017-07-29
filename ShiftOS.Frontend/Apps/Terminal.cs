@@ -199,7 +199,7 @@ namespace ShiftOS.Frontend.Apps
 
         protected override void OnKeyEvent(KeyEvent a)
         {
-            if(a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
+            if (a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
             {
                 _zoomFactor *= 2;
                 RecalculateLayout();
@@ -209,7 +209,7 @@ namespace ShiftOS.Frontend.Apps
 
             if (a.ControlDown && (a.Key == Keys.OemMinus || a.Key == Keys.Subtract))
             {
-                _zoomFactor = Math.Max(1, _zoomFactor/2);
+                _zoomFactor = Math.Max(1, _zoomFactor / 2);
                 RecalculateLayout();
                 Invalidate();
                 return;
@@ -221,7 +221,7 @@ namespace ShiftOS.Frontend.Apps
                 if (!PerformTerminalBehaviours)
                 {
                     Text = Text.Insert(Index, Environment.NewLine);
-                    Index+=2;
+                    Index += 2;
                     RecalculateLayout();
                     Invalidate();
                     return;
@@ -239,12 +239,12 @@ namespace ShiftOS.Frontend.Apps
                     var text2 = text[text.Length - 1];
                     var text3 = "";
                     var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-                        WriteLine("");
+                    WriteLine("");
 
-                        if (TerminalBackend.PrefixEnabled)
-                        {
-                            text3 = text4.Remove(0, $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ".Length);
-                        }
+                    if (TerminalBackend.PrefixEnabled)
+                    {
+                        text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
+                    }
                     if (!string.IsNullOrWhiteSpace(text3))
                     {
                         TerminalBackend.LastCommand = text3;
@@ -288,7 +288,7 @@ namespace ShiftOS.Frontend.Apps
                     {
                         var tostring3 = Lines[Lines.Length - 1];
                         var tostringlen = tostring3.Length + 1;
-                        var workaround = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                        var workaround = TerminalBackend.ShellOverride;
                         var derp = workaround.Length + 1;
                         if (tostringlen != derp)
                         {
@@ -310,9 +310,9 @@ namespace ShiftOS.Frontend.Apps
                     Debug.WriteLine("Drunky alert in terminal.");
                 }
             }
-            else if(a.Key == Keys.Right)
+            else if (a.Key == Keys.Right)
             {
-                if(Index < Text.Length)
+                if (Index < Text.Length)
                 {
                     Index++;
                     AppearanceManager.CurrentPosition++;
@@ -326,7 +326,7 @@ namespace ShiftOS.Frontend.Apps
                 {
                     var getstring = Lines[Lines.Length - 1];
                     var stringlen = getstring.Length + 1;
-                    var header = $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ";
+                    var header = TerminalBackend.ShellOverride;
                     var headerlen = header.Length + 1;
                     var selstart = Index;
                     var remstrlen = Text.Length - stringlen;
@@ -343,7 +343,7 @@ namespace ShiftOS.Frontend.Apps
             else if (a.Key == Keys.Up && PerformTerminalBehaviours)
             {
                 var tostring3 = Lines[Lines.Length - 1];
-                if (tostring3 == $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ ")
+                if (tostring3 == TerminalBackend.ShellOverride)
                     Console.Write(TerminalBackend.LastCommand);
                 ConsoleEx.OnFlush?.Invoke();
                 return;
@@ -360,7 +360,7 @@ namespace ShiftOS.Frontend.Apps
                     Text = Text.Insert(Index, a.KeyChar.ToString());
                     Index++;
                     AppearanceManager.CurrentPosition++;
-//                    RecalculateLayout();
+                    //                    RecalculateLayout();
                     InvalidateTopLevel();
                 }
             }
