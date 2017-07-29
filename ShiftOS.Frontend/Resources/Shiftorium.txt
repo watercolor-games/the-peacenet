@@ -1,11 +1,11 @@
 [
-	}
+	{
 		Name: "sploitset_keepalive",
 		Cost: 1000000000,
 		Description: "lolyouarentsupposedtobeabletobuythis",
 		Dependencies: "thisupgradeshouldneverexistever;sploitset_sshardline",
 	},
-	}
+	{
 		Name: "sploitset_sshardline",
 		Cost: 1000000000,
 		Description: "lolyouarentsupposedtobeabletobuythis",

@@ -13,7 +13,7 @@ namespace ShiftOS.Engine
         private static List<Objects.Exploit> Exploits = new List<Objects.Exploit>();
         private static List<Objects.Payload> Payloads = new List<Objects.Payload>();
         private static List<Objects.Port> Ports = new List<Objects.Port>();
-        private static List<Objects.Loot> Loot = new List<Objects.Loot>();
+        private static List<Objects.Loot> LootFiles = new List<Objects.Loot>();
 
         public static HackableSystem CurrentHackable { get; private set; } 
 
@@ -49,6 +49,14 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static Objects.Loot[] AvailableLoot
+        {
+            get
+            {
+                return LootFiles.ToArray();
+            }
+        }
+
         public static HackableSystem[] ActiveConnections
         {
             get
@@ -78,12 +86,6 @@ namespace ShiftOS.Engine
             var hsys = new HackableSystem();
             hsys.Data = data;
             hsys.IsPwn3d = false;
-            var fs = new Objects.ShiftFS.Directory();
-            fs.Name = data.FriendlyName;
-            Objects.ShiftFS.Utils.Mounts.Add(fs);
-            var mountid = Objects.ShiftFS.Utils.Mounts.IndexOf(fs);
-            Objects.ShiftFS.Utils.Mounts.Remove(fs);
-            hsys.Filesystem = fs;
             hsys.FirewallCracked = (data.FirewallStrength == 0);
             hsys.DoConnectionTimeout = (data.ConnectionTimeoutLevel > 0);
             if (hsys.DoConnectionTimeout)
@@ -97,10 +99,21 @@ namespace ShiftOS.Engine
             hsys.PortsToUnlock = new List<Objects.Port>();
             hsys.VectorsUnlocked = new List<Objects.SystemType>();
             hsys.PayloadExecuted = new List<Objects.Payload>();
+            hsys.ServerFTPLoot = new List<Objects.Loot>();
             foreach(Objects.Port porttocheck in Ports)
             {
                 if (data.SystemType.HasFlag(porttocheck.AttachTo))
                     hsys.PortsToUnlock.Add(porttocheck);
+            }
+            var rnd = new Random();
+            List<Objects.Loot> loot = new List<Objects.Loot>();
+            loot.AddRange(LootFiles.Where(x => x.Rarity <= hsys.Data.LootRarity));
+            var amount = data.LootAmount;
+            for (int i = 0; i < amount && i < loot.Count - 1; i++)
+            {
+                var randomLoot = loot[rnd.Next(0, loot.Count - 1)];
+                hsys.ServerFTPLoot.Add(randomLoot);
+                loot.Remove(randomLoot);
             }
             CurrentHackable = hsys;
         }
@@ -114,8 +127,6 @@ namespace ShiftOS.Engine
             Console.WriteLine("[sploitset] [FAIL] disconnected - connection terminated by remote machine ");
             if (!string.IsNullOrWhiteSpace(CurrentHackable.Data.OnHackFailedStoryEvent))
                 Story.Start(CurrentHackable.Data.OnHackFailedStoryEvent);
-            if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
-                Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
             CurrentHackable = null;
         }
 
@@ -123,8 +134,6 @@ namespace ShiftOS.Engine
         {
             if (CurrentHackable == null)
                 throw new NaughtyDeveloperException("Someone tried to end a non-existent hack.");
-            if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
-                Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
             Console.WriteLine("[sploitset] [FAIL] disconnected for unknown reason");
             CurrentHackable = null;
         }
@@ -135,8 +144,6 @@ namespace ShiftOS.Engine
                 throw new NaughtyDeveloperException("Someone tried to finish a non-existent hack.");
             if (!string.IsNullOrWhiteSpace(CurrentHackable.Data.OnHackCompleteStoryEvent))
                 Story.Start(CurrentHackable.Data.OnHackCompleteStoryEvent);
-            if (Objects.ShiftFS.Utils.Mounts.Contains(CurrentHackable.Filesystem))
-                Objects.ShiftFS.Utils.Mounts.Remove(CurrentHackable.Filesystem);
             Console.WriteLine("[sploitset] disconnected with payload applied");
             CurrentHackable = null;
         }
@@ -150,29 +157,24 @@ namespace ShiftOS.Engine
                 Ports.AddRange(@interface.GetPorts());
                 Payloads.AddRange(@interface.GetPayloads());
                 Exploits.AddRange(@interface.GetExploits());
-                var lootinfo = @interface.GetLootInfo();
-                foreach(var loot in lootinfo)
-                {
-                    var existing = Loot.FirstOrDefault(x => x.Info.Filename == loot.Filename);
-                    if (existing != null)
-                        throw new DataConflictException("Data conflict encountered while reading loot data. Two or more loot resources with the filename \"" + loot.Filename + "\" were found. This can cause major bugs and confusion in the game.");
-                    var @new = new Objects.Loot(loot, @interface.GetLootFromResource(loot.ResourceId));
-                    Loot.Add(@new);
-                }
+                LootFiles.AddRange(@interface.GetLoot());
             }
 
             var hackable = Hackables.FirstOrDefault(x => Hackables.Where(y => x.SystemName == y.SystemName).Count() > 1);
             if(hackable != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more hackables were found with the same hostname \"" + hackable.SystemName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
             var ports = Ports.FirstOrDefault(x => Ports.Where(y => x.Name == y.Name).Count() > 1);
-            if (hackable != null)
+            if (ports != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more ports were found with the same name \"" + ports.Name + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
             var payloads = Payloads.FirstOrDefault(x => Payloads.Where(y => x.PayloadName == y.PayloadName).Count() > 1);
-            if (hackable != null)
+            if (payloads != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more payloads were found with the same name \"" + payloads.PayloadName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
             var exploits = Exploits.FirstOrDefault(x => Exploits.Where(y => x.ExploitName == y.ExploitName).Count() > 1);
-            if (hackable != null)
+            if (exploits != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more exploits were found with the same name \"" + exploits.ExploitName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+            var loot = LootFiles.FirstOrDefault(x => LootFiles.Where(y => x.LootName == y.LootName).Count() > 1);
+            if (loot != null)
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more loot files were found with the same name \"" + loot.LootName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
         }
     }
 
@@ -205,8 +207,7 @@ namespace ShiftOS.Engine
         Objects.Exploit[] GetExploits();
         Objects.Payload[] GetPayloads();
         Objects.Port[] GetPorts();
-        Objects.LootInfo[] GetLootInfo();
-        byte[] GetLootFromResource(string resId);
+        Objects.Loot[] GetLoot();
     }
 
     public class HackableSystem
@@ -216,7 +217,7 @@ namespace ShiftOS.Engine
         public List<Objects.SystemType> VectorsUnlocked { get; set; }
         public List<Objects.Payload> PayloadExecuted { get; set; }
         public bool FirewallCracked { get; set; }
-        public Objects.ShiftFS.Directory Filesystem { get; set; }
+        public List<Objects.Loot> ServerFTPLoot { get; set; }
         public double MillisecondsCountdown { get; set; }
         public bool DoConnectionTimeout { get; set; }
         public bool IsPwn3d { get; set; }

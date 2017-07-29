@@ -9,7 +9,7 @@
 		FriendlyName: "FTP Payload",
 		PayloadName: "ftpull",
 		EffectiveAgainstFirewall: 1,
-		EffectiveAgainst: "FileServer"
+		EffectiveAgainst: "FileServer",
 	},
 	{
 		FriendlyName: "Force Heartbeat",
@@ -17,6 +17,6 @@
 		EffectiveAgainstFirewall: 1,
 		EffectiveAgainst: "SSHServer",
 		Function: 1,
-		Dependencies: "sploitset_keepalive"
+		Dependencies: "sploitset_keepalive",
 	}
 ]

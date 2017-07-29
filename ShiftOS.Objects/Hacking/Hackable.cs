@@ -61,11 +61,4 @@ namespace ShiftOS.Objects
         public string Contents { get; set; }
     }
 
-    public class LootInfo
-    {
-        public string Filename { get; set; }
-        public string ResourceId { get; set; }
-        public int Rarity { get; set; }
-    }
-
 }

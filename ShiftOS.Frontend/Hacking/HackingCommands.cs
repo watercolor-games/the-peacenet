@@ -18,7 +18,7 @@ namespace ShiftOS.Frontend
             var hackable = Hacking.AvailableToHack.FirstOrDefault(x => x.ID == id);
             if (hackable == null)
             {
-                Console.WriteLine("[sploitset] device not found on network.");
+                Console.WriteLine("[connectlib] device not found on network.");
                 return;
             }
             Hacking.InitHack(hackable);
@@ -31,7 +31,7 @@ namespace ShiftOS.Frontend
         {
             if (Hacking.CurrentHackable == null)
             {
-                Console.WriteLine("[sploitset] not connected");
+                Console.WriteLine("[connectlib] not connected");
             }
             string Port = args["port"].ToString();
             string ExploitName = args["id"].ToString();
@@ -63,7 +63,7 @@ namespace ShiftOS.Frontend
         {
             if (Hacking.CurrentHackable == null)
             {
-                Console.WriteLine("[sploitset] not connected");
+                Console.WriteLine("[connectlib] not connected");
             }
             string PayloadName = args["id"].ToString();
             var PayloadID = Hacking.AvailablePayloads.FirstOrDefault(x => x.ID == PayloadName);
@@ -87,7 +87,7 @@ namespace ShiftOS.Frontend
         {
             if (Hacking.CurrentHackable == null)
             {
-                Console.WriteLine("[sploitset] not connected");
+                Console.WriteLine("[connectlib] not connected");
             }
             foreach (var port in Hacking.CurrentHackable.PortsToUnlock)
             {
@@ -130,7 +130,7 @@ namespace ShiftOS.Frontend
         {
             if (Hacking.CurrentHackable == null)
             {
-                Console.WriteLine("[sploitset] not connected");
+                Console.WriteLine("[connectlib] not connected");
             }
             if (Hacking.CurrentHackable.PayloadExecuted.Count == 0)
             {
@@ -138,6 +138,47 @@ namespace ShiftOS.Frontend
                 return;
             }
             Hacking.FinishHack();
+        }
+
+        [Command("ftp-list")]
+        public static void ListAllFTP(Dictionary<string, object> args)
+        {
+            if (Hacking.CurrentHackable == null)
+            {
+                Console.WriteLine("[connectlib] not connected");
+            }
+            foreach (var loot in Hacking.CurrentHackable.ServerFTPLoot)
+            {
+                Console.WriteLine(loot.LootName + ": (assumed: " + loot.FriendlyName + ")" );
+            }
+        }
+
+        [Command("ftp-download")]
+        [RequiresArgument("file")]
+        public static void DownloadFTP(Dictionary<string, object> args)
+        {
+            if (Hacking.CurrentHackable == null)
+            {
+                Console.WriteLine("[connectlib] not connected");
+            }
+            string FindName = args["file"].ToString();
+            var LootID = Hacking.AvailableLoot.FirstOrDefault(x => x.LootName == FindName);
+            if (LootID == null)
+            {
+                Console.WriteLine("[SimplFTP] file not found on server.");
+                return;
+            }
+            if (!Hacking.CurrentHackable.ServerFTPLoot.Contains(LootID))
+            {
+                Console.WriteLine("[SimplFTP] file not found on server.");
+                return;
+            }
+            if (!Shiftorium.Buy(FindName, 0))
+            {
+                Console.WriteLine("[SimplFTP] Could not download file. Either the upgrade does not exist or the user doesn't have 0 codepoints (wat)");
+                return;
+            }
+            Console.WriteLine("[SimplFTP] downloaded file");
         }
     }
 }

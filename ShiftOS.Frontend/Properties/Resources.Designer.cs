@@ -71,6 +71,33 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /* ShiftOS Exploits data file
+        /// *
+        /// * This file contains information about all exploits in the game&apos;s campaign.
+        /// *
+        /// */
+        ///
+        ///[
+        ///	{
+        ///		FriendlyName: &quot;FTP Exploit&quot;,
+        ///		ExploitName: &quot;ftpwn&quot;,
+        ///		EffectiveAgainstPort: &quot;FileServer&quot;
+        ///	},
+        ///	{
+        ///		FriendlyName: &quot;SSH Exploit&quot;,
+        ///		ExploitName: &quot;sshardline&quot;,
+        ///		EffectiveAgainstPort: &quot;SSHServer&quot;,
+        ///		Dependencies: &quot;sploitset_sshardline&quot;
+        ///	}
+        ///].
+        /// </summary>
+        public static string Exploits {
+            get {
+                return ResourceManager.GetString("Exploits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /* ShiftOS hackables data file
         /// *
         /// * This file contains information about all hackable systems in the game&apos;s campaign.
@@ -86,7 +113,7 @@ namespace ShiftOS.Frontend.Properties {
         ///		WelcomeMessage: &quot;Don&apos;t make fun of SpamSyndicate web design.&quot;,
         ///		FirewallStrength: 0,
         ///		LootRarity: 1,
-        ///		LootAmount: 4,
+        ///		LootAmount: 2,
         ///		ConnectionTimeoutLevel: 4,
         ///		SystemType: &quot;FileServer, SSHServer&quot;,
         ///

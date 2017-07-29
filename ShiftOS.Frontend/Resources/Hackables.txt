@@ -13,7 +13,7 @@
 		WelcomeMessage: "Don't make fun of SpamSyndicate web design.",
 		FirewallStrength: 0,
 		LootRarity: 1,
-		LootAmount: 4,
+		LootAmount: 2,
 		ConnectionTimeoutLevel: 4,
 		SystemType: "FileServer, SSHServer",
 

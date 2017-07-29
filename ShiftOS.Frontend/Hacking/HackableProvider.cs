@@ -36,9 +36,9 @@ namespace ShiftOS.Frontend
             return new byte[] { 0xDE, 0xAD, 0xBE, 0xEF }; //nyi
         }
 
-        public LootInfo[] GetLootInfo()
+        public Loot[] GetLoot()
         {
-            return JsonConvert.DeserializeObject<LootInfo[]>(Properties.Resources.LootInfo);
+            return JsonConvert.DeserializeObject<Loot[]>(Properties.Resources.LootInfo);
         }
     }
 }
