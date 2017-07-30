@@ -1,3 +1,5 @@
+# HAI IM MICHAELVANOVERCUCK
+
 # This project is deprecated.
 
 ShiftOS, as of July 30th, 2017, has officially been marked as deprecated by the project leader. We may bring it back in the future as we believe the concept is unique and awesome, but we are not sure when or if.
