@@ -14,11 +14,13 @@ namespace ShiftOS.Frontend
         {
             TerminalBackend.SetShellOverride("sploitset> ");
         }
+
         [Command("ftp")]
         public static void FTPEnter(Dictionary<string, object> args)
         {
             TerminalBackend.SetShellOverride("SimplFTP> ");
         }
+
         //TODO: Implement firewall cracking
         [Command("connect")]
         [MetaCommand]

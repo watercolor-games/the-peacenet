@@ -131,9 +131,9 @@ namespace ShiftOS.Engine
                         if(id_found == false)
                         {
                             id_found = true;
-                            id_text = inp;
+                            id_text = inp.Remove(0,1);
                             res = "";
-                            arguments.Add("id", inp);
+                            arguments.Add("id", id_text);
                         }
                     }
                 }

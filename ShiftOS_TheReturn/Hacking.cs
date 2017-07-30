@@ -124,10 +124,13 @@ namespace ShiftOS.Engine
                 throw new NaughtyDeveloperException("Someone tried to fail a non-existent hack.");
             if (CurrentHackable.IsPwn3d)
                 throw new NaughtyDeveloperException("A developer tried to un-pwn a pwn3d hackable.");
+            Console.WriteLine();
             Console.WriteLine("[sploitset] [FAIL] disconnected - connection terminated by remote machine ");
             if (!string.IsNullOrWhiteSpace(CurrentHackable.Data.OnHackFailedStoryEvent))
                 Story.Start(CurrentHackable.Data.OnHackFailedStoryEvent);
             CurrentHackable = null;
+            TerminalBackend.SetShellOverride("");
+            TerminalBackend.PrintPrompt();
         }
 
         public static void EndHack()

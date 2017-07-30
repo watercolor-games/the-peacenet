@@ -164,34 +164,37 @@ namespace ShiftOS.Frontend.Apps
         /// <returns>An absolute fucking mess. Seriously, can someone fix this method so it uhh WORKS PROPERLY?</returns>
         public System.Drawing.Point GetPointAtIndex(Graphics gfx)
         {
-            int vertMeasure = 2;
+            var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
+
+            int _textHeight = (int)gfx.SmartMeasureString("#", font).Height;
+            float vertMeasure = 2;
             int horizMeasure = 2;
             if (string.IsNullOrEmpty(Text))
-                return new System.Drawing.Point(horizMeasure, vertMeasure);
+                return new System.Drawing.Point(horizMeasure, (int)vertMeasure);
             int lineindex = 0;
             int line = GetCurrentLine();
             for (int l = 0; l < line; l++)
             {
-                if (string.IsNullOrEmpty(Lines[l]))
+                lineindex += Lines[l].Length;
+                if (string.IsNullOrWhiteSpace(Lines[l]))
                 {
-                    vertMeasure += LoadedSkin.TerminalFont.Height * _zoomFactor;
+                    vertMeasure += _textHeight;
                     continue;
                 }
 
-                lineindex += Lines[l].Length;
-                var stringMeasure = gfx.SmartMeasureString(Lines[l] == "\r" ? " " : Lines[l], LoadedSkin.TerminalFont, Width - 4);
-                vertMeasure += (int)stringMeasure.Height * _zoomFactor;
-
+                var stringMeasure = gfx.SmartMeasureString(Lines[l], font, Width - 4);
+                vertMeasure += (int)(stringMeasure.Height);
+                
             }
-            var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), LoadedSkin.TerminalFont);
-            int w = (int)Math.Floor(lnMeasure.Width) * _zoomFactor;
+            var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), font);
+            int w = (int)Math.Floor(lnMeasure.Width);
             while (w > Width - 4)
             {
                 w = w - (Width - 4);
-                vertMeasure += (int)lnMeasure.Height * _zoomFactor;
+                vertMeasure += (int)lnMeasure.Height;
             }
             horizMeasure += w;
-            return new System.Drawing.Point(horizMeasure, vertMeasure);
+            return new System.Drawing.Point(horizMeasure, (int)vertMeasure);
         }
 
         private PointF CaretPosition = new PointF(2, 2);
