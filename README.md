@@ -1,35 +1,7 @@
-# ShiftOS
-[![Discord](https://discordapp.com/api/guilds/234414439330349056/widget.png?style=shield)](https://discord.gg/RJbcybn) 
-[![Build status](https://ci.appveyor.com/api/projects/status/ktdv3nt6c3q88g2t?svg=true)](https://ci.appveyor.com/project/ComputeLinux/shiftos)
+# This project is deprecated.
 
-The official, open-source, C# revamp of ShiftOS.
+ShiftOS, as of July 30th, 2017, has officially been marked as deprecated by the project leader. We may bring it back in the future as we believe the concept is unique and awesome, but we are not sure when or if.
 
-## License
+If you have any questions or concerns, you may contact the project leader at michaelshiftos@gmail.com.
 
-We are licensed under the [MIT license](https://github.com/shiftos-game/ShiftOS/blob/master/LICENSE). A simple description is:
-
-1. Don't steal our code and claim ownership of it
-2. Leave copyright statements and license info at the top of all .cs files. `InsertLicense.exe` can be used to add the license to all files without it.
-
-
-### Using our code for your own project
-
-You may use the ShiftOS.Engine, ShiftOS.Objects, and ShiftOS.Server projects to create your own games. You must include the original license and link back to [ShiftOS](https://github.com/shiftos-game/ShiftOS) in your `README` and in your game or credits.
-
-## Compiling the code
-
-To compile the ShiftOS project, first, make sure you have Visual Studio Community installed (recommended version: 2015). Then, install **MonoGame 3.6** from [here](http://www.monogame.net/downloads/). After installing these dependencies, open up **`ShiftOS_TheReturn.sln`** in Visual Studio.
-
-Then, set the `ShiftOS.Frontend` project as your startup project, by right-clicking it in Solution Explorer and clicking "Set As StartUp Project". Then, fucking smash that F5 key and watch as ShiftOS comes to life.
-
-## Where the hell is the **Issues** tab? This can't be GitHub!
-
-No, you're wrong. We've actually disabled the Issues tab in place of our own in-place [bugtracker](http://getshiftos.ml/Bugs). Please post bugs there. It is easier for us to track and integrate with the rest of the community.
-
-## Contributing
-
-See [`CONTRIBUTING.md`](https://github.com/shiftos-game/ShiftOS/blob/master/CONTRIBUTING.md)
-
-## `Mushroom`
-
-`I'm a mushroom.`
+We apologize to any actual fans of the project.

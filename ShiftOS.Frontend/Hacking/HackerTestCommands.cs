@@ -10,6 +10,7 @@ namespace ShiftOS.Frontend
 {
     public static class HackerTestCommands
     {
+        [ShellConstraint("shiftos_debug> ")]
         [Command("lsports")]
         public static void ListAllPorts()
         {
@@ -19,6 +20,7 @@ namespace ShiftOS.Frontend
             }
         }
 
+        [ShellConstraint("shiftos_debug> ")]
         [Command("describehackable")]
         [RequiresArgument("id")]
         public static void DescribeHackable(Dictionary<string, object> args)
@@ -41,6 +43,7 @@ namespace ShiftOS.Frontend
             Console.WriteLine(hackable.WelcomeMessage);
         }
 
+        [ShellConstraint("shiftos_debug> ")]
         [Command("describeport")]
         [RequiresArgument("id")]
         public static void DescribePort(Dictionary<string, object> args)
