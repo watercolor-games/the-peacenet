@@ -126,7 +126,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            using(var gfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+            using(var gfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
             {
                 var s = gfx.SmartMeasureString(text, font, wrapWidth);
                 return new Vector2((float)Math.Ceiling(s.Width), (float)Math.Ceiling(s.Height));
@@ -154,14 +154,20 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         var sFormat = System.Drawing.StringFormat.GenericTypographic;
                         sFormat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
                         
+                        /*gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        gfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;*/
                         gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-                        gfx.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);
+                        gfx.DrawString(text, font, System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);
                     }
 
                     var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     var data = new byte[Math.Abs(lck.Stride) * lck.Height];
                     System.Runtime.InteropServices.Marshal.Copy(lck.Scan0, data, 0, data.Length);
+                    for (int i = 0; i < data.Length; i++)
+						if (i % 4 != 3)
+							data[i] = (byte)(255 - data[i]); // invert colours
                     var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height);
                     tex2.SetData<byte>(data);
                     fontcache = new TextCache();
