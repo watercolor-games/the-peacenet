@@ -161,40 +161,20 @@ namespace ShiftOS.Frontend.Apps
         /// Gets the X and Y coordinates (in pixels) of the caret.
         /// </summary>
         /// <param name="gfx">A <see cref="System.Drawing.Graphics"/> object used for font measurements</param>
-        /// <returns>An absolute fucking mess. Seriously, can someone fix this method so it uhh WORKS PROPERLY?</returns>
+        /// <returns>the correct position of the d*ng caret. yw</returns>
         public System.Drawing.Point GetPointAtIndex(Graphics gfx)
         {
+			if (string.IsNullOrEmpty(Text))
+                return new System.Drawing.Point(2, 2);
             var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
-
-            int _textHeight = (int)gfx.SmartMeasureString("#", font).Height;
-            float vertMeasure = 2;
-            int horizMeasure = 2;
-            if (string.IsNullOrEmpty(Text))
-                return new System.Drawing.Point(horizMeasure, (int)vertMeasure);
-            int lineindex = 0;
-            int line = GetCurrentLine();
-            for (int l = 0; l < line; l++)
-            {
-                lineindex += Lines[l].Length;
-                if (string.IsNullOrWhiteSpace(Lines[l]))
-                {
-                    vertMeasure += _textHeight;
-                    continue;
-                }
-
-                var stringMeasure = gfx.SmartMeasureString(Lines[l], font, Width - 4);
-                vertMeasure += (int)(stringMeasure.Height);
-                
-            }
-            var lnMeasure = gfx.SmartMeasureString(Text.Substring(lineindex, Index - lineindex), font);
-            int w = (int)Math.Floor(lnMeasure.Width);
-            while (w > Width - 4)
-            {
-                w = w - (Width - 4);
-                vertMeasure += (int)lnMeasure.Height;
-            }
-            horizMeasure += w;
-            return new System.Drawing.Point(horizMeasure, (int)vertMeasure);
+            int currline = GetCurrentLine();
+            string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
+			int h = (int)Math.Round(gfx.SmartMeasureString(substring, font).Height - font.Height);
+            var lineMeasure = gfx.SmartMeasureString(Lines[currline], font);
+            int w = (int)Math.Floor(lineMeasure.Width);
+            if (w > Width - 4)
+                w = Width - 4;
+            return new System.Drawing.Point(w, h);
         }
 
         private PointF CaretPosition = new PointF(2, 2);
@@ -383,7 +363,7 @@ namespace ShiftOS.Frontend.Apps
                 if (blinkStatus == true)
                 {
                     PointF cursorPos;
-                    using (var cgfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+                    using (var cgfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                     {
                         cursorPos = GetPointAtIndex(cgfx);
 
@@ -396,12 +376,12 @@ namespace ShiftOS.Frontend.Apps
                         cursorPos.X = lineMeasure.X;
                     }
 
-                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y - (int)_vertOffset, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }
                 //Draw the text
 
 
-                gfx.DrawString(Text, 2, 2 - (int)Math.Floor(_vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
+                gfx.DrawString(Text, 2, 2, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
             }
         }
 
