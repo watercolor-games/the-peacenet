@@ -235,10 +235,11 @@ namespace ShiftOS.Frontend
 
             timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if(timeSinceLastPurge > 30)
+            if(timeSinceLastPurge > 2)
             {
                 GraphicsContext.StringCaches.Clear();
                 timeSinceLastPurge = 0;
+                GC.Collect();
             }
 
 
@@ -309,38 +310,21 @@ namespace ShiftOS.Frontend
                 double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
                     color = Color.Red;
-                gfxContext.DrawString($@"ShiftOS 1.0 Beta 4
-Copyright (c) 2017 Michael VanOverbeek, Rylan Arbour, RogueAI, william341
-This is an unstable build.
-FPS: {(fps)}
-An FPS below 20 can cause glitches in keyboard and mouse handling. It is advised that if you are getting these
-framerates, press CTRL+E to disable fancy effects, close any apps you are not using, and try running in windowed mode
-or in a lower resolution.
+                gfxContext.DrawString($@"ShiftOS
+=======================
 
-If all else fails, you can set a breakpoint somewhere in the ShiftOS.Update() or ShiftOS.Draw() methods in the game's source
-code and use Visual Studio's debugger to step through the code to find bottlenecks.
+Copyright (c) 2017 ShiftOS Developers
 
-If a method takes more than 30 milliseconds to complete, that is a sign that it is bottlenecking the game and may need to be
-optimized.
+Debug information - {fps} FPS
 
-Try using the SkinTextures cache when rendering skin elements, and try using the GraphicsContext.DrawString() method when drawing
-text. In this build, we are aware that this method causes bottlenecking, we are working on a caching system for fonts so we do not need to
-use the System.Drawing.Graphics class to draw text.
+CTRL+D: toggle debug menu
+CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
+Use the ""debug"" Terminal Command for engine debug commands.
 
-UI render target count: {UIManager.TextureCaches.Count}
-Skin texture caches: {UIManager.SkinTextures.Count}
-Open windows (excluding dialog boxes): {AppearanceManager.OpenForms.Count}
+Red text means low framerate, a low framerate could be a sign of CPU hogging code or a memory leak.
 
-Experimental effects enabled: {UIManager.ExperimentalEffects}
-Fullscreen: {UIManager.Fullscreen}
-Game resolution: {graphicsDevice.PreferredBackBufferWidth}x{graphicsDevice.PreferredBackBufferHeight}
 
-Mouse state:
-X: {LastMouseState.X}
-Y: {LastMouseState.Y}
-Last left click MS: {mouseMS}
-
-", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
             spriteBatch.End();

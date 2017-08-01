@@ -23,6 +23,13 @@ namespace ShiftOS.Frontend.Apps
     {
         private TerminalControl _terminal = null;
         
+        public TerminalControl TerminalControl
+        {
+            get
+            {
+                return _terminal;
+            }
+        }
 
         public Terminal()
         {
@@ -133,6 +140,19 @@ namespace ShiftOS.Frontend.Apps
 
         protected void RecalculateLayout()
         {
+            using(var gfx = Graphics.FromImage(new Bitmap(1, 1)))
+            {
+                var cloc = GetPointAtIndex(gfx);
+                var csize = gfx.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style));
+                if(cloc.Y - _vertOffset < 0)
+                {
+                    _vertOffset += cloc.Y - _vertOffset;
+                }
+                while((cloc.Y + csize.Height) - _vertOffset > Height)
+                {
+                    _vertOffset += csize.Height;
+                }
+            }
         }
 
         private bool blinkStatus = false;
@@ -370,12 +390,12 @@ namespace ShiftOS.Frontend.Apps
                         cursorPos.X = lineMeasure.X;
                     }
 
-                    gfx.DrawRectangle((int)cursorPos.X, (int)cursorPos.Y, (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+                    gfx.DrawRectangle((int)cursorPos.X, (int)(cursorPos.Y - _vertOffset), (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }
                 //Draw the text
 
 
-                gfx.DrawString(Text, 2, 2, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
+                gfx.DrawString(Text, 0, (int)(0 - _vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
             }
         }
 

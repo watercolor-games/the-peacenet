@@ -25,6 +25,10 @@ namespace ShiftOS.Frontend.Desktop
             {
                 Show();
                 SetupDesktop();
+                if (!Shiftorium.UpgradeInstalled("tutorial1"))
+                {
+                    Story.Start("tutorial1");
+                }
             };
 
             MouseMove += (loc) =>
