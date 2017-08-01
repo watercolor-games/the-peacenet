@@ -239,6 +239,7 @@ namespace ShiftOS.Frontend
             {
                 GraphicsContext.StringCaches.Clear();
                 timeSinceLastPurge = 0;
+                GC.Collect();
             }
 
 
