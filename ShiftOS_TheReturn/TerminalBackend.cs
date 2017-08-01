@@ -231,11 +231,13 @@ namespace ShiftOS.Engine
                 try
                 {
                     CommandHandler.Invoke(null, new[] { args });
+
                 }
                 catch
                 {
                     CommandHandler.Invoke(null, null);
                 }
+                CommandFinished?.Invoke(Localization.Parse(this.CommandInfo.name), args);
             }
         }
 
@@ -269,6 +271,8 @@ namespace ShiftOS.Engine
 
 
         }
+
+        public static event Action<string, Dictionary<string, object>> CommandFinished;
 
         public class MemoryTextWriter : System.IO.TextWriter
         {
@@ -402,14 +406,12 @@ namespace ShiftOS.Engine
         {
             if (string.IsNullOrWhiteSpace(text))
                 return;
-            var tw = new MemoryTextWriter();
-            Console.SetOut(tw);
+            var args = GetArgs(ref text);
+            var oargs = JsonConvert.DeserializeObject<Dictionary<string, object>>(GetSentArgs(args));
             try
             {
-                var args = GetArgs(ref text);
 
                 bool commandWasClient = RunClient(text, args, isRemote);
-
                 if (!commandWasClient)
                 {
                     Console.WriteLine("Error: Command not found.");
@@ -423,12 +425,6 @@ namespace ShiftOS.Engine
                 PrefixEnabled = true;
 
             }
-            string buffer = tw.ToString();
-            LastCommandBuffer = buffer;
-            Console.SetOut(new TerminalTextWriter());
-            if(!isRemote)
-                Console.Write(buffer);
-
         }
 
         /// <summary>

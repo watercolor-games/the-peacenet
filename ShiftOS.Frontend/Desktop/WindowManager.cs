@@ -136,26 +136,35 @@ namespace ShiftOS.Frontend.Desktop
 
         public void TileWindows()
         {
-
-            if (AppearanceManager.OpenForms.Count == 0)
-                return;
-            int start = 0;
-            var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => x.IsSidePanel()) as WindowBorder;
-            if (brdr != null)
+            try
             {
-                brdr.X = 0;
-                brdr.Y = DesktopStart;
-                brdr.ResizeWindow(UIManager.Viewport.Width / 4, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
-                start = UIManager.Viewport.Width / 4;
+                if (AppearanceManager.OpenForms.Count == 0)
+                    return;
+                int start = 0;
+                var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => x.IsSidePanel()) as WindowBorder;
+                if (brdr != null)
+                {
+                    brdr.X = 0;
+                    brdr.Y = DesktopStart;
+                    brdr.ResizeWindow(UIManager.Viewport.Width / 4, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
+                    start = UIManager.Viewport.Width / 4;
+                }
+
+
+                var wb = (WindowBorder)AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
+                if (wb != null)
+                {
+                    wb.X = start;
+                    wb.Y = DesktopStart;
+                    wb.ResizeWindow(UIManager.Viewport.Width - start, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
+                }
             }
-
-
-            var wb = (WindowBorder)AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
-            if (wb != null)
+            catch(Exception ex)
             {
-                wb.X = start;
-                wb.Y = DesktopStart;
-                wb.ResizeWindow(UIManager.Viewport.Width - start, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
+#if DEBUG
+                Debug.WriteLine("<engine> [WARN] Window management fucked up.");
+                Debug.WriteLine("<engine> [WARN] " + ex.ToString());
+#endif
             }
         }
     }

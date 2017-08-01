@@ -235,7 +235,7 @@ namespace ShiftOS.Frontend
 
             timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if(timeSinceLastPurge > 30)
+            if(timeSinceLastPurge > 5)
             {
                 GraphicsContext.StringCaches.Clear();
                 timeSinceLastPurge = 0;
