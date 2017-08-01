@@ -76,13 +76,14 @@ namespace ShiftOS.Frontend.Apps
             Dock = GUI.DockStyle.Fill;
             
         }
+        
+        private static readonly string[] delimiters = { Environment.NewLine };
 
         public string[] Lines
         {
             get
             {
-                return Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
+				return Text.Split(delimiters, StringSplitOptions.None);
             }
         }
 
@@ -121,18 +122,11 @@ namespace ShiftOS.Frontend.Apps
         }
 
         
+        private static readonly Regex regexNl = new Regex(Regex.Escape(Environment.NewLine));
+        
         public int GetCurrentLine()
         {
-            int line = 0;
-            for(int i = 0; i < Index; i++)
-            {
-                if(Text[i]=='\n')
-                {
-                    line++;
-                    continue;
-                }
-            }
-            return line;
+            return regexNl.Matches(Text.Substring(0, Index)).Count;
         }
 
         float _vertOffset = 0.0f;
