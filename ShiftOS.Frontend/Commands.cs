@@ -44,6 +44,73 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.Frontend
 {
+    public static class MissionsCommands
+    {
+        [Command("startmission")]
+        [RequiresArgument("id")]
+        [RequiresUpgrade("tutorial1")]
+        public static void StartMission(Dictionary<string, object> args)
+        {
+            string id = args["id"].ToString();
+            try
+            {
+                if (!Shiftorium.UpgradeInstalled(id))
+                {
+                    Story.Start(id);
+                    return;
+                }
+                Console.WriteLine("That mission has already been complete. You can't replay it.");
+            }
+            catch
+            {
+                Console.WriteLine("That mission could not be found. Try running missions for a list of available missions.");
+            }
+        }
+
+        [Command("missions")]
+        [RequiresUpgrade("tutorial1")]
+        public static void Missions()
+        {
+            Console.WriteLine("Available missions");
+            Console.WriteLine("===================");
+            Console.WriteLine();
+            bool found = false;
+            foreach (var type in ReflectMan.Types)
+            {
+                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    var missionattrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
+                    if(missionattrib != null)
+                    {
+                        found = true;
+                        Console.WriteLine();
+                        Console.WriteLine($@"{missionattrib.Name} (id {missionattrib.StoryID})
+------------------------------------
+
+assigner: {missionattrib.Assigner}
+cp reward: {missionattrib.CodepointAward}
+
+{missionattrib.Description}");
+                    }
+                }
+            }
+            if(found == false)
+            {
+                Console.WriteLine();
+                Console.WriteLine(@"No missions found.
+------------------------------------
+
+assigner: undefined
+cp reward: [object Object]
+
+There are no missions available for you to complete. Please check back later for more!");
+
+            }
+        }
+    }
+
+
+
     [TutorialLock]
     public static class TerminalCommands
     {

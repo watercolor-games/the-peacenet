@@ -41,7 +41,12 @@ namespace ShiftOS.Frontend.Stories
                         if(text == "help")
                         {
                             position++;
+                            
                         }
+                        break;
+                    case 2:
+                        if (text == "status")
+                            position++;
                         break;
                 }
             };
@@ -77,10 +82,62 @@ namespace ShiftOS.Frontend.Stories
             TerminalBackend.PrintPrompt();
             while (position == 1)
                 Thread.Sleep(10);
-            
+            TerminalBackend.PrefixEnabled = false;
+            Thread.Sleep(1000);
             ctl.WriteLine("");
             ctl.WriteLine("Any time you are unsure of a command to run, type the help command.");
             ctl.WriteLine("Now, try typing the \"status\" command to see your current system status.");
+
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+            while (position == 2)
+                Thread.Sleep(10);
+            Thread.Sleep(1000);
+            ctl.WriteLine("");
+            ctl.WriteLine("");
+            TerminalBackend.PrefixEnabled = false;
+            TerminalBackend.InStory = true;
+            ctl.WriteLine("As you can see, your system doesn't have much value within the Digital Society.");
+            Thread.Sleep(1000);
+            ctl.WriteLine($"You have {SaveSystem.CurrentSave.Codepoints} Codepoints - and {SaveSystem.CurrentSave.CountUpgrades()} system upgrades.");
+            ctl.WriteLine("");
+            ctl.WriteLine("");
+            Thread.Sleep(500);
+            ctl.WriteLine("Codepoints can be earned by completing objectives within ShiftOS or by playing minigames.");
+            Thread.Sleep(250);
+            ctl.WriteLine("When you have Codepoints, you can use them to buy system upgrades from the Shiftorium, to add new programs and enhancements to ShiftOS.");
+            Thread.Sleep(200);
+            ctl.WriteLine("Tasks that can give you Codepoints can be found using the missions command.");
+            Thread.Sleep(200);
+            ctl.WriteLine("You can start a mission using the startmission command, and specifying the mission ID as a command-line argument.");
+            Thread.Sleep(750);
+            ctl.WriteLine("<kernel> Careful. The user doesn't know how arguments work in ShiftOS.");
+            Thread.Sleep(490);
+            ctl.WriteLine("That reminds me... Command-line arguments are pretty easy in ShiftOS.");
+            Thread.Sleep(200);
+            ctl.WriteLine("Most commands don't require arguments at all, like \"help\", \"status\" and \"missions\". However, others like \"buy\" and \"close\" will.");
+            Thread.Sleep(200);
+            ctl.WriteLine("Most commands that require arguments will take the implicit syntax, i.e \"open pong\".");
+            Thread.Sleep(200);
+            ctl.WriteLine("Others will require the explicit syntax, for example \"fileskimmer --dir 0:/home\".");
+            Thread.Sleep(200);
+            ctl.WriteLine("And others will accept both, for example \"inject ftpwn --port 21\".");
+            Thread.Sleep(200);
+            ctl.WriteLine("When you run a command and you have forgotten to supply its arguments, the Shell will tell you which arguments you are missing.");
+            Thread.Sleep(200);
+            ctl.WriteLine("If the Shell says you are missing an \"id\" argument, you can pass it using either the implicit syntax, i.e \"command value\", or the explicit syntax, i.e \"command --id value\". Both will be accepted by the command interpreter.");
+            Thread.Sleep(200);
+            ctl.WriteLine("However, for other arguments, the explicit syntax is required - the command interpreter won't be able to tell what argument you're supplying data to if you use the implicit syntax, and thus it will assume you are supplying data for the \"id\" argument.");
+            Thread.Sleep(1000);
+            ctl.WriteLine("<cinemgr> Basic system usage tutorial complete.");
+            Thread.Sleep(500);
+            ctl.WriteLine("<cpd> 200 Codepoints earned.");
+            SaveSystem.CurrentSave.Codepoints += 200;
+            SaveSystem.SaveGame();
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.InStory = false;
+            Story.Context.MarkComplete();
+            TerminalBackend.PrintPrompt();
         }
     }
 }

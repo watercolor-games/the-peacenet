@@ -199,13 +199,6 @@ namespace ShiftOS.Engine
             Debug.Print("No such story: " + stid);
 #endif
         }
-
-        [Obsolete("Please use Story.Start() in tandem with [StoryAttribute].")]
-        public static void RunFromInternalResource(string resource_id)
-        {
-        }
-
-
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
