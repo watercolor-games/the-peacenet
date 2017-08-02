@@ -81,13 +81,13 @@ namespace ShiftOS.Frontend.Properties {
         ///	{
         ///		FriendlyName: &quot;FTP Exploit&quot;,
         ///		ExploitName: &quot;ftpwn&quot;,
-        ///		EffectiveAgainstPort: &quot;FileServer&quot;
+        ///		EffectiveAgainstPort: &quot;FileServer&quot;,
         ///	},
         ///	{
         ///		FriendlyName: &quot;SSH Exploit&quot;,
         ///		ExploitName: &quot;sshardline&quot;,
         ///		EffectiveAgainstPort: &quot;SSHServer&quot;,
-        ///		Dependencies: &quot;sploitset_sshardline&quot;
+        ///		Dependencies: &quot;sploitset_sshardline&quot;,
         ///	}
         ///].
         /// </summary>
@@ -176,7 +176,7 @@ namespace ShiftOS.Frontend.Properties {
         ///		FriendlyName: &quot;FTP Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;,
         ///		EffectiveAgainstFirewall: 1,
-        ///		EffectiveAgainst: &quot;FileServer&quot;
+        ///		EffectiveAgainst: &quot;FileServer&quot;,
         ///	},
         ///	{
         ///		FriendlyName: &quot;Force Heartbeat&quot;,
@@ -184,7 +184,7 @@ namespace ShiftOS.Frontend.Properties {
         ///		EffectiveAgainstFirewall: 1,
         ///		EffectiveAgainst: &quot;SSHServer&quot;,
         ///		Function: 1,
-        ///		Dependencies: &quot;sploitset_keepalive&quot;
+        ///		Dependencies: &quot;sploitset_keepalive&quot;,
         ///	}
         ///].
         /// </summary>
@@ -233,13 +233,13 @@ namespace ShiftOS.Frontend.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to [
-        ///	}
+        ///	{
         ///		Name: &quot;sploitset_keepalive&quot;,
         ///		Cost: 1000000000,
         ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
         ///		Dependencies: &quot;thisupgradeshouldneverexistever;sploitset_sshardline&quot;,
         ///	},
-        ///	}
+        ///	{
         ///		Name: &quot;sploitset_sshardline&quot;,
         ///		Cost: 1000000000,
         ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
@@ -250,6 +250,25 @@ namespace ShiftOS.Frontend.Properties {
         public static string Shiftorium {
             get {
                 return ResourceManager.GetString("Shiftorium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /* ShiftOS setup data file
+        /// * 
+        /// * This file holds information used by a ShiftOS &quot;Installer&quot; for setting up a system component.
+        /// *
+        /// */
+        ///
+        /// {
+        ///	Name: &quot;Sploitset Force Heartbeat exploit&quot;,
+        ///	Description: &quot;This is an exploit for the sploitset system exploitation utility which causes the remote system to force the connection to stay alive by sending heartbeat requests even after the firewall has timed out the connection. Useful against those pesky connection timers...&quot;,
+        ///	SourceType: &quot;ShiftoriumUpgrade&quot;,
+        ///	So [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string sploitset_keepalive {
+            get {
+                return ResourceManager.GetString("sploitset_keepalive", resourceCulture);
             }
         }
         

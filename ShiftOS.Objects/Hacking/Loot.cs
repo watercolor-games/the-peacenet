@@ -17,7 +17,7 @@ namespace ShiftOS.Objects
         {
             get
             {
-                return LootName.ToLower().Replace(" ", "_");
+                return PointTo;
             }
         }
 

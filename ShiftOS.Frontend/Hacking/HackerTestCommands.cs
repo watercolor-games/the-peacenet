@@ -11,6 +11,22 @@ namespace ShiftOS.Frontend
     public static class HackerTestCommands
     {
         [ShellConstraint("shiftos_debug> ")]
+        [Command("loot")]
+        [RequiresArgument("id")]
+        public static void ViewLoot(Dictionary<string, object> args)
+        {
+            string id = args["id"].ToString();
+            var loot = Hacking.AvailableLoot.FirstOrDefault(x => x.ID == id);
+            if(loot == null)
+            {
+                Console.WriteLine("Loot ID not found.");
+                return;
+            }
+            Objects.ShiftFS.Utils.WriteAllBytes("0:/" + loot.LootName, Hacking.GetLootBytes(loot.ID));
+            FileSkimmerBackend.OpenFile("0:/" + loot.LootName);
+        }
+
+        [ShellConstraint("shiftos_debug> ")]
         [Command("lsports")]
         public static void ListAllPorts()
         {

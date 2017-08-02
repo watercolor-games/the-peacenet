@@ -7,14 +7,16 @@
 [
 	{
 		FriendlyName: "Force Heartbeat",
-		LootName: "sploitset_keepalive",
+		LootName: "sploitset_keepalive.stp",
 		Rarity: 1,
 		PointTo: "sploitset_keepalive",
+		ID: "sploitset_keepalive"
 	},
 	{
 		FriendlyName: "SSHardline",
-		LootName: "sploitset_sshardline",
+		LootName: "sploitset_sshardline.stp",
 		Rarity: 1,
 		PointTo: "sploitset_sshardline",
+		ID: "sploitset_keepalive"
 	}
 ]

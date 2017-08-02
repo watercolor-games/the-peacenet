@@ -13,7 +13,7 @@ namespace ShiftOS.Frontend
     {
         public byte[] FindLootBytes(string id)
         {
-            foreach(var res in typeof(Properties.Resources).GetProperties(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static))
+            foreach(var res in typeof(Properties.Resources).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
             {
                 if(res.Name == id)
                 {

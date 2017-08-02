@@ -21,11 +21,12 @@ namespace ShiftOS.Frontend.Apps
 
         public void OnLoad()
         {
-            if(Hacking.CurrentHackable != null)
+            
+            if (Hacking.CurrentHackable != null)
             {
                 if (Hacking.CurrentHackable.VectorsUnlocked.Contains(Objects.SystemType.FileServer))
                 {
-                    if(Mounts.Count > 2)
+                    if (Mounts.Count > 2)
                     {
                         Mounts.RemoveAt(2);
                     }
@@ -37,6 +38,7 @@ namespace ShiftOS.Frontend.Apps
                         if(!FileExists("2:/" + loot.LootName))
                         {
                             var bytes = Hacking.GetLootBytes(loot.PointTo);
+                            WriteAllBytes($"2:/{loot.LootName}", bytes);
                         }
                     }
                 }

@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
+    <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\Network.cs" />
     <Compile Include="Apps\Pong.cs" />
     <Compile Include="Apps\SkinLoader.cs" />
@@ -196,6 +197,7 @@
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />
+    <None Include="Resources\sploitset_keepalive.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

@@ -78,12 +78,19 @@ namespace ShiftOS.Frontend.Desktop
         public override void SetupDialog(IShiftOSWindow win)
         {
             var wb = new WindowBorder();
+            var ctl = win as GUI.Control;
+            if (ctl.Width < 30)
+                ctl.Width = 30;
+            if (ctl.Height < 30)
+                ctl.Height = 30;
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
             wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
             wb.ParentWindow = win;
             wb.IsDialog = true;
             UIManager.AddTopLevel(wb);
             RunningBorders.Add(wb);
+            wb.X = (UIManager.Viewport.Width - wb.Width) / 2;
+            wb.Y = (UIManager.Viewport.Height - wb.Height) / 2;
             win.OnLoad();
             win.OnUpgrade();
             win.OnSkinLoad();
