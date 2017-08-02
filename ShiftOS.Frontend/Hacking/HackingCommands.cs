@@ -51,12 +51,12 @@ namespace ShiftOS.Frontend
             string Port = args["port"].ToString();
             string ExploitName = args["id"].ToString();
             var ExploitID = Hacking.AvailableExploits.FirstOrDefault(x => x.ID == ExploitName);
-            Console.WriteLine(ExploitID.ExploitName);
             if (ExploitID == null)
             {
                 Console.WriteLine("[sploitset] invalid exploit.");
                 return;
             }
+            Console.WriteLine(ExploitID.ExploitName);
             var ExploitTarget = Hacking.CurrentHackable.PortsToUnlock.First(x => x.Value.ToString() == Port);
             if (ExploitTarget == null)
             {

@@ -81,6 +81,18 @@ namespace ShiftOS.Engine
             }
         }
 
+        public static byte[] GetLootBytes(string lootid)
+        {
+            foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IHackableProvider))))
+            {
+                var @interface = (IHackableProvider)Activator.CreateInstance(type, null);
+                var bytes = @interface.FindLootBytes(lootid);
+                if (bytes != null)
+                    return bytes;
+            }
+            throw new NaughtyDeveloperException("Seems like the loot system's trying to work without any loot. This isn't normal.");
+        }
+
         public static void InitHack(Objects.Hackable data)
         {
             var hsys = new HackableSystem();
@@ -212,6 +224,7 @@ namespace ShiftOS.Engine
         Objects.Payload[] GetPayloads();
         Objects.Port[] GetPorts();
         Objects.Loot[] GetLoot();
+        byte[] FindLootBytes(string lootid);
     }
 
     public class HackableSystem
