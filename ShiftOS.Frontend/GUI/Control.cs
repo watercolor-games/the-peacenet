@@ -366,7 +366,7 @@ namespace ShiftOS.Frontend.GUI
         public void ClearControls()
         {
             _children.Clear();
-            Invalidate();
+            Invalidate(); 
         }
 
         public Point PointToLocal(int x, int y)

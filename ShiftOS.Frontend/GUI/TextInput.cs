@@ -37,6 +37,16 @@ namespace ShiftOS.Frontend.GUI
             }
         }
 
+        public override void MouseStateChanged()
+        {
+            if (MouseLeftDown == true)
+            {
+                UIManager.FocusedControl = this;
+                Invalidate();
+            }
+            base.MouseStateChanged();
+        }
+
         public string Text
         {
             get
@@ -51,7 +61,7 @@ namespace ShiftOS.Frontend.GUI
                 _text = value;
                 if(_index >= _text.Length)
                 {
-                    _index = _text.Length - 1;
+                    _index = _text.Length;
                 }
                 Invalidate();
             }
@@ -117,22 +127,26 @@ namespace ShiftOS.Frontend.GUI
         
         protected override void OnPaint(GraphicsContext gfx)
         {
-            gfx.Clear(LoadedSkin.ControlColor.ToMonoColor());
-            gfx.DrawString(_text, 2 - (int)Math.Floor(_textDrawOffset), 2, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
+            gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
+            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
+
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                gfx.DrawString(Text, (int)(2 - _textDrawOffset), 2, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
+            }
             if (IsFocusedControl)
             {
-                //Draw caret.
-
-                
-                gfx.DrawRectangle((int)(Math.Floor(caretPos) - Math.Floor(_textDrawOffset)), 2, 2, Height - 4, LoadedSkin.ControlTextColor.ToMonoColor());
+                //draw caret
+                gfx.DrawRectangle((int)(caretPos - _textDrawOffset), 2, 2, Height - 4, UIManager.SkinTextures["ControlTextColor"]);
             }
             else
             {
-                if (string.IsNullOrEmpty(_text))
+                if(string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
                 {
                     gfx.DrawString(_label, 2, 2, Color.Gray, _font);
                 }
             }
+
         }
     }
 }
