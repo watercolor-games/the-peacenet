@@ -18,5 +18,11 @@
 		Rarity: 1,
 		PointTo: "sploitset_sshardline",
 		ID: "sploitset_keepalive"
-	}
-]
+	},
+	{
+		FriendlyName: "Pong",
+		LootName: "pong.stp",
+		Rarity: 10, //Easter egg.
+		PointTo: "pong",
+		ID: "pong"
+	}]

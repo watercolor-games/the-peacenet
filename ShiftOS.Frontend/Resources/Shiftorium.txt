@@ -10,5 +10,10 @@
 		Cost: 1000000000,
 		Description: "lolyouarentsupposedtobeabletobuythis",
 		Dependencies: "thisupgradeshouldneverexistever",
+	},
+	{
+		Name: "Pong",
+		Cost: 0,
+		Dependencies: "pong",
 	}
 ]

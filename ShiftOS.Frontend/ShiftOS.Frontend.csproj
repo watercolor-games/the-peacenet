@@ -194,6 +194,7 @@
     <None Include="Resources\LootInfo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\pong.txt" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />

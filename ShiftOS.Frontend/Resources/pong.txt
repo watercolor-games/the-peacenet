@@ -1,0 +1,6 @@
+{
+	Name: "Pong",
+	Description: "It's a game so good we made you play it all the time in ShiftOS 0.0.x, 0.1.x and 1.0. It's only natural that we'd sleep Pong into the game again somehow, right?",
+	SourceType: "ShiftoriumUpgrade",
+	Source: "pong"
+}

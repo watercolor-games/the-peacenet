@@ -13,6 +13,7 @@ namespace ShiftOS.Frontend.Apps
     [WinOpen("{WO_PONG}")]
     [DefaultTitle("{TITLE_PONG}")]
     [DefaultIcon("iconPong")]
+    [RequiresUpgrade("pong")]
     public class Pong : GUI.Control, IShiftOSWindow
     {
         public Pong()

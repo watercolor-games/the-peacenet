@@ -146,15 +146,17 @@ namespace ShiftOS.Frontend.Properties {
         ///[
         ///	{
         ///		FriendlyName: &quot;Force Heartbeat&quot;,
-        ///		LootName: &quot;sploitset_keepalive&quot;,
+        ///		LootName: &quot;sploitset_keepalive.stp&quot;,
         ///		Rarity: 1,
         ///		PointTo: &quot;sploitset_keepalive&quot;,
+        ///		ID: &quot;sploitset_keepalive&quot;
         ///	},
         ///	{
         ///		FriendlyName: &quot;SSHardline&quot;,
-        ///		LootName: &quot;sploitset_sshardline&quot;,
+        ///		LootName: &quot;sploitset_sshardline.stp&quot;,
         ///		Rarity: 1,
         ///		PointTo: &quot;sploitset_sshardline&quot;,
+        ///		ID: &quot;sploitset_keepalive&quot;
         ///	}
         ///].
         /// </summary>
@@ -191,6 +193,20 @@ namespace ShiftOS.Frontend.Properties {
         public static string Payloads {
             get {
                 return ResourceManager.GetString("Payloads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	Name: &quot;Pong&quot;,
+        ///	Description: &quot;It&apos;s a game so good we made you play it all the time in ShiftOS 0.0.x, 0.1.x and 1.0. It&apos;s only natural that we&apos;d sleep Pong into the game again somehow, right?&quot;,
+        ///	SourceType: &quot;ShiftoriumUpgrade&quot;,
+        ///	Source: &quot;pong&quot;
+        ///}.
+        /// </summary>
+        public static string pong {
+            get {
+                return ResourceManager.GetString("pong", resourceCulture);
             }
         }
         
