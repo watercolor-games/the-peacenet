@@ -204,7 +204,15 @@ namespace ShiftOS.Frontend.Desktop
             Width = GetSize().Width;
             Height = GetSize().Height;
             var now = DateTime.Now.TimeOfDay;
-            var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds}";
+            var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
+            if(Hacking.CurrentHackable == null)
+            {
+                newDateTimeString += SaveSystem.CurrentSave.SystemName;
+            }
+            else
+            {
+                newDateTimeString += Hacking.CurrentHackable.Data.SystemName;
+            }
             if(newDateTimeString != dateTimeString)
             {
                 dateTimeString = newDateTimeString;

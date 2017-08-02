@@ -252,14 +252,21 @@ namespace ShiftOS.Frontend
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
                     Hacking.CurrentHackable.MillisecondsCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if(Hacking.CurrentHackable.MillisecondsCountdown <= 0)
+                    shroudOpacity = (float)GUI.ProgressBar.linear(Hacking.CurrentHackable.MillisecondsCountdown, Hacking.CurrentHackable.TotalConnectionTimeMS, 0, 0, 1);
+                    if (Hacking.CurrentHackable.MillisecondsCountdown <= 0)
                     {
                         Hacking.FailHack();
                     }
                 }
             }
+            else
+            {
+                shroudOpacity = 0;
+            }
             base.Update(gameTime);
         }
+
+        float shroudOpacity = 0.0f;
 
         private GUI.TextControl framerate = new GUI.TextControl();
 
@@ -291,6 +298,8 @@ namespace ShiftOS.Frontend
             var mousepos = Mouse.GetState(this.Window).Position;
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+
+            spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), Color.Red * shroudOpacity);
 
             if(Hacking.CurrentHackable != null)
             {

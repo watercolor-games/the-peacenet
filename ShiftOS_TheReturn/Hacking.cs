@@ -96,6 +96,7 @@ namespace ShiftOS.Engine
             {
                 hsys.MillisecondsCountdown = 0;
             }
+            hsys.TotalConnectionTimeMS = (int)hsys.MillisecondsCountdown;
             hsys.PortsToUnlock = new List<Objects.Port>();
             hsys.VectorsUnlocked = new List<Objects.SystemType>();
             hsys.PayloadExecuted = new List<Objects.Payload>();
@@ -215,6 +216,7 @@ namespace ShiftOS.Engine
 
     public class HackableSystem
     {
+        public int TotalConnectionTimeMS { get; set; }
         public Objects.Hackable Data { get; set; }
         public List<Objects.Port> PortsToUnlock { get; set; }
         public List<Objects.SystemType> VectorsUnlocked { get; set; }
