@@ -114,6 +114,13 @@ There are no missions available for you to complete. Please check back later for
     [TutorialLock]
     public static class TerminalCommands
     {
+        [Command("echo")]
+        [RequiresArgument("id")]
+        public static void Echo(Dictionary<string, object> args)
+        {
+            Console.WriteLine(args["id"].ToString());
+        }
+
         [MetaCommand]
         [Command("clear", description = "{DESC_CLEAR}")]
         public static bool Clear()
