@@ -183,11 +183,17 @@ namespace ShiftOS.Frontend.Apps
             var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
             int currline = GetCurrentLine();
             string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
-			int h = (int)Math.Round(gfx.SmartMeasureString(substring, font).Height - font.Height);
-            var lineMeasure = gfx.SmartMeasureString(Lines[currline], font);
+			int h = (int)Math.Round(gfx.SmartMeasureString(substring, font, Width).Height - font.Height);
+
+            int linestart = String.Join(Environment.NewLine, Lines.Take(GetCurrentLine())).Length;
+
+            var lineMeasure = gfx.SmartMeasureString(Text.Substring(linestart, Index - linestart), font);
             int w = (int)Math.Floor(lineMeasure.Width);
-            if (w > Width - 4)
-                w = Width - 4;
+            while (w > Width)
+            {
+                w -= Width;
+                h += (int)lineMeasure.Height;
+            }
             return new System.Drawing.Point(w, h);
         }
 
