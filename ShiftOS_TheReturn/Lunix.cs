@@ -36,21 +36,13 @@ using System.Threading.Tasks;
 namespace ShiftOS.Engine
 {
     /// <summary>
-    /// Special functions for when we're running under Wine. (Pure Mono is not detected)
+    /// Platform related duties. Detect Wine and Mono, escape the former.
     /// </summary>
     public static class Lunix
     {
-        /// <summary>
-        /// Determines if the game is running under Wine or not.
-        /// </summary>
-        public static bool InWine
-        {
-            get
-            {
-                var WineKey = Registry.CurrentUser.OpenSubKey(@"Software\Wine");
-                return WineKey != null;
-            }
-        }
+        public static readonly bool InWine = Registry.CurrentUser.OpenSubKey(@"Software\Wine") != null;
+        public static readonly bool InMono = Type.GetType("Mono.Framework") != null;
+           
         /// <summary>
         /// Escape Wine and run shell commands.
         /// </summary>
