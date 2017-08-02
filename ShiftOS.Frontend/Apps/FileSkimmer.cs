@@ -37,7 +37,7 @@ namespace ShiftOS.Frontend.Apps
                     {
                         if(!FileExists("2:/" + loot.LootName))
                         {
-                            var bytes = Hacking.GetLootBytes(loot.PointTo);
+                           var bytes = Hacking.GetLootBytes(loot.PointTo);
                             WriteAllBytes($"2:/{loot.LootName}", bytes);
                         }
                     }

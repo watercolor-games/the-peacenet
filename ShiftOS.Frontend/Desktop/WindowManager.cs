@@ -75,9 +75,19 @@ namespace ShiftOS.Frontend.Desktop
                 brdr.Text = title;
         }
 
+        public string GetTitle(IShiftOSWindow win)
+        {
+            var type = win.GetType();
+            var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultTitleAttribute) as DefaultTitleAttribute;
+            if (attr != null)
+                return Localization.Parse(attr.Title);
+            return "ShiftOS Window";
+        }
+
         public override void SetupDialog(IShiftOSWindow win)
         {
             var wb = new WindowBorder();
+            wb.Text = GetTitle(win);
             var ctl = win as GUI.Control;
             if (ctl.Width < 30)
                 ctl.Width = 30;
@@ -127,7 +137,9 @@ namespace ShiftOS.Frontend.Desktop
                 }
 
             }
+
             var wb = new WindowBorder();
+            wb.Text = GetTitle(win);
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
             wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
             wb.ParentWindow = win;
@@ -256,6 +268,10 @@ namespace ShiftOS.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
+            if (IsFocusedControl || ContainsFocusedControl)
+            {
+                UIManager.BringToFront(this);
+            }
             int titlebarheight = LoadedSkin.TitlebarHeight;
             int borderleft = LoadedSkin.LeftBorderWidth;
             int borderright = LoadedSkin.RightBorderWidth;
