@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using ShiftOS.Frontend.Apps;
 using ShiftOS.Frontend.GraphicsSubsystem;
 using static ShiftOS.Engine.SkinEngine;
 
@@ -33,6 +34,7 @@ namespace ShiftOS.Frontend.GUI
                     return;
                 }
                 _index = MathHelper.Clamp(value, 0, _text.Length);
+                CalculateVisibleText();
                 Invalidate();
             }
         }
@@ -63,6 +65,7 @@ namespace ShiftOS.Frontend.GUI
                 {
                     _index = _text.Length;
                 }
+                CalculateVisibleText();
                 Invalidate();
             }
         }
@@ -97,6 +100,7 @@ namespace ShiftOS.Frontend.GUI
                 _text = _text.Insert(_index, e.KeyChar.ToString());
                 _index++;
             }
+            caretMS = 0;
             CalculateVisibleText();
             Invalidate();
             base.OnKeyEvent(e);
@@ -106,18 +110,18 @@ namespace ShiftOS.Frontend.GUI
 
         protected void CalculateVisibleText()
         {
-            using(var gfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
+            using(var gfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
             {
                 string toCaret = _text.Substring(0, _index);
-                var measure = gfx.MeasureString(toCaret, _font);
+                var measure = gfx.SmartMeasureString(toCaret, _font);
                 caretPos = 2 + measure.Width;
-                while(caretPos - _textDrawOffset < 0)
+                if(caretPos - _textDrawOffset < 0)
                 {
-                    _textDrawOffset -= 0.01f;
+                    _textDrawOffset += (caretPos - _textDrawOffset);
                 }
-                while(caretPos - _textDrawOffset > Width)
+                if(caretPos - _textDrawOffset > Width)
                 {
-                    _textDrawOffset += 0.01f;
+                    _textDrawOffset -= caretPos - _textDrawOffset;
                 }
 
             }
@@ -136,17 +140,30 @@ namespace ShiftOS.Frontend.GUI
             }
             if (IsFocusedControl)
             {
-                //draw caret
-                gfx.DrawRectangle((int)(caretPos - _textDrawOffset), 2, 2, Height - 4, UIManager.SkinTextures["ControlTextColor"]);
+                if (caretMS <= 250)
+                {
+                    //draw caret
+                    gfx.DrawRectangle((int)(caretPos - _textDrawOffset), 2, 2, Height - 4, UIManager.SkinTextures["ControlTextColor"]);
+                }
             }
             else
             {
-                if(string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
+                if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
                 {
                     gfx.DrawString(_label, 2, 2, Color.Gray, _font);
                 }
             }
 
+        }
+
+        private double caretMS = 0;
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            caretMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (caretMS >= 500)
+                caretMS = 0;
+            Invalidate();
         }
     }
 }
