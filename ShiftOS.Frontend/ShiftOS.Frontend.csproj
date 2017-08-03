@@ -107,6 +107,7 @@
     <EmbeddedResource Include="Icon.bmp" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -196,6 +197,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\pong.txt" />
+    <None Include="Resources\banana.cow.stp.txt" />
+    <None Include="Resources\fire hydrant.cow.stp.txt" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />

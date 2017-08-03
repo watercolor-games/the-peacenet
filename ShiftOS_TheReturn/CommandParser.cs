@@ -121,20 +121,28 @@ namespace ShiftOS.Engine
                     i = 0;
                 }
 
-                CommandFormat part = parts[i];
-                string inp = text.Substring(position);
+                             CommandFormat part = parts[i];
+   string inp = text.Substring(position);
                 string res = part.CheckValidity(inp);
                 if(part is CommandFormatText)
                 {
-                    if(res == "+FALSE+")
+                    if (res == "+FALSE+")
                     {
-                        if(id_found == false)
+#if SUPERMOSQUITO_DIAGNOSIS
+                        if (!inp.Remove(0, 1).Contains(" "))
                         {
-                            id_found = true;
-                            id_text = inp.Remove(0,1);
-                            res = "";
-                            arguments.Add("id", id_text);
+
+
+                            if (id_found == false)
+                            {
+                                id_found = true;
+                                id_text = inp.Remove(0, 1);
+                                res = "";
+                                arguments.Add("id", id_text);
+                                
+                            }
                         }
+#endif
                     }
                 }
 

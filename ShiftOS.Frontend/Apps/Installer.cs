@@ -67,6 +67,17 @@ namespace ShiftOS.Frontend.Apps
                     Engine.Infobox.Show("Upgrade installed.", "The upgrade \"" + _setup.Source + "\" has been installed and is now ready to be used!");
 
                     break;
+                case SetupSource.CowFile:
+                    string cow = _setup.Source;
+                    string[] split = cow.Split('\t');
+                    string fname = split[0] + ".cow";
+                    string ascii = split[1];
+                    string csCowfiles = Paths.GetPath("data") + "/cows";
+                    if (!DirectoryExists(csCowfiles))
+                        CreateDirectory(csCowfiles);
+                    WriteAllText(csCowfiles + "/" + fname, ascii);
+                    Engine.Infobox.Show("Cowsay", "New cowfile installed! Have fun with your talking " + split[0] + "!");
+                    break;
             }
         }
 
@@ -126,6 +137,7 @@ namespace ShiftOS.Frontend.Apps
 
     public enum SetupSource
     {
-        ShiftoriumUpgrade
+        ShiftoriumUpgrade,
+        CowFile
     }
 }

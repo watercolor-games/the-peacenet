@@ -52,6 +52,7 @@ namespace ShiftOS.Frontend
         {
             var builder = new List<string>();
             int speechlen = (args.ContainsKey("width")) ? Convert.ToInt32(args["width"].ToString()) : 50;
+            string cowfile = (args.ContainsKey("file")) ? args["file"].ToString() : null;
             string speech = args["id"].ToString();
             AnimalMode _mode = AnimalMode.Normal;
             if (args.ContainsKey("mode"))
@@ -72,7 +73,7 @@ namespace ShiftOS.Frontend
 
             }
             DrawSpeechBubble(ref builder, speechlen, speech);
-            DrawCow(ref builder, _mode);
+            DrawCow(ref builder, _mode, cowfile);
             Console.WriteLine(string.Join(Environment.NewLine, builder.ToArray()));
         }
 
@@ -150,7 +151,7 @@ namespace ShiftOS.Frontend
             Youthful
         }
 
-        private static void DrawCow(ref List<string> Builder, AnimalMode AnimalMode)
+        private static void DrawCow(ref List<string> Builder, AnimalMode AnimalMode, string cowfile)
         {
             var startingLinePadding = Builder.First().Length / 4;
 
@@ -194,12 +195,23 @@ namespace ShiftOS.Frontend
                     break;
 
             }
-
-            Builder.Add($"{' '.RepeatChar(startingLinePadding)}\\   ^__^");
-            Builder.Add($"{' '.RepeatChar(startingLinePadding)} \\  ({eyeChar.RepeatChar(2)})\\_______");
-            Builder.Add($"{' '.RepeatChar(startingLinePadding)}    (__)\\       )\\/\\");
-            Builder.Add($"{' '.RepeatChar(startingLinePadding)}     {tongueChar.RepeatChar(1)}  ||----w |");
-            Builder.Add($"{' '.RepeatChar(startingLinePadding)}        ||     ||");
+            string cowpath = Paths.GetPath("data") + "/cows/" + cowfile + ".cow";
+            if (string.IsNullOrWhiteSpace(cowfile) || !Utils.FileExists(cowpath))
+            {
+                Builder.Add($"{' '.RepeatChar(startingLinePadding)}\\   ^__^");
+                Builder.Add($"{' '.RepeatChar(startingLinePadding)} \\  ({eyeChar.RepeatChar(2)})\\_______");
+                Builder.Add($"{' '.RepeatChar(startingLinePadding)}    (__)\\       )\\/\\");
+                Builder.Add($"{' '.RepeatChar(startingLinePadding)}     {tongueChar.RepeatChar(1)}  ||----w |");
+                Builder.Add($"{' '.RepeatChar(startingLinePadding)}        ||     ||");
+            }
+            else
+            {
+                string[] lines = Utils.ReadAllText(cowpath).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var line in lines)
+                {
+                    Builder.Add($"{' '.RepeatChar(startingLinePadding)}{line.Replace("#", eyeChar.ToString())}");
+                }
+            }
         }
     }
 

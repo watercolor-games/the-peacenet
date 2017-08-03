@@ -61,6 +61,20 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	Name: &quot;Cowsay Banana Cowfile&quot;,
+        ///	Description: &quot;It&apos;s fun to play with food. Especially in the form of a cowfile. This install file adds a Banana to Cowsay&apos;s cowfile list. To use it, simply do \&quot;cowsay --id Hello --file banana\&quot;.&quot;,
+        ///	SourceType: &quot;CowFile&quot;,
+        ///	Source: &quot;banana\t\&quot;-..___     __.=&apos;&gt;\r\n`.     \&quot;\&quot;\&quot;\&quot;\&quot;   ,&apos;\r\n  \&quot;-..__   _.-\&quot;\r\n        \&quot;\&quot;\&quot;&quot;
+        ///}.
+        /// </summary>
+        public static string banana_cow_stp {
+            get {
+                return ResourceManager.GetString("banana.cow.stp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap cursor_9x_pointer {
@@ -94,6 +108,19 @@ namespace ShiftOS.Frontend.Properties {
         public static string Exploits {
             get {
                 return ResourceManager.GetString("Exploits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	Name: &quot;Cowsay Fire Hydrant Cowfile&quot;,
+        ///	Description: &quot;Ever been so thirsty that you wanted to open a fire hydrant and just take a giant drink of water? Well, you can&apos;t do that with this install file, but you can at least get a neat cowfile firehydrant so you can make one talk!&quot;,
+        ///	SourceType: &quot;CowFile&quot;,
+        ///	Source:&quot;fire hydrant\t  \\      !\r\n   \\   .:::.\r\n      ///|\\\\\\\r\n     {=-#-#-=}\r\n    .-||||/..\\\r\n  c[I ||||\\&apos;&apos;/\r\n    &apos;-||||||| \r\n      |||||||\r\n      |||||||\r\n      |||||||\r\n    [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string fire_hydrant_cow_stp {
+            get {
+                return ResourceManager.GetString("fire hydrant.cow.stp", resourceCulture);
             }
         }
         
@@ -152,13 +179,16 @@ namespace ShiftOS.Frontend.Properties {
         ///		ID: &quot;sploitset_keepalive&quot;
         ///	},
         ///	{
+        ///		FriendlyName: &quot;Banana Cow&quot;,
+        ///		LootName: &quot;banana.cow.stp&quot;,
+        ///		Rarity: 1,
+        ///		PointTo: &quot;banana_cow_stp&quot;,
+        ///	},
+        ///	{
         ///		FriendlyName: &quot;SSHardline&quot;,
         ///		LootName: &quot;sploitset_sshardline.stp&quot;,
         ///		Rarity: 1,
-        ///		PointTo: &quot;sploitset_sshardline&quot;,
-        ///		ID: &quot;sploitset_keepalive&quot;
-        ///	}
-        ///].
+        ///		PointTo: &quot;sploitset_ssh [rest of string was truncated]&quot;;.
         /// </summary>
         public static string LootInfo {
             get {
@@ -260,6 +290,11 @@ namespace ShiftOS.Frontend.Properties {
         ///		Cost: 1000000000,
         ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
         ///		Dependencies: &quot;thisupgradeshouldneverexistever&quot;,
+        ///	},
+        ///	{
+        ///		Name: &quot;Pong&quot;,
+        ///		Cost: 0,
+        ///		Dependencies: &quot;pong&quot;,
         ///	}
         ///].
         /// </summary>

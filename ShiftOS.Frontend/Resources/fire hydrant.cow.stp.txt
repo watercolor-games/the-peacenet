@@ -1,0 +1,6 @@
+{
+	Name: "Cowsay Fire Hydrant Cowfile",
+	Description: "Ever been so thirsty that you wanted to open a fire hydrant and just take a giant drink of water? Well, you can't do that with this install file, but you can at least get a neat cowfile firehydrant so you can make one talk!",
+	SourceType: "CowFile",
+	Source:"fire hydrant\t  \\      !\r\n   \\   .:::.\r\n      ///|\\\\\\\r\n     {=-#-#-=}\r\n    .-||||/..\\\r\n  c[I ||||\\''/\r\n    '-||||||| \r\n      |||||||\r\n      |||||||\r\n      |||||||\r\n     [=======]\r\n"
+}

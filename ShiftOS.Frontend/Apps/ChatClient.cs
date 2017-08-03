@@ -92,9 +92,7 @@ namespace ShiftOS.Frontend.Apps
             _input.Text = "";
 
             //Let's try the AI stuff... :P
-            if (!messagecache.Contains(_messages.Last().Message))
-                messagecache.Add(_messages.Last().Message);
-            var rmsg = messagecache[rnd.Next(messagecache.Count)];
+            var rmsg = _messages[rnd.Next(_messages.Count)].Message;
             var split = new List<string>(rmsg.Split(' '));
             List<string> nmsg = new List<string>();
             if (split.Count > 2)
@@ -111,10 +109,10 @@ namespace ShiftOS.Frontend.Apps
                 {
                     split.RemoveAt(i);
                 }
-                split.AddRange(Regex.Split(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase), " "));
+                split.AddRange(Regex.Split(Regex.Replace(_messages[rnd.Next(_messages.Count)].Message, "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase), " "));
             }
             split.RemoveAt(rnd.Next(split.Count));
-            split.Add(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
+            split.Add(Regex.Replace(_messages[rnd.Next(_messages.Count)].Message, "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
             string combinedResult = string.Join(" ", split);
             _messages.Add(new ChatMessage
             {

@@ -13,6 +13,18 @@
 		ID: "sploitset_keepalive"
 	},
 	{
+		FriendlyName: "Banana Cow",
+		LootName: "banana.cow.stp",
+		Rarity: 1,
+		PointTo: "banana_cow_stp",
+	},
+	{
+		FriendlyName: "Fire Hydrant Cow",
+		LootName: "fire hydrant.cow.stp",
+		Rarity: 1,
+		PointTo: "fire_hydrant_cow_stp",
+	},
+	{
 		FriendlyName: "SSHardline",
 		LootName: "sploitset_sshardline.stp",
 		Rarity: 1,
