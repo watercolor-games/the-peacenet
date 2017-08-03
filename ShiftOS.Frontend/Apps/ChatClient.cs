@@ -93,6 +93,13 @@ namespace ShiftOS.Frontend.Apps
 
             //Let's try the AI stuff... :P
             var rmsg = _messages[rnd.Next(_messages.Count)].Message;
+            if (!messagecache.Contains(_messages.Last().Message))
+            {
+                messagecache.Add(_messages.Last().Message);
+#if RIP_USERS_SSD
+                SaveCache();
+#endif
+			}
             var split = new List<string>(rmsg.Split(' '));
             List<string> nmsg = new List<string>();
             if (split.Count > 2)
@@ -109,10 +116,10 @@ namespace ShiftOS.Frontend.Apps
                 {
                     split.RemoveAt(i);
                 }
-                split.AddRange(Regex.Split(Regex.Replace(_messages[rnd.Next(_messages.Count)].Message, "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase), " "));
+                split.AddRange(Regex.Split(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase), " "));
             }
             split.RemoveAt(rnd.Next(split.Count));
-            split.Add(Regex.Replace(_messages[rnd.Next(_messages.Count)].Message, "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
+            split.Add(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
             string combinedResult = string.Join(" ", split);
             _messages.Add(new ChatMessage
             {
@@ -125,7 +132,7 @@ namespace ShiftOS.Frontend.Apps
 
         readonly string[] outcomes = new string[] { "ok", "sure", "yeah", "yes", "no", "nope", "alright" };
         Random rnd = new Random();
-        List<string> messagecache = new List<string>();
+        private List<string> messagecache = new List<string>();
 
         public void SendClientMessage(string nick, string message)
         {
@@ -168,20 +175,29 @@ namespace ShiftOS.Frontend.Apps
             }
             gfx.DrawRectangle(vertSeparatorLeft, 0, 1, _bottomseparator, UIManager.SkinTextures["ControlTextColor"]);
         }
-
+		
         public void OnLoad()
         {
-            
+			if (System.IO.File.Exists("aicache.dat"))
+				messagecache = System.IO.File.ReadAllLines("aicache.dat").ToList();
         }
 
         public void OnSkinLoad()
         {
         }
-
+        
         public bool OnUnload()
         {
+			// this doesn't get called... dammit
+			SaveCache();
             return true;
         }
+
+		private void SaveCache()
+		{
+			// It's watching you...
+			System.IO.File.WriteAllLines("aicache.dat", messagecache);
+		}
 
         public void OnUpgrade()
         {

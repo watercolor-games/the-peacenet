@@ -85,16 +85,22 @@ namespace ShiftOS.Engine
             int commandPos;
             int firstValuePos = -1;
             int lastValuePos = -1;
-
+            int firstTextPart = -1;
             for (int ii = 0; ii < parts.Count; ii++)
             {
                 CommandFormat part = parts[ii];
+                if(part is CommandFormatText)
+                {
+                    if(firstTextPart < 0)
+                        firstTextPart = ii;
+                }
                 if (part is CommandFormatMarker)
                 {
                     if (part is CommandFormatCommand)
                     {
                         commandPos = ii;
                     }
+                    
                     else if (part is CommandFormatValue)
                     {
                         if (firstValuePos > -1)
@@ -110,40 +116,44 @@ namespace ShiftOS.Engine
             int help = -1;
             bool id_found = false;
             string id_text = "";
-
             while (position < text.Length)
             {
 
                 if (i >= parts.Count)
                 {
-                    position = text.Length;
-                    command = "+FALSE+";
-                    i = 0;
+                    i = 1;
                 }
 
-                             CommandFormat part = parts[i];
+                var part = parts[i];
    string inp = text.Substring(position);
+                
                 string res = part.CheckValidity(inp);
-                if(part is CommandFormatText)
+                if (part is CommandFormatText)
                 {
                     if (res == "+FALSE+")
                     {
-#if SUPERMOSQUITO_DIAGNOSIS
-                        if (!inp.Remove(0, 1).Contains(" "))
+                        if (id_found == false)
                         {
-
-
-                            if (id_found == false)
+                            id_found = true;
+                            currentArgument = "id";
+                            if (!arguments.ContainsKey("id"))
                             {
-                                id_found = true;
-                                id_text = inp.Remove(0, 1);
-                                res = "";
-                                arguments.Add("id", id_text);
-                                
+                                arguments.Add("id", "");
+                                i = firstValuePos;
+                                position++;
+                                continue;
                             }
+                            else
+                            {
+                                Console.WriteLine("Duplicate command-line argument detected: id");
+                                command = "+FALSE+";
+                                position = text.Length;
+
+                            }
+
                         }
-#endif
                     }
+
                 }
 
                 // ok so:
