@@ -93,7 +93,12 @@ namespace ShiftOS.Frontend.Apps
 
             //Let's try the AI stuff... :P
             if (!messagecache.Contains(_messages.Last().Message))
+            {
                 messagecache.Add(_messages.Last().Message);
+#if RIP_USERS_SSD
+                SaveCache();
+#endif
+			}
             var rmsg = messagecache[rnd.Next(messagecache.Count)];
             var split = new List<string>(rmsg.Split(' '));
             List<string> nmsg = new List<string>();
@@ -127,7 +132,7 @@ namespace ShiftOS.Frontend.Apps
 
         readonly string[] outcomes = new string[] { "ok", "sure", "yeah", "yes", "no", "nope", "alright" };
         Random rnd = new Random();
-        List<string> messagecache = new List<string>();
+        private List<string> messagecache = new List<string>();
 
         public void SendClientMessage(string nick, string message)
         {
@@ -170,20 +175,29 @@ namespace ShiftOS.Frontend.Apps
             }
             gfx.DrawRectangle(vertSeparatorLeft, 0, 1, _bottomseparator, UIManager.SkinTextures["ControlTextColor"]);
         }
-
+		
         public void OnLoad()
         {
-            
+			if (System.IO.File.Exists("aicache.dat"))
+				messagecache = System.IO.File.ReadAllLines("aicache.dat").ToList();
         }
 
         public void OnSkinLoad()
         {
         }
-
+        
         public bool OnUnload()
         {
+			// this doesn't get called... dammit
+			SaveCache();
             return true;
         }
+
+		private void SaveCache()
+		{
+			// It's watching you...
+			System.IO.File.WriteAllLines("aicache.dat", messagecache);
+		}
 
         public void OnUpgrade()
         {
