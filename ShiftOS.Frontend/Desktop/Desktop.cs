@@ -333,7 +333,7 @@ namespace ShiftOS.Frontend.Desktop
             int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
             int offset = initialGap;
 
-            foreach(var pbtn in PanelButtons)
+            foreach(var pbtn in PanelButtons.ToArray())
             {
                 offset += LoadedSkin.PanelButtonFromLeft.X;
 

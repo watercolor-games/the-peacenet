@@ -254,15 +254,18 @@ namespace ShiftOS.Frontend
                     var missionattrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
                     if(missionattrib != null)
                     {
-                        found = true;
-                        Console.WriteLine();
-                        Console.WriteLine($@"{missionattrib.Name} (id {missionattrib.StoryID})
+                        if (!Shiftorium.UpgradeInstalled(missionattrib.StoryID))
+                        {
+                            found = true;
+                            Console.WriteLine();
+                            Console.WriteLine($@"{missionattrib.Name} (id {missionattrib.StoryID})
 ------------------------------------
 
 assigner: {missionattrib.Assigner}
 cp reward: {missionattrib.CodepointAward}
 
 {missionattrib.Description}");
+                        }
                     }
                 }
             }
