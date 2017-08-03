@@ -134,23 +134,27 @@ namespace ShiftOS.Frontend.GUI
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
 
+            int textY = (Height - _font.Height) / 2;
+            int caretHeight = _font.Height;
+            
+
             if (!string.IsNullOrWhiteSpace(Text))
             {
-                gfx.DrawString(Text, (int)(2 - _textDrawOffset), 2, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
+                gfx.DrawString(Text, (int)(2 - _textDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
             }
             if (IsFocusedControl)
             {
                 if (caretMS <= 250)
                 {
                     //draw caret
-                    gfx.DrawRectangle((int)(caretPos - _textDrawOffset), 2, 2, Height - 4, UIManager.SkinTextures["ControlTextColor"]);
+                    gfx.DrawRectangle((int)(caretPos - _textDrawOffset), textY, 2, caretHeight, UIManager.SkinTextures["ControlTextColor"]);
                 }
             }
             else
             {
                 if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
                 {
-                    gfx.DrawString(_label, 2, 2, Color.Gray, _font);
+                    gfx.DrawString(_label, 2, textY, Color.Gray, _font);
                 }
             }
 
