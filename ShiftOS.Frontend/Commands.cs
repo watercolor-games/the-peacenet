@@ -44,6 +44,166 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.Frontend
 {
+    public static class Cowsay
+    {
+        [Command("cowsay")]
+        [RequiresArgument("id")]
+        public static void Say(Dictionary<string, object> args)
+        {
+            var builder = new List<string>();
+            int speechlen = (args.ContainsKey("width")) ? Convert.ToInt32(args["width"].ToString()) : 50;
+            string speech = args["id"].ToString();
+            AnimalMode _mode = AnimalMode.Normal;
+            if (args.ContainsKey("mode"))
+            {
+                try
+                {
+                    _mode = (AnimalMode)Enum.Parse(typeof(AnimalMode), args["mode"].ToString());
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid animal mode. Valid animal modes are:");
+                    foreach(var name in Enum.GetNames(typeof(AnimalMode)))
+                    {
+                        Console.WriteLine(" - " + name);
+                    }
+                    return;
+                }
+
+            }
+            DrawSpeechBubble(ref builder, speechlen, speech);
+            DrawCow(ref builder, _mode);
+            Console.WriteLine(string.Join(Environment.NewLine, builder.ToArray()));
+        }
+
+        public static string[] SplitInParts(this string value, int width)
+        {
+            List<string> nvalue = new List<string>();
+            while(value.Length > 0)
+            {
+                string substr = value.Substring(0, Math.Min(value.Length, width));
+                value = value.Remove(0, substr.Length);
+                nvalue.Add(substr);
+            }
+
+            return nvalue.ToArray();
+        }
+
+        public static string RepeatChar(this char value, int amount)
+        {
+            string nvalue = "";
+            for(int i = 0; i < amount; i++)
+            {
+                nvalue += value;
+            }
+            return nvalue;
+        }
+
+        private static void DrawSpeechBubble(ref List<string> Builder, int balloonWidth, string speech)
+        {
+            var lineLength = balloonWidth - 4;
+            var output = speech.SplitInParts((int)lineLength).ToArray();
+            var lines = output.Length;
+            var wrapperLineLength = (lines == 1 ? output.First().Length : (int)balloonWidth - 4) + 2;
+
+            Builder.Add($" {'_'.RepeatChar(wrapperLineLength)}");
+            if (lines == 1)
+            {
+                Builder.Add($"< {output.First()} >");
+            }
+            else
+            {
+                for (var i = 0; i < lines; i++)
+                {
+                    char lineStartChar = '|';
+                    char lineEndChar = '|';
+
+                    if (i == 0)
+                    {
+                        lineStartChar = '/';
+                        lineEndChar = '\\';
+                    }
+                    else if (i == lines - 1)
+                    {
+                        lineStartChar = '\\';
+                        lineEndChar = '/';
+                    }
+
+                    var neededPadding = (int)balloonWidth - 4 - output[i].Length;
+                    Builder.Add($"{lineStartChar} {output[i]}{' '.RepeatChar(neededPadding)} {lineEndChar}");
+                }
+            }
+
+            Builder.Add($" {'-'.RepeatChar(wrapperLineLength)}");
+        }
+
+        public enum AnimalMode
+        {
+            Normal,
+            Borg,
+            Dead,
+            Greedy,
+            Paranoid,
+            Stoned,
+            Tired,
+            Wired,
+            Youthful
+        }
+
+        private static void DrawCow(ref List<string> Builder, AnimalMode AnimalMode)
+        {
+            var startingLinePadding = Builder.First().Length / 4;
+
+            var eyeChar = 'o';
+            var tongueChar = ' ';
+
+            switch (AnimalMode)
+            {
+                case AnimalMode.Borg:
+                    eyeChar = '=';
+                    break;
+
+                case AnimalMode.Dead:
+                    eyeChar = 'x';
+                    tongueChar = 'U';
+                    break;
+
+                case AnimalMode.Greedy:
+                    eyeChar = '$';
+                    break;
+
+                case AnimalMode.Paranoid:
+                    eyeChar = '@';
+                    break;
+
+                case AnimalMode.Stoned:
+                    eyeChar = '*';
+                    tongueChar = 'U';
+                    break;
+
+                case AnimalMode.Tired:
+                    eyeChar = '-';
+                    break;
+
+                case AnimalMode.Wired:
+                    eyeChar = 'O';
+                    break;
+
+                case AnimalMode.Youthful:
+                    eyeChar = '.';
+                    break;
+
+            }
+
+            Builder.Add($"{' '.RepeatChar(startingLinePadding)}\\   ^__^");
+            Builder.Add($"{' '.RepeatChar(startingLinePadding)} \\  ({eyeChar.RepeatChar(2)})\\_______");
+            Builder.Add($"{' '.RepeatChar(startingLinePadding)}    (__)\\       )\\/\\");
+            Builder.Add($"{' '.RepeatChar(startingLinePadding)}     {tongueChar.RepeatChar(1)}  ||----w |");
+            Builder.Add($"{' '.RepeatChar(startingLinePadding)}        ||     ||");
+        }
+    }
+
+
     public static class MissionsCommands
     {
         [Command("startmission")]

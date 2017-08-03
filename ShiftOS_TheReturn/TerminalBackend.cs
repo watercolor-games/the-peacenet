@@ -233,9 +233,13 @@ namespace ShiftOS.Engine
                     CommandHandler.Invoke(null, new[] { args });
 
                 }
-                catch
+                catch (System.Reflection.TargetParameterCountException)
                 {
                     CommandHandler.Invoke(null, null);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
                 CommandFinished?.Invoke(Localization.Parse(this.CommandInfo.name), args);
             }
