@@ -11,6 +11,7 @@ using ShiftOS.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using static ShiftOS.Engine.SkinEngine;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ShiftOS.Frontend.Apps
 {
@@ -23,17 +24,12 @@ namespace ShiftOS.Frontend.Apps
         private TextInput _input = null;
         private Button _send = null;
         private List<ChatMessage> _messages = new List<ChatMessage>();
-
-
+        const int usersListWidth = 100;
+        const int topicBarHeight = 24;
+        public IRCNetwork NetInfo = null;
 
         public ChatClient()
         {
-            _messages.Add(new ChatMessage
-            {
-                Timestamp = DateTime.Now,
-                Author = "michael",
-                Message = "Welcome to ShiftOS IRC! Type in the box below to type a message."
-            });
             _send = new GUI.Button();
             _input = new GUI.TextInput();
             _sendprompt = new GUI.TextControl();
@@ -79,6 +75,16 @@ namespace ShiftOS.Frontend.Apps
                 Invalidate();
                 requiresRepaint = false;
             }
+        }
+
+        public bool ChannelConnected
+        {
+            get; private set;
+        }
+
+        public bool NetworkConnected
+        {
+            get; private set;
         }
 
         public void SendMessage()
@@ -150,13 +156,16 @@ namespace ShiftOS.Frontend.Apps
 
         protected override void OnPaint(GraphicsContext gfx)
         {
+            int messagesTop = NetworkConnected ? topicBarHeight : 0;
+            int messagesFromRight = ChannelConnected ? usersListWidth : 0;
+
             int _bottomseparator = _send.Y - 10;
             gfx.DrawRectangle(0, _bottomseparator, Width, 1, UIManager.SkinTextures["ControlTextColor"]);
             int nnGap = 25;
             int messagebottom = _bottomseparator - 5;
             foreach (var msg in _messages.OrderByDescending(x=>x.Timestamp))
             {
-                if (Height - messagebottom <= 0)
+                if (Height - messagebottom <= messagesTop)
                     break;
                 var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
                 var nnProper = $"<{msg.Author}>";
@@ -166,16 +175,134 @@ namespace ShiftOS.Frontend.Apps
                 vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X+2));
                 if (old != vertSeparatorLeft)
                     requiresRepaint = true;
-                var msgMeasure = gfx.MeasureString(msg.Message, LoadedSkin.TerminalFont, Width - vertSeparatorLeft - 4);
+                var msgMeasure = gfx.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
                 messagebottom -= (int)msgMeasure.Y;
                 gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
-                var nnColor = (msg.Author == SaveSystem.CurrentSave.Username) ? Color.Red : Color.LightGreen;
+                var nnColor = Color.LightGreen;
+
+                if (msg.Author == SaveSystem.CurrentSave.Username)
+                    nnColor = Color.Red;
+                else
+                {
+                    if (NetInfo != null)
+                    {
+                        if (NetInfo.Channel != null)
+                        {
+                            if (NetInfo.Channel.OnlineUsers != null)
+                            {
+                                var user = NetInfo.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == msg.Author);
+                                if(user != null)
+                                {
+                                    switch(user.Permission)
+                                    {
+                                        case IRCPermission.ChanOp:
+                                            nnColor = Color.Orange;
+                                            break;
+                                        case IRCPermission.NetOp:
+                                            nnColor = Color.Yellow;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont);
-                gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Width - vertSeparatorLeft - 4);
+                var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
+                if (msg.Message.Contains(SaveSystem.CurrentSave.Username))
+                    mcolor = Color.Orange;
+                gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
             }
-            gfx.DrawRectangle(vertSeparatorLeft, 0, 1, _bottomseparator, UIManager.SkinTextures["ControlTextColor"]);
+
+            string topic = "";
+            if (NetworkConnected)
+            {
+                topic = $"{NetInfo.FriendlyName}: {NetInfo.MOTD}";
+                if (ChannelConnected)
+                {
+                    topic = $"#{NetInfo.Channel.Tag} | {NetInfo.Channel.Topic}";
+                    int usersStartY = messagesTop;
+                    foreach(var user in NetInfo.Channel.OnlineUsers.OrderBy(x=>x.Nickname))
+                    {
+                        var measure = gfx.MeasureString(user.Nickname, LoadedSkin.TerminalFont);
+
+                        var nnColor = Color.LightGreen;
+                        if (user.Nickname == SaveSystem.CurrentSave.Username)
+                            nnColor = Color.Red;
+                        else
+                        {
+                            switch (user.Permission)
+                            {
+                                case IRCPermission.ChanOp:
+                                    nnColor = Color.Orange;
+                                    break;
+                                case IRCPermission.NetOp:
+                                    nnColor = Color.Yellow;
+                                    break;
+                            }
+                        }
+
+                        gfx.DrawString(user.Nickname, Width - messagesFromRight + 2, usersStartY, nnColor, LoadedSkin.TerminalFont);
+
+                        usersStartY += (int)measure.Y;
+                    }
+                    gfx.DrawRectangle(Width - messagesFromRight, messagesTop, 1, _bottomseparator - messagesTop, LoadedSkin.ControlTextColor.ToMonoColor());
+                }
+                gfx.DrawString(topic, 0, 0, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
+                gfx.DrawRectangle(0, messagesTop, Width, 1, LoadedSkin.ControlTextColor.ToMonoColor());
+            }
+
+            gfx.DrawRectangle(vertSeparatorLeft, messagesTop, 1, _bottomseparator - messagesTop, UIManager.SkinTextures["ControlTextColor"]);
         }
 		
+        public void FakeConnection(IRCNetwork net)
+        {
+            NetInfo = net;
+            var cs = net.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == "ChanServ");
+            if (cs == null)
+                net.Channel.OnlineUsers.Add(new IRCUser
+                {
+                    Nickname = "ChanServ",
+                    Permission = IRCPermission.ChanOp
+                });
+            var t = new Thread(() =>
+            {
+                SendClientMessage("shiftos", $"Looking up {net.SystemName}");
+                Thread.Sleep(250);
+                SendClientMessage("*", $"Connecting to {net.SystemName} ({net.SystemName}:6667)");
+                Thread.Sleep(1500);
+                SendClientMessage("*", "Connected. Now logging in.");
+                Thread.Sleep(25);
+                SendClientMessage("*", "*** Looking up your hostname... ");
+                Thread.Sleep(2000);
+                SendClientMessage("*", "***Checking Ident");
+                Thread.Sleep(10);
+                SendClientMessage("*", "*** Couldn't look up your hostname");
+                Thread.Sleep(10);
+                SendClientMessage("*", "***No Ident response");
+                Thread.Sleep(750);
+                SendClientMessage("*", "Capabilities supported: account-notify extended-join identify-msg multi-prefix sasl");
+                Thread.Sleep(250);
+                SendClientMessage("*", "Capabilities requested: account-notify extended-join identify-msg multi-prefix");
+                Thread.Sleep(250);
+                SendClientMessage("*", "Capabilities acknowledged: account-notify extended-join identify-msg multi-prefix");
+                Thread.Sleep(500);
+                SendClientMessage("*", $"Welcome to the {net.FriendlyName} {SaveSystem.CurrentSave.Username}");
+                NetworkConnected = true;
+                Thread.Sleep(250);
+                SendClientMessage("*", $"{SaveSystem.CurrentSave.Username} sets mode +i on {SaveSystem.CurrentSave.Username}");
+                Thread.Sleep(300);
+                SendClientMessage("shiftos", "Joining #" + net.Channel.Tag);
+                Thread.Sleep(100);
+                ChannelConnected = true;
+                SendClientMessage("shiftos", $"{net.Channel.Topic}: {net.Channel.OnlineUsers.Count} users online");
+                Thread.Sleep(10);
+                SendClientMessage("ChanServ", "ChanServ sets mode -v on " + SaveSystem.CurrentSave.Username);
+            });
+            t.Start();
+        }
+        
         public void OnLoad()
         {
 			if (System.IO.File.Exists("aicache.dat"))

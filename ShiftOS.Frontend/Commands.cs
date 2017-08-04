@@ -44,6 +44,30 @@ using ShiftOS.Engine;
 
 namespace ShiftOS.Frontend
 {
+    public static class FrontendDebugCommands
+    {
+        /// <summary>
+        /// Debug command to drop a fatal objective/hack failure screen in the form of an emergency alert system-esque screen.
+        /// 
+        /// ...Because WE'RE CANADA.
+        /// </summary>
+        [Command("drop_eas")]
+        [ShellConstraint("shiftos_debug> ")]
+        [RequiresArgument("id")]
+        public static void DropEAS(Dictionary<string, object> args)
+        {
+            Story.DisplayFailure(args["id"].ToString());
+        }
+
+        [Command("loaddefaultskn")]
+        [ShellConstraint("shiftos_debug> ")]
+        public static void LoadDefault()
+        {
+            Utils.Delete(Paths.GetPath("skin.json"));
+            SkinEngine.Init();
+        }
+    }
+
     public static class Cowsay
     {
         [Command("cowsay")]

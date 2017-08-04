@@ -19,10 +19,28 @@ namespace ShiftOS.Frontend
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
+        private bool isFailing = false;
+        private double failFadeInMS = 0;
+        private const double failFadeMaxMS = 500;
+        private string failMessage = "";
+        private string failRealMessage = "";
+        private double failFadeOutMS = 0;
+        private bool failEnded = false;
+        private double failCharAddMS = 0;
+
         private bool DisplayDebugInfo = false;
 
         public ShiftOS()
         {
+            Story.FailureRequested += (message) =>
+            {
+                failMessage = "";
+                failRealMessage = message;
+                isFailing = true;
+                failFadeInMS = 0;
+                failFadeOutMS = 0;
+                failEnded = false;
+            };
             graphicsDevice = new GraphicsDeviceManager(this);
             var uconf = Objects.UserConfig.Get();
             graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
@@ -154,115 +172,163 @@ namespace ShiftOS.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (UIManager.CrossThreadOperations.Count > 0)
+            if (isFailing)
             {
-                var action = UIManager.CrossThreadOperations.Dequeue();
-                action?.Invoke();
-            }
-
-            //Let's get the mouse state
-            var mouseState = Mouse.GetState(this.Window);
-                LastMouseState = mouseState;
-            
-                UIManager.ProcessMouseState(LastMouseState, mouseMS);
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                mouseMS = 0;
-            }
-            else
-            {
-                mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            }
-            //So we have mouse input, and the UI layout system working...
-
-            //But an OS isn't useful without the keyboard!
-
-            //Let's see how keyboard input works.
-
-            //Hmmm... just like the mouse...
-            var keystate = Keyboard.GetState();
-
-            //Simple... just iterate through this list and generate some key events?
-            var keys = keystate.GetPressedKeys();
-            if (keys.Length > 0)
-            {
-                var key = keys.FirstOrDefault(x => x != Keys.LeftControl && x != Keys.RightControl && x != Keys.LeftShift && x != Keys.RightShift && x != Keys.LeftAlt && x != Keys.RightAlt);
-                if(lastKey != key)
+                if (failFadeInMS < failFadeMaxMS)
+                    failFadeInMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if(failEnded == false)
                 {
-                    kb_elapsedms = 0;
-                    lastKey = key;
-                }
-            }
-            if (keystate.IsKeyDown(lastKey))
-            {
-                if (kb_elapsedms == 0 || kb_elapsedms >= 500)
-                {
-                    if (lastKey == Keys.F11)
+                    shroudOpacity = (float)GUI.ProgressBar.linear(failFadeInMS, 0, failFadeMaxMS, 0, 1);
+                    if(shroudOpacity >= 1)
                     {
-                        UIManager.Fullscreen = !UIManager.Fullscreen;
-                    }
-                    else
-                    {
-                        var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
-                        var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
-                        var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
-
-                        if (control && lastKey == Keys.D)
+                        if (failMessage == failRealMessage + "|")
                         {
-                            DisplayDebugInfo = !DisplayDebugInfo;
+                            var keydata = Keyboard.GetState();
+
+                            if (keydata.GetPressedKeys().FirstOrDefault(x => x != Keys.None) != Keys.None)
+                            {
+                                failEnded = true;
+                            }
                         }
-                        else if(control && lastKey == Keys.E)
-                        {
-                            UIManager.ExperimentalEffects = !UIManager.ExperimentalEffects;
-                        }                        
                         else
                         {
-                            var e = new KeyEvent(control, alt, shift, lastKey);
-                            UIManager.ProcessKeyEvent(e);
+                            failCharAddMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+                            if (failCharAddMS >= 75)
+                            {
+                                failMessage = failRealMessage.Substring(0, failMessage.Length) + "|";
+                                failCharAddMS = 0;
+                            }
                         }
                     }
-                }                
-                kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
-            }
-            else
-            {
-                kb_elapsedms = 0;
-            }
-
-            //Cause layout update on all elements
-            UIManager.LayoutUpdate(gameTime);
-
-            timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
-
-            if(timeSinceLastPurge > 2)
-            {
-                GraphicsContext.StringCaches.Clear();
-                timeSinceLastPurge = 0;
-                GC.Collect();
-            }
-
-
-            //Some hackables have a connection timeout applied to them.
-            //We must update timeout values here, and disconnect if the timeout
-            //hits zero.
-
-            if(Hacking.CurrentHackable != null)
-            {
-                if (Hacking.CurrentHackable.DoConnectionTimeout)
+                }
+                else
                 {
-                    Hacking.CurrentHackable.MillisecondsCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
-                    shroudOpacity = (float)GUI.ProgressBar.linear(Hacking.CurrentHackable.MillisecondsCountdown, Hacking.CurrentHackable.TotalConnectionTimeMS, 0, 0, 1);
-                    if (Hacking.CurrentHackable.MillisecondsCountdown <= 0)
+                    if(failFadeOutMS < failFadeMaxMS)
                     {
-                        Hacking.FailHack();
+                        failFadeOutMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    }
+
+                    shroudOpacity = 1 - (float)GUI.ProgressBar.linear(failFadeOutMS, 0, failFadeMaxMS, 0, 1);
+
+                    if(shroudOpacity <= 0)
+                    {
+                        isFailing = false;
                     }
                 }
             }
             else
             {
-                shroudOpacity = 0;
+                if (UIManager.CrossThreadOperations.Count > 0)
+                {
+                    var action = UIManager.CrossThreadOperations.Dequeue();
+                    action?.Invoke();
+                }
+
+                //Let's get the mouse state
+                var mouseState = Mouse.GetState(this.Window);
+                LastMouseState = mouseState;
+
+                UIManager.ProcessMouseState(LastMouseState, mouseMS);
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    mouseMS = 0;
+                }
+                else
+                {
+                    mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                }
+                //So we have mouse input, and the UI layout system working...
+
+                //But an OS isn't useful without the keyboard!
+
+                //Let's see how keyboard input works.
+
+                //Hmmm... just like the mouse...
+                var keystate = Keyboard.GetState();
+
+                //Simple... just iterate through this list and generate some key events?
+                var keys = keystate.GetPressedKeys();
+                if (keys.Length > 0)
+                {
+                    var key = keys.FirstOrDefault(x => x != Keys.LeftControl && x != Keys.RightControl && x != Keys.LeftShift && x != Keys.RightShift && x != Keys.LeftAlt && x != Keys.RightAlt);
+                    if (lastKey != key)
+                    {
+                        kb_elapsedms = 0;
+                        lastKey = key;
+                    }
+                }
+                if (keystate.IsKeyDown(lastKey))
+                {
+                    if (kb_elapsedms == 0 || kb_elapsedms >= 500)
+                    {
+                        if (lastKey == Keys.F11)
+                        {
+                            UIManager.Fullscreen = !UIManager.Fullscreen;
+                        }
+                        else
+                        {
+                            var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
+                            var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
+                            var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
+
+                            if (control && lastKey == Keys.D)
+                            {
+                                DisplayDebugInfo = !DisplayDebugInfo;
+                            }
+                            else if (control && lastKey == Keys.E)
+                            {
+                                UIManager.ExperimentalEffects = !UIManager.ExperimentalEffects;
+                            }
+                            else
+                            {
+                                var e = new KeyEvent(control, alt, shift, lastKey);
+                                UIManager.ProcessKeyEvent(e);
+                            }
+                        }
+                    }
+                    kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+                else
+                {
+                    kb_elapsedms = 0;
+                }
+
+                //Cause layout update on all elements
+                UIManager.LayoutUpdate(gameTime);
+
+                timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (timeSinceLastPurge > 2)
+                {
+                    GraphicsContext.StringCaches.Clear();
+                    timeSinceLastPurge = 0;
+                    GC.Collect();
+                }
+
+
+                //Some hackables have a connection timeout applied to them.
+                //We must update timeout values here, and disconnect if the timeout
+                //hits zero.
+
+                if (Hacking.CurrentHackable != null)
+                {
+                    if (Hacking.CurrentHackable.DoConnectionTimeout)
+                    {
+                        Hacking.CurrentHackable.MillisecondsCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                        shroudOpacity = (float)GUI.ProgressBar.linear(Hacking.CurrentHackable.MillisecondsCountdown, Hacking.CurrentHackable.TotalConnectionTimeMS, 0, 0, 1);
+                        if (Hacking.CurrentHackable.MillisecondsCountdown <= 0)
+                        {
+                            Hacking.FailHack();
+                        }
+                    }
+                }
+                else
+                {
+                    shroudOpacity = 0;
+                }
             }
+
             base.Update(gameTime);
         }
 
@@ -300,6 +366,21 @@ namespace ShiftOS.Frontend
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), Color.Red * shroudOpacity);
+
+            if(isFailing && failFadeInMS >= failFadeMaxMS)
+            {
+                var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0,0, UIManager.Viewport.Width, UIManager.Viewport.Height);
+                string objectiveFailed = "- OBJECTIVE FAILURE -";
+                string prompt = "[press any key to dismiss this message and return to your sentience]";
+                int textMaxWidth = UIManager.Viewport.Width / 3;
+                var topMeasure = gfx.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
+                var msgMeasure = gfx.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
+                var pMeasure = gfx.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
+
+                gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
+                gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
+                gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
+            }
 
             if(Hacking.CurrentHackable != null)
             {

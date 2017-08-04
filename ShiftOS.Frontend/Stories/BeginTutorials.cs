@@ -257,5 +257,57 @@ namespace ShiftOS.Frontend.Stories
                         });
                 });
         }
+
+        [RequiresUpgrade("tutorial_hacking_basics")]
+        [Mission("the_syndicate", "The Syndicate", "You just exploited a server owned by a group known as ShiftSyndicate. They found out, and they see you as a worthy recruit.", 250, "thejackel")]
+        public static void TheSyndicateEntry()
+        {
+            Story.Context.AutoComplete = false;
+            var irc = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Apps.ChatClient) as Apps.ChatClient;
+            if (irc == null)
+            {
+                irc = new Apps.ChatClient();
+                AppearanceManager.SetupWindow(irc);
+            }
+
+            irc.FakeConnection(new Objects.IRCNetwork
+            {
+                SystemName = "shiftsyndicate_irc",
+                FriendlyName = "ShiftSyndicate IRC Network",
+                MOTD = "Welcome to ShiftSyndicate IRC. This network is dedicated to finding out what this Digital Society is and how to break out. Unauthorized users WILL be z-lined.",
+                Channel = new Objects.IRCChannel
+                {
+                    Tag = "recruitment",
+                    Topic = "Artificial intelligence do everything now. Nobody is really here.",
+                    OnlineUsers = new List<Objects.IRCUser>
+                       {
+                           new Objects.IRCUser
+                           {
+                               Nickname = "thejackel",
+                               Permission = Objects.IRCPermission.NetOp
+                           },
+                           new Objects.IRCUser
+                           {
+                               Nickname = SaveSystem.CurrentSave.Username,
+                               Permission = Objects.IRCPermission.User
+                           }
+                       }
+                }
+            });
+            while (!irc.ChannelConnected)
+                Thread.Sleep(10);
+            SendClientMessage(irc, "thejackel", $"Hello there, {SaveSystem.CurrentSave.Username}. Welcome to our network.");
+            SendClientMessage(irc, "thejackel", $"I see you breached our File Transfer Protocol server.");
+            SendClientMessage(irc, "thejackel", $"You may not realize exactly who we are...");
+            SendClientMessage(irc, "thejackel", $"We know about you, and we know what you want.");
+            SendClientMessage(irc, "thejackel", $"");
+
+        }
+
+        public static void SendClientMessage(Apps.ChatClient client, string nick, string message)
+        {
+            Thread.Sleep(message.Length * 25);
+            client.SendClientMessage(nick, message);
+        }
     }
 }

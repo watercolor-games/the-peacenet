@@ -95,6 +95,14 @@ namespace ShiftOS.Engine
         public static StoryContext Context { get; private set; }
         public static event Action<string> StoryComplete;
         public static List<Objective> CurrentObjectives { get; private set; }
+        public static event Action<string> FailureRequested;
+
+        public static void DisplayFailure(string message)
+        {
+            FailureRequested?.Invoke(message);
+        }
+
+
 
         public static void PushObjective(string name, string desc, Func<bool> completeFunc, Action onComplete)
         {
