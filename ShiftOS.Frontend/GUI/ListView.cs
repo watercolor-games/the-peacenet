@@ -169,7 +169,10 @@ namespace ShiftOS.Frontend.GUI
                 if(image != null)
                 {
                     int imageDrawX = _itemx + ((textwidth - texwidth) / 2);
-                    gfx.DrawRectangle(imageDrawX, _itemy, texwidth, texheight, image);
+                    Color tint = Color.White;
+                    if (_items.IndexOf(item) == _selected)
+                        tint = LoadedSkin.ButtonPressedColor.ToMonoColor();
+                    gfx.DrawRectangle(imageDrawX, _itemy, texwidth, texheight, image, tint);
                 }
 
                 int texty = _itemy + texheight;

@@ -94,11 +94,16 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2)
         {
+            DrawLine(x, y, x1, y1, thickness, tex2, Color.White);
+        }
+
+        public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2, Color tint)
+        {
             x += _startx;
             y += _starty;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
-            _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, Color.White, rotation, Vector2.Zero, SpriteEffects.None, 0);
+            _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, tint, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Color color)
@@ -119,9 +124,14 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2)
         {
+            DrawRectangle(x, y, width, height, tex2, Color.White);
+        }
+
+        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint)
+        {
             x += _startx;
             y += _starty;
-            _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), Color.White);
+            _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), tint);
         }
 
         public Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
