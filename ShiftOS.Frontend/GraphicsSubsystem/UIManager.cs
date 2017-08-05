@@ -298,217 +298,139 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
     public static class KeysExtensions
     {
+        /*
+         * Notice: The following keymapping does <i>not</i> take into account the user's keyboard
+         * layout. This is written under the assumption the keyboard is en_US. 
+         * 
+         * @MichaelTheShifter I'm leaving you to figure out how to make this work with other layouts.
+         * 
+         * My suggestion would be to simply do what you are doing with strings, define a JSON file
+         * mapping each character to its associated character.
+         */
+
+        private static Dictionary<Keys, char> keymapDefault = new Dictionary<Keys, char>() {
+            { Keys.Space, ' ' },
+            { Keys.Tab, '\t' },
+            { Keys.Enter, '\n' },
+            { Keys.Back, '\b' },
+            { Keys.A, 'a'},
+            { Keys.B, 'b'},
+            { Keys.C, 'c' },
+            { Keys.D, 'd' },
+            { Keys.E, 'e' },
+            { Keys.F, 'f' },
+            { Keys.G, 'g' },
+            { Keys.H, 'h' },
+            { Keys.I, 'i' },
+            { Keys.J, 'j' },
+            { Keys.K, 'k' },
+            { Keys.L, 'l' },
+            { Keys.M, 'm' },
+            { Keys.N, 'n' },
+            { Keys.O, 'o' },
+            { Keys.P, 'p' },
+            { Keys.Q, 'q' },
+            { Keys.R, 'r' },
+            { Keys.S, 's' },
+            { Keys.T, 't' },
+            { Keys.U, 'u' },
+            { Keys.V, 'v' },
+            { Keys.W, 'w' },
+            { Keys.X, 'x' },
+            { Keys.Y, 'y' },
+            { Keys.Z, 'z' },
+            { Keys.D0, '0' },
+            { Keys.D1, '1' },
+            { Keys.D2, '2' },
+            { Keys.D3, '3' },
+            { Keys.D4, '4' },
+            { Keys.D5, '5' },
+            { Keys.D6, '6' },
+            { Keys.D7, '7' },
+            { Keys.D8, '8' },
+            { Keys.D9, '9' },
+            { Keys.OemTilde, '`' },
+            { Keys.OemMinus, '-' },
+            { Keys.OemPlus, '+' },
+            { Keys.OemOpenBrackets, '[' },
+            { Keys.OemCloseBrackets, ']'},
+            { Keys.OemBackslash, '\\'},
+            { Keys.OemPipe, '\\' },
+            { Keys.OemSemicolon, ';' },
+            { Keys.OemQuotes, '\'' },
+            { Keys.OemComma, ',' },
+            { Keys.OemPeriod, '.' },
+            { Keys.OemQuestion, '/' },
+        };
+
+        private static Dictionary<Keys, char> keymapShift = new Dictionary<Keys, char> () {
+            { Keys.Space, ' ' },
+            { Keys.Tab, '\t' },
+            { Keys.Enter, '\n' },
+            { Keys.Back, '\b' },
+            { Keys.A, 'A'},
+            { Keys.B, 'B'},
+            { Keys.C, 'C' },
+            { Keys.D, 'D' },
+            { Keys.E, 'E' },
+            { Keys.F, 'F' },
+            { Keys.G, 'G' },
+            { Keys.H, 'H' },
+            { Keys.I, 'I' },
+            { Keys.J, 'J' },
+            { Keys.K, 'K' },
+            { Keys.L, 'L' },
+            { Keys.M, 'M' },
+            { Keys.N, 'N' },
+            { Keys.O, 'O' },
+            { Keys.P, 'P' },
+            { Keys.Q, 'Q' },
+            { Keys.R, 'R' },
+            { Keys.S, 'S' },
+            { Keys.T, 'T' },
+            { Keys.U, 'U' },
+            { Keys.V, 'V' },
+            { Keys.W, 'W' },
+            { Keys.X, 'X' },
+            { Keys.Y, 'Y' },
+            { Keys.Z, 'Z' },
+            { Keys.D0, ')' },
+            { Keys.D1, '!' },
+            { Keys.D2, '@' },
+            { Keys.D3, '#' },
+            { Keys.D4, '$' },
+            { Keys.D5, '%' },
+            { Keys.D6, '^' },
+            { Keys.D7, '&' },
+            { Keys.D8, '*' },
+            { Keys.D9, '(' },
+            { Keys.OemTilde, '~' },
+            { Keys.OemMinus, '_' },
+            { Keys.OemPlus, '+' },
+            { Keys.OemOpenBrackets, '{' },
+            { Keys.OemCloseBrackets, '}'},
+            { Keys.OemBackslash, '|'},
+            { Keys.OemPipe, '|' },
+            { Keys.OemSemicolon, ':' },
+            { Keys.OemQuotes, '\'' },
+            { Keys.OemComma, '<' },
+            { Keys.OemPeriod, '>' },
+            { Keys.OemQuestion, '?' },
+        };
+
         public static char ToCharacter(this Keys key, bool shift)
         {
-            char c = '\0';
-            switch (key)
+            if (shift && keymapShift.ContainsKey(key))
             {
-                case Keys.Space:
-                    c = ' ';
-                    break;
-                case Keys.A:
-                    c = 'a';
-                    break;
-                case Keys.B:
-                    c = 'b';
-                    break;
-                case Keys.C:
-                    c = 'c';
-                    break;
-                case Keys.D:
-                    c = 'd';
-                    break;
-                case Keys.E:
-                    c = 'e';
-                    break;
-                case Keys.F:
-                    c = 'f';
-                    break;
-                case Keys.G:
-                    c = 'g';
-                    break;
-                case Keys.H:
-                    c = 'h';
-                    break;
-                case Keys.I:
-                    c = 'i';
-                    break;
-                case Keys.J:
-                    c = 'j';
-                    break;
-                case Keys.K:
-                    c = 'k';
-                    break;
-                case Keys.L:
-                    c = 'l';
-                    break;
-                case Keys.M:
-                    c = 'm';
-                    break;
-                case Keys.N:
-                    c = 'n';
-                    break;
-                case Keys.O:
-                    c = 'o';
-                    break;
-                case Keys.P:
-                    c = 'p';
-                    break;
-                case Keys.Q:
-                    c = 'q';
-                    break;
-                case Keys.R:
-                    c = 'r';
-                    break;
-                case Keys.S:
-                    c = 's';
-                    break;
-                case Keys.T:
-                    c = 't';
-                    break;
-                case Keys.U:
-                    c = 'u';
-                    break;
-                case Keys.V:
-                    c = 'v';
-                    break;
-                case Keys.W:
-                    c = 'w';
-                    break;
-                case Keys.X:
-                    c = 'x';
-                    break;
-                case Keys.Y:
-                    c = 'y';
-                    break;
-                case Keys.Z:
-                    c = 'z';
-                    break;
-                case Keys.D0:
-                    if (shift)
-                        c = ')';
-                    else
-                        c = '0';
-                    break;
-                case Keys.D1:
-                    if (shift)
-                        c = '!';
-                    else
-                        c = '1';
-                    break;
-                case Keys.D2:
-                    if (shift)
-                        c = '@';
-                    else
-                        c = '2';
-                    break;
-                case Keys.D3:
-                    if (shift)
-                        c = '#';
-                    else
-                        c = '3';
-                    break;
-                case Keys.D4:
-                    if (shift)
-                        c = '$';
-                    else
-                        c = '4';
-                    break;
-                case Keys.D5:
-                    if (shift)
-                        c = '%';
-                    else
-                        c = '5';
-                    break;
-                case Keys.D6:
-                    if (shift)
-                        c = '^';
-                    else
-                        c = '6';
-                    break;
-                case Keys.D7:
-                    if (shift)
-                        c = '&';
-                    else
-                        c = '7';
-                    break;
-                case Keys.D8:
-                    if (shift)
-                        c = '*';
-                    else
-                        c = '8';
-                    break;
-                case Keys.D9:
-                    if (shift)
-                        c = '(';
-                    else
-                        c = '9';
-                    break;
-                case Keys.OemBackslash:
-                    if (shift)
-                        c = '|';
-                    else
-                        c = '\\';
-                    break;
-                case Keys.OemCloseBrackets:
-                    if (shift)
-                        c = '}';
-                    else
-                        c = ']';
-                    break;
-                case Keys.OemComma:
-                    if (shift)
-                        c = '<';
-                    else
-                        c = ',';
-                    break;
-                case Keys.OemPeriod:
-                    if (shift)
-                        c = '>';
-                    else
-                        c = '.';
-                    break;
-                case Keys.OemQuestion:
-                    if (shift)
-                        c = '?';
-                    else
-                        c = '/';
-                    break;
-                case Keys.OemSemicolon:
-                    if (shift)
-                        c = ':';
-                    else
-                        c = ';';
-                    break;
-                case Keys.OemQuotes:
-                    if (shift)
-                        c = '"';
-                    else
-                        c = '\'';
-                    break;
-                case Keys.OemTilde:
-                    if (shift)
-                        c = '~';
-                    else
-                        c = '`';
-                    break;
-                case Keys.OemMinus:
-                    if (shift)
-                        c = '_';
-                    else
-                        c = '-';
-                    break;
-                case Keys.OemPlus:
-                    if (shift)
-                        c = '+';
-                    else
-                        c = '=';
-                    break;
+                return keymapShift[key];
             }
-            if (char.IsLetter(c))
-                if (shift)
-                    c = char.ToUpper(c);
-            return c;
+
+            if (!shift && keymapDefault.ContainsKey(key))
+            {
+                return keymapDefault[key];
+            }
+
+            return '\0'; // Ideally all keys should be included in this map
         }
     }
 }
