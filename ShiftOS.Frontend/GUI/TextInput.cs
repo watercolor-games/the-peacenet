@@ -78,14 +78,6 @@ namespace ShiftOS.Frontend.GUI
                     _index--;
                 
             }
-            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Back)
-            {
-                if(_index > 0)
-                {
-                    _text = _text.Remove(_index - 1, 1);
-                    _index--;
-                }
-            }
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Delete)
             {
                 if(_index < _text.Length - 1)
@@ -97,8 +89,19 @@ namespace ShiftOS.Frontend.GUI
                 if (_index < _text.Length)
                     _index++;
             if (e.KeyChar != '\0') {
-                _text = _text.Insert(_index, e.KeyChar.ToString());
-                _index++;
+                if (e.KeyChar == '\b')
+                {
+                    if (_index > 0)
+                    {
+                        _text = _text.Remove(_index - 1, 1);
+                        _index--;
+                    }
+                }
+                else
+                {
+                    _text = _text.Insert(_index, e.KeyChar.ToString());
+                    _index++;
+                }
             }
             caretMS = 0;
             CalculateVisibleText();
