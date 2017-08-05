@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.GraphicsSubsystem;
@@ -29,6 +30,8 @@ namespace ShiftOS.Frontend
         private double failCharAddMS = 0;
 
         private bool DisplayDebugInfo = false;
+
+        private KeyboardListener keyboardListener = new KeyboardListener ();
 
         public ShiftOS()
         {
@@ -68,11 +71,36 @@ namespace ShiftOS.Frontend
 
             //Fullscreen
             graphicsDevice.IsFullScreen = uconf.Fullscreen;
+
+            // keyboard events
+            keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
+
             UIManager.Init(this);
         }
 
-        private Keys lastKey = Keys.None;
+        private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
+        {
 
+            if (e.Key == Keys.F11)
+            {
+                UIManager.Fullscreen = !UIManager.Fullscreen;
+            }
+            else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
+            {
+                DisplayDebugInfo = !DisplayDebugInfo;
+            }
+            else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.E)
+            {
+                UIManager.ExperimentalEffects = !UIManager.ExperimentalEffects;
+            }
+            else
+            {
+                // Notice: I would personally recommend just using KeyboardEventArgs instead of KeyEvent
+                // from now on, but what ever. -phath0m
+                UIManager.ProcessKeyEvent(new KeyEvent(e));
+            }
+        }
+        
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -160,8 +188,7 @@ namespace ShiftOS.Frontend
             MouseTexture = null;
             // TODO: Unload any non ContentManager content here
         }
-
-        private double kb_elapsedms = 0;
+        
         private double mouseMS = 0;
 
         private MouseState LastMouseState;
@@ -244,55 +271,8 @@ namespace ShiftOS.Frontend
 
                 //Let's see how keyboard input works.
 
-                //Hmmm... just like the mouse...
-                var keystate = Keyboard.GetState();
+                keyboardListener.Update(gameTime);
 
-                //Simple... just iterate through this list and generate some key events?
-                var keys = keystate.GetPressedKeys();
-                if (keys.Length > 0)
-                {
-                    var key = keys.FirstOrDefault(x => x != Keys.LeftControl && x != Keys.RightControl && x != Keys.LeftShift && x != Keys.RightShift && x != Keys.LeftAlt && x != Keys.RightAlt);
-                    if (lastKey != key)
-                    {
-                        kb_elapsedms = 0;
-                        lastKey = key;
-                    }
-                }
-                if (keystate.IsKeyDown(lastKey))
-                {
-                    if (kb_elapsedms == 0 || kb_elapsedms >= 500)
-                    {
-                        if (lastKey == Keys.F11)
-                        {
-                            UIManager.Fullscreen = !UIManager.Fullscreen;
-                        }
-                        else
-                        {
-                            var shift = keystate.IsKeyDown(Keys.LeftShift) || keystate.IsKeyDown(Keys.RightShift);
-                            var alt = keystate.IsKeyDown(Keys.LeftAlt) || keystate.IsKeyDown(Keys.RightAlt);
-                            var control = keystate.IsKeyDown(Keys.LeftControl) || keystate.IsKeyDown(Keys.RightControl);
-
-                            if (control && lastKey == Keys.D)
-                            {
-                                DisplayDebugInfo = !DisplayDebugInfo;
-                            }
-                            else if (control && lastKey == Keys.E)
-                            {
-                                UIManager.ExperimentalEffects = !UIManager.ExperimentalEffects;
-                            }
-                            else
-                            {
-                                var e = new KeyEvent(control, alt, shift, lastKey);
-                                UIManager.ProcessKeyEvent(e);
-                            }
-                        }
-                    }
-                    kb_elapsedms += gameTime.ElapsedGameTime.TotalMilliseconds;
-                }
-                else
-                {
-                    kb_elapsedms = 0;
-                }
 
                 //Cause layout update on all elements
                 UIManager.LayoutUpdate(gameTime);
