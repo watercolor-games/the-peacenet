@@ -46,6 +46,38 @@ namespace ShiftOS.Frontend
 {
     public static class FrontendDebugCommands
     {
+        [Command("drop_opener")]
+        [ShellConstraint("shiftos_debug> ")]
+        public static void DropOpener(Dictionary<string, object> args)
+        {
+            string[] ids = new string[] { "" };
+            if (args.ContainsKey("id"))
+            {
+                ids = args["id"].ToString().Split(';');
+            }
+            FileSkimmerBackend.GetFile(ids, FileOpenerStyle.Open, (path) =>
+            {
+                Console.WriteLine(path);
+                TerminalBackend.PrintPrompt();
+            });
+        }
+
+        [Command("drop_saver")]
+        [ShellConstraint("shiftos_debug> ")]
+        public static void DropSaver(Dictionary<string, object> args)
+        {
+            string[] ids = new string[] { "" };
+            if (args.ContainsKey("id"))
+            {
+                ids = args["id"].ToString().Split(';');
+            }
+            FileSkimmerBackend.GetFile(ids, FileOpenerStyle.Save, (path) =>
+            {
+                Console.WriteLine(path);
+                TerminalBackend.PrintPrompt();
+            });
+        }
+
         /// <summary>
         /// Debug command to drop a fatal objective/hack failure screen in the form of an emergency alert system-esque screen.
         /// 

@@ -442,12 +442,21 @@ Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawi
 
         public void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback)
         {
-            throw new NotImplementedException();
+            var fs = new Apps.FileSkimmer();
+            fs.IsDialog = true;
+            fs.DialogMode = style;
+            fs.FileFilters = filetypes;
+            fs.DialogCallback = callback;
+            AppearanceManager.SetupDialog(fs);
         }
 
         public void OpenDirectory(string path)
         {
-            throw new NotImplementedException();
+            if (!Objects.ShiftFS.Utils.DirectoryExists(path))
+                return;
+            var fs = new Apps.FileSkimmer();
+            fs.Navigate(path);
+            AppearanceManager.SetupWindow(fs);
         }
     }
 

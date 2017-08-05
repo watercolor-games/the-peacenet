@@ -22,6 +22,62 @@ namespace ShiftOS.Frontend.Apps
         private const string SD_SYSTEM = "__system";
         private GUI.ListView _fList = null;
         private GUI.TextControl _currentdirtext = null;
+        private GUI.Button _openFile = null;
+        private GUI.TextControl _fileFilter = null;
+        private GUI.TextControl _filePrompt = null;
+        private GUI.TextInput _fileBox = null;
+
+
+        public bool IsDialog = false;
+        public Action<string> DialogCallback = null;
+        public string[] FileFilters = new string[] { "" };
+        public FileOpenerStyle DialogMode = FileOpenerStyle.Open;
+
+        public int SelectedFilter = 0;
+
+        public FileSkimmer()
+        {
+            _fileBox = new GUI.TextInput();
+            _filePrompt = new TextControl();
+            _fileFilter = new TextControl();
+            _openFile = new Button();
+
+            AddControl(_openFile);
+            AddControl(_fileBox);
+            AddControl(_filePrompt);
+            AddControl(_fileFilter);
+
+            _openFile.AutoSize = true;
+            _fileFilter.AutoSize = true;
+            _filePrompt.AutoSize = true;
+
+            Width = 720;
+            Height = 480;
+            _fList = new GUI.ListView();
+            //TODO: keyboard support in listviews
+            /*
+            _fList.KeyEvent += (e) =>
+            {
+                if(e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                {
+                    Navigate(_fList.SelectedItem.ToString());
+                }
+            };*/
+            _fList.DoubleClick += () =>
+            {
+                try
+                {
+                    Navigate(_fList.SelectedItem.Tag);
+                }
+                catch { }
+            };
+            AddControl(_fList);
+            _currentdirtext = new GUI.TextControl();
+            _currentdirtext.AutoSize = true;
+            AddControl(_currentdirtext);
+            ResetList();
+
+        }
 
         public void OnLoad()
         {
@@ -60,6 +116,19 @@ namespace ShiftOS.Frontend.Apps
                     Navigate(_fList.SelectedItem.ToString());
                 }
             };*/
+            _fList.Click += () =>
+            {
+                if(_fList.SelectedItem != null)
+                {
+                    if(_fList.SelectedItem.Tag != "__up")
+                    {
+                        if(FileExists(_fList.SelectedItem.Tag))
+                        {
+                            _fileBox.Text = _fList.SelectedItem.Text;
+                        }
+                    }
+                }
+            };
             _fList.DoubleClick += () =>
             {
                 try
@@ -68,11 +137,69 @@ namespace ShiftOS.Frontend.Apps
                 }
                 catch { }
             };
+            _fileBox.KeyEvent += (key) =>
+            {
+                if (key.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                {
+                    HandleFileSelect();
+                }
+            };
+            _openFile.Click += () =>
+            {
+                HandleFileSelect();
+            };
             AddControl(_fList);
             _currentdirtext = new GUI.TextControl();
             _currentdirtext.AutoSize = true;
             AddControl(_currentdirtext);
             ResetList();
+        }
+
+        public void HandleFileSelect(bool quiet = false)
+        {
+            string fname = _fileBox.Text;
+            string filter = FileFilters[SelectedFilter];
+            if (filter != "Directory")
+                if (!fname.EndsWith(filter))
+                    fname += filter;
+            string path = _currentdirectory + "/" + fname;
+            bool exists = false;
+            if (filter == "Directory")
+                exists = DirectoryExists(path);
+            else
+                exists = FileExists(path);
+            if (exists)
+            {
+                if (DialogMode == FileOpenerStyle.Open || quiet)
+                {
+                    DialogCallback?.Invoke(path);
+                    AppearanceManager.Close(this);
+                }
+                else
+                {
+                    Engine.Infobox.PromptYesNo("Overwrite file?", "The file you chose already exists on disk. Would you like to overwrite it?", (answer) =>
+                    {
+                        if (answer)
+                        {
+                            DialogCallback?.Invoke(path);
+                            AppearanceManager.Close(this);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                if (DialogMode == FileOpenerStyle.Open)
+                {
+                    if (quiet == false)
+                        Engine.Infobox.Show("File not found.", "The requested file path could not be found on disk.");
+                }
+                else
+                {
+                    DialogCallback?.Invoke(path);
+                    AppearanceManager.Close(this);
+                }
+            }  
         }
 
         public void Navigate(string path)
@@ -104,9 +231,17 @@ namespace ShiftOS.Frontend.Apps
             }
             else if (FileExists(path))
             {
-                if (!FileSkimmerBackend.OpenFile(path))
+                if (IsDialog)
                 {
-                    Engine.Infobox.Show("File Skimmer can't open this file!", "File Skimmer couldn't find a program that can open a file of this type. Please install a program that can handle this file and try again.");
+                    bool quiet = DialogMode == FileOpenerStyle.Open;
+                    this.HandleFileSelect(quiet);
+                }
+                else
+                {
+                    if (!FileSkimmerBackend.OpenFile(path))
+                    {
+                        Engine.Infobox.Show("File Skimmer can't open this file!", "File Skimmer couldn't find a program that can open a file of this type. Please install a program that can handle this file and try again.");
+                    }
                 }
             }
         }
@@ -227,15 +362,18 @@ namespace ShiftOS.Frontend.Apps
                 foreach (var dir in GetFiles(_currentdirectory))
                 {
                     var dinf = GetFileInfo(dir);
-                    var ext = FileSkimmerBackend.GetFileType(dir);
-
-
-                    _fList.AddItem(new ListViewItem
+                    if (dinf.Name.EndsWith(FileFilters[SelectedFilter]))
                     {
-                        Text = dinf.Name,
-                        Tag = dir,
-                        ImageKey = ext.ToString()
-                    });
+                        var ext = FileSkimmerBackend.GetFileType(dir);
+
+
+                        _fList.AddItem(new ListViewItem
+                        {
+                            Text = dinf.Name,
+                            Tag = dir,
+                            ImageKey = ext.ToString()
+                        });
+                    }
                 }
 
             }
@@ -243,19 +381,54 @@ namespace ShiftOS.Frontend.Apps
         }
 
 
+        private const int _fileselectboxheight = 50;
+
         protected override void OnLayout(GameTime gameTime)
         {
-            try
+            int listbottom = Height - _currentdirtext.Height;
+            if (IsDialog)
+                listbottom -= _fileselectboxheight;
+
+            _currentdirtext.Layout(gameTime);
+            _fList.X = 0;
+            _fList.Y = 0;
+            _fList.Width = Width;
+            _fList.Height = listbottom;
+            _currentdirtext.X = (Width - _currentdirtext.Width) / 2;
+            _currentdirtext.Y = _fList.Height;
+
+            if (IsDialog)
             {
-                _currentdirtext.Layout(gameTime);
-                _fList.X = 0;
-                _fList.Y = 0;
-                _fList.Width = Width;
-                _fList.Height = Height - _currentdirtext.Height;
-                _currentdirtext.X = (Width - _currentdirtext.Width) / 2;
-                _currentdirtext.Y = _fList.Height;
+                int _fileselectstart = Height - _fileselectboxheight;
+                _openFile.Text = DialogMode.ToString();
+                _openFile.Visible = true;
+                _openFile.X = (Width - _openFile.Width) - 10;
+                _openFile.Y = _fileselectstart + ((_fileselectboxheight - _openFile.Height) / 2);
+
+                _filePrompt.AutoSize = true;
+                _filePrompt.Text = $"{DialogMode} file: ";
+                _filePrompt.Font = SkinEngine.LoadedSkin.MainFont;
+                _filePrompt.Layout(gameTime);
+
+                _filePrompt.X = 10;
+                _filePrompt.Y = _fileselectstart + ((_fileselectboxheight - _filePrompt.Height) / 2);
+                _filePrompt.Visible = true;
+
+                _fileFilter.AutoSize = true;
+                _fileFilter.Visible = true;
+                _fileFilter.Text = FileFilters[SelectedFilter];
+                _fileFilter.Font = SkinEngine.LoadedSkin.MainFont;
+                _fileFilter.Layout(gameTime);
+                _fileFilter.X = _openFile.X - _fileFilter.Width - 10;
+                _fileFilter.Y = _fileselectstart + ((_fileselectboxheight - _fileFilter.Height) / 2);
+
+                _fileBox.X = _filePrompt.X + _filePrompt.Width + 10;
+                _fileBox.Width = _fileFilter.X - _fileBox.X;
+                _fileBox.Height = 24;
+                _fileBox.Y = _fileselectstart + ((_fileselectboxheight - _fileBox.Height) / 2);
+                _fileBox.Visible = true;
             }
-            catch { }
+
         }
     }
 }
