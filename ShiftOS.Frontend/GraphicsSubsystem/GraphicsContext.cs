@@ -154,9 +154,9 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         var sFormat = System.Drawing.StringFormat.GenericTypographic;
                         sFormat.FormatFlags |= System.Drawing.StringFormatFlags.NoClip;
                         
-                        /*gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                        gfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;*/
+                        gfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
                         gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
                         gfx.DrawString(text, font, System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);

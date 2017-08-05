@@ -1791,6 +1791,28 @@
     <Content Include="Lib\__phello__.foo.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\fileicon0.bmp" />
+    <None Include="Resources\fileicon10.bmp" />
+    <None Include="Resources\fileicon1.bmp" />
+    <None Include="Resources\fileicon12.bmp" />
+    <None Include="Resources\fileicon11.bmp" />
+    <None Include="Resources\fileicon14.bmp" />
+    <None Include="Resources\fileicon13.bmp" />
+    <None Include="Resources\fileicon15.bmp" />
+    <None Include="Resources\fileicon17.bmp" />
+    <None Include="Resources\fileicon16.bmp" />
+    <None Include="Resources\fileicon19.bmp" />
+    <None Include="Resources\fileicon18.bmp" />
+    <None Include="Resources\fileicon3.bmp" />
+    <None Include="Resources\fileicon2.bmp" />
+    <None Include="Resources\fileicon5.bmp" />
+    <None Include="Resources\fileicon4.bmp" />
+    <None Include="Resources\fileicon7.bmp" />
+    <None Include="Resources\fileicon6.bmp" />
+    <None Include="Resources\fileicon8.bmp" />
+    <None Include="Resources\fileiconsaa.png" />
+    <None Include="Resources\fileicon9.bmp" />
+    <None Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\pywintemplate.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

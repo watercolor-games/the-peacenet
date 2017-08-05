@@ -112,6 +112,226 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon0 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon1 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon10 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon10", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon11 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon11", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon12 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon12", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon13 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon13", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon14 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon14", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon15 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon15", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon16 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon17 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon17", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon18 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon18", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon19 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon19", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon2 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon3 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon4 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon5 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon6 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon7 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon8 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon8", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileicon9 {
+            get {
+                object obj = ResourceManager.GetObject("fileicon9", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileiconcf {
+            get {
+                object obj = ResourceManager.GetObject("fileiconcf", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fileiconsaa {
+            get {
+                object obj = ResourceManager.GetObject("fileiconsaa", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///	Name: &quot;Cowsay Fire Hydrant Cowfile&quot;,
         ///	Description: &quot;Ever been so thirsty that you wanted to open a fire hydrant and just take a giant drink of water? Well, you can&apos;t do that with this install file, but you can at least get a neat cowfile firehydrant so you can make one talk!&quot;,
@@ -185,10 +405,10 @@ namespace ShiftOS.Frontend.Properties {
         ///		PointTo: &quot;banana_cow_stp&quot;,
         ///	},
         ///	{
-        ///		FriendlyName: &quot;SSHardline&quot;,
-        ///		LootName: &quot;sploitset_sshardline.stp&quot;,
+        ///		FriendlyName: &quot;Fire Hydrant Cow&quot;,
+        ///		LootName: &quot;fire hydrant.cow.stp&quot;,
         ///		Rarity: 1,
-        ///		PointTo: &quot;sploitset_ssh [rest of string was truncated]&quot;;.
+        ///		PointTo: &quot;fire_hydran [rest of string was truncated]&quot;;.
         /// </summary>
         public static string LootInfo {
             get {
@@ -205,10 +425,11 @@ namespace ShiftOS.Frontend.Properties {
         ///
         ///[
         ///	{
-        ///		FriendlyName: &quot;FTP Payload&quot;,
+        ///		FriendlyName: &quot;FTP File Puller Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;,
         ///		EffectiveAgainstFirewall: 1,
         ///		EffectiveAgainst: &quot;FileServer&quot;,
+        ///		Function: 2
         ///	},
         ///	{
         ///		FriendlyName: &quot;Force Heartbeat&quot;,

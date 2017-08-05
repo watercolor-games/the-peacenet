@@ -142,4 +142,70 @@
   <data name="pywintemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pywintemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="fileicon0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon0.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon10.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon11.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon12.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon13" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon13.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon14" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon14.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon15" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon15.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon16.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon17" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon17.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon18" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon18.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon19" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon19.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon2.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon3.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon4.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon5.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon6.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon7.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon8.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileicon9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileicon9.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileiconcf" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileiconcf.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fileiconsaa" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fileiconsaa.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
