@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using ShiftOS.Engine;
 using ShiftOS.Frontend.Desktop;
 using ShiftOS.Frontend.GUI;
@@ -279,14 +280,17 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
     public class KeyEvent
     {
-        public KeyEvent(bool control, bool alt, bool shift, Keys key)
+
+        public KeyEvent(KeyboardEventArgs e)
         {
-            ControlDown = control;
-            AltDown = alt;
-            ShiftDown = shift;
-            Key = key;
-            KeyChar = key.ToCharacter(shift);
+            ControlDown = false;
+            ShiftDown = e.Modifiers.HasFlag(KeyboardModifiers.Shift);
+            ControlDown = e.Modifiers.HasFlag(KeyboardModifiers.Control);
+            AltDown = e.Modifiers.HasFlag(KeyboardModifiers.Alt);
+            Key = e.Key;
+            KeyChar = e.Character ?? '\0' ;
         }
+
 
         public bool ControlDown { get; private set; }
         public bool AltDown { get; private set; }
@@ -294,143 +298,5 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         public Keys Key { get; private set; }
 
         public char KeyChar { get; private set; }
-    }
-
-    public static class KeysExtensions
-    {
-        /*
-         * Notice: The following keymapping does <i>not</i> take into account the user's keyboard
-         * layout. This is written under the assumption the keyboard is en_US. 
-         * 
-         * @MichaelTheShifter I'm leaving you to figure out how to make this work with other layouts.
-         * 
-         * My suggestion would be to simply do what you are doing with strings, define a JSON file
-         * mapping each character to its associated character.
-         */
-
-        private static Dictionary<Keys, char> keymapDefault = new Dictionary<Keys, char>() {
-            { Keys.Space, ' ' },
-            { Keys.Tab, '\t' },
-            { Keys.Enter, '\n' },
-            { Keys.Back, '\b' },
-            { Keys.A, 'a'},
-            { Keys.B, 'b'},
-            { Keys.C, 'c' },
-            { Keys.D, 'd' },
-            { Keys.E, 'e' },
-            { Keys.F, 'f' },
-            { Keys.G, 'g' },
-            { Keys.H, 'h' },
-            { Keys.I, 'i' },
-            { Keys.J, 'j' },
-            { Keys.K, 'k' },
-            { Keys.L, 'l' },
-            { Keys.M, 'm' },
-            { Keys.N, 'n' },
-            { Keys.O, 'o' },
-            { Keys.P, 'p' },
-            { Keys.Q, 'q' },
-            { Keys.R, 'r' },
-            { Keys.S, 's' },
-            { Keys.T, 't' },
-            { Keys.U, 'u' },
-            { Keys.V, 'v' },
-            { Keys.W, 'w' },
-            { Keys.X, 'x' },
-            { Keys.Y, 'y' },
-            { Keys.Z, 'z' },
-            { Keys.D0, '0' },
-            { Keys.D1, '1' },
-            { Keys.D2, '2' },
-            { Keys.D3, '3' },
-            { Keys.D4, '4' },
-            { Keys.D5, '5' },
-            { Keys.D6, '6' },
-            { Keys.D7, '7' },
-            { Keys.D8, '8' },
-            { Keys.D9, '9' },
-            { Keys.OemTilde, '`' },
-            { Keys.OemMinus, '-' },
-            { Keys.OemPlus, '+' },
-            { Keys.OemOpenBrackets, '[' },
-            { Keys.OemCloseBrackets, ']'},
-            { Keys.OemBackslash, '\\'},
-            { Keys.OemPipe, '\\' },
-            { Keys.OemSemicolon, ';' },
-            { Keys.OemQuotes, '\'' },
-            { Keys.OemComma, ',' },
-            { Keys.OemPeriod, '.' },
-            { Keys.OemQuestion, '/' },
-        };
-
-        private static Dictionary<Keys, char> keymapShift = new Dictionary<Keys, char> () {
-            { Keys.Space, ' ' },
-            { Keys.Tab, '\t' },
-            { Keys.Enter, '\n' },
-            { Keys.Back, '\b' },
-            { Keys.A, 'A'},
-            { Keys.B, 'B'},
-            { Keys.C, 'C' },
-            { Keys.D, 'D' },
-            { Keys.E, 'E' },
-            { Keys.F, 'F' },
-            { Keys.G, 'G' },
-            { Keys.H, 'H' },
-            { Keys.I, 'I' },
-            { Keys.J, 'J' },
-            { Keys.K, 'K' },
-            { Keys.L, 'L' },
-            { Keys.M, 'M' },
-            { Keys.N, 'N' },
-            { Keys.O, 'O' },
-            { Keys.P, 'P' },
-            { Keys.Q, 'Q' },
-            { Keys.R, 'R' },
-            { Keys.S, 'S' },
-            { Keys.T, 'T' },
-            { Keys.U, 'U' },
-            { Keys.V, 'V' },
-            { Keys.W, 'W' },
-            { Keys.X, 'X' },
-            { Keys.Y, 'Y' },
-            { Keys.Z, 'Z' },
-            { Keys.D0, ')' },
-            { Keys.D1, '!' },
-            { Keys.D2, '@' },
-            { Keys.D3, '#' },
-            { Keys.D4, '$' },
-            { Keys.D5, '%' },
-            { Keys.D6, '^' },
-            { Keys.D7, '&' },
-            { Keys.D8, '*' },
-            { Keys.D9, '(' },
-            { Keys.OemTilde, '~' },
-            { Keys.OemMinus, '_' },
-            { Keys.OemPlus, '+' },
-            { Keys.OemOpenBrackets, '{' },
-            { Keys.OemCloseBrackets, '}'},
-            { Keys.OemBackslash, '|'},
-            { Keys.OemPipe, '|' },
-            { Keys.OemSemicolon, ':' },
-            { Keys.OemQuotes, '\'' },
-            { Keys.OemComma, '<' },
-            { Keys.OemPeriod, '>' },
-            { Keys.OemQuestion, '?' },
-        };
-
-        public static char ToCharacter(this Keys key, bool shift)
-        {
-            if (shift && keymapShift.ContainsKey(key))
-            {
-                return keymapShift[key];
-            }
-
-            if (!shift && keymapDefault.ContainsKey(key))
-            {
-                return keymapDefault[key];
-            }
-
-            return '\0'; // Ideally all keys should be included in this map
-        }
     }
 }
