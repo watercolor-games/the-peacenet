@@ -29,6 +29,8 @@ namespace ShiftOS.Frontend
         private bool failEnded = false;
         private double failCharAddMS = 0;
 
+        public Color UITint = Color.White;
+
         private bool DisplayDebugInfo = false;
 
         private KeyboardListener keyboardListener = new KeyboardListener ();
@@ -59,7 +61,7 @@ namespace ShiftOS.Frontend
                 );
 
             Content.RootDirectory = "Content";
-
+            graphicsDevice.PreferMultiSampling = true;
 
             //Make window borderless
             Window.IsBorderless = false;
@@ -327,9 +329,10 @@ namespace ShiftOS.Frontend
             var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             rasterizerState.MultiSampleAntiAlias = true;
+            
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearClamp, DepthStencilState.Default,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
                             rasterizerState);
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);

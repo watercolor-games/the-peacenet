@@ -92,7 +92,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         }
                     }
 
-                    batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White);
+                    batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), _game.UITint);
                 }
             }
         }
@@ -240,6 +240,11 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         }
 
+        public static void SetUITint(Color color)
+        {
+            _game.UITint = color;
+        }
+
 
         public static bool ExperimentalEffects = true;
 
@@ -250,10 +255,13 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         {
             if (SkinEngine.LoadedSkin == null)
                 SkinEngine.Init();
+
+            batch.Draw(SkinTextures["DesktopColor"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
+
             graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());
             if (SkinTextures.ContainsKey("desktopbackground"))
             {
-                batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
+                batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
             }
         }
 

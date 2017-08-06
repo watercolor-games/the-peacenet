@@ -101,7 +101,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Display data including icons, names, and the category of the item.
         /// </summary>
-        public LauncherAttribute DisplayData { get; internal set; }
+        public LauncherAttribute DisplayData { get; set; }
         /// <summary>
         /// A .NET <see cref="Type"/> that is associated with this item. 
         /// </summary>

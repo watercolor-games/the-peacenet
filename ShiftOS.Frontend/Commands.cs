@@ -41,11 +41,25 @@ using ShiftOS.Objects;
 using ShiftOS.Engine.Scripting;
 using ShiftOS.Objects.ShiftFS;
 using ShiftOS.Engine;
+using Microsoft.Xna.Framework;
+using ShiftOS.Frontend.GraphicsSubsystem;
 
 namespace ShiftOS.Frontend
 {
     public static class FrontendDebugCommands
     {
+        [Command("set_ui_tint")]
+        [RequiresArgument("color")]
+        [ShellConstraint("shiftos_debug> ")]
+        public static void SetUITint    (Dictionary<string, object> args)
+        {
+            string[] split = args["color"].ToString().Split(';');
+            int r = MathHelper.Clamp(Convert.ToInt32(split[0]), 0, 255);
+            int g = MathHelper.Clamp(Convert.ToInt32(split[1]), 0, 255);
+            int b = MathHelper.Clamp(Convert.ToInt32(split[2]), 0, 255);
+            UIManager.SetUITint(new Color(r, g, b, 255));
+        }
+
         [Command("drop_opener")]
         [ShellConstraint("shiftos_debug> ")]
         public static void DropOpener(Dictionary<string, object> args)

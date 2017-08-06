@@ -168,6 +168,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                         gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                         gfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
                         gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                        gfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
                         gfx.DrawString(text, font, System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, bmp.Width, bmp.Height), sFormat);
                     }
