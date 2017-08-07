@@ -400,8 +400,14 @@ namespace ShiftOS.Frontend.Apps
                 }
                 //Draw the text
 
+                int textloc = 0 - (int)_vertOffset;
+                foreach (var line in Lines)
+                {
+                    if(!(textloc < 0 || textloc - font.Height >= Height))
+                        gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
+                    textloc += font.Height;
+                }
 
-                gfx.DrawString(Text, 0, (int)(0 - _vertOffset), LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
             }
         }
 
@@ -454,16 +460,8 @@ namespace ShiftOS.Frontend.Apps
     {
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font, int width)
         {
-            var textformat = new StringFormat(StringFormat.GenericTypographic);
-            textformat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-            //textformat.Trimming = StringTrimming.Character;
-            //textformat.FormatFlags |= StringFormatFlags.NoClip;
-            
-            gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-            var measure = gfx.MeasureString(s, font, width, textformat);
-            if (string.IsNullOrEmpty(s))
-                measure.Width = 0;
-            return new SizeF((float)Math.Ceiling(Math.Max(1,measure.Width)), (float)Math.Ceiling(Math.Max(1,measure.Height)));
+            var measure = System.Windows.Forms.TextRenderer.MeasureText(s, font, new Size(width, int.MaxValue));
+            return measure;
         }
 
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
