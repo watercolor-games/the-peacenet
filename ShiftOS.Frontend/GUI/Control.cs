@@ -369,6 +369,16 @@ namespace ShiftOS.Frontend.GUI
             Invalidate(); 
         }
 
+        public void RemoveControl(Control ctrl)
+        {
+            if(_children.Contains(ctrl))
+            {
+                _children.Remove(ctrl);
+                ctrl._parent = null;
+                Invalidate();
+            }
+        }
+
         public Point PointToLocal(int x, int y)
         {
             return new GUI.Point(x - _x, y - _y);

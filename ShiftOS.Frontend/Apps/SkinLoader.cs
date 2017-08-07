@@ -29,6 +29,210 @@ namespace ShiftOS.Frontend.Apps
         private Button _apply = null;
         private Dictionary<string, Texture2D> SkinTextures = new Dictionary<string, Texture2D>();
 
+        public void PaintWindow(GraphicsContext gfx)
+        {
+            int titleheight = _skin.TitlebarHeight;
+            int leftborderwidth = _skin.LeftBorderWidth;
+            int rightborderwidth = _skin.RightBorderWidth;
+            int bottomborderwidth = _skin.BottomBorderWidth;
+
+            var titlebarcolor = SkinTextures["TitleBackgroundColor"];
+            var titlefont = _skin.TitleFont;
+            var titletextcolor = _skin.TitleTextColor;
+            var titletextleft = _skin.TitleTextLeft;
+            bool titletextcentered = _skin.TitleTextCentered;
+
+            var drawcorners = _skin.ShowTitleCorners;
+            int titlebarleft = _previewxstart;
+            int titlebarwidth = _previewxwidth;
+            if (drawcorners)
+            {
+                //set titleleft to the first corner width
+                titlebarleft += _skin.TitleLeftCornerWidth;
+                titlebarwidth -= _skin.TitleLeftCornerWidth;
+                titlebarwidth -= _skin.TitleRightCornerWidth;
+
+
+                //Let's get the left and right images.
+                //and the colors
+                var leftcolor = SkinTextures["TitleLeftCornerBackground"];
+                var rightcolor = SkinTextures["TitleRightCornerBackground"];
+                //and the widths
+                var leftwidth = _skin.TitleLeftCornerWidth;
+                var rightwidth = _skin.TitleRightCornerWidth;
+
+                //draw left corner
+                if (SkinTextures.ContainsKey("titleleft"))
+                {
+                    gfx.DrawRectangle(_previewxstart, _windowystart, leftwidth, titleheight, SkinTextures["titleleft"]);
+                }
+                else
+                {
+                    gfx.DrawRectangle(_previewxstart, _windowystart, leftwidth, titleheight, leftcolor);
+                }
+
+                //draw right corner
+                if (SkinTextures.ContainsKey("titleright"))
+                {
+                    gfx.DrawRectangle(titlebarleft + titlebarwidth, _windowystart, rightwidth, titleheight, SkinTextures["titleright"]);
+                }
+                else
+                {
+                    gfx.DrawRectangle(titlebarleft + titlebarwidth, _windowystart, rightwidth, titleheight, rightcolor);
+                }
+            }
+
+            if (!SkinTextures.ContainsKey("titlebar"))
+            {
+                //draw the title bg
+                gfx.DrawRectangle(titlebarleft, _windowystart, titlebarwidth, titleheight, titlebarcolor);
+
+            }
+            else
+            {
+                gfx.DrawRectangle(titlebarleft, _windowystart, titlebarwidth, titleheight, SkinTextures["titlebar"]);
+            }
+            //Now we draw the title text.
+            var textMeasure = gfx.MeasureString("Program window", titlefont);
+            Vector2 textloc;
+            if (titletextcentered)
+                textloc = new Vector2((titlebarwidth - textMeasure.X) / 2,
+                    _windowystart + titletextleft.Y);
+            else
+                textloc = new Vector2(titlebarleft + titletextleft.X, _windowystart + titletextleft.Y);
+
+            gfx.DrawString("Program window", (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
+
+            var tbuttonpos = _skin.TitleButtonPosition;
+
+            //Draw close button
+            var closebuttonsize = _skin.CloseButtonSize;
+            var closebuttonright = _skin.CloseButtonFromSide;
+            if (_skin.TitleButtonPosition == 0)
+                closebuttonright = new System.Drawing.Point(_previewxstart + (_previewxwidth - closebuttonsize.Width - closebuttonright.X), _windowystart + closebuttonright.Y);
+            else
+                closebuttonright = new System.Drawing.Point(_previewxstart + closebuttonright.X, _windowystart + closebuttonright.Y);
+            if (!SkinTextures.ContainsKey("closebutton"))
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["CloseButtonColor"]);
+            }
+            else
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["closebutton"]);
+            }
+
+            //Draw maximize button
+            closebuttonsize = _skin.MaximizeButtonSize;
+            closebuttonright = _skin.MaximizeButtonFromSide;
+            if (_skin.TitleButtonPosition == 0)
+                closebuttonright = new System.Drawing.Point(_previewxstart + (_previewxwidth - closebuttonsize.Width - closebuttonright.X), _windowystart + closebuttonright.Y);
+            else
+                closebuttonright = new System.Drawing.Point(_previewxstart + closebuttonright.X, _windowystart + closebuttonright.Y);
+
+            if (!SkinTextures.ContainsKey("maximizebutton"))
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["MaximizeButtonColor"]);
+            }
+            else
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["maximizebutton"]);
+            }
+
+            //Draw minimize button
+            closebuttonsize = _skin.MinimizeButtonSize;
+            closebuttonright = _skin.MinimizeButtonFromSide;
+            if (_skin.TitleButtonPosition == 0)
+                closebuttonright = new System.Drawing.Point(_previewxstart + (_previewxwidth - closebuttonsize.Width - closebuttonright.X), _windowystart + closebuttonright.Y);
+            else
+                closebuttonright = new System.Drawing.Point(_previewxstart + closebuttonright.X, _windowystart + closebuttonright.Y);
+            if (!SkinTextures.ContainsKey("minimizebutton"))
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["MinimizeButtonColor"]);
+            }
+            else
+            {
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, SkinTextures["minimizebutton"]);
+            }
+
+
+
+            //Some variables we'll need...
+            int bottomlocy = _windowystart + (_previewheight - _skin.BottomBorderWidth);
+            int bottomlocx = _previewxstart + leftborderwidth;
+            int bottomwidth = _previewxwidth - bottomlocx - rightborderwidth;
+            int brightlocx = _previewxstart + (_previewxwidth - rightborderwidth);
+
+            var borderleftcolor = (ContainsFocusedControl || IsFocusedControl) ? SkinTextures["BorderLeftBackground"] : SkinTextures["BorderInactiveLeftBackground"];
+            var borderrightcolor = (ContainsFocusedControl || IsFocusedControl) ? SkinTextures["BorderRightBackground"] : SkinTextures["BorderInactiveRightBackground"];
+            var borderbottomcolor = (ContainsFocusedControl || IsFocusedControl) ? SkinTextures["BorderBottomBackground"] : SkinTextures["BorderInactiveBottomBackground"];
+            var borderbleftcolor = (ContainsFocusedControl || IsFocusedControl) ? SkinTextures["BorderBottomLeftBackground"] : SkinTextures["BorderInactiveBottomLeftBackground"];
+            var borderbrightcolor = (ContainsFocusedControl || IsFocusedControl) ? SkinTextures["BorderBottomRightBackground"] : SkinTextures["BorderInactiveBottomRightBackground"];
+
+
+            //draw border corners
+            //BOTTOM LEFT
+            if (!SkinTextures.ContainsKey("bottomlborder"))
+            {
+                gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor);
+            }
+            else
+            {
+                gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, SkinTextures["bottomlborder"]);
+            }
+
+            //BOTTOM RIGHT
+            if (!SkinTextures.ContainsKey("bottomrborder"))
+            {
+                gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor);
+            }
+            else
+            {
+                gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, SkinTextures["bottomrborder"]);
+            }
+
+            //BOTTOM
+            if (!SkinTextures.ContainsKey("bottomborder"))
+            {
+                gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor);
+            }
+            else
+            {
+                gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, SkinTextures["bottomborder"]);
+            }
+
+            //LEFT
+            if (!SkinTextures.ContainsKey("leftborder"))
+            {
+                gfx.DrawRectangle(_previewxstart, _windowystart + titleheight, leftborderwidth, _previewheight - titleheight - bottomborderwidth, borderleftcolor);
+            }
+            else
+            {
+                gfx.DrawRectangle(_previewxstart, _windowystart + titleheight, leftborderwidth, _previewheight - titleheight - bottomborderwidth, SkinTextures["leftborder"]);
+            }
+
+            //RIGHT
+            if (!SkinTextures.ContainsKey("rightborder"))
+            {
+                gfx.DrawRectangle(brightlocx, _windowystart + titleheight, rightborderwidth, _previewheight - titleheight - bottomborderwidth, borderrightcolor);
+            }
+            else
+            {
+                gfx.DrawRectangle(brightlocx, _windowystart + titleheight, rightborderwidth, _previewheight - titleheight - bottomborderwidth, SkinTextures["rightborder"]);
+            }
+
+
+
+            gfx.DrawRectangle(_previewxstart + leftborderwidth, _windowystart + titleheight, _previewxwidth - leftborderwidth - rightborderwidth, _previewheight - titleheight - bottomborderwidth, SkinTextures["ControlColor"]);
+            //So here's what we're gonna do now.
+            //Now that we have a titlebar and window borders...
+            //We're going to composite the hosted window
+            //and draw it to the remaining area.
+
+            //Painting of the canvas is done by the Paint() method.
+
+        }
+
+
         public SkinLoader()
         {
             _close = new GUI.Button();
@@ -369,9 +573,8 @@ namespace ShiftOS.Frontend.Apps
             //Now we actually paint the ui
             PaintDesktop(gfx);
 
-            //Paint the window rect
-            gfx.DrawRectangle(_previewxstart, _windowystart, _previewxwidth, _previewheight, Color.Red);
-
+            //The desktop's painted, now time for the window.
+            PaintWindow(gfx);
         }
     }
 }

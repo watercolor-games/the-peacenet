@@ -48,6 +48,41 @@ namespace ShiftOS.Frontend
 {
     public static class FrontendDebugCommands
     {
+        [Command("infobox_prison")]
+        [ShellConstraint("shiftos_debug> ")]
+        public static void InfoboxPrison()
+        {
+            var ibox = new InfoboxMessage("Infobox Prison", "You are now sentenced to life in Infobox Prison.");
+            ibox.ShowPrompt(() =>
+            {
+                InfoboxPrison();
+                InfoboxPrison();
+            });
+            var t = new Thread(() =>
+            {
+                var parent = ibox.Parent;
+                int xvel = 3;
+                int yvel = 3;
+                while (parent.Visible)
+                {
+                    if (parent.X + parent.Width >= UIManager.Viewport.Width)
+                        xvel = -xvel;
+                    if (parent.X <= 0)
+                        xvel = -xvel;
+                    if (parent.Y <= 0)
+                        yvel = -yvel;
+                    if (parent.Y + parent.Height >= UIManager.Viewport.Height)
+                        yvel = -yvel;
+                    parent.X += xvel;
+                    parent.Y += yvel;
+                    Thread.Sleep(50);
+                }
+                InfoboxPrison();
+                InfoboxPrison();
+            });
+            t.Start();
+        }
+
         [Command("set_ui_tint")]
         [RequiresArgument("color")]
         [ShellConstraint("shiftos_debug> ")]
