@@ -42,6 +42,14 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             }
         }
 
+        public static System.Drawing.Size ScreenSize
+        {
+            get
+            {
+                return new System.Drawing.Size(_game.graphicsDevice.PreferredBackBufferWidth, _game.graphicsDevice.PreferredBackBufferHeight);
+            }
+        }
+
         public static void BringToFront(GUI.Control ctrl)
         {
             topLevels.Remove(ctrl);
@@ -146,8 +154,8 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                     graphics.Clear(Color.Transparent);
                     var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
                     ctrl.Paint(gfxContext);
-                    
-                    graphics.SetRenderTarget(null);
+
+                    graphics.SetRenderTarget(_game.GameRenderTarget);
                     TextureCaches[hc] = _target;
                     batch.End();
                 }

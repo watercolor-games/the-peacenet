@@ -154,7 +154,7 @@ namespace ShiftOS.Frontend
             _optionsSave.Click += () =>
             {
 
-                if (UIManager.Viewport != _screenResolutions[_resIndex])
+                if (UIManager.ScreenSize != _screenResolutions[_resIndex])
                 {
 
                     Engine.Infobox.PromptYesNo("Confirm sentience edit", "Performing this operation requires your sentience to be re-established which may cause you to go unconscious. Do you wish to continue?", (sleep) =>
@@ -181,7 +181,7 @@ namespace ShiftOS.Frontend
             foreach(var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.OrderBy(x=>x.Width * x.Height))
             {
                     _screenResolutions.Add(new System.Drawing.Size(mode.Width, mode.Height));
-                    if (UIManager.Viewport == _screenResolutions.Last())
+                    if (UIManager.ScreenSize == _screenResolutions.Last())
                         _resIndex = _screenResolutions.Count - 1;
             }
             _fullscreen.Y = _sandbox.Y;

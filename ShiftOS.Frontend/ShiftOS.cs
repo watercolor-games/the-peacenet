@@ -29,6 +29,8 @@ namespace ShiftOS.Frontend
         private bool failEnded = false;
         private double failCharAddMS = 0;
 
+        public RenderTarget2D GameRenderTarget = null;
+
         public Color UITint = Color.White;
 
         private bool DisplayDebugInfo = false;
@@ -56,8 +58,8 @@ namespace ShiftOS.Frontend
                 UIManager.InvalidateAll();
             };
             UIManager.Viewport = new System.Drawing.Size(
-                    graphicsDevice.PreferredBackBufferWidth,
-                    graphicsDevice.PreferredBackBufferHeight
+                    1280,
+                    720
                 );
 
             Content.RootDirectory = "Content";
@@ -76,6 +78,7 @@ namespace ShiftOS.Frontend
 
             // keyboard events
             keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
+
 
             UIManager.Init(this);
         }
@@ -164,6 +167,8 @@ namespace ShiftOS.Frontend
         /// </summary>
         protected override void LoadContent()
         {
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, 1280, 720);
+
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
 
@@ -255,7 +260,9 @@ namespace ShiftOS.Frontend
 
                 //Let's get the mouse state
                 var mouseState = Mouse.GetState(this.Window);
-                LastMouseState = mouseState;
+                int x = (int)GUI.ProgressBar.linear(mouseState.X, 0, graphicsDevice.PreferredBackBufferWidth, 0, 1280);
+                int y = (int)GUI.ProgressBar.linear(mouseState.Y, 0, graphicsDevice.PreferredBackBufferHeight, 0, 720);
+                LastMouseState = new MouseState(x, y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
 
                 UIManager.ProcessMouseState(LastMouseState, mouseMS);
                 if (mouseState.LeftButton == ButtonState.Pressed)
@@ -329,8 +336,8 @@ namespace ShiftOS.Frontend
             var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             rasterizerState.MultiSampleAntiAlias = true;
-            
 
+            graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             rasterizerState);
@@ -344,7 +351,7 @@ namespace ShiftOS.Frontend
 
 
 
-            var mousepos = Mouse.GetState(this.Window).Position;
+            var mousepos = LastMouseState;
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
@@ -400,6 +407,10 @@ Red text means low framerate, a low framerate could be a sign of CPU hogging cod
 Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
+            spriteBatch.End();
+            graphicsDevice.GraphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin();
+            spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }
