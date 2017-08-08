@@ -147,6 +147,19 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
 
         public static List<TextCache> StringCaches = new List<TextCache>();
 
+        public TextCache GetCache(string text, System.Drawing.Font font, int wrapWidth)
+        {
+            //Don't use LINQ, it could be a performance bottleneck.
+            var caches = StringCaches.ToArray();
+            for (int i = 0; i < caches.Length; i++)
+            {
+                var cache = caches[i];
+                if (cache.Text == text && cache.FontFamily == font && cache.WrapWidth == wrapWidth)
+                    return cache;
+            }
+            return null;
+        }
+
         public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, int wrapWidth = 0)
         {
             if (string.IsNullOrEmpty(text))
@@ -154,7 +167,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             x += _startx;
             y += _starty;
             var measure = MeasureString(text, font, wrapWidth);
-            var cache = StringCaches.FirstOrDefault(z => z.Text == text && z.FontFamily == font && z.WrapWidth == wrapWidth);
+            var cache = GetCache(text, font, wrapWidth);
             if (cache == null)
             {
                 using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))

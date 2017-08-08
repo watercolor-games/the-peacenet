@@ -163,57 +163,61 @@ namespace ShiftOS.Frontend.Apps
             gfx.DrawRectangle(0, _bottomseparator, Width, 1, UIManager.SkinTextures["ControlTextColor"]);
             int nnGap = 25;
             int messagebottom = _bottomseparator - 5;
-            foreach (var msg in _messages.OrderByDescending(x=>x.Timestamp))
+            try
             {
-                if (Height - messagebottom <= messagesTop)
-                    break;
-                var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
-                var nnProper = $"<{msg.Author}>";
-                var tsMeasure = gfx.MeasureString(tsProper, LoadedSkin.TerminalFont);
-                var nnMeasure = gfx.MeasureString(nnProper, LoadedSkin.TerminalFont);
-                int old = vertSeparatorLeft;
-                vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X+2));
-                if (old != vertSeparatorLeft)
-                    requiresRepaint = true;
-                var msgMeasure = gfx.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
-                messagebottom -= (int)msgMeasure.Y;
-                gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
-                var nnColor = Color.LightGreen;
-
-                if (msg.Author == SaveSystem.CurrentSave.Username)
-                    nnColor = Color.Red;
-                else
+                foreach (var msg in _messages.OrderByDescending(x => x.Timestamp))
                 {
-                    if (NetInfo != null)
+                    if (Height - messagebottom <= messagesTop)
+                        break;
+                    var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
+                    var nnProper = $"<{msg.Author}>";
+                    var tsMeasure = gfx.MeasureString(tsProper, LoadedSkin.TerminalFont);
+                    var nnMeasure = gfx.MeasureString(nnProper, LoadedSkin.TerminalFont);
+                    int old = vertSeparatorLeft;
+                    vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
+                    if (old != vertSeparatorLeft)
+                        requiresRepaint = true;
+                    var msgMeasure = gfx.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                    messagebottom -= (int)msgMeasure.Y;
+                    gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
+                    var nnColor = Color.LightGreen;
+
+                    if (msg.Author == SaveSystem.CurrentSave.Username)
+                        nnColor = Color.Red;
+                    else
                     {
-                        if (NetInfo.Channel != null)
+                        if (NetInfo != null)
                         {
-                            if (NetInfo.Channel.OnlineUsers != null)
+                            if (NetInfo.Channel != null)
                             {
-                                var user = NetInfo.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == msg.Author);
-                                if(user != null)
+                                if (NetInfo.Channel.OnlineUsers != null)
                                 {
-                                    switch(user.Permission)
+                                    var user = NetInfo.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == msg.Author);
+                                    if (user != null)
                                     {
-                                        case IRCPermission.ChanOp:
-                                            nnColor = Color.Orange;
-                                            break;
-                                        case IRCPermission.NetOp:
-                                            nnColor = Color.Yellow;
-                                            break;
+                                        switch (user.Permission)
+                                        {
+                                            case IRCPermission.ChanOp:
+                                                nnColor = Color.Orange;
+                                                break;
+                                            case IRCPermission.NetOp:
+                                                nnColor = Color.Yellow;
+                                                break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont);
-                var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
-                if (msg.Message.Contains(SaveSystem.CurrentSave.Username))
-                    mcolor = Color.Orange;
-                gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                    gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont);
+                    var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
+                    if (msg.Message.Contains(SaveSystem.CurrentSave.Username))
+                        mcolor = Color.Orange;
+                    gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                }
             }
+            catch { }
 
             string topic = "";
             if (NetworkConnected)
