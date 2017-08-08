@@ -209,8 +209,6 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
         }
     }
 
-    
-
     public class TextCache
     {
         public string Text { get; set; }

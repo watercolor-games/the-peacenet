@@ -199,9 +199,12 @@ namespace ShiftOS.Frontend.Apps
 
         private PointF CaretPosition = new PointF(2, 2);
         private Size CaretSize = new Size(2, 15);
+        private bool doEnter = true;
 
         protected override void OnKeyEvent(KeyEvent a)
         {
+            if (a.Key != Keys.Enter)
+                doEnter = true;
             if (a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
             {
                 _zoomFactor *= 2;
@@ -221,66 +224,70 @@ namespace ShiftOS.Frontend.Apps
 
             if (a.Key == Keys.Enter && !ReadOnly)
             {
-                if (!PerformTerminalBehaviours)
+                if (doEnter == true)
                 {
-                    Text = Text.Insert(Index, Environment.NewLine);
-                    Index += 2;
-                    RecalculateLayout();
-                    Invalidate();
-                    return;
-                }
-
-                try
-                {
-                    if (!TerminalBackend.PrefixEnabled)
+                    if (!PerformTerminalBehaviours)
                     {
-                        string textraw = Lines[Lines.Length - 1];
-                        TerminalBackend.SendText(textraw);
+                        Text = Text.Insert(Index, Environment.NewLine);
+                        Index += 2;
+                        RecalculateLayout();
+                        Invalidate();
                         return;
                     }
-                    var text = Lines;
-                    var text2 = text[text.Length - 1];
-                    var text3 = "";
-                    var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-                    WriteLine("");
 
-                    if (TerminalBackend.PrefixEnabled)
+                    try
                     {
-                        text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
-                    }
-                    if (!string.IsNullOrWhiteSpace(text3))
-                    {
-                        TerminalBackend.LastCommand = text3;
-                        TerminalBackend.SendText(text4);
-                        if (TerminalBackend.InStory == false)
+                        if (!TerminalBackend.PrefixEnabled)
                         {
+                            string textraw = Lines[Lines.Length - 1];
+                            TerminalBackend.SendText(textraw);
+                            return;
+                        }
+                        var text = Lines;
+                        var text2 = text[text.Length - 1];
+                        var text3 = "";
+                        var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
+                        WriteLine("");
+
+                        if (TerminalBackend.PrefixEnabled)
+                        {
+                            text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
+                        }
+                        if (!string.IsNullOrWhiteSpace(text3))
+                        {
+                            TerminalBackend.LastCommand = text3;
+                            TerminalBackend.SendText(text4);
+                            if (TerminalBackend.InStory == false)
                             {
-                                var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
-
-                                if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
                                 {
-                                    Console.WriteLine("{ERR_SYNTAXERROR}");
-                                }
-                                else
-                                {
-                                    TerminalBackend.InvokeCommand(result.Key, result.Value);
-                                }
+                                    var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
 
+                                    if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
+                                    {
+                                        Console.WriteLine("{ERR_SYNTAXERROR}");
+                                    }
+                                    else
+                                    {
+                                        TerminalBackend.InvokeCommand(result.Key, result.Value);
+                                    }
+
+                                }
                             }
                         }
                     }
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    if (TerminalBackend.PrefixEnabled)
+                    catch
                     {
-                        TerminalBackend.PrintPrompt();
                     }
-                    AppearanceManager.CurrentPosition = 0;
+                    finally
+                    {
+                        if (TerminalBackend.PrefixEnabled)
+                        {
+                            TerminalBackend.PrintPrompt();
+                        }
+                        AppearanceManager.CurrentPosition = 0;
 
+                    }
+                    doEnter = false;
                 }
             }
             else if (a.Key == Keys.Back && !ReadOnly)

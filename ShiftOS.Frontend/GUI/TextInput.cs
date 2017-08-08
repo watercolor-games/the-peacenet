@@ -72,6 +72,8 @@ namespace ShiftOS.Frontend.GUI
 
         protected override void OnKeyEvent(KeyEvent e)
         {
+            if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                return;
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Left)
             {
                 if (_index > 0)
