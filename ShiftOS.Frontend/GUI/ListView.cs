@@ -163,7 +163,7 @@ namespace ShiftOS.Frontend.GUI
                     image = _images[item.ImageKey];
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = gfx.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 if(image != null)

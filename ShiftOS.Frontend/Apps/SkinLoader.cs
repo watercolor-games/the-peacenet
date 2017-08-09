@@ -93,7 +93,7 @@ namespace ShiftOS.Frontend.Apps
                 gfx.DrawRectangle(titlebarleft, _windowystart, titlebarwidth, titleheight, SkinTextures["titlebar"]);
             }
             //Now we draw the title text.
-            var textMeasure = gfx.MeasureString("Program window", titlefont);
+            var textMeasure = GraphicsContext.MeasureString("Program window", titlefont);
             Vector2 textloc;
             if (titletextcentered)
                 textloc = new Vector2((titlebarwidth - textMeasure.X) / 2,
@@ -363,7 +363,7 @@ namespace ShiftOS.Frontend.Apps
             {
                 gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, SkinTextures["applauncher"]);
             }
-            var altextmeasure = gfx.MeasureString(_skin.AppLauncherText, _skin.AppLauncherFont);
+            var altextmeasure = GraphicsContext.MeasureString(_skin.AppLauncherText, _skin.AppLauncherFont);
             int altextx = _previewxstart + (holderSize.Width - (int)altextmeasure.X) / 2;
             int altexty = _desktopystart + (holderSize.Height - (int)altextmeasure.Y) / 2;
             gfx.DrawString(_skin.AppLauncherText, altextx, altexty, _skin.AppLauncherTextColor.ToMonoColor(), _skin.AppLauncherFont);
@@ -373,7 +373,7 @@ namespace ShiftOS.Frontend.Apps
             var panelClockTextColor = _skin.DesktopPanelClockColor.ToMonoColor();
 
             string dateTimeString = "00:00:00 - localhost";
-            var measure = gfx.MeasureString(dateTimeString, _skin.DesktopPanelClockFont);
+            var measure = GraphicsContext.MeasureString(dateTimeString, _skin.DesktopPanelClockFont);
 
             int panelclockleft = _previewxstart + (dp_width - (int)measure.X);
             int panelclockwidth = (dp_width - panelclockleft);

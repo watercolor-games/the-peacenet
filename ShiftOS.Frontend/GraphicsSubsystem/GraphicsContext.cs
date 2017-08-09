@@ -136,13 +136,10 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
             _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), tint);
         }
 
-        public Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
+        public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            using(var gfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-            {
-                var s = gfx.SmartMeasureString(text, font, wrapWidth);
-                return new Vector2((float)Math.Ceiling(s.Width), (float)Math.Ceiling(s.Height));
-            }
+            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue));
+            return new Vector2(measure.Width, measure.Height);
         }
 
         public static List<TextCache> StringCaches = new List<TextCache>();
@@ -174,7 +171,7 @@ namespace ShiftOS.Frontend.GraphicsSubsystem
                 {
                     using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                     {
-                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Point(0, 0), System.Drawing.Color.White);
+                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0,0,bmp.Width,bmp.Height), System.Drawing.Color.White);
                     }
                     var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];

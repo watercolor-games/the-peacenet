@@ -140,18 +140,15 @@ namespace ShiftOS.Frontend.Apps
 
         protected void RecalculateLayout()
         {
-            using(var gfx = Graphics.FromImage(new Bitmap(1, 1)))
+            var cloc = GetPointAtIndex();
+            var csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style));
+            if (cloc.Y - _vertOffset < 0)
             {
-                var cloc = GetPointAtIndex(gfx);
-                var csize = gfx.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style));
-                if(cloc.Y - _vertOffset < 0)
-                {
-                    _vertOffset += cloc.Y - _vertOffset;
-                }
-                while((cloc.Y + csize.Height) - _vertOffset > Height)
-                {
-                    _vertOffset += csize.Height;
-                }
+                _vertOffset += cloc.Y - _vertOffset;
+            }
+            while ((cloc.Y + csize.Y) - _vertOffset > Height)
+            {
+                _vertOffset += csize.Y;
             }
         }
 
@@ -176,23 +173,23 @@ namespace ShiftOS.Frontend.Apps
         /// </summary>
         /// <param name="gfx">A <see cref="System.Drawing.Graphics"/> object used for font measurements</param>
         /// <returns>the correct position of the d*ng caret. yw</returns>
-        public System.Drawing.Point GetPointAtIndex(Graphics gfx)
+        public System.Drawing.Point GetPointAtIndex()
         {
 			if (string.IsNullOrEmpty(Text))
                 return new System.Drawing.Point(2, 2);
             var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
             int currline = GetCurrentLine();
             string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
-			int h = (int)Math.Round(gfx.SmartMeasureString(substring, font, Width).Height - font.Height);
+			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Width).Y - font.Height);
 
             int linestart = String.Join(Environment.NewLine, Lines.Take(GetCurrentLine())).Length;
 
-            var lineMeasure = gfx.SmartMeasureString(Text.Substring(linestart, Index - linestart), font);
-            int w = (int)Math.Floor(lineMeasure.Width);
+            var lineMeasure = GraphicsContext.MeasureString(Text.Substring(linestart, Index - linestart), font);
+            int w = (int)Math.Floor(lineMeasure.X);
             while (w > Width)
             {
                 w -= Width;
-                h += (int)lineMeasure.Height;
+                h += (int)lineMeasure.Y;
             }
             return new System.Drawing.Point(w, h);
         }
@@ -389,15 +386,11 @@ namespace ShiftOS.Frontend.Apps
                 //Draw the caret.
                 if (blinkStatus == true)
                 {
-                    PointF cursorPos;
-                    using (var cgfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                    {
-                        cursorPos = GetPointAtIndex(cgfx);
+                    PointF cursorPos = GetPointAtIndex();
+                    string caret = (Index < Text.Length) ? Text[Index].ToString() : " ";
+                    var cursorSize = GraphicsContext.MeasureString(caret, font);
 
-                    }
-                    var cursorSize = gfx.MeasureString("#", font);
-
-                    var lineMeasure = gfx.MeasureString(Lines[GetCurrentLine()], font);
+                    var lineMeasure = GraphicsContext.MeasureString(Lines[GetCurrentLine()], font);
                     if (cursorPos.X > lineMeasure.X)
                     {
                         cursorPos.X = lineMeasure.X;
@@ -465,12 +458,15 @@ namespace ShiftOS.Frontend.Apps
 
     public static class GraphicsExtensions
     {
+
+        [Obsolete("Use GraphicsContext.MeasureString instead")]
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font, int width)
         {
             var measure = System.Windows.Forms.TextRenderer.MeasureText(s, font, new Size(width, int.MaxValue));
             return measure;
         }
 
+        [Obsolete("Use GraphicsContext.MeasureString instead")]
         public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
         {
             return SmartMeasureString(gfx, s, font, int.MaxValue);

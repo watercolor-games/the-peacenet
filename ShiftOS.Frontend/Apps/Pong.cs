@@ -100,7 +100,7 @@ namespace ShiftOS.Frontend.Apps
                 ["%cp"] = codepointsToEarn.ToString()
             });
 
-            var tSize = gfx.MeasureString(cp_text, SkinEngine.LoadedSkin.Header3Font);
+            var tSize = GraphicsContext.MeasureString(cp_text, SkinEngine.LoadedSkin.Header3Font);
 
             var tLoc = new Vector2((Width - (int)tSize.X) / 2,
                 (Height - (int)tSize.Y)
@@ -109,14 +109,14 @@ namespace ShiftOS.Frontend.Apps
 
             gfx.DrawString(cp_text, (int)tLoc.X, (int)tLoc.Y, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), SkinEngine.LoadedSkin.Header3Font);
 
-            tSize = gfx.MeasureString(counter, SkinEngine.LoadedSkin.Header2Font);
+            tSize = GraphicsContext.MeasureString(counter, SkinEngine.LoadedSkin.Header2Font);
 
             tLoc = new Vector2((Width - (int)tSize.X) / 2,
                 (Height - (int)tSize.Y) / 2
 
                 );
             gfx.DrawString(counter, (int)tLoc.X, (int)tLoc.Y, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), SkinEngine.LoadedSkin.Header2Font);
-            tSize = gfx.MeasureString(header, SkinEngine.LoadedSkin.Header2Font);
+            tSize = GraphicsContext.MeasureString(header, SkinEngine.LoadedSkin.Header2Font);
 
             tLoc = new Vector2((Width - (int)tSize.X) / 2,
                 (Height - (int)tSize.Y) / 4
@@ -129,7 +129,7 @@ namespace ShiftOS.Frontend.Apps
                 ["%level"] = level.ToString(),
                 ["%time"] = secondsleft.ToString()
             });
-            tSize = gfx.MeasureString(l, SkinEngine.LoadedSkin.Header3Font);
+            tSize = GraphicsContext.MeasureString(l, SkinEngine.LoadedSkin.Header3Font);
 
             tLoc = new Vector2((Width - (int)tSize.X) / 2,
                 (tSize.Y)

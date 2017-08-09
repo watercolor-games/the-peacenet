@@ -119,16 +119,14 @@ namespace ShiftOS.Frontend.Desktop
             int y = 0;
             int height = 0;
             int[] widths = new int[items.Length];
-            using(var gfx = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
-            {
                 LauncherItems.Clear();
                 for(int i = 0; i < items.Length; i++)
                 {
                     string name = Localization.Parse(items[i].DisplayData.Name);
-                    var measure = gfx.SmartMeasureString(name, LoadedSkin.MainFont);
-                    if (height < (int)measure.Height)
-                        height = (int)measure.Height;
-                    widths[i] = 120 + (int)measure.Width;
+                    var measure = GraphicsContext.MeasureString(name, LoadedSkin.MainFont);
+                    if (height < (int)measure.Y)
+                        height = (int)measure.Y;
+                    widths[i] = 120 + (int)measure.X;
                     
                 }
 
@@ -148,7 +146,7 @@ namespace ShiftOS.Frontend.Desktop
                     y += item.Height;
                 }
                 
-            }
+            
             Invalidate();
         }
 
@@ -297,7 +295,7 @@ namespace ShiftOS.Frontend.Desktop
             {
                 gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"]);
             }
-            var altextmeasure = gfx.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont);
+            var altextmeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont);
             int altextx = (holderSize.Width - (int)altextmeasure.X) / 2;
             int altexty = (holderSize.Height - (int)altextmeasure.Y) / 2;
             gfx.DrawString(LoadedSkin.AppLauncherText, altextx, altexty, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont);
@@ -307,7 +305,7 @@ namespace ShiftOS.Frontend.Desktop
             var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
 
             
-            var measure = gfx.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
+            var measure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
 
             int panelclockleft = Width - (int)measure.X;
             int panelclockwidth = Width - panelclockleft;

@@ -348,7 +348,7 @@ namespace ShiftOS.Frontend.Desktop
                     gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"]);
                 }
                 //Now we draw the title text.
-                var textMeasure = gfx.MeasureString(Text, titlefont);
+                var textMeasure = GraphicsContext.MeasureString(Text, titlefont);
                 PointF textloc;
                 if (titletextcentered)
                     textloc = new PointF((titlebarwidth - textMeasure.X) / 2,

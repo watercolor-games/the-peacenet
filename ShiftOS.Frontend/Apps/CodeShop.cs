@@ -137,9 +137,9 @@ As you continue through your job, going further up the ranks, you will unlock ad
             }
 
             int wrapwidth = (Width - (upgradelist.X + upgradelist.Width)) - 45;
-            var titlemeasure = gfx.MeasureString(title, SkinEngine.LoadedSkin.Header2Font, wrapwidth);
+            var titlemeasure = GraphicsContext.MeasureString(title, SkinEngine.LoadedSkin.Header2Font, wrapwidth);
 
-            var descmeasure = gfx.MeasureString(desc, SkinEngine.LoadedSkin.MainFont, wrapwidth);
+            var descmeasure = GraphicsContext.MeasureString(desc, SkinEngine.LoadedSkin.MainFont, wrapwidth);
 
             int availablewidth = Width - (upgradelist.X + upgradelist.Width);
             int titlelocx = (availablewidth - (int)titlemeasure.X) / 2;
@@ -152,7 +152,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
             gfx.DrawString(desc, desclocx, desclocy, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), SkinEngine.LoadedSkin.MainFont, wrapwidth);
 
             string shiftorium = "Shiftorium";
-            var smeasure = gfx.MeasureString(shiftorium, SkinEngine.LoadedSkin.HeaderFont);
+            var smeasure = GraphicsContext.MeasureString(shiftorium, SkinEngine.LoadedSkin.HeaderFont);
             gfx.DrawString(shiftorium, upgradelist.X + ((upgradelist.Width - (int)smeasure.X) / 2), 20, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), SkinEngine.LoadedSkin.HeaderFont);
         }
     }

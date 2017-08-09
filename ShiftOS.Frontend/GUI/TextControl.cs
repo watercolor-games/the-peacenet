@@ -57,7 +57,7 @@ namespace ShiftOS.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx)
         {
-            var sMeasure = gfx.MeasureString(_text, _font, Width);
+            var sMeasure = GraphicsContext.MeasureString(_text, _font, Width);
             PointF loc = new PointF(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;

@@ -70,11 +70,7 @@ namespace ShiftOS.Frontend.Apps
             int inRight = (Width - _send.Width - 20);
             _input.AutoSize = false;
             _input.Width = inRight - _input.X;
-            if (requiresRepaint)
-            {
-                Invalidate();
-                requiresRepaint = false;
-            }
+
         }
 
         public bool ChannelConnected
@@ -171,13 +167,13 @@ namespace ShiftOS.Frontend.Apps
                         break;
                     var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
                     var nnProper = $"<{msg.Author}>";
-                    var tsMeasure = gfx.MeasureString(tsProper, LoadedSkin.TerminalFont);
-                    var nnMeasure = gfx.MeasureString(nnProper, LoadedSkin.TerminalFont);
+                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont);
+                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont);
                     int old = vertSeparatorLeft;
                     vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
                     if (old != vertSeparatorLeft)
                         requiresRepaint = true;
-                    var msgMeasure = gfx.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                    var msgMeasure = GraphicsContext.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
                     messagebottom -= (int)msgMeasure.Y;
                     gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
                     var nnColor = Color.LightGreen;
@@ -229,7 +225,7 @@ namespace ShiftOS.Frontend.Apps
                     int usersStartY = messagesTop;
                     foreach(var user in NetInfo.Channel.OnlineUsers.OrderBy(x=>x.Nickname))
                     {
-                        var measure = gfx.MeasureString(user.Nickname, LoadedSkin.TerminalFont);
+                        var measure = GraphicsContext.MeasureString(user.Nickname, LoadedSkin.TerminalFont);
 
                         var nnColor = Color.LightGreen;
                         if (user.Nickname == SaveSystem.CurrentSave.Username)

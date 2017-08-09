@@ -20,16 +20,13 @@ namespace ShiftOS.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if(AutoSize == true)
+            if (AutoSize == true)
             {
                 int borderwidth = SkinEngine.LoadedSkin.ButtonBorderWidth * 2;
 
-                using (var gfx = Graphics.FromImage(new Bitmap(1, 1)))
-                {
-                    var measure = gfx.MeasureString(this.Text, this.Font);
-                    Width = borderwidth + (int)measure.Width + 16;
-                    Height = borderwidth + (int)measure.Height + 12;
-                }
+                var measure = GraphicsContext.MeasureString(this.Text, this.Font);
+                Width = borderwidth + (int)measure.X + 16;
+                Height = borderwidth + (int)measure.Y + 12;
             }
         }
 
@@ -45,7 +42,7 @@ namespace ShiftOS.Frontend.GUI
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, bgCol);
 
-            var measure = gfx.MeasureString(Text, Font);
+            var measure = GraphicsContext.MeasureString(Text, Font);
 
             var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
 

@@ -363,9 +363,9 @@ namespace ShiftOS.Frontend
                 string objectiveFailed = "- OBJECTIVE FAILURE -";
                 string prompt = "[press any key to dismiss this message and return to your sentience]";
                 int textMaxWidth = UIManager.Viewport.Width / 3;
-                var topMeasure = gfx.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
-                var msgMeasure = gfx.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
-                var pMeasure = gfx.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
+                var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
+                var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
+                var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
 
                 gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
                 gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
@@ -378,7 +378,7 @@ namespace ShiftOS.Frontend
                 {
                     string str = $"Timeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
                     var gfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
-                    var measure = gfx.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
+                    var measure = GraphicsContext.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
                     gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
                 }
             }
