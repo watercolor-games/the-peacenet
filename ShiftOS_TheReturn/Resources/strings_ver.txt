@@ -11,7 +11,7 @@ some.command{print:\"hello\"}
 math.add{op1:1,op2:2}
 set.value{key:\"somekey\", value:true}
 	
-You have been given 50 Codepoints - use your knowledge to use them to buy the MUD Fundamentals Shiftorium Upgrade using the terminal.
+You have been given 50 Experience - use your knowledge to use them to buy the MUD Fundamentals Shiftorium Upgrade using the terminal.
 To buy MUD Fundamentals, type shiftorium.buy{upgrade:\"mud_fundamentals\"} This is also true for any other thing you want to buy from the shiftorium, just replace mud_fundementals with any other upgrade id.
 ",
 
@@ -31,7 +31,7 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{APPLICATIONS}":"Applications",
 	"{TERMINAL}":"Terminal",
 	"{PONG}":"Pong",
-	"{CODEPOINTS}":"Codepoints",
+	"{Experience}":"Experience",
 	"{SHIFTORIUM}":"Shiftorium",
 	"{HACK}":"Hack",
 	"{SHIFTER}":"Shifter",
@@ -78,15 +78,15 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{HAS_LEFT_CHAT}":"has left the chat.",
 	"{SHIFTORIUM_EXP}":"The Shiftorium is your one-stop-shop for ShiftOS system enhancements, upgrades and applications.
 	
-	You can buy upgrades in the Shiftorium using a currency called Codepoints, which you can earn by doing various tasks within ShiftOS, such as playing Pong, stealing them from other users, and finding ways to make your own. It's up to you how you get your Codepoints.
+	You can buy upgrades in the Shiftorium using a currency called Experience, which you can earn by doing various tasks within ShiftOS, such as playing Pong, stealing them from other users, and finding ways to make your own. It's up to you how you get your Experience.
 	
-	You can then use them to buy new applications, features, enhancements and upgrades for ShiftOS that make the user experience a lot better. Be careful though, buying too many system enhancements without buying new ways of earning Codepoints first can leave you in the dust and unable to upgrade the system.
+	You can then use them to buy new applications, features, enhancements and upgrades for ShiftOS that make the user experience a lot better. Be careful though, buying too many system enhancements without buying new ways of earning Experience first can leave you in the dust and unable to upgrade the system.
 	
 	Anyways, feel free to browse from our wonderful selection! You can see a list of available upgrades on the left, as well as a progress bar showing how much you've upgraded the system compared to how much you still can.",
 	"{PONG_WELCOME}":"You as a homo sapien are brought to this application known as Pong, and you are certainly welcome to this application.",
 	"{PONG_DESC}":"Pong is an arcade game where your goal is to get the ball past the opponent paddle while keeping it from getting past yours.
 	
-	In ShiftOS, Pong is modified - you only have one chance, the game is divided into 60 second levels, and you can earn Codepoints by surviving a level, and beating the opponent.",
+	In ShiftOS, Pong is modified - you only have one chance, the game is divided into 60 second levels, and you can earn Experience by surviving a level, and beating the opponent.",
 	"{NO_APP_TO_OPEN}":"No app found for this file!",
 	"{NO_APP_TO_OPEN_EXP}":"File Skimmer could not find an application that can open this file.",
 	"{CLIENT_DIAGNOSTICS}":"Client diagnostics",
@@ -104,16 +104,16 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{UPGRADE_DEVELOPMENT}":"Development Upgrade",
 	"{UPGRADE_DEVELOPMENT_DESCRIPTION}":"Development Upgrade Don't Buy",
 	"{SECONDS_LEFT}":"seconds left",
-	"{CASH_OUT_WITH_CODEPOINTS}":"Cash out with your codepoints",
+	"{CASH_OUT_WITH_Experience}":"Cash out with your Experience",
 	"{PONG_PLAY_ON_FOR_MORE}":"Play on for more!",
 	"{YOU_REACHED_LEVEL}":"You've reached level",
 	"{PONG_BEAT_AI_REWARD}":"Reward for beating AI (CP)",
-	"{PONG_BEAT_AI_REWARD_SECONDARY}":"Codepoints for beating AI:",
-	"{CODEPOINTS_FOR_BEATING_LEVEL}":"Codepoints for beating level",
+	"{PONG_BEAT_AI_REWARD_SECONDARY}":"Experience for beating AI:",
+	"{Experience_FOR_BEATING_LEVEL}":"Experience for beating level",
 	"{YOU_WON}":"You won",
 	"{YOU_LOSE}":"You lose",
 	"{TRY_AGAIN}":"Try again",
-	"{CODEPOINTS_SHORT}":"CP",
+	"{Experience_SHORT}":"CP",
 	"{TERMINAL_FORMATTING_DRIVE}":"Formatting drive... %percent %",
 	"{INSTALLING_SHIFTOS}":"Installing ShiftOS on %domain.",
 	"{YOU_MISSED_OUT_ON}":"You missed out on",
@@ -154,13 +154,13 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{COMMAND_SOS_SHUTDOWN_USAGE}":"%ns.%cmd",
 	"{COMMAND_SOS_SHUTDOWN_DESCRIPTION}":"Saves and shuts down ShiftOS",
 	"{COMMAND_SOS_STATUS_USAGE}":"%ns.%cmd",
-	"{COMMAND_SOS_STATUS_DESCRIPTION}":"Displays how many codepoints you have",
+	"{COMMAND_SOS_STATUS_DESCRIPTION}":"Displays how many Experience you have",
 	"{COMMAND_DEV_CRASH_USAGE}":"%ns.%cmd",
 	"{COMMAND_DEV_CRASH_DESCRIPTION}":"Shuts down ShiftOS forcefully",
 	"{COMMAND_DEV_UNLOCKEVERYTHING_USAGE}":"%ns.%cmd",
 	"{COMMAND_DEV_UNLOCKEVERYTHING_DESCRIPTION}":"Unlocks all shiftorium upgrades",
 	"{COMMAND_DEV_FREECP_USAGE}":"%ns.%cmd{[amount:1000]}",
-	"{COMMAND_DEV_FREECP_DESCRIPTION}":"Gives [ammount] codepoints",
+	"{COMMAND_DEV_FREECP_DESCRIPTION}":"Gives [ammount] Experience",
 	"{COMMAND_TRM_CLEAR_USAGE}":"%ns.%cmd",
 	"{COMMAND_TRM_CLEAR_DESCRIPTION}":"Clears the terminal",
 	"{COMMAND_SHIFTORIUM_BUY_USAGE}":"%ns.%cmd{upgrade:}",
@@ -180,9 +180,9 @@ If a system file is deleted by the virus scanner, it will be replaced.",
 	"{PROLOGUE_NOSPACES}":"Usernames must not contain spaces.",
 	"{PROLOGUE_PLEASE_ENTER_USERNAME}":"Please enter a valid username. Blank usernames are not permitted.",
 
-	"{SHIFTORIUM_NOTENOUGHCP}":"Not enough codepoints: ",
-	"{SHIFTORIUM_TRANSFERRED_FROM}":"Received Codepoints from",
-	"{SHIFTORIUM_TRANSFERRED_TO}":"Transferred Codepoints to",
+	"{SHIFTORIUM_NOTENOUGHCP}":"Not enough Experience: ",
+	"{SHIFTORIUM_TRANSFERRED_FROM}":"Received Experience from",
+	"{SHIFTORIUM_TRANSFERRED_TO}":"Transferred Experience to",
 
 	"{SE_SAVING}":"Saving game to disk",
 	"{SE_TIPOFADVICE}":"Tip of advice: ShiftOS will always save your game after big events or when you shut down the operating system. You can also invoke a save yourself using 'sos.save'.",

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.Apps;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using static ShiftOS.Engine.SkinEngine;
+using Plex.Engine;
+using Plex.Frontend.Apps;
+using Plex.Frontend.GraphicsSubsystem;
+using static Plex.Engine.SkinEngine;
 
 
-namespace ShiftOS.Frontend.Desktop
+namespace Plex.Frontend.Desktop
 {
     public class Desktop : GUI.Control, IDesktop
     {
@@ -25,7 +25,7 @@ namespace ShiftOS.Frontend.Desktop
             {
                 Show();
                 SetupDesktop();
-                if (!Shiftorium.UpgradeInstalled("tutorial1"))
+                if (!Upgrades.UpgradeInstalled("tutorial1"))
                 {
                     Story.Start("tutorial1");
                 }
@@ -66,7 +66,7 @@ namespace ShiftOS.Frontend.Desktop
         {
             get
             {
-                return "ShiftOS MonoGame Desktop";
+                return "Plex MonoGame Desktop";
             }
         }
 
@@ -230,7 +230,7 @@ namespace ShiftOS.Frontend.Desktop
                 if(alSelectedItem != -1)
                 {
                     var item = LauncherItems[alSelectedItem];
-                    AppearanceManager.SetupWindow((IShiftOSWindow)Activator.CreateInstance(item.Data.LaunchType, null));
+                    AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.Data.LaunchType, null));
                 }
                 alOpen = false;
                 Invalidate();

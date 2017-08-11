@@ -1,4 +1,4 @@
-/* ShiftOS Loot data file
+/* Plex Loot data file
  *
  * This file contains information about all loot in the game's campaign.
  *

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.Desktop;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using ShiftOS.Frontend.GUI;
+using Plex.Engine;
+using Plex.Frontend.Desktop;
+using Plex.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GUI;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public class Infobox : IInfobox
     {
@@ -33,7 +33,7 @@ namespace ShiftOS.Frontend
         }
     }
 
-    public class InfoboxMessage : GUI.Control, IShiftOSWindow
+    public class InfoboxMessage : GUI.Control, IPlexWindow
     {
         public InfoboxMessage(string title, string message)
         {

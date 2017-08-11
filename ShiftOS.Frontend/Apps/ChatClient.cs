@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GUI;
-using ShiftOS.Objects.ShiftFS;
-using ShiftOS.Objects;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.GUI;
+using Plex.Objects.ShiftFS;
+using Plex.Objects;
+using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
-using static ShiftOS.Engine.SkinEngine;
+using static Plex.Engine.SkinEngine;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [WinOpen("irc")]
     [DefaultTitle("IRC Client")]
     [Launcher("IRC Client", false, null, "Networking")]
-    public class ChatClient : Control, IShiftOSWindow
+    public class ChatClient : Control, IPlexWindow
     {
         private TextControl _sendprompt = null;
         private TextInput _input = null;
@@ -268,7 +268,7 @@ namespace ShiftOS.Frontend.Apps
                 });
             var t = new Thread(() =>
             {
-                SendClientMessage("shiftos", $"Looking up {net.SystemName}");
+                SendClientMessage("Plex", $"Looking up {net.SystemName}");
                 Thread.Sleep(250);
                 SendClientMessage("*", $"Connecting to {net.SystemName} ({net.SystemName}:6667)");
                 Thread.Sleep(1500);
@@ -293,10 +293,10 @@ namespace ShiftOS.Frontend.Apps
                 Thread.Sleep(250);
                 SendClientMessage("*", $"{SaveSystem.CurrentSave.Username} sets mode +i on {SaveSystem.CurrentSave.Username}");
                 Thread.Sleep(300);
-                SendClientMessage("shiftos", "Joining #" + net.Channel.Tag);
+                SendClientMessage("Plex", "Joining #" + net.Channel.Tag);
                 Thread.Sleep(100);
                 ChannelConnected = true;
-                SendClientMessage("shiftos", $"{net.Channel.Topic}: {net.Channel.OnlineUsers.Count} users online");
+                SendClientMessage("Plex", $"{net.Channel.Topic}: {net.Channel.OnlineUsers.Count} users online");
                 Thread.Sleep(10);
                 SendClientMessage("ChanServ", "ChanServ sets mode -v on " + SaveSystem.CurrentSave.Username);
             });

@@ -1,6 +1,6 @@
-/* ShiftOS setup data file
+/* Plex setup data file
  * 
- * This file holds information used by a ShiftOS "Installer" for setting up a system component.
+ * This file holds information used by a Plex "Installer" for setting up a system component.
  *
  */
 

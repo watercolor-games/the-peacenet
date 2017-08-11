@@ -5,13 +5,13 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
+using Plex.Engine;
 using System.Drawing.Imaging;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace ShiftOS.Frontend.GUI
+namespace Plex.Frontend.GUI
 {
     public class PictureBox : Control
     {

@@ -9,8 +9,8 @@
     <ProjectGuid>{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShiftOS.Frontend</RootNamespace>
-    <AssemblyName>ShiftOS.Frontend</AssemblyName>
+    <RootNamespace>Plex.Frontend</RootNamespace>
+    <AssemblyName>Plex</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -48,8 +48,8 @@
     <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\Network.cs" />
     <Compile Include="Apps\Pong.cs" />
-    <Compile Include="Apps\Shifter.cs" />
-    <Compile Include="Apps\SkinLoader.cs" />
+    <Compile Include="Apps\PlexTheme.cs" />
+    <Compile Include="Apps\Themes.cs" />
     <Compile Include="Apps\SystemStatus.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Apps\TextPad.cs" />
@@ -81,7 +81,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ShiftOS.cs" />
+    <Compile Include="Plexgate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stories\BeginTutorials.cs" />
@@ -116,8 +116,7 @@
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -171,13 +170,13 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShiftOS.Objects\ShiftOS.Objects.csproj">
+    <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
       <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
-      <Name>ShiftOS.Objects</Name>
+      <Name>Plex.Objects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShiftOS_TheReturn\ShiftOS.Engine.csproj">
+    <ProjectReference Include="..\ShiftOS_TheReturn\Plex.Engine.csproj">
       <Project>{7c979b07-0585-4033-a110-e5555b9d6651}</Project>
-      <Name>ShiftOS.Engine</Name>
+      <Name>Plex.Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,27 +1,3 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,12 +7,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using static ShiftOS.Engine.SaveSystem;
+using static Plex.Engine.SaveSystem;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     /// <summary>
-    /// Backend for the ShiftOS terminal.
+    /// Backend for the Plex terminal.
     /// </summary>
     public static class TerminalBackend
     {
@@ -55,7 +31,7 @@ namespace ShiftOS.Engine
         }
 
         /// <summary>
-        /// Sets the shell override string to the specified value. Empty string or <see cref="null"/> to use the default ShiftOS string. 
+        /// Sets the shell override string to the specified value. Empty string or <see cref="null"/> to use the default Plex string. 
         /// </summary>
         /// <param name="value">The string to use as a shell prompt.</param>
         public static void SetShellOverride(string value)
@@ -74,7 +50,7 @@ namespace ShiftOS.Engine
         public static bool Elevated { get; set; }
 
         /// <summary>
-        /// Parses command-line arguments using the ShiftOS syntax and stores them in a <see cref="Dictionary{string, string}"/>, removing the parsed text from the original string.
+        /// Parses command-line arguments using the Plex syntax and stores them in a <see cref="Dictionary{string, string}"/>, removing the parsed text from the original string.
         /// </summary>
         /// <param name="text">The text to parse.</param>
         /// <returns><see cref="Dictionary{string, string}"/> containing the parsed arguments.</returns>
@@ -113,7 +89,7 @@ namespace ShiftOS.Engine
         public static string LastCommandBuffer { get; private set; }
 
         /// <summary>
-        /// Invokes a ShiftOS terminal command.
+        /// Invokes a Plex terminal command.
         /// </summary>
         /// <param name="command">The command name.</param>
         /// <param name="arguments">The command arguments.</param>
@@ -260,7 +236,7 @@ namespace ShiftOS.Engine
 
         public class WinOpenCommand : TerminalCommand
         {
-            public Type ShiftOSWindow { get; set; }
+            public Type PlexWindow { get; set; }
 
             public override bool MatchShell()
             {
@@ -270,7 +246,7 @@ namespace ShiftOS.Engine
 
             public override void Invoke(Dictionary<string, object> args)
             {
-                AppearanceManager.SetupWindow((IShiftOSWindow)Activator.CreateInstance(ShiftOSWindow, null));
+                AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(PlexWindow, null));
             }
 
 
@@ -335,7 +311,7 @@ namespace ShiftOS.Engine
             Commands = new List<TerminalCommand>();
             foreach (var type in ReflectMan.Types)
             {
-                if (type.GetInterfaces().Contains(typeof(IShiftOSWindow)))
+                if (type.GetInterfaces().Contains(typeof(IPlexWindow)))
                 {
                     var winopenattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is WinOpenAttribute) as WinOpenAttribute;
                     if(winopenattrib != null)
@@ -348,7 +324,7 @@ namespace ShiftOS.Engine
                         winc.CommandInfo = new Engine.Command(winopenattrib.ID, "", "Opens the \"" + winopenattrib.ID + " program.");
                         winc.RequiredArguments = new List<string>();
                         winc.RequiresElevation = false;
-                        winc.ShiftOSWindow = type;
+                        winc.PlexWindow = type;
 
                         var ambiguity = Commands.FirstOrDefault(x => x.CommandInfo.name == winc.CommandInfo.name);
                         if (ambiguity != null)
@@ -402,9 +378,9 @@ namespace ShiftOS.Engine
         }
 
         /// <summary>
-        /// Invokes a ShiftOS terminal command.
+        /// Invokes a Plex terminal command.
         /// </summary>
-        /// <param name="text">The full command text in regular ShiftOS syntax</param>
+        /// <param name="text">The full command text in regular Plex syntax</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
         public static void InvokeCommand(string text, bool isRemote = false)
         {
@@ -513,7 +489,7 @@ namespace ShiftOS.Engine
             var cmd = Commands.FirstOrDefault(x => Localization.Parse(x.CommandInfo.name) == text);
             if (cmd == null)
                 return false;
-            if (!Shiftorium.UpgradeInstalled(cmd.Dependencies))
+            if (!Upgrades.UpgradeInstalled(cmd.Dependencies))
                 return false;
             bool res = false;
             foreach (var arg in cmd.RequiredArguments)
@@ -600,7 +576,7 @@ namespace ShiftOS.Engine
         /// <summary>
         /// Instructs the terminal command interpreter to disallow running of this command unless the user shell override matches up with the value provided here.
         /// </summary>
-        /// <param name="shell">The required shell string. Null or whitespace to match with the default ShiftOS shell.</param>
+        /// <param name="shell">The required shell string. Null or whitespace to match with the default Plex shell.</param>
         public ShellConstraintAttribute(string shell)
         {
             Shell = shell;

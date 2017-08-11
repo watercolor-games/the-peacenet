@@ -7,15 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class ShiftOS : Game
+    public class Plexgate : Game
     {
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
@@ -37,7 +37,7 @@ namespace ShiftOS.Frontend
 
         private KeyboardListener keyboardListener = new KeyboardListener ();
 
-        public ShiftOS()
+        public Plexgate()
         {
             Story.FailureRequested += (message) =>
             {
@@ -69,7 +69,7 @@ namespace ShiftOS.Frontend
             Window.IsBorderless = false;
 
             //Set the title
-            Window.Title = "ShiftOS";
+            Window.Title = "Plex";
 
 
 
@@ -117,7 +117,7 @@ namespace ShiftOS.Frontend
         {
             OutOfBoxExperience.Init(new MonoGameOOBE());
 
-            //Before we do ANYTHING, we've got to initiate the ShiftOS engine.
+            //Before we do ANYTHING, we've got to initiate the Plex engine.
             UIManager.GraphicsDevice = GraphicsDevice;
 
             //Let's get localization going.
@@ -357,6 +357,7 @@ namespace ShiftOS.Frontend
 
             spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), Color.Red * shroudOpacity);
 
+
             if(isFailing && failFadeInMS >= failFadeMaxMS)
             {
                 var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0,0, UIManager.Viewport.Width, UIManager.Viewport.Height);
@@ -390,10 +391,10 @@ namespace ShiftOS.Frontend
                 double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
                     color = Color.Red;
-                gfxContext.DrawString($@"ShiftOS
+                gfxContext.DrawString($@"Plex
 =======================
 
-Copyright (c) 2017 ShiftOS Developers
+Copyright (c) 2017 Plex Developers
 
 Debug information - {fps} FPS
 
@@ -406,6 +407,18 @@ Red text means low framerate, a low framerate could be a sign of CPU hogging cod
 
 Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
+
+#if DEBUG
+            var _dGfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, 1280, 720);
+            string volition = @"PROJECT: PLEX
+PROPERTY OF WATERCOLOR GAMES
+FOR INTERNAL USE ONLY.";
+            var dmeasure = GraphicsContext.MeasureString(volition, SkinEngine.LoadedSkin.HeaderFont, 480);
+            int x = (1280 - (int)dmeasure.X) / 2;
+            int y = (720 - (int)dmeasure.Y) / 2;
+            _dGfx.DrawString(volition, x, y, Color.White * 0.5F, SkinEngine.LoadedSkin.HeaderFont, 480);
+#endif
+
 
             spriteBatch.End();
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);

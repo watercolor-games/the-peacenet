@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
+using Plex.Engine;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
-    [FileHandler("TextPad", ".txt", "")]
-    [DefaultTitle("TextPad")]
-    [WinOpen("textpad")]
-    [Launcher("TextPad", false, null, "Accessories")]
-    public class TextPad : GUI.Control, IShiftOSWindow, IFileHandler
+    [FileHandler("Plex Editor", ".txt", "")]
+    [DefaultTitle("Plex Editor")]
+    [WinOpen("edit")]
+    [Launcher("Plex Editor", false, null, "Accessories")]
+    public class TextPad : GUI.Control, IPlexWindow, IFileHandler
     {
         private TerminalControl contentsLabel = null;
 

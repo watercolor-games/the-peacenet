@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GUI;
+using Plex.Engine;
+using Plex.Frontend.GUI;
 using Newtonsoft.Json;
-using static ShiftOS.Objects.ShiftFS.Utils;
+using static Plex.Objects.ShiftFS.Utils;
 using Microsoft.Xna.Framework;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [DefaultTitle("Installer")]
     [FileHandler("Setup file", ".stp", "")]
-    public class Installer : Control, IShiftOSWindow, IFileHandler
+    public class Installer : Control, IPlexWindow, IFileHandler
     {
         private SetupFile _setup = null;
         private TextControl _header = null;
@@ -58,12 +58,12 @@ namespace ShiftOS.Frontend.Apps
             switch (_setup.SourceType)
             {
                 case SetupSource.ShiftoriumUpgrade:
-                    if (Shiftorium.UpgradeInstalled(_setup.Source))
+                    if (Upgrades.UpgradeInstalled(_setup.Source))
                     {
                         Engine.Infobox.Show("Upgrade installed.", "This upgrade has already been installed either through the Shiftorium or through another setup file.");
                         return;
                     }
-                    Shiftorium.Buy(_setup.Source, 0);
+                    Upgrades.Buy(_setup.Source, 0);
                     Engine.Infobox.Show("Upgrade installed.", "The upgrade \"" + _setup.Source + "\" has been installed and is now ready to be used!");
 
                     break;

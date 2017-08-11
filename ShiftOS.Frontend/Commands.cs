@@ -1,27 +1,3 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 #define DEVEL
 
 using System;
@@ -32,24 +8,24 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ShiftOS.Engine.Properties;
+using Plex.Engine.Properties;
 using System.IO;
 using Newtonsoft.Json;
 using System.IO.Compression;
 
-using ShiftOS.Objects;
-using ShiftOS.Engine.Scripting;
-using ShiftOS.Objects.ShiftFS;
-using ShiftOS.Engine;
+using Plex.Objects;
+using Plex.Engine.Scripting;
+using Plex.Objects.ShiftFS;
+using Plex.Engine;
 using Microsoft.Xna.Framework;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public static class FrontendDebugCommands
     {
         [Command("infobox_prison")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         public static void InfoboxPrison()
         {
             var ibox = new InfoboxMessage("Infobox Prison", "You are now sentenced to life in Infobox Prison.");
@@ -85,7 +61,7 @@ namespace ShiftOS.Frontend
 
         [Command("set_ui_tint")]
         [RequiresArgument("color")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         public static void SetUITint    (Dictionary<string, object> args)
         {
             string[] split = args["color"].ToString().Split(';');
@@ -96,7 +72,7 @@ namespace ShiftOS.Frontend
         }
 
         [Command("drop_opener")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         public static void DropOpener(Dictionary<string, object> args)
         {
             string[] ids = new string[] { "" };
@@ -112,7 +88,7 @@ namespace ShiftOS.Frontend
         }
 
         [Command("drop_saver")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         public static void DropSaver(Dictionary<string, object> args)
         {
             string[] ids = new string[] { "" };
@@ -133,7 +109,7 @@ namespace ShiftOS.Frontend
         /// ...Because WE'RE CANADA.
         /// </summary>
         [Command("drop_eas")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         [RequiresArgument("id")]
         public static void DropEAS(Dictionary<string, object> args)
         {
@@ -141,7 +117,7 @@ namespace ShiftOS.Frontend
         }
 
         [Command("loaddefaultskn")]
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         public static void LoadDefault()
         {
             Utils.Delete(Paths.GetPath("skin.json"));
@@ -331,7 +307,7 @@ namespace ShiftOS.Frontend
             string id = args["id"].ToString();
             try
             {
-                if (!Shiftorium.UpgradeInstalled(id))
+                if (!Upgrades.UpgradeInstalled(id))
                 {
                     Story.Start(id);
                     return;
@@ -359,7 +335,7 @@ namespace ShiftOS.Frontend
                     var missionattrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
                     if(missionattrib != null)
                     {
-                        if (!Shiftorium.UpgradeInstalled(missionattrib.StoryID))
+                        if (!Upgrades.UpgradeInstalled(missionattrib.StoryID))
                         {
                             found = true;
                             Console.WriteLine();
@@ -413,13 +389,13 @@ There are no missions available for you to complete. Please check back later for
         }
     }
 
-    public static class ShiftOSCommands
+    public static class PlexCommands
     {
 #if DEBUG
         [Command("debug")]
         public static void EnterDebug()
         {
-            TerminalBackend.SetShellOverride("shiftos_debug> ");
+            TerminalBackend.SetShellOverride("Plex_debug> ");
         }
 #endif
 
@@ -523,11 +499,11 @@ There are no missions available for you to complete. Please check back later for
             sb.AppendLine("=================");
             sb.AppendLine();
             //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Shiftorium.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell() == true).OrderBy(x => x.CommandInfo.name))
+            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell() == true).OrderBy(x => x.CommandInfo.name))
             {
                 sb.Append(" - " + n.CommandInfo.name);
                 if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
-                    if (Shiftorium.UpgradeInstalled("help_description"))
+                    if (Upgrades.UpgradeInstalled("help_description"))
                         sb.Append(" - " + n.CommandInfo.description);
                 sb.AppendLine();
             }
@@ -553,9 +529,9 @@ There are no missions available for you to complete. Please check back later for
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-           string cp = SaveSystem.CurrentSave.Codepoints.ToString();
+           string cp = SaveSystem.CurrentSave.Experience.ToString();
            string installed = SaveSystem.CurrentSave.CountUpgrades().ToString();
-            string available = Shiftorium.GetAvailable().Length.ToString();
+            string available = Upgrades.GetAvailable().Length.ToString();
 
             Console.WriteLine(Localization.Parse("{COM_STATUS}", new Dictionary<string, string>
             {
@@ -602,11 +578,11 @@ There are no missions available for you to complete. Please check back later for
 
                 upgrade = (string)userArgs["id"];
 
-                var upg = Shiftorium.GetAvailable().FirstOrDefault(x => x.ID == upgrade);
+                var upg = Upgrades.GetAvailable().FirstOrDefault(x => x.ID == upgrade);
                 if(upg != null)
                 {
-                    if (!Shiftorium.Buy(upg.ID, upg.Cost) == true)
-                        Console.WriteLine("{ERR_NOTENOUGHCODEPOINTS}");
+                    if (!Upgrades.Buy(upg.ID, upg.Cost) == true)
+                        Console.WriteLine("{ERR_NOTENOUGHExperience}");
                 }
                 else
                 {
@@ -650,7 +626,7 @@ There are no missions available for you to complete. Please check back later for
 
                 upgrade = (string)userArgs["id"];
 
-                foreach (var upg in Shiftorium.GetDefaults())
+                foreach (var upg in Upgrades.GetDefaults())
                 {
                     if (upg.ID == upgrade)
                     {
@@ -678,12 +654,12 @@ There are no missions available for you to complete. Please check back later for
         [Command("upgradecategories", description = "{DESC_UPGRADECATEGORIES}")]
         public static bool ListCategories()
         {
-            foreach(var cat in Shiftorium.GetCategories())
+            foreach(var cat in Upgrades.GetCategories())
             {
                 Console.WriteLine(Localization.Parse("{SHFM_CATEGORY}", new Dictionary<string, string>
                 {
                     ["%name"] = cat,
-                    ["%available"] = Shiftorium.GetAvailable().Where(x=>x.Category==cat).Count().ToString()
+                    ["%available"] = Upgrades.GetAvailable().Where(x=>x.Category==cat).Count().ToString()
                 }));
             }
             return true;
@@ -707,10 +683,10 @@ There are no missions available for you to complete. Please check back later for
                 Dictionary<string, ulong> upgrades = new Dictionary<string, ulong>();
                 int maxLength = 5;
 
-                IEnumerable<ShiftoriumUpgrade> upglist = Shiftorium.GetAvailable();
+                IEnumerable<ShiftoriumUpgrade> upglist = Upgrades.GetAvailable();
                 if (showOnlyInCategory)
                 {
-                    if (Shiftorium.IsCategoryEmptied(cat))
+                    if (Upgrades.IsCategoryEmptied(cat))
                     {
                         ConsoleEx.Bold = true;
                         ConsoleEx.ForegroundColor = ConsoleColor.Red;
@@ -721,7 +697,7 @@ There are no missions available for you to complete. Please check back later for
                         Console.WriteLine("{ERR_EMPTYCATEGORY}");
                         return true;
                     }
-                    upglist = Shiftorium.GetAvailable().Where(x => x.Category == cat);
+                    upglist = Upgrades.GetAvailable().Where(x => x.Category == cat);
                 }
 
 
@@ -788,11 +764,11 @@ There are no missions available for you to complete. Please check back later for
             sb.AppendLine("===============");
             sb.AppendLine();
             //print all unique namespaces.
-            foreach(var n in TerminalBackend.Commands.Where(x => x is TerminalBackend.WinOpenCommand && Shiftorium.UpgradeInstalled(x.Dependencies)).OrderBy(x => x.CommandInfo.name))
+            foreach(var n in TerminalBackend.Commands.Where(x => x is TerminalBackend.WinOpenCommand && Upgrades.UpgradeInstalled(x.Dependencies)).OrderBy(x => x.CommandInfo.name))
             {
                 sb.Append(" - " + n.CommandInfo.name);
                 if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
-                    if (Shiftorium.UpgradeInstalled("help_description"))
+                    if (Upgrades.UpgradeInstalled("help_description"))
                         sb.Append(" - " + n.CommandInfo.description);
                 sb.AppendLine();
             }

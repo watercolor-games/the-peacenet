@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShiftOS.Objects
+namespace Plex.Objects
 {
     public class UserConfig
     {
@@ -20,7 +20,7 @@ namespace ShiftOS.Objects
         private static UserConfig def = new UserConfig
         {
             Language = "english",
-            DigitalSocietyAddress = "michaeltheshifter.me",
+            DigitalSocietyAddress = "getPlex.net",
             DigitalSocietyPort = 13370,
             Fullscreen = true,
             ScreenWidth = 1920,

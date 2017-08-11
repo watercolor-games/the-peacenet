@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.Desktop;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.Desktop;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [WinOpen("systemstatus")]
     [Launcher("System Status", false, null, "System")]
     [DefaultTitle("System Status")]
     [SidePanel]
-    public class SystemStatus : GUI.Control, IShiftOSWindow
+    public class SystemStatus : GUI.Control, IPlexWindow
     {
         GUI.TextControl _header = null;
         GUI.TextControl _mainstatus = null;
@@ -58,8 +58,8 @@ namespace ShiftOS.Frontend.Apps
             _mainstatus.Y = _header.Y + _header.Height + 10;
             _mainstatus.Width = Width - 40;
             _mainstatus.Height = Height - (_header.Y + _header.Height) - 40;
-            _mainstatus.Text = $@"Codepoints: {SaveSystem.CurrentSave.Codepoints}
-Upgrades: {SaveSystem.CurrentSave.CountUpgrades()} installed, {Shiftorium.GetDefaults().Count} available
+            _mainstatus.Text = $@"Experience: {SaveSystem.CurrentSave.Experience}
+Upgrades: {SaveSystem.CurrentSave.CountUpgrades()} installed, {Upgrades.GetDefaults().Count} available
 Filesystems:
 ";
 

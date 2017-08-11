@@ -1,4 +1,4 @@
-/* ShiftOS hackables data file
+/* Plex hackables data file
  *
  * This file contains information about all hackable systems in the game's campaign.
  *

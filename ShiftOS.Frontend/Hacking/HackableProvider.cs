@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Objects;
-using ShiftOS.Engine;
+using Plex.Objects;
+using Plex.Engine;
 using Newtonsoft.Json;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public class HackableProvider : IHackableProvider
     {

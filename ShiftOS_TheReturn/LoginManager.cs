@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Objects;
+using Plex.Objects;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     public static class LoginManager
     {
@@ -50,7 +50,7 @@ namespace ShiftOS.Engine
         void Login();
         
         /// <summary>
-        /// Gets whether the ShiftOS engine should use a GUI-based login system or the default one.
+        /// Gets whether the Plex engine should use a GUI-based login system or the default one.
         /// </summary>
         bool UseGUILogin { get; }
 

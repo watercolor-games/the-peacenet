@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using ShiftOS.Frontend.GUI;
-using static ShiftOS.Objects.ShiftFS.Utils;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GUI;
+using static Plex.Objects.ShiftFS.Utils;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [WinOpen("fileskimmer")]
     [Launcher("File Skimmer", false, null, "System")]
     [DefaultTitle("File Skimmer")]
-    public class FileSkimmer : GUI.Control, IShiftOSWindow
+    public class FileSkimmer : GUI.Control, IPlexWindow
     {
         private string _currentdirectory = "0:";
         private const string SD_SYSTEM = "__system";

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
-    [Launcher("Shiftorium", false, null, "Utilities")]
-    [DefaultTitle("Shiftorium")]
-    [WinOpen("shiftorium")]
-    public class CodeShop : GUI.Control, IShiftOSWindow
+    [Launcher("Upgrades", false, null, "Utilities")]
+    [DefaultTitle("Upgrades")]
+    [WinOpen("upgrademgr")]
+    public class CodeShop : GUI.Control, IPlexWindow
     {
         private GUI.ListBox upgradelist = null;
         private ShiftoriumUpgrade selectedUpgrade = null;
@@ -38,7 +38,7 @@ namespace ShiftOS.Frontend.Apps
                 upgradeprogress.Y = upgradelist.Y + upgradelist.Height + 10;
                 upgradeprogress.Width = upgradelist.Width;
                 upgradeprogress.Height = 24;
-                upgradeprogress.Maximum = Shiftorium.GetDefaults().Count;
+                upgradeprogress.Maximum = Upgrades.GetDefaults().Count;
                 upgradeprogress.Value = SaveSystem.CurrentSave.CountUpgrades();
                 buy.X = Width - buy.Width - 15;
                 buy.Y = Height - buy.Height - 15;
@@ -59,15 +59,15 @@ namespace ShiftOS.Frontend.Apps
             buy.Font = SkinEngine.LoadedSkin.MainFont;
             buy.Click += () =>
             {
-                if(Shiftorium.Buy(selectedUpgrade.ID, selectedUpgrade.Cost) == true)
+                if(Upgrades.Buy(selectedUpgrade.ID, selectedUpgrade.Cost) == true)
                 {
-                    Engine.Infobox.Show("Upgrade installed!", "You have successfully bought and installed the " + selectedUpgrade.Name + " upgrade for " + selectedUpgrade.Cost + " Codepoints.");
+                    Engine.Infobox.Show("Upgrade installed!", "You have successfully bought and installed the " + selectedUpgrade.Name + " upgrade for " + selectedUpgrade.Cost + " Experience.");
                     SelectUpgrade(null);
                     PopulateList();
                 }
                 else
                 {
-                    Engine.Infobox.Show("Insufficient funds.", "You do not have enough Codepoints to buy this upgrade. You need " + (selectedUpgrade.Cost - SaveSystem.CurrentSave.Codepoints) + " more.");
+                    Engine.Infobox.Show("Insufficient funds.", "You do not have enough Experience to buy this upgrade. You need " + (selectedUpgrade.Cost - SaveSystem.CurrentSave.Experience) + " more.");
                 }
             };
             AddControl(buy);
@@ -78,7 +78,7 @@ namespace ShiftOS.Frontend.Apps
             upgradelist.SelectedIndexChanged += () =>
             {
                 string itemtext = upgradelist.SelectedItem.ToString();
-                var upg = Shiftorium.GetAvailable().FirstOrDefault(x => $"{x.Category}: {x.Name} - {x.Cost}CP" == itemtext);
+                var upg = Upgrades.GetAvailable().FirstOrDefault(x => $"{x.Category}: {x.Name} - {x.Cost}CP" == itemtext);
                 if(upg != null)
                 {
                     SelectUpgrade(upg);
@@ -99,7 +99,7 @@ namespace ShiftOS.Frontend.Apps
         public void PopulateList()
         {
             upgradelist.ClearItems();
-            foreach(var upgrade in Shiftorium.GetAvailable())
+            foreach(var upgrade in Upgrades.GetAvailable())
             {
                 upgradelist.AddItem($"{upgrade.Category}: {upgrade.Name} - {upgrade.Cost}CP");
                 Invalidate();

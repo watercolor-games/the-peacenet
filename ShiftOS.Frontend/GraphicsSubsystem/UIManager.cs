@@ -8,20 +8,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.Desktop;
-using ShiftOS.Frontend.GUI;
+using Plex.Engine;
+using Plex.Frontend.Desktop;
+using Plex.Frontend.GUI;
 
-namespace ShiftOS.Frontend.GraphicsSubsystem
+namespace Plex.Frontend.GraphicsSubsystem
 {
     public static class UIManager
     {
         private static List<GUI.Control> topLevels = new List<GUI.Control>();
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
-        private static ShiftOS _game = null;
+        private static Plexgate _game = null;
 
-        public static void Init(ShiftOS sentience)
+        public static void Init(Plexgate sentience)
         {
             _game = sentience;
         }

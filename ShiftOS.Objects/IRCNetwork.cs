@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShiftOS.Objects
+namespace Plex.Objects
 {
     public class IRCNetwork
     {

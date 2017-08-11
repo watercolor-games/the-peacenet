@@ -1,4 +1,1 @@
-
-import webbrowser
-
-webbrowser.open("http://xkcd.com/353/")
+import webbrowserwebbrowser.open("http://xkcd.com/353/")

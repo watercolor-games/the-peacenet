@@ -1,27 +1,3 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 #define MUD_RAPIDDEV
 
 using System;
@@ -34,11 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using static ShiftOS.Engine.SaveSystem;
+using static Plex.Engine.SaveSystem;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
-    // Provides functionality for managing windows within ShiftOS.
+    // Provides functionality for managing windows within Plex.
     public static class AppearanceManager
     {
         [Obsolete("Please use Localization.GetAllLanguages().")]
@@ -48,7 +24,7 @@ namespace ShiftOS.Engine
         }
 
         // Sets the title text of the specified window.
-        public static void SetWindowTitle(IShiftOSWindow window, string title)
+        public static void SetWindowTitle(IPlexWindow window, string title)
         {
             if (window == null)
                 throw new ArgumentNullException("window", "The window cannot be null.");
@@ -58,7 +34,7 @@ namespace ShiftOS.Engine
         //HEY LETS FIND THE WINDOWS
         public static IEnumerable<Type> GetAllWindowTypes()
         {
-            return Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IShiftOSWindow)));
+            return Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IPlexWindow)));
         }
 
         // hey you know that window we just made appear? well give it its title
@@ -109,11 +85,11 @@ namespace ShiftOS.Engine
 
 
 
-        // Provides a list of all open ShiftOS windows.
+        // Provides a list of all open Plex windows.
         public static List<IWindowBorder> OpenForms = new List<IWindowBorder>();
 
         // Decorates a window with a border, then shows the window.
-        public static void SetupWindow(IShiftOSWindow form)
+        public static void SetupWindow(IPlexWindow form)
         {
             if (form == null)
                 //YOU GET THE POINT THIS REALLY SHOULDNT BE NULL
@@ -126,7 +102,7 @@ namespace ShiftOS.Engine
         }
 
         // Closes the specified window. SHOCKED YOU ARE I KNOW, HOW COULD YOU HAVE GUESSED
-        public static void Close(IShiftOSWindow win)
+        public static void Close(IPlexWindow win)
         {
             if (win == null)
                 //NOPE SHOULDNT BE NULL
@@ -140,7 +116,7 @@ namespace ShiftOS.Engine
 
 
         // Decorates a window with a border, then shows the window, as a dialog box.
-        public static void SetupDialog(IShiftOSWindow form)
+        public static void SetupDialog(IPlexWindow form)
         {
             if (form == null)
                 //NULLLLLLLLL
@@ -193,7 +169,7 @@ namespace ShiftOS.Engine
         }
     }
 
-    // Provides the base functionality for a ShiftOS terminal.
+    // Provides the base functionality for a Plex terminal.
     public interface ITerminalWidget
     {
         void Write(string text); // Actually write text to this Terminal! :D:D:D:D
@@ -207,19 +183,19 @@ namespace ShiftOS.Engine
     {
         public abstract void Minimize(IWindowBorder border); // guess what this does
         public abstract void Maximize(IWindowBorder border); // ooh this too
-        public abstract void Close(IShiftOSWindow win); // omg this probably does something
-        public abstract void SetupWindow(IShiftOSWindow win); // i cant think of what this does
-        public abstract void SetupDialog(IShiftOSWindow win); // how about this???????
+        public abstract void Close(IPlexWindow win); // omg this probably does something
+        public abstract void SetupWindow(IPlexWindow win); // i cant think of what this does
+        public abstract void SetupDialog(IPlexWindow win); // how about this???????
         public abstract void InvokeAction(Action act); // i wonder what this invokes
-        public abstract void SetTitle(IShiftOSWindow win, string title); // what is a title again
+        public abstract void SetTitle(IPlexWindow win, string title); // what is a title again
     }
 
-    // Provides the base functionality for a typical ShiftOS window border, what did you expect
+    // Provides the base functionality for a typical Plex window border, what did you expect
     public interface IWindowBorder
     {
         void Close(); // CLOSES THE BORDER ALONG WITH ITS WINDOW!!!!!!! HOLY SHIT I DIDNT EXPECT THAT
         string Text { get; set; } // title text exists now
-        IShiftOSWindow ParentWindow { get; set; } // Gets or sets the underlying for this border. 
+        IPlexWindow ParentWindow { get; set; } // Gets or sets the underlying for this border. 
     }
 
     // Provides a way of setting default title text for classes. 

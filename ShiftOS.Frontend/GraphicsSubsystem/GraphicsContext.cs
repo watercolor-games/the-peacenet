@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ShiftOS.Frontend.Apps;
+using Plex.Frontend.Apps;
 
-namespace ShiftOS.Frontend.GraphicsSubsystem
+namespace Plex.Frontend.GraphicsSubsystem
 {
     public class GraphicsContext
     {

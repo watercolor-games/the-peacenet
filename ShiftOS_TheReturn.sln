@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Engine", "ShiftOS_TheReturn\ShiftOS.Engine.csproj", "{7C979B07-0585-4033-A110-E5555B9D6651}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Engine", "ShiftOS_TheReturn\Plex.Engine.csproj", "{7C979B07-0585-4033-A110-E5555B9D6651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Objects", "ShiftOS.Objects\ShiftOS.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Objects", "ShiftOS.Objects\Plex.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftOS.Frontend", "ShiftOS.Frontend\ShiftOS.Frontend.csproj", "{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex", "ShiftOS.Frontend\Plex.csproj", "{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

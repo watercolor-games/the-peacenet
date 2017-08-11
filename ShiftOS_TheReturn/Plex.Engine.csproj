@@ -7,8 +7,8 @@
     <ProjectGuid>{7C979B07-0585-4033-A110-E5555B9D6651}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShiftOS.Engine</RootNamespace>
-    <AssemblyName>ShiftOS.Engine</AssemblyName>
+    <RootNamespace>Plex.Engine</RootNamespace>
+    <AssemblyName>Plex.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -139,7 +139,6 @@
     <Compile Include="GUI\IShiftOSWindow.cs" />
     <Compile Include="GUI\IStatusIcon.cs" />
     <Compile Include="IVirus.cs" />
-    <Compile Include="KernelWatchdog.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="LoginManager.cs" />
     <Compile Include="Lunix.cs" />
@@ -161,7 +160,7 @@
     <Compile Include="Server.cs" />
     <Compile Include="ServerManager.cs" />
     <Compile Include="ShiftnetSite.cs" />
-    <Compile Include="Shiftorium.cs" />
+    <Compile Include="Upgrades.cs" />
     <Compile Include="GUI\Skinning.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
@@ -175,7 +174,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Lib\ensurepip\_bundled\pip-8.1.1-py2.py3-none-any.whl">
@@ -199,9 +197,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShiftOS.Objects\ShiftOS.Objects.csproj">
+    <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
       <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
-      <Name>ShiftOS.Objects</Name>
+      <Name>Plex.Objects</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1791,6 +1789,8 @@
     <Content Include="Lib\__phello__.foo.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\strings_ver.txt" />
+    <None Include="Resources\secretlang.txt" />
     <None Include="Resources\fileicon0.bmp" />
     <None Include="Resources\fileicon10.bmp" />
     <None Include="Resources\fileicon1.bmp" />

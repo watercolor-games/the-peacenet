@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
+using Plex.Engine;
 
 #if DEBUG
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public static class HackerTestCommands
     {
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         [Command("loot")]
         [RequiresArgument("id")]
         public static void ViewLoot(Dictionary<string, object> args)
@@ -26,7 +26,7 @@ namespace ShiftOS.Frontend
             FileSkimmerBackend.OpenFile("0:/" + loot.LootName);
         }
 
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         [Command("lsports")]
         public static void ListAllPorts()
         {
@@ -36,7 +36,7 @@ namespace ShiftOS.Frontend
             }
         }
 
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         [Command("describehackable")]
         [RequiresArgument("id")]
         public static void DescribeHackable(Dictionary<string, object> args)
@@ -59,7 +59,7 @@ namespace ShiftOS.Frontend
             Console.WriteLine(hackable.WelcomeMessage);
         }
 
-        [ShellConstraint("shiftos_debug> ")]
+        [ShellConstraint("Plex_debug> ")]
         [Command("describeport")]
         [RequiresArgument("id")]
         public static void DescribePort(Dictionary<string, object> args)

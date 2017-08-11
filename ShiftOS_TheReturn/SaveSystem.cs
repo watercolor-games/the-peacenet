@@ -1,26 +1,3 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 // #define NOSAVE
 
 //#define ONLINEMODE
@@ -33,12 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
-using ShiftOS.Objects;
-using ShiftOS.Objects.ShiftFS;
-using oobe = ShiftOS.Engine.OutOfBoxExperience;
+using Plex.Objects;
+using Plex.Objects.ShiftFS;
+using oobe = Plex.Engine.OutOfBoxExperience;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     [Obsolete("Use the servers.conf file instead.")]
     public class EngineConfig
@@ -49,7 +26,7 @@ namespace ShiftOS.Engine
     }
 
     /// <summary>
-    /// Management class for the ShiftOS save system.
+    /// Management class for the Plex save system.
     /// </summary>
     public static class SaveSystem
     {
@@ -65,7 +42,7 @@ namespace ShiftOS.Engine
         public static bool IsSandbox = false;
 
         /// <summary>
-        /// Occurs before the save system connects to the ShiftOS Digital Society.
+        /// Occurs before the save system connects to the Plex Digital Society.
         /// </summary>
         public static event Action PreDigitalSocietyConnection;
 
@@ -76,9 +53,9 @@ namespace ShiftOS.Engine
 
 
         /// <summary>
-        /// Start the entire ShiftOS engine.
+        /// Start the entire Plex engine.
         /// </summary>
-        /// <param name="useDefaultUI">Whether ShiftOS should initiate it's Windows Forms front-end.</param>
+        /// <param name="useDefaultUI">Whether Plex should initiate it's Windows Forms front-end.</param>
         public static void Begin(bool useDefaultUI = true)
         {
             AppDomain.CurrentDomain.UnhandledException += (o, a) =>
@@ -88,7 +65,7 @@ namespace ShiftOS.Engine
 
             if (!System.IO.File.Exists(Paths.SaveFile))
             {
-                var root = new ShiftOS.Objects.ShiftFS.Directory();
+                var root = new Plex.Objects.ShiftFS.Directory();
                 root.Name = "System";
                 System.IO.File.WriteAllText(Paths.SaveFile, JsonConvert.SerializeObject(root));
             }
@@ -111,28 +88,9 @@ namespace ShiftOS.Engine
                 //Do not uncomment until I sort out the copyright stuff... - Michael
                 //AudioManager.Init();
 
-                var defaultConf = new EngineConfig();
-                if (System.IO.File.Exists("engineconfig.json"))
-                    defaultConf = JsonConvert.DeserializeObject<EngineConfig>(System.IO.File.ReadAllText("engineconfig.json"));
-                else
-                {
-                    System.IO.File.WriteAllText("engineconfig.json", JsonConvert.SerializeObject(defaultConf, Formatting.Indented));
-                }
-
                 Thread.Sleep(350);
                 Console.WriteLine("{MISC_KERNELVERSION}");
                 Thread.Sleep(50);
-                Console.WriteLine("Copyright (c) 2018 DevX. Licensed under MIT.");
-                Console.WriteLine("");
-                Console.WriteLine("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
-                Console.WriteLine("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
-                Console.WriteLine("FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE");
-                Console.WriteLine("AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER");
-                Console.WriteLine("LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,");
-                Console.WriteLine("OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE");
-                Console.WriteLine("SOFTWARE.");
-                Console.WriteLine("");
-                Thread.Sleep(250);
                 Console.WriteLine("{MISC_KERNELBOOTED}");
                 Console.WriteLine("{MISC_SHIFTFSDRV}");
                 Thread.Sleep(350);
@@ -201,7 +159,7 @@ namespace ShiftOS.Engine
                     {
                         IsSandbox = true,
                         Username = "user",
-                        SystemName = "shiftos",
+                        SystemName = "Plex",
                         ID = new Guid(),
                         Upgrades = new Dictionary<string, bool>(),
                         Language = "english",
@@ -217,14 +175,14 @@ namespace ShiftOS.Engine
 
                     Localization.SetupTHETRUEDefaultLocals();
 
-                    Shiftorium.Init();
+                    Upgrades.Init();
 
                     TerminalBackend.InStory = false;
                     TerminalBackend.PrefixEnabled = true;
 
                     Desktop.InvokeOnWorkerThread(new Action(() =>
                     {
-                        ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
+                        Plex.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
                     }));
 
 
@@ -275,7 +233,7 @@ namespace ShiftOS.Engine
                 Thread.Sleep(10);
             }
 
-            Shiftorium.Init();
+            Upgrades.Init();
 
             while (CurrentSave.StoryPosition < 1)
             {
@@ -329,43 +287,10 @@ namespace ShiftOS.Engine
                 goto Sysname;
             }
 
-            //why the fuck is it crashing here of all places
-            //fucking fuckdrunk
-            Console.WriteLine($@"
-                   `-:/++++::.`                   
-              .+ydNMMMMMNNMMMMMNhs/.              
-           /yNMMmy+:-` `````.-/ohNMMms-           
-        `oNMMh/.`:oydmNMMMMNmhs+- .+dMMm+`             {{GEN_WELCOME}}
-      `oMMmo``+dMMMMMMMMMMMMMMMMMNh/`.sNMN+       
-     :NMN+ -yMMMMMMMNdhyssyyhdmNMMMMNs``sMMd.          {{GEN_SYSTEMSTATUS}}
-    oMMd.`sMMMMMMd+.            `/MMMMN+ -mMN:         ----------------------
-   oMMh .mMMMMMM/     `-::::-.`  :MMMMMMh`.mMM:   
-  :MMd .NMMMMMMs    .dMMMMMMMMMNddMMMMMMMd`.NMN.        {{GEN_CODEPOINTS}}:     {SaveSystem.CurrentSave.Codepoints}
-  mMM. dMMMMMMMo    -mMMMMMMMMMMMMMMMMMMMMs /MMy        
- :MMh :MMMMMMMMm`     .+shmMMMMMMMMMMMMMMMN` NMN`                       
- oMM+ sMMMMMMMMMN+`        `-/smMMMMMMMMMMM: hMM:       
- sMM+ sMMMMMMMMMMMMds/-`        .sMMMMMMMMM/ yMM/ 
- +MMs +MMMMMMMMMMMMMMMMMmhs:`     +MMMMMMMM- dMM-       {{GEN_SYSTEMNAME}}:    {CurrentSave.SystemName.ToUpper()}
- .MMm `NMMMMMMMMMMMMMMMMMMMMMo    `NMMMMMMd .MMN        
-  hMM+ +MMMMMMmsdNMMMMMMMMMMN/    -MMMMMMN- yMM+        
-  `NMN- oMMMMMd   `-/+osso+-     .mMMMMMN: +MMd   
-   -NMN: /NMMMm`               :yMMMMMMm- oMMd`   
-    -mMMs``sMMMMNdhso++///+oydNMMMMMMNo .hMMh`    
-     `yMMm/ .omMMMMMMMMMMMMMMMMMMMMd+``oNMNo      
-       -hMMNo. -ohNMMMMMMMMMMMMmy+. -yNMNy`       
-         .sNMMms/. `-/+++++/:-` ./yNMMmo`         
-            :sdMMMNdyso+++ooshdNMMMdo-            
-               `:+yhmNNMMMMNNdhs+-                
-                       ````                       ");
-
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
-            Shiftorium.LogOrphanedUpgrades = true;
-            Desktop.InvokeOnWorkerThread(new Action(() =>
-            {
-                ShiftOS.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
-            }));
-
+            Upgrades.LogOrphanedUpgrades = true;
+        
 
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
@@ -394,13 +319,13 @@ namespace ShiftOS.Engine
         public static event EmptyEventHandler GameReady;
 
         /// <summary>
-        /// Deducts a set amount of Codepoints from the save file... and sends them to a place where they'll never be seen again.
+        /// Deducts a set amount of Experience from the save file... and sends them to a place where they'll never be seen again.
         /// </summary>
-        /// <param name="amount">The amount of Codepoints to deduct.</param>
-        public static void TransferCodepointsToVoid(ulong amount)
+        /// <param name="amount">The amount of Experience to deduct.</param>
+        public static void TransferExperienceToVoid(ulong amount)
         {
-            CurrentSave.Codepoints -= amount;
-            NotificationDaemon.AddNotification(NotificationType.CodepointsSent, amount);
+            CurrentSave.Experience -= amount;
+            NotificationDaemon.AddNotification(NotificationType.ExperienceSent, amount);
         }
 
         /// <summary>
@@ -419,7 +344,7 @@ namespace ShiftOS.Engine
         {
             string path;
 
-            path = "C:\\ShiftOS2\\";
+            path = "C:\\Plex2\\";
             //Migrate old saves.
             if (System.IO.Directory.Exists(path) && !System.IO.File.Exists(path + "havemigrated"))
             {
@@ -458,9 +383,9 @@ namespace ShiftOS.Engine
             AppearanceManager.Invoke(new Action(() =>
             {
                 CurrentSave = new Save();
-                CurrentSave.Codepoints = 0;
+                CurrentSave.Experience = 0;
                 CurrentSave.Upgrades = new Dictionary<string, bool>();
-                Shiftorium.Init();
+                Upgrades.Init();
                 oobe.Start(CurrentSave);
             }));
         }
@@ -473,9 +398,9 @@ namespace ShiftOS.Engine
             if (!IsSandbox)
             {
 #if !NOSAVE
-                if (!Shiftorium.Silent)
+                if (!Upgrades.Silent)
                     Console.WriteLine("");
-                if (!Shiftorium.Silent)
+                if (!Upgrades.Silent)
                     Console.Write("{SE_SAVING}... ");
                 if (SaveSystem.CurrentSave != null)
                 {
@@ -496,7 +421,7 @@ namespace ShiftOS.Engine
 
                     System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
                 }
-                if (!Shiftorium.Silent)
+                if (!Upgrades.Silent)
                     Console.WriteLine(" ...{DONE}.");
 #endif
             }
@@ -504,14 +429,14 @@ namespace ShiftOS.Engine
         }
 
         /// <summary>
-        /// Transfers codepoints from an arbitrary character to the save file.
+        /// Transfers Experience from an arbitrary character to the save file.
         /// </summary>
         /// <param name="who">The character name</param>
-        /// <param name="amount">The amount of Codepoints.</param>
-        public static void TransferCodepointsFrom(string who, ulong amount)
+        /// <param name="amount">The amount of Experience.</param>
+        public static void TransferExperienceFrom(string who, ulong amount)
         {
-            NotificationDaemon.AddNotification(NotificationType.CodepointsReceived, amount);
-            CurrentSave.Codepoints += amount;
+            NotificationDaemon.AddNotification(NotificationType.ExperienceReceived, amount);
+            CurrentSave.Experience += amount;
         }
     }
 

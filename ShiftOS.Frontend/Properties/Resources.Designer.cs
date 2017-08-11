@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ShiftOS.Frontend.Properties {
+namespace Plex.Frontend.Properties {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace ShiftOS.Frontend.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace ShiftOS.Frontend.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ShiftOS.Frontend.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Plex.Frontend.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace ShiftOS.Frontend.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -68,16 +68,16 @@ namespace ShiftOS.Frontend.Properties {
         ///	Source: &quot;banana\t\&quot;-..___     __.=&apos;&gt;\r\n`.     \&quot;\&quot;\&quot;\&quot;\&quot;   ,&apos;\r\n  \&quot;-..__   _.-\&quot;\r\n        \&quot;\&quot;\&quot;&quot;
         ///}.
         /// </summary>
-        public static string banana_cow_stp {
+        internal static string banana_cow_stp {
             get {
-                return ResourceManager.GetString("banana.cow.stp", resourceCulture);
+                return ResourceManager.GetString("banana_cow_stp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap cursor_9x_pointer {
+        internal static System.Drawing.Bitmap cursor_9x_pointer {
             get {
                 object obj = ResourceManager.GetObject("cursor_9x_pointer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -85,7 +85,7 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS Exploits data file
+        ///   Looks up a localized string similar to /* Plex Exploits data file
         /// *
         /// * This file contains information about all exploits in the game&apos;s campaign.
         /// *
@@ -105,7 +105,7 @@ namespace ShiftOS.Frontend.Properties {
         ///	}
         ///].
         /// </summary>
-        public static string Exploits {
+        internal static string Exploits {
             get {
                 return ResourceManager.GetString("Exploits", resourceCulture);
             }
@@ -114,7 +114,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon0 {
+        internal static System.Drawing.Bitmap fileicon0 {
             get {
                 object obj = ResourceManager.GetObject("fileicon0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -124,7 +124,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon1 {
+        internal static System.Drawing.Bitmap fileicon1 {
             get {
                 object obj = ResourceManager.GetObject("fileicon1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -134,7 +134,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon10 {
+        internal static System.Drawing.Bitmap fileicon10 {
             get {
                 object obj = ResourceManager.GetObject("fileicon10", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -144,7 +144,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon11 {
+        internal static System.Drawing.Bitmap fileicon11 {
             get {
                 object obj = ResourceManager.GetObject("fileicon11", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -154,7 +154,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon12 {
+        internal static System.Drawing.Bitmap fileicon12 {
             get {
                 object obj = ResourceManager.GetObject("fileicon12", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -164,7 +164,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon13 {
+        internal static System.Drawing.Bitmap fileicon13 {
             get {
                 object obj = ResourceManager.GetObject("fileicon13", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -174,7 +174,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon14 {
+        internal static System.Drawing.Bitmap fileicon14 {
             get {
                 object obj = ResourceManager.GetObject("fileicon14", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -184,7 +184,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon15 {
+        internal static System.Drawing.Bitmap fileicon15 {
             get {
                 object obj = ResourceManager.GetObject("fileicon15", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -194,7 +194,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon16 {
+        internal static System.Drawing.Bitmap fileicon16 {
             get {
                 object obj = ResourceManager.GetObject("fileicon16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -204,7 +204,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon17 {
+        internal static System.Drawing.Bitmap fileicon17 {
             get {
                 object obj = ResourceManager.GetObject("fileicon17", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -214,7 +214,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon18 {
+        internal static System.Drawing.Bitmap fileicon18 {
             get {
                 object obj = ResourceManager.GetObject("fileicon18", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -224,7 +224,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon19 {
+        internal static System.Drawing.Bitmap fileicon19 {
             get {
                 object obj = ResourceManager.GetObject("fileicon19", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -234,7 +234,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon2 {
+        internal static System.Drawing.Bitmap fileicon2 {
             get {
                 object obj = ResourceManager.GetObject("fileicon2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -244,7 +244,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon3 {
+        internal static System.Drawing.Bitmap fileicon3 {
             get {
                 object obj = ResourceManager.GetObject("fileicon3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -254,7 +254,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon4 {
+        internal static System.Drawing.Bitmap fileicon4 {
             get {
                 object obj = ResourceManager.GetObject("fileicon4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -264,7 +264,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon5 {
+        internal static System.Drawing.Bitmap fileicon5 {
             get {
                 object obj = ResourceManager.GetObject("fileicon5", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -274,7 +274,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon6 {
+        internal static System.Drawing.Bitmap fileicon6 {
             get {
                 object obj = ResourceManager.GetObject("fileicon6", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -284,7 +284,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon7 {
+        internal static System.Drawing.Bitmap fileicon7 {
             get {
                 object obj = ResourceManager.GetObject("fileicon7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -294,7 +294,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon8 {
+        internal static System.Drawing.Bitmap fileicon8 {
             get {
                 object obj = ResourceManager.GetObject("fileicon8", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -304,7 +304,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileicon9 {
+        internal static System.Drawing.Bitmap fileicon9 {
             get {
                 object obj = ResourceManager.GetObject("fileicon9", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -314,7 +314,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileiconcf {
+        internal static System.Drawing.Bitmap fileiconcf {
             get {
                 object obj = ResourceManager.GetObject("fileiconcf", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -324,7 +324,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap fileiconsaa {
+        internal static System.Drawing.Bitmap fileiconsaa {
             get {
                 object obj = ResourceManager.GetObject("fileiconsaa", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -338,14 +338,14 @@ namespace ShiftOS.Frontend.Properties {
         ///	SourceType: &quot;CowFile&quot;,
         ///	Source:&quot;fire hydrant\t  \\      !\r\n   \\   .:::.\r\n      ///|\\\\\\\r\n     {=-#-#-=}\r\n    .-||||/..\\\r\n  c[I ||||\\&apos;&apos;/\r\n    &apos;-||||||| \r\n      |||||||\r\n      |||||||\r\n      |||||||\r\n    [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string fire_hydrant_cow_stp {
+        internal static string fire_hydrant_cow_stp {
             get {
-                return ResourceManager.GetString("fire hydrant.cow.stp", resourceCulture);
+                return ResourceManager.GetString("fire_hydrant_cow_stp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS hackables data file
+        ///   Looks up a localized string similar to /* Plex hackables data file
         /// *
         /// * This file contains information about all hackable systems in the game&apos;s campaign.
         /// *
@@ -367,7 +367,7 @@ namespace ShiftOS.Frontend.Properties {
         ///	}
         ///].
         /// </summary>
-        public static string Hackables {
+        internal static string Hackables {
             get {
                 return ResourceManager.GetString("Hackables", resourceCulture);
             }
@@ -376,7 +376,7 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap justthes {
+        internal static System.Drawing.Bitmap justthes {
             get {
                 object obj = ResourceManager.GetObject("justthes", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -384,7 +384,7 @@ namespace ShiftOS.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS Loot data file
+        ///   Looks up a localized string similar to /* Plex Loot data file
         /// *
         /// * This file contains information about all loot in the game&apos;s campaign.
         /// *
@@ -408,16 +408,16 @@ namespace ShiftOS.Frontend.Properties {
         ///		FriendlyName: &quot;Fire Hydrant Cow&quot;,
         ///		LootName: &quot;fire hydrant.cow.stp&quot;,
         ///		Rarity: 1,
-        ///		PointTo: &quot;fire_hydran [rest of string was truncated]&quot;;.
+        ///		PointTo: &quot;fire_hydrant_c [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string LootInfo {
+        internal static string LootInfo {
             get {
                 return ResourceManager.GetString("LootInfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS Payloads data file
+        ///   Looks up a localized string similar to /* Plex Payloads data file
         /// *
         /// * This file contains information about all payloads in the game&apos;s campaign.
         /// *
@@ -441,7 +441,7 @@ namespace ShiftOS.Frontend.Properties {
         ///	}
         ///].
         /// </summary>
-        public static string Payloads {
+        internal static string Payloads {
             get {
                 return ResourceManager.GetString("Payloads", resourceCulture);
             }
@@ -450,49 +450,21 @@ namespace ShiftOS.Frontend.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {
         ///	Name: &quot;Pong&quot;,
-        ///	Description: &quot;It&apos;s a game so good we made you play it all the time in ShiftOS 0.0.x, 0.1.x and 1.0. It&apos;s only natural that we&apos;d sleep Pong into the game again somehow, right?&quot;,
+        ///	Description: &quot;It&apos;s a game so good we made you play it all the time in Plex 0.0.x, 0.1.x and 1.0. It&apos;s only natural that we&apos;d sleep Pong into the game again somehow, right?&quot;,
         ///	SourceType: &quot;ShiftoriumUpgrade&quot;,
         ///	Source: &quot;pong&quot;
         ///}.
         /// </summary>
-        public static string pong {
+        internal static string pong {
             get {
                 return ResourceManager.GetString("pong", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS Ports data file
-        /// *
-        /// * This file contains information about all ports in the game&apos;s campaign.
-        /// *
-        /// */
-        ///
-        ///[
-        ///	{
-        ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,
-        ///		AttachTo: &quot;EmailServer&quot;,
-        ///		Value: 25,
-        ///		Name: &quot;smtp&quot;,
-        ///	},
-        ///	{
-        ///		FriendlyName: &quot;File Transfer Protocol&quot;,
-        ///		AttachTo: &quot;FileServer&quot;,
-        ///		Value: 21,
-        ///		Name: &quot;ftp&quot;,
-        ///	},
-        ///	{
-        ///		FriendlyName: &quot;ShiftSSH server&quot;,
-        ///		AttachTo: &quot;SSHServer&quot;,
-        ///		Value: 22,
-        ///		Name: &quot;ssh&quot;,
-        ///	},
-        ///	{
-        ///		FriendlyName: &quot;MySQL server&quot;,
-        ///		AttachTo: &quot;Database&quot;,
-        ///	 [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to /* Plex Ports data file        /// *        /// * This file contains information about all ports in the game&apos;s campaign.        /// *        /// */        ///        ///[        ///	{        ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,        ///		AttachTo: &quot;EmailServer&quot;,        ///		Value: 25,        ///		Name: &quot;smtp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;File Transfer Protocol&quot;,        ///		AttachTo: &quot;FileServer&quot;,        ///		Value: 21,        ///		Name: &quot;ftp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;ShiftSSH server&quot;,        ///		AttachTo: &quot;SSHServer&quot;,        ///		Value: 22,        ///		Name: &quot;ssh&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;MySQL server&quot;,        ///		AttachTo: &quot;Database&quot;,        ///		Value: 3306,        ///		Name: &quot;sql&quot;,        ///	} [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string Ports {
+        internal static string Ports {
             get {
                 return ResourceManager.GetString("Ports", resourceCulture);
             }
@@ -519,16 +491,16 @@ namespace ShiftOS.Frontend.Properties {
         ///	}
         ///].
         /// </summary>
-        public static string Shiftorium {
+        internal static string Shiftorium {
             get {
                 return ResourceManager.GetString("Shiftorium", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* ShiftOS setup data file
+        ///   Looks up a localized string similar to /* Plex setup data file
         /// * 
-        /// * This file holds information used by a ShiftOS &quot;Installer&quot; for setting up a system component.
+        /// * This file holds information used by a Plex &quot;Installer&quot; for setting up a system component.
         /// *
         /// */
         ///
@@ -536,75 +508,36 @@ namespace ShiftOS.Frontend.Properties {
         ///	Name: &quot;Sploitset Force Heartbeat exploit&quot;,
         ///	Description: &quot;This is an exploit for the sploitset system exploitation utility which causes the remote system to force the connection to stay alive by sending heartbeat requests even after the firewall has timed out the connection. Useful against those pesky connection timers...&quot;,
         ///	SourceType: &quot;ShiftoriumUpgrade&quot;,
-        ///	So [rest of string was truncated]&quot;;.
+        ///	Source:  [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string sploitset_keepalive {
+        internal static string sploitset_keepalive {
             get {
                 return ResourceManager.GetString("sploitset_keepalive", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {
-        ///	&quot;{SUBMIT}&quot;:&quot;Bestätigen&quot;,
-        ///
-        ///&quot;{TERMINAL_TUTORIAL_1}&quot;:&quot;Wilkommen zum ShiftOS Terminal. Hier wirst du die meiste Zeit in ShiftOS verbringen.
-        ///  
-        ///Eine kurze Erklärung wie du das Terminal benutzt lautet wiefolgt. Du kannst das command &apos;sos.help&apos; benutzen um eine Liste aller commands aufzurufen. Schreib es
-        ///einfach in das Terminal und drücke &lt;enter&gt; um alle commands anzuzeigen.
-        /// 
-        ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Be [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to {        ///	&quot;{SUBMIT}&quot;:&quot;Bestätigen&quot;,        ///        ///&quot;{TERMINAL_TUTORIAL_1}&quot;:&quot;Wilkommen zum Plex Terminal. Hier wirst du die meiste Zeit in Plex verbringen.        ///          ///Eine kurze Erklärung wie du das Terminal benutzt lautet wiefolgt. Du kannst das command &apos;sos.help&apos; benutzen um eine Liste aller commands aufzurufen. Schreib es        ///einfach in das Terminal und drücke &lt;enter&gt; um alle commands anzuzeigen.        ///         ///Commands können mit argumenten versehen werden, indem du ein key-value Paar in einem {} Block hinter dem command angibst. Zum Beispiel:        ///         ///some [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string strings_de {
+        internal static string strings_de {
             get {
                 return ResourceManager.GetString("strings_de", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        /// * ShiftOS English Language Pack
-        /// *
-        /// * This is the default language pack distributed within the game.
-        /// */
-        ///
-        ///{
-        ///  //General strings
-        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
-        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Programs&quot;,
-        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Commands&quot;,
-        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Objectives&quot;,
-        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Current processes&quot;,
-        ///  &quot;{GEN_WELCOME}&quot;: &quot;Welcome to ShiftOS.&quot;,
-        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;System name&quot;,
-        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Password&quot;,
-        ///  &quot;{GEN_LPROMPT [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to /*        /// * Plex English Language Pack        /// *        /// * This is the default language pack distributed within the game.        /// */        ///        ///{        ///  //General strings        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Programs&quot;,        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Commands&quot;,        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Objectives&quot;,        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Current processes&quot;,        ///  &quot;{GEN_WELCOME}&quot;: &quot;Welcome to Plex.&quot;,        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;System name&quot;,        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Password&quot;,        ///  &quot;{GEN_LPROMPT}&quot;: &quot;%sysname login: &quot; [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string strings_en {
+        internal static string strings_en {
             get {
                 return ResourceManager.GetString("strings_en", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        /// * ShiftOS French Language Pack
-        /// *
-        /// * This is a default language pack distributed within the game.
-        /// */
-        ///
-        ///{
-        ///  //General strings
-        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.
-        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Les programmes&quot;,
-        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Les ordres&quot;,
-        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Les objectifs&quot;,
-        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Les procèdures actuelles&quot;,
-        ///  &quot;{GEN_WELCOME}&quot;: &quot;Bienvenue au ShiftOS.&quot;,
-        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;Nom de système&quot;,
-        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Mot de  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to /*        /// * Plex French Language Pack        /// *        /// * This is a default language pack distributed within the game.        /// */        ///        ///{        ///  //General strings        ///  //These strings can be used anywhere in the UI where language context isn&apos;t necessary.        ///  &quot;{GEN_PROGRAMS}&quot;: &quot;Les programmes&quot;,        ///  &quot;{GEN_COMMANDS}&quot;: &quot;Les ordres&quot;,        ///  &quot;{GEN_OBJECTIVES}&quot;: &quot;Les objectifs&quot;,        ///  &quot;{GEN_CURRENTPROCESSES}&quot;: &quot;Les procèdures actuelles&quot;,        ///  &quot;{GEN_WELCOME}&quot;: &quot;Bienvenue au Plex.&quot;,        ///  &quot;{GEN_SYSTEMNAME}&quot;: &quot;Nom de système&quot;,        ///  &quot;{GEN_PASSWORD}&quot;: &quot;Mot de passe&quot;,        ///  &quot;{GEN_LPROM [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string strings_fr {
+        internal static string strings_fr {
             get {
                 return ResourceManager.GetString("strings_fr", resourceCulture);
             }

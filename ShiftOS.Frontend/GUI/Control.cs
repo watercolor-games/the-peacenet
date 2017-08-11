@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Drawing;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GraphicsSubsystem;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Microsoft.Xna.Framework;
 using System.Runtime.InteropServices;
 
-namespace ShiftOS.Frontend.GUI
+namespace Plex.Frontend.GUI
 {
     public abstract class Control
     {

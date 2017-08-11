@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     /// <summary>
     /// Provides functionality for parsing a Terminal command string

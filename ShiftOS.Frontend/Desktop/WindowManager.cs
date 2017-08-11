@@ -8,13 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using static ShiftOS.Engine.SkinEngine;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
+using static Plex.Engine.SkinEngine;
 
-namespace ShiftOS.Frontend.Desktop
+namespace Plex.Frontend.Desktop
 {
-    public static class ShiftOSWindowExtensions
+    public static class PlexWindowExtensions
     {
         public static bool IsSidePanel(this IWindowBorder border)
         {
@@ -34,7 +34,7 @@ namespace ShiftOS.Frontend.Desktop
             }
         }
 
-        public override void Close(IShiftOSWindow win)
+        public override void Close(IPlexWindow win)
         {
             var brdr = RunningBorders.FirstOrDefault(x => x.ParentWindow == win);
             if (brdr != null)
@@ -68,23 +68,23 @@ namespace ShiftOS.Frontend.Desktop
             throw new NotImplementedException();
         }
 
-        public override void SetTitle(IShiftOSWindow win, string title)
+        public override void SetTitle(IPlexWindow win, string title)
         {
             var brdr = RunningBorders.FirstOrDefault(x => x.ParentWindow == win);
             if (brdr != null)
                 brdr.Text = title;
         }
 
-        public string GetTitle(IShiftOSWindow win)
+        public string GetTitle(IPlexWindow win)
         {
             var type = win.GetType();
             var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultTitleAttribute) as DefaultTitleAttribute;
             if (attr != null)
                 return Localization.Parse(attr.Title);
-            return "ShiftOS Window";
+            return "Plex Window";
         }
 
-        public override void SetupDialog(IShiftOSWindow win)
+        public override void SetupDialog(IPlexWindow win)
         {
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
@@ -110,19 +110,19 @@ namespace ShiftOS.Frontend.Desktop
         {
             get
             {
-                if (Shiftorium.UpgradeInstalled("wm_unlimited_windows"))
+                if (Upgrades.UpgradeInstalled("wm_unlimited_windows"))
                     return int.MaxValue;
-                if (Shiftorium.UpgradeInstalled("wm_4_windows"))
+                if (Upgrades.UpgradeInstalled("wm_4_windows"))
                     return 4;
-                if (Shiftorium.UpgradeInstalled("wm_2_windows"))
+                if (Upgrades.UpgradeInstalled("wm_2_windows"))
                     return 2;
                 return 1;
             }
         }
 
-        public override void SetupWindow(IShiftOSWindow win)
+        public override void SetupWindow(IPlexWindow win)
         {
-            if (!Shiftorium.UpgradeAttributesUnlocked(win.GetType()))
+            if (!Upgrades.UpgradeAttributesUnlocked(win.GetType()))
             {
                 Console.WriteLine("Application not found on system.");
                 return;
@@ -190,7 +190,7 @@ namespace ShiftOS.Frontend.Desktop
 
     public class WindowBorder : GUI.Control, IWindowBorder
     {
-        private string _text = "ShiftOS window";
+        private string _text = "Plex window";
         private GUI.Control _hostedwindow = null;
 
         public void ResizeWindow(int width, int height)
@@ -225,11 +225,11 @@ namespace ShiftOS.Frontend.Desktop
             Y = 480;
         }
 
-        public IShiftOSWindow ParentWindow
+        public IPlexWindow ParentWindow
         {
             get
             {
-                return (IShiftOSWindow)_hostedwindow;
+                return (IPlexWindow)_hostedwindow;
             }
 
             set

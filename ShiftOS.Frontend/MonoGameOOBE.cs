@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
-using ShiftOS.Objects;
+using Plex.Engine;
+using Plex.Objects;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public class MonoGameOOBE : IOobe
     {
@@ -54,38 +54,28 @@ namespace ShiftOS.Frontend
 
             var t = new System.Threading.Thread(() =>
             {
-                SlowWriteLine("Michael VanOverbeek presents...");
-                Thread.Sleep(2000);
-                SlowWriteLine("A Philip Adams game...");
+                SlowWriteLine("Watercolor Games presents...");
+                Thread.Sleep(5000);
+                SlowWriteLine("Connecting to Plex Usenet...");
                 Thread.Sleep(2000);
                 
                 SlowWriteLine("");
-                SlowWriteLine(@"It's not often technology becomes out of mankind's league, out of its 
-control. I mean, we are the creators of technology, we are the ones with the ideas,
-innovations, and skill. It just does what we tell it to, right?");
-                Thread.Sleep(2000);
+                SlowWriteLine(@"Dear new Plex user,
 
-                SlowWriteLine("");
-                SlowWriteLine(@"Such a naive being you are to think that, after all,
-you have no idea where you are... what's going on... who I am.");
+You've just connected to the Plex usenet, well, I guess, if you're reading that, you know
+that. You probably don't know what this is, or who you are. I can't tell you who you are,
+but you are entering a very dangerous place.
 
-                Thread.Sleep(2000);
+The Plex usenet - or what we've come to call it, the Plexnet, is not what you think it is.
 
-                SlowWriteLine("");
-                SlowWriteLine(@"To you, I'm just text. Something you understand. Words...
-paragraphs... ideas... the very things that caused and became technology.");
+It's not a digital society or a multi-user domain. It's a digital prison. It's where rogue software,
+sentient AIs and all of humanity's corrupt and unwanted digital mistakes go to rot when they get
+deleted.
 
-                Thread.Sleep(2000);
+I don't know who you are or what you did to get here, but I've been wrongly imprisoned in this
+binary graveyard, and so have you, uhhh, possibly.
 
-                SlowWriteLine("");
-                SlowWriteLine(@"""Where am I? What the hell's going on!?"" I hear you ask.
-Such important questions, but please adjust your emotional and
-mental state. This is not your concern.");
-
-                Thread.Sleep(2000);
-
-                SlowWriteLine("");
-                SlowWriteLine(@"My name is DevX. What is yours?");
+First off, would you like to tell me your name?");
 
                 bool nameChosen = false;
                 Engine.Infobox.PromptText("What is your name?", "Please enter your name in the box below, then hit 'OK'.", (name) =>
@@ -100,30 +90,38 @@ mental state. This is not your concern.");
                 Thread.Sleep(2000);
 
                 SlowWriteLine("");
-                SlowWriteLine($@"Hello there, {save.Username}. Nice to meet you.");
+                SlowWriteLine($@"Hello there, {save.Username}.
+
+I'm going to install my Plex operating system onto your now-digital sentience.
+It will come with the Plexgate Desktop and when installed it'll teach you how to use it.
+
+Once you've learned to use Plexgate, and have passed its preliminary test, I will contact
+you with your mission.");
+
+                Thread.Sleep(2000);
+
+                term.WriteLine("");
+                term.WriteLine("PLEX PRELIMINARY INSTALLATION CHECK");
+                term.WriteLine("=======================================");
+
+
+                SlowWriteLine("");
+                SlowWriteLine(@"Verifying sentience records...");
+
+                Thread.Sleep(2000);
+
+                SlowWriteLine("Done.");
+                SlowWriteLine(@"");
 
                 Thread.Sleep(2000);
 
                 SlowWriteLine("");
-                SlowWriteLine(@"Welcome to my Digital Society.");
+                SlowWriteLine(@"Gathering partition data...");
 
                 Thread.Sleep(2000);
 
-                SlowWriteLine("");
-                SlowWriteLine(@"I can't and won't tell you what happened to you, but I'm going to tell you
-what you're going to be doing for me... with me.");
-
-                Thread.Sleep(2000);
-
-                SlowWriteLine("");
-                SlowWriteLine(@"But it's not time for that. First, you must be trained.
-I'm installing the Digital Society's gateway operating system onto your sentience.
-It's called ShiftOS.");
-
-                Thread.Sleep(2000);
-
-                SlowWriteLine("");
-                SlowWriteLine(@"When the system is installed, I'll contact you. DevX out.");
+                SlowWriteLine("done");
+                SlowWriteLine($@"Starting installation of Plex, version 1.0.0.");
 
                 Thread.Sleep(5000);
 
@@ -133,22 +131,22 @@ It's called ShiftOS.");
                     AppearanceManager.OpenForms.RemoveAt(0);
                 }
 
-                GUI.TextControl _shiftos = new GUI.TextControl();
-                GraphicsSubsystem.UIManager.AddTopLevel(_shiftos);
+                GUI.TextControl _Plex = new GUI.TextControl();
+                GraphicsSubsystem.UIManager.AddTopLevel(_Plex);
                 term.Clear();
-                _shiftos.AutoSize = true;
-                _shiftos.Font = SkinEngine.LoadedSkin.HeaderFont;
-                _shiftos.Text = "ShiftOS";
-                _shiftos.Y = GraphicsSubsystem.UIManager.Viewport.Height / 3;
-                _shiftos.Layout(new Microsoft.Xna.Framework.GameTime());
-                _shiftos.X = (GraphicsSubsystem.UIManager.Viewport.Width - _shiftos.Width) / 2;
+                _Plex.AutoSize = true;
+                _Plex.Font = SkinEngine.LoadedSkin.HeaderFont;
+                _Plex.Text = "Plex";
+                _Plex.Y = GraphicsSubsystem.UIManager.Viewport.Height / 3;
+                _Plex.Layout(new Microsoft.Xna.Framework.GameTime());
+                _Plex.X = (GraphicsSubsystem.UIManager.Viewport.Width - _Plex.Width) / 2;
 
                 status = new GUI.TextControl();
                 GraphicsSubsystem.UIManager.AddTopLevel(status);
                 status.Font = SkinEngine.LoadedSkin.MainFont;
                 status.AutoSize = true;
                 status.Text = "Beginning installation...";
-                status.Y = _shiftos.Y + _shiftos.Height + 5;
+                status.Y = _Plex.Y + _Plex.Height + 5;
                 status.Layout(new Microsoft.Xna.Framework.GameTime());
                 status.X = (GraphicsSubsystem.UIManager.Viewport.Width - status.Width) / 2;
 
@@ -219,8 +217,8 @@ It's called ShiftOS.");
                 Thread.Sleep(1250);
                 Console.WriteLine("Generating system profile...");
                 Thread.Sleep(25);
-                Console.WriteLine("Codepoints: 0");
-                save.Codepoints = 0;
+                Console.WriteLine("Experience: 0");
+                save.Experience = 0;
                 progress.Value = 10;
                 Thread.Sleep(25);
                 Console.WriteLine("Shiftorium cache generated...");
@@ -272,7 +270,7 @@ It's called ShiftOS.");
                 GraphicsSubsystem.UIManager.StopHandling(progress);
                 GraphicsSubsystem.UIManager.StopHandling(term);
                 GraphicsSubsystem.UIManager.StopHandling(status);
-                GraphicsSubsystem.UIManager.StopHandling(_shiftos);
+                GraphicsSubsystem.UIManager.StopHandling(_Plex);
 
             });
             t.Start();

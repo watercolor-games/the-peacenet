@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     /// <summary>
     /// The main class.
@@ -13,7 +13,7 @@ namespace ShiftOS.Frontend
         [STAThread]
         static void Main()
         {
-            using (var game = new ShiftOS())
+            using (var game = new Plexgate())
                 game.Run();
         }
     }

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GUI;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.GUI;
+using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     public class MainMenu : GUI.Control
     {
@@ -81,7 +81,7 @@ namespace ShiftOS.Frontend
             _mainTitle.Y = 30;
             _mainTitle.Font = new System.Drawing.Font("Lucida Console", 48F);
             _mainTitle.AutoSize = true;
-            _mainTitle.Text = "ShiftOS";
+            _mainTitle.Text = "Plex";
 
             _menuTitle.Text = "Main menu";
             _menuTitle.Font = new System.Drawing.Font(_menuTitle.Font.Name, 16F);
@@ -162,7 +162,7 @@ namespace ShiftOS.Frontend
                         if (sleep == true)
                         {
                             SaveOptions();
-                            System.Diagnostics.Process.Start("ShiftOS.Frontend.exe");
+                            System.Diagnostics.Process.Start("Plex.Frontend.exe");
                             Environment.Exit(-1);
                         }
                     });
@@ -196,7 +196,7 @@ namespace ShiftOS.Frontend
             _close.Click += () =>
             {
                 SaveSystem.IsSandbox = true;
-                ShiftOSCommands.Shutdown();
+                PlexCommands.Shutdown();
             };
         }
 
@@ -253,21 +253,21 @@ namespace ShiftOS.Frontend
                 case 0:
                     return "Sentience choppy? Try adjusting sentience quality settings in Options.";
                 case 1:
-                    return "Want to hear about the latest ShiftOS news and events? Check out the Community menu!";
+                    return "Want to hear about the latest Plex news and events? Check out the Community menu!";
                 case 2:
                     return "Go follow DevX on Twitter! http://twitter.com/MichaelTheShift";
                 case 3:
-                    return "Ran out of things to do in-game? Visit the modding forums for some extra user-created content or how to make your own ShiftOS-y things!";
+                    return "Ran out of things to do in-game? Visit the modding forums for some extra user-created content or how to make your own Plex-y things!";
                 case 4:
                     return "Tip of advice: Never use a GUI toolkit made in the 90s for utility design to develop a game that simulates an operating system with tools that look like they should be made in a GUI toolkit from the 90s for utility design.";
                 case 5:
-                    return "Skins are a very extensive and neat way to customize your ShiftOS experience. Why not give them a try?";
+                    return "Skins are a very extensive and neat way to customize your Plex experience. Why not give them a try?";
                 case 6:
-                    return "We thought of putting some pong stuff here but ShiftOS is already mostly just playing pong if you don't play this update. Ping pung pong pang.";
+                    return "We thought of putting some pong stuff here but Plex is already mostly just playing pong if you don't play this update. Ping pung pong pang.";
                 case 7:
                     return "Welcome to the Digital Society. Do you wish to continue?";
                 case 8:
-                    return "Open-source projects are pretty cool, you can use, modify, copy and redistribute the code without worrying too much about what lawyer you're gonna hire to act on your behalf. That's why ShiftOS is one of them. http://github.com/shiftos-game/ShiftOS";
+                    return "Open-source projects are pretty cool, you can use, modify, copy and redistribute the code without worrying too much about what lawyer you're gonna hire to act on your behalf. That's why Plex is one of them. http://github.com/Plex-game/Plex";
                 case 9:
                     return "Sure, you can toggle fullscreen in Options, but you can also use your F11 key to toggle it on and off in-game!";
                 default:

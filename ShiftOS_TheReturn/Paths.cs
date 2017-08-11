@@ -1,39 +1,15 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using static ShiftOS.Objects.ShiftFS.Utils;
-using ShiftOS.Objects.ShiftFS;
+using static Plex.Objects.ShiftFS.Utils;
+using Plex.Objects.ShiftFS;
 using Newtonsoft.Json;
 using System.Threading;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     /// <summary>
     /// Management class for ShiftFS path variables.
@@ -48,7 +24,8 @@ namespace ShiftOS.Engine
                 Locations = new Dictionary<string, string>();
                 Locations.Add("root", "0:");
 
-            AddPath("root", "system");
+            AddPath("root", "etc");
+            AddPath("root", "usr");
 
             AddPath("root", "home");
             AddPath("home", "documents");
@@ -56,22 +33,23 @@ namespace ShiftOS.Engine
             AddPath("home", "pictures");
 
 
-            AddPath("system", "local");
+            AddPath("usr", "local");
             AddPath("local", "english.local");
             AddPath("local", "deutsch.local");
             AddPath("local", "verbose.local");
-            AddPath("system", "data");
-            AddPath("system", "applauncher");
-            AddPath("data", "save.json");
-            AddPath("data", "user.dat");
-            AddPath("data", "notifications.dat");
-            AddPath("data", "skin");
-            AddPath("skin", "widgets.dat");
-            AddPath("system", "programs");
-            AddPath("system", "kernel.sft");
-            AddPath("system", "conf.sft");
-            AddPath("skin", "current");
-            AddPath("current", "skin.json");
+            AddPath("etc", "plexgate");
+            AddPath("plexgate", "launcheritems");
+            AddPath("plexgate", "sentience.plex");
+            AddPath("home", "user.dat");
+            AddPath("plexgate", "notifications.plex");
+            AddPath("plexgate", "ui");
+            AddPath("ui", "widgets.dat");
+            AddPath("root", "bin");
+            AddPath("root", "boot");
+            AddPath("boot", "plexkrnl.so");
+            AddPath("etc", "conf.plex");
+            AddPath("ui", "current");
+            AddPath("current", "themedata.plex");
             AddPath("current", "images");
 
             CheckPathExistence();
@@ -102,7 +80,7 @@ namespace ShiftOS.Engine
             get
             {
                 string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                return System.IO.Path.Combine(appdata, "ShiftOS", "saves");
+                return System.IO.Path.Combine(appdata, "Plex", "saves");
             }
         }
 
@@ -155,7 +133,7 @@ namespace ShiftOS.Engine
         private static Dictionary<string, string> Locations { get; set; }
 
         /// <summary>
-        /// Mounts the ShiftOS shared directory to 1:/, creating the directory if it does not exist.
+        /// Mounts the Plex shared directory to 1:/, creating the directory if it does not exist.
         /// </summary>
         public static void CreateAndMountSharedFolder()
         {
@@ -168,7 +146,7 @@ namespace ShiftOS.Engine
             mount.Name = "Shared";
             Utils.Mount(JsonConvert.SerializeObject(mount));
             ScanForDirectories(SharedFolder, 1);
-            //This event-based system allows us to sync the ramdisk from ShiftOS to the host OS.
+            //This event-based system allows us to sync the ramdisk from Plex to the host OS.
             Utils.DirectoryCreated += (dir) =>
             {
                 try
@@ -225,7 +203,7 @@ namespace ShiftOS.Engine
                 catch { }
             };
 
-            //This thread will sync the ramdisk from the host OS to ShiftOS.
+            //This thread will sync the ramdisk from the host OS to Plex.
             var t = new Thread(() =>
             {
                 while (!SaveSystem.ShuttingDown)
@@ -256,14 +234,14 @@ namespace ShiftOS.Engine
         }
 
         /// <summary>
-        /// Gets the ShiftOS shared folder.
+        /// Gets the Plex shared folder.
         /// </summary>
-        public static string SharedFolder { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ShiftOS_Shared"); } }
+        public static string SharedFolder { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Plex_Shared"); } }
 
         /// <summary>
-        /// Gets the location of the ShiftOS.mfs file.
+        /// Gets the location of the Plex.mfs file.
         /// </summary>
-        public static string SaveFile { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ShiftOS.mfs"); } }
+        public static string SaveFile { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Plex.mfs"); } }
 
         /// <summary>
         /// Gets the path of the inner save file.

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Engine;
+using Plex.Engine;
 
-namespace ShiftOS.Frontend
+namespace Plex.Frontend
 {
     class HackingCommands
     {
@@ -213,9 +213,9 @@ namespace ShiftOS.Frontend
                 Console.WriteLine("[SimplFTP] file not found on server.");
                 return;
             }
-            if (!Shiftorium.Buy(FindName, 0))
+            if (!Upgrades.Buy(FindName, 0))
             {
-                Console.WriteLine("[SimplFTP] Could not download file. Either the upgrade does not exist or the user doesn't have 0 codepoints (wat)");
+                Console.WriteLine("[SimplFTP] Could not download file. Either the upgrade does not exist or the user doesn't have 0 Experience (wat)");
                 return;
             }
             Console.WriteLine("[SimplFTP] downloaded file");

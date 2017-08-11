@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace ShiftOS.Frontend.GUI
+namespace Plex.Frontend.GUI
 {
     public class ItemGroup : Control
     {

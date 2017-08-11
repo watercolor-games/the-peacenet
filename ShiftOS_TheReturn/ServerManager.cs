@@ -1,38 +1,14 @@
-/*
- * MIT License
- * 
- * Copyright (c) 2017 Michael VanOverbeek and ShiftOS devs
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShiftOS.Objects;
+using Plex.Objects;
 using NetSockets;
 using System.Windows.Forms;
 using System.Threading;
-using ShiftOS;
-using static ShiftOS.Engine.SaveSystem;
+using Plex;
+using static Plex.Engine.SaveSystem;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Diagnostics;
@@ -40,7 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Net.NetworkInformation;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     /// <summary>
     /// Digital Society connection management class.
@@ -137,7 +113,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
             string[] split = msg.GUID.Split('|');
             bool finished = false;
             if (split[0] == SaveSystem.CurrentSave.SystemName)
-                foreach(var type in Array.FindAll(ReflectMan.Types, x => x.GetInterfaces().Contains(typeof(Server)) && Shiftorium.UpgradeAttributesUnlocked(x)))
+                foreach(var type in Array.FindAll(ReflectMan.Types, x => x.GetInterfaces().Contains(typeof(Server)) && Upgrades.UpgradeAttributesUnlocked(x)))
                 {
                     var attrib = type.GetCustomAttributes().FirstOrDefault(x => x is ServerAttribute) as ServerAttribute;
                     if(attrib != null)
@@ -217,7 +193,7 @@ Ping: {ServerManager.DigitalSocietyPing} ms
             {
                 if (!UserDisconnect)
                 {
-                    Desktop.PushNotification("digital_society_connection", "Disconnected from Digital Society.", "The ShiftOS kernel has been disconnected from the Digital Society. We are attempting to re-connect you.");
+                    Desktop.PushNotification("digital_society_connection", "Disconnected from Digital Society.", "The Plex kernel has been disconnected from the Digital Society. We are attempting to re-connect you.");
                     TerminalBackend.PrefixEnabled = true;
                     ConsoleEx.ForegroundColor = ConsoleColor.Red;
                     ConsoleEx.Bold = true;
@@ -260,10 +236,10 @@ Ping: {ServerManager.DigitalSocietyPing} ms
                     var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg.Contents);
                     if(args["username"] as string == SaveSystem.CurrentSave.Username)
                     {
-                        SaveSystem.CurrentSave.Codepoints += (ulong)args["amount"];
+                        SaveSystem.CurrentSave.Experience += (ulong)args["amount"];
                         Desktop.InvokeOnWorkerThread(new Action(() =>
                         {
-                            Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Codepoints.");
+                            Infobox.Show($"MUD Control Centre", $"Someone bought an item in your shop, and they have paid {args["amount"]}, and as such, you have been granted these Experience.");
                         }));
                         SaveSystem.SaveGame();
                     }

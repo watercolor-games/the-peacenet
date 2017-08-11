@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Frontend.Apps;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using static ShiftOS.Engine.SkinEngine;
+using Plex.Frontend.Apps;
+using Plex.Frontend.GraphicsSubsystem;
+using static Plex.Engine.SkinEngine;
 
-namespace ShiftOS.Frontend.GUI
+namespace Plex.Frontend.GUI
 {
     public class TextInput : Control
     {

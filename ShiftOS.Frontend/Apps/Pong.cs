@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [Launcher("{TITLE_PONG}", false, null, "{AL_GAMES}")]
     [WinOpen("{WO_PONG}")]
     [DefaultTitle("{TITLE_PONG}")]
     [DefaultIcon("iconPong")]
     [RequiresUpgrade("pong")]
-    public class Pong : GUI.Control, IShiftOSWindow
+    public class Pong : GUI.Control, IPlexWindow
     {
         public Pong()
         {
@@ -42,7 +42,7 @@ namespace ShiftOS.Frontend.Apps
         private double aiXVel = 1;
         private double aiYVel = 1;
         private int paddleWidth;
-        private long codepointsToEarn = 0;
+        private long ExperienceToEarn = 0;
         private int level = 1;
         private double playerY = 0.0;
         private double opponentY = 0.0;
@@ -97,7 +97,7 @@ namespace ShiftOS.Frontend.Apps
 
             string cp_text = Localization.Parse("{PONG_STATUSCP}", new Dictionary<string, string>
             {
-                ["%cp"] = codepointsToEarn.ToString()
+                ["%cp"] = ExperienceToEarn.ToString()
             });
 
             var tSize = GraphicsContext.MeasureString(cp_text, SkinEngine.LoadedSkin.Header3Font);

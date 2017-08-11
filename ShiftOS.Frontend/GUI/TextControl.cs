@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using ShiftOS.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GraphicsSubsystem;
 
-namespace ShiftOS.Frontend.GUI
+namespace Plex.Frontend.GUI
 {
     public class TextControl : Control
     {

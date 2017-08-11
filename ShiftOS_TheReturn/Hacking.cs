@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShiftOS.Engine
+namespace Plex.Engine
 {
     public static class Hacking
     {
@@ -21,7 +21,7 @@ namespace ShiftOS.Engine
         {
             get
             {
-                return Hackables.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+                return Hackables.Where(x => Upgrades.UpgradeInstalled(x.Dependencies) && !Upgrades.UpgradeInstalled(x.ID)).ToArray();
             }
         }
 
@@ -29,7 +29,7 @@ namespace ShiftOS.Engine
         {
             get
             {
-                return Exploits.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+                return Exploits.Where(x => Upgrades.UpgradeInstalled(x.Dependencies) && !Upgrades.UpgradeInstalled(x.ID)).ToArray();
             }
         }
 
@@ -37,7 +37,7 @@ namespace ShiftOS.Engine
         {
             get
             {
-                return Payloads.Where(x => Shiftorium.UpgradeInstalled(x.Dependencies) && !Shiftorium.UpgradeInstalled(x.ID)).ToArray();
+                return Payloads.Where(x => Upgrades.UpgradeInstalled(x.Dependencies) && !Upgrades.UpgradeInstalled(x.ID)).ToArray();
             }
         }
 
@@ -178,19 +178,19 @@ namespace ShiftOS.Engine
 
             var hackable = Hackables.FirstOrDefault(x => Hackables.Where(y => x.SystemName == y.SystemName).Count() > 1);
             if(hackable != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more hackables were found with the same hostname \"" + hackable.SystemName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more hackables were found with the same hostname \"" + hackable.SystemName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
             var ports = Ports.FirstOrDefault(x => Ports.Where(y => x.Name == y.Name).Count() > 1);
             if (ports != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more ports were found with the same name \"" + ports.Name + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more ports were found with the same name \"" + ports.Name + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
             var payloads = Payloads.FirstOrDefault(x => Payloads.Where(y => x.PayloadName == y.PayloadName).Count() > 1);
             if (payloads != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more payloads were found with the same name \"" + payloads.PayloadName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more payloads were found with the same name \"" + payloads.PayloadName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
             var exploits = Exploits.FirstOrDefault(x => Exploits.Where(y => x.ExploitName == y.ExploitName).Count() > 1);
             if (exploits != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more exploits were found with the same name \"" + exploits.ExploitName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more exploits were found with the same name \"" + exploits.ExploitName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
             var loot = LootFiles.FirstOrDefault(x => LootFiles.Where(y => x.LootName == y.LootName).Count() > 1);
             if (loot != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more loot files were found with the same name \"" + loot.LootName + "\". This is a direct violation of the ShiftOS save system and Shiftorium backend.");
+                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more loot files were found with the same name \"" + loot.LootName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
         }
     }
 

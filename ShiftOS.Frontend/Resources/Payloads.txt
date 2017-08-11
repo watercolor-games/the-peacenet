@@ -1,4 +1,4 @@
-﻿/* ShiftOS Payloads data file
+﻿/* Plex Payloads data file
  *
  * This file contains information about all payloads in the game's campaign.
  *

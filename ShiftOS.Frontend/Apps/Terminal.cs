@@ -8,18 +8,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using ShiftOS.Engine;
-using ShiftOS.Frontend.GraphicsSubsystem;
-using static ShiftOS.Engine.SkinEngine;
+using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
+using static Plex.Engine.SkinEngine;
 
-namespace ShiftOS.Frontend.Apps
+namespace Plex.Frontend.Apps
 {
     [FileHandler("Shell script", ".trm", "fileicontrm")]
     [Launcher("{TITLE_TERMINAL}", false, null, "{AL_UTILITIES}")]
     [WinOpen("{WO_TERMINAL}")]
     [DefaultTitle("{TITLE_TERMINAL}")]
     [DefaultIcon("iconTerminal")]
-    public class Terminal : GUI.Control, IShiftOSWindow
+    public class Terminal : GUI.Control, IPlexWindow
     {
         private TerminalControl _terminal = null;
         
