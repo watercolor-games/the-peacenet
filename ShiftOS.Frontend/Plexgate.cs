@@ -20,6 +20,11 @@ namespace Plex.Frontend
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
+        public bool IsInTutorial = false;
+        public Rectangle MouseEventBounds;
+        public string TutorialOverlayText = "";
+        public Action TutorialOverlayCompleted = null;
+
         private bool isFailing = false;
         private double failFadeInMS = 0;
         private const double failFadeMaxMS = 500;
@@ -81,6 +86,12 @@ namespace Plex.Frontend
 
 
             UIManager.Init(this);
+
+            Story.MissionComplete += (mission) =>
+            {
+                var mc = new Apps.MissionComplete(mission);
+                AppearanceManager.SetupDialog(mc);
+            };
         }
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -262,17 +273,33 @@ namespace Plex.Frontend
                 var mouseState = Mouse.GetState(this.Window);
                 int x = (int)GUI.ProgressBar.linear(mouseState.X, 0, graphicsDevice.PreferredBackBufferWidth, 0, 1280);
                 int y = (int)GUI.ProgressBar.linear(mouseState.Y, 0, graphicsDevice.PreferredBackBufferHeight, 0, 720);
+                bool prc = true;
+                bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
                 LastMouseState = new MouseState(x, y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
-
-                UIManager.ProcessMouseState(LastMouseState, mouseMS);
-                if (mouseState.LeftButton == ButtonState.Pressed)
+                if (IsInTutorial)
                 {
-                    mouseMS = 0;
+                    if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
+                        prc = false;
                 }
-                else
+                if (prc == true)
                 {
-                    mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
 
+                    UIManager.ProcessMouseState(LastMouseState, mouseMS);
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        mouseMS = 0;
+                        if (IsInTutorial && lastclicked == false)
+                        {
+                            IsInTutorial = false;
+                            TutorialOverlayCompleted?.Invoke();
+                            
+                        }
+                    }
+                    else
+                    {
+                        mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                    }
                 }
                 //So we have mouse input, and the UI layout system working...
 
@@ -341,11 +368,37 @@ namespace Plex.Frontend
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             rasterizerState);
+            //Create a graphics context so we can draw shit
+            var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0, 0, 1280, 720);
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
 
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawTArgets(spriteBatch);
+
+
+            //draw tutorial overlay
+            if (IsInTutorial)
+            {
+                gfx.DrawRectangle(0, 0, MouseEventBounds.X, 720, Color.Black * 0.5F);
+                gfx.DrawRectangle(MouseEventBounds.X, 0, 1280 - MouseEventBounds.X, MouseEventBounds.Y, Color.Black * 0.5F);
+                gfx.DrawRectangle(MouseEventBounds.Right, MouseEventBounds.Y, 1280 - MouseEventBounds.Right, MouseEventBounds.Height, Color.Black * 0.5F);
+                gfx.DrawRectangle(MouseEventBounds.X, MouseEventBounds.Bottom, 1280 - MouseEventBounds.X, 720 - MouseEventBounds.Bottom, Color.Black * 0.5F);
+
+                var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, 1280 / 3);
+                int textX = ((MouseEventBounds.X) >= (1280 / 2)) ? MouseEventBounds.X - (int)tutmeasure.X - 15 : MouseEventBounds.Right + 15;
+                int textY = ((MouseEventBounds.Y) >= (720 / 2)) ? MouseEventBounds.Y - (int)tutmeasure.Y - 15 : MouseEventBounds.Bottom + 15;
+                if (textX < 15)
+                    textX = 15;
+                if (textX > 1265)
+                    textX = 1265 - (int)tutmeasure.X;
+                if (textY < 0)
+                    textY = 15;
+                if (textY > 705)
+                    textY = 705 - (int)tutmeasure.Y;
+                gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, (int)tutmeasure.X);
+
+            }
 
             //Draw a mouse cursor
 
@@ -360,7 +413,6 @@ namespace Plex.Frontend
 
             if(isFailing && failFadeInMS >= failFadeMaxMS)
             {
-                var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0,0, UIManager.Viewport.Width, UIManager.Viewport.Height);
                 string objectiveFailed = "- OBJECTIVE FAILURE -";
                 string prompt = "[press any key to dismiss this message and return to your sentience]";
                 int textMaxWidth = UIManager.Viewport.Width / 3;
@@ -378,7 +430,6 @@ namespace Plex.Frontend
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
                     string str = $"Timeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
-                    var gfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height);
                     var measure = GraphicsContext.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
                     gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
                 }
@@ -386,12 +437,11 @@ namespace Plex.Frontend
 
             if (DisplayDebugInfo)
             {
-                var gfxContext = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
                 var color = Color.White;
                 double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
                     color = Color.Red;
-                gfxContext.DrawString($@"Plex
+                gfx.DrawString($@"Plex
 =======================
 
 Copyright (c) 2017 Plex Developers
@@ -409,14 +459,13 @@ Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawi
             }
 
 #if DEBUG
-            var _dGfx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, 1280, 720);
             string volition = @"PROJECT: PLEX
 PROPERTY OF WATERCOLOR GAMES
 FOR INTERNAL USE ONLY.";
             var dmeasure = GraphicsContext.MeasureString(volition, SkinEngine.LoadedSkin.HeaderFont, 480);
             int x = (1280 - (int)dmeasure.X) / 2;
             int y = (720 - (int)dmeasure.Y) / 2;
-            _dGfx.DrawString(volition, x, y, Color.White * 0.5F, SkinEngine.LoadedSkin.HeaderFont, 480);
+            gfx.DrawString(volition, x, y, Color.White * 0.5F, SkinEngine.LoadedSkin.HeaderFont, 480);
 #endif
 
 
