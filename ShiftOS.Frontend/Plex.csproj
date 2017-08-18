@@ -50,6 +50,7 @@
     <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\Installer.cs" />
+    <Compile Include="Apps\MissionComplete.cs" />
     <Compile Include="Apps\Network.cs" />
     <Compile Include="Apps\Pong.cs" />
     <Compile Include="Apps\PlexTheme.cs" />

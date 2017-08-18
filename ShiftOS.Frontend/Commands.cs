@@ -24,6 +24,27 @@ namespace Plex.Frontend
 {
     public static class FrontendDebugCommands
     {
+        [Command("drop_tutorial")]
+        [ShellConstraint("Plex_debug> ")]
+        [RequiresArgument("id")]
+        public static void DropTutorial(Dictionary<string, object> args)
+        {
+            Random rnd = new Random();
+            string text = args["id"].ToString();
+            int w = rnd.Next(10, 1280);
+            int h = rnd.Next(10, 720);
+            int x = rnd.Next(0, 1280 - w);
+            int y = rnd.Next(0, 720 - h);
+
+            TerminalBackend.PrefixEnabled = false;
+            UIManager.SetTutorialOverlay(new Rectangle(x, y, w, h), text, () =>
+               {
+                   Console.WriteLine("Tutorial complete.");
+                   TerminalBackend.PrefixEnabled = true;
+                   TerminalBackend.PrintPrompt();
+               });
+        }
+
         [Command("infobox_prison")]
         [ShellConstraint("Plex_debug> ")]
         public static void InfoboxPrison()

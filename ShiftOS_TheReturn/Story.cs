@@ -72,6 +72,7 @@ namespace Plex.Engine
         public static event Action<string> StoryComplete;
         public static List<Objective> CurrentObjectives { get; private set; }
         public static event Action<string> FailureRequested;
+        public static event Action<MissionAttribute> MissionComplete;
 
         public static void DisplayFailure(string message)
         {
@@ -152,15 +153,11 @@ namespace Plex.Engine
                                     if(story is MissionAttribute)
                                     {
                                         var mission = story as MissionAttribute;
-                                        ConsoleEx.ForegroundColor = ConsoleColor.Yellow;
-                                        ConsoleEx.Bold = true;
-                                        Console.WriteLine(" - mission complete - ");
-                                        ConsoleEx.Bold = false;
-                                        ConsoleEx.ForegroundColor = ConsoleColor.White;
-                                        Console.WriteLine($"{mission.Name} successfully finished. You have earned {mission.CodepointAward} Experience for your efforts.");
                                         SaveSystem.CurrentSave.Experience += mission.CodepointAward;
                                         TerminalBackend.PrintPrompt();
                                         TerminalBackend.PrefixEnabled = true;
+                                        TerminalBackend.InStory = false;
+                                        MissionComplete?.Invoke(mission);
                                     }
                                     StoryComplete?.Invoke(stid);
                                     SaveSystem.CurrentSave.PickupPoint = null;

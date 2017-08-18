@@ -21,6 +21,14 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static GUI.Control FocusedControl = null;
         private static Plexgate _game = null;
 
+        public static void SetTutorialOverlay(Rectangle mouserect, string text, Action complete)
+        {
+            _game.TutorialOverlayText = text;
+            _game.MouseEventBounds = mouserect;
+            _game.TutorialOverlayCompleted = complete;
+            _game.IsInTutorial = true;
+        }
+
         public static void Init(Plexgate sentience)
         {
             _game = sentience;

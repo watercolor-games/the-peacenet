@@ -220,7 +220,7 @@ namespace Plex.Frontend.Desktop
         }
 
         private List<PanelButtonData> PanelButtons = new List<PanelButtonData>();
-        private List<AppLauncherItem> LauncherItems = new List<AppLauncherItem>();
+        internal List<AppLauncherItem> LauncherItems = new List<AppLauncherItem>();
 
         public override void MouseStateChanged()
         {

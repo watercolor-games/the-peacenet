@@ -138,7 +138,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue));
+            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
             return new Vector2(measure.Width, measure.Height);
         }
 
@@ -157,7 +157,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             return null;
         }
 
-        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, int wrapWidth = 0)
+        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
             if (string.IsNullOrEmpty(text))
                 return;
@@ -171,7 +171,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 {
                     using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                     {
-                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0,0,bmp.Width,bmp.Height), System.Drawing.Color.White);
+                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0,0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
                     }
                     var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
