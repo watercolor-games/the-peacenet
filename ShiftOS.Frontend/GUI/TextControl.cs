@@ -82,7 +82,14 @@ namespace Plex.Frontend.GUI
                     return;
                 _text = value;
                 requiresTextRerender = true;
+                OnTextChanged();
             }
+        }
+
+        public event Action TextChanged;
+        protected virtual void OnTextChanged()
+        {
+            TextChanged?.Invoke();
         }
 
         public Font Font

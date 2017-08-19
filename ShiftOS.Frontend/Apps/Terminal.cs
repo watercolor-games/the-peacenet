@@ -222,72 +222,69 @@ namespace Plex.Frontend.Apps
 
             if (a.Key == Keys.Enter && !ReadOnly)
             {
-                if (doEnter == true)
+                if (!PerformTerminalBehaviours)
                 {
-                    if (!PerformTerminalBehaviours)
+                    Text = Text.Insert(Index, Environment.NewLine);
+                    Index += 2;
+                    RecalculateLayout();
+                    Invalidate();
+                    return;
+                }
+
+                try
+                {
+                    if (!TerminalBackend.PrefixEnabled)
                     {
-                        Text = Text.Insert(Index, Environment.NewLine);
-                        Index += 2;
-                        RecalculateLayout();
-                        Invalidate();
+                        string textraw = Lines[Lines.Length - 1];
+                        TerminalBackend.SendText(textraw);
                         return;
                     }
+                    var text = Lines;
+                    var text2 = text[text.Length - 1];
+                    var text3 = "";
+                    var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
+                    WriteLine("");
 
-                    try
+                    if (TerminalBackend.PrefixEnabled)
                     {
-                        if (!TerminalBackend.PrefixEnabled)
+                        text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
+                    }
+                    if (!string.IsNullOrWhiteSpace(text3))
+                    {
+                        TerminalBackend.LastCommand = text3;
+                        TerminalBackend.SendText(text4);
+                        if (TerminalBackend.InStory == false)
                         {
-                            string textraw = Lines[Lines.Length - 1];
-                            TerminalBackend.SendText(textraw);
-                            return;
-                        }
-                        var text = Lines;
-                        var text2 = text[text.Length - 1];
-                        var text3 = "";
-                        var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-                        WriteLine("");
-
-                        if (TerminalBackend.PrefixEnabled)
-                        {
-                            text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
-                        }
-                        if (!string.IsNullOrWhiteSpace(text3))
-                        {
-                            TerminalBackend.LastCommand = text3;
-                            TerminalBackend.SendText(text4);
-                            if (TerminalBackend.InStory == false)
                             {
+                                var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
+
+                                if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
                                 {
-                                    var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
-
-                                    if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
-                                    {
-                                        Console.WriteLine("{ERR_SYNTAXERROR}");
-                                    }
-                                    else
-                                    {
-                                        TerminalBackend.InvokeCommand(result.Key, result.Value);
-                                    }
-
+                                    Console.WriteLine("{ERR_SYNTAXERROR}");
                                 }
+                                else
+                                {
+                                    TerminalBackend.InvokeCommand(result.Key, result.Value);
+                                }
+
                             }
                         }
                     }
-                    catch
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (TerminalBackend.PrefixEnabled)
                     {
+                        TerminalBackend.PrintPrompt();
                     }
-                    finally
-                    {
-                        if (TerminalBackend.PrefixEnabled)
-                        {
-                            TerminalBackend.PrintPrompt();
-                        }
-                        AppearanceManager.CurrentPosition = 0;
+                    AppearanceManager.CurrentPosition = 0;
 
-                    }
-                    doEnter = false;
                 }
             }
+
             else if (a.Key == Keys.Back && !ReadOnly)
             {
                 try
@@ -378,10 +375,25 @@ namespace Plex.Frontend.Apps
 
         public bool PerformTerminalBehaviours = true;
 
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            int textloc = 0 - (int)_vertOffset;
+            foreach (var line in Lines)
+            {
+                var font = LoadedSkin.TerminalFont;
+                if (!(textloc < 0 || textloc - font.Height >= Height))
+                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
+                textloc += font.Height;
+            }
+
+        }
+
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            var font = new System.Drawing.Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style); 
+            PaintBackground = false;
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
+
+            var font = new System.Drawing.Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style); 
             if (!string.IsNullOrEmpty(Text))
             {
                 //Draw the caret.
@@ -400,14 +412,7 @@ namespace Plex.Frontend.Apps
                     gfx.DrawRectangle((int)cursorPos.X, (int)(cursorPos.Y - _vertOffset), (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }
                 //Draw the text
-
-                int textloc = 0 - (int)_vertOffset;
-                foreach (var line in Lines)
-                {
-                    if(!(textloc < 0 || textloc - font.Height >= Height))
-                        gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
-                    textloc += font.Height;
-                }
+                base.OnPaint(gfx, target);
 
             }
         }
