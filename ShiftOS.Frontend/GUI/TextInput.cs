@@ -12,12 +12,11 @@ using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
-    public class TextInput : Control
+    public class TextInput : TextControl
     {
         private string _label = "Type here!";
         private string _text = "";
         private int _index = 0;
-        private System.Drawing.Font _font = new System.Drawing.Font("Tahoma", 9f);
 
         public int Index
         {
@@ -38,6 +37,26 @@ namespace Plex.Frontend.GUI
                 CalculateVisibleText();
                 Invalidate();
             }
+        }
+
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            int textY = (Height - Font.Height) / 2;
+            int caretHeight = Font.Height;
+
+
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                gfx.DrawString(Text, (int)(2 - _textDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font);
+            }
+            if(!IsFocusedControl)
+            {
+                if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
+                {
+                    gfx.DrawString(_label, 2, textY, Color.Gray, Font);
+                }
+            }
+
         }
 
         public override void MouseStateChanged()
@@ -116,22 +135,20 @@ namespace Plex.Frontend.GUI
 
         protected void CalculateVisibleText()
         {
-            using(var gfx = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+            string toCaret = _text.Substring(0, _index);
+            var measure = GraphicsContext.MeasureString(toCaret, Font);
+            caretPos = 2 + measure.X;
+            if (caretPos - _textDrawOffset < 0)
             {
-                string toCaret = _text.Substring(0, _index);
-                var measure = gfx.SmartMeasureString(toCaret, _font);
-                caretPos = 2 + measure.Width;
-                if(caretPos - _textDrawOffset < 0)
-                {
-                    _textDrawOffset += (caretPos - _textDrawOffset);
-                }
-                if(caretPos - _textDrawOffset > Width)
-                {
-                    _textDrawOffset -= caretPos - _textDrawOffset;
-                }
-
+                _textDrawOffset += (caretPos - _textDrawOffset);
             }
+            if (caretPos - _textDrawOffset > Width)
+            {
+                _textDrawOffset -= caretPos - _textDrawOffset;
+            }
+
         }
+        
 
         private float _textDrawOffset = 0;
         
@@ -139,15 +156,9 @@ namespace Plex.Frontend.GUI
         {
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
+            int textY = (Height - Font.Height) / 2;
+            int caretHeight = Font.Height;
 
-            int textY = (Height - _font.Height) / 2;
-            int caretHeight = _font.Height;
-            
-
-            if (!string.IsNullOrWhiteSpace(Text))
-            {
-                gfx.DrawString(Text, (int)(2 - _textDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), _font);
-            }
             if (IsFocusedControl)
             {
                 if (caretMS <= 250)
@@ -156,14 +167,8 @@ namespace Plex.Frontend.GUI
                     gfx.DrawRectangle((int)(caretPos - _textDrawOffset), textY, 2, caretHeight, UIManager.SkinTextures["ControlTextColor"]);
                 }
             }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
-                {
-                    gfx.DrawString(_label, 2, textY, Color.Gray, _font);
-                }
-            }
 
+            base.OnPaint(gfx, target);
         }
 
         private double caretMS = 0;

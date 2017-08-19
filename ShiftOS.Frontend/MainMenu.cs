@@ -87,6 +87,7 @@ namespace Plex.Frontend
             _menuTitle.Font = new System.Drawing.Font(_menuTitle.Font.Name, 16F);
             _menuTitle.X = 30;
             _menuTitle.Y = _mainTitle.Y + _mainTitle.Font.Height + 10;
+            _menuTitle.AutoSize = true;
 
             _campaign.Y = _menuTitle.Y + _menuTitle.Font.Height + 15;
             _sandbox.Y = _campaign.Y + _campaign.Font.Height + 15;
