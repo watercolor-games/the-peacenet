@@ -386,7 +386,7 @@ namespace Plex.Frontend.GUI
 
         public virtual void MouseStateChanged() { }
 
-        protected virtual void OnPaint(GraphicsContext gfx)
+        protected virtual void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlColor"]);
         }
@@ -412,11 +412,11 @@ namespace Plex.Frontend.GUI
             parent.Invalidate();
         }
 
-        public void Paint(GraphicsContext gfx)
+        public void Paint(GraphicsContext gfx, RenderTarget2D target)
         {
             if (_visible == true)
             {
-                OnPaint(gfx);
+                OnPaint(gfx, target);
                 int draw_x = gfx.X;
                 int draw_y = gfx.Y;
                 int draw_width = gfx.Width;
@@ -429,7 +429,7 @@ namespace Plex.Frontend.GUI
                         gfx.Y = draw_y + ctrl.Y;
                         gfx.Width = ctrl.Width;
                         gfx.Height = ctrl.Height;
-                        ctrl.Paint(gfx);
+                        ctrl.Paint(gfx, target);
                         gfx.X = draw_x;
                         gfx.Y = draw_y;
                     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 
@@ -143,7 +144,7 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);

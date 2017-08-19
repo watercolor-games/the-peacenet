@@ -13,6 +13,14 @@ namespace Plex.Frontend.GraphicsSubsystem
 {
     public class GraphicsContext
     {
+        public SpriteBatch Batch
+        {
+            get
+            {
+                return _spritebatch;
+            }
+        }
+
         public GraphicsDevice Device
         {
             get
@@ -161,19 +169,20 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (string.IsNullOrEmpty(text))
                 return;
+            TextCache cache = null;
             x += _startx;
             y += _starty;
-            var measure = MeasureString(text, font, wrapWidth);
-            var cache = GetCache(text, font, wrapWidth);
+            cache = GetCache(text, font, wrapWidth);
             if (cache == null)
             {
+                var measure = MeasureString(text, font, wrapWidth);
                 using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
                 {
                     using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                     {
                         TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0,0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
                     }
-                    var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                     var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
                     Marshal.Copy(lck.Scan0, bytes, 0, bytes.Length);
                     bmp.UnlockBits(lck);

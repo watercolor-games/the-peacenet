@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -120,9 +121,9 @@ namespace Plex.Frontend.Apps
             PopulateList();
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            base.OnPaint(gfx);
+            base.OnPaint(gfx, target);
 
             string title = "Welcome to the Shiftorium!";
             string desc = @"The Shiftorium is a place where you can buy upgrades for your computer. These upgrades include hardware enhancements, kernel and software optimizations and features, new programs, upgrades to existing programs, and more.

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
@@ -265,7 +266,7 @@ namespace Plex.Frontend.Desktop
 
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             //Let's get data for the desktop panel.
 

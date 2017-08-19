@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
@@ -377,7 +378,7 @@ namespace Plex.Frontend.Apps
 
         public bool PerformTerminalBehaviours = true;
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             var font = new System.Drawing.Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style); 
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());

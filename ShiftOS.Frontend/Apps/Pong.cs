@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -55,7 +56,7 @@ namespace Plex.Frontend.Apps
 
         #region Control behaviour overrides
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             //This is where we'll dump the winforms painting code
             //By now, Layout() would have calculated the game's state
@@ -74,7 +75,7 @@ namespace Plex.Frontend.Apps
             aiballYLocal -= ((double)paddleWidth / 2);
 
 
-            base.OnPaint(gfx);
+            base.OnPaint(gfx, target);
 
             //draw the ball
             if (doBallCalc)

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 
@@ -38,7 +39,7 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.Clear(LoadedSkin.ProgressBarBackgroundColor.ToMonoColor());
             int w = (int)linear(_value, 0, _maximum, 0, Width);

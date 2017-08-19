@@ -53,7 +53,7 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             switch (_layout)
             {

@@ -20,10 +20,25 @@ namespace Plex.Frontend
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
+        private Color ShroudColor = Color.Black;
+
         public bool IsInTutorial = false;
         public Rectangle MouseEventBounds;
         public string TutorialOverlayText = "";
         public Action TutorialOverlayCompleted = null;
+
+        //Crash variables
+        public bool IsCrashed = false;
+        public double CrashAnimMS = 0.0;
+        
+
+
+        public void Crash()
+        {
+            CrashAnimMS = 0;
+            IsCrashed = true;
+        }
+
 
         private bool isFailing = false;
         private double failFadeInMS = 0;
@@ -221,10 +236,10 @@ namespace Plex.Frontend
             {
                 if (failFadeInMS < failFadeMaxMS)
                     failFadeInMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-                if(failEnded == false)
+                if (failEnded == false)
                 {
                     shroudOpacity = (float)GUI.ProgressBar.linear(failFadeInMS, 0, failFadeMaxMS, 0, 1);
-                    if(shroudOpacity >= 1)
+                    if (shroudOpacity >= 1)
                     {
                         if (failMessage == failRealMessage + "|")
                         {
@@ -248,14 +263,14 @@ namespace Plex.Frontend
                 }
                 else
                 {
-                    if(failFadeOutMS < failFadeMaxMS)
+                    if (failFadeOutMS < failFadeMaxMS)
                     {
                         failFadeOutMS += gameTime.ElapsedGameTime.TotalMilliseconds;
                     }
 
                     shroudOpacity = 1 - (float)GUI.ProgressBar.linear(failFadeOutMS, 0, failFadeMaxMS, 0, 1);
 
-                    if(shroudOpacity <= 0)
+                    if (shroudOpacity <= 0)
                     {
                         isFailing = false;
                     }
@@ -292,7 +307,7 @@ namespace Plex.Frontend
                         {
                             IsInTutorial = false;
                             TutorialOverlayCompleted?.Invoke();
-                            
+
                         }
                     }
                     else
@@ -343,6 +358,23 @@ namespace Plex.Frontend
                 {
                     shroudOpacity = 0;
                 }
+            }
+
+            if (IsCrashed)
+            {
+                CrashAnimMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if((CrashAnimMS > 500 && CrashAnimMS < 600) || CrashAnimMS > 800)
+                {
+                    ShroudColor = Color.Black;
+                    shroudOpacity = 1;
+                }
+                else
+                {
+                    shroudOpacity = 0;
+                }
+
+                if (CrashAnimMS > 1800)
+                    ShroudColor = Color.Blue;
             }
 
             base.Update(gameTime);
@@ -408,8 +440,23 @@ namespace Plex.Frontend
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
-            spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), Color.Red * shroudOpacity);
+            spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
+            if (IsCrashed)
+            {
+                if(CrashAnimMS > 2400)
+                {
+                    string e_systemerror = "System error";
+                    string e_errtext = @"Plexgate has experienced a fatal error and the Plex kernel has shut your user experience down.
 
+In order for you to regain your graphical user experience, you will need to start a text shell, connect to your system, diagnose and correct the error. Reboot the system when you are done.
+
+To begin this process, strike the [T] key while holding <CTRL>.";
+                    int cwidth = 1280 - 400;
+                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
+                    gfx.DrawString(e_systemerror, 200, 200, Color.White, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
+                    gfx.DrawString(e_errtext, 200, 200 + (int)titlemeasure.Y + 50, Color.White, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 12f), cwidth);
+                }
+            }
 
             if(isFailing && failFadeInMS >= failFadeMaxMS)
             {
@@ -441,7 +488,7 @@ namespace Plex.Frontend
                 double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
                 if (fps <= 20)
                     color = Color.Red;
-                gfx.DrawString($@"Plex
+                string debugtext = $@"Plex
 =======================
 
 Copyright (c) 2017 Plex Developers
@@ -452,10 +499,10 @@ CTRL+D: toggle debug menu
 CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
 Use the ""debug"" Terminal Command for engine debug commands.
 
-Red text means low framerate, a low framerate could be a sign of CPU hogging code or a memory leak.
-
-
-Text cache: {GraphicsContext.StringCaches.Count}", 0, 0, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+Red text means low framerate, a low framerate could be a sign of CPU hogging code or a memory leak.";
+                var debugmeasure = GraphicsContext.MeasureString(debugtext, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+                gfx.DrawRectangle(0, 0, (int)debugmeasure.X + 10, (int)debugmeasure.Y + 10, Color.Black * 0.75F);
+                gfx.DrawString(debugtext, 5, 5, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
             }
 
 #if DEBUG

@@ -74,11 +74,5 @@ System name: {SaveSystem.CurrentSave.SystemName}
 RAM usage: 0MB/0MB <nyi>
 Open programs: {AppearanceManager.OpenForms.Count}";
         }
-
-        protected override void OnPaint(GraphicsContext gfx)
-        {
-            base.OnPaint(gfx);
-
-        }
     }
 }

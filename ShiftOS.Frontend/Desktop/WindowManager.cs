@@ -284,7 +284,7 @@ namespace Plex.Frontend.Desktop
 
 
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             int titleheight = LoadedSkin.TitlebarHeight;
             int leftborderwidth = LoadedSkin.LeftBorderWidth;

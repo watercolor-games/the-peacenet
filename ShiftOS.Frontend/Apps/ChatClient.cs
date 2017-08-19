@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using static Plex.Engine.SkinEngine;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Frontend.Apps
 {
@@ -150,7 +151,7 @@ namespace Plex.Frontend.Apps
         int vertSeparatorLeft = 20;
         bool requiresRepaint = false;
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             int messagesTop = NetworkConnected ? topicBarHeight : 0;
             int messagesFromRight = ChannelConnected ? usersListWidth : 0;

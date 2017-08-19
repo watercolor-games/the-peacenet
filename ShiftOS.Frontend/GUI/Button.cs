@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -30,7 +31,18 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            var fgCol = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
+            var measure = GraphicsContext.MeasureString(Text, Font);
+
+            var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
+
+            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font);
+
+        }
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             var bgCol = UIManager.SkinTextures["ButtonBackgroundColor"];
             var fgCol = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
@@ -42,12 +54,7 @@ namespace Plex.Frontend.GUI
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
             gfx.DrawRectangle(1, 1, Width - 2, Height - 2, bgCol);
 
-            var measure = GraphicsContext.MeasureString(Text, Font);
-
-            var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
-
-            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font);
-
+            base.OnPaint(gfx, target);
         }
     }
 }

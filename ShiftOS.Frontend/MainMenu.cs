@@ -328,7 +328,7 @@ namespace Plex.Frontend
             Invalidate();
         }
 
-        protected override void OnPaint(GraphicsContext gfx)
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.DrawRectangle(0, 0, Width, Height, Color.Lerp(_redbg, _bluebg, _bglerp));
             gfx.DrawRectangle(0, 0, Width / 4, Height, Color.White * 0.35F);

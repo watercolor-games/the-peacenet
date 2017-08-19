@@ -21,6 +21,11 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static GUI.Control FocusedControl = null;
         private static Plexgate _game = null;
 
+        public static void Crash()
+        {
+            _game.Crash();
+        }
+
         public static void SetTutorialOverlay(Rectangle mouserect, string text, Action complete)
         {
             _game.TutorialOverlayText = text;
@@ -161,7 +166,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                                     RasterizerState.CullNone);
                     graphics.Clear(Color.Transparent);
                     var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
-                    ctrl.Paint(gfxContext);
+                    ctrl.Paint(gfxContext, _target);
 
                     graphics.SetRenderTarget(_game.GameRenderTarget);
                     TextureCaches[hc] = _target;

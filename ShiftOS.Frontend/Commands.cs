@@ -24,6 +24,13 @@ namespace Plex.Frontend
 {
     public static class FrontendDebugCommands
     {
+        [Command("drop_crash")]
+        [ShellConstraint("Plex_debug> ")]
+        public static void Crash()
+        {
+            UIManager.Crash();
+        }
+
         [Command("drop_tutorial")]
         [ShellConstraint("Plex_debug> ")]
         [RequiresArgument("id")]
