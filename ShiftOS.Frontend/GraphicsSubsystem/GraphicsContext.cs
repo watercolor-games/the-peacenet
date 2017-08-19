@@ -180,11 +180,28 @@ namespace Plex.Frontend.GraphicsSubsystem
             {
                 using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                 {
-                    TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
+                    }
+                    else
+                    {
+                        gfx.DrawString(text, font, System.Drawing.Brushes.Black, new System.Drawing.Rectangle(0,0,bmp.Width,bmp.Height), System.Drawing.StringFormat.GenericTypographic);
+                    }
                 }
                 var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
                 Marshal.Copy(lck.Scan0, bytes, 0, bytes.Length);
+                if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                {
+                    for (int i = 0; i < bytes.Length; i += 4)
+                    {
+                        bytes[i] = (byte)(255 - bytes[i]);
+                        bytes[i + 1] = (byte)(255 - bytes[i + 1]);
+                        bytes[i + 2] = (byte)(255 - bytes[i + 2]);
+
+                    }
+                }
                 bmp.UnlockBits(lck);
                 using (var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height))
                 {
