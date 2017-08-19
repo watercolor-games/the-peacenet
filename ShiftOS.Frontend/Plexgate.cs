@@ -20,6 +20,14 @@ namespace Plex.Frontend
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
+#if DEBUG
+        private GUI.TextControl DebugText = new GUI.TextControl();
+#endif
+        private GUI.TextControl SystemError = new GUI.TextControl();
+        private GUI.TextControl SystemErrorText = new GUI.TextControl();
+
+
+
         private Color ShroudColor = Color.Black;
 
         public bool IsInTutorial = false;
@@ -107,6 +115,18 @@ namespace Plex.Frontend
                 var mc = new Apps.MissionComplete(mission);
                 AppearanceManager.SetupDialog(mc);
             };
+
+#if DEBUG
+            DebugText.Visible = true;
+            DebugText.AutoSize = true;
+            UIManager.AddHUD(DebugText);
+#endif
+
+            UIManager.AddHUD(SystemError);
+            SystemError.Visible = false;
+            UIManager.AddHUD(SystemErrorText);
+            SystemErrorText.Visible = false;
+
         }
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -374,8 +394,74 @@ namespace Plex.Frontend
                 }
 
                 if (CrashAnimMS > 1800)
+                {
                     ShroudColor = Color.Blue;
+                }
+
+                if (CrashAnimMS > 2400)
+                {
+                    string e_systemerror = "System error";
+                    string e_errtext = @"Plexgate has experienced a fatal error and the Plex kernel has shut your user experience down.
+
+In order for you to regain your graphical user experience, you will need to start a text shell, connect to your system, diagnose and correct the error. Reboot the system when you are done.
+
+To begin this process, strike the [T] key while holding <CTRL>.";
+                    int cwidth = 1280 - 400;
+                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
+                    SystemError.X = 200;
+                    SystemError.Y = 200;
+                    SystemError.AutoSize = false;
+                    SystemError.Width = (int)titlemeasure.X;
+                    SystemError.Height = (int)titlemeasure.Y;
+                    SystemError.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold);
+                    SystemError.Text = e_systemerror;
+
+                    SystemErrorText.Text = e_errtext;
+                    SystemErrorText.AutoSize = false;
+                    SystemErrorText.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 12f);
+                    var e_measure = GraphicsContext.MeasureString(e_errtext, SystemErrorText.Font, cwidth);
+                    SystemErrorText.Width = (int)e_measure.X;
+                    SystemErrorText.Height = (int)e_measure.Y;
+                    SystemErrorText.X = 200;
+                    SystemErrorText.Y = SystemError.Y + SystemError.Height + 20;
+
+                    SystemError.Visible = true;
+                    SystemErrorText.Visible = true;
+                }
             }
+            else
+            {
+                SystemError.Visible = false;
+                SystemErrorText.Visible = false;
+
+            }
+
+#if DEBUG
+            DebugText.Visible = DisplayDebugInfo;
+            if (DebugText.Visible)
+            {
+                DebugText.X = 5;
+                DebugText.Y = 5;
+                var color = Color.White;
+                double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
+                if (fps <= 20)
+                    color = Color.Red;
+                DebugText.Text = $@"Plex
+=======================
+
+Copyright (c) 2017 Plex Developers
+
+Debug information - {fps} FPS
+
+CTRL+D: toggle debug menu
+CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
+Use the ""debug"" Terminal Command for engine debug commands.
+
+Current time: {DateTime.Now}
+Text cache: {GraphicsContext.StringCaches.Count}";
+
+            }
+#endif
 
             base.Update(gameTime);
         }
@@ -390,7 +476,9 @@ namespace Plex.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch, 0, 0);
+            UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch);
+            UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
+
 
             var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
@@ -441,22 +529,6 @@ namespace Plex.Frontend
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
-            if (IsCrashed)
-            {
-                if(CrashAnimMS > 2400)
-                {
-                    string e_systemerror = "System error";
-                    string e_errtext = @"Plexgate has experienced a fatal error and the Plex kernel has shut your user experience down.
-
-In order for you to regain your graphical user experience, you will need to start a text shell, connect to your system, diagnose and correct the error. Reboot the system when you are done.
-
-To begin this process, strike the [T] key while holding <CTRL>.";
-                    int cwidth = 1280 - 400;
-                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
-                    gfx.DrawString(e_systemerror, 200, 200, Color.White, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
-                    gfx.DrawString(e_errtext, 200, 200 + (int)titlemeasure.Y + 50, Color.White, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 12f), cwidth);
-                }
-            }
 
             if(isFailing && failFadeInMS >= failFadeMaxMS)
             {
@@ -481,31 +553,13 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                     gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
                 }
             }
-
+#if DEBUG
             if (DisplayDebugInfo)
             {
-                var color = Color.White;
-                double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
-                if (fps <= 20)
-                    color = Color.Red;
-                string debugtext = $@"Plex
-=======================
-
-Copyright (c) 2017 Plex Developers
-
-Debug information - {fps} FPS
-
-CTRL+D: toggle debug menu
-CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
-Use the ""debug"" Terminal Command for engine debug commands.
-
-Red text means low framerate, a low framerate could be a sign of CPU hogging code or a memory leak.";
-                var debugmeasure = GraphicsContext.MeasureString(debugtext, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
-                gfx.DrawRectangle(0, 0, (int)debugmeasure.X + 10, (int)debugmeasure.Y + 10, Color.Black * 0.75F);
-                gfx.DrawString(debugtext, 5, 5, color, new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Bold));
+                //So we need to draw the shroud for the debug text because I don't have foreground/background colors implemented into the UI framework yet.
+                gfx.DrawRectangle(0, 0, (int)DebugText.Width + 10, (int)DebugText.Height + 10, Color.Black * 0.75F);
             }
 
-#if DEBUG
             string volition = @"PROJECT: PLEX
 PROPERTY OF WATERCOLOR GAMES
 FOR INTERNAL USE ONLY.";
@@ -514,7 +568,9 @@ FOR INTERNAL USE ONLY.";
             int y = (720 - (int)dmeasure.Y) / 2;
             gfx.DrawString(volition, x, y, Color.White * 0.5F, SkinEngine.LoadedSkin.HeaderFont, 480);
 #endif
-
+            //Since we've drawn all the shrouds and stuff...
+            //we can draw the HUD.
+            UIManager.DrawHUD(spriteBatch);
 
             spriteBatch.End();
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);

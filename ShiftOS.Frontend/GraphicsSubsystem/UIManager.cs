@@ -17,6 +17,7 @@ namespace Plex.Frontend.GraphicsSubsystem
     public static class UIManager
     {
         private static List<GUI.Control> topLevels = new List<GUI.Control>();
+        private static List<GUI.Control> hudctrls = new List<GUI.Control>();
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
         private static Plexgate _game = null;
@@ -73,6 +74,8 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             foreach (var toplevel in topLevels.ToArray())
                 toplevel.Layout(gameTime);
+            foreach (var toplevel in hudctrls.ToArray())
+                toplevel.Layout(gameTime);
         }
 
         public static void Animate(object owner, System.Reflection.PropertyInfo prop, double from, double to, int timeMs)
@@ -91,25 +94,38 @@ namespace Plex.Frontend.GraphicsSubsystem
         }
 
         public static Dictionary<int, RenderTarget2D> TextureCaches = new Dictionary<int, RenderTarget2D>();
+        public static Dictionary<int, RenderTarget2D> HUDCaches = new Dictionary<int, RenderTarget2D>();
+
 
         public static void DrawTArgets(SpriteBatch batch)
         {
-            foreach(var ctrl in topLevels.ToArray())
+            DrawTargetsInternal(batch, ref topLevels, ref TextureCaches);
+        }
+
+
+        public static void DrawHUD(SpriteBatch batch)
+        {
+            DrawTargetsInternal(batch, ref hudctrls, ref HUDCaches);
+        }
+
+        private static void DrawTargetsInternal(SpriteBatch batch, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
+        {
+            foreach (var ctrl in controls.ToArray())
             {
                 if (ctrl.Visible == true)
                 {
                     int hc = ctrl.GetHashCode();
-                    if (!TextureCaches.ContainsKey(hc))
+                    if (!targets.ContainsKey(hc))
                     {
                         ctrl.Invalidate();
                         continue;
                     }
-                    var _target = TextureCaches[hc];
+                    var _target = targets[hc];
                     if (ExperimentalEffects)
                     {
                         for (int i = 5; i > 0; i--)
                         {
-                            batch.Draw(_target, new Rectangle(ctrl.X - i, ctrl.Y - i, ctrl.Width+(i*2), ctrl.Height+(i*2)), new Color(Color.Black, 255 / (i * 2)));
+                            batch.Draw(_target, new Rectangle(ctrl.X - i, ctrl.Y - i, ctrl.Width + (i * 2), ctrl.Height + (i * 2)), new Color(Color.Black, 255 / (i * 2)));
                         }
                     }
 
@@ -118,19 +134,20 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
+
         public static void SendToBack(Control ctrl)
        { 
             topLevels.Remove(ctrl);
             topLevels.Insert(0, ctrl);
         }
 
-        public static void DrawControlsToTargets(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
+        public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
         {
-            foreach (var ctrl in topLevels.ToArray().Where(x=>x.Visible==true))
+            foreach (var ctrl in controls.ToArray().Where(x=>x.Visible==true))
             {
                 RenderTarget2D _target;
                 int hc = ctrl.GetHashCode();
-                if (!TextureCaches.ContainsKey(hc))
+                if (!targets.ContainsKey(hc))
                 {
                     _target = new RenderTarget2D(
                                     graphics,
@@ -139,11 +156,11 @@ namespace Plex.Frontend.GraphicsSubsystem
                                     false,
                                     graphics.PresentationParameters.BackBufferFormat,
                                     DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                    TextureCaches.Add(hc, _target);
+                    targets.Add(hc, _target);
                 }
                 else
                 {
-                    _target = TextureCaches[hc];
+                    _target = targets[hc];
                     if(_target.Width != ctrl.Width || _target.Height != ctrl.Height)
                     {
                         _target = new RenderTarget2D(
@@ -153,7 +170,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 false,
                 graphics.PresentationParameters.BackBufferFormat,
                 DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                        TextureCaches[hc] = _target;
+                        targets[hc] = _target;
 
                     }
                 }
@@ -175,6 +192,17 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
+        public static void DrawControlsToTargets(GraphicsDevice device, SpriteBatch batch)
+        {
+            DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref topLevels, ref TextureCaches);
+        }
+
+        public static void DrawHUDToTargets(GraphicsDevice device, SpriteBatch batch)
+        {
+            DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
+        }
+
+
         public static void AddTopLevel(GUI.Control ctrl)
         {
             if (!topLevels.Contains(ctrl))
@@ -182,9 +210,21 @@ namespace Plex.Frontend.GraphicsSubsystem
             FocusedControl = ctrl;
         }
 
+        public static void AddHUD(GUI.Control ctrl)
+        {
+            if (!hudctrls.Contains(ctrl))
+                hudctrls.Add(ctrl);
+            FocusedControl = ctrl;
+        }
+
+
         public static void InvalidateAll()
         {
             foreach(var ctrl in topLevels)
+            {
+                ctrl.Invalidate();
+            }
+            foreach (var ctrl in hudctrls)
             {
                 ctrl.Invalidate();
             }
@@ -192,10 +232,15 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
-            foreach(var ctrl in topLevels.ToArray())
+            foreach (var ctrl in hudctrls.ToArray())
             {
-                ctrl.ProcessMouseState(state, lastLeftClickMS);
-                
+                if (ctrl.ProcessMouseState(state, lastLeftClickMS))
+                    return;
+            }
+            foreach (var ctrl in topLevels.ToArray())
+            {
+                if (ctrl.ProcessMouseState(state, lastLeftClickMS))
+                    return;
             }
         }
 
@@ -305,6 +350,21 @@ namespace Plex.Frontend.GraphicsSubsystem
 
             ctrl = null;
         }
+        internal static void StopHandlingHUD(GUI.Control ctrl)
+        {
+            if (hudctrls.Contains(ctrl))
+                hudctrls.Remove(ctrl);
+
+            int hc = ctrl.GetHashCode();
+            if (HUDCaches.ContainsKey(hc))
+            {
+                HUDCaches[hc].Dispose();
+                HUDCaches.Remove(hc);
+            }
+
+            ctrl = null;
+        }
+
     }
 
     public class KeyEvent
