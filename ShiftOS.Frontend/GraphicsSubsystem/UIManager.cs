@@ -138,7 +138,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                                     Math.Max(1,ctrl.Height),
                                     false,
                                     graphics.PresentationParameters.BackBufferFormat,
-                                    DepthFormat.Depth24);
+                                    DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
                     TextureCaches.Add(hc, _target);
                 }
                 else
@@ -152,7 +152,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 Math.Max(1,ctrl.Height),
                 false,
                 graphics.PresentationParameters.BackBufferFormat,
-                DepthFormat.Depth24);
+                DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
                         TextureCaches[hc] = _target;
 
                     }

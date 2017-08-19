@@ -120,7 +120,7 @@ namespace Plex.Frontend.GUI
             {
                 requiresTextRerender = false;
                 if(_textBuffer == null)
-                    _textBuffer = new RenderTarget2D(gfx.Device, Math.Max(1,Width), Math.Max(1,Height), false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+                    _textBuffer = new RenderTarget2D(gfx.Device, Math.Max(1,Width), Math.Max(1,Height), false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
                 gfx.Batch.End();
                 int x = gfx.X;
                 int y = gfx.Y;
