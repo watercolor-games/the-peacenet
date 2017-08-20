@@ -22,6 +22,7 @@ namespace Plex.Frontend
 
 #if DEBUG
         private GUI.TextControl DebugText = new GUI.TextControl();
+        private GUI.TextControl Watermark = new GUI.TextControl();
 #endif
         private GUI.TextControl SystemError = new GUI.TextControl();
         private GUI.TextControl SystemErrorText = new GUI.TextControl();
@@ -120,6 +121,13 @@ namespace Plex.Frontend
             DebugText.Visible = true;
             DebugText.AutoSize = true;
             UIManager.AddHUD(DebugText);
+            UIManager.AddHUD(Watermark);
+            Watermark.AutoSize = true;
+            Watermark.Text = $@"Project: Plex
+Copyright (c) {DateTime.Now.Year} Watercolor Games
+For internal use only.";
+            Watermark.Opacity = 0.75;
+            Watermark.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 16F, System.Drawing.FontStyle.Bold);
 #endif
 
             UIManager.AddHUD(SystemError);
@@ -442,25 +450,12 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             {
                 DebugText.X = 5;
                 DebugText.Y = 5;
-                var color = Color.White;
-                double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
-                if (fps <= 20)
-                    color = Color.Red;
-                DebugText.Text = $@"Plex
-=======================
-
-Copyright (c) 2017 Plex Developers
-
-Debug information - {fps} FPS
-
-CTRL+D: toggle debug menu
-CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
-Use the ""debug"" Terminal Command for engine debug commands.
-
-Current time: {DateTime.Now}
-Text cache: {GraphicsContext.StringCaches.Count}";
+                
 
             }
+
+            Watermark.X = (1280 - Watermark.Width) / 2;
+            Watermark.Y = (720 - Watermark.Height) / 2;
 #endif
 
             base.Update(gameTime);
@@ -553,13 +548,6 @@ Text cache: {GraphicsContext.StringCaches.Count}";
                 gfx.DrawRectangle(0, 0, (int)DebugText.Width + 10, (int)DebugText.Height + 10, Color.Black * 0.75F);
             }
 
-            string volition = @"PROJECT: PLEX
-PROPERTY OF WATERCOLOR GAMES
-FOR INTERNAL USE ONLY.";
-            var dmeasure = GraphicsContext.MeasureString(volition, SkinEngine.LoadedSkin.HeaderFont, 480);
-            int x = (1280 - (int)dmeasure.X) / 2;
-            int y = (720 - (int)dmeasure.Y) / 2;
-            gfx.DrawString(volition, x, y, Color.White * 0.5F, SkinEngine.LoadedSkin.HeaderFont, 480);
 #endif
             //Since we've drawn all the shrouds and stuff...
             //we can draw the HUD.
@@ -575,6 +563,23 @@ FOR INTERNAL USE ONLY.";
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
+            var color = Color.White;
+            double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
+            if (fps <= 20)
+                color = Color.Red;
+            DebugText.Text = $@"Plex
+=======================
+
+Copyright (c) 2017 Plex Developers
+
+Debug information - {fps} FPS
+
+CTRL+D: toggle debug menu
+CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
+Use the ""debug"" Terminal Command for engine debug commands.
+
+Current time: {DateTime.Now}
+Text cache: {GraphicsContext.StringCaches.Count}";
         }
     }
 
