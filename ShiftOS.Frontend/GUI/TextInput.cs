@@ -90,7 +90,17 @@ namespace Plex.Frontend.GUI
                     _index--;
                 
             }
-            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Delete)
+            if (e.Key == Microsoft.Xna.Framework.Input.Keys.Back)
+            {
+                if (_index > 0)
+                {
+                    _index--;
+                    Text = Text.Remove(_index, 1);
+                    
+                }
+
+            }
+            if (e.Key == Microsoft.Xna.Framework.Input.Keys.Delete)
             {
                 if(_index < Text.Length - 1)
                 {
@@ -101,15 +111,7 @@ namespace Plex.Frontend.GUI
                 if (_index < Text.Length)
                     _index++;
             if (e.KeyChar != '\0') {
-                if (e.KeyChar == '\b')
-                {
-                    if (_index > 0)
-                    {
-                        Text = Text.Remove(_index - 1, 1);
-                        _index--;
-                    }
-                }
-                else
+                if (e.KeyChar != '\b')
                 {
                     Text = Text.Insert(_index, e.KeyChar.ToString());
                     _index++;
@@ -125,6 +127,8 @@ namespace Plex.Frontend.GUI
 
         protected void CalculateVisibleText()
         {
+            if (_index < 0)
+                _index = 0;
             string toCaret = Text.Substring(0, _index);
             var measure = GraphicsContext.MeasureString(toCaret, Font);
             caretPos = 2 + measure.X;

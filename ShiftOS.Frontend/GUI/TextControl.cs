@@ -12,11 +12,17 @@ namespace Plex.Frontend.GUI
 {
     public class TextControl : Control
     {
-        private string _text = "Text Control";
+        private string _text = "";
         private TextAlign _textAlign = TextAlign.TopLeft;
         private Font _font = new Font("Tahoma", 9f);
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
+
+        protected void RequireTextRerender()
+        {
+            requiresTextRerender = true;
+        }
+
 
         protected virtual void RenderText(GraphicsContext gfx)
         {
@@ -83,6 +89,7 @@ namespace Plex.Frontend.GUI
                 _text = value;
                 requiresTextRerender = true;
                 OnTextChanged();
+                Invalidate();
             }
         }
 
@@ -157,7 +164,7 @@ namespace Plex.Frontend.GUI
                                     RasterizerState.CullNone);
 
             }
-            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer);
+            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, Microsoft.Xna.Framework.Color.White * (float)Opacity);
         }
     }
 

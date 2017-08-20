@@ -24,7 +24,7 @@ namespace Plex.Frontend
         private Button _optionsSave = new Button();
         private CheckBox _fullscreen = new CheckBox();
         private Button _close = new Button();
-
+        private TextControl _tips = new TextControl();
 
         public MainMenu()
         {
@@ -43,6 +43,7 @@ namespace Plex.Frontend
             AddControl(_resDisplay);
             AddControl(_optionsSave);
             AddControl(_fullscreen);
+            AddControl(_tips);
 
             _optionsSave.Text = "Save sentience settings";
             _optionsSave.Width = (Width / 4) - 60;
@@ -163,7 +164,7 @@ namespace Plex.Frontend
                         if (sleep == true)
                         {
                             SaveOptions();
-                            System.Diagnostics.Process.Start("Plex.Frontend.exe");
+                            System.Diagnostics.Process.Start("Plex.exe");
                             Environment.Exit(-1);
                         }
                     });
@@ -240,6 +241,10 @@ namespace Plex.Frontend
         private bool _tipVisible = false;
         int rnd = 0;
         private Random _rnd = new Random();
+        private int _tipWidth = 0;
+        private int _tipHeight = 0;
+        
+
 
         public string GetRandomString()
         {
@@ -295,6 +300,10 @@ namespace Plex.Frontend
                 if (_tipFade == 0.0f)
                 {
                     _tipText = GetRandomString();
+                    var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, (Width / 4) - 30);
+                    _tipWidth = (int)measure.X;
+                    _tipHeight = (int)measure.Y;
+
                 }
                 _tipFade += 0.01f;
                 if(_tipFade >= 1.0f)
@@ -315,6 +324,15 @@ namespace Plex.Frontend
                     }
                 }
             }
+
+            _tips.Visible = _tipVisible;
+            _tips.Opacity = _tipFade;
+            _tips.Text = _tipText;
+            _tips.Width = _tipWidth;
+            _tips.Height = _tipHeight;
+            _tips.X = 30;
+            _tips.Y = (Height - _tips.Height) - 30;
+            _tips.Font = _campaign.Font;
 
             _resDown.Visible = (_menuTitle.Text == "Options" && _resIndex > 0);
             _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);

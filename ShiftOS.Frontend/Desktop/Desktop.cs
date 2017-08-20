@@ -15,14 +15,11 @@ using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.Desktop
 {
-    public class Desktop : GUI.Control, IDesktop
+    public class Desktop : GUI.TextControl, IDesktop
     {
         bool alOpen = false;
         int alX = 0;
         int alY = 0;
-
-        private TextControl AppLauncherLabel = new TextControl();
-        private TextControl PanelClockLabel = new TextControl();
 
         public Desktop()
         {
@@ -65,13 +62,6 @@ namespace Plex.Frontend.Desktop
                     }
                 }
             };
-            UIManager.AddHUD(PanelClockLabel);
-            UIManager.AddHUD(AppLauncherLabel);
-
-            PanelClockLabel.AutoSize = true;
-            AppLauncherLabel.AutoSize = true;
-
-
         }
 
         public string DesktopName
@@ -125,6 +115,61 @@ namespace Plex.Frontend.Desktop
             alSelectedItem = -1;
             Invalidate();
         }
+
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            int dp_height = LoadedSkin.DesktopPanelHeight;
+            int dp_position = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - dp_height;
+            int dp_width = Width;
+            //Panel clock.
+
+            var panelClockRight = LoadedSkin.DesktopPanelClockFromRight;
+            var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
+
+
+            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
+            int panelclockleft = Width - (int)pcMeasure.X;
+            int panelclockwidth = Width - panelclockleft;
+            
+            gfx.DrawString(dateTimeString, panelclockleft, LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont);
+
+            int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
+            
+            var almeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont);
+            gfx.DrawString(LoadedSkin.AppLauncherText, (al_holder_width - (int)almeasure.X) / 2, (LoadedSkin.AppLauncherHolderSize.Height - (int)almeasure.Y) / 2, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont);
+
+            int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
+            int offset = initialGap;
+
+            foreach (var pbtn in PanelButtons.ToArray())
+            {
+                offset += LoadedSkin.PanelButtonFromLeft.X;
+
+                int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
+                int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
+                int pbtnheight = LoadedSkin.PanelButtonSize.Height;
+
+                //now we draw the text
+
+                gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont);
+
+                offset += LoadedSkin.PanelButtonSize.Width;
+            }
+
+
+            if (alOpen)
+            {
+                int height = (LauncherItems[0].Height * LauncherItems.Count) + 2;
+                int width = LauncherItems[0].Width + 2;
+                
+                foreach (var item in LauncherItems)
+                {
+                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y + 1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
+                }
+            }
+
+        }
+
 
         public void PopulateAppLauncher(LauncherItem[] items)
         {
@@ -223,29 +268,12 @@ namespace Plex.Frontend.Desktop
             {
                 newDateTimeString += Hacking.CurrentHackable.Data.SystemName;
             }
-            dateTimeString = newDateTimeString;
-            PanelClockLabel.Text = dateTimeString;
-            PanelClockLabel.Font = LoadedSkin.DesktopPanelClockFont;
-            int dp_height = LoadedSkin.DesktopPanelHeight;
-            int dp_position = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - dp_height;
-            int dp_width = Width;
-            //Panel clock.
-
-            var panelClockRight = LoadedSkin.DesktopPanelClockFromRight;
-            var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
-
-
-            
-            int panelclockleft = Width - (int)PanelClockLabel.Width;
-            int panelclockwidth = Width - panelclockleft;
-            PanelClockLabel.X = panelclockleft;
-            PanelClockLabel.Y = LoadedSkin.DesktopPanelClockFromRight.Y;
-
-            AppLauncherLabel.Text = LoadedSkin.AppLauncherText;
-            AppLauncherLabel.Font = LoadedSkin.AppLauncherFont;
-            int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
-            AppLauncherLabel.X = (al_holder_width - AppLauncherLabel.Width) / 2;
-            AppLauncherLabel.Y = ((LoadedSkin.AppLauncherHolderSize.Height - AppLauncherLabel.Height) / 2);
+            if (newDateTimeString != dateTimeString)
+            {
+                dateTimeString = newDateTimeString;
+                RequireTextRerender();
+                Invalidate();
+            }
 
 
 
@@ -328,8 +356,8 @@ namespace Plex.Frontend.Desktop
                 gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"]);
             }
 
-
-            int panelclockleft = Width - (int)PanelClockLabel.Width;
+            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
+            int panelclockleft = Width - (int)pcMeasure.X;
             int panelclockwidth = Width - panelclockleft;
 
             if (UIManager.SkinTextures.ContainsKey("panelclockbg"))
@@ -365,10 +393,6 @@ namespace Plex.Frontend.Desktop
                     gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonColor"]);
                 }
 
-                //now we draw the text
-
-                gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont);
-
                 offset += LoadedSkin.PanelButtonSize.Width;
             }
 
@@ -386,9 +410,9 @@ namespace Plex.Frontend.Desktop
                     {
                         gfx.DrawRectangle(alX+1, alY + item.Y+1, item.Width-2, item.Height, UIManager.SkinTextures["Menu_MenuItemSelected"]);
                     }
-                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y+1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
             }
+            base.OnPaint(gfx, target);
         }
     }
 

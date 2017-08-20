@@ -188,7 +188,7 @@ namespace Plex.Frontend.Desktop
         }
     }
 
-    public class WindowBorder : GUI.Control, IWindowBorder
+    public class WindowBorder : GUI.TextControl, IWindowBorder
     {
         private string _text = "Plex window";
         private GUI.Control _hostedwindow = null;
@@ -245,17 +245,26 @@ namespace Plex.Frontend.Desktop
 
         public bool IsDialog { get; set; }
 
-        public string Text
+        protected override void RenderText(GraphicsContext gfx)
         {
-            get
-            {
-                return _text;
-            }
+            var titlefont = LoadedSkin.TitleFont;
+            var titletextcolor = LoadedSkin.TitleTextColor;
+            var titletextleft = LoadedSkin.TitleTextLeft;
+            bool titletextcentered = LoadedSkin.TitleTextCentered;
+            int titlebarleft = 0;
+            int titlebarwidth = Width;
 
-            set
-            {
-                _text = value;
-            }
+            //Now we draw the title text.
+            var textMeasure = GraphicsContext.MeasureString(Text, titlefont);
+            PointF textloc;
+            if (titletextcentered)
+                textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
+                    titletextleft.Y);
+            else
+                textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
+
+            gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
+
         }
 
         public void Close()
@@ -264,7 +273,6 @@ namespace Plex.Frontend.Desktop
             UIManager.StopHandling(this);
         }
 
-        private int lastmousex, lastmousey = 0;
 
         protected override void OnLayout(GameTime gameTime)
         {
@@ -347,16 +355,6 @@ namespace Plex.Frontend.Desktop
                 {
                     gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"]);
                 }
-                //Now we draw the title text.
-                var textMeasure = GraphicsContext.MeasureString(Text, titlefont);
-                PointF textloc;
-                if (titletextcentered)
-                    textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
-                        titletextleft.Y);
-                else
-                    textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
-
-                gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
 
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 
@@ -478,6 +476,7 @@ namespace Plex.Frontend.Desktop
             //and draw it to the remaining area.
 
             //Painting of the canvas is done by the Paint() method.
+            base.OnPaint(gfx, target);
         }
 
     }
