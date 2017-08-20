@@ -18,8 +18,8 @@ namespace Plex.Frontend.GUI
     {
         private int _x = 0;
         private int _y = 0;
-        private int _w = 0;
-        private int _h = 0;
+        private int _w = 1;
+        private int _h = 1;
         private Control _parent = null;
         private List<Control> _children = new List<Control>();
         private bool _wasMouseInControl = false;
@@ -140,6 +140,8 @@ namespace Plex.Frontend.GUI
 
         public void Invalidate()
         {
+            if (this is ListView)
+                System.Diagnostics.Debug.Print("We are a listview");
             _invalidated = true;
             foreach(var child in _children)
             {
@@ -308,6 +310,7 @@ namespace Plex.Frontend.GUI
             }
             set
             {
+                value = Math.Max(1, value);
                 if (_w == value)
                     return;
                 _w = value;
@@ -323,6 +326,7 @@ namespace Plex.Frontend.GUI
             }
             set
             {
+                value = Math.Max(1, value);
                 if (_h == value)
                     return;
                 _h = value;
@@ -541,7 +545,6 @@ namespace Plex.Frontend.GUI
                 {
                     _wasMouseInControl = true;
                     MouseEnter?.Invoke();
-                    Invalidate();
                 }
 
                 //Things are going to get a bit complicated.
@@ -624,7 +627,6 @@ namespace Plex.Frontend.GUI
                     {
                         _wasMouseInControl = false;
                         MouseLeave?.Invoke();
-                        Invalidate();
                     }
                 }
             }

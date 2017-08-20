@@ -389,7 +389,6 @@ namespace Plex.Frontend.Apps
             if (IsDialog)
                 listbottom -= _fileselectboxheight;
 
-            _currentdirtext.Layout(gameTime);
             _fList.X = 0;
             _fList.Y = 0;
             _fList.Width = Width;

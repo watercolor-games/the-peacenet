@@ -563,6 +563,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
+#if DEBUG
             var color = Color.White;
             double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
             if (fps <= 20)
@@ -580,6 +581,7 @@ Use the ""debug"" Terminal Command for engine debug commands.
 
 Current time: {DateTime.Now}
 Text cache: {GraphicsContext.StringCaches.Count}";
+#endif
         }
     }
 

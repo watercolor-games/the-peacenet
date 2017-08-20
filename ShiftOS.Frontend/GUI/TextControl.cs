@@ -20,9 +20,15 @@ namespace Plex.Frontend.GUI
 
         protected void RequireTextRerender()
         {
+            if (this is ListView)
+                System.Diagnostics.Debug.Print("Fuck");
             requiresTextRerender = true;
         }
 
+        protected void DontRequireTextRerender()
+        {
+            requiresTextRerender = false;
+        }
 
         protected virtual void RenderText(GraphicsContext gfx)
         {
