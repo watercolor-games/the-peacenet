@@ -214,7 +214,6 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (!hudctrls.Contains(ctrl))
                 hudctrls.Add(ctrl);
-            FocusedControl = ctrl;
         }
 
 
@@ -232,11 +231,6 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
-            foreach (var ctrl in hudctrls.ToArray())
-            {
-                if (ctrl.ProcessMouseState(state, lastLeftClickMS))
-                    return;
-            }
             foreach (var ctrl in topLevels.ToArray())
             {
                 if (ctrl.ProcessMouseState(state, lastLeftClickMS))

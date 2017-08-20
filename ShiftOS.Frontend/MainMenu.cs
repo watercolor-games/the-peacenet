@@ -334,9 +334,9 @@ namespace Plex.Frontend
             gfx.DrawRectangle(0, 0, Width, Height, Color.Lerp(_redbg, _bluebg, _bglerp));
             gfx.DrawRectangle(0, 0, Width / 4, Height, Color.White * 0.35F);
 
-            var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, (Width / 4) - 30);
-            int _height = (Height - (int)measure.Y) - 30;
-            gfx.DrawString(_tipText, 30, _height, Color.White * _tipFade, _campaign.Font, (Width / 4) - 30);
+            //var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, (Width / 4) - 30);
+            //int _height = (Height - (int)measure.Y) - 30;
+            //gfx.DrawString(_tipText, 30, _height, Color.White * _tipFade, _campaign.Font, (Width / 4) - 30);
         }
     }
 }

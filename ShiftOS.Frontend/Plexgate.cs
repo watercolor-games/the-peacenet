@@ -520,14 +520,7 @@ Text cache: {GraphicsContext.StringCaches.Count}";
 
             }
 
-            //Draw a mouse cursor
-
-
-
-            var mousepos = LastMouseState;
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X+1, mousepos.Y+1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
-
+            
             spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
 
             if(isFailing && failFadeInMS >= failFadeMaxMS)
@@ -571,6 +564,10 @@ FOR INTERNAL USE ONLY.";
             //Since we've drawn all the shrouds and stuff...
             //we can draw the HUD.
             UIManager.DrawHUD(spriteBatch);
+            //Draw a mouse cursor
+            var mousepos = LastMouseState;
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.End();
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
