@@ -58,6 +58,7 @@
     <Compile Include="Apps\SystemStatus.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Apps\TextPad.cs" />
+    <Compile Include="BloomFilter.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
@@ -239,6 +240,7 @@
     <None Include="Resources\fileicon1.bmp" />
     <None Include="Resources\fileicon10.bmp" />
     <None Include="Resources\fileicon0.bmp" />
+    <Content Include="Content\Effects\Ambient.fx" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />

@@ -11,6 +11,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine;
 using Plex.Frontend.Desktop;
 using Plex.Frontend.GUI;
+using Plex.Objects;
 
 namespace Plex.Frontend.GraphicsSubsystem
 {
@@ -21,6 +22,8 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
         private static Plexgate _game = null;
+        private static Bloom_Sample.BloomFilter _bloom = null;
+
 
         public static void Crash()
         {
@@ -35,9 +38,30 @@ namespace Plex.Frontend.GraphicsSubsystem
             _game.IsInTutorial = true;
         }
 
+        private static BloomPresets _preset = BloomPresets.SuperWide;
+
+        public static BloomPresets BloomPreset
+        {
+            get
+            {
+                return _preset;
+            }
+        }
+
         public static void Init(Plexgate sentience)
         {
             _game = sentience;
+            _bloom = new Bloom_Sample.BloomFilter();
+            _bloom.Load(_game.GraphicsDevice, _game.Content, 1280, 720);
+            _preset = UserConfig.Get().BloomPreset;
+        }
+
+        public static Texture2D Bloom(Texture2D texture)
+        {
+            if (_preset == BloomPresets.None)
+                return texture;
+            _bloom.SetBloomPreset(_preset);
+            return _bloom.Draw(texture, texture.Width, texture.Height);
         }
 
         public static bool Fullscreen
@@ -60,7 +84,15 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             get
             {
-                return new System.Drawing.Size(_game.graphicsDevice.PreferredBackBufferWidth, _game.graphicsDevice.PreferredBackBufferHeight);
+                try
+                {
+                    return new System.Drawing.Size(_game.graphicsDevice.PreferredBackBufferWidth, _game.graphicsDevice.PreferredBackBufferHeight);
+                }
+                catch
+                {
+                    var conf = UserConfig.Get();
+                    return new System.Drawing.Size(conf.ScreenWidth, conf.ScreenHeight);
+                }
             }
         }
 

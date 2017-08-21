@@ -109,8 +109,7 @@ namespace Plex.Frontend
             keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
 
 
-            UIManager.Init(this);
-
+            
             Story.MissionComplete += (mission) =>
             {
                 var mc = new Apps.MissionComplete(mission);
@@ -134,6 +133,11 @@ For internal use only.";
             SystemError.Visible = false;
             UIManager.AddHUD(SystemErrorText);
             SystemErrorText.Visible = false;
+
+            //Frametime not limited to 16.66 Hz / 60 FPS
+            IsFixedTimeStep = false;
+            graphicsDevice.SynchronizeWithVerticalRetrace = true;
+            graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
 
         }
 
@@ -206,6 +210,7 @@ For internal use only.";
             //Create a main menu
             var mm = new MainMenu();
             UIManager.AddTopLevel(mm);
+            UIManager.Init(this);
 
             base.Initialize();
 
@@ -515,10 +520,10 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
             }
 
-            
+
             spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
 
-            if(isFailing && failFadeInMS >= failFadeMaxMS)
+            if (isFailing && failFadeInMS >= failFadeMaxMS)
             {
                 string objectiveFailed = "- OBJECTIVE FAILURE -";
                 string prompt = "[press any key to dismiss this message and return to your sentience]";
@@ -532,7 +537,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                 gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
             }
 
-            if(Hacking.CurrentHackable != null)
+            if (Hacking.CurrentHackable != null)
             {
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
@@ -559,9 +564,16 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
             spriteBatch.End();
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
-            spriteBatch.Begin();
+            var bloom = UIManager.Bloom(GameRenderTarget);
+            graphicsDevice.GraphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
+                            rasterizerState);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
+            spriteBatch.Draw(bloom, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
+        
+            graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             base.Draw(gameTime);
 #if DEBUG
             var color = Color.White;
