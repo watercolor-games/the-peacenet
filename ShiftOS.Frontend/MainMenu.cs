@@ -25,7 +25,7 @@ namespace Plex.Frontend
 
         private TextControl _bodyTitle = new TextControl();
         private TextControl _bodySubtitle = new TextControl();
-        private TextControl _bodyText = new TextControl();
+        private BBCodeLabel _bodyText = new BBCodeLabel();
 
         private Button _bloomDown = new Button();
         private Button _bloomUp = new Button();
@@ -80,15 +80,27 @@ namespace Plex.Frontend
 
             _bodyText.X = _bodyTitle.X;
             _bodyText.Y = _bodySubtitle.Y + _bodySubtitle.Height + 15;
-            _bodyText.Width = ((Width - _bodystart) - 45);
+            _bodyText.Width = ((Width - _bodystart) - 90);
             _bodyText.Height = ((Height - (_bodySubtitle.Y + _bodySubtitle.Height + 15)) - 45);
-            _bodyText.Text = @"Please wait while Plex connects to servers.
+            _bodyText.Text = @"[b]Please wait while Plex connects to servers.[/b]
 
 If you see this screen for more than a few seconds, you either don't have a working internet connection, the servers are offline, or we haven't set them up yet.
 
 In the case of no internet, connect to the internet and restart the game...or just play offline and not see announcements, it's up to you.
 
-In the case of server downtime or no servers at all, we're working on it. Please be patient.";
+In the case of server downtime or no servers at all, we're working on it. Please be patient.
+
+
+[u]This is a [b]BBCode[/b] parser[/u]
+
+You can use BBCode with this GUI element. This element can be declared like this ([b]note[/b]: in this case, we're declaring a HUD element):
+
+[code]
+var bbcode = new Plex.Frontend.GUI.BBCodeLabel();
+Plex.Frontend.UIManager.AddHUD(bbcode);
+
+bbcode.Text = ""[b]Bold[/b] text!"";
+[/code]";
 
             _optionsSave.Text = "Save sentience settings";
             _optionsSave.Width = (Width / 4) - 60;

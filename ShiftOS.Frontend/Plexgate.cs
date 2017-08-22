@@ -570,7 +570,8 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             rasterizerState);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
-            spriteBatch.Draw(bloom, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
+            if(bloom != GameRenderTarget)
+                spriteBatch.Draw(bloom, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
         
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);

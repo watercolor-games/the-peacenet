@@ -146,7 +146,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
+            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
             return new Vector2(measure.Width, measure.Height);
         }
 
@@ -182,7 +182,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
-                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak);
+                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
                     }
                     else
                     {

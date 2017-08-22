@@ -64,6 +64,7 @@
     <Compile Include="Desktop\WindowManager.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
+    <Compile Include="GUI\BBCodeLabel.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\CheckBox.cs" />
     <Compile Include="GUI\Control.cs" />
@@ -94,6 +95,10 @@
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MonoGame.Extended, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Extended.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
       <Private>True</Private>
