@@ -140,13 +140,13 @@ namespace Plex.Frontend.GUI
 
         public void Invalidate()
         {
+            if (this is BBCodeLabel)
+                System.Diagnostics.Debug.Print("THIS. IS. BBCODELABEL.");
             if (this is ListView)
                 System.Diagnostics.Debug.Print("We are a listview");
             _invalidated = true;
-            foreach(var child in _children)
-            {
+            foreach (var child in _children)
                 child.Invalidate();
-            }
         }
 
         public double Opacity

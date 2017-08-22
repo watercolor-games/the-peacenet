@@ -139,6 +139,8 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint)
         {
+            if (tex2 == null)
+                return;
             x += _startx;
             y += _starty;
             _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), tint);

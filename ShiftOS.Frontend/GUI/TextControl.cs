@@ -82,7 +82,9 @@ namespace Plex.Frontend.GUI
                 Height = (int)measure.Y;
             }
             if (requiresTextRerender)
+            {
                 Invalidate();
+            }
         }
 
         public string Text
@@ -128,14 +130,6 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            if(_textBuffer != null)
-            {
-                if (_textBuffer.Width != Width || _textBuffer.Height != Height)
-                {
-                    requiresTextRerender = true;
-                    _textBuffer = null;
-                }
-            }
             if (requiresTextRerender)
             {
                 requiresTextRerender = false;

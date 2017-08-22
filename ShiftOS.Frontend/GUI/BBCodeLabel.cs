@@ -9,12 +9,14 @@ using CodeKicker.BBCode.SyntaxTree;
 using Plex.Engine;
 using Plex.Frontend.Apps;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Frontend.Desktop;
 
 namespace Plex.Frontend.GUI
 {
     public class BBCodeLabel : TextControl
     {
         private BBCodeParser parser = null;
+        private Dictionary<string, Texture2D> _imageCaches = new Dictionary<string, Texture2D>();
 
         public BBCodeLabel()
         {
@@ -44,7 +46,7 @@ namespace Plex.Frontend.GUI
                 WalkTheFuckingTree(gfx, parser.ParseSyntaxTree(Text), ref text_x, ref text_y, true);
         }
 
-        public void WalkTheFuckingTree(GraphicsContext gfx, SyntaxTreeNode tree, ref int text_x, ref int text_y, bool drawText, bool b = false, bool i = false, bool u = false, bool c = false, bool q = false, bool item = false, bool l = false, bool h = false)
+        public void WalkTheFuckingTree(GraphicsContext gfx, SyntaxTreeNode tree, ref int text_x, ref int text_y, bool drawText, bool b = false, bool i = false, bool u = false, bool c = false, bool q = false, bool item = false, bool l = false, bool h = false, bool m = false)
         {
             foreach(var node in tree.SubNodes)
             {
@@ -58,11 +60,13 @@ namespace Plex.Frontend.GUI
                     bool temp_l = l;
                     bool temp_h = h;
                     bool temp_item = item;
+                    bool temp_m = m;
 
                     var tag = node as TagNode;
                     var name = tag.Tag.Name;
                     if (c == false)
                     {
+                        m = m || name == "img";
                         b = b || name == "b";
                         i = i || name == "i";
                         u = u || name == "u";
@@ -72,7 +76,7 @@ namespace Plex.Frontend.GUI
                         item = item || name == "*";
                         h = h || name == "url";
                     }
-                    WalkTheFuckingTree(gfx, node, ref text_x, ref text_y, drawText, b, i, u, c, q, l, item, h);
+                    WalkTheFuckingTree(gfx, node, ref text_x, ref text_y, drawText, b, i, u, c, q, l, item, h, m);
                     b = temp_b;
                     i = temp_i;
                     u = temp_u;
@@ -80,6 +84,7 @@ namespace Plex.Frontend.GUI
                     q = temp_q;
                     l = temp_l;
                     item = temp_item;
+                    m = temp_m;
                     h = temp_h;
                 }
                 else
@@ -99,8 +104,31 @@ namespace Plex.Frontend.GUI
                     if (item)
                         indent += 25;
                     var font = new System.Drawing.Font(fname, Font.Size, fs);
+                    if (m)
+                    {
+                        var img = DownloadImage(node.ToText());
+                        //image will draw at the very left
+                        text_x = 0;
+                        //and a line below the current line's position
+                        text_y += font.Height;
+                        int imgwidth = img.Width;
+                        int imgheight = img.Height;
+                        while(imgwidth > Width)
+                        {
+                            imgwidth /= 4;
+                            imgheight /= 4;
+                        }
+                        if (drawText)
+                        {
+                            gfx.DrawRectangle(text_x, text_y, img.Width, img.Height, img);
+                        }
+                        //and the rest of the line will draw below the image
+                        text_y += img.Height;
+                        continue;
+                    }
                     foreach (var line in node.ToString().Split('\n'))
                     {
+                        
                         var words = line.Split(' ');
                         if (c)
                         {
@@ -127,6 +155,25 @@ namespace Plex.Frontend.GUI
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public Texture2D DownloadImage(string imgurl)
+        {
+            if (_imageCaches.ContainsKey(imgurl))
+            {
+                return _imageCaches[imgurl];
+            }
+            else
+            {
+                var wc = new System.Net.WebClient();
+                var bytes = wc.DownloadData(imgurl);
+                using (var img = (System.Drawing.Bitmap)SkinEngine.ImageFromBinary(bytes))
+                {
+                    var tex2 = img.ToTexture2D(UIManager.GraphicsDevice);
+                    _imageCaches.Add(imgurl, tex2);
+                    return tex2;
                 }
             }
         }

@@ -593,7 +593,8 @@ CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.Ex
 Use the ""debug"" Terminal Command for engine debug commands.
 
 Current time: {DateTime.Now}
-Text cache: {GraphicsContext.StringCaches.Count}";
+Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
+";
 #endif
         }
     }
