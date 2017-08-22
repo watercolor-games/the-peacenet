@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Apps\ChatClient.cs" />
     <Compile Include="Apps\CodeShop.cs" />
+    <Compile Include="Apps\Community.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\MissionComplete.cs" />
@@ -246,6 +247,7 @@
     <None Include="Resources\fileicon10.bmp" />
     <None Include="Resources\fileicon0.bmp" />
     <Content Include="Content\Effects\Ambient.fx" />
+    <None Include="Resources\Credits.txt" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />

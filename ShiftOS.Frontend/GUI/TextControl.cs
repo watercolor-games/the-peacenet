@@ -130,6 +130,15 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
+            if(_textBuffer != null)
+            {
+                if(_textBuffer.Width != Width || _textBuffer.Height != Height)
+                {
+                    _textBuffer.Dispose();
+                    _textBuffer = null;
+                    RequireTextRerender();
+                }
+            }
             if (requiresTextRerender)
             {
                 requiresTextRerender = false;

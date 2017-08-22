@@ -35,6 +35,7 @@ namespace Plex.Frontend
 
         private Button _optionsSave = new Button();
         private CheckBox _fullscreen = new CheckBox();
+        private Button _community = new Button();
         private Button _close = new Button();
         private TextControl _tips = new TextControl();
 
@@ -59,6 +60,7 @@ namespace Plex.Frontend
             AddControl(_resDisplay);
             AddControl(_optionsSave);
             AddControl(_fullscreen);
+            AddControl(_community);
             AddControl(_tips);
             AddControl(_bloomUp);
             AddControl(_bloomDown);
@@ -106,6 +108,13 @@ namespace Plex.Frontend
             _sandbox.Font = _campaign.Font;
             _sandbox.X = 30;
 
+            _community.Text = "Community";
+            _community.Width = 200;
+            _community.Height = 6 + _campaign.Font.Height;
+            _community.Font = _campaign.Font;
+            _community.X = 30;
+
+
             _fullscreen.X = 30;
             _fullscreen.Y = _campaign.Y;
 
@@ -130,7 +139,8 @@ namespace Plex.Frontend
 
             _campaign.Y = _menuTitle.Y + _menuTitle.Font.Height + 15;
             _sandbox.Y = _campaign.Y + _campaign.Font.Height + 15;
-            _options.Y = _sandbox.Y + _sandbox.Font.Height + 15;
+            _community.Y = _sandbox.Y + _sandbox.Font.Height + 15;
+            _options.Y = _community.Y + _community.Font.Height + 15;
             _campaign.Click += () =>
             {
                 SaveSystem.IsSandbox = false;
@@ -142,6 +152,10 @@ namespace Plex.Frontend
                 SaveSystem.IsSandbox = true;
                 SaveSystem.Begin(false);
                 Close();
+            };
+            _community.Click += () =>
+            {
+                AppearanceManager.SetupDialog(new Apps.Community());
             };
             _options.Click += () =>
             {
@@ -429,6 +443,7 @@ namespace Plex.Frontend
             _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);
             _resDisplay.Visible = _menuTitle.Text == "Options";
             _optionsSave.Visible = _resDisplay.Visible;
+            _community.Visible = !_resDisplay.Visible;
             _fullscreen.Visible = _optionsSave.Visible;
             _bloomDisplay.Text = blooms[_bloomindex].ToString();
 

@@ -211,11 +211,11 @@ namespace Plex.Frontend.Desktop
             Click += () =>
             {
                 var cbtnloc = LoadedSkin.CloseButtonFromSide;
+                var cbtnsize = LoadedSkin.CloseButtonSize;
                 var realcloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleLeftCornerWidth - LoadedSkin.TitleRightCornerWidth) - cbtnloc.X,
+                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleLeftCornerWidth - LoadedSkin.TitleRightCornerWidth) - cbtnsize.Width,
                         cbtnloc.Y
                     );
-                var cbtnsize = LoadedSkin.CloseButtonSize;
                 if(MouseX >= realcloc.X && MouseY >= realcloc.Y && MouseX <= realcloc.X + cbtnsize.Width && MouseY <= realcloc.Y + cbtnsize.Height)
                 {
                     AppearanceManager.Close(ParentWindow);

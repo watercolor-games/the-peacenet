@@ -75,6 +75,27 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [u][h1]Credits[/h1][/u]
+        ///
+        ///We need to put the names of any people who work on this game in here. We also need to put the names and sources of any third party libraries we use (such as monogame, CodeKicker.BBCode, JSON.NET etc).
+        ///
+        ///You can format this file using BBCode (Plexnet-flavoured) as it will render using the BBCode label control.
+        ///
+        ///BBCode example:
+        ///
+        ///[h1]This is a top-level heading[/h1]
+        ///[h2]This is a second-level heading[/h2]
+        ///[h3]This is a third-level heading[/h3]
+        ///
+        ///You can have [b]bold[/b], [i]i [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Credits {
+            get {
+                return ResourceManager.GetString("Credits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap cursor_9x_pointer {

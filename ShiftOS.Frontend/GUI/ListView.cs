@@ -230,6 +230,46 @@ namespace Plex.Frontend.GUI
             }
             base.OnPaint(gfx, target);
         }
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+                        if (AutoSize)
+            {
+                int end_width = MinWidth;
+                int end_height = MinHeight;
+                int _itemx = _initialmargin;
+                int _itemy = _initialmargin - scroll;
+                int yhelper = 0;
+                foreach (var item in _items)
+                {
+                    Texture2D image = null;
+                    int texwidth = defaulttexturesize;
+                    int texheight = defaulttexturesize;
+                    if (_images.ContainsKey(item.ImageKey))
+                    {
+                        texwidth = _images[item.ImageKey].Width;
+                        texheight = _images[item.ImageKey].Height;
+                        image = _images[item.ImageKey];
+                    }
+                    int textwidth = texwidth + (_itemimagemargin * 2);
+                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                    yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
+
+                    int texty = _itemy + texheight;
+                    int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
+                    _itemx += textwidth + _itemgap;
+                    if (_itemx >= (MaxWidth - (_initialmargin * 2)))
+                    {
+                        _itemx = _initialmargin;
+                        _itemy += yhelper;
+                    }
+                    end_width = Math.Max(end_width, _itemx);
+                    end_height = Math.Max(end_height, _itemy +yhelper);
+                }
+                Width = end_width;
+                Height = end_height;
+            }
+        }
     }
 
     public class ListViewItem

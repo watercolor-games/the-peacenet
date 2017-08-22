@@ -37,7 +37,76 @@ namespace Plex.Frontend.GUI
         private int _mouseX = 0;
         private int _mouseY = 0;
         private bool _captureMouse = false;
-        
+        private int _maxwidth = int.MaxValue;
+        private int _minwidth = 1;
+        private int _maxheight = int.MaxValue;
+        private int _minheight = 1;
+
+        public int MinWidth
+        {
+            get
+            {
+                return _minwidth;
+            }
+            set
+            {
+                if (value == _minwidth)
+                    return;
+                if (value < 1)
+                    value = 1;
+                _minwidth = value;
+            }
+        }
+
+        public int MaxWidth
+        {
+            get
+            {
+                return _maxwidth;
+            }
+            set
+            {
+                if (value == 0)
+                    value = int.MaxValue;
+                if (value == _maxwidth)
+                    return;
+                _maxwidth = value;
+            }
+        }
+
+        public int MinHeight
+        {
+            get
+            {
+                return _minheight;
+            }
+            set
+            {
+                if (value == _minheight)
+                    return;
+                if (value < 1)
+                    value = 1;
+                _minheight = value;
+            }
+        }
+
+        public int MaxHeight
+        {
+            get
+            {
+                return _maxheight;
+            }
+            set
+            {
+                if (value == 0)
+                    value = int.MaxValue;
+                if (value == _maxheight)
+                    return;
+                _maxheight = value;
+            }
+        }
+
+
         public void BringToFront()
         {
             if(_parent != null)
@@ -310,7 +379,7 @@ namespace Plex.Frontend.GUI
             }
             set
             {
-                value = Math.Max(1, value);
+                value = MathHelper.Clamp(value, _minwidth, _maxwidth);
                 if (_w == value)
                     return;
                 _w = value;
@@ -326,7 +395,7 @@ namespace Plex.Frontend.GUI
             }
             set
             {
-                value = Math.Max(1, value);
+                value = MathHelper.Clamp(value, _minheight, _maxheight);
                 if (_h == value)
                     return;
                 _h = value;
@@ -545,6 +614,7 @@ namespace Plex.Frontend.GUI
                 {
                     _wasMouseInControl = true;
                     MouseEnter?.Invoke();
+                    Invalidate();
                 }
 
                 //Things are going to get a bit complicated.
@@ -627,6 +697,7 @@ namespace Plex.Frontend.GUI
                     {
                         _wasMouseInControl = false;
                         MouseLeave?.Invoke();
+                        Invalidate();
                     }
                 }
             }

@@ -1,0 +1,26 @@
+[u][h1]Credits[/h1][/u]
+
+We need to put the names of any people who work on this game in here. We also need to put the names and sources of any third party libraries we use (such as monogame, CodeKicker.BBCode, JSON.NET etc).
+
+You can format this file using BBCode (Plexnet-flavoured) as it will render using the BBCode label control.
+
+BBCode example:
+
+[h1]This is a top-level heading[/h1]
+[h2]This is a second-level heading[/h2]
+[h3]This is a third-level heading[/h3]
+
+You can have [b]bold[/b], [i]italic[/i] and [u]underlined[/u] text.
+
+...Or you can have [b]bold, [i]italic AND [u]underlined[/u][/i][/b] text, or any combination.
+
+[code]
+This is preformatted text, [b]nested[/b] BBCodes won't work here.
+[/code]
+
+[list]
+[*] This is a list.
+[*] It has two items.
+[/list]
+
+For more information on BBCode syntax I suppose you can use the almighty [url]http://phpbb.com/[/url] forum software to test how it works in a forum... or just go to [url]http://www.google.com[/url].
