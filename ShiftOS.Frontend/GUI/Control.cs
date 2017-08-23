@@ -442,7 +442,7 @@ namespace Plex.Frontend.GUI
 
         public Point PointToScreen(int x, int y)
         {
-            var parentCoords = PointToParent(x, y);
+            var parentCoords = new Point(x, y);
             Control parent = this._parent;
             while(parent != null)
             {

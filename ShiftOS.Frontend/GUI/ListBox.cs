@@ -43,11 +43,11 @@ namespace Plex.Frontend.GUI
         {
             get
             {
-                return MathHelper.Clamp(selectedIndex, 0, items.Count - 1);
+                return selectedIndex;
             }
             set
             {
-                selectedIndex = MathHelper.Clamp(value, 0, items.Count - 1);
+                selectedIndex = MathHelper.Clamp(value, -1, items.Count - 1);
                 RecalculateItemsPerPage();
                 SelectedIndexChanged?.Invoke();
             }
@@ -63,7 +63,7 @@ namespace Plex.Frontend.GUI
                 }
                 catch
                 {
-                    return "";
+                    return null;
                 }
             }
         }

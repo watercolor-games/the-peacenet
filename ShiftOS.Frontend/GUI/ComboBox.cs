@@ -14,6 +14,7 @@ namespace Plex.Frontend.GUI
     {
         private List<object> items = null;
         private int _selectedIndex = -1;
+        private ListBox _listui = null;
 
         public event Action SelectedItemChanged;
 
@@ -70,7 +71,37 @@ namespace Plex.Frontend.GUI
             items = new List<object>();
             MinWidth = 175;
             MinHeight = 24;
-
+            Click += () =>
+            {
+                if(MouseX > Width - 26)
+                {
+                    _listui = new ListBox();
+                    foreach(var item in items)
+                    {
+                        _listui.AddItem(item);
+                    }
+                    _listui.Width = Width;
+                    int height = 2;
+                    foreach(var item in items)
+                    {
+                        height += (int)GraphicsContext.MeasureString(item.ToString(), Font).X;
+                    }
+                    _listui.Height = height;
+                    var scp = PointToScreen(X, Y);
+                    _listui.X = scp.X;
+                    _listui.Y = scp.Y + Height;
+                    _listui.Click += () =>
+                    {
+                        if(_listui.SelectedItem != null)
+                        {
+                            SelectedIndex = _listui.SelectedIndex;
+                        }
+                        UIManager.StopHandling(_listui);
+                        _listui = null;
+                    };
+                    UIManager.AddTopLevel(_listui);
+                }
+            };
         }
 
         protected override void RenderText(GraphicsContext gfx)
