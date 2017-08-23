@@ -1,10 +1,36 @@
-﻿using System;using System.Collections.Generic;using System.Linq;using System.Text;using System.Threading.Tasks;using Microsoft.Xna.Framework;using Newtonsoft.Json;using Plex.Engine;using Plex.Frontend.GUI;using System.Dynamic;namespace Plex.Frontend.Apps{    [WinOpen("plextheme")]    [DefaultTitle("PlexTheme")]    [Launcher("PlexTheme", false, null, "Customization")]    public class PlexTheme : Control, IPlexWindow    {        private Skin _skin
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Plex.Engine;
+using Plex.Frontend.GUI;
+using System.Dynamic;
+
+namespace Plex.Frontend.Apps
+{
+    [WinOpen("plextheme")]
+    [DefaultTitle("PlexTheme")]
+    [Launcher("PlexTheme", false, null, "Customization")]
+    public class PlexTheme : Control, IPlexWindow
+    {
+        private Skin _skin
         {
             get
             {
                 return SkinEngine.LoadedSkin;
             }
-        }        private List<Group> groups = new List<Group>();        public string UIState = "";        public SettingGroup CurrentSettingGroup = null;        public TextControl Title = new TextControl();        public Button BackButton = new Button();        private List<PropertyUI> Properties = new List<PropertyUI>();        public class SettingGroup
+        }
+        private List<Group> groups = new List<Group>();
+        public string UIState = "";
+        public SettingGroup CurrentSettingGroup = null;
+        public TextControl Title = new TextControl();
+        public Button BackButton = new Button();
+        private List<PropertyUI> Properties = new List<PropertyUI>();
+
+        public class SettingGroup
         {
             public string Title { get; set; }
             public List<Property> Properties { get; set; }
@@ -13,21 +39,31 @@
             {
                 Properties = new List<Property>();
             }
-        }        public class PropertyUI
+        }
+
+        public class PropertyUI
         {
             public TextControl Name { get; set; }
             public TextControl Description { get; set; }
             public Control Value { get; set; }
-        }        public class Property
+        }
+
+        public class Property
         {
             public string Name { get; set; }
             public string Description { get; set; }
             public System.Reflection.FieldInfo Field { get; set; }
-        }        public class Group
+        }
+
+        public class Group
         {
             public TextControl Title = new TextControl();
             public ListView ListView = new ListView();
-        }                public PlexTheme()
+        }
+
+        
+
+        public PlexTheme()
         {
             UIState = GetHashCode().ToString();
             AddControl(BackButton);
@@ -37,14 +73,19 @@
             };
             AddControl(Title);
             Title.AutoSize = true;
-        }        protected override void OnLayout(GameTime gameTime)        {            try
+        }
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            try
             {
                 Title.Font = SkinEngine.LoadedSkin.HeaderFont;
                 Title.X = 15;
                 Title.Y = 15;
                 Title.AutoSize = true;
 
-                int current_y = Title.Y + Title.Height + 20;
+                int current_y = Title.Y + Title.Height + 20;
+
                 if (UIState == this.GetHashCode().ToString())
                 {
                     Title.Text = "Settings";
@@ -89,7 +130,11 @@
                     }
                 }
             
-            }            catch { }        }        public void SetUIState(string state)
+            }
+            catch { }
+        }
+
+        public void SetUIState(string state)
         {
             this.ClearControls();
             AddControl(BackButton);
@@ -98,8 +143,10 @@
             if(UIState == this.GetHashCode().ToString())
             {
                 ResetMetaListing();
-            }            else if(UIState == "ShowSettings")
+            }
+            else if(UIState == "ShowSettings")
             {
+                Properties.Clear();
                 foreach(var property in CurrentSettingGroup.Properties)
                 {
                     var name = new TextControl();
@@ -110,6 +157,21 @@
                     description.AutoSize = true;
                     description.Text = property.Description;
                     Control value = null;
+                    if(property.Field.FieldType == typeof(System.Drawing.Color))
+                    {
+                        var btn = new Button();
+                        btn.Text = "Choose color...";
+                        btn.AutoSize = true;
+                        btn.Click += () =>
+                        {
+                            AppearanceManager.SetupDialog(new ColorDialog(property.Name, (System.Drawing.Color)property.Field.GetValue(_skin), (newcolor) =>
+                            {
+                                property.Field.SetValue(_skin, newcolor);
+                                GraphicsSubsystem.UIManager.InvalidateAll();
+                            }));
+                        };
+                        value = btn;
+                    }
                     if(property.Field.FieldType == typeof(string) || property.Field.IsNumeric())
                     {
                         value = new TextInput();
@@ -151,7 +213,43 @@
                         Value = value
                     });
                 }
-            }        }        public void ResetMetaListing()        {            var type = _skin.GetType();            List<string> metanames = new List<string>();            foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))            {                var meta = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterMetaAttribute) as ShifterMetaAttribute;                if(meta != null)                {                    if (!metanames.Contains(meta.Meta))                        metanames.Add(meta.Meta);                }            }            while(groups.Count > 0)            {                RemoveControl(groups[0].Title);                RemoveControl(groups[0].ListView);                ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; //IT'S THE SEMICOLON PARTYFEST                //that's actually valid C#                //like, VS isn't fucking freaking out                //wtf                //Microsoft, you're drunk.                groups.RemoveAt(0);            }            foreach (var meta in metanames)            {                var tc = new TextControl();                tc.Font = SkinEngine.LoadedSkin.Header3Font;                tc.AutoSize = true;                tc.Text = Localization.Parse(meta);                AddControl(tc);                var lv = new ListView();                foreach(var cat in GetCategoryListing(meta))
+            }
+        }
+
+        public void ResetMetaListing()
+        {
+            var type = _skin.GetType();
+            List<string> metanames = new List<string>();
+            foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                var meta = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterMetaAttribute) as ShifterMetaAttribute;
+                if(meta != null)
+                {
+                    if (!metanames.Contains(meta.Meta))
+                        metanames.Add(meta.Meta);
+                }
+            }
+            while(groups.Count > 0)
+            {
+                RemoveControl(groups[0].Title);
+                RemoveControl(groups[0].ListView);
+                ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; //IT'S THE SEMICOLON PARTYFEST
+                //that's actually valid C#
+                //like, VS isn't fucking freaking out
+                //wtf
+                //Microsoft, you're drunk.
+                groups.RemoveAt(0);
+
+            }
+            foreach (var meta in metanames)
+            {
+                var tc = new TextControl();
+                tc.Font = SkinEngine.LoadedSkin.Header3Font;
+                tc.AutoSize = true;
+                tc.Text = Localization.Parse(meta);
+                AddControl(tc);
+                var lv = new ListView();
+                foreach(var cat in GetCategoryListing(meta))
                 {
                     lv.AddItem(new ListViewItem
                     {
@@ -159,18 +257,26 @@
                         Tag = cat,
                         ImageKey = cat
                     });
-                }                lv.DoubleClick += () =>
+                }
+                lv.DoubleClick += () =>
                 {
                     if(lv.SelectedItem != null)
                     {
                         CurrentSettingGroup = CreateSettingGroup(meta, lv.SelectedItem.Tag);
                         SetUIState("ShowSettings");
                     }
-                };                lv.AutoSize = true;                AddControl(lv);                groups.Add(new Group
+                };
+                lv.AutoSize = true;
+                AddControl(lv);
+                groups.Add(new Group
                 {
                     Title = tc,
                     ListView = lv
-                });            }        }        public SettingGroup CreateSettingGroup(string meta, string category)
+                });
+            }
+        }
+
+        public SettingGroup CreateSettingGroup(string meta, string category)
         {
             SettingGroup group = new Apps.PlexTheme.SettingGroup();
             group.Title = Localization.Parse(meta) + ": " + Localization.Parse(category);
@@ -194,7 +300,52 @@
                 }
             }
             return group;
-        }        public List<string> GetCategoryListing(string metaname)        {            List<string> catnames = new List<string>();            var type = _skin.GetType();            foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))            {                var meta = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterMetaAttribute) as ShifterMetaAttribute;                if (meta != null)                {                    if(meta.Meta == metaname)                    {                        var cat = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterCategoryAttribute) as ShifterCategoryAttribute;                        if(cat != null)                        {                            if (!catnames.Contains(cat.Category))                                catnames.Add(cat.Category);                        }                    }                }            }            return catnames;        }        public void OnLoad()        {            ResetMetaListing();        }        public void OnSkinLoad()        {        }        public bool OnUnload()        {            return true;        }        public void OnUpgrade()        {        }    }    public static class ReflectionExtensions
+        }
+
+        public List<string> GetCategoryListing(string metaname)
+        {
+            List<string> catnames = new List<string>();
+            var type = _skin.GetType();
+            foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                var meta = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterMetaAttribute) as ShifterMetaAttribute;
+                if (meta != null)
+                {
+                    if(meta.Meta == metaname)
+                    {
+                        var cat = field.GetCustomAttributes(false).FirstOrDefault(x => x is ShifterCategoryAttribute) as ShifterCategoryAttribute;
+                        if(cat != null)
+                        {
+                            if (!catnames.Contains(cat.Category))
+                                catnames.Add(cat.Category);
+                        }
+                    }
+                }
+            }
+
+            return catnames;
+        }
+
+        public void OnLoad()
+        {
+            ResetMetaListing();
+        }
+
+        public void OnSkinLoad()
+        {
+        }
+
+        public bool OnUnload()
+        {
+            return true;
+        }
+
+        public void OnUpgrade()
+        {
+        }
+    }
+
+    public static class ReflectionExtensions
     {
         public static bool IsNumeric(this System.Reflection.FieldInfo info)
         {
@@ -208,4 +359,5 @@
             return (valtype == typeof(int) || valtype == typeof(short) || valtype == typeof(byte) || valtype == typeof(sbyte) || valtype == typeof(long) || valtype == typeof(uint) || valtype == typeof(ulong));
         }
 
-    }}
+    }
+}

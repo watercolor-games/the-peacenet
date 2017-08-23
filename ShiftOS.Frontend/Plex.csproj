@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Apps\ChatClient.cs" />
     <Compile Include="Apps\CodeShop.cs" />
+    <Compile Include="Apps\ColorDialog.cs" />
     <Compile Include="Apps\Community.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\Installer.cs" />

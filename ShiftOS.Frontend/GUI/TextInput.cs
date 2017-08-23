@@ -142,13 +142,21 @@ namespace Plex.Frontend.GUI
                             return;
                         break;
                     case TextFilter.Decimal:
-                        if (!char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+                        if ((!char.IsDigit(e.KeyChar) && e.KeyChar != '.') || (e.KeyChar == '.' && Text.Contains(".")))
                             return;
                         break;
                 }
 
                 if (e.KeyChar != '\b')
                 {
+                    if (TextFilter == TextFilter.Integer || TextFilter == TextFilter.Decimal)
+                    {
+                        if (Text == "0" && e.KeyChar != '.')
+                        {
+                            Text = e.KeyChar.ToString();
+                            return;
+                        }
+                    }
                     Text = Text.Insert(_index, e.KeyChar.ToString());
                     _index++;
                 }
