@@ -168,6 +168,8 @@ namespace Plex.Frontend.Apps
                             {
                                 property.Field.SetValue(_skin, newcolor);
                                 GraphicsSubsystem.UIManager.InvalidateAll();
+                                SkinEngine.SaveSkin();
+                                SkinEngine.LoadSkin();
                             }));
                         };
                         value = btn;

@@ -18,6 +18,16 @@ namespace Plex.Frontend.GUI
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
 
+        protected override void OnDisposing()
+        {
+            if (_textBuffer != null)
+            {
+                _textBuffer.Dispose();
+                _textBuffer = null;
+            }
+            base.OnDisposing();
+        }
+
         protected void RequireTextRerender()
         {
             if (this is ListView)

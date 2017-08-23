@@ -18,6 +18,18 @@ namespace Plex.Frontend.GUI
         private BBCodeParser parser = null;
         private Dictionary<string, Texture2D> _imageCaches = new Dictionary<string, Texture2D>();
 
+        protected override void OnDisposing()
+        {
+            parser = null;
+            while(_imageCaches.Count > 0)
+            {
+                var cache = _imageCaches.First();
+                cache.Value.Dispose();
+                _imageCaches.Remove(cache.Key);
+            }
+            base.OnDisposing();
+        }
+
         public BBCodeLabel()
         {
             parser = new BBCodeParser(new[]

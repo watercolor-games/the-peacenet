@@ -55,6 +55,10 @@ namespace Plex.Frontend.Apps
             _red.Text = "Red";
             _green.Text = "Green";
             _blue.Text = "Blue";
+            _alpha.AutoSize = true;
+            _red.AutoSize = true;
+            _green.AutoSize = true;
+            _blue.AutoSize = true;
 
             _ok.Click += () =>
             {
@@ -116,9 +120,9 @@ namespace Plex.Frontend.Apps
 
             _alpha.X = 15;
             _alpha.Y = 15;
-            _alpha.MaxWidth = Width - ((Width - 30) / 3);
+            _alpha.MaxWidth = ((Width - 30) / 2);
             _alphaBox.X = 15;
-            _alphaBox.Y = _alpha.Y + _alphaBox.Height + 5;
+            _alphaBox.Y = _alpha.Y + _alpha.Height + 5;
             _alphaBox.Height = _alphaBox.Font.Height + 6;
             _alphaBox.Width = _alpha.MaxWidth;
 
@@ -139,7 +143,7 @@ namespace Plex.Frontend.Apps
             _greenBox.Height = _redBox.Height;
 
             _blue.X = 15;
-            _blue.Y = _green.Y + _green.Height + 15;
+            _blue.Y = _greenBox.Y + _greenBox.Height + 15;
             _blue.MaxWidth = _green.MaxWidth;
             _blueBox.X = 15;
             _blueBox.Y = _blue.Y + _blue.Height + 5;

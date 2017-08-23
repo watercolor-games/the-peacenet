@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace Plex.Frontend.GUI
 {
-    public abstract class Control
+    public abstract class Control : IDisposable
     {
         private int _x = 0;
         private int _y = 0;
@@ -41,6 +41,22 @@ namespace Plex.Frontend.GUI
         private int _minwidth = 1;
         private int _maxheight = int.MaxValue;
         private int _minheight = 1;
+
+        protected virtual void OnDisposing()
+        {
+
+        }
+
+        public void Dispose()
+        {
+            OnDisposing();
+            foreach(var child in _children)
+            {
+                child.Dispose();
+            }
+            _children.Clear();
+            
+        }
 
         public int MinWidth
         {

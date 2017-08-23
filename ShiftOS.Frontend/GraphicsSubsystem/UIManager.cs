@@ -373,7 +373,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 TextureCaches[hc].Dispose();
                 TextureCaches.Remove(hc);
             }
-
+            ctrl.Dispose();
             ctrl = null;
         }
         internal static void StopHandlingHUD(GUI.Control ctrl)
@@ -387,6 +387,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 HUDCaches[hc].Dispose();
                 HUDCaches.Remove(hc);
             }
+            ctrl.Dispose();
 
             ctrl = null;
         }
