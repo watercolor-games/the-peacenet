@@ -174,6 +174,29 @@ namespace Plex.Frontend.Apps
                         };
                         value = btn;
                     }
+                    if (property.Field.FieldType.IsEnum)
+                    {
+                        var names = Enum.GetNames(property.Field.FieldType);
+                        var val = property.Field.GetValue(_skin).ToString();
+                        var cbox = new ComboBox();
+                        foreach(var ename in names)
+                        {
+                            cbox.AddItem(ename);
+                            
+                        }
+                        cbox.SelectedIndex = names.ToList().IndexOf(val);
+                        cbox.SelectedItemChanged += () =>
+                        {
+                            if(cbox.SelectedItem != null)
+                            {
+                                var eval = Enum.Parse(property.Field.FieldType, cbox.SelectedItem.ToString());
+                                property.Field.SetValue(_skin, eval);
+
+                            }
+                        };
+                        cbox.AutoSize = true;
+                        value = cbox;
+                    }
                     if(property.Field.FieldType == typeof(string) || property.Field.IsNumeric())
                     {
                         value = new TextInput();

@@ -69,6 +69,7 @@
     <Compile Include="GUI\BBCodeLabel.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\CheckBox.cs" />
+    <Compile Include="GUI\ComboBox.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\ItemGroup.cs" />
     <Compile Include="GUI\ListBox.cs" />
