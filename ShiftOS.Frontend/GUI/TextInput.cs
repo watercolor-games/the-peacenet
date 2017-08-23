@@ -68,6 +68,8 @@ namespace Plex.Frontend.GUI
             base.MouseStateChanged();
         }
 
+        public TextFilter TextFilter { get; set; }
+
         protected override void OnTextChanged()
         {
             if (_index > Text.Length)
@@ -94,6 +96,20 @@ namespace Plex.Frontend.GUI
             {
                 if (_index > 0)
                 {
+                    if (TextFilter == TextFilter.Decimal | TextFilter == TextFilter.Integer)
+                    {
+                        if(string.IsNullOrWhiteSpace(Text.Remove(_index - 1, 1)))
+                        {
+                            Text = "0";
+                            return;
+                        }
+                        if(Text.Remove(_index - 1, 1).StartsWith("."))
+                        {
+                            Text = "0" + Text.Remove(_index - 1, 1);
+                            return;
+                        }
+                    }
+
                     _index--;
                     Text = Text.Remove(_index, 1);
                     
@@ -111,6 +127,26 @@ namespace Plex.Frontend.GUI
                 if (_index < Text.Length)
                     _index++;
             if (e.KeyChar != '\0') {
+                switch (TextFilter)
+                {
+                    case TextFilter.Alphabetical:
+                        if (!char.IsLetter(e.KeyChar))
+                            return;
+                        break;
+                    case TextFilter.Alphanumeric:
+                        if (!char.IsLetterOrDigit(e.KeyChar))
+                            return;
+                        break;
+                    case TextFilter.Integer:
+                        if (!char.IsDigit(e.KeyChar))
+                            return;
+                        break;
+                    case TextFilter.Decimal:
+                        if (!char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+                            return;
+                        break;
+                }
+
                 if (e.KeyChar != '\b')
                 {
                     Text = Text.Insert(_index, e.KeyChar.ToString());
@@ -124,6 +160,25 @@ namespace Plex.Frontend.GUI
         }
         
         float caretPos = 2f;
+
+        public dynamic Value
+        {
+            get
+            {
+                switch (TextFilter)
+                {
+                    case TextFilter.Decimal:
+                        return Convert.ToDouble(Text);
+                    case TextFilter.Integer:
+                        long value = Convert.ToInt64(Text);
+                        if (value <= int.MaxValue)
+                            return (int)value;
+                        else return value;
+                    default:
+                        return Text;
+                }
+            }
+        }
 
         protected void CalculateVisibleText()
         {
@@ -179,5 +234,14 @@ namespace Plex.Frontend.GUI
                 caretMS = 0;
             Invalidate();
         }
+    }
+    
+    public enum TextFilter
+    {
+        None,
+        Alphabetical,
+        Alphanumeric,
+        Integer,
+        Decimal
     }
 }

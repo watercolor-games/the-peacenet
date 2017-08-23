@@ -398,28 +398,14 @@ namespace Plex.Engine
             if (!IsSandbox)
             {
 #if !NOSAVE
-                if (!Upgrades.Silent)
-                    Console.WriteLine("");
-                if (!Upgrades.Silent)
-                    Console.Write("{SE_SAVING}... ");
                 if (SaveSystem.CurrentSave != null)
                 {
                     var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
-                    new Thread(() =>
-                    {
-                        try
-                        {
-                            // please don't do networking on the main thread if you're just going to
-                            // discard the response, it's extremely slow
-                            ServerManager.SendMessage("mud_save", serialisedSaveFile);
-                        }
-                        catch { }
-                    })
-                    { IsBackground = false }.Start();
                     if (!System.IO.Directory.Exists(Paths.SaveDirectory))
                         System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
 
                     System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
+                    SkinEngine.SaveSkin();
                 }
                 if (!Upgrades.Silent)
                     Console.WriteLine(" ...{DONE}.");

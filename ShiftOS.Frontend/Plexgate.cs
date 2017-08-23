@@ -575,29 +575,36 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             spriteBatch.End();
         
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
+            framesdrawn++;
             base.Draw(gameTime);
 #if DEBUG
             var color = Color.White;
             double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
             if (fps <= 20)
                 color = Color.Red;
+            TotalFPS += fps;
             DebugText.Text = $@"Plex
 =======================
 
 Copyright (c) 2017 Plex Developers
 
-Debug information - {fps} FPS
+Debug information
 
 CTRL+D: toggle debug menu
 CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
 Use the ""debug"" Terminal Command for engine debug commands.
 
+FPS: {fps}
+Average FPS: {TotalFPS / framesdrawn}
 Current time: {DateTime.Now}
 Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
 ";
 #endif
         }
+        public double TotalFPS = 0;
+        public int framesdrawn = 0;
     }
+
 
     [ShiftoriumProvider]
     public class MonoGameShiftoriumProvider : IShiftoriumProvider
