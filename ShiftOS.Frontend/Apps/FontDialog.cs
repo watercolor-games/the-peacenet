@@ -54,7 +54,7 @@ namespace Plex.Frontend.Apps
             _cancel.Text = "Cancel";
 
             _ok.AutoSize = true;
-            _cancel.AutoSize = false;
+            _cancel.AutoSize = true;
 
             _preview.AutoSize = true;
             _preview.Text = "The quick brown fox jumped over the lazy dog.";
@@ -89,7 +89,7 @@ namespace Plex.Frontend.Apps
             };
             _size.AutoSize = true;
             _size.MinWidth = 150;
-
+            _size.MinHeight = 6 + _size.Font.Height;
             PopulateFonts();
         }
 
