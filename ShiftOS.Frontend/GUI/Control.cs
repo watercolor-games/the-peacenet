@@ -609,6 +609,8 @@ namespace Plex.Frontend.GUI
             }
         }
 
+        private int _lastScrollValue = 0;
+
         public virtual bool ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
             //If we aren't rendering the control, we aren't accepting input.
@@ -632,6 +634,7 @@ namespace Plex.Frontend.GUI
                     MouseEnter?.Invoke();
                     Invalidate();
                 }
+
 
                 //Things are going to get a bit complicated.
                 //Firstly, we need to find out if we have any children.
@@ -663,7 +666,7 @@ namespace Plex.Frontend.GUI
                     bool ld = state.LeftButton == ButtonState.Pressed;
                     bool md = state.MiddleButton == ButtonState.Pressed;
                     bool rd = state.RightButton == ButtonState.Pressed;
-                    if(ld != _leftState || md != _middleState || rd != _rightState)
+                    if (ld != _leftState || md != _middleState || rd != _rightState)
                     {
                         fire = true;
                     }
@@ -689,11 +692,25 @@ namespace Plex.Frontend.GUI
                     _rightState = rd;
                     if (fire)
                         MouseStateChanged();
+                    if (!IsFocusedControl)
+                    {
+                        _lastScrollValue = state.ScrollWheelValue;
+                    }
+                    if (state.ScrollWheelValue != _lastScrollValue && IsFocusedControl)
+                    {
+                        int delta = state.ScrollWheelValue - _lastScrollValue;
+                        OnMouseScroll(delta);
+                        MouseScroll?.Invoke(delta);
+                        _lastScrollValue = state.ScrollWheelValue;
+                    }
+
                 }
+
                 return true;
             }
             else
             {
+                
                 _leftState = false;
                 _rightState = false;
                 _middleState = false;
@@ -731,6 +748,13 @@ namespace Plex.Frontend.GUI
             //Mouse is not in the local space, don't do anything.
             return false;
         }
+
+        protected virtual void OnMouseScroll(int value)
+        {
+
+        }
+
+        public event Action<int> MouseScroll;
 
         protected virtual void OnKeyEvent(KeyEvent e)
         {

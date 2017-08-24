@@ -82,11 +82,9 @@ namespace Plex.Frontend.GUI
                     }
                     _listui.Width = Width;
                     int height = 2;
-                    foreach(var item in items)
-                    {
-                        height += (int)GraphicsContext.MeasureString(item.ToString(), Font).X;
-                    }
+                    height += (Font.Height * Math.Min(items.Count, 15));
                     _listui.Height = height;
+                    _listui.SelectedIndex = SelectedIndex;
                     var scp = PointToScreen(X, Y);
                     _listui.X = scp.X;
                     _listui.Y = scp.Y + Height;

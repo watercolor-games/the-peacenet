@@ -174,6 +174,24 @@ namespace Plex.Frontend.Apps
                         };
                         value = btn;
                     }
+                    if (property.Field.FieldType == typeof(System.Drawing.Font))
+                    {
+                        var btn = new Button();
+                        btn.Text = "Select font...";
+                        btn.AutoSize = true;
+                        btn.Click += () =>
+                        {
+                            AppearanceManager.SetupDialog(new FontDialog(property.Name, (System.Drawing.Font)property.Field.GetValue(_skin), (newfont) =>
+                            {
+                                property.Field.SetValue(_skin, newfont);
+                                GraphicsSubsystem.UIManager.InvalidateAll();
+                                SkinEngine.SaveSkin();
+                                SkinEngine.LoadSkin();
+                            }));
+                        };
+                        value = btn;
+                    }
+
                     if (property.Field.FieldType.IsEnum)
                     {
                         var names = Enum.GetNames(property.Field.FieldType);

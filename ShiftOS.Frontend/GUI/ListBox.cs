@@ -10,7 +10,7 @@ using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
-    public class ListBox : GUI.Control
+    public class ListBox : GUI.TextControl
     {
         private int fontheight = 0;
         private List<object> items = new List<object>();
@@ -19,6 +19,22 @@ namespace Plex.Frontend.GUI
         private int itemsPerPage = 1;
 
         private int _itemOver = -1;
+
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
+            {
+                int x = 1;
+                int y = fontheight * (i - itemOffset);
+                int width = Width - 2;
+                int height = fontheight;
+                {
+                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
+
+                }
+            }
+
+        }
 
         public ListBox()
         {
@@ -49,6 +65,19 @@ namespace Plex.Frontend.GUI
             };
         }
 
+
+        protected override void OnMouseScroll(int value)
+        {
+            if (this.itemOffset - (value / fontheight) < 0)
+                return;
+            if (this.itemOffset - (value / fontheight) > items.Count - itemsPerPage)
+                return;
+            if (this.itemOffset - (value / fontheight) == itemOffset)
+                return;
+            itemOffset -= value / fontheight;
+            RequireTextRerender();
+            Invalidate();
+        }
 
         public int SelectedIndex
         {
@@ -84,6 +113,7 @@ namespace Plex.Frontend.GUI
             selectedIndex = -1;
             items.Clear();
             SelectedIndexChanged?.Invoke();
+            RequireTextRerender();
             Invalidate();
         }
 
@@ -91,6 +121,7 @@ namespace Plex.Frontend.GUI
         {
             items.Add(item);
             RecalculateItemsPerPage();
+            RequireTextRerender();
             Invalidate();
         }
 
@@ -100,6 +131,7 @@ namespace Plex.Frontend.GUI
             selectedIndex = -1;
             RecalculateItemsPerPage();
             SelectedIndexChanged?.Invoke();
+            RequireTextRerender();
             Invalidate();
         }
 
@@ -109,6 +141,7 @@ namespace Plex.Frontend.GUI
            while(itemsPerPage * fontheight < Height && itemsPerPage < items.Count)
             {
                 itemsPerPage++;
+                RequireTextRerender();
             }
            //We have the amount of items we can fit on screen.
            //Now let's calculate the offset based on this, as well
@@ -119,14 +152,17 @@ namespace Plex.Frontend.GUI
                 if(selectedIndex >= items.Count)
                 {
                     selectedIndex = items.Count - 1;
+                    RequireTextRerender();
                 }
-                while(this.itemOffset > selectedIndex)
+                while (this.itemOffset >= selectedIndex)
                 {
                     itemOffset--;
+                    RequireTextRerender();
                 }
-                while(this.itemOffset + itemsPerPage < selectedIndex)
+                while (this.itemOffset + itemsPerPage <= selectedIndex )
                 {
                     itemOffset++;
+                    RequireTextRerender();
                 }
             }
         }
@@ -169,20 +205,17 @@ namespace Plex.Frontend.GUI
                 {
                     //draw the string as selected
                     gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlTextColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
                 else if (i == _itemOver)
                 {
                     gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ButtonHoverColor.ToMonoColor());
-                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ButtonForegroundColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
                 else
                 {
                     gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
-
                 }
             }
+            base.OnPaint(gfx, target);
         }
 
         protected override void OnLayout(GameTime gameTime)
