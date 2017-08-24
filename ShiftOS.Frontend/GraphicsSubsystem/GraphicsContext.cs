@@ -111,6 +111,8 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             x += _startx;
             y += _starty;
+            x1 += _startx;
+            y1 += _starty;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, tint, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -120,6 +122,8 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             x += _startx;
             y += _starty;
+            x1 += _startx;
+            y1 += _starty;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -148,12 +152,14 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
+            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
             return new Vector2(measure.Width, measure.Height);
         }
 
+        [Obsolete("Don't be a broom. Use a TextControl.")]
         public static List<TextCache> StringCaches = new List<TextCache>();
 
+        [Obsolete("Don't be a broom. Use a TextControl.")]
         public TextCache GetCache(string text, System.Drawing.Font font, int wrapWidth)
         {
             //Don't use LINQ, it could be a performance bottleneck.
@@ -184,7 +190,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
-                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
                     }
                     else
                     {

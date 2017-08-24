@@ -143,6 +143,8 @@ namespace Plex.Frontend.GUI
             int sepstart = Width - 26;
             gfx.DrawRectangle(sepstart, 0, 1, Height, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
 
+            
+
             //draw button
             var buttonbg = SkinEngine.LoadedSkin.ButtonBackgroundColor.ToMonoColor();
             if (ContainsMouse)
@@ -150,7 +152,19 @@ namespace Plex.Frontend.GUI
             if (MouseLeftDown)
                 buttonbg = SkinEngine.LoadedSkin.ButtonPressedColor.ToMonoColor();
             gfx.DrawRectangle(sepstart + 1, 1, (Width - sepstart) - 2, Height - 2, buttonbg);
-
+            //draw arrow
+            int sepwidth = Width - sepstart;
+            int arrowright = sepstart + (sepwidth - (sepwidth / 3));
+            int arrowleft = sepstart + (sepwidth / 3);
+            int arrowcenter = sepstart + (sepwidth / 2);
+            int arrowbottom = Height - (Height / 3);
+            int arrowtop = Height / 3;
+            for (int i = 0; i < sepwidth / 3; i++)
+            {
+                gfx.DrawLine(arrowleft+i, arrowtop, arrowcenter, arrowbottom, 1, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+                gfx.DrawLine(arrowcenter, arrowbottom, arrowright-i, arrowtop, 1, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+                gfx.DrawLine(arrowleft+i, arrowtop, arrowright-i, arrowtop+i, 1, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+            }
         }
     }
 }

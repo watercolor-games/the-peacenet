@@ -18,8 +18,19 @@ namespace Plex.Frontend.GUI
         private int itemOffset = 0;
         private int itemsPerPage = 1;
 
+        private int _itemOver = -1;
+
         public ListBox()
         {
+            MouseMove += (loc) =>
+            {
+                int screeni = (loc.Y / fontheight);
+                int i = screeni + itemOffset;
+                if (_itemOver == i)
+                    return;
+                _itemOver = i;
+                Invalidate();
+            };
             Click += () =>
             {
                 //loop through the list of items on the screen
@@ -154,16 +165,21 @@ namespace Plex.Frontend.GUI
                 int y = fontheight * (i - itemOffset);
                 int width = Width - 2;
                 int height = fontheight;
-                if(i == selectedIndex)
+                if (i == selectedIndex)
                 {
                     //draw the string as selected
-                    gfx.DrawRectangle(x, y+2, width, height, UIManager.SkinTextures["ControlTextColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y+2, LoadedSkin.ControlColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlTextColor"]);
+                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlColor.ToMonoColor(), LoadedSkin.MainFont);
+                }
+                else if (i == _itemOver)
+                {
+                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ButtonHoverColor.ToMonoColor());
+                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ButtonForegroundColor.ToMonoColor(), LoadedSkin.MainFont);
                 }
                 else
                 {
-                    gfx.DrawRectangle(x, y+2, width, height, UIManager.SkinTextures["ControlColor"]);
-                    gfx.DrawString(items[i].ToString(), x, y+2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlColor"]);
+                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
 
                 }
             }
