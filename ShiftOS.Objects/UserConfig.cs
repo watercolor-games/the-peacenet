@@ -39,13 +39,15 @@ namespace Plex.Objects
 
     public class UserConfig
     {
+        public List<ServerDetails> Servers { get; set; }
+
         public string Language { get; set; }
         public string DigitalSocietyAddress { get; set; }
         public int DigitalSocietyPort { get; set; }
         public int ScreenWidth = 1920;
         public int ScreenHeight = 1080;
         public bool Fullscreen = true;
-        public BloomPresets BloomPreset = BloomPresets.SuperWide;
+        public BloomPresets BloomPreset { get; set; }
 
         private static UserConfig def = new UserConfig
         {
@@ -55,7 +57,8 @@ namespace Plex.Objects
             Fullscreen = true,
             ScreenWidth = 1920,
             ScreenHeight = 1080,
-            BloomPreset = BloomPresets.SuperWide
+            BloomPreset = BloomPresets.SuperWide,
+            Servers = new List<ServerDetails>()
             };
 
         public static UserConfig current = null;

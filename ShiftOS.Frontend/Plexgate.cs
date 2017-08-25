@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,6 +22,12 @@ namespace Plex.Frontend
     {
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
+
+        internal UdpClient _mpClient = null;
+        internal IPAddress IPAddress = null;
+        internal int Port = 0;
+        internal Thread ServerThread = null;
+
 
 #if DEBUG
         private GUI.TextControl DebugText = new GUI.TextControl();
@@ -212,6 +221,15 @@ For internal use only.";
             UIManager.AddTopLevel(mm);
             UIManager.Init(this);
 
+            _mpClient = new UdpClient();
+
+            ServerThread = new Thread(() =>
+            {
+                System.Diagnostics.Debug.Print("Starting local server...");
+                Server.Program.Main(null);
+            });
+            ServerThread.Start();
+
             base.Initialize();
 
         }
@@ -252,6 +270,8 @@ For internal use only.";
         protected override void UnloadContent()
         {
             MouseTexture = null;
+
+            ServerThread.Abort();
             // TODO: Unload any non ContentManager content here
         }
         

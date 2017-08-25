@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -376,6 +378,58 @@ namespace Plex.Frontend.GraphicsSubsystem
             ctrl.Dispose();
             ctrl = null;
         }
+
+        public static void ConnectToServer(string host, int port)
+        {
+            var he = Dns.GetHostEntry(host);
+            var ip = he.AddressList.Last();
+
+            
+
+            _game.IPAddress = ip;
+            _game.Port = port;
+            NetworkClient.Connect(ip, port);
+        }
+
+        public static void PingServer()
+        {
+            var heart = Encoding.UTF8.GetBytes("heart");
+            NetworkClient.Send(heart, heart.Length);
+            var beat = Encoding.UTF8.GetBytes("beat");
+            bool done = false;
+            var t = new Thread(() =>
+            {
+                var ep = new System.Net.IPEndPoint(_game.IPAddress, _game.Port);
+                byte[] receive = new byte[4];
+                while (Encoding.UTF8.GetString(receive) != "beat")
+                {
+                    receive = NetworkClient.Receive(ref ep);
+                }
+                done = true;
+            });
+            t.Start();
+            int ms = 0;
+            while(ms < 4000 && done == false)
+            {
+                ms++;
+                Thread.Sleep(1);
+            }
+            if(done == false)
+            {
+                t.Abort();
+                throw new NetworkTimeoutException(_game.IPAddress, _game.Port);
+            }
+        }
+
+        public static System.Net.Sockets.UdpClient NetworkClient
+        {
+            get
+            {
+                return _game._mpClient;
+            }
+        }
+
+
         internal static void StopHandlingHUD(GUI.Control ctrl)
         {
             if (hudctrls.Contains(ctrl))

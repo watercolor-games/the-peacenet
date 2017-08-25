@@ -31,11 +31,14 @@ namespace Plex.Frontend.GUI
                 Texture2D image = null;
                 int texwidth = defaulttexturesize;
                 int texheight = defaulttexturesize;
-                if (_images.ContainsKey(item.ImageKey))
+                if (!string.IsNullOrWhiteSpace(item.ImageKey))
                 {
-                    texwidth = _images[item.ImageKey].Width;
-                    texheight = _images[item.ImageKey].Height;
-                    image = _images[item.ImageKey];
+                    if (_images.ContainsKey(item.ImageKey))
+                    {
+                        texwidth = _images[item.ImageKey].Width;
+                        texheight = _images[item.ImageKey].Height;
+                        image = _images[item.ImageKey];
+                    }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
                 var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
@@ -68,11 +71,14 @@ namespace Plex.Frontend.GUI
                     Texture2D image = null;
                     int texwidth = defaulttexturesize;
                     int texheight = defaulttexturesize;
-                    if (_images.ContainsKey(item.ImageKey))
+                    if (!string.IsNullOrWhiteSpace(item.ImageKey))
                     {
-                        texwidth = _images[item.ImageKey].Width;
-                        texheight = _images[item.ImageKey].Height;
-                        image = _images[item.ImageKey];
+                        if (_images.ContainsKey(item.ImageKey))
+                        {
+                            texwidth = _images[item.ImageKey].Width;
+                            texheight = _images[item.ImageKey].Height;
+                            image = _images[item.ImageKey];
+                        }
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
                     var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
@@ -196,11 +202,14 @@ namespace Plex.Frontend.GUI
                 Texture2D image = null;
                 int texwidth = defaulttexturesize;
                 int texheight = defaulttexturesize;
-                if (_images.ContainsKey(item.ImageKey))
+                if (!string.IsNullOrWhiteSpace(item.ImageKey))
                 {
-                    texwidth = _images[item.ImageKey].Width;
-                    texheight = _images[item.ImageKey].Height;
-                    image = _images[item.ImageKey];
+                    if (_images.ContainsKey(item.ImageKey))
+                    {
+                        texwidth = _images[item.ImageKey].Width;
+                        texheight = _images[item.ImageKey].Height;
+                        image = _images[item.ImageKey];
+                    }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
                 var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);

@@ -38,7 +38,7 @@ namespace Plex.Frontend
         private Button _community = new Button();
         private Button _close = new Button();
         private TextControl _tips = new TextControl();
-
+        
         public MainMenu()
         {
             X = 0;
@@ -102,7 +102,7 @@ namespace Plex.Frontend
             _optionsSave.Height = 6 + _optionsSave.Font.Height;
 
 
-            _sandbox.Text = "Sandbox";
+            _sandbox.Text = "Multiplayer";
             _sandbox.Width = 200;
             _sandbox.Height = 6 + _campaign.Font.Height;
             _sandbox.Font = _campaign.Font;
@@ -149,9 +149,9 @@ namespace Plex.Frontend
             };
             _sandbox.Click += () =>
             {
-                SaveSystem.IsSandbox = true;
-                SaveSystem.Begin(false);
-                Close();
+                var mpServerList = new Apps.MultiplayerServerList();
+                AppearanceManager.SetupDialog(mpServerList);
+
             };
             _community.Click += () =>
             {

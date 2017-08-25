@@ -143,6 +143,7 @@
     <Compile Include="LoginManager.cs" />
     <Compile Include="Lunix.cs" />
     <Compile Include="MissionAttribute.cs" />
+    <Compile Include="NetworkTimeoutException.cs" />
     <Compile Include="NotificationDaemon.cs" />
     <Compile Include="GUI\OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />

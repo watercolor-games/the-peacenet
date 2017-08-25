@@ -54,6 +54,7 @@
     <Compile Include="Apps\FontDialog.cs" />
     <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\MissionComplete.cs" />
+    <Compile Include="Apps\MultiplayerServerList.cs" />
     <Compile Include="Apps\Network.cs" />
     <Compile Include="Apps\Pong.cs" />
     <Compile Include="Apps\PlexTheme.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stories\BeginTutorials.cs" />
+    <Compile Include="Stories\TheSyndicate.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +192,10 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plex.Server\Plex.Server.csproj">
+      <Project>{54b1a6ba-f465-4df7-ba4c-56ea5d2b9326}</Project>
+      <Name>Plex.Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
       <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
       <Name>Plex.Objects</Name>
