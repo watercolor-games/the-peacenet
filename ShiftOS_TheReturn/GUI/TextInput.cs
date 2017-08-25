@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 

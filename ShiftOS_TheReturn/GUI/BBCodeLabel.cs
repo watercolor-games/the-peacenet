@@ -7,9 +7,8 @@ using Plex.Frontend.GraphicsSubsystem;
 using CodeKicker.BBCode;
 using CodeKicker.BBCode.SyntaxTree;
 using Plex.Engine;
-using Plex.Frontend.Apps;
 using Microsoft.Xna.Framework.Graphics;
-using Plex.Frontend.Desktop;
+using Plex.Frontend;
 
 namespace Plex.Frontend.GUI
 {

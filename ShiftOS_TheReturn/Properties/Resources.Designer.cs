@@ -63,6 +63,16 @@ namespace Plex.Engine.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap cursor_9x_pointer {
+            get {
+                object obj = ResourceManager.GetObject("cursor_9x_pointer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap fileicon0 {
             get {
                 object obj = ResourceManager.GetObject("fileicon0", resourceCulture);

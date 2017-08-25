@@ -62,24 +62,9 @@
     <Compile Include="Apps\SystemStatus.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Apps\TextPad.cs" />
-    <Compile Include="BloomFilter.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
-    <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
-    <Compile Include="GraphicsSubsystem\UIManager.cs" />
-    <Compile Include="GUI\BBCodeLabel.cs" />
-    <Compile Include="GUI\Button.cs" />
-    <Compile Include="GUI\CheckBox.cs" />
-    <Compile Include="GUI\ComboBox.cs" />
-    <Compile Include="GUI\Control.cs" />
-    <Compile Include="GUI\ItemGroup.cs" />
-    <Compile Include="GUI\ListBox.cs" />
-    <Compile Include="GUI\ListView.cs" />
-    <Compile Include="GUI\PictureBox.cs" />
-    <Compile Include="GUI\ProgressBar.cs" />
-    <Compile Include="GUI\TextControl.cs" />
-    <Compile Include="GUI\TextInput.cs" />
     <Compile Include="Hacking\HackingCommands.cs" />
     <Compile Include="Hacking\HackableProvider.cs" />
     <Compile Include="Hacking\HackerTestCommands.cs" />
@@ -93,7 +78,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Plexgate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stories\BeginTutorials.cs" />

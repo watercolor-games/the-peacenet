@@ -25,8 +25,9 @@ namespace Plex.Frontend.Apps
         private ListView _list = new ListView();
 
 
-        public MultiplayerServerList()
+        public MultiplayerServerList(Action _cb = null)
         {
+            _callback = _cb;
             Width = 900;
             Height = 600;
             AddControl(_close);
@@ -132,8 +133,11 @@ namespace Plex.Frontend.Apps
                 Engine.Infobox.Show("Connection error.", ex.Message);
                 return;
             }
-
+            _callback?.Invoke();
+            AppearanceManager.Close(this);
         }
+
+        public Action _callback = null;
 
         public void OnLoad()
         {

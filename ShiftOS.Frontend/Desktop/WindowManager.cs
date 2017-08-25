@@ -481,27 +481,6 @@ namespace Plex.Frontend.Desktop
 
     }
 
-    public static class ImageExtensioons
-    {
-        public static Texture2D ToTexture2D(this Image image, GraphicsDevice device)
-        {
-            var bmp = (Bitmap)image;
-            var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var data = new byte[Math.Abs(lck.Stride) * lck.Height];
-            Marshal.Copy(lck.Scan0, data, 0, data.Length);
-            bmp.UnlockBits(lck);
-            for(int i = 0; i < data.Length; i += 4)
-            {
-                byte r = data[i];
-                byte b = data[i + 2];
-                data[i] = b;
-                data[i + 2] = r;
-            }
-            var tex2 = new Texture2D(device, bmp.Width, bmp.Height);
-            tex2.SetData<byte>(data);
-            return tex2;
-        }
-    }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SidePanel : Attribute

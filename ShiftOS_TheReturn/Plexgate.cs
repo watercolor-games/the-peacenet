@@ -28,6 +28,8 @@ namespace Plex.Frontend
         internal int Port = 0;
         internal Thread ServerThread = null;
 
+        public event Action Initializing;
+
 
 #if DEBUG
         private GUI.TextControl DebugText = new GUI.TextControl();
@@ -119,12 +121,7 @@ namespace Plex.Frontend
 
 
             
-            Story.MissionComplete += (mission) =>
-            {
-                var mc = new Apps.MissionComplete(mission);
-                AppearanceManager.SetupDialog(mc);
-            };
-
+            
 #if DEBUG
             DebugText.Visible = true;
             DebugText.AutoSize = true;
@@ -182,53 +179,29 @@ For internal use only.";
         /// </summary>
         protected override void Initialize()
         {
-            OutOfBoxExperience.Init(new MonoGameOOBE());
 
             //Before we do ANYTHING, we've got to initiate the Plex engine.
             UIManager.GraphicsDevice = GraphicsDevice;
 
-            //Let's get localization going.
-            Localization.RegisterProvider(new MonoGameLanguageProvider());
 
-            //First things first, let's initiate the window manager.
-            AppearanceManager.Initiate(new Desktop.WindowManager());
-            //Cool. Now the engine's window management system talks to us.
 
-            //Also initiate the desktop
-            Engine.Desktop.Init(new Desktop.Desktop());
-
+            
             //While we're having a damn initiation fuckfest, let's get the hacking engine running.
             Hacking.Initiate();
 
-            //Now we can initiate the Infobox subsystem
-            Engine.Infobox.Init(new Infobox());
+            
+            
 
             
 
-            //Let's initiate the engine just for a ha.
-
-            TerminalBackend.TerminalRequested += () =>
-            {
-                AppearanceManager.SetupWindow(new Apps.Terminal());
-            };
-
-            FileSkimmerBackend.Init(new MGFSLayer());
 
 
 
-            //Create a main menu
-            var mm = new MainMenu();
-            UIManager.AddTopLevel(mm);
             UIManager.Init(this);
 
             _mpClient = new UdpClient();
 
-            ServerThread = new Thread(() =>
-            {
-                System.Diagnostics.Debug.Print("Starting local server...");
-                Server.Program.Main(null);
-            });
-            ServerThread.Start();
+            Initializing?.Invoke();
 
             base.Initialize();
 
@@ -253,7 +226,7 @@ For internal use only.";
 
 
             // TODO: use this.Content to load your game content here
-            var bmp = Properties.Resources.cursor_9x_pointer;
+            var bmp = Engine.Properties.Resources.cursor_9x_pointer;
             var _lock = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             byte[] rgb = new byte[Math.Abs(_lock.Stride) * _lock.Height];
             Marshal.Copy(_lock.Scan0, rgb, 0, rgb.Length);
@@ -626,61 +599,70 @@ Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
     }
 
 
-    [ShiftoriumProvider]
-    public class MonoGameShiftoriumProvider : IShiftoriumProvider
+
+    public static class ImageExtensioons
     {
-        public List<ShiftoriumUpgrade> GetDefaults()
+        public static Texture2D ToTexture2D(this System.Drawing.Image image, GraphicsDevice device)
         {
-            return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+            var bmp = (System.Drawing.Bitmap)image;
+            var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var data = new byte[Math.Abs(lck.Stride) * lck.Height];
+            Marshal.Copy(lck.Scan0, data, 0, data.Length);
+            bmp.UnlockBits(lck);
+            for (int i = 0; i < data.Length; i += 4)
+            {
+                byte r = data[i];
+                byte b = data[i + 2];
+                data[i] = b;
+                data[i + 2] = r;
+            }
+            var tex2 = new Texture2D(device, bmp.Width, bmp.Height);
+            tex2.SetData<byte>(data);
+            return tex2;
         }
     }
 
-    public class MGFSLayer : IFileSkimmer
+
+    public static class ConsoleColorExtensions
     {
-        public string GetFileExtension(FileType fileType)
+        public static System.Drawing.Color ToColor(this ConsoleColor cc)
         {
-            switch (fileType)
+            switch (cc)
             {
-                case FileType.CommandFormat:
-                    return ".cf";
-                case FileType.Executable:
-                    return ".saa";
-                case FileType.Filesystem:
-                    return ".mfs";
-                case FileType.Image:
-                    return ".png";
-                case FileType.JSON:
-                    return ".json";
-                case FileType.Lua:
-                    return ".lua";
-                case FileType.Python:
-                    return ".py";
-                case FileType.Skin:
-                    return ".skn";
-                case FileType.TextFile:
-                    return ".txt";
-                default:
-                    return ".scrtm";
+                case ConsoleColor.Black:
+                    return System.Drawing.Color.Black;
+                case ConsoleColor.Blue:
+                    return System.Drawing.Color.Blue;
+                case ConsoleColor.Cyan:
+                    return System.Drawing.Color.Cyan;
+                case ConsoleColor.DarkBlue:
+                    return System.Drawing.Color.DarkBlue;
+                case ConsoleColor.DarkCyan:
+                    return System.Drawing.Color.DarkCyan;
+                case ConsoleColor.DarkGray:
+                    return System.Drawing.Color.DarkGray;
+                case ConsoleColor.DarkGreen:
+                    return System.Drawing.Color.DarkGreen;
+                case ConsoleColor.DarkMagenta:
+                    return System.Drawing.Color.DarkMagenta;
+                case ConsoleColor.DarkRed:
+                    return System.Drawing.Color.DarkRed;
+                case ConsoleColor.DarkYellow:
+                    return System.Drawing.Color.Orange;
+                case ConsoleColor.Gray:
+                    return System.Drawing.Color.Gray;
+                case ConsoleColor.Green:
+                    return System.Drawing.Color.Green;
+                case ConsoleColor.Magenta:
+                    return System.Drawing.Color.Magenta;
+                case ConsoleColor.Red:
+                    return System.Drawing.Color.Red;
+                case ConsoleColor.White:
+                    return System.Drawing.Color.White;
+                case ConsoleColor.Yellow:
+                    return System.Drawing.Color.Yellow;
             }
-        }
-
-        public void GetPath(string[] filetypes, FileOpenerStyle style, Action<string> callback)
-        {
-            var fs = new Apps.FileSkimmer();
-            fs.IsDialog = true;
-            fs.DialogMode = style;
-            fs.FileFilters = filetypes;
-            fs.DialogCallback = callback;
-            AppearanceManager.SetupDialog(fs);
-        }
-
-        public void OpenDirectory(string path)
-        {
-            if (!Objects.ShiftFS.Utils.DirectoryExists(path))
-                return;
-            var fs = new Apps.FileSkimmer();
-            fs.Navigate(path);
-            AppearanceManager.SetupWindow(fs);
+            return System.Drawing.Color.Empty;
         }
     }
 

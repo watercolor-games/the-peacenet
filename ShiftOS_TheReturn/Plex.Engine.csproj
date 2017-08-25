@@ -53,6 +53,10 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Discoursistency.Base">
       <HintPath>..\Libraries\Discoursistency.Base.dll</HintPath>
     </Reference>
@@ -87,6 +91,15 @@
     <Reference Include="Microsoft.Scripting.Metadata, Version=1.1.2.22, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
       <HintPath>..\packages\DynamicLanguageRuntime.1.1.2\lib\Net45\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="MonoGame.Extended, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MonoGame.Extended.Input, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.Input.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.Input.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -124,6 +137,7 @@
     <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BFInterpreter.cs" />
+    <Compile Include="BloomFilter.cs" />
     <Compile Include="CommandParser.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConsoleEx.cs" />
@@ -132,7 +146,21 @@
       <DependentUpon>CrashHandler.cs</DependentUpon>
     </Compile>
     <Compile Include="Desktop.cs" />
+    <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
+    <Compile Include="GraphicsSubsystem\UIManager.cs" />
+    <Compile Include="GUI\BBCodeLabel.cs" />
+    <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\CheckBox.cs" />
+    <Compile Include="GUI\ComboBox.cs" />
+    <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\FileSkimmerBackend.cs" />
+    <Compile Include="GUI\ItemGroup.cs" />
+    <Compile Include="GUI\ListBox.cs" />
+    <Compile Include="GUI\ListView.cs" />
+    <Compile Include="GUI\PictureBox.cs" />
+    <Compile Include="GUI\ProgressBar.cs" />
+    <Compile Include="GUI\TextControl.cs" />
+    <Compile Include="GUI\TextInput.cs" />
     <Compile Include="Hacking.cs" />
     <Compile Include="IFileHandler.cs" />
     <Compile Include="Infobox.cs" />
@@ -147,6 +175,7 @@
     <Compile Include="NotificationDaemon.cs" />
     <Compile Include="GUI\OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />
+    <Compile Include="Plexgate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -1790,6 +1819,7 @@
     <Content Include="Lib\__phello__.foo.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\cursor_9x_pointer.png" />
     <None Include="Resources\strings_ver.txt" />
     <None Include="Resources\secretlang.txt" />
     <None Include="Resources\fileicon0.bmp" />

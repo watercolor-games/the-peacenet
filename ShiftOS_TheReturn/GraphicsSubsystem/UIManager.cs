@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine;
-using Plex.Frontend.Desktop;
 using Plex.Frontend.GUI;
 using Plex.Objects;
 
@@ -276,7 +275,7 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (e.ControlDown && e.Key == Keys.T)
             {
-                AppearanceManager.SetupWindow(new Apps.Terminal());
+                TerminalBackend.OpenTerminal();
                 return;
             }
             FocusedControl?.ProcessKeyEvent(e);
@@ -343,7 +342,7 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static bool ExperimentalEffects = true;
 
         public static Queue<Action> CrossThreadOperations = new Queue<Action>();
-        internal static GraphicsDevice GraphicsDevice;
+        public static GraphicsDevice GraphicsDevice;
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
@@ -364,7 +363,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             return new Color(color.R, color.G, color.B, color.A);
         }
 
-        internal static void StopHandling(GUI.Control ctrl)
+        public static void StopHandling(GUI.Control ctrl)
         {
             if (topLevels.Contains(ctrl))
                 topLevels.Remove(ctrl);

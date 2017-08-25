@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Plex.Frontend.Apps;
 
 namespace Plex.Frontend.GraphicsSubsystem
 {
