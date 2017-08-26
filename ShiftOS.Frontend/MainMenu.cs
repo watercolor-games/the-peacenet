@@ -284,46 +284,35 @@ namespace Plex.Frontend
         private float _bglerp = 0.0f;
         private int _lerpdir = 1;
         private bool _tipVisible = false;
-        int rnd = 0;
         private Random _rnd = new Random();
         private int _tipWidth = 0;
         private int _tipHeight = 0;
         
 
+		private static readonly string[] funnyXD = new string[]
+		{
+			"Sentience choppy? Try adjusting sentience quality settings in\nOptions.",
+			"Want to hear about the latest Plex news and events? Check out the Community menu!",
+			"What's a 'tip of advice'?",
+			"Welcome to the Digital\nSociety. Do you wish to continue?",
+			"Open-source projects are pretty\ncool. This isn't one.",
+			"Sure, you can toggle fullscreen in Options, but you can also use your F11 key to toggle it on and off in-game!",
+			"Multithreading is the mayonnaise in the sandwich of\nPlex\u00ae.",
+			"Ammunition is precious, so don't waste it.",
+			"Your experienceing a lethal virus which i like to call (death)",
+			"We ran out of things to say."
+		};
+		
+		private static List<string> remainingTips = null;
 
         public string GetRandomString()
         {
-            var r = _rnd.Next(0, 10);
-            while(r == rnd)
-            {
-                r = _rnd.Next(0, 10);
-            }
-            rnd = r;
-            switch (r)
-            {
-                case 0:
-                    return "Sentience choppy? Try adjusting sentience quality settings in Options.";
-                case 1:
-                    return "Want to hear about the latest Plex news and events? Check out the Community menu!";
-                case 2:
-                    return "Go follow DevX on Twitter! http://twitter.com/MichaelTheShift";
-                case 3:
-                    return "Ran out of things to do in-game? Visit the modding forums for some extra user-created content or how to make your own Plex-y things!";
-                case 4:
-                    return "Tip of advice: Never use a GUI toolkit made in the 90s for utility design to develop a game that simulates an operating system with tools that look like they should be made in a GUI toolkit from the 90s for utility design.";
-                case 5:
-                    return "Skins are a very extensive and neat way to customize your Plex experience. Why not give them a try?";
-                case 6:
-                    return "We thought of putting some pong stuff here but Plex is already mostly just playing pong if you don't play this update. Ping pung pong pang.";
-                case 7:
-                    return "Welcome to the Digital Society. Do you wish to continue?";
-                case 8:
-                    return "Open-source projects are pretty cool, you can use, modify, copy and redistribute the code without worrying too much about what lawyer you're gonna hire to act on your behalf. That's why Plex is one of them. http://github.com/Plex-game/Plex";
-                case 9:
-                    return "Sure, you can toggle fullscreen in Options, but you can also use your F11 key to toggle it on and off in-game!";
-                default:
-                    return "We ran out of things to say.";
-            }
+			if (remainingTips == null || remainingTips.Count == 0)
+				remainingTips = new List<string>(funnyXD);
+            int r = _rnd.Next(0, remainingTips.Count);
+            string ret = remainingTips[r];
+            remainingTips.RemoveAt(r);
+            return ret;
         }
 
         protected override void OnLayout(GameTime gameTime)
@@ -365,18 +354,19 @@ namespace Plex.Frontend
                     if(_tipFade <= 0.0f)
                     {
                         _tipVisible = false;
-                        _tipText = GetRandomString();
+                        _tipFade = 0.0f;
                     }
                 }
             }
 
-            _tips.Visible = _tipVisible;
+            _tips.Visible = true;
             _tips.Opacity = _tipFade;
             _tips.Text = _tipText;
             _tips.Width = _tipWidth;
             _tips.Height = _tipHeight;
             _tips.X = 30;
             _tips.Y = (Height - _tips.Height) - 30;
+            _tips.Height = Height - _tips.Y; // ugh
             _tips.Font = _campaign.Font;
 
             _resDown.Visible = (_menuTitle.Text == "Options" && _resIndex > 0);
