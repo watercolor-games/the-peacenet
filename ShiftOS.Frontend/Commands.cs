@@ -543,7 +543,6 @@ There are no missions available for you to complete. Please check back later for
 
 
 
-        [MultiplayerOnly]
         [Command("save", description = "{DESC_SAVE}")]
         public static bool Save()
         {
@@ -551,7 +550,6 @@ There are no missions available for you to complete. Please check back later for
             return true;
         }
 
-        [MultiplayerOnly]
         [Command("status", description = "{DESC_STATUS}")]
         public static bool Status()
         {

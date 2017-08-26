@@ -146,7 +146,7 @@ namespace Plex.Engine
         {
             OnExit?.Invoke();
             //disconnect from MUD
-            ServerManager.Disconnect();
+            ServerManager.Disconnect( DisconnectType.EngineShutdown);
             Desktop.InvokeOnWorkerThread(() =>
             {
                 Process.GetCurrentProcess().Kill(); //bye bye

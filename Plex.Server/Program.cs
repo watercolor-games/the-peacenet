@@ -5,13 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-
+using Plex.Objects;
+using Newtonsoft.Json;
+using System.Reflection;
+using Plex.Engine;
 
 namespace Plex.Server
 {
     public class Program
     {
         private static UdpClient _server = null;
+
+        public static void SendMessage(PlexServerHeader header)
+        {
+            var ip = IPAddress.Parse(header.IPForwardedBy);
+            int port = 62252;
+            var data = JsonConvert.SerializeObject(header);
+            var bytes = Encoding.UTF8.GetBytes(data);
+            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
+        }
+
+        public static void Broadcast(PlexServerHeader header)
+        {
+            var ip = IPAddress.Broadcast;
+            int port = 62252;
+            var data = JsonConvert.SerializeObject(header);
+            var bytes = Encoding.UTF8.GetBytes(data);
+            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
+
+        }
 
         public static void Main(string[] args)
         {
@@ -30,7 +52,45 @@ namespace Plex.Server
                     var beat = Encoding.UTF8.GetBytes("beat");
                     _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
                 }
+                else
+                {
+                    var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
+                    ServerManager.HandleMessage(header);
+                }
             }
         }
     }
+
+    /// <summary>
+    /// Digital Society connection management class.
+    /// </summary>
+    public static class ServerManager
+    {
+        internal static void HandleMessage(PlexServerHeader header)
+        {
+            foreach (var type in ReflectMan.Types)
+            {
+                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ServerMessageHandlerAttribute) != null))
+                {
+                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
+                    if (attribute.ID == header.Message)
+                    {
+                        method.Invoke(null, new[] { header.PlexUser, header.PlexSysname, header.Content, header.IPForwardedBy });
+                    }
+                }
+            }
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ServerMessageHandlerAttribute : Attribute
+    {
+        public ServerMessageHandlerAttribute(string id)
+        {
+            ID = id;
+        }
+
+        public string ID { get; private set; }
+    }
+
 }

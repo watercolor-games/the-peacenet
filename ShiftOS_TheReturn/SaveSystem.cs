@@ -114,41 +114,7 @@ namespace Plex.Engine
                         Ready.WaitOne();
                     }
 
-                    ServerManager.GUIDReceived += (str) =>
-                    {
-                        //Connection successful! Stop waiting!
-                        Console.WriteLine("{MISC_CONNECTIONSUCCESSFUL}");
-                        Thread.Sleep(100);
-                        Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
-                        Thread.Sleep(500);
-                    };
-
-                    try
-                    {
-                        if (ServerManager.ServerOnline)
-                        {
-                            ServerManager.Initiate(UserConfig.Get().DigitalSocietyAddress, UserConfig.Get().DigitalSocietyPort);
-                            // This halts the client until the connection is successful.
-                            ServerManager.guidReceiveARE.WaitOne();
-                            Console.WriteLine("{MISC_DHCPHANDSHAKEFINISHED}");
-                        }
-                        else
-                        {
-                            Console.WriteLine("{MISC_NONETWORK}");
-                            Console.WriteLine("{LOADINGMSG2_" + loadingJoke2 + "}");
-                        }
-                        FinishBootstrap();
-                    }
-                    catch (Exception ex)
-                    {
-                        // "No errors, this never gets called."
-                        Console.WriteLine("[inetd] SEVERE: " + ex.Message);
-                        string dest = "Startup Exception " + DateTime.Now.ToString().Replace("/", "-").Replace(":", "-") + ".txt";
-                        System.IO.File.WriteAllText(dest, ex.ToString());
-                        Console.WriteLine("[inetd] Full exception details have been saved to: " + dest);
-                        Thread.Sleep(3000);
-                        System.Diagnostics.Process.GetCurrentProcess().Kill();
-                    }
+                    FinishBootstrap();
 
                     //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
                 }
@@ -170,7 +136,7 @@ namespace Plex.Engine
                         SoundEnabled = true,
                         StoriesExperienced = null,
                         StoryPosition = 0,
-                        
+
                     };
 
                     Localization.SetupTHETRUEDefaultLocals();
@@ -200,32 +166,6 @@ namespace Plex.Engine
         /// </summary>
         private static void FinishBootstrap()
         {
-            ServerMessageReceived savehandshake = null;
-
-            savehandshake = (msg) =>
-            {
-                if (msg.Name == "mud_savefile")
-                {
-                    ServerManager.MessageReceived -= savehandshake;
-                    try
-                    {
-                        CurrentSave = JsonConvert.DeserializeObject<Save>(msg.Contents);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("{ENGINE_CANNOTLOADSAVE}");
-                        oobe.PromptForLogin();
-                    }
-                    }
-                else if (msg.Name == "mud_login_denied")
-                {
-                    ServerManager.MessageReceived -= savehandshake;
-                    oobe.PromptForLogin();
-                }
-            };
-            ServerManager.MessageReceived += savehandshake;
-
-
             ReadSave();
 
             while (CurrentSave == null)

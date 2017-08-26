@@ -55,6 +55,7 @@
     <Compile Include="IRCNetwork.cs" />
     <Compile Include="MudAttributes.cs" />
     <Compile Include="Objects.cs" />
+    <Compile Include="PlexServerHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Save.cs" />
     <Compile Include="ServerDetails.cs" />

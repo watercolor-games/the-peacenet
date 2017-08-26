@@ -126,7 +126,6 @@ namespace Plex.Frontend.Apps
             try
             {
                 UIManager.ConnectToServer(server.Hostname, server.Port);
-                UIManager.PingServer();
             }
             catch (Exception ex)
             {

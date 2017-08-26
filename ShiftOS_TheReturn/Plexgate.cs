@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects;
 
 namespace Plex.Frontend
 {
@@ -30,6 +32,10 @@ namespace Plex.Frontend
 
         public event Action Initializing;
 
+        public void FireInitialized()
+        {
+            Initializing?.Invoke();
+        }
 
 #if DEBUG
         private GUI.TextControl DebugText = new GUI.TextControl();
@@ -189,11 +195,39 @@ For internal use only.";
             //While we're having a damn initiation fuckfest, let's get the hacking engine running.
             Hacking.Initiate();
 
-            
-            
 
-            
 
+
+            ClientThread = new Thread(() =>
+            {
+                while (true)
+                {
+                    if (this.IPAddress != null)
+                    {
+                        var ep = new IPEndPoint(this.IPAddress, this.Port);
+                        var data = _mpClient.Receive(ref ep);
+                        var content = Encoding.UTF8.GetString(data);
+                        msSinceLastReply = 0.0;
+                        if (content == "beat")
+                        {
+                            System.Diagnostics.Debug.Print("Pong");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
+                                ServerManager.HandleMessage(msg);
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                    }
+                }
+            });
+            ClientThread.Start();
 
 
 
@@ -206,6 +240,10 @@ For internal use only.";
             base.Initialize();
 
         }
+
+        private double msSinceLastReply = 0.0;
+
+        private Thread ClientThread = null;
 
         private double timeSinceLastPurge = 0;
 
@@ -258,6 +296,20 @@ For internal use only.";
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (IPAddress != null)
+            {
+                msSinceLastReply += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if ((int)msSinceLastReply >= 2000)
+                {
+                    var bytes = Encoding.UTF8.GetBytes("heart");
+                    _mpClient.Send(bytes, bytes.Length);
+                    System.Diagnostics.Debug.Print("Ping.");
+                }
+                if(msSinceLastReply >= 10000)
+                {
+                    ServerManager.Disconnect(DisconnectType.Error, "The server took too long to respond.");
+                }
+            }
             if (isFailing)
             {
                 if (failFadeInMS < failFadeMaxMS)

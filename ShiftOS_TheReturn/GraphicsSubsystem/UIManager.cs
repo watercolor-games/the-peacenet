@@ -385,12 +385,13 @@ namespace Plex.Frontend.GraphicsSubsystem
 
             
 
+            NetworkClient.Connect(ip, port);
+            PingServer(ip, port);
             _game.IPAddress = ip;
             _game.Port = port;
-            NetworkClient.Connect(ip, port);
         }
 
-        public static void PingServer()
+        private static void PingServer(IPAddress ip, int port)
         {
             var heart = Encoding.UTF8.GetBytes("heart");
             NetworkClient.Send(heart, heart.Length);
@@ -398,7 +399,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             bool done = false;
             var t = new Thread(() =>
             {
-                var ep = new System.Net.IPEndPoint(_game.IPAddress, _game.Port);
+                var ep = new System.Net.IPEndPoint(ip, port);
                 byte[] receive = new byte[4];
                 while (Encoding.UTF8.GetString(receive) != "beat")
                 {
@@ -428,6 +429,13 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
+        public static Plexgate Game
+        {
+            get
+            {
+                return _game;
+            }
+        }
 
         internal static void StopHandlingHUD(GUI.Control ctrl)
         {
