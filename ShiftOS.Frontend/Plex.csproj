@@ -127,7 +127,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
       <Link>x86\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -240,7 +239,6 @@
     <None Include="Resources\fileicon1.bmp" />
     <None Include="Resources\fileicon10.bmp" />
     <None Include="Resources\fileicon0.bmp" />
-    <Content Include="Content\Effects\Ambient.fx" />
     <None Include="Resources\Credits.txt" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />

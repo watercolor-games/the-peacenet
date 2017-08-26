@@ -27,12 +27,6 @@ namespace Plex.Frontend
         private TextControl _bodySubtitle = new TextControl();
         private BBCodeLabel _bodyText = new BBCodeLabel();
 
-        private Button _bloomDown = new Button();
-        private Button _bloomUp = new Button();
-        private TextControl _bloomDisplay = new TextControl();
-        private int _bloomindex = 0;
-        private BloomPresets[] blooms = null;
-
         private Button _optionsSave = new Button();
         private CheckBox _fullscreen = new CheckBox();
         private Button _community = new Button();
@@ -62,9 +56,6 @@ namespace Plex.Frontend
             AddControl(_fullscreen);
             AddControl(_community);
             AddControl(_tips);
-            AddControl(_bloomUp);
-            AddControl(_bloomDown);
-            AddControl(_bloomDisplay);
 
             _bodyTitle.X = _bodystart + 45;
             _bodyTitle.Y = 45;
@@ -201,44 +192,6 @@ namespace Plex.Frontend
 
                 }
             };
-            _bloomDown.Text = "<<";
-            _bloomUp.Text = ">>";
-
-            _bloomDown.Font = _campaign.Font;
-            _bloomDown.Height = _campaign.Height;
-            _bloomDown.Width = 40;
-            _bloomUp.Font = _campaign.Font;
-            _bloomUp.Height = _campaign.Height;
-            _bloomUp.Width = 40;
-
-            _bloomDown.Y = _resDown.Height + _resDown.Y + 5;
-            _bloomUp.Y = _bloomDown.Y;
-            _bloomDown.X = 30;
-            _bloomUp.X = ((Width / 4) - _bloomUp.Width) - 30;
-            _bloomDisplay.X = _resDown.X + _resDown.Width;
-            _bloomDisplay.Width = (_resUp.X - _resDown.X);
-            _bloomDisplay.Y = _bloomDown.Y;
-            _bloomDisplay.Height = _resDown.Height;
-            _bloomDisplay.TextAlign = TextAlign.MiddleCenter;
-
-            _bloomDown.Click += () =>
-            {
-                if (_bloomindex > 0)
-                {
-                    _bloomindex--;
-                    var res = blooms[_bloomindex];
-                    _bloomDisplay.Text = res.ToString();
-                }
-            };
-            _bloomUp.Click += () =>
-            {
-                if (_bloomindex < blooms.Length - 1)
-                {
-                    _bloomindex++;
-                    var res = blooms[_bloomindex];
-                    _bloomDisplay.Text = res.ToString();
-                }
-            };
 
             _fullscreen.CheckedChanged += () =>
             {
@@ -248,7 +201,7 @@ namespace Plex.Frontend
             _optionsSave.Click += () =>
             {
 
-                if (UIManager.ScreenSize != _screenResolutions[_resIndex] || UIManager.BloomPreset != blooms[_bloomindex])
+                if (UIManager.ScreenSize != _screenResolutions[_resIndex])
                 {
 
                     Engine.Infobox.PromptYesNo("Confirm sentience edit", "Performing this operation requires your sentience to be re-established which may cause you to go unconscious. Do you wish to continue?", (sleep) =>
@@ -278,15 +231,7 @@ namespace Plex.Frontend
                     if (UIManager.ScreenSize == _screenResolutions.Last())
                         _resIndex = _screenResolutions.Count - 1;
             }
-            _fullscreen.Y = _bloomDown.Y + _bloomDown.Height + 5;
-            List<BloomPresets> presets = new List<BloomPresets>();
-            foreach(var e in Enum.GetValues(typeof(BloomPresets)))
-            {
-                presets.Add((BloomPresets)e);
-            }
-            presets = presets.OrderBy(x => (int)x).ToList();
-            blooms = presets.ToArray();
-            _bloomindex = presets.IndexOf(UIManager.BloomPreset);
+            _fullscreen.Y = _resDown.Y + _resDown.Height + 5;
 
             _close.X = 30;
             _close.Font = _campaign.Font;
@@ -307,7 +252,6 @@ namespace Plex.Frontend
             var uconf = Objects.UserConfig.Get();
             var res = _screenResolutions[_resIndex];
             uconf.ScreenWidth = res.Width;
-            uconf.BloomPreset = blooms[_bloomindex];
             uconf.ScreenHeight = res.Height;
             System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
 
@@ -436,16 +380,12 @@ namespace Plex.Frontend
             _tips.Font = _campaign.Font;
 
             _resDown.Visible = (_menuTitle.Text == "Options" && _resIndex > 0);
-            _bloomUp.Visible = _resDown.Visible;
-            _bloomDown.Visible = _resDown.Visible;
-            _bloomDisplay.Visible = _resDown.Visible;
 
             _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);
             _resDisplay.Visible = _menuTitle.Text == "Options";
             _optionsSave.Visible = _resDisplay.Visible;
             _community.Visible = !_resDisplay.Visible;
             _fullscreen.Visible = _optionsSave.Visible;
-            _bloomDisplay.Text = blooms[_bloomindex].ToString();
 
             if (_fullscreen.Visible)
             {

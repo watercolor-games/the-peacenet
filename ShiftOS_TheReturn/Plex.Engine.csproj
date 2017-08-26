@@ -140,7 +140,6 @@
     <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BFInterpreter.cs" />
-    <Compile Include="BloomFilter.cs" />
     <Compile Include="CommandParser.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConsoleEx.cs" />

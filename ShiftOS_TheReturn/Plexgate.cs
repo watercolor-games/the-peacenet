@@ -609,14 +609,11 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
             spriteBatch.End();
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
-            var bloom = UIManager.Bloom(GameRenderTarget);
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             rasterizerState);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
-            if(bloom != GameRenderTarget)
-                spriteBatch.Draw(bloom, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
         
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
