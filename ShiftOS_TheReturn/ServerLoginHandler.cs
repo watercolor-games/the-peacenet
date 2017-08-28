@@ -127,6 +127,8 @@ You must log in or create an account on this server so we can protect your save 
 
 After logging in once, you will not have to log in again unless you have been inactive for a week.";
 
+            _passwordField.PasswordChar = true;
+
             _ok.Click += () =>
             {
                 DisconnectOnClose = false;
