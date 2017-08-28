@@ -147,6 +147,12 @@
     <Compile Include="CrashHandler.Designer.cs">
       <DependentUpon>CrashHandler.cs</DependentUpon>
     </Compile>
+    <Compile Include="CrashHandlerUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CrashHandlerUI.Designer.cs">
+      <DependentUpon>CrashHandlerUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Desktop.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
@@ -202,6 +208,9 @@
     <Compile Include="UserManagementCommands.cs" />
     <Compile Include="VirusManager.cs" />
     <Compile Include="GUI\WinOpenAttribute.cs" />
+    <EmbeddedResource Include="CrashHandlerUI.resx">
+      <DependentUpon>CrashHandlerUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>
     </EmbeddedResource>

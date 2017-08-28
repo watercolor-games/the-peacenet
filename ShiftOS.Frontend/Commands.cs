@@ -594,6 +594,13 @@ There are no missions available for you to complete. Please check back later for
 
     public static class ShiftoriumCommands
     {
+#if DEBUG
+        [Command("crash")]
+        public static void Crash()
+        {
+            CrashHandler.Start(new Exception("The user threw a fake crash."));
+        }
+#endif
         [Command("buy", description = "{DESC_BUY}")]
         [RequiresArgument("id")]
         public static bool BuyUpgrade(Dictionary<string, object> userArgs)
