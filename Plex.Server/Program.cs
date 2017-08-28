@@ -75,11 +75,37 @@ namespace Plex.Server
                     var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
                     if (attribute.ID == header.Message)
                     {
-                        method.Invoke(null, new[] { header.PlexUser, header.PlexSysname, header.Content, header.IPForwardedBy });
+                        var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
+                        if(sessionRequired != null)
+                        {
+                            bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
+                            if(nosession == false)
+                            {
+                                nosession = SessionManager.IsExpired(header.SessionID);
+                            }
+
+                            if (nosession)
+                            {
+                                Program.SendMessage(new PlexServerHeader
+                                {
+                                    IPForwardedBy = header.IPForwardedBy,
+                                    Message = "login_required",
+                                    Content = ""
+                                });
+                                return;
+                            }
+                        }
+                        method.Invoke(null, new[] { header.SessionID, header.Content, header.IPForwardedBy });
                     }
                 }
             }
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class SessionRequired : Attribute
+    {
+
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
