@@ -22,6 +22,7 @@ namespace Plex.Objects
     public class UserConfig
     {
         public List<ServerDetails> Servers { get; set; }
+        public Dictionary<string, string> SessionCache { get; set; }
 
         public string Language { get; set; }
         public string DigitalSocietyAddress { get; set; }
@@ -32,6 +33,7 @@ namespace Plex.Objects
 
         private static UserConfig def = new UserConfig
         {
+            SessionCache = new Dictionary<string, string>(),
             Language = "english",
             DigitalSocietyAddress = "getPlex.net",
             DigitalSocietyPort = 13370,
@@ -54,6 +56,8 @@ namespace Plex.Objects
                 File.WriteAllText("config.json", JsonConvert.SerializeObject(def, Formatting.Indented));
                 current = def;
             }
+            if (current.SessionCache == null)
+                current.SessionCache = new Dictionary<string, string>();
             return current;
         }
     }

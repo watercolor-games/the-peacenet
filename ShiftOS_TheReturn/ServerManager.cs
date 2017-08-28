@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Net.NetworkInformation;
 using Plex.Frontend.GraphicsSubsystem;
+using System.Net;
 
 namespace Plex.Engine
 {
@@ -48,14 +49,32 @@ namespace Plex.Engine
             }
         }
 
+        public static void SendMessage(string message, string contents)
+        {
+            string sessionKey = "";
+            if (SessionInfo != null)
+                sessionKey = SessionInfo.SessionID;
+            var header = new PlexServerHeader
+            {
+                Content = contents,
+                IPForwardedBy = "",
+                Message = message,
+                SessionID = sessionKey
+            };
+            byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
+            UIManager.NetworkClient.Send(data, data.Length);
+        }
+
         internal static void HandleMessage(PlexServerHeader header)
         {
-            if (SessionInfo == null)
-                return;
-            if (SessionInfo != null)
-                if (SessionInfo.SessionID != header.SessionID)
+            if (!string.IsNullOrWhiteSpace(header.SessionID))
+            {
+                if (SessionInfo == null)
                     return;
-            
+                if (SessionInfo != null)
+                    if (SessionInfo.SessionID != header.SessionID)
+                        return;
+            }
 
             foreach (var type in ReflectMan.Types)
             {
@@ -70,7 +89,23 @@ namespace Plex.Engine
             }
         }
 
-
+        internal static void StartSessionManager(string host, int port)
+        {
+            var uconf = UserConfig.Get();
+            var session = new SessionInfo();
+            session.ServerIP = host;
+            session.ServerPort = port;
+            if (uconf.SessionCache.ContainsKey(host + ":" + port))
+            {
+                var key = uconf.SessionCache[host + ":" + port];
+                session.SessionID = key;
+            }
+            else
+            {
+                session.SessionID = "";
+            }
+            SendMessage("session_verify", session.SessionID);
+        }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]

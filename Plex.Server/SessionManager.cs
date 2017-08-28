@@ -31,6 +31,26 @@ namespace Plex.Server
             return DateTime.Now > acct.Expiry;
         }
 
+        [ServerMessageHandler("session_verify")]
+        public static void SessionVerify(string session_id, string content, string ip)
+        {
+            bool nosession = string.IsNullOrWhiteSpace(session_id);
+            if (!nosession)
+            {
+                nosession = IsExpired(session_id);
+            }
+            if (nosession)
+            {
+                Program.SendMessage(new PlexServerHeader
+                {
+                    Content = "",
+                    IPForwardedBy = ip,
+                    Message = "login_required",
+                    SessionID = session_id
+                });
+            }
+        }
+
         [ServerMessageHandler("acct_get_key")]
         public static void AccountGetKey(string session_id, string content, string ip)
         {

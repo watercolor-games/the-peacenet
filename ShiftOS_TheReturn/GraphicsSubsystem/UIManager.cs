@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -361,12 +362,12 @@ namespace Plex.Frontend.GraphicsSubsystem
             var he = Dns.GetHostEntry(host);
             var ip = he.AddressList.Last();
 
-            
-
             NetworkClient.Connect(ip, port);
             PingServer(ip, port);
             _game.IPAddress = ip;
             _game.Port = port;
+            //Start session management for this server...
+            ServerManager.StartSessionManager(host, port);
         }
 
         private static void PingServer(IPAddress ip, int port)
