@@ -11,10 +11,42 @@ namespace Plex.Engine
     public static class ServerLoginHandler
     {
         private static LoginScreen _loginScreen = null;
+        private static int triesLeft = 4;
+
+        [ClientMessageHandler("session_accessdenied")]
+        public static void AccessDenied(string content, string ip)
+        {
+            if (triesLeft > 0)
+            {
+                Engine.Infobox.Show("Login failed.", "The username or password you have entered is incorrect. (You have " + triesLeft + " attempt(s) left.)");
+                triesLeft--;
+            }
+            else
+            {
+                ServerManager.Disconnect(DisconnectType.Error, "You have ran out of login attempts and have been kicked off of the server.");
+                foreach (var screen in AppearanceManager.OpenForms.Where(x => x.ParentWindow is LoginScreen).ToArray())
+                {
+                    AppearanceManager.Close(screen.ParentWindow);
+                }
+                _loginScreen = null;
+            }
+        }
+
+        [ClientMessageHandler("malformed_data")]
+        public static void MalformedDataHandler(string content, string ip)
+        {
+            foreach (var screen in AppearanceManager.OpenForms.Where(x => x.ParentWindow is LoginScreen).ToArray())
+            {
+                AppearanceManager.Close(screen.ParentWindow);
+            }
+            _loginScreen = null;
+            ServerManager.Disconnect(DisconnectType.Error, "The client has sent an incorrect or malformed request to the server and has been kicked out for security purposes.");
+        }
 
         [ClientMessageHandler("login_required")]
         public static void LoginRequired(string content, string ip)
         {
+            triesLeft = 4;
             foreach(var screen in AppearanceManager.OpenForms.Where(x=>x.ParentWindow is LoginScreen).ToArray())
             {
                 AppearanceManager.Close(screen.ParentWindow);
@@ -43,6 +75,7 @@ namespace Plex.Engine
         private Button _ok = null;
         private Button _cancel = null;
         private Button _createacct = null;
+        private BBCodeLabel _description = new BBCodeLabel();
 
         public bool DisconnectOnClose = true;
 
@@ -87,6 +120,12 @@ namespace Plex.Engine
             AddControl(_ok);
             AddControl(_cancel);
             AddControl(_createacct);
+            AddControl(_description);
+            _description.Text = @"[b]Why do I need to log in?[/b]
+
+You must log in or create an account on this server so we can protect your save file from hackers/cheaters.
+
+After logging in once, you will not have to log in again unless you have been inactive for a week.";
 
             _ok.Click += () =>
             {
@@ -119,15 +158,17 @@ namespace Plex.Engine
         {
             _title.X = 5;
             _title.Y = 5;
-
+            _title.Font = SkinEngine.LoadedSkin.Header3Font;
             _uname.X = 5;
             _uname.Y = _title.Y + _title.Height + 10;
 
             _usernameField.X = 5;
             _usernameField.Y = _uname.Y + _uname.Height + 5;
             _usernameField.MinWidth = Width - 10;
-            _usernameField.MinHeight = _usernameField.Font.Height;
-            _usernameField.AutoSize = true;
+            _usernameField.MinHeight = _usernameField.Font.Height + 6;
+            _usernameField.Width = 1;
+            _usernameField.Height = 1;
+
 
             _password.X = 5;
             _password.Y = _usernameField.Y + _usernameField.Height + 10;
@@ -135,8 +176,9 @@ namespace Plex.Engine
             _passwordField.X = 5;
             _passwordField.Y = _password.Y + _password.Height + 5;
             _passwordField.MinWidth = Width - 10;
-            _passwordField.MinHeight = _passwordField.Font.Height;
-            _passwordField.AutoSize = true;
+            _passwordField.MinHeight = _passwordField.Font.Height + 6;
+            _passwordField.Width = 1;
+            _passwordField.Height = 1;
 
             _createacct.X = 5;
             _createacct.Y = (Height - _createacct.Height) - 5;
@@ -144,7 +186,12 @@ namespace Plex.Engine
             _ok.X = Width - _ok.Width - 5;
             _ok.Y = Height - _ok.Height - 5;
             _cancel.X = _ok.X - _cancel.Width - 5;
-            _cancel.Y = _ok.Y; 
+            _cancel.Y = _ok.Y;
+
+            _description.X = 5;
+            _description.Width = Width - 10;
+            _description.Y = _passwordField.Y + _passwordField.Height + 5;
+            _description.Height = _ok.Y - _description.Y - 10;
 
         }
 
