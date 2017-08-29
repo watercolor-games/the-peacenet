@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Net.NetworkInformation;
 using Plex.Frontend.GraphicsSubsystem;
+using System.Net;
 
 namespace Plex.Engine
 {
@@ -31,38 +32,79 @@ namespace Plex.Engine
     /// </summary>
     public static class ServerManager
     {
+        public static SessionInfo SessionInfo { get; internal set; }
+
+
+
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
             UIManager.Game.IPAddress = null;
-            if(type == DisconnectType.UserRequested || type == DisconnectType.Error)
+            if (type == DisconnectType.UserRequested || type == DisconnectType.Error)
             {
                 UIManager.Game.FireInitialized();
-                if(type == DisconnectType.Error)
+                if (type == DisconnectType.Error)
                 {
                     Infobox.Show("Disconnected from server.", userMessage);
                 }
-            }  
+            }
+        }
+
+        public static void SendMessage(string message, string contents)
+        {
+            string sessionKey = "";
+            if (SessionInfo != null)
+                sessionKey = SessionInfo.SessionID;
+            var header = new PlexServerHeader
+            {
+                Content = contents,
+                IPForwardedBy = "",
+                Message = message,
+                SessionID = sessionKey
+            };
+            byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
+            UIManager.NetworkClient.Send(data, data.Length);
         }
 
         internal static void HandleMessage(PlexServerHeader header)
         {
-            if (header.PlexUser == SaveSystem.CurrentSave.Username)
+            if (!string.IsNullOrWhiteSpace(header.SessionID))
             {
-                if (header.PlexSysname == SaveSystem.CurrentSave.SystemName)
+                if (SessionInfo == null)
+                    return;
+                if (SessionInfo != null)
+                    if (SessionInfo.SessionID != header.SessionID)
+                        return;
+            }
+
+            foreach (var type in ReflectMan.Types)
+            {
+                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ClientMessageHandlerAttribute) != null))
                 {
-                    foreach (var type in ReflectMan.Types)
+                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ClientMessageHandlerAttribute) as ClientMessageHandlerAttribute;
+                    if (attribute.ID == header.Message)
                     {
-                        foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ClientMessageHandlerAttribute) != null))
-                        {
-                            var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ClientMessageHandlerAttribute) as ClientMessageHandlerAttribute;
-                            if(attribute.ID == header.Message)
-                            {
-                                method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
-                            }
-                        }
+                        method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
                     }
                 }
             }
+        }
+
+        internal static void StartSessionManager(string host, int port)
+        {
+            var uconf = UserConfig.Get();
+            var session = new SessionInfo();
+            session.ServerIP = host;
+            session.ServerPort = port;
+            if (uconf.SessionCache.ContainsKey(host + ":" + port))
+            {
+                var key = uconf.SessionCache[host + ":" + port];
+                session.SessionID = key;
+            }
+            else
+            {
+                session.SessionID = "";
+            }
+            SendMessage("session_verify", session.SessionID);
         }
     }
 

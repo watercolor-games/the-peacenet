@@ -211,7 +211,7 @@ namespace Plex.Frontend.GUI
         public static string Repeat(this string value, int count)
         {
             string r = "";
-            for (int i = 0; i <= count; i++)
+            for (int i = 0; i < count; i++)
             {
                 r += value;
             }

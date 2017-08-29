@@ -19,21 +19,20 @@ namespace Plex.Server
         public static void SendMessage(PlexServerHeader header)
         {
             var ip = IPAddress.Parse(header.IPForwardedBy);
-            int port = 62252;
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
-            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
+            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, _port));
         }
 
         public static void Broadcast(PlexServerHeader header)
         {
             var ip = IPAddress.Broadcast;
-            int port = 62252;
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
-            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
-
+            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, _port));
         }
+
+        private static int _port = 0;
 
         public static void Main(string[] args)
         {
@@ -46,6 +45,7 @@ namespace Plex.Server
             {
                 _ipEP = new IPEndPoint(IPAddress.Any, 62252);
                 var receive = _server.Receive(ref _ipEP);
+                _port = _ipEP.Port;
                 string data = Encoding.UTF8.GetString(receive);
                 if(data == "heart")
                 {
@@ -55,6 +55,9 @@ namespace Plex.Server
                 else
                 {
                     var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
+                    IPAddress test = null;
+                    if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
+                        header.IPForwardedBy = _ipEP.Address.ToString();
                     ServerManager.HandleMessage(header);
                 }
             }
@@ -75,11 +78,38 @@ namespace Plex.Server
                     var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
                     if (attribute.ID == header.Message)
                     {
-                        method.Invoke(null, new[] { header.PlexUser, header.PlexSysname, header.Content, header.IPForwardedBy });
+                        var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
+                        if(sessionRequired != null)
+                        {
+                            bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
+                            if(nosession == false)
+                            {
+                                nosession = SessionManager.IsExpired(header.SessionID);
+                            }
+
+                            if (nosession)
+                            {
+                                Program.SendMessage(new PlexServerHeader
+                                {
+                                    IPForwardedBy = header.IPForwardedBy,
+                                    Message = "login_required",
+                                    Content = ""
+                                });
+                                return;
+                            }
+                        }
+                        method.Invoke(null, new[] { header.SessionID, header.Content, header.IPForwardedBy });
+                        return;
                     }
                 }
             }
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class SessionRequired : Attribute
+    {
+
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]

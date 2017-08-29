@@ -15,6 +15,24 @@ namespace Plex.Frontend.GUI
     {
         private string _label = "Type here!";
         private int _index = 0;
+        private bool passwordChar = false;
+
+        public bool PasswordChar
+        {
+            get
+            {
+                return passwordChar;
+            }
+            set
+            {
+                if (passwordChar == value)
+                    return;
+                passwordChar = value;
+                this.CalculateVisibleText();
+                this.Invalidate();
+                this.RequireTextRerender();
+            }
+        }
 
         public int Index
         {
@@ -42,10 +60,12 @@ namespace Plex.Frontend.GUI
             int textY = (Height - Font.Height) / 2;
             int caretHeight = Font.Height;
 
-
-            if (!string.IsNullOrWhiteSpace(Text))
+            string text = Text;
+            if (PasswordChar)
+                text = "*".Repeat(Text.Length);
+            if (!string.IsNullOrWhiteSpace(text))
             {
-                gfx.DrawString(Text, (int)(2 - TextDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font);
+                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font);
             }
             if(!IsFocusedControl)
             {
@@ -189,18 +209,23 @@ namespace Plex.Frontend.GUI
 
         protected void CalculateVisibleText()
         {
+            string text = Text;
+            if (PasswordChar)
+                text = "*".Repeat(Text.Length);
             if (_index < 0)
                 _index = 0;
-            string toCaret = Text.Substring(0, _index);
+            string toCaret = text.Substring(0, _index);
             var measure = GraphicsContext.MeasureString(toCaret, Font);
             caretPos = 2 + measure.X;
             if (caretPos - TextDrawOffset < 0)
             {
                 TextDrawOffset += (caretPos - TextDrawOffset);
+                RequireTextRerender();
             }
             if (caretPos - TextDrawOffset > Width)
             {
                 TextDrawOffset -= caretPos - TextDrawOffset;
+                RequireTextRerender();
             }
 
         }
