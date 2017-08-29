@@ -14,6 +14,7 @@ using Plex.Objects;
 using Plex.Objects.ShiftFS;
 using oobe = Plex.Engine.OutOfBoxExperience;
 using static System.Net.Mime.MediaTypeNames;
+using static Whoa.Whoa;
 
 namespace Plex.Engine
 {
@@ -284,31 +285,11 @@ namespace Plex.Engine
         {
             string path;
 
-            path = "C:\\Plex2\\";
-            //Migrate old saves.
-            if (System.IO.Directory.Exists(path) && !System.IO.File.Exists(path + "havemigrated"))
-            {
-                Console.WriteLine("Old save detected. Migrating filesystem to MFS...");
-                foreach (string file in System.IO.Directory.EnumerateFileSystemEntries(path))
-                {
-                    string dest = file.Replace(path, "0:/").Replace("\\", "/");
-                    if (System.IO.File.GetAttributes(file).HasFlag(FileAttributes.Directory))
-                        if (!Utils.DirectoryExists(dest))
-                            Utils.CreateDirectory(dest);
-                    else
-                    {
-                        string rfile = Path.GetFileName(file);
-                        Utils.WriteAllBytes(dest, System.IO.File.ReadAllBytes(file));
-                        Console.WriteLine("Exported file " + file);
-                    }
-                }
-                System.IO.File.WriteAllText(path + "havemigrated", "1.0 BETA");
-            }
-
-            path = Path.Combine(Paths.SaveDirectory, "autosave.save");
+            path = Path.Combine(Paths.SaveDirectory, "autosave.whoa");
 
             if (System.IO.File.Exists(path))
-                CurrentSave = JsonConvert.DeserializeObject<Save>(System.IO.File.ReadAllText(path));
+				using (var fobj = System.IO.File.OpenRead(path))
+					CurrentSave = DeserialiseObject<Save>(fobj);
             else
                 NewSave();
 
@@ -340,11 +321,11 @@ namespace Plex.Engine
 #if !NOSAVE
                 if (SaveSystem.CurrentSave != null)
                 {
-                    var serialisedSaveFile = JsonConvert.SerializeObject(CurrentSave, Formatting.Indented);
                     if (!System.IO.Directory.Exists(Paths.SaveDirectory))
                         System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
 
-                    System.IO.File.WriteAllText(Path.Combine(Paths.SaveDirectory, "autosave.save"), serialisedSaveFile);
+                    using (var fobj = System.IO.File.OpenWrite(Path.Combine(Paths.SaveDirectory, "autosave.whoa")))
+						SerialiseObject(fobj, CurrentSave);
                     SkinEngine.SaveSkin();
                 }
                 if (!Upgrades.Silent)
