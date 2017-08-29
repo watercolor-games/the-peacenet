@@ -50,9 +50,12 @@ namespace Plex.Frontend.GUI
         public void Dispose()
         {
             OnDisposing();
-            foreach(var child in _children)
+            while(_children.Count > 0)
             {
+                var child = _children[0];
                 child.Dispose();
+                _children.Remove(child);
+                child = null;
             }
             _children.Clear();
             
