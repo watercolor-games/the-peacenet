@@ -506,9 +506,9 @@ namespace Plex.Engine
             {
                 cmd.Invoke(args);
             }
-            catch(Exception ex)
+            catch(TargetInvocationException ex)
             {
-                Console.WriteLine("Command error: " + ex.Message);
+                Console.WriteLine("Command error: " + ex.InnerException.Message);
             }
 
             return true;

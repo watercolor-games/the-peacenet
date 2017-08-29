@@ -278,6 +278,8 @@ namespace Plex.Engine
             System.Windows.Forms.Application.Restart();
         }
 
+        public static readonly byte[] rst5 = Encoding.UTF8.GetBytes("p13x");
+
         /// <summary>
         /// Requests the save file from the server. If authentication fails, this will cause the user to be prompted for their website login and a new save will be created if none is associated with the login.
         /// </summary>
@@ -288,13 +290,77 @@ namespace Plex.Engine
             path = Path.Combine(Paths.SaveDirectory, "autosave.whoa");
 
             if (System.IO.File.Exists(path))
-				using (var fobj = System.IO.File.OpenRead(path))
-					CurrentSave = DeserialiseObject<Save>(fobj);
+            {
+                using (var fobj = System.IO.File.OpenRead(path))
+                {
+                    var magic = new byte[4];
+                    var reader = new BinaryReader(fobj);
+                    magic = reader.ReadBytes(4);
+                    if (magic.SequenceEqual(rst5))
+                    {
+                        int savelength = reader.ReadInt32();
+                        using (var memory = new System.IO.MemoryStream())
+                        {
+                            
+                            var savebytes = new byte[savelength];
+                            savebytes = reader.ReadBytes(savebytes.Length);
+                            memory.Write(savebytes, 0, savebytes.Length);
+                            memory.Position = 0;
+                            try
+                            {
+                                CurrentSave = DeserialiseObject<Save>(memory);
+                            }
+                            catch
+                            {
+                                TryFallbackReader(path);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        TryFallbackReader(path);
+                    }
+                }
+            }
             else
                 NewSave();
 
 
         }
+
+        public static void TryFallbackReader(string path)
+        {
+            Infobox.PromptYesNo("Unreadable save file", "Your save file is from an older version of Plex and can't be read. We can fall back to the old reader to convert your save, but this will break older versions. Would you like to continue?", (yes) =>
+                            {
+                                if (yes)
+                                {
+                                    try
+                                    {
+                                        using (var newreader = System.IO.File.OpenRead(path))
+                                        {
+                                            var reader = new BinaryReader(newreader);
+                                            var bytes = new byte[newreader.Length];
+                                            reader.Read(bytes, 0, bytes.Length);
+                                            var save = Encoding.ASCII.GetString(bytes);
+                                            CurrentSave = JsonConvert.DeserializeObject<Save>(save);
+                                            SaveGame();
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Infobox.Show("Unsalvagable save file", "This save file was unsalvagable using the fallback JSON reader. Creating a new save...", () =>
+                                        {
+                                            NewSave();
+                                        });
+                                    }
+                                }
+                                else
+                                {
+                                    NewSave();
+                                }
+                            });
+        }
+
 
         /// <summary>
         /// Creates a new save, starting the Out Of Box Experience (OOBE).
@@ -325,11 +391,20 @@ namespace Plex.Engine
                         System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
 
                     using (var fobj = System.IO.File.OpenWrite(Path.Combine(Paths.SaveDirectory, "autosave.whoa")))
-						SerialiseObject(fobj, CurrentSave);
+                    {
+                        var writer = new BinaryWriter(fobj);
+                        writer.Write(rst5);
+                        using (var memory = new MemoryStream())
+                        {
+                            SerialiseObject(memory, CurrentSave);
+                            byte[] data = memory.ToArray();
+                            writer.Write(data.Length);
+                            writer.Write(data);
+                        }
+                        writer.Close();
+                    }
                     SkinEngine.SaveSkin();
                 }
-                if (!Upgrades.Silent)
-                    Console.WriteLine(" ...{DONE}.");
 #endif
             }
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));

@@ -150,7 +150,7 @@ namespace Plex.Engine
                                 SaveSystem.CurrentSave.PickupPoint = Context.Id;
                                 Context.OnComplete += () =>
                                 {
-                                    if(story is MissionAttribute)
+                                    if (story is MissionAttribute)
                                     {
                                         var mission = story as MissionAttribute;
                                         SaveSystem.CurrentSave.Experience += mission.CodepointAward;
@@ -160,7 +160,7 @@ namespace Plex.Engine
                                         MissionComplete?.Invoke(mission);
                                     }
                                     StoryComplete?.Invoke(stid);
-                                    SaveSystem.CurrentSave.PickupPoint = null;
+                                    SaveSystem.CurrentSave.PickupPoint = "";
                                 };
                                 mth.Invoke(null, null);
                                 if (Context.AutoComplete)
