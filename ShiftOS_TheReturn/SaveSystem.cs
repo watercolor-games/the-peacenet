@@ -287,7 +287,7 @@ namespace Plex.Engine
         {
             string path;
 
-            path = Path.Combine(Paths.SaveDirectory, "autosave.whoa");
+            path = Path.Combine(Paths.SaveDirectory, "autosave.save");
 
             if (System.IO.File.Exists(path))
             {
@@ -390,7 +390,7 @@ namespace Plex.Engine
                     if (!System.IO.Directory.Exists(Paths.SaveDirectory))
                         System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
 
-                    using (var fobj = System.IO.File.OpenWrite(Path.Combine(Paths.SaveDirectory, "autosave.whoa")))
+                    using (var fobj = System.IO.File.OpenWrite(Path.Combine(Paths.SaveDirectory, "autosave.save")))
                     {
                         var writer = new BinaryWriter(fobj);
                         writer.Write(rst5);
