@@ -15,6 +15,7 @@ namespace Plex.Server
     public class Program
     {
         private static UdpClient _server = null;
+        internal static bool IsMultiplayerServer = false;
 
         public static void SendMessage(PlexServerHeader header)
         {
@@ -33,6 +34,12 @@ namespace Plex.Server
         }
 
         private static int _port = 0;
+
+        public static void Main(string[] args, bool isMP)
+        {
+            IsMultiplayerServer = isMP;
+            Main(args);
+        }
 
         public static void Main(string[] args)
         {

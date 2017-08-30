@@ -35,7 +35,7 @@ namespace Plex.Frontend
             var ServerThread = new Thread(() =>
             {
                 System.Diagnostics.Debug.Print("Starting local server...");
-                Server.Program.Main(null);
+                Server.Program.Main(null, false);
             });
             ServerThread.Start();
 
