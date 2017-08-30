@@ -361,13 +361,25 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             var he = Dns.GetHostEntry(host);
             var ip = he.AddressList.Last();
-
+            bool isMP = false;
             NetworkClient.Connect(ip, port);
             PingServer(ip, port);
+            NetworkClient.Send(Encoding.UTF8.GetBytes("ismp"), Encoding.UTF8.GetBytes("ismp").Length);
+            var ep = new IPEndPoint(ip, port);
+            var dgram = NetworkClient.Receive(ref ep);
+            isMP = (dgram[0] == 1) ? true : false;
             _game.IPAddress = ip;
             _game.Port = port;
             //Start session management for this server...
-            ServerManager.StartSessionManager(host, port);
+            SaveSystem.IsSandbox = isMP; //If we're on a multiplayer server then disable the story system.
+            if (isMP)
+            {
+                ServerManager.StartSessionManager(host, port);
+            }
+            else
+            {
+                ServerManager.StartSinglePlayer(host, port);
+            }
         }
 
         private static void PingServer(IPAddress ip, int port)

@@ -104,7 +104,17 @@ namespace Plex.Engine
             {
                 session.SessionID = "";
             }
+            SessionInfo = session;
             SendMessage("session_verify", session.SessionID);
+        }
+
+        internal static void StartSinglePlayer(string host, int port)
+        {
+            var session = new SessionInfo();
+            session.ServerIP = host;
+            session.ServerPort = port;
+            SessionInfo = session;
+            SendMessage("acct_get_key", session.SessionID);
         }
     }
 

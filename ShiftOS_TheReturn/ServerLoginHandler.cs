@@ -32,6 +32,13 @@ namespace Plex.Engine
             }
         }
 
+        [ClientMessageHandler("session_accessgranted")]
+        public static void SessionGranted(string content, string ip)
+        {
+            ServerManager.SessionInfo.SessionID = content;
+            SaveSystem.Begin();
+        }
+
         [ClientMessageHandler("malformed_data")]
         public static void MalformedDataHandler(string content, string ip)
         {

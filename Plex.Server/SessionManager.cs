@@ -122,7 +122,7 @@ namespace Plex.Server
                 {
                     string sessionkey = Guid.NewGuid().ToString();
                     var accts = getAccts();
-                    accts.FirstOrDefault(x => x.Username == user.Username).Expiry = DateTime.Now;
+                    accts.FirstOrDefault(x => x.Username == user.Username).Expiry = DateTime.Now.AddDays(7);
                     accts.FirstOrDefault(x => x.Username == user.Username).SessionID = sessionkey;
                     setSessions(accts);
                     user.SessionID = sessionkey;
@@ -138,7 +138,13 @@ namespace Plex.Server
             }
             else
             {
-
+                Program.SendMessage(new PlexServerHeader
+                {
+                    IPForwardedBy = ip,
+                    Message = "session_accessgranted",
+                    SessionID = session_id,
+                    Content = getAccts()[0].SessionID
+                });
             }
 
         }

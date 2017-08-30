@@ -59,6 +59,11 @@ namespace Plex.Server
                     var beat = Encoding.UTF8.GetBytes("beat");
                     _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
                 }
+                else if (data == "ismp")
+                {
+                    int value = (IsMultiplayerServer) ? 1 : 0;
+                    _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(_ipEP.Address, _ipEP.Port));
+                }
                 else
                 {
                     var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);

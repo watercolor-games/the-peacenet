@@ -134,13 +134,12 @@ namespace Plex.Frontend
             _options.Y = _community.Y + _community.Font.Height + 15;
             _campaign.Click += () =>
             {
-                SaveSystem.IsSandbox = false;
-                SaveSystem.Begin(false);
+                UIManager.ConnectToServer("localhost", 62252);
                 Close();
             };
             _sandbox.Click += () =>
             {
-                var mpServerList = new Apps.MultiplayerServerList();
+                var mpServerList = new Apps.MultiplayerServerList(Close);
                 AppearanceManager.SetupDialog(mpServerList);
 
             };
