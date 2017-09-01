@@ -87,7 +87,7 @@ namespace Plex.Frontend.GUI
         {
             if (AutoSize)
             {
-                var measure = GraphicsContext.MeasureString(_text, _font);
+                var measure = GraphicsContext.MeasureString(_text, _font, MaxWidth);
                 Width = (int)measure.X;
                 Height = (int)measure.Y;
             }

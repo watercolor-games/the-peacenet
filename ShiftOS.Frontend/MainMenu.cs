@@ -9,6 +9,8 @@ using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Objects;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Plex.Frontend
 {
@@ -25,7 +27,7 @@ namespace Plex.Frontend
 
         private TextControl _bodyTitle = new TextControl();
         private TextControl _bodySubtitle = new TextControl();
-        private BBCodeLabel _bodyText = new BBCodeLabel();
+        private TextControl _bodyText = new TextControl();
 
         private Button _optionsSave = new Button();
         private CheckBox _fullscreen = new CheckBox();
@@ -75,7 +77,6 @@ namespace Plex.Frontend
             _bodyText.Y = _bodySubtitle.Y + _bodySubtitle.Height + 15;
             _bodyText.Width = ((Width - _bodystart) - 90);
             _bodyText.Height = ((Height - (_bodySubtitle.Y + _bodySubtitle.Height + 15)) - 45);
-            _bodyText.Text = @"[img]https://yt3.ggpht.com/-Mp8jtkg2ULI/AAAAAAAAAAI/AAAAAAAAAAA/qxszRwo4HbQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg[/img]";
             _optionsSave.Text = "Save sentience settings";
             _optionsSave.Width = (Width / 4) - 60;
             _optionsSave.X = 30;
@@ -244,6 +245,16 @@ namespace Plex.Frontend
                 SaveSystem.IsSandbox = true;
                 PlexCommands.Shutdown();
             };
+            var t = new System.Threading.Thread(() =>
+            {
+                var wc = new System.Net.WebClient();
+                string json = wc.DownloadString("https://getshiftos.net/api/announcements");
+                var announcement = JsonConvert.DeserializeObject<List<Announcement>>(json).First();
+                _bodyTitle.Text = "Latest announcement";
+                _bodySubtitle.Text = announcement.title[0].value;
+                _bodyText.Text = Regex.Replace(announcement.body[0].value, "<.*?>", String.Empty);
+            });
+            t.Start();
         }
 
         public void SaveOptions()
@@ -380,6 +391,10 @@ namespace Plex.Frontend
             {
                 _fullscreen.Checked = UIManager.Fullscreen;
             }
+
+            _bodySubtitle.AutoSize = true;
+            _bodySubtitle.MaxWidth = _bodyText.Width;
+            _bodyText.Y = _bodySubtitle.Y + _bodySubtitle.Height + 15;
 
             Invalidate();
         }

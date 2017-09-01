@@ -62,6 +62,7 @@ namespace Plex.Frontend.Desktop
                     }
                 }
             };
+            //UIManager.AddHUD(this);
         }
 
         public string DesktopName
@@ -262,7 +263,10 @@ namespace Plex.Frontend.Desktop
             var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
             if(Hacking.CurrentHackable == null)
             {
-                newDateTimeString += SaveSystem.CurrentSave.SystemName;
+                if (SaveSystem.CurrentSave != null)
+                    newDateTimeString += SaveSystem.CurrentSave.SystemName;
+                else
+                    newDateTimeString += "localhost";
             }
             else
             {
