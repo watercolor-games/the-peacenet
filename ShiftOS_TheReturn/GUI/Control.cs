@@ -517,13 +517,17 @@ namespace Plex.Frontend.GUI
                 {
                     if (ctrl.Visible == true)
                     {
-                        gfx.X = draw_x + ctrl.X;
-                        gfx.Y = draw_y + ctrl.Y;
-                        gfx.Width = ctrl.Width;
-                        gfx.Height = ctrl.Height;
-                        ctrl.Paint(gfx, target);
-                        gfx.X = draw_x;
-                        gfx.Y = draw_y;
+                        //Cull any controls that fall outside the bounds of our own.
+                        if (ctrl.X >= 0 && ctrl.Y >= 0 && ctrl.X + ctrl.Width <= Width && ctrl.Y + ctrl.Height <= Height)
+                        {
+                            gfx.X = draw_x + ctrl.X;
+                            gfx.Y = draw_y + ctrl.Y;
+                            gfx.Width = ctrl.Width;
+                            gfx.Height = ctrl.Height;
+                            ctrl.Paint(gfx, target);
+                            gfx.X = draw_x;
+                            gfx.Y = draw_y;
+                        }
                     }
                     gfx.Width = draw_width;
                     gfx.Height = draw_height;
