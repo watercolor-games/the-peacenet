@@ -52,7 +52,7 @@ namespace Plex.Frontend.GUI
                 bgCol = UIManager.SkinTextures["ButtonPressedColor"];
 
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
-            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, bgCol);
+            gfx.DrawRectangle(SkinEngine.LoadedSkin.ButtonBorderWidth, SkinEngine.LoadedSkin.ButtonBorderWidth, Width - (SkinEngine.LoadedSkin.ButtonBorderWidth * 2), Height - (SkinEngine.LoadedSkin.ButtonBorderWidth * 2), bgCol);
 
             base.OnPaint(gfx, target);
         }

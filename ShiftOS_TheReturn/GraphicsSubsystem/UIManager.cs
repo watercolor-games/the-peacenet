@@ -325,9 +325,6 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
-            if (SkinEngine.LoadedSkin == null)
-                SkinEngine.Init();
-
             batch.Draw(SkinTextures["DesktopColor"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
 
             graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());

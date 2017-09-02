@@ -74,6 +74,8 @@ namespace Plex.Frontend.Apps
 
         public PlexTheme()
         {
+            Width = 750;
+            Height = 600;
             _scrollBar.Position = ScrollbarPosition.VerticalRight;
             UIState = GetHashCode().ToString();
             AddControl(BackButton);

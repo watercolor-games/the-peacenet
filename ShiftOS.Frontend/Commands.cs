@@ -149,7 +149,7 @@ namespace Plex.Frontend
         public static void LoadDefault()
         {
             Utils.Delete(Paths.GetPath("skin.json"));
-            SkinEngine.Init();
+            SkinEngine.LoadDefaultSkin();
         }
     }
 

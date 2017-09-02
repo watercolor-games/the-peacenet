@@ -73,6 +73,7 @@
     <Compile Include="MainMenu.cs" />
     <Compile Include="MonoGameLanguageProvider.cs" />
     <Compile Include="MonoGameOOBE.cs" />
+    <Compile Include="PlexSkin.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\arnix.skn" />
     <None Include="Resources\cursor_9x_pointer.png" />
   </ItemGroup>
   <ItemGroup>

@@ -595,7 +595,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             if (DisplayDebugInfo)
             {
                 //So we need to draw the shroud for the debug text because I don't have foreground/background colors implemented into the UI framework yet.
-                gfx.DrawRectangle(0, 0, (int)DebugText.Width + 10, (int)DebugText.Height + 10, Color.Black * 0.75F);
+                gfx.DrawRectangle(0, 0, (int)DebugText.Width + 10, (int)DebugText.Height + 10, SkinEngine.LoadedSkin.ControlColor.ToMonoColor() * 0.75F);
             }
 
 #endif

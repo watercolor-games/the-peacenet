@@ -74,9 +74,8 @@ namespace Plex.Engine
             if (Utils.Mounts.Count == 0)
                 Utils.Mount(System.IO.File.ReadAllText(Paths.SaveFile));
             Paths.Init();
-
-            Localization.SetupTHETRUEDefaultLocals();
             SkinEngine.Init();
+            Localization.SetupTHETRUEDefaultLocals();
             Random rnd = new Random();
             int loadingJoke1 = rnd.Next(10);
             int loadingJoke2 = rnd.Next(11);

@@ -10,13 +10,20 @@ using Plex.Engine;
 using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
-using static Plex.Engine.SkinEngine;
 
 
 namespace Plex.Frontend.Desktop
 {
     public class Desktop : GUI.TextControl, IDesktop
     {
+        public PlexSkin LoadedSkin
+        {
+            get
+            {
+                return (PlexSkin)SkinEngine.LoadedSkin;
+            }
+        }
+
         bool alOpen = false;
         int alX = 0;
         int alY = 0;

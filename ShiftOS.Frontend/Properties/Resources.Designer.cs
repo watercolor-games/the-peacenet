@@ -61,6 +61,16 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] arnix {
+            get {
+                object obj = ResourceManager.GetObject("arnix", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///	Name: &quot;Cowsay Banana Cowfile&quot;,
         ///	Description: &quot;It&apos;s fun to play with food. Especially in the form of a cowfile. This install file adds a Banana to Cowsay&apos;s cowfile list. To use it, simply do \&quot;cowsay --id Hello --file banana\&quot;.&quot;,
@@ -492,25 +502,7 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [
-        ///	{
-        ///		Name: &quot;sploitset_keepalive&quot;,
-        ///		Cost: 1000000000,
-        ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
-        ///		Dependencies: &quot;thisupgradeshouldneverexistever;sploitset_sshardline&quot;,
-        ///	},
-        ///	{
-        ///		Name: &quot;sploitset_sshardline&quot;,
-        ///		Cost: 1000000000,
-        ///		Description: &quot;lolyouarentsupposedtobeabletobuythis&quot;,
-        ///		Dependencies: &quot;thisupgradeshouldneverexistever&quot;,
-        ///	},
-        ///	{
-        ///		Name: &quot;Pong&quot;,
-        ///		Cost: 0,
-        ///		Dependencies: &quot;pong&quot;,
-        ///	}
-        ///].
+        ///   Looks up a localized string similar to [].
         /// </summary>
         internal static string Shiftorium {
             get {

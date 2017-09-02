@@ -187,6 +187,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             {
                 using (var gfx = System.Drawing.Graphics.FromImage(bmp))
                 {
+                    gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
                         TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);

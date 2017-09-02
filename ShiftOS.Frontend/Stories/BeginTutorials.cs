@@ -140,6 +140,14 @@ namespace Plex.Frontend.Stories
             TerminalBackend.PrintPrompt();
         }
         
+        public static PlexSkin LoadedSkin
+        {
+            get
+            {
+                return (PlexSkin)SkinEngine.LoadedSkin;
+            }
+        }
+
         [Mission("gcc", "GUI Crash Course", "Welcome to the Plexgate Desktop. Now, it's time to learn how to use it.", 450, "plexkrnl")]
         [RequiresUpgrade("tutorial1")]
         public static void GUICrashCourse()
@@ -168,13 +176,13 @@ namespace Plex.Frontend.Stories
                {
                    var now = DateTime.Now.TimeOfDay;
                    var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - {SaveSystem.CurrentSave.SystemName}";
-                   var dtmeasure = GraphicsContext.MeasureString(newDateTimeString, SkinEngine.LoadedSkin.DesktopPanelClockFont);
-                   int dp_height = SkinEngine.LoadedSkin.DesktopPanelHeight;
-                   int dp_start = (UIManager.Viewport.Height - dp_height) * SkinEngine.LoadedSkin.DesktopPanelPosition;
-                   int al_left = SkinEngine.LoadedSkin.AppLauncherFromLeft.X;
-                   int al_width = SkinEngine.LoadedSkin.AppLauncherHolderSize.Width;
+                   var dtmeasure = GraphicsContext.MeasureString(newDateTimeString, LoadedSkin.DesktopPanelClockFont);
+                   int dp_height = LoadedSkin.DesktopPanelHeight;
+                   int dp_start = (UIManager.Viewport.Height - dp_height) * LoadedSkin.DesktopPanelPosition;
+                   int al_left = LoadedSkin.AppLauncherFromLeft.X;
+                   int al_width = LoadedSkin.AppLauncherHolderSize.Width;
                    int dp_width = UIManager.Viewport.Width;
-                   int pc_left = dp_width - SkinEngine.LoadedSkin.DesktopPanelClockFromRight.X - (int)dtmeasure.X;
+                   int pc_left = dp_width - LoadedSkin.DesktopPanelClockFromRight.X - (int)dtmeasure.X;
                    int pc_width = dp_width - pc_left;
                    int pb_width = dp_width - al_width - pc_width;
                    int pb_left = al_width;
@@ -190,7 +198,7 @@ namespace Plex.Frontend.Stories
                                     int al_container_height = ((Engine.Desktop.CurrentDesktop as Desktop.Desktop).LauncherItems.Count * al_item_to_click.Height) + 2;
                                     int al_item_width = al_item_to_click.Width;
                                     int al_item_height = al_item_to_click.Height;
-                                    int al_c_y = (SkinEngine.LoadedSkin.DesktopPanelPosition == 0) ? dp_start + dp_height : 720 - dp_height - al_container_height;
+                                    int al_c_y = (LoadedSkin.DesktopPanelPosition == 0) ? dp_start + dp_height : 720 - dp_height - al_container_height;
                                     UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(al_item_to_click.X+1, al_c_y + al_item_to_click.Y+1, al_item_width-2, al_item_height), "You just opened your Launcher... I guess that was a bug with my tutorial overlay...it's not REALLY supposed to send click events directly to Plexgate...\r\n\r\nAhh well, I guess while you're here we might as well go over the System Status window. Go ahead and click here to open it.", () =>
                                     {
                                         var sstatus = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Apps.SystemStatus) as Desktop.WindowBorder;

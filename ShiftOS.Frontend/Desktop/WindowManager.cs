@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
-using static Plex.Engine.SkinEngine;
+
 
 namespace Plex.Frontend.Desktop
 {
     public static class PlexWindowExtensions
     {
-        public static bool IsSidePanel(this IWindowBorder border)
+public static bool IsSidePanel(this IWindowBorder border)
         {
             var win = border.ParentWindow.GetType();
             var attr = win.GetCustomAttributes(false).FirstOrDefault(x => x is SidePanel);
@@ -26,6 +26,14 @@ namespace Plex.Frontend.Desktop
 
     public class WindowManager : Engine.WindowManager
     {
+        public PlexSkin LoadedSkin
+        {
+            get
+            {
+                return (PlexSkin)SkinEngine.LoadedSkin;
+            }
+        }
+
         public int DesktopStart
         {
             get
@@ -141,6 +149,15 @@ namespace Plex.Frontend.Desktop
 
     public class WindowBorder : GUI.TextControl, IWindowBorder
     {
+        public PlexSkin LoadedSkin
+        {
+            get
+            {
+                return (PlexSkin)SkinEngine.LoadedSkin;
+            }
+        }
+
+
         private string _text = "Plex window";
         private GUI.Control _hostedwindow = null;
 
@@ -196,7 +213,7 @@ namespace Plex.Frontend.Desktop
                     }
                     _mouseXLast = screenpos.X;
                     _mouseYLast = screenpos.Y;
-                    Microsoft.Xna.Framework.Input.Mouse.SetPosition(MathHelper.Clamp(screenpos.X, X+5, X + (Width-10)), MathHelper.Clamp(screenpos.Y, Y+5, Y + (SkinEngine.LoadedSkin.TitlebarHeight-10)));
+                    Microsoft.Xna.Framework.Input.Mouse.SetPosition(MathHelper.Clamp(screenpos.X, X+5, X + (Width-10)), MathHelper.Clamp(screenpos.Y, Y+5, Y + (LoadedSkin.TitlebarHeight-10)));
                 }
                 else
                 {
@@ -468,7 +485,7 @@ namespace Plex.Frontend.Desktop
 
         public override void MouseStateChanged()
         {
-            moving = (MouseLeftDown && MouseY >= 0 && MouseY <= SkinEngine.LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
+            moving = (MouseLeftDown && MouseY >= 0 && MouseY <= LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
             if(moving == false)
             {
                 _mouseXLast = int.MinValue;

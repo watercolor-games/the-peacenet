@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Plex.Engine;
@@ -18,6 +19,8 @@ namespace Plex.Frontend
         [STAThread]
         static void Main()
         {
+            SkinEngine.SetSkinProvider(new PlexSkinProvider());
+
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
             FileSkimmerBackend.Init(new MGFSLayer());
@@ -58,11 +61,24 @@ namespace Plex.Frontend
                     //Create a main menu
                     var mm = new MainMenu();
                     UIManager.AddTopLevel(mm);
-
                 };
                 game.Run();
             }
             ServerThread.Abort();
+        }
+    }
+
+    public class PlexSkinProvider : ISkinProvider
+    {
+        public Skin GetDefaultSkin()
+        {
+            //todo: material design skin
+            return JsonConvert.DeserializeObject<PlexSkin>(Encoding.UTF8.GetString(Properties.Resources.arnix));
+        }
+
+        public Skin ReadSkin(string pfsPath)
+        {
+            return JsonConvert.DeserializeObject<PlexSkin>(Objects.ShiftFS.Utils.ReadAllText(pfsPath));
         }
     }
 
