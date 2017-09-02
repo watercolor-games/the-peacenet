@@ -34,6 +34,18 @@ namespace Plex.Engine
     {
         public static SessionInfo SessionInfo { get; internal set; }
 
+        [ClientMessageHandler("server_banned")]
+        public static void BannedHandler(string content, string ip)
+        {
+            Disconnect(DisconnectType.Error, "You have been banned from this server and can't connect to it.");
+        }
+
+        [ClientMessageHandler("server_shutdown")]
+        public static void MaintenanceHandler(string content, string ip)
+        {
+            Disconnect(DisconnectType.Error, "This server has been shut down by its administrator for maintenance.");
+        }
+
 
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")

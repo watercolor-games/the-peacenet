@@ -518,28 +518,6 @@ There are no missions available for you to complete. Please check back later for
             }
         }
 
-        [MetaCommand]
-        [Command("help", "", "{DESC_COMMANDS}")]
-        public static bool Commands()
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("{GEN_COMMANDS}");
-            sb.AppendLine("=================");
-            sb.AppendLine();
-            //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell() == true).OrderBy(x => x.CommandInfo.name))
-            {
-                sb.Append(" - " + n.CommandInfo.name);
-                if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
-                    if (Upgrades.UpgradeInstalled("help_description"))
-                        sb.Append(" - " + n.CommandInfo.description);
-                sb.AppendLine();
-            }
-
-            Console.WriteLine(sb.ToString());
-
-            return true;
-        }
 
 
 

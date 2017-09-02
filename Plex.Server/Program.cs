@@ -9,13 +9,15 @@ using Plex.Objects;
 using Newtonsoft.Json;
 using System.Reflection;
 using Plex.Engine;
+using System.IO;
 
 namespace Plex.Server
 {
     public class Program
     {
         private static UdpClient _server = null;
-        internal static bool IsMultiplayerServer = false;
+        internal static bool IsMultiplayerServer = true;
+        public static List<string> BannedIPs = new List<string>();
 
         public static void SendMessage(PlexServerHeader header)
         {
@@ -43,6 +45,108 @@ namespace Plex.Server
 
         public static void Main(string[] args)
         {
+            if (!IsMultiplayerServer)
+            {
+                ServerLoop();
+            }
+            else
+            {
+                Console.SetOut(new LocalizedTextWriter());
+                Console.WriteLine("<plexsrv> Starting server...");
+                var t = new System.Threading.Thread(ServerLoop);
+                t.Start();
+                Localization.RegisterProvider(new ServerLanguageProvider());
+                Console.WriteLine("Server thread running and listening for requests.");
+                Console.WriteLine("Reading banned IP addresses...");
+                if (System.IO.File.Exists("banned-ips.json"))
+                {
+                    BannedIPs = JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText("banned-ips.json"));
+                }
+                Console.WriteLine("{0} IP addresses have been banned.", BannedIPs.Count);
+                Console.WriteLine("Starting server shell. Type 'help' for a list of commands.");
+                TerminalBackend.PopulateTerminalCommands();
+                while (true)
+                {
+                    TerminalBackend.PrefixEnabled = false;
+                    TerminalBackend.InStory = false;
+                    Console.Write("> ");
+                    string cmd = Console.ReadLine();
+                    if(cmd == "exit")
+                    {
+                        Broadcast(new PlexServerHeader
+                        {
+                            Message = "server_shutdown",
+                            SessionID = "",
+                            IPForwardedBy = "",
+                            Content = ""
+                        });
+                        Console.WriteLine("<plexsrv> Broadcasting shutdown message to connected clients... waiting 5 seconds before closing.");
+                        System.Threading.Thread.Sleep(5000);
+                        Environment.Exit(-1);
+                    }
+                    else
+                    {
+                        var parsed = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(cmd);
+                        TerminalBackend.InvokeCommand(parsed.Key, parsed.Value);
+                    }
+                }
+            }
+
+        }
+
+        public class ServerLanguageProvider : ILanguageProvider
+        {
+            public string[] GetAllLanguages()
+            {
+                return new string[] { "server" };
+            }
+
+            public string GetCurrentTranscript()
+            {
+                WriteDefaultTranscript();
+                return File.ReadAllText("server.lang");
+            }
+
+            public List<string> GetJSONTranscripts()
+            {
+                return new List<string> { "server.lang" };
+            }
+
+            public void WriteDefaultTranscript()
+            {
+                File.WriteAllText("server.lang", Properties.Resources.server_lang);
+            }
+
+            public void WriteTranscript()
+            {
+                File.WriteAllText("server.lang", Properties.Resources.server_lang);
+            }
+        }
+
+        [Command("banip")]
+        [RequiresArgument("id")]
+        public static void BanIP(Dictionary<string, object> args)
+        {
+            string ip = args["id"].ToString();
+            if (BannedIPs.Contains(ip))
+            {
+                Console.WriteLine("This IP address is already banned.");
+                return;
+            }
+            IPAddress _ban = null;
+            if(IPAddress.TryParse(ip, out _ban) == false)
+            {
+                Console.WriteLine("Parse error: Input is not a valid IP address.");
+                return;
+            }
+
+            BannedIPs.Add(ip);
+            System.IO.File.WriteAllText("banned-ips.json", JsonConvert.SerializeObject(BannedIPs, Formatting.Indented));
+            Console.WriteLine("The IP address {0} has been banned. Any attempts to query the server from this address will result in a 'server_banned' result. Banlist saved.");
+        }
+
+        public static void ServerLoop()
+        {
             _server = new UdpClient();
             var _ipEP = new IPEndPoint(IPAddress.Any, 62252);
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -53,8 +157,19 @@ namespace Plex.Server
                 _ipEP = new IPEndPoint(IPAddress.Any, 62252);
                 var receive = _server.Receive(ref _ipEP);
                 _port = _ipEP.Port;
+                if (BannedIPs.Contains(_ipEP.Address.ToString()))
+                {
+                    SendMessage(new PlexServerHeader
+                    {
+                        IPForwardedBy = _ipEP.Address.ToString(),
+                        Message = "server_banned",
+                        SessionID = "",
+                        Content = ""
+                    });
+                    continue;
+                }
                 string data = Encoding.UTF8.GetString(receive);
-                if(data == "heart")
+                if (data == "heart")
                 {
                     var beat = Encoding.UTF8.GetBytes("beat");
                     _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
@@ -72,6 +187,49 @@ namespace Plex.Server
                         header.IPForwardedBy = _ipEP.Address.ToString();
                     ServerManager.HandleMessage(header);
                 }
+            }
+
+        }
+
+        public class LocalizedTextWriter : System.IO.TextWriter
+        {
+            public override Encoding Encoding
+            {
+                get
+                {
+                    return Encoding.ASCII;
+                }
+            }
+
+            public override void Write(string value)
+            {
+                string localized = Localization.Parse(value);
+                Reset();
+                Console.Write(localized);
+                Console.SetOut(this);
+            }
+
+            public override void WriteLine()
+            {
+                Reset();
+                Console.WriteLine();
+                Console.SetOut(this);
+            }
+
+            public void Reset()
+            {
+                StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
+                standardOutput.AutoFlush = true;
+                Console.SetOut(standardOutput);
+
+            }
+
+            public override void WriteLine(string value)
+            {
+                string localized = Localization.Parse(value);
+                Reset();
+                Console.WriteLine(localized);
+                Console.SetOut(this);
             }
         }
     }
