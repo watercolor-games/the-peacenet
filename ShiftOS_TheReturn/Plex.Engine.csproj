@@ -171,6 +171,7 @@
     <Compile Include="GUI\ListView.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
+    <Compile Include="GUI\ScrollBar.cs" />
     <Compile Include="GUI\TextControl.cs" />
     <Compile Include="GUI\TextInput.cs" />
     <Compile Include="Hacking.cs" />

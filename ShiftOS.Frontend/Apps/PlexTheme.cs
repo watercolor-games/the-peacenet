@@ -29,8 +29,7 @@ namespace Plex.Frontend.Apps
         public TextControl Title = new TextControl();
         public Button BackButton = new Button();
         private List<PropertyUI> Properties = new List<PropertyUI>();
-        private int _scrollValue = 0;
-        private int _scrollMax = 0;
+        private ScrollBar _scrollBar = new ScrollBar();
 
         public class SettingGroup
         {
@@ -45,7 +44,7 @@ namespace Plex.Frontend.Apps
 
         protected override void OnMouseScroll(int value)
         {
-            _scrollValue = MathHelper.Clamp(_scrollValue - value, 0, _scrollMax - Height);
+            _scrollBar.Value -= (value / 2);
         }
 
         public class PropertyUI
@@ -72,6 +71,7 @@ namespace Plex.Frontend.Apps
 
         public PlexTheme()
         {
+            _scrollBar.Position = ScrollbarPosition.VerticalRight;
             UIState = GetHashCode().ToString();
             AddControl(BackButton);
             BackButton.Click += () =>
@@ -80,15 +80,17 @@ namespace Plex.Frontend.Apps
             };
             AddControl(Title);
             Title.AutoSize = true;
+            AddControl(_scrollBar);
         }
 
         protected override void OnLayout(GameTime gameTime)
         {
             try
             {
+                int width = Width - _scrollBar.Width;
                 Title.Font = SkinEngine.LoadedSkin.HeaderFont;
                 Title.X = 15;
-                Title.Y = 15 - _scrollValue;
+                Title.Y = 15 - _scrollBar.Value;
                 Title.AutoSize = true;
 
                 int current_y = (Title.Y + Title.Height + 20);
@@ -99,15 +101,14 @@ namespace Plex.Frontend.Apps
                     BackButton.Visible = false;
                     foreach (var group in groups)
                     {
-                        group.Title.Y = current_y - _scrollValue;
+                        group.Title.Y = current_y - _scrollBar.Value;
                         group.Title.X = 15;
                         group.Title.Font = SkinEngine.LoadedSkin.Header3Font;
                         current_y += group.Title.Height + 10;
-                        group.ListView.Y = current_y - _scrollValue;
+                        group.ListView.Y = current_y - _scrollBar.Value;
                         group.ListView.X = 15;
-                        group.ListView.MaxWidth = Width - 30;
+                        group.ListView.MaxWidth = width - 30;
                         current_y += group.ListView.Height + 15;
-                        _scrollMax = current_y;
                     }
                 }
                 else if(UIState == "ShowSettings")
@@ -121,24 +122,23 @@ namespace Plex.Frontend.Apps
                     Title.Text = CurrentSettingGroup.Title;
                     foreach(var property in Properties)
                     {
-                        property.Name.Y = current_y - _scrollValue;
+                        property.Name.Y = current_y - _scrollBar.Value;
                         property.Name.Font = SkinEngine.LoadedSkin.Header3Font;
                         property.Name.AutoSize = true;
                         property.Name.X = 15;
-                        property.Value.Y = current_y - _scrollValue;
-                        property.Value.X = (Width - property.Value.Width) - 30;
+                        property.Value.Y = current_y - _scrollBar.Value;
+                        property.Value.X = (width - property.Value.Width) - 30;
                         property.Name.MaxWidth = (property.Value.X) - 30;
                         current_y += Math.Max(property.Name.Height, property.Value.Height) + 10;
                         property.Description.X = 15;
-                        property.Description.Y = current_y - _scrollValue;
+                        property.Description.Y = current_y - _scrollBar.Value;
                         property.Description.Font = SkinEngine.LoadedSkin.MainFont;
                         property.Description.AutoSize = true;
-                        property.Description.MaxWidth = Width - 30;
+                        property.Description.MaxWidth = width - 30;
                         current_y += property.Description.Height + 15;
-                        _scrollMax = current_y;
                     }
                 }
-                _scrollValue = MathHelper.Clamp(_scrollValue, 0, _scrollMax - Height);
+                _scrollBar.Maximum = Math.Max(Height, current_y);
             }
             catch { }
         }
@@ -278,6 +278,7 @@ namespace Plex.Frontend.Apps
                     });
                 }
             }
+            AddControl(_scrollBar);
         }
 
         public void ResetMetaListing()
