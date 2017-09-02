@@ -178,7 +178,6 @@ namespace Plex.Frontend.Desktop
             Y = 480;
             MouseMove += (pt) =>
             {
-                bool moving = (MouseLeftDown == true && MouseY >= 0 && MouseY <= SkinEngine.LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
                 if (moving)
                 {
                     var screenpos = PointToScreen(MouseX, MouseY);
@@ -187,14 +186,17 @@ namespace Plex.Frontend.Desktop
                     if (_mouseYLast == int.MinValue)
                         _mouseYLast = screenpos.Y;
                     int diff_x = screenpos.X - _mouseXLast;
-
+                    
                     int diff_y = screenpos.Y - _mouseYLast;
                     if (diff_x != 0)
                         X += diff_x;
                     if (diff_y != 0)
+                    {
                         Y += diff_y;
+                    }
                     _mouseXLast = screenpos.X;
                     _mouseYLast = screenpos.Y;
+                    Microsoft.Xna.Framework.Input.Mouse.SetPosition(MathHelper.Clamp(screenpos.X, X+5, X + (Width-10)), MathHelper.Clamp(screenpos.Y, Y+5, Y + (SkinEngine.LoadedSkin.TitlebarHeight-10)));
                 }
                 else
                 {
@@ -204,6 +206,8 @@ namespace Plex.Frontend.Desktop
 
             };
         }
+
+        private bool moving = false;
 
         public IPlexWindow ParentWindow
         {
@@ -464,6 +468,12 @@ namespace Plex.Frontend.Desktop
 
         public override void MouseStateChanged()
         {
+            moving = (MouseLeftDown && MouseY >= 0 && MouseY <= SkinEngine.LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
+            if(moving == false)
+            {
+                _mouseXLast = int.MinValue;
+                _mouseYLast = int.MinValue;
+            }
             base.MouseStateChanged();
         }
     }

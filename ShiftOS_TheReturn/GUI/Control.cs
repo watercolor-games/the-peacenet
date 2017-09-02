@@ -438,6 +438,12 @@ namespace Plex.Frontend.GUI
             }
         }
 
+        private bool _mouseHandled = false;
+        public void MouseHandled()
+        {
+            _mouseHandled = true;
+        }
+
         public Point PointToParent(int x, int y)
         {
             return new Point(x + _x, y + _y);
@@ -624,7 +630,7 @@ namespace Plex.Frontend.GUI
             if (_visible == false)
                 return false;
 
-
+            _mouseHandled = false;
             //Firstly, we get the mouse coordinates in the local space
             var coords = PointToLocal(state.Position.X, state.Position.Y);
             _mouseX = coords.X;
@@ -633,7 +639,12 @@ namespace Plex.Frontend.GUI
             if(coords.X >= 0 && coords.Y >= 0 && coords.X <= _w && coords.Y <= _h)
             {
                 //We're in the local space. Let's fire the MouseMove event.
-                MouseMove?.Invoke(coords);
+                if (IsFocusedControl)
+                {
+                    MouseMove?.Invoke(coords);
+                    if (_mouseHandled)
+                        return true;
+                }
                 //Also, if the mouse hasn't been in the local space last time it moved, fire MouseEnter.
                 if(_wasMouseInControl == false)
                 {
