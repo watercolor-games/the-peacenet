@@ -104,11 +104,11 @@ namespace Plex.Frontend.Apps
                         group.Title.Y = current_y - _scrollBar.Value;
                         group.Title.X = 15;
                         group.Title.Font = SkinEngine.LoadedSkin.Header3Font;
-                        current_y += group.Title.Height + 10;
+                        current_y += group.Title.Height + 5;
                         group.ListView.Y = current_y - _scrollBar.Value;
                         group.ListView.X = 15;
                         group.ListView.MaxWidth = width - 30;
-                        current_y += group.ListView.Height + 15;
+                        current_y += group.ListView.Height + 10;
                     }
                 }
                 else if(UIState == "ShowSettings")
