@@ -287,7 +287,7 @@ For internal use only.";
         {
             MouseTexture = null;
 
-            ServerThread.Abort();
+            ServerThread?.Abort();
             // TODO: Unload any non ContentManager content here
         }
         

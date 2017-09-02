@@ -29,6 +29,8 @@ namespace Plex.Frontend.Apps
         public TextControl Title = new TextControl();
         public Button BackButton = new Button();
         private List<PropertyUI> Properties = new List<PropertyUI>();
+        private int _scrollValue = 0;
+        private int _scrollMax = 0;
 
         public class SettingGroup
         {
@@ -39,6 +41,11 @@ namespace Plex.Frontend.Apps
             {
                 Properties = new List<Property>();
             }
+        }
+
+        protected override void OnMouseScroll(int value)
+        {
+            _scrollValue = MathHelper.Clamp(_scrollValue - value, 0, _scrollMax - Height);
         }
 
         public class PropertyUI
@@ -81,10 +88,10 @@ namespace Plex.Frontend.Apps
             {
                 Title.Font = SkinEngine.LoadedSkin.HeaderFont;
                 Title.X = 15;
-                Title.Y = 15;
+                Title.Y = 15 - _scrollValue;
                 Title.AutoSize = true;
 
-                int current_y = Title.Y + Title.Height + 20;
+                int current_y = (Title.Y + Title.Height + 20);
 
                 if (UIState == this.GetHashCode().ToString())
                 {
@@ -92,14 +99,15 @@ namespace Plex.Frontend.Apps
                     BackButton.Visible = false;
                     foreach (var group in groups)
                     {
-                        group.Title.Y = current_y;
+                        group.Title.Y = current_y - _scrollValue;
                         group.Title.X = 15;
                         group.Title.Font = SkinEngine.LoadedSkin.Header3Font;
                         current_y += group.Title.Height + 10;
-                        group.ListView.Y = current_y;
+                        group.ListView.Y = current_y - _scrollValue;
                         group.ListView.X = 15;
                         group.ListView.MaxWidth = Width - 30;
                         current_y += group.ListView.Height + 15;
+                        _scrollMax = current_y;
                     }
                 }
                 else if(UIState == "ShowSettings")
@@ -113,23 +121,24 @@ namespace Plex.Frontend.Apps
                     Title.Text = CurrentSettingGroup.Title;
                     foreach(var property in Properties)
                     {
-                        property.Name.Y = current_y;
+                        property.Name.Y = current_y - _scrollValue;
                         property.Name.Font = SkinEngine.LoadedSkin.Header3Font;
                         property.Name.AutoSize = true;
                         property.Name.X = 15;
-                        property.Value.Y = current_y;
+                        property.Value.Y = current_y - _scrollValue;
                         property.Value.X = (Width - property.Value.Width) - 30;
                         property.Name.MaxWidth = (property.Value.X) - 30;
                         current_y += Math.Max(property.Name.Height, property.Value.Height) + 10;
                         property.Description.X = 15;
-                        property.Description.Y = current_y;
+                        property.Description.Y = current_y - _scrollValue;
                         property.Description.Font = SkinEngine.LoadedSkin.MainFont;
                         property.Description.AutoSize = true;
                         property.Description.MaxWidth = Width - 30;
                         current_y += property.Description.Height + 15;
+                        _scrollMax = current_y;
                     }
                 }
-            
+                _scrollValue = MathHelper.Clamp(_scrollValue, 0, _scrollMax - Height);
             }
             catch { }
         }
