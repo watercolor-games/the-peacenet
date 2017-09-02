@@ -183,6 +183,18 @@ namespace Plex.Frontend.Apps
                         };
                         value = btn;
                     }
+                    if(property.Field.FieldType == typeof(bool))
+                    {
+                        var checker = new CheckBox();
+                        checker.Checked = (bool)property.Field.GetValue(_skin);
+                        checker.CheckedChanged += () =>
+                        {
+                            property.Field.SetValue(_skin, checker.Checked);
+                        };
+                        checker.Width = 16;
+                        checker.Height = 16;
+                        value = checker;
+                    }
                     if (property.Field.FieldType == typeof(System.Drawing.Font))
                     {
                         var btn = new Button();

@@ -14,8 +14,8 @@ namespace Plex.Frontend.GUI
     {
         public CheckBox()
         {
-            Width = 24;
-            Height = 24;
+            Width = 16;
+            Height = 16;
             Click += () =>
             {
                 Checked = !_checked;
@@ -43,15 +43,14 @@ namespace Plex.Frontend.GUI
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
+            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
             if (_checked)
             {
-                gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlTextColor"]);
-            }
-            else
-            {
-                gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
+                gfx.DrawLine(4, 4, Width-4, Height-4, 1, UIManager.SkinTextures["ControlTextColor"]);
+                gfx.DrawLine(Width-4, 4, 4, Height - 4, 1, UIManager.SkinTextures["ControlTextColor"]);
 
             }
+
         }
 
         public event Action CheckedChanged;
