@@ -44,7 +44,10 @@ namespace Plex.Frontend.Apps
 
         protected override void OnMouseScroll(int value)
         {
-            _scrollBar.Value -= (value / 2);
+            if (value < 0)
+                _scrollBar.Value += 32;
+            else if (value > 0)
+                _scrollBar.Value -= 32;
         }
 
         public class PropertyUI

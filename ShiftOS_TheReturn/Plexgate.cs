@@ -104,8 +104,8 @@ namespace Plex.Frontend
                 UIManager.InvalidateAll();
             };
             UIManager.Viewport = new System.Drawing.Size(
-                    1280,
-                    720
+                    uconf.ScreenWidth,
+                    uconf.ScreenHeight
                 );
 
             Content.RootDirectory = "Content";
@@ -132,13 +132,6 @@ namespace Plex.Frontend
             DebugText.Visible = true;
             DebugText.AutoSize = true;
             UIManager.AddHUD(DebugText);
-            UIManager.AddHUD(Watermark);
-            Watermark.AutoSize = true;
-            Watermark.Text = $@"Project: Plex
-Copyright (c) {DateTime.Now.Year} Watercolor Games
-For internal use only.";
-            Watermark.Opacity = 0.75;
-            Watermark.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 16F, System.Drawing.FontStyle.Bold);
 #endif
 
             UIManager.AddHUD(SystemError);
@@ -260,7 +253,7 @@ For internal use only.";
         /// </summary>
         protected override void LoadContent()
         {
-            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, 1280, 720);
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
@@ -366,37 +359,39 @@ For internal use only.";
                     var action = UIManager.CrossThreadOperations.Dequeue();
                     action?.Invoke();
                 }
-
-                //Let's get the mouse state
-                var mouseState = Mouse.GetState(this.Window);
-                int x = (int)GUI.ProgressBar.linear(mouseState.X, 0, graphicsDevice.PreferredBackBufferWidth, 0, 1280);
-                int y = (int)GUI.ProgressBar.linear(mouseState.Y, 0, graphicsDevice.PreferredBackBufferHeight, 0, 720);
-                bool prc = true;
-                bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
-                LastMouseState = new MouseState(x, y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
-                if (IsInTutorial)
+                if (IsActive)
                 {
-                    if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
-                        prc = false;
-                }
-                if (prc == true)
-                {
-
-                    UIManager.ProcessMouseState(LastMouseState, mouseMS);
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    //Let's get the mouse state
+                    var mouseState = Mouse.GetState(this.Window);
+                    bool prc = true;
+                    int x = mouseState.X;
+                    int y = mouseState.Y;
+                    bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
+                    LastMouseState = new MouseState(mouseState.X, mouseState.Y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
+                    if (IsInTutorial)
                     {
-                        mouseMS = 0;
-                        if (IsInTutorial && lastclicked == false)
+                        if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
+                            prc = false;
+                    }
+                    if (prc == true)
+                    {
+
+                        UIManager.ProcessMouseState(LastMouseState, mouseMS);
+                        if (mouseState.LeftButton == ButtonState.Pressed)
                         {
-                            IsInTutorial = false;
-                            TutorialOverlayCompleted?.Invoke();
+                            mouseMS = 0;
+                            if (IsInTutorial && lastclicked == false)
+                            {
+                                IsInTutorial = false;
+                                TutorialOverlayCompleted?.Invoke();
+
+                            }
+                        }
+                        else
+                        {
+                            mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
 
                         }
-                    }
-                    else
-                    {
-                        mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-
                     }
                 }
                 //So we have mouse input, and the UI layout system working...

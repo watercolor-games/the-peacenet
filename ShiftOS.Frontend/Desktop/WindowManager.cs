@@ -44,7 +44,6 @@ namespace Plex.Frontend.Desktop
                 if (AppearanceManager.OpenForms.Contains(brdr))
                 {
                     AppearanceManager.OpenForms.Remove(brdr);
-                    TileWindows();
                     Engine.Desktop.ResetPanelButtons();
                 }
                 win = null;
@@ -110,13 +109,7 @@ namespace Plex.Frontend.Desktop
         {
             get
             {
-                if (Upgrades.UpgradeInstalled("wm_unlimited_windows"))
-                    return int.MaxValue;
-                if (Upgrades.UpgradeInstalled("wm_4_windows"))
-                    return 4;
-                if (Upgrades.UpgradeInstalled("wm_2_windows"))
-                    return 2;
-                return 1;
+                return 0;
             }
         }
 
@@ -127,65 +120,23 @@ namespace Plex.Frontend.Desktop
                 Console.WriteLine("Application not found on system.");
                 return;
             }
-            while (AppearanceManager.OpenForms.Where(x => !x.IsSidePanel()).Count() >= MaxCount)
-            {
-                var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
-                if (brdr != null)
-                {
-                    brdr.Close();
-                    AppearanceManager.OpenForms.Remove(brdr);
-                }
-
-            }
-
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
             wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
             wb.ParentWindow = win;
             wb.IsDialog = true;
+            wb.X = (UIManager.Viewport.Width - wb.Width) / 2;
+            wb.Y = (UIManager.Viewport.Height - wb.Height) / 2;
+
             UIManager.AddTopLevel(wb);
             AppearanceManager.OpenForms.Add(wb);
             RunningBorders.Add(wb);
-            TileWindows();
             win.OnLoad();
             win.OnUpgrade();
             win.OnSkinLoad();
         }
 
-        public void TileWindows()
-        {
-            try
-            {
-                if (AppearanceManager.OpenForms.Count == 0)
-                    return;
-                int start = 0;
-                var brdr = AppearanceManager.OpenForms.FirstOrDefault(x => x.IsSidePanel()) as WindowBorder;
-                if (brdr != null)
-                {
-                    brdr.X = 0;
-                    brdr.Y = DesktopStart;
-                    brdr.ResizeWindow(UIManager.Viewport.Width / 4, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
-                    start = UIManager.Viewport.Width / 4;
-                }
-
-
-                var wb = (WindowBorder)AppearanceManager.OpenForms.FirstOrDefault(x => !x.IsSidePanel());
-                if (wb != null)
-                {
-                    wb.X = start;
-                    wb.Y = DesktopStart;
-                    wb.ResizeWindow(UIManager.Viewport.Width - start, UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight);
-                }
-            }
-            catch(Exception ex)
-            {
-#if DEBUG
-                Debug.WriteLine("<engine> [WARN] Window management fucked up.");
-                Debug.WriteLine("<engine> [WARN] " + ex.ToString());
-#endif
-            }
-        }
     }
 
     public class WindowBorder : GUI.TextControl, IWindowBorder
@@ -206,6 +157,8 @@ namespace Plex.Frontend.Desktop
 
         }
 
+        
+
         public WindowBorder()
         {
             Click += () =>
@@ -223,6 +176,33 @@ namespace Plex.Frontend.Desktop
             };
             X = 720;
             Y = 480;
+            MouseMove += (pt) =>
+            {
+                bool moving = (MouseLeftDown == true && MouseY >= 0 && MouseY <= SkinEngine.LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
+                if (moving)
+                {
+                    var screenpos = PointToScreen(MouseX, MouseY);
+                    if (_mouseXLast == int.MinValue)
+                        _mouseXLast = screenpos.X;
+                    if (_mouseYLast == int.MinValue)
+                        _mouseYLast = screenpos.Y;
+                    int diff_x = screenpos.X - _mouseXLast;
+
+                    int diff_y = screenpos.Y - _mouseYLast;
+                    if (diff_x != 0)
+                        X += diff_x;
+                    if (diff_y != 0)
+                        Y += diff_y;
+                    _mouseXLast = screenpos.X;
+                    _mouseYLast = screenpos.Y;
+                }
+                else
+                {
+                    _mouseXLast = int.MinValue;
+                    _mouseYLast = int.MinValue;
+                }
+
+            };
         }
 
         public IPlexWindow ParentWindow
@@ -479,6 +459,13 @@ namespace Plex.Frontend.Desktop
             base.OnPaint(gfx, target);
         }
 
+        private int _mouseXLast = int.MinValue;
+        private int _mouseYLast = int.MinValue;
+
+        public override void MouseStateChanged()
+        {
+            base.MouseStateChanged();
+        }
     }
 
 

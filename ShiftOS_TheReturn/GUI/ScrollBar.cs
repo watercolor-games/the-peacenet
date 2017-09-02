@@ -131,11 +131,11 @@ namespace Plex.Frontend.GUI
             int scroll_pos = (int)ProgressBar.linear(_value, 0, _max - GetThumbSize(), 0, GetScrollDimension());
             if(GetScrollDimension() == Width)
             {
-                gfx.DrawRectangle(scroll_pos, 0, scroll_pos + scrollheight, Height, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+                gfx.DrawRectangle(scroll_pos, 0, scrollheight, Height, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
             }
             else
             {
-                gfx.DrawRectangle(0, scroll_pos, Width, scroll_pos + scrollheight, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
+                gfx.DrawRectangle(0, scroll_pos, Width, scrollheight, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor());
             }
         }
 
