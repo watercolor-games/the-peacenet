@@ -1,11 +1,198 @@
-using System;using System.Collections.Generic;using System.Drawing;using System.IO;using System.Linq;using System.Text;using System.Threading.Tasks;using Newtonsoft.Json;using System.Windows.Forms;using static Plex.Engine.SaveSystem;using Plex.Objects.ShiftFS;using System.Reflection;using Plex.Engine.Scripting;namespace Plex.Engine{    /// <summary>    /// Skinning API for Lua.    /// </summary>    [Exposed("skinning")]    public class SkinFunctions    {        /// <summary>        /// Reload the current skin.        /// </summary>        public void loadSkin()        {            SkinEngine.LoadSkin();        }        /// <summary>        /// Get the current skin info.        /// </summary>        /// <returns>A proxy object containing all skin variables.</returns>        public dynamic getSkin()        {            return SkinEngine.LoadedSkin;        }        /// <summary>        /// Set the current skin to the specified <see cref="Skin"/> class.         /// </summary>        /// <param name="skn">The <see cref="Skin"/> class to load.</param>        public void setSkin(Skin skn)        {            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(skn));            SkinEngine.LoadSkin();        }        /// <summary>        /// Retrieves an image from the skin file.        /// </summary>        /// <param name="id">The skin image ID</param>        /// <returns>The loaded image, null (nil in Lua) if none is found.</returns>        public dynamic getImage(string id)        {            return SkinEngine.GetImage(id);        }    }    public interface ISkinProvider
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Windows.Forms;
+using static Plex.Engine.SaveSystem;
+using Plex.Objects.ShiftFS;
+using System.Reflection;
+using Plex.Engine.Scripting;
+namespace Plex.Engine
+{
+    /// <summary>
+    /// Skinning API for Lua.
+    /// </summary>
+    [Exposed("skinning")]
+    public class SkinFunctions
+    {
+        /// <summary>
+        /// Reload the current skin.
+        /// </summary>
+        public void loadSkin()
+        {
+            SkinEngine.LoadSkin();
+        }
+
+        /// <summary>
+        /// Get the current skin info.
+        /// </summary>
+        /// <returns>A proxy object containing all skin variables.</returns>
+        public dynamic getSkin()
+        {
+            return SkinEngine.LoadedSkin;
+        }
+
+        /// <summary>
+        /// Set the current skin to the specified <see cref="Skin"/> class. 
+        /// </summary>
+        /// <param name="skn">The <see cref="Skin"/> class to load.</param>
+        public void setSkin(Skin skn)
+        {
+            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(skn));
+            SkinEngine.LoadSkin();
+        }
+
+        /// <summary>
+        /// Retrieves an image from the skin file.
+        /// </summary>
+        /// <param name="id">The skin image ID</param>
+        /// <returns>The loaded image, null (nil in Lua) if none is found.</returns>
+        public dynamic getImage(string id)
+        {
+            return SkinEngine.GetImage(id);
+        }
+    }
+
+    public interface ISkinProvider
     {
         Skin GetDefaultSkin();
         Skin ReadSkin(string pfsPath);
-    }    /// <summary>    /// Skin engine management class.    /// </summary>    public static class SkinEngine    {        private static ISkinProvider SkinProvider = null;        private static ISkinPostProcessor processor = null;        /// <summary>        /// Load a new skin postprocessor into the engine.        /// </summary>        /// <param name="_processor">The postprocessor to load.</param>        public static void SetPostProcessor(ISkinPostProcessor _processor)        {            processor = _processor;        }        /// <summary>        /// Retrieve the user-specified image layout of a skin image.        /// </summary>        /// <param name="img">The skin image ID.</param>        /// <returns>The <see cref="ImageLayout"/> for the image.</returns>        public static ImageLayout GetImageLayout(string img)        {            if (LoadedSkin.SkinImageLayouts.ContainsKey(img))            {                return LoadedSkin.SkinImageLayouts[img];            }            else            {                LoadedSkin.SkinImageLayouts.Add(img, ImageLayout.Tile);                return ImageLayout.Tile;            }        }        /// <summary>        /// Retrieves an image from the skin after postprocessing it.        /// </summary>        /// <param name="img">The image ID to search.</param>        /// <returns>The post-processed image, or null if none was found.</returns>        public static System.Drawing.Image GetImage(string img)        {            var type = LoadedSkin.GetType();            foreach (var field in type.GetFields())            {                foreach (var attr in field.GetCustomAttributes(false))                {                    if (attr is ImageAttribute)                    {                        var iattr = attr as ImageAttribute;                        if (iattr.Name == img)                        {                            byte[] image = (byte[])field.GetValue(LoadedSkin);                            if (processor != null)                                image = processor.ProcessImage(image);                            return ImageFromBinary(image);                        }                    }                }            }            return null;        }        /// <summary>        /// Set the engine's current icon prober.        /// </summary>        /// <param name="prober">The icon prober to use.</param>        public static void SetIconProber(IIconProber prober)        {            _iconProber = prober;        }        /// <summary>        /// Load a <see cref="Image"/> from a <see cref="byte"/> array.          /// </summary>        /// <param name="image">The array to convert</param>        /// <returns>The resulting image.</returns>        public static Image ImageFromBinary(byte[] image)        {            if (image == null)                return null;            Image img = (Bitmap)((new ImageConverter()).ConvertFrom(image));            return img;        }        private static Skin loadedSkin = null;        /// <summary>        /// Gets the currently loaded skin.        /// </summary>        public static Skin LoadedSkin        {            get            {                if (loadedSkin == null)                    Init();                return loadedSkin;            }            private set            {                loadedSkin = value;            }        }        public static void SetSkinProvider(ISkinProvider provider)
+    }
+
+    /// <summary>
+    /// Skin engine management class.
+    /// </summary>
+    public static class SkinEngine
+    {
+        private static ISkinProvider SkinProvider = null;
+        private static ISkinPostProcessor processor = null;
+
+        /// <summary>
+        /// Load a new skin postprocessor into the engine.
+        /// </summary>
+        /// <param name="_processor">The postprocessor to load.</param>
+        public static void SetPostProcessor(ISkinPostProcessor _processor)
+        {
+            processor = _processor;
+        }
+
+        /// <summary>
+        /// Retrieve the user-specified image layout of a skin image.
+        /// </summary>
+        /// <param name="img">The skin image ID.</param>
+        /// <returns>The <see cref="ImageLayout"/> for the image.</returns>
+        public static ImageLayout GetImageLayout(string img)
+        {
+            if (LoadedSkin.SkinImageLayouts.ContainsKey(img))
+            {
+                return LoadedSkin.SkinImageLayouts[img];
+            }
+            else
+            {
+                LoadedSkin.SkinImageLayouts.Add(img, ImageLayout.Tile);
+                return ImageLayout.Tile;
+            }
+        }
+
+        public static byte[] ImageToBinary(Image img)
+        {
+            using(var memstr = new MemoryStream())
+            {
+                img.Save(memstr, System.Drawing.Imaging.ImageFormat.Png);
+                return memstr.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves an image from the skin after postprocessing it.
+        /// </summary>
+        /// <param name="img">The image ID to search.</param>
+        /// <returns>The post-processed image, or null if none was found.</returns>
+        public static System.Drawing.Image GetImage(string img)
+        {
+            var type = LoadedSkin.GetType();
+
+            foreach (var field in type.GetFields())
+            {
+                foreach (var attr in field.GetCustomAttributes(false))
+                {
+                    if (attr is ImageAttribute)
+                    {
+                        var iattr = attr as ImageAttribute;
+                        if (iattr.Name == img)
+                        {
+                            byte[] image = (byte[])field.GetValue(LoadedSkin);
+                            if (processor != null)
+                                image = processor.ProcessImage(image);
+                            return ImageFromBinary(image);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Set the engine's current icon prober.
+        /// </summary>
+        /// <param name="prober">The icon prober to use.</param>
+        public static void SetIconProber(IIconProber prober)
+        {
+            _iconProber = prober;
+        }
+
+        /// <summary>
+        /// Load a <see cref="Image"/> from a <see cref="byte"/> array.  
+        /// </summary>
+        /// <param name="image">The array to convert</param>
+        /// <returns>The resulting image.</returns>
+        public static Image ImageFromBinary(byte[] image)
+        {
+            if (image == null)
+                return null;
+            Image img = (Bitmap)((new ImageConverter()).ConvertFrom(image));
+            return img;
+        }
+
+        private static Skin loadedSkin = null;
+
+        /// <summary>
+        /// Gets the currently loaded skin.
+        /// </summary>
+        public static Skin LoadedSkin
+        {
+            get
+            {
+                if (loadedSkin == null)
+                    Init();
+                return loadedSkin;
+            }
+            private set
+            {
+                loadedSkin = value;
+            }
+        }
+
+        public static void SetSkinProvider(ISkinProvider provider)
         {
             SkinProvider = provider;
-        }        /// <summary>        /// Initiates the skin engine.        /// </summary>        public static void Init()        {            Application.ApplicationExit += (o, a) =>            {                SaveSkin();            };            if (Utils.Mounts.Count > 0)
+        }
+
+        /// <summary>
+        /// Initiates the skin engine.
+        /// </summary>
+        public static void Init()
+        {
+            Application.ApplicationExit += (o, a) =>
+            {
+                SaveSkin();
+            };
+            if (Utils.Mounts.Count > 0)
             {
                 if (!Utils.FileExists(Paths.GetPath("themedata.plex")))
                 {
@@ -15,26 +202,155 @@ using System;using System.Collections.Generic;using System.Drawing;using Syst
                 else
                 {
                     LoadSkin();
-                }            }            else
+                }
+            }
+            else
             {
                 LoadedSkin = SkinProvider.GetDefaultSkin();
-            }            SkinLoaded?.Invoke();        }        public static void LoadDefaultSkin()
+            }
+            SkinLoaded?.Invoke();
+
+        }
+
+        public static void LoadDefaultSkin()
         {
             loadedSkin = SkinProvider.GetDefaultSkin();
             SaveSkin();
             SkinLoaded?.Invoke();
-        }        /// <summary>        /// Occurs when the skin is loaded.        /// </summary>        public static event EmptyEventHandler SkinLoaded;        /// <summary>        /// Reload the current skin.        /// </summary>        public static void LoadSkin()        {            LoadedSkin = SkinProvider.ReadSkin(Paths.GetPath("themedata.plex"));            SkinLoaded?.Invoke();            Desktop.ResetPanelButtons();            Desktop.PopulateAppLauncher();        }        /// <summary>        /// Save the skin loaded in memory to the filesystem.        /// </summary>        public static void SaveSkin()        {            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));        }        private static IIconProber _iconProber = null;        /// <summary>        /// Retrieves the default icon for a given icon ID.        /// </summary>        /// <param name="id">The icon ID to search.</param>        /// <returns>The resulting icon image.</returns>        public static Image GetDefaultIcon(string id)        {            if (_iconProber != null)            {                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.Name == id))                {                    var attr = Array.Find(type.GetCustomAttributes(true), a => a is DefaultIconAttribute);                    if (attr != null)                        return _iconProber.GetIcon(attr as DefaultIconAttribute);                }            }            return new Bitmap(16, 16);        }        /// <summary>        /// Retrieves the user-defined icon for a specified icon ID.        /// </summary>        /// <param name="id">The icon ID to search.</param>        /// <returns>The resulting icon image.</returns>        public static Image GetIcon(string id)        {            if (!LoadedSkin.AppIcons.ContainsKey(id))                LoadedSkin.AppIcons.Add(id, null);            if (LoadedSkin.AppIcons[id] == null)            {                var img = GetDefaultIcon(id);                using (var mstr = new MemoryStream())                {                    img.Save(mstr, System.Drawing.Imaging.ImageFormat.Png);                    LoadedSkin.AppIcons[id] = mstr.ToArray();                }                return img;            }            else            {                using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))                {                    return Image.FromStream(sr);                }            }        }
+        }
+
+        /// <summary>
+        /// Occurs when the skin is loaded.
+        /// </summary>
+        public static event EmptyEventHandler SkinLoaded;
+
+        /// <summary>
+        /// Reload the current skin.
+        /// </summary>
+        public static void LoadSkin()
+        {
+            LoadedSkin = SkinProvider.ReadSkin(Paths.GetPath("themedata.plex"));
+            SkinLoaded?.Invoke();
+            Desktop.ResetPanelButtons();
+            Desktop.PopulateAppLauncher();
+        }
+
+        /// <summary>
+        /// Save the skin loaded in memory to the filesystem.
+        /// </summary>
+        public static void SaveSkin()
+        {
+            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
+        }
+
+        private static IIconProber _iconProber = null;
+
+        /// <summary>
+        /// Retrieves the default icon for a given icon ID.
+        /// </summary>
+        /// <param name="id">The icon ID to search.</param>
+        /// <returns>The resulting icon image.</returns>
+        public static Image GetDefaultIcon(string id)
+        {
+            if (_iconProber != null)
+            {
+                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.Name == id))
+                {
+                    var attr = Array.Find(type.GetCustomAttributes(true), a => a is DefaultIconAttribute);
+                    if (attr != null)
+                        return _iconProber.GetIcon(attr as DefaultIconAttribute);
+                }
+            }
+            return new Bitmap(16, 16);
+        }
+
+        /// <summary>
+        /// Retrieves the user-defined icon for a specified icon ID.
+        /// </summary>
+        /// <param name="id">The icon ID to search.</param>
+        /// <returns>The resulting icon image.</returns>
+        public static Image GetIcon(string id)
+        {
+            if (!LoadedSkin.AppIcons.ContainsKey(id))
+                LoadedSkin.AppIcons.Add(id, null);
+
+            if (LoadedSkin.AppIcons[id] == null)
+            {
+                var img = GetDefaultIcon(id);
+                using (var mstr = new MemoryStream())
+                {
+                    img.Save(mstr, System.Drawing.Imaging.ImageFormat.Png);
+                    LoadedSkin.AppIcons[id] = mstr.ToArray();
+                }
+                return img;
+            }
+            else
+            {
+                using (var sr = new MemoryStream(LoadedSkin.AppIcons[id]))
+                {
+                    return Image.FromStream(sr);
+                }
+            }
+
+        }
 
         public static Skin GetDefaultSkin()
         {
             return SkinProvider.GetDefaultSkin();
         }
-    }    /// <summary>    /// Interface for probing app icons.    /// </summary>    public interface IIconProber    {        /// <summary>        /// Retrieve the icon image from a <see cref="DefaultIconAttribute"/>.         /// </summary>        /// <param name="attr">The attribute data</param>        /// <returns>The resulting image.</returns>        Image GetIcon(DefaultIconAttribute attr);    }    /// <summary>    /// Sets the default icon ID for a <see cref="IPlexWindow"/>.     /// </summary>    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]    public class DefaultIconAttribute : Attribute    {        public DefaultIconAttribute(string id)        {            ID = id;        }        public string ID { get; private set; }    }    /// <summary>    /// The data stored in any .skn file.    /// </summary>    public abstract class Skin    {        //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.        public override string ToString()        {            return JsonConvert.SerializeObject(this, Formatting.Indented);        }
+    }
+
+    /// <summary>
+    /// Interface for probing app icons.
+    /// </summary>
+    public interface IIconProber
+    {
+        /// <summary>
+        /// Retrieve the icon image from a <see cref="DefaultIconAttribute"/>. 
+        /// </summary>
+        /// <param name="attr">The attribute data</param>
+        /// <returns>The resulting image.</returns>
+        Image GetIcon(DefaultIconAttribute attr);
+    }
+
+    /// <summary>
+    /// Sets the default icon ID for a <see cref="IPlexWindow"/>. 
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
+    public class DefaultIconAttribute : Attribute
+    {
+        public DefaultIconAttribute(string id)
+        {
+            ID = id;
+        }
+
+        public string ID { get; private set; }
+    }
+
+    /// <summary>
+    /// The data stored in any .skn file.
+    /// </summary>
+    public abstract class Skin
+    {
+        //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
 
         //we DO NOT want this showing in the shifter.
         [ShifterHidden]
         public Dictionary<string, ImageLayout> SkinImageLayouts = new Dictionary<string, ImageLayout>();
-        [ShifterHidden]        public CommandParser CurrentParser = CommandParser.GenerateSample();        [ShifterHidden]        public Dictionary<string, string> AppNames = new Dictionary<string, string>();        [ShifterHidden]        public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
+
+        [ShifterHidden]
+        public CommandParser CurrentParser = CommandParser.GenerateSample();
+
+        [ShifterHidden]
+        public Dictionary<string, string> AppNames = new Dictionary<string, string>();
+
+        [ShifterHidden]
+        public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
         [ShifterMeta("System")]
         [ShifterCategory("Buttons")]
@@ -205,4 +521,116 @@ using System;using System.Collections.Generic;using System.Drawing;using Syst
 
 
 
-    /// <summary>    /// Marks a skin spec field as hidden from the Shifter.    /// </summary>    public class ShifterHiddenAttribute : Attribute    {    }    public class ShifterFlagAttribute : Attribute    {        public ShifterFlagAttribute(string flag, bool expected)        {            Expected = expected;            Flag = flag;        }        public bool Expected { get; set; }        public string Flag { get; set; }        public bool IsTrue(Skin skn)        {            foreach (var f in skn.GetType().GetFields())            {                if (f.Name == Flag)                {                    if (f.FieldType == typeof(bool))                    {                        return (bool)f.GetValue(skn) == Expected;                    }                }            }            throw new ArgumentException("The flag attribute was given an incorrect flag variable name.");        }    }    public class ImageAttribute : Attribute    {        /// <summary>        /// Attribute a byte array within the Skin object with this attribute and the engine and Shifter will see it as an image and you'll be able to grab the image by calling SkinEngine.GetImage() passing the name you input here.        /// </summary>        /// <param name="name">The name you want to reference this image as in the code.</param>        public ImageAttribute(string name)        {            Name = name;        }        public string Name { get; set; }    }    public class ShifterEnumMaskAttribute : Attribute    {        public ShifterEnumMaskAttribute(string[] items)        {            Items = items;        }        public string[] Items { get; set; }    }    public class ShifterNameAttribute : Attribute    {        public ShifterNameAttribute(string name)        {            Name = name;        }        public string Name { get; set; }    }    public class ShifterDescriptionAttribute : Attribute    {        public ShifterDescriptionAttribute(string description)        {            Description = description;        }        public string Description { get; set; }    }    public class ShifterCategoryAttribute : Attribute    {        public ShifterCategoryAttribute(string category)        {            Category = category;        }        public string Category { get; set; }    }    public interface ISkinPostProcessor    {        /// <summary>        /// Perform algorithmic operations at the bit level on a Plex skin image.        /// </summary>        /// <param name="original">The image, as loaded by the engine, as a 32-bit ARGB byte array.</param>        /// <returns>The processed image.</returns>        byte[] ProcessImage(byte[] original);    }    public class ShifterMetaAttribute : Attribute    {        public ShifterMetaAttribute(string meta)        {            Meta = meta;        }        public string Meta { get; set; }    }}
+    /// <summary>
+    /// Marks a skin spec field as hidden from the Shifter.
+    /// </summary>
+    public class ShifterHiddenAttribute : Attribute
+    {
+
+    }
+
+    public class ShifterFlagAttribute : Attribute
+    {
+        public ShifterFlagAttribute(string flag, bool expected)
+        {
+            Expected = expected;
+            Flag = flag;
+        }
+
+        public bool Expected { get; set; }
+        public string Flag { get; set; }
+        public bool IsTrue(Skin skn)
+        {
+            foreach (var f in skn.GetType().GetFields())
+            {
+                if (f.Name == Flag)
+                {
+                    if (f.FieldType == typeof(bool))
+                    {
+                        return (bool)f.GetValue(skn) == Expected;
+                    }
+                }
+            }
+            throw new ArgumentException("The flag attribute was given an incorrect flag variable name.");
+        }
+    }
+
+    public class ImageAttribute : Attribute
+    {
+        /// <summary>
+        /// Attribute a byte array within the Skin object with this attribute and the engine and Shifter will see it as an image and you'll be able to grab the image by calling SkinEngine.GetImage() passing the name you input here.
+        /// </summary>
+        /// <param name="name">The name you want to reference this image as in the code.</param>
+        public ImageAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
+    }
+
+
+    public class ShifterEnumMaskAttribute : Attribute
+    {
+        public ShifterEnumMaskAttribute(string[] items)
+        {
+            Items = items;
+        }
+
+        public string[] Items { get; set; }
+    }
+
+
+
+    public class ShifterNameAttribute : Attribute
+    {
+        public ShifterNameAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
+    }
+
+    public class ShifterDescriptionAttribute : Attribute
+    {
+        public ShifterDescriptionAttribute(string description)
+        {
+            Description = description;
+        }
+
+        public string Description { get; set; }
+    }
+
+    public class ShifterCategoryAttribute : Attribute
+    {
+
+        public ShifterCategoryAttribute(string category)
+        {
+            Category = category;
+        }
+
+        public string Category { get; set; }
+    }
+
+    public interface ISkinPostProcessor
+    {
+        /// <summary>
+        /// Perform algorithmic operations at the bit level on a Plex skin image.
+        /// </summary>
+        /// <param name="original">The image, as loaded by the engine, as a 32-bit ARGB byte array.</param>
+        /// <returns>The processed image.</returns>
+        byte[] ProcessImage(byte[] original);
+    }
+
+    public class ShifterMetaAttribute : Attribute
+    {
+
+        public ShifterMetaAttribute(string meta)
+        {
+            Meta = meta;
+        }
+
+        public string Meta { get; set; }
+    }
+}

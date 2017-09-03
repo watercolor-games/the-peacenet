@@ -135,18 +135,53 @@ namespace Plex.Frontend.GraphicsSubsystem
             _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, width, height), color);
         }
 
-        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2)
+        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, ImageLayout layout = ImageLayout.Stretch)
         {
-            DrawRectangle(x, y, width, height, tex2, Color.White);
+            DrawRectangle(x, y, width, height, tex2, Color.White, layout);
         }
 
-        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint)
+        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch)
         {
             if (tex2 == null)
                 return;
             x += _startx;
             y += _starty;
-            _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), tint);
+            _spritebatch.End();
+            var state = SamplerState.LinearClamp;
+            if (layout == ImageLayout.Tile)
+                state = SamplerState.LinearWrap;
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                    state, DepthStencilState.Default,
+                                    RasterizerState.CullNone);
+            switch (layout)
+            {
+                case ImageLayout.Tile:
+                    _spritebatch.Draw(tex2, new Vector2(x,y), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                    break;
+                case ImageLayout.Stretch:
+                    _spritebatch.Draw(tex2, new Rectangle(x, y, width, height), tint);
+                    break;
+                case ImageLayout.None:
+                    _spritebatch.Draw(tex2, new Rectangle(x, y, tex2.Width, tex2.Height), tint);
+                    break;
+                case ImageLayout.Center:
+                    _spritebatch.Draw(tex2, new Rectangle(x+((width - tex2.Width) / 2), y+((height - tex2.Height) / 2), tex2.Width, tex2.Height), tint);
+                    break;
+                case ImageLayout.Zoom:
+                    float scale = Math.Min(width / tex2.Width, height / tex2.Height);
+                    
+                    var scaleWidth = (int)(tex2.Width * scale);
+                    var scaleHeight = (int)(tex2.Height * scale);
+
+                    _spritebatch.Draw(tex2, new Rectangle(x+(((int)width - scaleWidth) / 2), y+(((int)height - scaleHeight) / 2), scaleWidth, scaleHeight), tint);
+                    break;
+                    ;
+            }
+            _spritebatch.End();
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                    SamplerState.LinearClamp, DepthStencilState.Default,
+                                    RasterizerState.CullNone);
+
         }
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)

@@ -16,7 +16,7 @@ namespace Plex.Frontend.Desktop
 {
     public static class PlexWindowExtensions
     {
-public static bool IsSidePanel(this IWindowBorder border)
+        public static bool IsSidePanel(this IWindowBorder border)
         {
             var win = border.ParentWindow.GetType();
             var attr = win.GetCustomAttributes(false).FirstOrDefault(x => x is SidePanel);
@@ -328,7 +328,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                     //draw left corner
                     if(UIManager.SkinTextures.ContainsKey("titleleft"))
                     {
-                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, UIManager.SkinTextures["titleleft"]);
+                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, UIManager.SkinTextures["titleleft"], SkinEngine.GetImageLayout("titleleft"));
                     }
                     else
                     {
@@ -338,7 +338,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                     //draw right corner
                     if (UIManager.SkinTextures.ContainsKey("titleright"))
                     {
-                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, UIManager.SkinTextures["titleright"]);
+                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, UIManager.SkinTextures["titleright"], SkinEngine.GetImageLayout("titleright"));
                     }
                     else
                     {
@@ -354,7 +354,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                 }
                 else
                 {
-                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"]);
+                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"], SkinEngine.GetImageLayout("titlebar"));
                 }
 
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
@@ -370,7 +370,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                     }
                     else
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"]);
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"], SkinEngine.GetImageLayout("closebutton"));
                     }
                 
                 //Draw maximize button
@@ -385,7 +385,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                     }
                     else
                     {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"]);
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
                     }
                 
                 //Draw minimize button
@@ -399,7 +399,7 @@ public static bool IsSidePanel(this IWindowBorder border)
             }
             else
             {
-                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"]);
+                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
             }
 
                 
@@ -425,7 +425,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                 }
                 else
                 {
-                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomlborder"]);
+                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomlborder"], SkinEngine.GetImageLayout("bottomlborder"));
                 }
 
                 //BOTTOM RIGHT
@@ -435,7 +435,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                 }
                 else
                 {
-                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomrborder"]);
+                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomrborder"], SkinEngine.GetImageLayout("bottomrborder"));
                 }
 
                 //BOTTOM
@@ -445,7 +445,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                 }
                 else
                 {
-                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, UIManager.SkinTextures["bottomborder"]);
+                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, UIManager.SkinTextures["bottomborder"], SkinEngine.GetImageLayout("bottomborder"));
                 }
 
                 //LEFT
@@ -455,7 +455,7 @@ public static bool IsSidePanel(this IWindowBorder border)
                 }
                 else
                 {
-                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"]);
+                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"], SkinEngine.GetImageLayout("leftborder"));
                 }
 
             //RIGHT
@@ -465,7 +465,7 @@ public static bool IsSidePanel(this IWindowBorder border)
             }
             else
             {
-                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"]);
+                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"], SkinEngine.GetImageLayout("rightborder"));
             }
 
             

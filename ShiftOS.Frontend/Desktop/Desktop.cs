@@ -226,7 +226,7 @@ namespace Plex.Frontend.Desktop
                 pbtn.Window = border;
                 PanelButtons.Add(pbtn);
             }
-
+            RequireTextRerender();
             Invalidate();            
         }
 
@@ -304,6 +304,7 @@ namespace Plex.Frontend.Desktop
                     AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.Data.LaunchType, null));
                 }
                 alOpen = false;
+                RequireTextRerender();
                 Invalidate();
                 return;
             }
@@ -319,7 +320,7 @@ namespace Plex.Frontend.Desktop
             {
                 if(alOpen == false && MouseLeftDown == true)
                 {
-                    alX = 0;
+                    alX = al_left.X;
                     if(LoadedSkin.DesktopPanelPosition == 0)
                     {
                         alY = LoadedSkin.DesktopPanelHeight;
@@ -329,6 +330,7 @@ namespace Plex.Frontend.Desktop
                         alY = (Height - LoadedSkin.DesktopPanelHeight) - (LauncherItems[0].Height * LauncherItems.Count);
                     }
                     alOpen = true;
+                    RequireTextRerender();
                     Invalidate();
                 }
                 
@@ -350,7 +352,7 @@ namespace Plex.Frontend.Desktop
             if (UIManager.SkinTextures.ContainsKey("desktoppanel"))
             {
                 //Draw with the texture
-                gfx.DrawRectangle(0, dp_position, dp_width, dp_height, UIManager.SkinTextures["desktoppanel"]);
+                gfx.DrawRectangle(0, dp_position, dp_width, dp_height, UIManager.SkinTextures["desktoppanel"], SkinEngine.GetImageLayout("desktoppanel"));
             }
             else
             {
@@ -364,7 +366,7 @@ namespace Plex.Frontend.Desktop
             var holderSize = LoadedSkin.AppLauncherHolderSize;
             if (UIManager.SkinTextures.ContainsKey("applauncher"))
             {
-                gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"]);
+                gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"], SkinEngine.GetImageLayout("applauncher"));
             }
 
             var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
@@ -374,7 +376,7 @@ namespace Plex.Frontend.Desktop
             if (UIManager.SkinTextures.ContainsKey("panelclockbg"))
             {
                 //draw the background using panelclock texture
-                gfx.DrawRectangle(panelclockleft, dp_position, panelclockwidth, dp_height, UIManager.SkinTextures["panelclockbg"]);
+                gfx.DrawRectangle(panelclockleft, dp_position, panelclockwidth, dp_height, UIManager.SkinTextures["panelclockbg"], SkinEngine.GetImageLayout("panelclockbg"));
             }
             else
             {
@@ -397,7 +399,7 @@ namespace Plex.Frontend.Desktop
                 //Draw panel button background...
                 if (UIManager.SkinTextures.ContainsKey("panelbutton"))
                 {
-                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["panelbutton"]);
+                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["panelbutton"], SkinEngine.GetImageLayout("panelbutton"));
                 }
                 else
                 {

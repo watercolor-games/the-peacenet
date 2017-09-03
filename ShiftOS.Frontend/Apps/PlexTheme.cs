@@ -200,6 +200,85 @@ namespace Plex.Frontend.Apps
                         checker.Height = 16;
                         value = checker;
                     }
+                    if(property.Field.FieldType == typeof(System.Drawing.Point))
+                    {
+                        var igroup = new ItemGroup();
+                        igroup.AutoSize = true;
+
+                        var width = new TextInput() { TextFilter = TextFilter.Integer };
+                        width.Height = 24;
+                        width.Width = 75;
+                        width.Text = ((System.Drawing.Point)property.Field.GetValue(_skin)).X.ToString();
+                        width.TextChanged += () =>
+                        {
+                            var pt = (System.Drawing.Point)property.Field.GetValue(_skin);
+                            property.Field.SetValue(_skin, new System.Drawing.Point(width.Value, pt.Y));
+                        };
+                        igroup.AddControl(width);
+
+                        var height = new TextInput() { TextFilter = TextFilter.Integer };
+                        height.Height = 24;
+                        height.Width = 75;
+                        height.Text = ((System.Drawing.Point)property.Field.GetValue(_skin)).Y.ToString();
+                        height.TextChanged += () =>
+                        {
+                            var pt = (System.Drawing.Point)property.Field.GetValue(_skin);
+                            property.Field.SetValue(_skin, new System.Drawing.Point(pt.X, height.Value));
+                        };
+                        igroup.AddControl(height);
+                        value = igroup;
+                    }
+                    if(property.Field.FieldType == typeof(byte[]))
+                    {
+                        var imgattrib = property.Field.GetCustomAttributes(false).FirstOrDefault(x => x is ImageAttribute) as ImageAttribute;
+                        if (imgattrib != null)
+                        {
+                            var btn = new Button();
+                            btn.AutoSize = true;
+                            btn.Text = "Choose image...";
+                            btn.Click += () =>
+                            {
+                                var image = SkinEngine.GetImage(imgattrib.Name);
+                                var layout = SkinEngine.GetImageLayout(imgattrib.Name);
+                                AppearanceManager.SetupDialog(new GraphicPicker(property.Name, image, layout, (nimg, nbytes, nlayout) =>
+                                {
+                                    property.Field.SetValue(_skin, nbytes);
+                                    _skin.SkinImageLayouts[imgattrib.Name] = nlayout;
+                                    GraphicsSubsystem.UIManager.ResetSkinTextures(GraphicsSubsystem.UIManager.GraphicsDevice);
+                                    GraphicsSubsystem.UIManager.InvalidateAll();
+                                }));
+                            };
+                            value = btn;
+                        }
+                    }
+                    if (property.Field.FieldType == typeof(System.Drawing.Size))
+                    {
+                        var igroup = new ItemGroup();
+                        igroup.AutoSize = true;
+
+                        var width = new TextInput() { TextFilter = TextFilter.Integer };
+                        width.Height = 24;
+                        width.Width = 75;
+                        width.Text = ((System.Drawing.Size)property.Field.GetValue(_skin)).Width.ToString();
+                        width.TextChanged += () =>
+                        {
+                            var pt = (System.Drawing.Size)property.Field.GetValue(_skin);
+                            property.Field.SetValue(_skin, new System.Drawing.Size(width.Value, pt.Height));
+                        };
+                        igroup.AddControl(width);
+
+                        var height = new TextInput() { TextFilter = TextFilter.Integer };
+                        height.Height = 24;
+                        height.Width = 75;
+                        height.Text = ((System.Drawing.Size)property.Field.GetValue(_skin)).Height.ToString();
+                        height.TextChanged += () =>
+                        {
+                            var pt = (System.Drawing.Size)property.Field.GetValue(_skin);
+                            property.Field.SetValue(_skin, new System.Drawing.Size(pt.Width, height.Value));
+                        };
+                        igroup.AddControl(height);
+                        value = igroup;
+                    }
                     if (property.Field.FieldType == typeof(System.Drawing.Font))
                     {
                         var btn = new Button();

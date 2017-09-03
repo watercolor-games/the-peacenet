@@ -16,9 +16,9 @@ namespace Plex.Frontend.GUI
     public class PictureBox : Control
     {
         private Texture2D img = null;
-        private ImageLayout _layout = ImageLayout.Fit;
+        private System.Windows.Forms.ImageLayout _layout = System.Windows.Forms.ImageLayout.Zoom;
 
-        public ImageLayout ImageLayout
+        public System.Windows.Forms.ImageLayout ImageLayout
         {
             get
             {
@@ -26,7 +26,10 @@ namespace Plex.Frontend.GUI
             }
             set
             {
+                if (_layout == value)
+                    return;
                 _layout = value;
+                Invalidate();
             }
         }
 
@@ -41,6 +44,7 @@ namespace Plex.Frontend.GUI
                 if (img != null)
                     img.Dispose();
                 img = value;
+                Invalidate();
             }
         }
 
@@ -55,16 +59,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            switch (_layout)
-            {
-                case ImageLayout.Stretch:
-                    gfx.DrawRectangle(0, 0, Width, Height, Image);
-                    break;
-                case ImageLayout.None:
-                    gfx.DrawRectangle(0, 0, Image.Width, Image.Height, Image);
-                    break;
-            }
-
+            gfx.DrawRectangle(0, 0, Width, Height, img, _layout);
         }
 
         //Again, thanks StackOverflow
@@ -119,11 +114,5 @@ namespace Plex.Frontend.GUI
         }
     }
 
-    public enum ImageLayout
-    {
-        None,
-        Stretch,
-        Tile,
-        Fit,
-    }
+    
 }

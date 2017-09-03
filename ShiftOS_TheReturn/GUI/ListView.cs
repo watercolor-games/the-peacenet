@@ -15,7 +15,7 @@ namespace Plex.Frontend.GUI
         private List<ListViewItem> _items = null;
         private Dictionary<string, Texture2D> _images = null;
         private const int _itemimagemargin = 15;
-        private const int _initialmargin = 20;
+        private const int _initialmargin = 10;
         private const int _itemgap = 5;
         private int scroll = 0;
         private const int defaulttexturesize = 42;
