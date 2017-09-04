@@ -1,7 +1,7 @@
-# This project is deprecated.
+# Project: Plex
 
-ShiftOS, as of July 30th, 2017, has officially been marked as deprecated by the project leader. We may bring it back in the future as we believe the concept is unique and awesome, but we are not sure when or if.
+Project Plex is a game written against MonoGame and a revised version of the ShiftOS 1.0 Beta 3 engine with a number of fixes, performance optimizations and a whole new style of gameplay.
 
-If you have any questions or concerns, you may contact the project leader at michaelshiftos@gmail.com.
+#`Mushroom`#
 
-We apologize to any actual fans of the project.
+`We are all mushrooms.`
