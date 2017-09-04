@@ -84,6 +84,12 @@ namespace Plex.Objects
         /// </summary>
         [Order]
         public string PickupPoint { get; set; }
+
+        [Order]
+        public List<string> LoadedUpgrades { get; set; }
+
+        [Order]
+        public int MaxLoadedUpgrades { get; set; }
     }
 
     public class SettingsObject : DynamicObject

@@ -181,8 +181,8 @@ namespace Plex.Frontend.Desktop
             //Enforce the 800x600 window rule.
             MaxWidth = 800;
             MaxHeight = 600;
-            MinWidth = 300;
-            MinHeight = 300;
+            MinWidth = 100;
+            MinHeight = 100;
             Click += () =>
             {
                 var cbtnloc = LoadedSkin.CloseButtonFromSide;
