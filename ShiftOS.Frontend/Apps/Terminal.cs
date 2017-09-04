@@ -105,7 +105,7 @@ namespace Plex.Frontend.Apps
 
         public void SelectBottom()
         {
-           Index = Text.Length - 1;
+           Index = Text.Length;
             RecalculateLayout();
             InvalidateTopLevel();
         }
