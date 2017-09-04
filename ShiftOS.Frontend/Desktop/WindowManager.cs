@@ -178,6 +178,11 @@ namespace Plex.Frontend.Desktop
 
         public WindowBorder()
         {
+            //Enforce the 800x600 window rule.
+            MaxWidth = 800;
+            MaxHeight = 600;
+            MinWidth = 300;
+            MinHeight = 300;
             Click += () =>
             {
                 var cbtnloc = LoadedSkin.CloseButtonFromSide;
@@ -285,10 +290,15 @@ namespace Plex.Frontend.Desktop
             int borderleft = LoadedSkin.LeftBorderWidth;
             int borderright = LoadedSkin.RightBorderWidth;
             int borderbottom = LoadedSkin.BottomBorderWidth;
+            int maxwidth = (MaxWidth - LoadedSkin.LeftBorderWidth) - LoadedSkin.RightBorderWidth;
+            int maxheight = (MaxHeight - LoadedSkin.TitlebarHeight) - LoadedSkin.BottomBorderWidth;
+            _hostedwindow.MaxWidth = maxwidth;
+            _hostedwindow.MaxHeight = maxheight;
             _hostedwindow.X = borderleft;
             _hostedwindow.Y = titlebarheight;
-            Width = _hostedwindow.X + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
-            Height = _hostedwindow.Y + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
+            Width = borderleft + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
+            Height = titlebarheight + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
+
         }
 
 

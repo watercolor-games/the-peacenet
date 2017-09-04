@@ -25,9 +25,9 @@ namespace Plex.Frontend.GUI
             {
                 int borderwidth = SkinEngine.LoadedSkin.ButtonBorderWidth * 2;
 
-                var measure = GraphicsContext.MeasureString(this.Text, this.Font);
-                Width = borderwidth + (int)measure.X + 16;
-                Height = borderwidth + (int)measure.Y + 12;
+                base.OnLayout(gameTime);
+                Width += borderwidth;
+                Height += borderwidth;
             }
         }
 

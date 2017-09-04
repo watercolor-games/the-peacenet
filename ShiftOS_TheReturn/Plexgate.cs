@@ -140,11 +140,13 @@ namespace Plex.Frontend
             SystemErrorText.Visible = false;
 
             //Frametime not limited to 16.66 Hz / 60 FPS
-            IsFixedTimeStep = false;
+            IsFixedTimeStep = true;
             graphicsDevice.SynchronizeWithVerticalRetrace = true;
             graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
 
         }
+
+        private double lowestfps = 0;
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
@@ -155,6 +157,8 @@ namespace Plex.Frontend
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
+                lowestfps = double.MaxValue;
+                highestfps = 0;
                 DisplayDebugInfo = !DisplayDebugInfo;
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.E)
@@ -624,6 +628,8 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             double fps = Math.Round(1 / gameTime.ElapsedGameTime.TotalSeconds);
             if (fps <= 20)
                 color = Color.Red;
+            highestfps = Math.Max(highestfps, fps);
+            lowestfps = Math.Min(lowestfps, fps);
             TotalFPS += fps;
             DebugText.Text = $@"Plex
 =======================
@@ -636,7 +642,7 @@ CTRL+D: toggle debug menu
 CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
 Use the ""debug"" Terminal Command for engine debug commands.
 
-FPS: {fps}
+FPS: {fps} - Highest: {highestfps}, Lowest: {lowestfps} (note: opening or closing this debug text resets these counters)
 Average FPS: {TotalFPS / framesdrawn}
 Current time: {DateTime.Now}
 Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
@@ -645,9 +651,10 @@ Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
         }
         public double TotalFPS = 0;
         public int framesdrawn = 0;
+        public double highestfps = 0;
     }
 
-
+    
 
     public static class ImageExtensioons
     {

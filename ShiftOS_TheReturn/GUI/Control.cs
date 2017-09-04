@@ -74,6 +74,7 @@ namespace Plex.Frontend.GUI
                 if (value < 1)
                     value = 1;
                 _minwidth = value;
+                Width = Width;
             }
         }
 
@@ -90,6 +91,7 @@ namespace Plex.Frontend.GUI
                 if (value == _maxwidth)
                     return;
                 _maxwidth = value;
+                Width = Width;
             }
         }
 
@@ -106,6 +108,7 @@ namespace Plex.Frontend.GUI
                 if (value < 1)
                     value = 1;
                 _minheight = value;
+                Height = Height;
             }
         }
 
@@ -122,6 +125,7 @@ namespace Plex.Frontend.GUI
                 if (value == _maxheight)
                     return;
                 _maxheight = value;
+                Height = Height;
             }
         }
 
@@ -524,7 +528,7 @@ namespace Plex.Frontend.GUI
                     if (ctrl.Visible == true)
                     {
                         //Cull any controls that fall outside the bounds of our own.
-                        if (ctrl.X >= 0 && ctrl.Y >= 0 && ctrl.X + ctrl.Width <= Width && ctrl.Y + ctrl.Height <= Height)
+                        if (ctrl.X >= 0 && ctrl.Y >= 0 && ctrl.X  < Width && ctrl.Y < Height)
                         {
                             gfx.X = draw_x + ctrl.X;
                             gfx.Y = draw_y + ctrl.Y;
@@ -584,7 +588,9 @@ namespace Plex.Frontend.GUI
             }
             OnLayout(gameTime);
             foreach (var child in _children)
-                child.Layout(gameTime);
+                if(child.Visible)
+                    if(child.X >= 0 && child.Y >= 0 && child.X < Width && child.Y < Height)
+                        child.Layout(gameTime);
         }
 
         protected virtual void OnLayout(GameTime gameTime)

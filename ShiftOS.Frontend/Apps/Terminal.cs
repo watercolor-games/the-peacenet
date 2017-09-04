@@ -118,8 +118,6 @@ namespace Plex.Frontend.Apps
             {
                 Text += Localization.Parse(text);
                 SelectBottom();
-                Index += text.Length;
-                RecalculateLayout();
                 InvalidateTopLevel();
             });
         }

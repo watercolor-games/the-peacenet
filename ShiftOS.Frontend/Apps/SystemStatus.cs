@@ -60,14 +60,6 @@ namespace Plex.Frontend.Apps
             _mainstatus.Height = Height - (_header.Y + _header.Height) - 40;
             _mainstatus.Text = $@"Experience: {SaveSystem.CurrentSave.Experience}
 Upgrades: {SaveSystem.CurrentSave.CountUpgrades()} installed, {Upgrades.GetDefaults().Count} available
-Filesystems:
-";
-
-            foreach(var mount in Objects.ShiftFS.Utils.Mounts)
-            {
-                _mainstatus.Text += $" - {Objects.ShiftFS.Utils.Mounts.IndexOf(mount)}:/ ({mount.Name}){Environment.NewLine}"; 
-            }
-            _mainstatus.Text += $@"
 
 Username: {SaveSystem.CurrentSave.Username}
 System name: {SaveSystem.CurrentSave.SystemName}
