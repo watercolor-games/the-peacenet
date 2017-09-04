@@ -186,8 +186,8 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
         {
-            var measure = TextRenderer.MeasureText(text, font, new System.Drawing.Size(wrapWidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
-            return new Vector2(measure.Width, measure.Height);
+            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth);
+
         }
 
         [Obsolete("Don't be a broom. Use a TextControl.")]
@@ -211,50 +211,10 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (string.IsNullOrEmpty(text))
                 return;
-            TextCache cache = null;
             x += _startx;
             y += _starty;
-            //cache = GetCache(text, font, wrapWidth);
-            //if (cache == null)
-            //{
-            var measure = MeasureString(text, font, wrapWidth);
-            using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
-            {
-                using (var gfx = System.Drawing.Graphics.FromImage(bmp))
-                {
-                    gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    {
-                        TextRenderer.DrawText(gfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
-                    }
-                    else
-                    {
-                        gfx.DrawString(text, font, System.Drawing.Brushes.Black, new System.Drawing.Rectangle(0,0,bmp.Width,bmp.Height), System.Drawing.StringFormat.GenericTypographic);
-                    }
-                }
-                var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
-                Marshal.Copy(lck.Scan0, bytes, 0, bytes.Length);
-                if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                {
-                    for (int i = 0; i < bytes.Length; i += 4)
-                    {
-                        bytes[i] = (byte)(255 - bytes[i]);
-                        bytes[i + 1] = (byte)(255 - bytes[i + 1]);
-                        bytes[i + 2] = (byte)(255 - bytes[i + 2]);
 
-                    }
-                }
-                bmp.UnlockBits(lck);
-                using (var tex2 = new Texture2D(_graphicsDevice, bmp.Width, bmp.Height))
-                {
-                    tex2.SetData<byte>(bytes);
-
-                    _spritebatch.Draw(tex2, new Rectangle(x, y, tex2.Width, tex2.Height), color);
-                }
-
-            }
-
+            Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth);
         }
 
         private float getRotation(float x, float y, float x2, float y2)

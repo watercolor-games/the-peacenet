@@ -183,6 +183,16 @@ namespace Plex.Frontend
         protected override void Initialize()
         {
 
+            if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                TextRenderer.Init(new Engine.TextRenderers.WindowsFormsTextRenderer());
+            }
+            else
+            {
+                TextRenderer.Init(new Engine.TextRenderers.GdiPlusTextRenderer());
+            }
+
+
             //Before we do ANYTHING, we've got to initiate the Plex engine.
             UIManager.GraphicsDevice = GraphicsDevice;
 

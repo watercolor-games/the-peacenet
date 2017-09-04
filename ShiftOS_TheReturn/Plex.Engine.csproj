@@ -142,6 +142,7 @@
   <ItemGroup>
     <Compile Include="AppearanceManager.cs" />
     <Compile Include="AppLauncherDaemon.cs" />
+    <Compile Include="ATextRenderer.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BFInterpreter.cs" />
     <Compile Include="CommandParser.cs" />
@@ -204,6 +205,8 @@
     <Compile Include="ServerLoginHandler.cs" />
     <Compile Include="ServerManager.cs" />
     <Compile Include="ShiftnetSite.cs" />
+    <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
+    <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
     <Compile Include="Upgrades.cs" />
     <Compile Include="GUI\Skinning.cs" />
     <Compile Include="Story.cs" />
