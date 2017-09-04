@@ -25,8 +25,10 @@ namespace Plex.Engine.TextRenderers
                 using (var cgfx = System.Drawing.Graphics.FromImage(bmp))
                 {
                     cgfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                    System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
-
+                    if (color != Microsoft.Xna.Framework.Color.Black)
+                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
+                    else
+                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.Black, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
                 }
                 var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
@@ -35,8 +37,10 @@ namespace Plex.Engine.TextRenderers
                 using (var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height))
                 {
                     tex2.SetData<byte>(bytes);
-
-                    gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, ImageLayout.Stretch);
+                    if (color != Microsoft.Xna.Framework.Color.Black)
+                        gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, ImageLayout.Stretch);
+                    else
+                        gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, Microsoft.Xna.Framework.Color.Black, ImageLayout.Stretch);
                 }
 
             }

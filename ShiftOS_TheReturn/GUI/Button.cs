@@ -26,8 +26,12 @@ namespace Plex.Frontend.GUI
                 int borderwidth = SkinEngine.LoadedSkin.ButtonBorderWidth * 2;
 
                 base.OnLayout(gameTime);
-                Width += borderwidth;
-                Height += borderwidth;
+                if (TextRerenderRequired == true)
+                {
+                    Width += borderwidth*4;
+                    Height += borderwidth*4;
+                }
+
             }
         }
 

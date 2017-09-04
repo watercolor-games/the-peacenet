@@ -83,6 +83,14 @@ namespace Plex.Frontend.GUI
 
         }
 
+        public bool TextRerenderRequired
+        {
+            get
+            {
+                return this.requiresTextRerender;
+            }
+        }
+
         protected override void OnLayout(GameTime gameTime)
         {
             if (AutoSize)

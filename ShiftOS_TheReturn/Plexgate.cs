@@ -155,6 +155,10 @@ namespace Plex.Frontend
             {
                 UIManager.Fullscreen = !UIManager.Fullscreen;
             }
+            else if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Modifiers.HasFlag(KeyboardModifiers.Shift) && e.Key == Keys.S)
+            {
+                SkinEngine.LoadEngineDefault();
+            }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
                 lowestfps = double.MaxValue;

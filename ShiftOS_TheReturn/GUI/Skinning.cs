@@ -61,6 +61,7 @@ namespace Plex.Engine
     {
         Skin GetDefaultSkin();
         Skin ReadSkin(string pfsPath);
+        Skin GetEasterEggSkin();
     }
 
     /// <summary>
@@ -144,6 +145,12 @@ namespace Plex.Engine
         public static void SetIconProber(IIconProber prober)
         {
             _iconProber = prober;
+        }
+
+        internal static void LoadEngineDefault()
+        {
+            loadedSkin = SkinProvider.GetEasterEggSkin();
+            SkinLoaded?.Invoke();
         }
 
         /// <summary>

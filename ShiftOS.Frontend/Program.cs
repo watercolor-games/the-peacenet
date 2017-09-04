@@ -70,6 +70,11 @@ namespace Plex.Frontend
 
     public class PlexSkinProvider : ISkinProvider
     {
+        public Skin GetEasterEggSkin()
+        {
+            return new PlexSkin();
+        }
+
         public Skin GetDefaultSkin()
         {
             //todo: material design skin
