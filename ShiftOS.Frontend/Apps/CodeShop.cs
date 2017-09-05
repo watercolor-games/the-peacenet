@@ -116,6 +116,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
                             Upgrades.LoadUpgrade(selectedUpgrade.ID);
 
                         }
+                        SelectUpgrade(selectedUpgrade);
                     }
                     catch (UpgradeException ex)
                     {

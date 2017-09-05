@@ -502,7 +502,34 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [].
+        ///   Looks up a localized string similar to //This file declares all ranks in the game, their requirements and their rewards.
+        ///
+        /////Although the engine orders ranks by the amount of experience required to gain them,
+        /////for readability it&apos;s advised that all ranks in this file are ordered by experience from least to greatest.
+        ///
+        /////Values per object:
+        ///// - Name (required, string) - the name of the rank
+        ///// - Experience (required, 64-bit unsigned integer) - the amount of experience required to get this rank
+        ///// - UpgradeMax (required, 32-bit signed intege [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ranks {
+            get {
+                return ResourceManager.GetString("ranks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///	{
+        ///		Category: &quot;Test&quot;,
+        ///		Name: &quot;Test upgrade.&quot;,
+        ///		Description: &quot;This is a test purchasable upgrade with no dependencies.&quot;,
+        ///		Cost: 50,
+        ///		Purchasable: true,
+        ///		Dependencies: null
+        ///	}
+        ///
+        ///].
         /// </summary>
         internal static string Shiftorium {
             get {

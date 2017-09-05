@@ -217,6 +217,7 @@
     <None Include="Resources\LootInfo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ranks.txt" />
     <None Include="Resources\pong.txt" />
     <None Include="Resources\banana.cow.stp.txt" />
     <None Include="Resources\fire hydrant.cow.stp.txt" />

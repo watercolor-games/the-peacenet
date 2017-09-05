@@ -5,6 +5,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects;
 
 namespace Plex.Frontend
 {
@@ -19,6 +20,8 @@ namespace Plex.Frontend
         [STAThread]
         static void Main()
         {
+            RankManager.Init(new MGRankProvider());
+
             SkinEngine.SetSkinProvider(new PlexSkinProvider());
 
             //Let's get localization going.
@@ -93,6 +96,19 @@ namespace Plex.Frontend
         public List<ShiftoriumUpgrade> GetDefaults()
         {
             return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
+        }
+    }
+
+    public class MGRankProvider : IRankProvider
+    {
+        public Rank[] GetRanks()
+        {
+            return JsonConvert.DeserializeObject<Rank[]>(Properties.Resources.ranks);
+        }
+
+        public void OnRankUp(Rank rank)
+        {
+            throw new NotImplementedException();
         }
     }
 

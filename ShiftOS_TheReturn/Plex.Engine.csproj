@@ -198,6 +198,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PythonAPI.cs" />
+    <Compile Include="RankManager.cs" />
     <Compile Include="ReflectMan.cs" />
     <Compile Include="SaveSystem.cs" />
     <Compile Include="Scripting.cs" />

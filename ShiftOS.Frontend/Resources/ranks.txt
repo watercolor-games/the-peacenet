@@ -1,0 +1,17 @@
+//This file declares all ranks in the game, their requirements and their rewards.
+
+//Although the engine orders ranks by the amount of experience required to gain them,
+//for readability it's advised that all ranks in this file are ordered by experience from least to greatest.
+
+//Values per object:
+// - Name (required, string) - the name of the rank
+// - Experience (required, 64-bit unsigned integer) - the amount of experience required to get this rank
+// - UpgradeMax (required, 32-bit signed integer) - when the user has this rank, this is the max amount of upgrades they can have loaded at once
+// - UnlockedUpgrades (optional, array of upgrade IDs) - when the user gains this rank, these upgrades will be unlocked.
+[
+	{
+		Name: "Inexperienced",
+		Experience: 0,
+		UpgradeMax: 5
+	}
+]

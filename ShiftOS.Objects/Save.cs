@@ -90,6 +90,9 @@ namespace Plex.Objects
 
         [Order]
         public int MaxLoadedUpgrades { get; set; }
+
+        [Order]
+        public int Rank { get; set; }
     }
 
     public class SettingsObject : DynamicObject
