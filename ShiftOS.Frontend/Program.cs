@@ -108,7 +108,7 @@ namespace Plex.Frontend
 
         public void OnRankUp(Rank rank)
         {
-            throw new NotImplementedException();
+            AppearanceManager.SetupDialog(new Apps.RankUpDialog(rank));
         }
     }
 
