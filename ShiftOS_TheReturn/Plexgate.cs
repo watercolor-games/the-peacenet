@@ -187,14 +187,25 @@ namespace Plex.Frontend
         protected override void Initialize()
         {
 
-            if(Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                TextRenderer.Init(new Engine.TextRenderers.WindowsFormsTextRenderer());
-            }
-            else
-            {
-                TextRenderer.Init(new Engine.TextRenderers.GdiPlusTextRenderer());
-            }
+			ATextRenderer strategy = null;
+			try
+			{
+				strategy = new Engine.TextRenderers.NativeTextRenderer();
+			}
+			catch
+			{
+				if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+				{
+					strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
+				}
+				else
+				{
+					strategy = new Engine.TextRenderers.GdiPlusTextRenderer();				
+				}
+			}
+			
+			TextRenderer.Init(strategy);
+			Console.WriteLine(strategy.GetType().ToString());
 
 
             //Before we do ANYTHING, we've got to initiate the Plex engine.
