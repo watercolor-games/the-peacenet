@@ -143,15 +143,15 @@ namespace Plex.Frontend.GUI
                         var words = line.Split(' ');
                         if (c)
                         {
-                            var linemeasure = GraphicsContext.MeasureString(line, font, Width);
+                            var linemeasure = GraphicsContext.MeasureString(line, font, Engine.GUI.TextAlignment.TopLeft, Width);
                             if(!drawText)
                                 gfx.DrawRectangle(0, text_y, Width, (int)linemeasure.Y, SkinEngine.LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
                         }
                         foreach (var word in words)
                         {
-                            var measure = GraphicsContext.MeasureString(word, font);
+                            var measure = GraphicsContext.MeasureString(word, font, Engine.GUI.TextAlignment.TopLeft);
                             if(drawText)
-                                gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font);
+                                gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft);
 
                             text_x += (int)measure.X;
                             if (text_x > Width)

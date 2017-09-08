@@ -46,15 +46,15 @@ namespace Plex.Frontend.Apps
                         break;
                     var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
                     var nnProper = $"<{msg.Author}>";
-                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont);
-                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont);
+                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
+                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     int old = vertSeparatorLeft;
                     vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
                     if (old != vertSeparatorLeft)
                         requiresRepaint = true;
-                    var msgMeasure = GraphicsContext.MeasureString(msg.Message, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                    var msgMeasure = GraphicsContext.MeasureString(msg.Message, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft, (Width - vertSeparatorLeft - 4) - messagesFromRight);
                     messagebottom -= (int)msgMeasure.Y;
-                    gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
+                    gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     var nnColor = Color.LightGreen;
 
                     if (msg.Author == SaveSystem.CurrentSave.Username)
@@ -85,11 +85,11 @@ namespace Plex.Frontend.Apps
                         }
                     }
 
-                    gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont);
+                    gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
                     if (msg.Message.Contains(SaveSystem.CurrentSave.Username))
                         mcolor = Color.Orange;
-                    gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, (Width - vertSeparatorLeft - 4) - messagesFromRight);
+                    gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft, (Width - vertSeparatorLeft - 4) - messagesFromRight);
                 }
             }
             catch { }
@@ -104,7 +104,7 @@ namespace Plex.Frontend.Apps
                     int usersStartY = messagesTop;
                     foreach (var user in NetInfo.Channel.OnlineUsers.OrderBy(x => x.Nickname))
                     {
-                        var measure = GraphicsContext.MeasureString(user.Nickname, LoadedSkin.TerminalFont);
+                        var measure = GraphicsContext.MeasureString(user.Nickname, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
 
                         var nnColor = Color.LightGreen;
                         if (user.Nickname == SaveSystem.CurrentSave.Username)
@@ -122,19 +122,32 @@ namespace Plex.Frontend.Apps
                             }
                         }
 
-                        gfx.DrawString(user.Nickname, Width - messagesFromRight + 2, usersStartY, nnColor, LoadedSkin.TerminalFont);
+                        gfx.DrawString(user.Nickname, Width - messagesFromRight + 2, usersStartY, nnColor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
 
                         usersStartY += (int)measure.Y;
                     }
                 }
-                gfx.DrawString(topic, 0, 0, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont);
+                gfx.DrawString(topic, 0, 0, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
             }
 
 
         }
 
+        public void AddUser(string nick, IRCPermission perm)
+        {
+            this.NetInfo.Channel.OnlineUsers.Add(new IRCUser
+            {
+                Nickname = nick,
+                Permission = perm
+            });
+            RequireTextRerender();
+            Invalidate();
+        }
+
         public ChatClient()
         {
+            Width = 800;
+            Height = 600;
             _send = new GUI.Button();
             _input = new GUI.TextInput();
             _sendprompt = new GUI.TextControl();
@@ -262,8 +275,8 @@ namespace Plex.Frontend.Apps
                         break;
                     var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
                     var nnProper = $"<{msg.Author}>";
-                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont);
-                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont);
+                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
+                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     int old = vertSeparatorLeft;
                     vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
                     if (old != vertSeparatorLeft)

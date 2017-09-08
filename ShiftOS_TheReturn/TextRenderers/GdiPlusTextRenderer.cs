@@ -9,6 +9,7 @@ using Plex.Frontend.GraphicsSubsystem;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.GUI;
 
 namespace Plex.Engine.TextRenderers
 {
@@ -17,9 +18,9 @@ namespace Plex.Engine.TextRenderers
     /// </summary>
     public class GdiPlusTextRenderer : ATextRenderer
     {
-        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth)
+        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment)
         {
-            var measure = MeasureText(text, font, maxwidth);
+            var measure = MeasureText(text, font, maxwidth, alignment);
             using(var bmp = new Bitmap((int)measure.X, (int)measure.Y))
             {
                 using(var cgfx = Graphics.FromImage(bmp))
@@ -51,7 +52,7 @@ namespace Plex.Engine.TextRenderers
             }
         }
 
-        public override Vector2 MeasureText(string text, Font font, int maxwidth)
+        public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment)
         {
             using(var gfx = Graphics.FromHwnd(IntPtr.Zero))
             {

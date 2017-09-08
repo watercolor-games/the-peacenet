@@ -65,13 +65,13 @@ namespace Plex.Frontend.GUI
                 text = "*".Repeat(Text.Length);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font);
+                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font, Engine.GUI.TextAlignment.TopLeft);
             }
             if(!IsFocusedControl)
             {
                 if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
                 {
-                    gfx.DrawString(_label, 2, textY, Color.Gray, Font);
+                    gfx.DrawString(_label, 2, textY, Color.Gray, Font, Engine.GUI.TextAlignment.TopLeft);
                 }
             }
 
@@ -215,7 +215,7 @@ namespace Plex.Frontend.GUI
             if (_index < 0)
                 _index = 0;
             string toCaret = text.Substring(0, _index);
-            var measure = GraphicsContext.MeasureString(toCaret, Font);
+            var measure = GraphicsContext.MeasureString(toCaret, Font, Engine.GUI.TextAlignment.TopLeft);
             caretPos = 2 + measure.X;
             if (caretPos - TextDrawOffset < 0)
             {

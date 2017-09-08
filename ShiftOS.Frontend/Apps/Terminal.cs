@@ -140,7 +140,7 @@ namespace Plex.Frontend.Apps
         protected void RecalculateLayout()
         {
             var cloc = GetPointAtIndex();
-            var csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style));
+            var csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style), Engine.GUI.TextAlignment.TopLeft);
             if (cloc.Y - _vertOffset < 0)
             {
                 _vertOffset += cloc.Y - _vertOffset;
@@ -179,11 +179,11 @@ namespace Plex.Frontend.Apps
             var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
             int currline = GetCurrentLine();
             string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
-			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Width).Y - font.Height);
+			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Engine.GUI.TextAlignment.TopLeft, Width).Y - font.Height);
 
             int linestart = String.Join(Environment.NewLine, Lines.Take(GetCurrentLine())).Length;
 
-            var lineMeasure = GraphicsContext.MeasureString(Text.Substring(linestart, Index - linestart), font);
+            var lineMeasure = GraphicsContext.MeasureString(Text.Substring(linestart, Index - linestart), font, Engine.GUI.TextAlignment.TopLeft);
             int w = (int)Math.Floor(lineMeasure.X);
             while (w > Width)
             {
@@ -380,7 +380,7 @@ namespace Plex.Frontend.Apps
             {
                 var font = LoadedSkin.TerminalFont;
                 if (!(textloc < 0 || textloc - font.Height >= Height))
-                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Width - 4);
+                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
                 textloc += font.Height;
             }
 
@@ -399,9 +399,9 @@ namespace Plex.Frontend.Apps
                 {
                     PointF cursorPos = GetPointAtIndex();
                     string caret = (Index < Text.Length) ? Text[Index].ToString() : " ";
-                    var cursorSize = GraphicsContext.MeasureString(caret, font);
+                    var cursorSize = GraphicsContext.MeasureString(caret, font, Engine.GUI.TextAlignment.TopLeft);
 
-                    var lineMeasure = GraphicsContext.MeasureString(Lines[GetCurrentLine()], font);
+                    var lineMeasure = GraphicsContext.MeasureString(Lines[GetCurrentLine()], font, Engine.GUI.TextAlignment.TopLeft);
                     if (cursorPos.X > lineMeasure.X)
                     {
                         cursorPos.X = lineMeasure.X;

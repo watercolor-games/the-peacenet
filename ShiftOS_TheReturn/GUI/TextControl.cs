@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.GUI;
 using Plex.Frontend.GraphicsSubsystem;
 
 namespace Plex.Frontend.GUI
@@ -17,6 +18,23 @@ namespace Plex.Frontend.GUI
         private Font _font = new Font("Tahoma", 9f);
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
+        private TextAlignment alignment = TextAlignment.TopLeft;
+
+        public TextAlignment Alignment
+        {
+            get
+            {
+                return alignment;
+            }
+            set
+            {
+                if (alignment == value)
+                    return;
+                alignment = value;
+                RequireTextRerender();
+                Invalidate();
+            }
+        }
 
         protected override void OnDisposing()
         {
@@ -42,7 +60,7 @@ namespace Plex.Frontend.GUI
 
         protected virtual void RenderText(GraphicsContext gfx)
         {
-            var sMeasure = GraphicsContext.MeasureString(_text, _font, Width);
+            var sMeasure = GraphicsContext.MeasureString(_text, _font, Alignment, Width);
             PointF loc = new PointF(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;
@@ -79,7 +97,7 @@ namespace Plex.Frontend.GUI
 
             }
 
-            gfx.DrawString(_text, 0, 0, Engine.SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), _font, this.Width);
+            gfx.DrawString(_text, 0, 0, Engine.SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), _font, Alignment, this.Width);
 
         }
 
@@ -97,7 +115,7 @@ namespace Plex.Frontend.GUI
             {
                 if (requiresTextRerender)
                 {
-                    var measure = GraphicsContext.MeasureString(_text, _font, MaxWidth);
+                    var measure = GraphicsContext.MeasureString(_text, _font, Alignment, MaxWidth);
                     Width = (int)measure.X;
                     Height = (int)measure.Y;
                 }

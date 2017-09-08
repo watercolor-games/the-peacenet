@@ -9,6 +9,7 @@ using Plex.Frontend.GraphicsSubsystem;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.GUI;
 
 namespace Plex.Engine.TextRenderers
 {
@@ -17,16 +18,16 @@ namespace Plex.Engine.TextRenderers
     /// </summary>
     public class WindowsFormsTextRenderer : ATextRenderer
     {
-        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth)
+        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment)
         {
-            var measure = MeasureText(text, font, maxwidth);
+            var measure = MeasureText(text, font, maxwidth, alignment);
             using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
             {
                 using (var cgfx = System.Drawing.Graphics.FromImage(bmp))
                 {
                     cgfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
                     if (color != Microsoft.Xna.Framework.Color.Black)
-                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
+                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, GetFlags(alignment));
                     else
                         System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.Black, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
                 }
@@ -46,9 +47,37 @@ namespace Plex.Engine.TextRenderers
             }
         }
 
-        public override Vector2 MeasureText(string text, Font font, int maxwidth)
+        public readonly TextFormatFlags baseFlags = TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl;
+
+        public TextFormatFlags GetFlags(TextAlignment alignment)
         {
-            var measure = System.Windows.Forms.TextRenderer.MeasureText(text, font, new System.Drawing.Size(maxwidth, int.MaxValue), TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
+            switch (alignment)
+            {
+                case TextAlignment.TopLeft:
+                default:
+                    return baseFlags | TextFormatFlags.Top | TextFormatFlags.Left;
+                case TextAlignment.Top:
+                    return baseFlags | TextFormatFlags.Top | TextFormatFlags.HorizontalCenter;
+                case TextAlignment.TopRight:
+                    return baseFlags | TextFormatFlags.Top | TextFormatFlags.Right;
+                case TextAlignment.Left:
+                    return baseFlags | TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
+                case TextAlignment.Middle:
+                    return baseFlags | TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
+                case TextAlignment.Right:
+                    return baseFlags | TextFormatFlags.Right | TextFormatFlags.VerticalCenter;
+                case TextAlignment.BottomLeft:
+                    return baseFlags | TextFormatFlags.Bottom | TextFormatFlags.Left;
+                case TextAlignment.Bottom:
+                    return baseFlags | TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter;
+                case TextAlignment.BottomRight:
+                    return baseFlags | TextFormatFlags.Bottom | TextFormatFlags.Right;
+            }
+        }
+
+        public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment)
+        {
+            var measure = System.Windows.Forms.TextRenderer.MeasureText(text, font, new System.Drawing.Size(maxwidth, int.MaxValue), GetFlags(alignment));
             return new Vector2(measure.Width, measure.Height);
 
         }

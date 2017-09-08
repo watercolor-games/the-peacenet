@@ -38,11 +38,11 @@ namespace Plex.Frontend.GUI
         protected override void RenderText(GraphicsContext gfx)
         {
             var fgCol = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
-            var measure = GraphicsContext.MeasureString(Text, Font);
+            var measure = GraphicsContext.MeasureString(Text, Font, Engine.GUI.TextAlignment.Middle);
 
             var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
 
-            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font);
+            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font, Engine.GUI.TextAlignment.Middle);
 
         }
 

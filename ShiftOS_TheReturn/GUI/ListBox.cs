@@ -29,7 +29,7 @@ namespace Plex.Frontend.GUI
                 int width = Width - 2;
                 int height = fontheight;
                 {
-                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont, Alignment);
 
                 }
             }

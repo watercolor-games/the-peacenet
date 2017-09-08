@@ -104,8 +104,8 @@ namespace Plex.Frontend.GUI
 
         protected override void RenderText(GraphicsContext gfx)
         {
-            var measure = GraphicsContext.MeasureString(Text, Font);
-            gfx.DrawString(Text, 2, (Height - (int)measure.Y) / 2, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), Font);
+            var measure = GraphicsContext.MeasureString(Text, Font, Engine.GUI.TextAlignment.TopLeft);
+            gfx.DrawString(Text, 2, (Height - (int)measure.Y) / 2, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), Font, Engine.GUI.TextAlignment.TopLeft);
         }
 
         protected override void OnLayout(GameTime gameTime)
@@ -120,7 +120,7 @@ namespace Plex.Frontend.GUI
 
             if (AutoSize)
             {
-                var textmeasure = GraphicsContext.MeasureString(Text, Font);
+                var textmeasure = GraphicsContext.MeasureString(Text, Font, Engine.GUI.TextAlignment.TopLeft);
                 int padding_w = 4;
                 int padding_h = 4;
                 int sidebar_width = 25;

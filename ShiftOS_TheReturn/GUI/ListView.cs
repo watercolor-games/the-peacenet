@@ -41,12 +41,12 @@ namespace Plex.Frontend.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 int texty = _itemy + texheight;
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
-                gfx.DrawString(item.Text, textx, texty, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont, textwidth);
+                gfx.DrawString(item.Text, textx, texty, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
                 _itemx += textwidth + _itemgap;
                 if (_itemx >= (Width - (_initialmargin * 2)))
                 {
@@ -81,7 +81,7 @@ namespace Plex.Frontend.GUI
                         }
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
-                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                     int texty = _itemy + texheight;
@@ -212,7 +212,7 @@ namespace Plex.Frontend.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 if(image != null)
@@ -261,7 +261,7 @@ namespace Plex.Frontend.GUI
                         image = _images[item.ImageKey];
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
-                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, textwidth);
+                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                     int texty = _itemy + texheight;

@@ -173,6 +173,7 @@
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\ScrollBar.cs" />
+    <Compile Include="GUI\TextAlignment.cs" />
     <Compile Include="GUI\TextControl.cs" />
     <Compile Include="GUI\TextInput.cs" />
     <Compile Include="Hacking.cs" />
@@ -207,7 +208,6 @@
     <Compile Include="ServerManager.cs" />
     <Compile Include="ShiftnetSite.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
-    <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
     <Compile Include="Upgrades.cs" />
     <Compile Include="GUI\Skinning.cs" />

@@ -344,7 +344,7 @@ namespace Plex.Frontend
                 if (_tipFade == 0.0f)
                 {
                     _tipText = GetRandomString();
-                    var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, (Width / 4) - 30);
+                    var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, Engine.GUI.TextAlignment.TopLeft, (Width / 4) - 30);
                     _tipWidth = (int)measure.X;
                     _tipHeight = (int)measure.Y;
 

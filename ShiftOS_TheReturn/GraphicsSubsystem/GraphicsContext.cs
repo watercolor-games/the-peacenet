@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.GUI;
 
 namespace Plex.Frontend.GraphicsSubsystem
 {
@@ -184,37 +185,20 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         }
 
-        public static Vector2 MeasureString(string text, System.Drawing.Font font, int wrapWidth = int.MaxValue)
+        public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue)
         {
-            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth);
+            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, alignment);
 
         }
 
-        [Obsolete("Don't be a broom. Use a TextControl.")]
-        public static List<TextCache> StringCaches = new List<TextCache>();
-
-        [Obsolete("Don't be a broom. Use a TextControl.")]
-        public TextCache GetCache(string text, System.Drawing.Font font, int wrapWidth)
-        {
-            //Don't use LINQ, it could be a performance bottleneck.
-            var caches = StringCaches.ToArray();
-            for (int i = 0; i < caches.Length; i++)
-            {
-                var cache = caches[i];
-                if (cache.Text == text && cache.FontFamily == font && cache.WrapWidth == wrapWidth)
-                    return cache;
-            }
-            return null;
-        }
-
-        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, int wrapWidth = int.MaxValue)
+        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue)
         {
             if (string.IsNullOrEmpty(text))
                 return;
             x += _startx;
             y += _starty;
 
-            Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth);
+            Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment);
         }
 
         private float getRotation(float x, float y, float x2, float y2)

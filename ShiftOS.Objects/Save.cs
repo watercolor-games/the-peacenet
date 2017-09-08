@@ -93,6 +93,9 @@ namespace Plex.Objects
 
         [Order]
         public int Rank { get; set; }
+
+        [Order]
+        public ulong Cash { get; set; }
     }
 
     public class SettingsObject : DynamicObject

@@ -176,7 +176,7 @@ namespace Plex.Frontend.Stories
                {
                    var now = DateTime.Now.TimeOfDay;
                    var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - {SaveSystem.CurrentSave.SystemName}";
-                   var dtmeasure = GraphicsContext.MeasureString(newDateTimeString, LoadedSkin.DesktopPanelClockFont);
+                   var dtmeasure = GraphicsContext.MeasureString(newDateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
                    int dp_height = LoadedSkin.DesktopPanelHeight;
                    int dp_start = (UIManager.Viewport.Height - dp_height) * LoadedSkin.DesktopPanelPosition;
                    int al_left = LoadedSkin.AppLauncherFromLeft.X;

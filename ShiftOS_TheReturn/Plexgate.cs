@@ -176,7 +176,7 @@ namespace Plex.Frontend
                 UIManager.ProcessKeyEvent(new KeyEvent(e));
             }
         }
-        
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -187,22 +187,16 @@ namespace Plex.Frontend
         protected override void Initialize()
         {
 
-			ATextRenderer strategy = null;
-			try
-			{
-				strategy = new Engine.TextRenderers.NativeTextRenderer();
-			}
-			catch
-			{
-				if(Environment.OSVersion.Platform == PlatformID.Win32NT)
-				{
-					strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
-				}
-				else
-				{
-					strategy = new Engine.TextRenderers.GdiPlusTextRenderer();				
-				}
-			}
+            ATextRenderer strategy = null;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
+            }
+            else
+            {
+                strategy = new Engine.TextRenderers.GdiPlusTextRenderer();
+            }
+        
 			
 			TextRenderer.Init(strategy);
 			Console.WriteLine(strategy.GetType().ToString());
@@ -435,16 +429,6 @@ namespace Plex.Frontend
                 //Cause layout update on all elements
                 UIManager.LayoutUpdate(gameTime);
 
-                timeSinceLastPurge += gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (timeSinceLastPurge > 2)
-                {
-                    GraphicsContext.StringCaches.Clear();
-                    timeSinceLastPurge = 0;
-                    GC.Collect();
-                }
-
-
                 //Some hackables have a connection timeout applied to them.
                 //We must update timeout values here, and disconnect if the timeout
                 //hits zero.
@@ -494,7 +478,7 @@ In order for you to regain your graphical user experience, you will need to star
 
 To begin this process, strike the [T] key while holding <CTRL>.";
                     int cwidth = 1280 - 400;
-                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold));
+                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold), Engine.GUI.TextAlignment.TopLeft);
                     SystemError.X = 200;
                     SystemError.Y = 200;
                     SystemError.AutoSize = false;
@@ -506,7 +490,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                     SystemErrorText.Text = e_errtext;
                     SystemErrorText.AutoSize = false;
                     SystemErrorText.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 12f);
-                    var e_measure = GraphicsContext.MeasureString(e_errtext, SystemErrorText.Font, cwidth);
+                    var e_measure = GraphicsContext.MeasureString(e_errtext, SystemErrorText.Font, Engine.GUI.TextAlignment.TopLeft, cwidth);
                     SystemErrorText.Width = (int)e_measure.X;
                     SystemErrorText.Height = (int)e_measure.Y;
                     SystemErrorText.X = 200;
@@ -579,7 +563,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                 gfx.DrawRectangle(MouseEventBounds.Right, MouseEventBounds.Y, 1280 - MouseEventBounds.Right, MouseEventBounds.Height, Color.Black * 0.5F);
                 gfx.DrawRectangle(MouseEventBounds.X, MouseEventBounds.Bottom, 1280 - MouseEventBounds.X, 720 - MouseEventBounds.Bottom, Color.Black * 0.5F);
 
-                var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, 1280 / 3);
+                var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, 1280 / 3);
                 int textX = ((MouseEventBounds.X) >= (1280 / 2)) ? MouseEventBounds.X - (int)tutmeasure.X - 15 : MouseEventBounds.Right + 15;
                 int textY = ((MouseEventBounds.Y) >= (720 / 2)) ? MouseEventBounds.Y - (int)tutmeasure.Y - 15 : MouseEventBounds.Bottom + 15;
                 if (textX < 15)
@@ -590,7 +574,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                     textY = 15;
                 if (textY > 705)
                     textY = 705 - (int)tutmeasure.Y;
-                gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, (int)tutmeasure.X);
+                gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, (int)tutmeasure.X);
 
             }
 
@@ -602,13 +586,13 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                 string objectiveFailed = "- OBJECTIVE FAILURE -";
                 string prompt = "[press any key to dismiss this message and return to your sentience]";
                 int textMaxWidth = UIManager.Viewport.Width / 3;
-                var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
-                var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
-                var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
+                var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
+                var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+                var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
 
-                gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, textMaxWidth);
-                gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, textMaxWidth);
-                gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, textMaxWidth);
+                gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
+                gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+                gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
             }
 
             if (Hacking.CurrentHackable != null)
@@ -616,8 +600,8 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                 if (Hacking.CurrentHackable.DoConnectionTimeout)
                 {
                     string str = $"Timeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
-                    var measure = GraphicsContext.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont);
-                    gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont);
+                    var measure = GraphicsContext.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft);
+                    gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft);
                 }
             }
 #if DEBUG

@@ -261,7 +261,7 @@ namespace Plex.Frontend.Desktop
             int titlebarwidth = Width;
 
             //Now we draw the title text.
-            var textMeasure = GraphicsContext.MeasureString(Text, titlefont);
+            var textMeasure = GraphicsContext.MeasureString(Text, titlefont, Engine.GUI.TextAlignment.TopLeft);
             PointF textloc;
             if (titletextcentered)
                 textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
@@ -269,7 +269,7 @@ namespace Plex.Frontend.Desktop
             else
                 textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
 
-            gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont);
+            gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont, Engine.GUI.TextAlignment.TopLeft);
 
         }
 

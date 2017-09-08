@@ -135,16 +135,16 @@ namespace Plex.Frontend.Desktop
             var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
 
 
-            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
+            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
             int panelclockleft = Width - (int)pcMeasure.X;
             int panelclockwidth = Width - panelclockleft;
             
-            gfx.DrawString(dateTimeString, panelclockleft, LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont);
+            gfx.DrawString(dateTimeString, panelclockleft, LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
 
             int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
             
-            var almeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont);
-            gfx.DrawString(LoadedSkin.AppLauncherText, (al_holder_width - (int)almeasure.X) / 2, (LoadedSkin.AppLauncherHolderSize.Height - (int)almeasure.Y) / 2, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont);
+            var almeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
+            gfx.DrawString(LoadedSkin.AppLauncherText, (al_holder_width - (int)almeasure.X) / 2, (LoadedSkin.AppLauncherHolderSize.Height - (int)almeasure.Y) / 2, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
 
             int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
             int offset = initialGap;
@@ -159,7 +159,7 @@ namespace Plex.Frontend.Desktop
 
                 //now we draw the text
 
-                gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont);
+                gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont, Engine.GUI.TextAlignment.TopLeft);
 
                 offset += LoadedSkin.PanelButtonSize.Width;
             }
@@ -172,7 +172,7 @@ namespace Plex.Frontend.Desktop
                 
                 foreach (var item in LauncherItems)
                 {
-                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y + 1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont);
+                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y + 1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
                 }
             }
 
@@ -188,7 +188,7 @@ namespace Plex.Frontend.Desktop
                 for(int i = 0; i < items.Length; i++)
                 {
                     string name = Localization.Parse(items[i].DisplayData.Name);
-                    var measure = GraphicsContext.MeasureString(name, LoadedSkin.MainFont);
+                    var measure = GraphicsContext.MeasureString(name, LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
                     if (height < (int)measure.Y)
                         height = (int)measure.Y;
                     widths[i] = 120 + (int)measure.X;
@@ -369,7 +369,7 @@ namespace Plex.Frontend.Desktop
                 gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"], SkinEngine.GetImageLayout("applauncher"));
             }
 
-            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont);
+            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
             int panelclockleft = Width - (int)pcMeasure.X;
             int panelclockwidth = Width - panelclockleft;
 

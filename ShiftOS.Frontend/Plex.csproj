@@ -57,7 +57,7 @@
     <Compile Include="Apps\MissionComplete.cs" />
     <Compile Include="Apps\MultiplayerServerList.cs" />
     <Compile Include="Apps\Network.cs" />
-    <Compile Include="Apps\Pong.cs" />
+    <Compile Include="Apps\Plexnet.cs" />
     <Compile Include="Apps\PlexTheme.cs" />
     <Compile Include="Apps\RankUpDialog.cs" />
     <Compile Include="Apps\Themes.cs" />
@@ -178,6 +178,10 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plex.Extras\Plex.Extras.csproj">
+      <Project>{3f6b15ac-6fbd-4e66-b15c-44ca39e7f46e}</Project>
+      <Name>Plex.Extras</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plex.Server\Plex.Server.csproj">
       <Project>{54b1a6ba-f465-4df7-ba4c-56ea5d2b9326}</Project>
       <Name>Plex.Server</Name>
