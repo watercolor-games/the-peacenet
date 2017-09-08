@@ -4,18 +4,31 @@
 
 namespace WrapMode
 {
-	const int None = 0;
-	const int Letters = 1;
-	const int Words = 2;
+	const int32_t None = 0;
+	const int32_t Letters = 1;
+	const int32_t Words = 2;
 }
 
 namespace Styles
 {
-	const int Regular = 0;
-	const int Bold = 1;
-	const int Italic = 2;
-	const int Underline = 4;
-	const int Strikeout = 8;
+	const int32_t Regular = 0;
+	const int32_t Bold = 1;
+	const int32_t Italic = 2;
+	const int32_t Underline = 4;
+	const int32_t Strikeout = 8;
+}
+
+namespace Alignment
+{
+	const int32_t TopLeft = 0;
+	const int32_t Top = 1;
+	const int32_t TopRight = 2;
+	const int32_t Left = 3;
+	const int32_t Middle = 4;
+	const int32_t Right = 5;
+	const int32_t BottomLeft = 6;
+	const int32_t Bottom = 7;
+	const int32_t BottomRight = 8;
 }
 
 // IN:
@@ -25,11 +38,12 @@ namespace Styles
 // typefacelen - the length of "typeface"
 // pointsize - font size in points
 // styles - bitwise combination of the Styles constants above
+// alignment - one of the Alignment constants above
 // wrapmode - one of the WrapMode constants above
 // wrapwidth - the width to wrap at if wrapmode is not WrapMode::None
 // RETURNS:
 // the width and height as ints combined into a long
-extern "C" int64_t MeasureString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t wrapmode, int32_t wrapwidth);
+extern "C" int64_t MeasureString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth);
 
 // IN:
 // text - the text to be drawn as a C string
@@ -38,6 +52,7 @@ extern "C" int64_t MeasureString(char* text, int32_t textlen, char* typeface, in
 // typefacelen - the length of "typeface"
 // pointsize - font size in points
 // styles - bitwise combination of the Styles constants above
+// alignment - one of the Alignment constants above
 // wrapmode - one of the WrapMode constants above
 // wrapwidth - the width to wrap at if wrapmode is not WrapMode::None
 // r - red channel of main text colour in range 0 to 1
@@ -48,5 +63,5 @@ extern "C" int64_t MeasureString(char* text, int32_t textlen, char* typeface, in
 // h - height of image in pixels (obtained from MeasureString)
 // OUT:
 // buffer - a buffer allocated to w * h * 4 that will take RGBA pixels
-extern "C" void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer);
+extern "C" void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer);
 

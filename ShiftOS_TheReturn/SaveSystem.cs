@@ -297,21 +297,25 @@ namespace Plex.Engine
                     magic = reader.ReadBytes(4);
                     if (magic.SequenceEqual(rst5))
                     {
+                        var checksum = reader.ReadBytes(64);
                         int savelength = reader.ReadInt32();
+                        var savebytes = reader.ReadBytes(savelength);
+                        if (!checksum.SequenceEqual(new System.Security.Cryptography.SHA512Managed().ComputeHash(savebytes)))
+                        {
+                            Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.");
+                            return;
+						}
                         using (var memory = new System.IO.MemoryStream())
                         {
-                            
-                            var savebytes = new byte[savelength];
-                            savebytes = reader.ReadBytes(savebytes.Length);
-                            memory.Write(savebytes, 0, savebytes.Length);
+                            memory.Write(savebytes, 0, savelength);
                             memory.Position = 0;
                             try
                             {
                                 CurrentSave = DeserialiseObject<Save>(memory);
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                TryFallbackReader(path);
+                                Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read." + Environment.NewLine + ex.ToString());
                             }
                         }
                     }
@@ -393,13 +397,15 @@ namespace Plex.Engine
                     {
                         var writer = new BinaryWriter(fobj);
                         writer.Write(rst5);
+                        byte[] data;
                         using (var memory = new MemoryStream())
                         {
                             SerialiseObject(memory, CurrentSave);
-                            byte[] data = memory.ToArray();
-                            writer.Write(data.Length);
-                            writer.Write(data);
+                            data = memory.ToArray();
                         }
+                        writer.Write(new System.Security.Cryptography.SHA512Managed().ComputeHash(data));
+						writer.Write(data.Length);
+						writer.Write(data);
                         writer.Close();
                     }
                     SkinEngine.SaveSkin();

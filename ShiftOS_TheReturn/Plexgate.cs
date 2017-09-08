@@ -188,15 +188,21 @@ namespace Plex.Frontend
         {
 
             ATextRenderer strategy = null;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            try
             {
-                strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
+				strategy = new Engine.TextRenderers.NativeTextRenderer();
             }
-            else
+            catch
             {
-                strategy = new Engine.TextRenderers.GdiPlusTextRenderer();
-            }
-        
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
+                }
+                else
+                {
+                    strategy = new Engine.TextRenderers.GdiPlusTextRenderer();
+                }
+			}
 			
 			TextRenderer.Init(strategy);
 			Console.WriteLine(strategy.GetType().ToString());

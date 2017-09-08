@@ -208,6 +208,7 @@
     <Compile Include="ServerManager.cs" />
     <Compile Include="ShiftnetSite.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
+    <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
     <Compile Include="Upgrades.cs" />
     <Compile Include="GUI\Skinning.cs" />
