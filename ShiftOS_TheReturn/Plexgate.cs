@@ -30,6 +30,11 @@ namespace Plex.Frontend
         internal int Port = 0;
         internal Thread ServerThread = null;
 
+        private GUI.TextControl _objectiveTitle = new GUI.TextControl();
+        private GUI.TextControl _objectiveDesc = new GUI.TextControl();
+        private int objectiveState = 0;
+        private double _objectiveStateValue = 0.0;
+
         public event Action Initializing;
 
         public void FireInitialized()
@@ -133,7 +138,8 @@ namespace Plex.Frontend
             DebugText.AutoSize = true;
             UIManager.AddHUD(DebugText);
 #endif
-
+            UIManager.AddHUD(_objectiveTitle);
+            UIManager.AddHUD(_objectiveDesc);
             UIManager.AddHUD(SystemError);
             SystemError.Visible = false;
             UIManager.AddHUD(SystemErrorText);
@@ -186,6 +192,20 @@ namespace Plex.Frontend
         /// </summary>
         protected override void Initialize()
         {
+            Story.ObjectiveStarted += () =>
+            {
+                objectiveState = 1;
+                _objectiveStateValue = 0.0;
+                _objectiveTitle.Text = Story.CurrentObjectives.First().Name;
+                _objectiveDesc.Text = Story.CurrentObjectives.First().Description;
+
+            };
+
+            Story.ObjectiveComplete += () =>
+            {
+                objectiveState = 2;
+                _objectiveStateValue = 0.0;
+            };
 
             ATextRenderer strategy = null;
             try
@@ -323,6 +343,42 @@ namespace Plex.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if(objectiveState == 0)
+            {
+                _objectiveTitle.Visible = false;
+                _objectiveDesc.Visible = false;
+            }
+            else
+            {
+                _objectiveTitle.Visible = true;
+                _objectiveDesc.Visible = true;
+                _objectiveTitle.AutoSize = true;
+                _objectiveTitle.Font = SkinEngine.LoadedSkin.Header3Font;
+                _objectiveDesc.AutoSize = true;
+                _objectiveDesc.Font = SkinEngine.LoadedSkin.MainFont;
+                _objectiveTitle.MaxWidth = 300;
+                _objectiveDesc.MaxWidth = 300;
+                _objectiveStateValue = MathHelper.Clamp((float)_objectiveStateValue + ((float)gameTime.ElapsedGameTime.TotalSeconds * 1.5F), 0, 1);
+                switch (objectiveState)
+                {
+                    case 1:
+                        _objectiveTitle.Opacity = 1.0;
+                        _objectiveDesc.Opacity = 1.0;
+                        _objectiveTitle.X = (int)MathHelper.Lerp(0 - _objectiveTitle.Width, 15, (float)_objectiveStateValue);
+                        _objectiveDesc.X = _objectiveTitle.X;
+                        break;
+                    case 2:
+                        _objectiveTitle.Opacity = 1.0 - (float)_objectiveStateValue;
+                        _objectiveDesc.Opacity = _objectiveTitle.Opacity;
+                        if (_objectiveStateValue == 1.0)
+                            objectiveState = 0;
+                        break;
+                }
+
+                _objectiveDesc.Y = (UIManager.Viewport.Height - _objectiveDesc.Height) - 15;
+                _objectiveTitle.Y = _objectiveDesc.Y - _objectiveTitle.Height - 15;
+            }
+
             if (IPAddress != null)
             {
                 msSinceLastReply += gameTime.ElapsedGameTime.TotalMilliseconds;

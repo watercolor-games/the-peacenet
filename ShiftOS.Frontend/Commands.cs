@@ -363,7 +363,7 @@ namespace Plex.Frontend
                     var missionattrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
                     if(missionattrib != null)
                     {
-                        if (!Upgrades.UpgradeInstalled(missionattrib.StoryID))
+                        if (!Upgrades.UpgradeInstalled(missionattrib.StoryID) && Upgrades.UpgradeAttributesUnlocked(mth))
                         {
                             found = true;
                             Console.WriteLine();

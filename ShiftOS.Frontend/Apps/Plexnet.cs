@@ -27,6 +27,18 @@ namespace Plex.Frontend.Apps
             _go.Text = "Go ->";
             _go.AutoSize = true;
 
+            _go.Click += () =>
+            {
+                GoToURL(_address.Text);
+            };
+            _address.KeyEvent += (key) =>
+            {
+                if (key.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                {
+                    GoToURL(_address.Text);
+                }
+            };
+
             _address.AutoSize = true;
             _address.MinHeight = 24;
 
@@ -50,6 +62,14 @@ namespace Plex.Frontend.Apps
 
         public void OnUpgrade()
         {
+        }
+
+        public string CurrentUrl
+        {
+            get
+            {
+                return _address.Text;
+            }
         }
 
         public void SetSite(PlexnetSite site)

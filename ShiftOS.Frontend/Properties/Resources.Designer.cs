@@ -448,6 +448,16 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap moneymate_transparent {
+            get {
+                object obj = ResourceManager.GetObject("moneymate_transparent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /* Plex Payloads data file
         /// *
         /// * This file contains information about all payloads in the game&apos;s campaign.

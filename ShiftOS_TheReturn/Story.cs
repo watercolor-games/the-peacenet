@@ -68,6 +68,9 @@ namespace Plex.Engine
     /// </summary>
     public static class Story
     {
+        public static event Action ObjectiveStarted;
+        public static event Action ObjectiveComplete;
+
         public static StoryContext Context { get; private set; }
         public static event Action<string> StoryComplete;
         public static List<Objective> CurrentObjectives { get; private set; }
@@ -90,6 +93,7 @@ namespace Plex.Engine
             CurrentObjectives.Add(currentObjective);
             var t = new Thread(() =>
             {
+                ObjectiveStarted?.Invoke();
                 var obj = currentObjective;
                 while (!obj.IsComplete)
                 {
@@ -98,27 +102,10 @@ namespace Plex.Engine
                 Thread.Sleep(500);
                 CurrentObjectives.Remove(obj);
                 obj.Complete();
+                ObjectiveComplete?.Invoke();
             });
             t.IsBackground = true;
             t.Start();
-
-            Console.WriteLine();
-            ConsoleEx.ForegroundColor = ConsoleColor.Red;
-            ConsoleEx.Bold = true;
-            Console.WriteLine("NEW OBJECTIVE:");
-            Console.WriteLine();
-
-            ConsoleEx.ForegroundColor = ConsoleColor.White;
-            ConsoleEx.Bold = false;
-            Console.WriteLine("A new objective has been added to your system.");
-            ConsoleEx.Bold = true;
-            Console.WriteLine(name);
-            ConsoleEx.Bold = false;
-            Console.WriteLine();
-            Console.WriteLine(desc);
-            Console.WriteLine();
-            Console.WriteLine("Run 'status' at any time to view your current objectives.");
-            TerminalBackend.PrintPrompt();
         }
         
         

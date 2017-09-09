@@ -243,7 +243,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
-            foreach (var ctrl in topLevels.ToArray().Where(x=>x.Visible == true).OrderByDescending(x=>topLevels.IndexOf(x)))
+            foreach (var ctrl in topLevels.ToArray().Where(x=>x != null).Where(x=>x.Visible == true).OrderByDescending(x=>topLevels.IndexOf(x)))
             {
                 if (ctrl.ProcessMouseState(state, lastLeftClickMS))
                     return;

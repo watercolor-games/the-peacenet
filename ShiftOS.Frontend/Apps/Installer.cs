@@ -8,11 +8,12 @@ using Plex.Frontend.GUI;
 using Newtonsoft.Json;
 using static Plex.Objects.ShiftFS.Utils;
 using Microsoft.Xna.Framework;
+using Plex.Extras;
 
 namespace Plex.Frontend.Apps
 {
     [DefaultTitle("Installer")]
-    [FileHandler("Setup file", ".stp", "")]
+    [FileHandler("Setup file", ".pst", "")]
     public class Installer : Control, IPlexWindow, IFileHandler
     {
         private SetupFile _setup = null;
@@ -105,6 +106,22 @@ namespace Plex.Frontend.Apps
         {
             _setup = JsonConvert.DeserializeObject<SetupFile>(ReadAllText(file));
             AppearanceManager.SetupDialog(this);
+        }
+
+        public static SetupFile Generate<T>()
+        {
+            var type = typeof(T);
+            var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is InstallerAttribute) as InstallerAttribute;
+            if (attr == null)
+                throw new Exception("Type has no installer attribute, can't create setup file.");
+            var stp = new SetupFile
+            {
+                Description = attr.Description,
+                Name = attr.Name,
+                Source = attr.Upgrade,
+                SourceType = SetupSource.ShiftoriumUpgrade
+            };
+            return stp;
         }
 
         public void OnLoad()

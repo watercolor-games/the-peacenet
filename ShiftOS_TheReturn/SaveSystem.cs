@@ -302,7 +302,10 @@ namespace Plex.Engine
                         var savebytes = reader.ReadBytes(savelength);
                         if (!checksum.SequenceEqual(new System.Security.Cryptography.SHA512Managed().ComputeHash(savebytes)))
                         {
-                            Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.");
+                            Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.", ()=>
+                            {
+                                NewSave();
+                            });
                             return;
 						}
                         using (var memory = new System.IO.MemoryStream())

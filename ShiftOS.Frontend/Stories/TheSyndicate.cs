@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Plex.Engine;
+using Plex.Extras;
 using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -12,6 +13,7 @@ namespace Plex.Frontend.Stories
 {
     public static class TheFundamentals
     {
+        [RequiresUpgrade("gcc")]
         [Mission("m00_fundamentals_01", "The Fundamentals", "Welcome to Plexnet. Let's get your system ready.", 650, "alkaline")]
         public static void MTheSyndicate()
         {
@@ -89,9 +91,85 @@ namespace Plex.Frontend.Stories
             Thread.Sleep(4000);
             _client.SendClientMessage("jonnythesweetness4", "Hm, I've had bad experiences with them...but whatever you say, alkaline...");
             Thread.Sleep(4000);
-            _client.SendClientMessage("jonnythesweetness4", $"Alright, {SaveSystem.CurrentSave.Username}. Open the Plexnet Browser and head to 'net.moneymate/home.rnp', and download the moneymate .pst file. Let us know when you've got it.");
+            _client.SendClientMessage("jonnythesweetness4", $"Alright, {SaveSystem.CurrentSave.Username}. Open the Plexnet Browser and head to 'main.moneymate/home.rnp'");
 
+            Story.PushObjective("Get MoneyMate", "Follow Jonny's request, and visit 'main.moneymate' in the Plexnet Browser.", () =>
+            {
+                var win = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Apps.Plexnet);
+                if(win != null)
+                {
+                    return ((Plexnet)win.ParentWindow).CurrentUrl == "main.moneymate/home.rnp";
+                }
+                return false;
+            }, () =>
+            {
+                Thread.Sleep(2000);
+                _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.CurrentSave.Username}, you there yet? If you are, click the big 'download' link towards the bottom.");
+                Thread.Sleep(4000);
+                _client.SendClientMessage("jonnythesweetness4", "It'll give you a .pst file. Open it in Installer and it'll install MoneyMate manager.");
+                Story.PushObjective("Download & install MoneyMate.", "You've got a big download link right there! Go ahead and click it and install MoneyMate Manager.", () =>
+                {
+                    var type = typeof(MoneyMateManager);
+                    return Upgrades.UpgradeAttributesUnlocked(type);
+                }, () =>
+                {
+                    Thread.Sleep(2000);
+                    _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.CurrentSave.Username}: Installed yet?");
+                    Thread.Sleep(4000);
+                    _client.SendClientMessage("alkaline", "jonnythesweetness4: In this amount of time? They must've.");
+                    Thread.Sleep(4000);
+                    _client.SendClientMessage("alkaline", $"Anyway {SaveSystem.CurrentSave.Username}, now that you've installed MoneyMate Manager, you must load its upgrades in order for you to use it.");
+                    Thread.Sleep(4000);
+                    _client.SendClientMessage("alkaline", $"To do this, open your 'Upgrades' application...");
+                    Story.PushObjective("Open the Upgrade Manager", "Open the Upgrade Manager (from App Launcher or Terminal) to load MoneyMate's upgrades.", () =>
+                    {
+                        return AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is CodeShop) != null;
+                    },
+                    ()=>
+                    {
+                        Thread.Sleep(1000);
+                        _client.SendClientMessage("alkaline", $"Now select MoneyMate Manager (unloaded), and load it.");
+                        Story.PushObjective("Load MoneyMate Manager", "Load the MoneyMate Manager upgrade.", () =>
+                        {
+                            var upg = typeof(MoneyMateManager).GetCustomAttributes(false).FirstOrDefault(x => x is InstallerAttribute) as InstallerAttribute;
+                            return Upgrades.IsLoaded(upg.Upgrade);
+                        }, () =>
+                        {
+                            Thread.Sleep(1000);
+                            _client.SendClientMessage("alkaline", "Loaded? Hmm... your system node says it is. You've got MoneyMate installed. Good job!");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness4", "Wait, alkaline, how do you know the user successfully did what we said? For sure?");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "That's...not something you need to know, Jonny.");
+                            //Coder's note: I keep getting SendMessage and SendClientMessage mixed up. Why?
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", $"Anyway, {SaveSystem.CurrentSave.Username}, a word on upgrades... Right now you can only have 5 loaded at once.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness4", "OOH! Ranks! These are fun to explain!");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "ugh, take it away Jonny... -_-");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness", $"{SaveSystem.CurrentSave.Username}: In the Plexnet, tasks you perform (such as the ones we're getting you to) earn you Experience Points (XP, as we like to shorten it to). The more XP you earn, the higher your SYstem Rank goes. As you earn more ranks, you can gain more upgrade slots, system RAM, and even earn special upgrades you can't get anywhere else!");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "Right now, you can only load 5 upgrades at once, this includes MoneyMate Manager. Ranking up will allow you to load more upgrades at once.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "Since certain tasks may require certain upgrades to be loaded, you will have to decide which ones to unload, or you will have to perform a less intensive task, until you earn enough upgrade slots to satisfy the requirements of the initial task.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness4", "The reason we got you to install MoneyMate, is so that you have a program which allows you to send and receive money in the Plexnet, allowing you to buy upgrades.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness4", "You can also use money to buy more system RAM, which will allow you to run more programs at once. Your rank will determine the maximum amount of RAM you can have, though.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "Each program in Plex takes up 4MB of system RAM, and your system currently has 8MB of RAM, meaning you can only run 2 programs at once.");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("alkaline", "We'll let ya get off and go explore the Plexnet some more. Come see us again and we'll teach you how to buy RAM!");
+                            Thread.Sleep(4000);
+                            _client.SendClientMessage("jonnythesweetness4", $"Oh, and, {SaveSystem.CurrentSave.Username}, I uhh... have something I wanna tell you in private.... so when you get the chance please come find me.");
+                            Story.Context.MarkComplete();
+                        });
 
+                    });
+                });
+            });
         }
 
         private static ChatClient _client = null;
