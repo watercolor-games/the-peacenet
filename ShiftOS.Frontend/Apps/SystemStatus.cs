@@ -63,7 +63,6 @@ Upgrades: {SaveSystem.CurrentSave.CountUpgrades()} installed, {Upgrades.GetDefau
 
 Username: {SaveSystem.CurrentSave.Username}
 System name: {SaveSystem.CurrentSave.SystemName}
-RAM usage: 0MB/0MB <nyi>
 Open programs: {AppearanceManager.OpenForms.Count}";
         }
     }

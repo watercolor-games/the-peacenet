@@ -149,7 +149,7 @@ namespace Plex.Frontend.Stories
                             Thread.Sleep(4000);
                             _client.SendClientMessage("alkaline", "ugh, take it away Jonny... -_-");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("jonnythesweetness", $"{SaveSystem.CurrentSave.Username}: In the Plexnet, tasks you perform (such as the ones we're getting you to) earn you Experience Points (XP, as we like to shorten it to). The more XP you earn, the higher your SYstem Rank goes. As you earn more ranks, you can gain more upgrade slots, system RAM, and even earn special upgrades you can't get anywhere else!");
+                            _client.SendClientMessage("jonnythesweetness", $"{SaveSystem.CurrentSave.Username}: In the Plexnet, tasks you perform (such as the ones we're getting you to) earn you Experience Points (XP, as we like to shorten it to). The more XP you earn, the higher your System Rank goes. As you earn more ranks, you can gain more upgrade slots and even earn special upgrades you can't get anywhere else!");
                             Thread.Sleep(4000);
                             _client.SendClientMessage("alkaline", "Right now, you can only load 5 upgrades at once, this includes MoneyMate Manager. Ranking up will allow you to load more upgrades at once.");
                             Thread.Sleep(4000);
@@ -157,11 +157,11 @@ namespace Plex.Frontend.Stories
                             Thread.Sleep(4000);
                             _client.SendClientMessage("jonnythesweetness4", "The reason we got you to install MoneyMate, is so that you have a program which allows you to send and receive money in the Plexnet, allowing you to buy upgrades.");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("jonnythesweetness4", "You can also use money to buy more system RAM, which will allow you to run more programs at once. Your rank will determine the maximum amount of RAM you can have, though.");
+                            _client.SendClientMessage("jonnythesweetness4", "You can also use money to pay for services on the Plexnet.");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("alkaline", "Each program in Plex takes up 4MB of system RAM, and your system currently has 8MB of RAM, meaning you can only run 2 programs at once.");
+                            _client.SendClientMessage("alkaline", "Money and experience are very valuable resources within the Plexnet. If you want to get far, you'll want to earn lots of money and lots of XP.");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("alkaline", "We'll let ya get off and go explore the Plexnet some more. Come see us again and we'll teach you how to buy RAM!");
+                            _client.SendClientMessage("alkaline", "We'll let ya get off and go explore the net some more on your own. Come see me again and I'll teach you how to earn your first money.");
                             Thread.Sleep(4000);
                             _client.SendClientMessage("jonnythesweetness4", $"Oh, and, {SaveSystem.CurrentSave.Username}, I uhh... have something I wanna tell you in private.... so when you get the chance please come find me.");
                             Story.Context.MarkComplete();
