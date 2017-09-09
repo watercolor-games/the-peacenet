@@ -27,7 +27,7 @@ namespace Plex.Frontend
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
             FileSkimmerBackend.Init(new MGFSLayer());
-
+            CashManager.Init(new PlexCashProvider());
             OutOfBoxExperience.Init(new MonoGameOOBE());
             //Now we can initiate the Infobox subsystem
             Engine.Infobox.Init(new Infobox());
@@ -68,6 +68,55 @@ namespace Plex.Frontend
                 game.Run();
             }
             ServerThread.Abort();
+        }
+    }
+
+    public class PlexCashProvider : ICashProvider
+    {
+        public bool Deduct(long cents, string to)
+        {
+            if (!Upgrades.IsLoaded("moneymate_manager"))
+            {
+                Engine.Infobox.Show("Missing upgrade", "An action in the system was requested that requires an upgrade that is not currently loaded. Action ID: moneymate_cash_deduct");
+                return false;
+            }
+            if(SaveSystem.CurrentSave.Cash < cents)
+            {
+                Engine.Infobox.Show("MoneyMate Manager", $"{to} has attempted to deduct ${((double)cents) / 100} from your account, however you only have ${((double)SaveSystem.CurrentSave.Cash) / 100} in your account. Transaction failed.");
+                return false;
+            }
+            if (SaveSystem.CurrentSave.Transactions == null)
+                SaveSystem.CurrentSave.Transactions = new List<CashTransaction>();
+            SaveSystem.CurrentSave.Transactions.Add(new CashTransaction
+            {
+                Date = DateTime.Now,
+                Amount = cents,
+                From = SaveSystem.CurrentSave.Username,
+                To = to
+            });
+            SaveSystem.CurrentSave.Cash -= cents;
+            return true;
+        }
+
+        public bool Receive(long cents, string from)
+        {
+            if (!Upgrades.IsLoaded("moneymate_manager"))
+            {
+                Engine.Infobox.Show("Missing upgrade", "An action in the system was requested that requires an upgrade that is not currently loaded. Action ID: moneymate_cash_receive");
+                return false;
+            }
+            if (SaveSystem.CurrentSave.Transactions == null)
+                SaveSystem.CurrentSave.Transactions = new List<CashTransaction>();
+            SaveSystem.CurrentSave.Transactions.Add(new CashTransaction
+            {
+                Date = DateTime.Now,
+                Amount = cents,
+                To = SaveSystem.CurrentSave.Username,
+                From = from
+            });
+            SaveSystem.CurrentSave.Cash += cents;
+            return true;
+
         }
     }
 

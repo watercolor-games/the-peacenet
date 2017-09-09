@@ -95,7 +95,18 @@ namespace Plex.Objects
         public int Rank { get; set; }
 
         [Order]
-        public ulong Cash { get; set; }
+        public long Cash { get; set; }
+
+        [Order]
+        public List<CashTransaction> Transactions { get; set; }
+    }
+
+    public class CashTransaction
+    {
+        public long Amount { get; set; }
+        public string To { get; set; }
+        public string From { get; set; }
+        public DateTime Date { get; set; }
     }
 
     public class SettingsObject : DynamicObject

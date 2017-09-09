@@ -145,6 +145,7 @@
     <Compile Include="ATextRenderer.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BFInterpreter.cs" />
+    <Compile Include="CashManager.cs" />
     <Compile Include="CommandParser.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConsoleEx.cs" />

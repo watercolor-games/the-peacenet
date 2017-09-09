@@ -99,6 +99,14 @@ namespace Plex.Frontend
             UIManager.SetUITint(new Color(r, g, b, 255));
         }
 
+        [Command("add_cash")]
+        [RequiresArgument("id")]
+        public static void AddCash(Dictionary<string, object> args)
+        {
+            long amount = Convert.ToInt64(args["id"].ToString());
+            CashManager.Receive(amount, "debugger");
+        }
+
         [Command("drop_opener")]
         [ShellConstraint("Plex_debug> ")]
         public static void DropOpener(Dictionary<string, object> args)

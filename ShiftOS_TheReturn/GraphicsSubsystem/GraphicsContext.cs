@@ -169,7 +169,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                     _spritebatch.Draw(tex2, new Rectangle(x+((width - tex2.Width) / 2), y+((height - tex2.Height) / 2), tex2.Width, tex2.Height), tint);
                     break;
                 case ImageLayout.Zoom:
-                    float scale = Math.Min(width / tex2.Width, height / tex2.Height);
+                    float scale = Math.Min(width / (float)tex2.Width, height / (float)tex2.Height);
                     
                     var scaleWidth = (int)(tex2.Width * scale);
                     var scaleHeight = (int)(tex2.Height * scale);

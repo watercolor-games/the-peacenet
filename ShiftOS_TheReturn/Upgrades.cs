@@ -114,22 +114,15 @@ namespace Plex.Engine
         /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Experience or the upgrade wasn' found.</returns>
         public static bool Buy(string id, ulong cost)
         {
-            if (SaveSystem.CurrentSave.Experience >= cost)
+            if(CashManager.Deduct((long)cost, "upgrademgr") == true)
             {
+                if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
+                    SaveSystem.CurrentSave.Upgrades.Add(id, false);
                 SaveSystem.CurrentSave.Upgrades[id] = true;
-                TerminalBackend.InvokeCommand("sos.save");
-                SaveSystem.TransferExperienceToVoid(cost);
                 Installed?.Invoke();
-                Desktop.ResetPanelButtons();
-                Desktop.PopulateAppLauncher();
                 return true;
             }
-            else
-            {
-                if (!Silent)
-                    Console.WriteLine($"{{SHIFTORIUM_NOTENOUGHCP}}: {cost} > {SaveSystem.CurrentSave.Experience}");
-                return false;
-            }
+            return false;
         }
 
         /// <summary>

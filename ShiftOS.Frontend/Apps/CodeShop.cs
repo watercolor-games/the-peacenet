@@ -179,7 +179,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
             {
                 string type = "unknown";
                 if (upgrade.Purchasable)
-                    type = $"{upgrade.Cost} XP";
+                    type = $"${((double)upgrade.Cost) / 100}";
                 if (upgrade.Installed)
                 {
                     type = (Upgrades.IsLoaded(upgrade.ID)) ? "loaded" : "unloaded";
