@@ -68,6 +68,7 @@
     <Compile Include="ServerDetails.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="UserConfig.cs" />
+    <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

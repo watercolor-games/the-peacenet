@@ -10,14 +10,21 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Plex.Engine;
 using System.IO;
+using System.Drawing;
 
 namespace Plex.Server
 {
     public class Program
     {
+        private static readonly string[] NATOCodeNames = { "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu" };
+
         private static UdpClient _server = null;
         internal static bool IsMultiplayerServer = true;
         public static List<string> BannedIPs = new List<string>();
+
+        public static List<Rank> Ranks { get; set; }
+
+        public static World GameWorld = null;
 
         public static void SendMessage(PlexServerHeader header)
         {
@@ -43,6 +50,313 @@ namespace Plex.Server
             Main(args);
         }
 
+        public static void LoadWorld()
+        {
+            if (!File.Exists("world.whoa"))
+            {
+                Console.WriteLine("<worldgen> No world detected on filesystem. Generating world...");
+
+                var world = new World();
+                Console.WriteLine("<worldgen> Creating subnet list...");
+                world.Networks = new List<Subnet>();
+
+
+                Console.WriteLine("<worldgen> Creating MAIN subnet...");
+
+                var main = CreateSubnet("main", "Main subnet", "This is the maintenance subnet of the Plexnet. The health of this network is vital for proper operation of the Plexnet.");
+
+                Console.WriteLine("<rogue> Generating rogue system...");
+
+                var rogue = GenerateSystem(1000, SystemType.Computer, "rogue");
+
+                Console.WriteLine("<rogue> Joining main subnet");
+                main.NPCs.Add(rogue);
+
+                Console.WriteLine("<main> Joining world network...");
+
+                world.Rogue = main;
+
+                int subnets = rnd.Next(0, NATOCodeNames.Length - 1);
+                Console.WriteLine("<worldgen> This world will have {0} sub-networks.", subnets);
+
+                for (int i = 0; i < subnets; i++)
+                {
+                    Console.WriteLine("<worldgen> Generating sub-network {0}...", i);
+                    string name = null;
+                    while (name == null || world.Networks.FirstOrDefault(x => x.Name == name) != null)
+                    {
+                        name = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
+                    }
+                    Console.WriteLine("<{0}> Subnet generated.", name);
+
+                    var subnet = CreateSubnet(name, $"{name} subnet", "");
+
+                    Console.WriteLine("<{0}> I need a router.", name);
+
+                    var router = GenerateSystem(rnd.Next(1, Ranks.Count), SystemType.Router, GenerateSystemName(subnet));
+
+                    Console.WriteLine("<{0}.{1}> Joining {0}...", name, router.SystemDescriptor.SystemName);
+
+                    subnet.NPCs.Add(router);
+
+                    for (int j = 1; j <= router.SystemDescriptor.Rank; j++)
+                    {
+                        int max_systems = 20 / j;
+                        int generatedsystems = rnd.Next(1, max_systems);
+
+                        Console.WriteLine("<{0}> Generating {1} rank {2} systems...", subnet.Name, generatedsystems, j);
+
+                        string stype = null;
+                        string[] names = Enum.GetNames(typeof(SystemType));
+                        while (stype == null || stype == "Router")
+                            stype = names[rnd.Next(names.Length)];
+                        SystemType systemtype = (SystemType)Enum.Parse(typeof(SystemType), stype);
+                        var system = GenerateSystem(j, systemtype, GenerateSystemName(subnet));
+                        Console.WriteLine("<{0}.{1}> Joining {0}...", subnet.Name, system.SystemDescriptor.SystemName);
+                        subnet.NPCs.Add(system);
+                    }
+
+
+                    Console.WriteLine("<{0}> Joining world...", subnet.Name);
+
+                    world.Networks.Add(subnet);
+                }
+
+                Console.WriteLine("<worldgen> SUBNETS CREATED. Now let's position them.");
+                PointF _mainPos = new PointF(0, 0);
+                foreach (var net in world.Networks)
+                {
+                    int averagerank = AverageRank(net.NPCs);
+                    float radius = 125 * averagerank;
+                    int degrees = rnd.Next(360);
+                    var point = GetPositionFromRadius(_mainPos, radius, degrees);
+                    Console.WriteLine("<{0}> Average rank: {1} - Radius from main net: {2} - Absolute World Position: {3}, {4}", net.Name, averagerank, radius, point.X, point.Y);
+                    net.WorldX = point.X;
+                    net.WorldY = point.Y;
+                    Console.WriteLine("<{0}> Grabbing router...", net.Name);
+                    var router = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router);
+                    Console.WriteLine("<{0}> Router is {0}.{1}", net.Name, router.SystemDescriptor.SystemName);
+                    foreach (var npc in net.NPCs.Where(x => x.SystemType != SystemType.Router))
+                    {
+                        int nradius = 50 * npc.SystemDescriptor.Rank;
+                        int ndegrees = rnd.Next(360);
+                        var npoint = GetPositionFromRadius(new PointF(router.X, router.Y), nradius, ndegrees);
+                        npc.X = npoint.X;
+                        npc.Y = npoint.Y;
+                        Console.WriteLine("<{0}.{1}> New location: {2}, {3}", net.Name, npc.SystemDescriptor.SystemName, npoint.X, npoint.Y);
+
+                    }
+                }
+                Console.WriteLine("---------------------------");
+                Console.WriteLine("World generation complete.");
+                Console.WriteLine("Generating world economy...");
+                Console.WriteLine("---------------------------");
+
+                foreach (var net in world.Networks)
+                {
+                    var computers = net.NPCs.Where(x => x.SystemType != SystemType.Router);
+                    var routerRank = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router).SystemDescriptor.Rank;
+                    for (int i = 1; i < routerRank; i++)
+                    {
+                        var rank = Ranks[i];
+                        var systemsWithRank = computers.Where(x => x.SystemDescriptor.Rank == i);
+                        if (systemsWithRank.Count() == 0)
+                            continue;
+                        ulong cashPerSystem = rank.MaximumCash / (ulong)systemsWithRank.Count();
+                        foreach (var system in systemsWithRank)
+                        {
+                            Console.WriteLine("<{0}.{1}> Adding cash: ${2}", net.Name, system.SystemDescriptor.SystemName, ((double)cashPerSystem / 100));
+                            system.SystemDescriptor.Cash = (long)cashPerSystem;
+                        }
+                    }
+                }
+                Program.GameWorld = world;
+                SaveWorld();
+            }
+            else
+            {
+                using (var fobj = File.OpenRead("world.whoa"))
+                {
+                    using (var reader = new BinaryReader(fobj))
+                    {
+                        var magic = new byte[4];
+                        magic = reader.ReadBytes(4);
+                        if (magic.SequenceEqual(worldmagic))
+                        {
+                            int worldDataCount = reader.ReadInt32();
+                            byte[] worldData = reader.ReadBytes(worldDataCount);
+                            using (var memory = new MemoryStream(worldData))
+                            {
+                                GameWorld = Whoa.Whoa.DeserialiseObject<World>(memory);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public class ServerSkin : Skin { }
+
+        public class ServerSkinProvider : ISkinProvider
+        {
+            public Skin GetDefaultSkin()
+            {
+                return new ServerSkin();
+            }
+
+            public Skin GetEasterEggSkin()
+            {
+                return new ServerSkin();
+            }
+
+            public Skin ReadSkin(string pfsPath)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public static void SaveWorld()
+        {
+            using(var fobj = File.OpenWrite("world.whoa"))
+            {
+                using(var writer = new BinaryWriter(fobj))
+                {
+                    writer.Write(worldmagic);
+                    byte[] worldbytes = null;
+                    using (var memory = new MemoryStream())
+                    {
+                        Whoa.Whoa.SerialiseObject(memory, GameWorld);
+                        worldbytes = memory.ToArray();
+                    }
+                    writer.Write(worldbytes.Length);
+                    writer.Write(worldbytes);
+                }
+            }
+        }
+
+        [Command("worldinfo")]
+        public static void WorldInfo()
+        {
+            Console.WriteLine("World info");
+            Console.WriteLine("===============");
+            Console.WriteLine();
+            Console.WriteLine("Subnet count (excluding rogue): {0}", GameWorld.Networks.Count);
+            List<HackableSystem> systems = new List<HackableSystem>();
+            foreach(var net in GameWorld.Networks)
+            {
+                systems.AddRange(net.NPCs);
+            }
+            Console.WriteLine("Systems: {0}", systems.Count);
+            foreach(SystemType stype in Enum.GetValues(typeof(SystemType)).Cast<SystemType>())
+            {
+                Console.WriteLine("  {0} of which are a {1}", systems.Where(x => x.SystemType == stype).Count(), stype);
+            }
+            long cash = 0;
+            foreach(var system in systems)
+            {
+                cash += system.SystemDescriptor.Cash;
+            }
+            Console.WriteLine("This world is worth ${0}", ((double)cash / 100));
+        }
+
+
+        private static readonly byte[] worldmagic = Encoding.UTF8.GetBytes("wR1d");
+
+        public static int AverageRank(List<HackableSystem> systems)
+        {
+            int rank = 0;
+            foreach (var sys in systems)
+                rank += sys.SystemDescriptor.Rank;
+            return rank / systems.Count;
+        }
+
+        public static PointF GetPositionFromRadius(PointF centre, float radius, float degrees)
+        {
+            float x = (float)(centre.X + radius * Math.Cos(degrees * Math.PI / 180));
+            float y = (float)(centre.Y + radius * Math.Sin(degrees * Math.PI / 180));
+            return new PointF(x, y);
+        }
+
+
+        private const string letters = "abcdefghijklmnopqrstuvwxyz";
+
+        public static string GenerateSystemName(Subnet subnet)
+        {
+            string sysname = null;
+            while(sysname == null || subnet.NPCs.FirstOrDefault(x=>x.SystemDescriptor.SystemName == sysname) != null)
+            {
+                string nato = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
+                char c = letters[rnd.Next(letters.Length)];
+                int num = rnd.Next(0, 9);
+                sysname = $"{nato}-{c}{num}";
+            }
+            return sysname;
+        }
+
+        public static Subnet CreateSubnet(string name, string friendlyname, string friendlydescription)
+        {
+            var subnet = new Subnet();
+
+            subnet.Name = name;
+            subnet.FriendlyName = friendlyname;
+            subnet.FriendlyDescription = friendlydescription;
+            subnet.NPCs = new List<HackableSystem>();
+            
+            return subnet;
+        }
+
+        static Random rnd = new Random();
+
+        public static HackableSystem GenerateSystem(int rank, SystemType type, string sysname)
+        {
+            Console.WriteLine("<worldgen> Creating hackable...");
+            var hackable = new HackableSystem();
+            Console.WriteLine("<worldgen> Creating system descriptor...");
+            var save = new Save();
+            save.SystemName = sysname;
+            Console.WriteLine("<worldgen> System name: " + sysname);
+            save.Rank = rank;
+            Console.WriteLine("<worldgen> Rank: " + rank);
+
+            if(rank == 1000)
+            {
+                save.Cash = 0;
+                save.Experience = long.MaxValue;
+                save.MaxLoadedUpgrades = int.MaxValue;
+            }
+            else
+            {
+                var current = Ranks[rank];
+                save.Cash = 0;
+                save.Experience = current.Experience;
+                save.MaxLoadedUpgrades = current.UpgradeMax;
+            }
+            save.CompletedHacks = new List<HackableSystem>();
+            save.Language = "english";
+            save.PickupPoint = "";
+            save.StoriesExperienced = new List<string>();
+            save.Transactions = new List<CashTransaction>();
+            save.ViralInfections = new List<ViralInfection>();
+            save.Upgrades = new Dictionary<string, bool>();
+            save.LoadedUpgrades = new List<string>();
+
+            hackable.SystemDescriptor = save;
+            hackable.IsPwn3d = false;
+            hackable.SystemType = type;
+            Console.WriteLine("<worldgen> System type: {0}", type);
+            return hackable;
+        }
+
+        public static int Clamp(int value, int min, int max)
+        {
+            if (value < min)
+                return min;
+            if (value > max)
+                return max;
+            return value;
+        }
+
         public static void Main(string[] args)
         {
             if (!IsMultiplayerServer)
@@ -51,7 +365,57 @@ namespace Plex.Server
             }
             else
             {
+                
                 Console.SetOut(new LocalizedTextWriter());
+
+                if (!File.Exists("ranks.json"))
+                {
+                    Console.WriteLine("<ranksys> No ranks found on server. Please configure the ranks. An example file has been written to ranks.example.json. Press a key to continue.");
+                    string comment = @"/* Rank example
+ *
+ * Ranks are used by the server to give players a sense of progression. As the user ranks up,
+ * they earn perks such as more upgrade slots and a bigger MoneyMate budget.
+ *
+ * The rank system is also used by the server's world generator to generate cash and resources
+ * for each NPC system in the world based on their rank.
+ * 
+ * Your server's economy ultimately depends on the budget given to each rank, and the amount of NPCs
+ * generated for each rank, so we let you decide the values for each rank in this file.
+ *
+ * Note that ranks are ordered by experience, starting at 0. Rank 0 is the base rank, and its experience value is
+ * completely ignored. All new players start at rank 0, so use it to set what your players can and can't do until they rank up.
+ *
+ * When you're ready, rename this file to 'ranks.json', and fire up your server, and the next phase of setup will begin.
+ *
+ *
+ * Note: All cash values are expressed in cents. 500 = $5.
+ */";
+                    var ranksex = new List<Rank>
+                    {
+                        new Rank
+                        {
+                            Experience = 0,
+                             MaximumCash = 500000,
+                              Name = "Inexperienced",
+                               UnlockedUpgrades = null,
+                                UpgradeMax = 5
+                        }
+                    };
+                    comment += Environment.NewLine;
+                    comment += JsonConvert.SerializeObject(ranksex, Formatting.Indented);
+                    if (!File.Exists("ranks.example.json"))
+                        File.WriteAllText("ranks.example.json", comment);
+                    Console.ReadKey(true);
+                    Environment.Exit(0);
+                }
+                Ranks = JsonConvert.DeserializeObject<List<Rank>>(File.ReadAllText("ranks.json"));
+
+                Console.WriteLine("PROJECT: PLEX SERVER SOFTWARE - Copyright (c) 2017 Watercolor Games - Licensed under MIT");
+                Console.WriteLine("===============================");
+                SkinEngine.SetSkinProvider(new ServerSkinProvider());
+                Console.WriteLine();
+                LoadWorld();
+
                 Console.WriteLine("<plexsrv> Starting server...");
                 var t = new System.Threading.Thread(ServerLoop);
                 t.Start();
@@ -73,6 +437,8 @@ namespace Plex.Server
                     string cmd = Console.ReadLine();
                     if(cmd == "exit")
                     {
+                        Console.WriteLine("<worldgen> Saving world...");
+                        SaveWorld();
                         Broadcast(new PlexServerHeader
                         {
                             Message = "server_shutdown",
@@ -228,7 +594,7 @@ namespace Plex.Server
             {
                 string localized = Localization.Parse(value);
                 Reset();
-                Console.WriteLine(localized);
+                Console.WriteLine($"[{DateTime.Now}] {localized}");
                 Console.SetOut(this);
             }
         }

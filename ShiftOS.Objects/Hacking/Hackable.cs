@@ -26,5 +26,6 @@ namespace Plex.Objects{    public class Hackable    {        [Order]
         WebServer,
         MailServer,
         NAS,
-        Database
+        Database,
+        Router
     }    }

@@ -114,6 +114,13 @@ namespace Plex.Objects
 
         [Order]
         public bool IsPwn3d { get; set; }
+
+        [Order]
+        public float X { get; set; }
+
+        [Order]
+        public float Y { get; set; }
+
     }
 
 
