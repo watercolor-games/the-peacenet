@@ -268,17 +268,10 @@ namespace Plex.Frontend.Desktop
             Height = GetSize().Height;
             var now = DateTime.Now.TimeOfDay;
             var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
-            if(Hacking.CurrentHackable == null)
-            {
                 if (SaveSystem.CurrentSave != null)
                     newDateTimeString += SaveSystem.CurrentSave.SystemName;
                 else
                     newDateTimeString += "localhost";
-            }
-            else
-            {
-                newDateTimeString += Hacking.CurrentHackable.Data.SystemName;
-            }
             if (newDateTimeString != dateTimeString)
             {
                 dateTimeString = newDateTimeString;

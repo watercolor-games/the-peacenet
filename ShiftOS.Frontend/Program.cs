@@ -89,7 +89,7 @@ namespace Plex.Frontend
                 SaveSystem.CurrentSave.Transactions = new List<CashTransaction>();
             SaveSystem.CurrentSave.Transactions.Add(new CashTransaction
             {
-                Date = DateTime.Now,
+                Date = DateTime.Now.ToString(),
                 Amount = cents,
                 From = SaveSystem.CurrentSave.Username,
                 To = to
@@ -109,7 +109,7 @@ namespace Plex.Frontend
                 SaveSystem.CurrentSave.Transactions = new List<CashTransaction>();
             SaveSystem.CurrentSave.Transactions.Add(new CashTransaction
             {
-                Date = DateTime.Now,
+                Date = DateTime.Now.ToString(),
                 Amount = cents,
                 To = SaveSystem.CurrentSave.Username,
                 From = from

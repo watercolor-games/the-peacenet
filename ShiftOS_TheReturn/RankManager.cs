@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Plex.Objects;
 
 namespace Plex.Engine
@@ -11,6 +12,12 @@ namespace Plex.Engine
     {
         private static Rank[] _ranks = null;
         private static IRankProvider _provider = null;
+
+        public static Rank GetRankData(int rank)
+        {
+            int clamped = MathHelper.Clamp(rank, 0, _ranks.Length - 1);
+            return _ranks.OrderBy(x => x.Experience).ToArray()[clamped];
+        }
 
         public static void Init(IRankProvider provider)
         {

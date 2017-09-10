@@ -125,6 +125,14 @@ namespace Plex.Engine
             return false;
         }
 
+        public static List<ShiftoriumUpgrade> AllUpgrades
+        {
+            get
+            {
+                return upgDb;
+            }
+        }
+
         /// <summary>
         /// Determines whether all Shiftorium upgrade attributes for this type have been installed.
         /// </summary>

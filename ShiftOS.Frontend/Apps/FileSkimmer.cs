@@ -81,29 +81,6 @@ namespace Plex.Frontend.Apps
 
         public void OnLoad()
         {
-            
-            if (Hacking.CurrentHackable != null)
-            {
-                if (Hacking.CurrentHackable.VectorsUnlocked.Contains(Objects.SystemType.FileServer))
-                {
-                    if (Mounts.Count > 2)
-                    {
-                        Mounts.RemoveAt(2);
-                    }
-                    var dir = new Objects.ShiftFS.Directory();
-                    dir.Name = $"{Hacking.CurrentHackable.Data.SystemName} (ftp)";
-                    Mounts.Add(dir);
-                    foreach (var loot in Hacking.CurrentHackable.ServerFTPLoot)
-                    {
-                        if(!FileExists("2:/" + loot.LootName))
-                        {
-                           var bytes = Hacking.GetLootBytes(loot.PointTo);
-                            WriteAllBytes($"2:/{loot.LootName}", bytes);
-                        }
-                    }
-                }
-            }
-
             Width = 720;
             Height = 480;
             _fList = new GUI.ListView();

@@ -18,100 +18,171 @@ namespace Plex.Frontend.Apps
     [DefaultTitle("Network")]
     public class Network : Control, IPlexWindow
     {
-        private NetworkGUIState _state = NetworkGUIState.Listing;
-        private TextControl _title = new TextControl();
-        private TextControl _subtitle = new TextControl();
-        private TextControl _description = new TextControl();
-        private ListBox _sysList = new ListBox();
-        private Button _connect = new Button();
-        private Button _disconnect = new Button();
-        private HackableSystem _current = null;
-        
+        public TextControl _title = new TextControl();
+        public List<Node> _nodes = new List<Node>();
+
+        public TextControl _hoverTitle = new TextControl();
+        public TextControl _hoverdesc = new TextControl();
+
+        public const int WorldSize = 1000; //NOTE: The world is this size, squared.
+
+        public float WorldOffsetX = 0;
+        public float WorldOffsetY = 0;
+
+        public bool Anim_IsMovingOffset = false;
+        public float Anim_OffsetValue = 0;
+        public float Anim_NewOffsetX = 0;
+        public float Anim_NewOffsetY = 0;
+        public float Anim_OldOffsetX = 0;
+        public float Anim_OldOffsetY = 0;
+
+
+        public float ZoomLevel = 1;
+
+
         public Network()
         {
             Width = 720;
             Height = 480;
             AddControl(_title);
-            AddControl(_subtitle);
-            AddControl(_description);
-            AddControl(_sysList);
-            AddControl(_connect);
-            AddControl(_disconnect);
-            
-            _connect.Text = "Connect";
-            _connect.AutoSize = true;
-
-            _title.Font = LoadedSkin.HeaderFont;
-            _title.AutoSize = true;
-            _title.Text = "Network";
-
-            _subtitle.AutoSize = true;
-            _subtitle.Text = "Select a Digital Society system below to view information about it.";
-            _subtitle.Font = LoadedSkin.Header3Font;
-
-            _sysList.DoubleClick += () =>
+            _nodes.Add(new Apps.Node
             {
-                if(_sysList.SelectedItem != null)
+                X = 0,
+                Y = 0,
+                Hackable = new Hackable
                 {
-                    ProcedurallyGenerateWhatWillBringPlexBack(_sysList.SelectedItem as Hackable);
-                }
-            };
-            _sysList.KeyEvent += (k) =>
-            {
-                if (k.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
-                {
-                    if (_sysList.SelectedItem != null)
-                    {
-                        ProcedurallyGenerateWhatWillBringPlexBack(_sysList.SelectedItem as Hackable);
-                    }
-                }
-            };
-            _connect.Click += () =>
-            {
-                ListPorts();
-            };
+                    Dependencies = "",
+                    Description = "This is your own system.",
+                    FriendlyName = SaveSystem.CurrentSave.SystemName,
+                    OnHackCompleteStoryEvent = "",
+                    OnHackFailedStoryEvent = "",
+                    SystemName = SaveSystem.CurrentSave.SystemName,
+                    SystemType = SystemType.Computer,
+                    WelcomeMessage = ""
+                },
+                 Icon = new PictureBox(),
+            });
         }
 
-        public void ListPorts()
+        public void ResetUI()
         {
-            _state = NetworkGUIState.PortsList;
-            int portListStart = _sysList.Y;
-            int portHeight = 100;
-            for(int i = 0; i < _current.PortsToUnlock.Count; i++)
+            ClearControls();
+            AddControl(_title);
+
+            foreach(var hackable in Hacking.Hackables)
             {
-                var portview = new PortView(_current.PortsToUnlock[i]);
-                portview.Width = _sysList.Width;
-                portview.X = _sysList.X;
-                portview.Y = portListStart + (portHeight * i);
-                portview.Height = portHeight;
-                AddControl(portview);
+                var node = _nodes.FirstOrDefault(x => x.Hackable == hackable);
+                if(node == null)
+                {
+                    _nodes.Add(new Node
+                    {
+                        X = hackable.X,
+                        Y = hackable.Y,
+                        Connections = new List<int>(),
+                        Hackable = hackable,
+                    });
+                }
+            }
+            AddControl(_hoverTitle);
+            AddControl(_hoverdesc);
+
+            foreach (var ctrl in _nodes)
+            {
+                ctrl.Icon = new PictureBox();
+                ctrl.Icon.MouseLeave += () =>
+                {
+                    _hoverTitle.Visible = false;
+                    _hoverdesc.Visible = false;
+                };
+                ctrl.Icon.Click += () =>
+                {
+                    if(WorldOffsetX != ctrl.X || WorldOffsetY != ctrl.Y)
+                    {
+                        Anim_NewOffsetX = ctrl.X;
+                        Anim_NewOffsetY = ctrl.Y;
+                        Anim_OffsetValue = 0;
+                        Anim_IsMovingOffset = true;
+                        Anim_OldOffsetX = WorldOffsetX;
+                        Anim_OldOffsetY = WorldOffsetY;
+                    }
+                };
+                ctrl.Icon.MouseEnter += () =>
+                {
+                    _hoverTitle.Visible = true;
+                    _hoverdesc.Visible = true;
+                    _hoverTitle.Text = ctrl.Hackable.SystemName;
+                    _hoverdesc.Text = $@"{ctrl.Hackable.SystemType}
+
+{ctrl.Hackable.Description}";
+
+                    _hoverTitle.X = ctrl.Icon.X + (ctrl.Icon.Width / 2) + 10;
+                    _hoverTitle.Y = ctrl.Icon.Y + (ctrl.Icon.Height / 2) + 10;
+
+                };
+                AddControl(ctrl.Icon);
+
+            }
+        }
+
+        protected override void OnMouseScroll(int value)
+        {
+            if (value > 0)
+                ZoomLevel += (ZoomLevel / 2);
+            else if (value < 0)
+                ZoomLevel -= (ZoomLevel / 2);
+            ZoomLevel = MathHelper.Clamp(ZoomLevel, 0.01F, 2);
+            Invalidate();
+        }
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            if(Anim_OffsetValue == 1.0)
+            {
+                Anim_IsMovingOffset = false;
+            }
+            else
+            {
+                Anim_OffsetValue = MathHelper.Clamp(Anim_OffsetValue + ((float)gameTime.ElapsedGameTime.TotalSeconds * 1.5f), 0, 1);
+                WorldOffsetX = MathHelper.Lerp(Anim_OldOffsetX, Anim_NewOffsetX, Anim_OffsetValue);
+                WorldOffsetY = MathHelper.Lerp(Anim_OldOffsetY, Anim_NewOffsetY, Anim_OffsetValue);
+
+            }
+
+            _title.X = 15;
+            _title.Y = 15;
+            _title.AutoSize = true;
+            _title.Font = SkinEngine.LoadedSkin.HeaderFont;
+            _title.Text = "Network";
+            _hoverTitle.AutoSize = true;
+            _hoverTitle.Font = SkinEngine.LoadedSkin.Header3Font;
+            _hoverTitle.MaxWidth = 300;
+            _hoverdesc.AutoSize = true;
+            _hoverdesc.X = _hoverTitle.X;
+            _hoverdesc.Y = _hoverTitle.Y + _hoverTitle.Height + 5;
+            _hoverdesc.MaxWidth = 300;
+            _hoverdesc.Font = SkinEngine.LoadedSkin.MainFont;
+            foreach(var node in _nodes)
+            {
+                node.Icon.Width = (int)(32 * ZoomLevel);
+                node.Icon.Height = (int)(32 * ZoomLevel);
+
+                node.Icon.X = (int)((ProgressBar.linear((node.X-WorldOffsetX)*ZoomLevel, -WorldSize, WorldSize, 0, Width) - (node.Icon.Width / 2)));
+                node.Icon.Y = (int)((ProgressBar.linear((node.Y-WorldOffsetY)*ZoomLevel, -WorldSize, WorldSize, 0, Height) - (node.Icon.Height / 2)));
+
+            }
+        }
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+            foreach(var node in _nodes)
+            {
+                gfx.DrawRectangle(node.Icon.X, node.Icon.Y, node.Icon.Width, node.Icon.Height, Color.White);
             }
         }
 
         public void OnLoad()
         {
-            ListHackables();
-        }
-
-        bool doCountdown = false;
-
-        public void ProcedurallyGenerateWhatWillBringPlexBack(Hackable hackable)
-        {
-            _state = NetworkGUIState.Information;
-            Hacking.InitHack(hackable);
-            doCountdown = Hacking.CurrentHackable.DoConnectionTimeout;
-            Hacking.CurrentHackable.DoConnectionTimeout = false;
-            _current = Hacking.CurrentHackable;
-        }
-
-        public void ListHackables()
-        {
-            _state = NetworkGUIState.Listing;
-            _sysList.ClearItems();
-            foreach(var hackable in Hacking.AvailableToHack.OrderBy(x=>x.FriendlyName))
-            {
-                _sysList.AddItem(hackable);
-            }
+            ResetUI();
         }
 
         public void OnSkinLoad()
@@ -126,104 +197,14 @@ namespace Plex.Frontend.Apps
         public void OnUpgrade()
         {
         }
+    }
 
-        protected override void OnLayout(GameTime gameTime)
-        {
-            /*_title.X = 15;
-            _title.Y = 15;
-
-            _subtitle.X = 15;
-            _subtitle.Y = _title.Y + _title.Height + 7;
-
-            _description.Visible = (_current != null) && _state != NetworkGUIState.Listing;
-            _connect.Visible = (_current != null) && _state == NetworkGUIState.Information;
-            _disconnect.Visible = (_current != null) && _state == NetworkGUIState.Information;
-            _sysList.Visible = _state == NetworkGUIState.Listing;
-
-            if (_sysList.Visible)
-            {
-                _sysList.X = 15;
-                _sysList.Y = _subtitle.Y + _subtitle.Height + 10;
-                _sysList.Width = this.Width - 30;
-                _sysList.Height = (Height - _sysList.Y - 15);
-
-                _title.Text = "Network";
-                _subtitle.Text = "Select a Digital Society system below to view information about it.";
-
-            }
-            if (_current != null)
-            {
-                _title.Text = _current.Data.SystemName;
-                _subtitle.Text = _current.Data.FriendlyName;
-                if(_state == NetworkGUIState.Information)
-                {
-                    _description.Visible = true;
-                    _description.AutoSize = false;
-                    _description.X = _sysList.X;
-                    _description.Y = _sysList.Y;
-                    _description.Width = _sysList.Width;
-                    _description.Height = _sysList.Height - 50;
-                    _description.Text = $@"System type: {_current.Data.SystemType}
-Loot rarity: {_current.Data.LootRarity}
-
-{_current.Data.Description}";
-
-                    _connect.Visible = true;
-                    _connect.X = Width - _connect.Width - 15;
-                    _connect.Y = _description.Y + _description.Height + 15;
-
-
-                }
-            }
-            base.OnLayout(gameTime);*/
-        }
-
-        public class PortView : Control
-        {
-            private Port _port = null;
-            private Button _start = new Button();
-
-            public PortView(Port port)
-            {
-                _port = port;
-                _start.AutoSize = true;
-                _start.Text = "Connect";
-                _start.Click += () =>
-                {
-                    ConnectionStarted?.Invoke(port);
-                };
-                AddControl(_start);
-            }
-
-            private bool unlocked = false;
-
-            protected override void OnLayout(GameTime gameTime)
-            {
-                /*_start.Y = (Height - _start.Height) / 2;
-                _start.X = (Width - _start.Width) - 15;
-                unlocked = _port.Locks.Count > 0;
-                base.OnLayout(gameTime);*/
-            }
-
-            protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
-            {
-                /*gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
-                gfx.DrawRectangle(1, 1, Width - 2, Height - 2, LoadedSkin.ControlColor.ToMonoColor());
-                gfx.DrawString(_port.Name + " (" + _port.Value + ")", 15, 15, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.Header3Font);
-                string _status = "Tier: " + _port.Tier.ToString();
-                string lockstatus = (unlocked == true) ? "Unlocked" : $"{_port.Locks.Count} locks";
-                _status += " - " + lockstatus;
-                gfx.DrawString(_status, 15, 15 + LoadedSkin.Header3Font.Height + 5, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont);*/
-            }
-
-            public event Action<Port> ConnectionStarted;
-        }
-
-        public enum NetworkGUIState
-        {
-            Listing,
-            Information,
-            PortsList,
-        }
+    public class Node
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public Hackable Hackable { get; set; }
+        public PictureBox Icon { get; set; }
+        public List<int> Connections { get; set; } 
     }
 }

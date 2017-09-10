@@ -12,6 +12,7 @@
 	{
 		Name: "Inexperienced",
 		Experience: 0,
-		UpgradeMax: 5
+		UpgradeMax: 5,
+		MaximumCash = 200000, //$2000.00
 	}
 ]

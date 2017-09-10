@@ -495,22 +495,6 @@ namespace Plex.Frontend
                 //We must update timeout values here, and disconnect if the timeout
                 //hits zero.
 
-                if (Hacking.CurrentHackable != null)
-                {
-                    if (Hacking.CurrentHackable.DoConnectionTimeout)
-                    {
-                        Hacking.CurrentHackable.MillisecondsCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
-                        shroudOpacity = (float)GUI.ProgressBar.linear(Hacking.CurrentHackable.MillisecondsCountdown, Hacking.CurrentHackable.TotalConnectionTimeMS, 0, 0, 1);
-                        if (Hacking.CurrentHackable.MillisecondsCountdown <= 0)
-                        {
-                            Hacking.FailHack();
-                        }
-                    }
-                }
-                else
-                {
-                    shroudOpacity = 0;
-                }
             }
 
             if (IsCrashed)
@@ -657,15 +641,6 @@ To begin this process, strike the [T] key while holding <CTRL>.";
                 gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
             }
 
-            if (Hacking.CurrentHackable != null)
-            {
-                if (Hacking.CurrentHackable.DoConnectionTimeout)
-                {
-                    string str = $"Timeout in {(Hacking.CurrentHackable.MillisecondsCountdown / 1000).ToString("#.##")} seconds.";
-                    var measure = GraphicsContext.MeasureString(str, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft);
-                    gfx.DrawString(str, 5, (gfx.Height - ((int)measure.Y) - 5), Color.Red, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft);
-                }
-            }
 #if DEBUG
             if (DisplayDebugInfo)
             {

@@ -25,7 +25,9 @@ namespace Plex.Engine.TextRenderers
             {
                 using (var cgfx = System.Drawing.Graphics.FromImage(bmp))
                 {
-                    cgfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    cgfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                    cgfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    
                     if (color != Microsoft.Xna.Framework.Color.Black)
                         System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, GetFlags(alignment));
                     else

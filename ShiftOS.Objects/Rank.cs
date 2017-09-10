@@ -12,5 +12,6 @@ namespace Plex.Objects
         public ulong Experience { get; set; }
         public int UpgradeMax { get; set; }
         public string[] UnlockedUpgrades { get; set; }
+        public ulong MaximumCash { get; set; }
     }
 }

@@ -99,14 +99,34 @@ namespace Plex.Objects
 
         [Order]
         public List<CashTransaction> Transactions { get; set; }
+
+        [Order]
+        public List<HackableSystem> CompletedHacks { get; set; }
     }
+
+    public class HackableSystem
+    {
+        [Order]
+        public Save SystemDescriptor { get; set; }
+
+        [Order]
+        public SystemType SystemType { get; set; }
+
+        [Order]
+        public bool IsPwn3d { get; set; }
+    }
+
 
     public class CashTransaction
     {
+        [Order]
         public long Amount { get; set; }
+        [Order]
         public string To { get; set; }
+        [Order]
         public string From { get; set; }
-        public DateTime Date { get; set; }
+        [Order]
+        public string Date { get; set; }
     }
 
     public class SettingsObject : DynamicObject

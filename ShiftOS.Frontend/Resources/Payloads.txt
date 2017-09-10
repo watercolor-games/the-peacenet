@@ -8,16 +8,18 @@
 	{
 		FriendlyName: "FTP File Puller Payload",
 		PayloadName: "ftpull",
-		EffectiveAgainstFirewall: 1,
-		EffectiveAgainst: "FileServer",
+		Port: 21,
 		Function: 2
 	},
 	{
-		FriendlyName: "Force Heartbeat",
-		PayloadName: "keepalive",
-		EffectiveAgainstFirewall: 1,
-		EffectiveAgainst: "SSHServer",
-		Function: 1,
-		Dependencies: "sploitset_keepalive",
-	}
+		FriendlyName: "Reverse shell",
+		PayloadName: "rsh",
+		Port: 22
+	},
+	/* This is for when we implement the ability to watch players you hack in Multiplayer.
+	{
+		FriendlyName: "Plexnet VNC viewer",
+		PayloadName: "pvnc",
+		Port: 5900
+	}*/
 ]
