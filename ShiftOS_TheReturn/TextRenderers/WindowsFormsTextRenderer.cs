@@ -79,8 +79,11 @@ namespace Plex.Engine.TextRenderers
 
         public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment)
         {
-            var measure = System.Windows.Forms.TextRenderer.MeasureText(text, font, new System.Drawing.Size(maxwidth, int.MaxValue), GetFlags(alignment));
-            return new Vector2(measure.Width, measure.Height);
+            using (var gfx = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                var measure = System.Windows.Forms.TextRenderer.MeasureText(gfx, text, font, new System.Drawing.Size(maxwidth, int.MaxValue), GetFlags(alignment));
+                return new Vector2(measure.Width, measure.Height);
+            }
 
         }
     }
