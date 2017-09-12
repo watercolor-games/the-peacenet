@@ -302,7 +302,7 @@ namespace Plex.Frontend
         /// </summary>
         protected override void LoadContent()
         {
-            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height);
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
@@ -658,7 +658,6 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.End();
-            graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
                             SamplerState.LinearWrap, DepthStencilState.Default,

@@ -193,7 +193,7 @@ namespace Plex.Engine
     // Provides the base functionality for a typical Plex window border, what did you expect
     public interface IWindowBorder
     {
-        void Close(); // CLOSES THE BORDER ALONG WITH ITS WINDOW!!!!!!! HOLY SHIT I DIDNT EXPECT THAT
+        bool Close(); // CLOSES THE BORDER ALONG WITH ITS WINDOW!!!!!!! HOLY SHIT I DIDNT EXPECT THAT
         string Text { get; set; } // title text exists now
         IPlexWindow ParentWindow { get; set; } // Gets or sets the underlying for this border. 
     }

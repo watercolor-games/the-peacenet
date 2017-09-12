@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
 
 namespace Plex.Engine

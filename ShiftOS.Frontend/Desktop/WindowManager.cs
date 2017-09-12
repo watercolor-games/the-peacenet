@@ -47,14 +47,16 @@ namespace Plex.Frontend.Desktop
             var brdr = RunningBorders.FirstOrDefault(x => x.ParentWindow == win);
             if (brdr != null)
             {
-                brdr.Close();
-                RunningBorders.Remove(brdr);
-                if (AppearanceManager.OpenForms.Contains(brdr))
+                if (brdr.Close())
                 {
-                    AppearanceManager.OpenForms.Remove(brdr);
-                    Engine.Desktop.ResetPanelButtons();
+                    RunningBorders.Remove(brdr);
+                    if (AppearanceManager.OpenForms.Contains(brdr))
+                    {
+                        AppearanceManager.OpenForms.Remove(brdr);
+                        Engine.Desktop.ResetPanelButtons();
+                    }
+                    win = null;
                 }
-                win = null;
             }
         }
 
@@ -273,10 +275,13 @@ namespace Plex.Frontend.Desktop
 
         }
 
-        public void Close()
+        public bool Close()
         {
+            if (!ParentWindow.OnUnload())
+                return false;
             Visible = false;
             UIManager.StopHandling(this);
+            return true;
         }
 
 

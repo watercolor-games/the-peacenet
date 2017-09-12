@@ -118,6 +118,11 @@ namespace Plex.Frontend.GraphicsSubsystem
                         continue;
                     }
                     var _target = targets[hc];
+                    if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+                    {
+                        ctrl.Invalidate();
+                        continue;
+                    }
                     if (ExperimentalEffects)
                     {
                         for (int i = 5; i > 0; i--)
@@ -176,15 +181,15 @@ namespace Plex.Frontend.GraphicsSubsystem
                     graphics.SetRenderTarget(_target);
                     graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                     batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearClamp, DepthStencilState.Default,
+                                    SamplerState.LinearClamp, GraphicsDevice.DepthStencilState,
                                     RasterizerState.CullNone);
                     graphics.Clear(Color.Transparent);
                     var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
                     ctrl.Paint(gfxContext, _target);
 
+                    batch.End();
                     graphics.SetRenderTarget(_game.GameRenderTarget);
                     TextureCaches[hc] = _target;
-                    batch.End();
                 }
             }
         }
@@ -212,12 +217,14 @@ namespace Plex.Frontend.GraphicsSubsystem
             if (!topLevels.Contains(ctrl))
                 topLevels.Add(ctrl);
             FocusedControl = ctrl;
+            ctrl.Invalidate();
         }
 
         public static void AddHUD(GUI.Control ctrl)
         {
             if (!hudctrls.Contains(ctrl))
                 hudctrls.Add(ctrl);
+            ctrl.Invalidate();
         }
 
 

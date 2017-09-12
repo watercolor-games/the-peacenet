@@ -149,7 +149,7 @@ namespace Plex.Frontend.GUI
                         }
                         foreach (var word in words)
                         {
-                            var measure = GraphicsContext.MeasureString(word, font, Engine.GUI.TextAlignment.TopLeft);
+                            var measure = GraphicsContext.MeasureString(word + " ", font, Engine.GUI.TextAlignment.TopLeft);
                             if(drawText)
                                 gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft);
 

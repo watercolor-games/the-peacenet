@@ -48,8 +48,6 @@ namespace Plex.Frontend.GUI
 
         protected void RequireTextRerender()
         {
-            if (this is ListView)
-                System.Diagnostics.Debug.Print("Fuck");
             requiresTextRerender = true;
         }
 
