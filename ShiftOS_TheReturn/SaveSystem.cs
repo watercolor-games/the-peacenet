@@ -284,53 +284,59 @@ namespace Plex.Engine
         /// </summary>
         public static void ReadSave()
         {
-            string path;
-
-            path = Path.Combine(Paths.SaveDirectory, "autosave.save");
-
-            if (System.IO.File.Exists(path))
+            if (IsSandbox == false)
             {
-                using (var fobj = System.IO.File.OpenRead(path))
+                string path;
+
+                path = Path.Combine(Paths.SaveDirectory, "autosave.save");
+
+                if (System.IO.File.Exists(path))
                 {
-                    var magic = new byte[4];
-                    var reader = new BinaryReader(fobj);
-                    magic = reader.ReadBytes(4);
-                    if (magic.SequenceEqual(rst5))
+                    using (var fobj = System.IO.File.OpenRead(path))
                     {
-                        var checksum = reader.ReadBytes(64);
-                        int savelength = reader.ReadInt32();
-                        var savebytes = reader.ReadBytes(savelength);
-                        if (!checksum.SequenceEqual(new System.Security.Cryptography.SHA512Managed().ComputeHash(savebytes)))
+                        var magic = new byte[4];
+                        var reader = new BinaryReader(fobj);
+                        magic = reader.ReadBytes(4);
+                        if (magic.SequenceEqual(rst5))
                         {
-                            Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.", ()=>
+                            var checksum = reader.ReadBytes(64);
+                            int savelength = reader.ReadInt32();
+                            var savebytes = reader.ReadBytes(savelength);
+                            if (!checksum.SequenceEqual(new System.Security.Cryptography.SHA512Managed().ComputeHash(savebytes)))
                             {
-                                NewSave();
-                            });
-                            return;
-						}
-                        using (var memory = new System.IO.MemoryStream())
-                        {
-                            memory.Write(savebytes, 0, savelength);
-                            memory.Position = 0;
-                            try
-                            {
-                                CurrentSave = DeserialiseObject<Save>(memory);
+                                Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.", () =>
+                                {
+                                    NewSave();
+                                });
+                                return;
                             }
-                            catch (Exception ex)
+                            using (var memory = new System.IO.MemoryStream())
                             {
-                                Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read." + Environment.NewLine + ex.ToString());
+                                memory.Write(savebytes, 0, savelength);
+                                memory.Position = 0;
+                                try
+                                {
+                                    CurrentSave = DeserialiseObject<Save>(memory);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read." + Environment.NewLine + ex.ToString());
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        TryFallbackReader(path);
+                        else
+                        {
+                            TryFallbackReader(path);
+                        }
                     }
                 }
+                else
+                    NewSave();
             }
             else
-                NewSave();
-
+            {
+                ServerManager.SendMessage("save_read", "");
+            }
 
         }
 

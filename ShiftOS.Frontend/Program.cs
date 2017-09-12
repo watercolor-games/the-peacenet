@@ -38,13 +38,20 @@ namespace Plex.Frontend
             //Also initiate the desktop
             Engine.Desktop.Init(new Desktop.Desktop());
 
-            var ServerThread = new Thread(() =>
-            {
-                System.Diagnostics.Debug.Print("Starting local server...");
-                Server.Program.Main(null, false);
-            });
-            ServerThread.Start();
+            Thread ServerThread = null;
 
+            UIManager.SinglePlayerStarted += () =>
+            {
+                ServerThread = new Thread(() =>
+                {
+                    System.Diagnostics.Debug.Print("Starting local server...");
+                    Plex.Server.Program.Main(null, false);
+                });
+                ServerThread.IsBackground = true;
+                ServerThread.Start();
+                Thread.Sleep(1000);
+                UIManager.ConnectToServer("localhost", 3251);
+            };
 
             TerminalBackend.TerminalRequested += () =>
             {
@@ -67,7 +74,9 @@ namespace Plex.Frontend
                 };
                 game.Run();
             }
-            ServerThread.Abort();
+            if(ServerThread != null)
+                if(ServerThread.ThreadState != ThreadState.Aborted)
+                    ServerThread.Abort();
         }
     }
 

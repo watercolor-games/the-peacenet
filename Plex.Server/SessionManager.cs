@@ -111,7 +111,7 @@ namespace Plex.Server
                         IPForwardedBy = ip,
                         Message = "session_accessdenied",
                         SessionID = session_id,
-                        Content = ""
+                        Content = session_id
                     });
                     return;
 

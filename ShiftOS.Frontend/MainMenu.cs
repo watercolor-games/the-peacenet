@@ -135,7 +135,7 @@ namespace Plex.Frontend
             _options.Y = _community.Y + _community.Font.Height + 15;
             _campaign.Click += () =>
             {
-                UIManager.ConnectToServer("localhost", 62252);
+                UIManager.StartSPServer();
                 Close();
             };
             _sandbox.Click += () =>

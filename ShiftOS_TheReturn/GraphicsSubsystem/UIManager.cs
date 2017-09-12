@@ -90,21 +90,6 @@ namespace Plex.Frontend.GraphicsSubsystem
                 toplevel.Layout(gameTime);
         }
 
-        public static void Animate(object owner, System.Reflection.PropertyInfo prop, double from, double to, int timeMs)
-        {
-            var t = new System.Threading.Thread(() =>
-            {
-                for(int i = 0; i < timeMs; i++)
-                {
-                    double value = ProgressBar.linear(i, 0, timeMs, from, to);
-                    prop.SetValue(owner, value);
-                    System.Threading.Thread.Sleep(1);
-                }
-            });
-            t.IsBackground = true;
-            t.Start();
-        }
-
         public static Dictionary<int, RenderTarget2D> TextureCaches = new Dictionary<int, RenderTarget2D>();
         public static Dictionary<int, RenderTarget2D> HUDCaches = new Dictionary<int, RenderTarget2D>();
 
@@ -202,6 +187,13 @@ namespace Plex.Frontend.GraphicsSubsystem
                     batch.End();
                 }
             }
+        }
+
+        public static event Action SinglePlayerStarted;
+
+        public static void StartSPServer()
+        {
+            SinglePlayerStarted?.Invoke();
         }
 
         public static void DrawControlsToTargets(GraphicsDevice device, SpriteBatch batch)
@@ -381,19 +373,28 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         private static void PingServer(IPAddress ip, int port)
         {
+            Exception error = null;
             var heart = Encoding.UTF8.GetBytes("heart");
             NetworkClient.Send(heart, heart.Length);
             var beat = Encoding.UTF8.GetBytes("beat");
             bool done = false;
             var t = new Thread(() =>
             {
-                var ep = new System.Net.IPEndPoint(ip, port);
-                byte[] receive = new byte[4];
-                while (Encoding.UTF8.GetString(receive) != "beat")
+                try
                 {
-                    receive = NetworkClient.Receive(ref ep);
+                    var ep = new System.Net.IPEndPoint(ip, port);
+                    byte[] receive = new byte[4];
+                    while (Encoding.UTF8.GetString(receive) != "beat")
+                    {
+                        receive = NetworkClient.Receive(ref ep);
+                    }
+                    done = true;
                 }
-                done = true;
+                catch(Exception ex)
+                {
+                    error = ex;
+                    done = true;
+                }
             });
             t.Start();
             int ms = 0;
@@ -407,6 +408,8 @@ namespace Plex.Frontend.GraphicsSubsystem
                 t.Abort();
                 throw new NetworkTimeoutException(_game.IPAddress, _game.Port);
             }
+            if (done == true && error != null)
+                throw error;
         }
 
         public static System.Net.Sockets.UdpClient NetworkClient

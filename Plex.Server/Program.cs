@@ -17,7 +17,7 @@ namespace Plex.Server
     public class Program
     {
         private static readonly string[] NATOCodeNames = { "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu" };
-
+        private const int _MyPort = 3251;
         private static UdpClient _server = null;
         internal static bool IsMultiplayerServer = true;
         public static List<string> BannedIPs = new List<string>();
@@ -31,7 +31,10 @@ namespace Plex.Server
             var ip = IPAddress.Parse(header.IPForwardedBy);
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
-            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, _port));
+            var _ipEP = new IPEndPoint(ip, _port);
+            _server.Send(bytes, bytes.Length, _ipEP);
+            if (IsMultiplayerServer)
+                Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3})", _ipEP.ToString(), header.Message, header.SessionID, header.Content);
         }
 
         public static void Broadcast(PlexServerHeader header)
@@ -175,23 +178,16 @@ namespace Plex.Server
             }
             else
             {
-                using (var fobj = File.OpenRead("world.whoa"))
+                try
                 {
-                    using (var reader = new BinaryReader(fobj))
-                    {
-                        var magic = new byte[4];
-                        magic = reader.ReadBytes(4);
-                        if (magic.SequenceEqual(worldmagic))
-                        {
-                            int worldDataCount = reader.ReadInt32();
-                            byte[] worldData = reader.ReadBytes(worldDataCount);
-                            using (var memory = new MemoryStream(worldData))
-                            {
-                                GameWorld = Whoa.Whoa.DeserialiseObject<World>(memory);
-                            }
-                        }
-
-                    }
+                    Console.WriteLine("<worldgen> Loading from world.whoa...");
+                    GameWorld = JsonConvert.DeserializeObject<World>(File.ReadAllText("world.whoa"));
+                }
+                catch
+                {
+                    Console.WriteLine("<worldgen> Bad world file. Regenerating...");
+                    File.Delete("world.whoa");
+                    LoadWorld();
                 }
             }
         }
@@ -218,21 +214,7 @@ namespace Plex.Server
 
         public static void SaveWorld()
         {
-            using(var fobj = File.OpenWrite("world.whoa"))
-            {
-                using(var writer = new BinaryWriter(fobj))
-                {
-                    writer.Write(worldmagic);
-                    byte[] worldbytes = null;
-                    using (var memory = new MemoryStream())
-                    {
-                        Whoa.Whoa.SerialiseObject(memory, GameWorld);
-                        worldbytes = memory.ToArray();
-                    }
-                    writer.Write(worldbytes.Length);
-                    writer.Write(worldbytes);
-                }
-            }
+            File.WriteAllText("world.whoa", JsonConvert.SerializeObject(GameWorld, Formatting.Indented));
         }
 
         [Command("worldinfo")]
@@ -514,13 +496,14 @@ namespace Plex.Server
         public static void ServerLoop()
         {
             _server = new UdpClient();
-            var _ipEP = new IPEndPoint(IPAddress.Any, 62252);
+            var _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sock.Bind(new IPEndPoint(IPAddress.Loopback, 62252));
+            sock.Bind(new IPEndPoint(IPAddress.Loopback, _MyPort));
             _server.Client = sock;
+            
             while (true)
             {
-                _ipEP = new IPEndPoint(IPAddress.Any, 62252);
+                _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
                 var receive = _server.Receive(ref _ipEP);
                 _port = _ipEP.Port;
                 if (BannedIPs.Contains(_ipEP.Address.ToString()))
@@ -532,6 +515,9 @@ namespace Plex.Server
                         SessionID = "",
                         Content = ""
                     });
+                    if (IsMultiplayerServer)
+                        Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
+
                     continue;
                 }
                 string data = Encoding.UTF8.GetString(receive);
@@ -539,11 +525,17 @@ namespace Plex.Server
                 {
                     var beat = Encoding.UTF8.GetBytes("beat");
                     _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
+                    
                 }
                 else if (data == "ismp")
                 {
                     int value = (IsMultiplayerServer) ? 1 : 0;
                     _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(_ipEP.Address, _ipEP.Port));
+                    if (IsMultiplayerServer)
+                        Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
+                    if (IsMultiplayerServer)
+                        Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
+
                 }
                 else
                 {
@@ -551,6 +543,9 @@ namespace Plex.Server
                     IPAddress test = null;
                     if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
                         header.IPForwardedBy = _ipEP.Address.ToString();
+                    if (IsMultiplayerServer)
+                        Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3})", _ipEP.ToString(), header.Message, header.SessionID, header.Content);
+
                     ServerManager.HandleMessage(header);
                 }
             }
