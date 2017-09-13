@@ -180,6 +180,7 @@ namespace Plex.Server
             {
                 try
                 {
+                    bool tryJSON = false;
                     Console.WriteLine("<worldgen> Loading from world.whoa...");
                     using (var fobj = File.OpenRead("world.whoa"))
                     {
@@ -196,8 +197,15 @@ namespace Plex.Server
                                     GameWorld = Whoa.Whoa.DeserialiseObject<World>(memory);
                                 }
                             }
-
+                            else
+                            {
+                                tryJSON = true;
+                            }
                         }
+                    }
+                    if(tryJSON == true)
+                    {
+                        GameWorld = JsonConvert.DeserializeObject<World>(File.ReadAllText("world.whoa"));
                     }
                 }
                 catch (Exception ex)

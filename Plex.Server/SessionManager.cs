@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Plex.Objects;
 using System.IO;
 using Newtonsoft.Json;
+using Plex.Engine;
 
 namespace Plex.Server
 {
@@ -112,6 +113,13 @@ namespace Plex.Server
                 Content = acct.SessionID
             });
 
+        }
+
+        [Command("getnumber")]
+        [RequiresArgument("id")]
+        public static void GetTypeAsInt(Dictionary<string, object> args)
+        {
+            Console.WriteLine(((int)Enum.Parse(typeof(SystemType), args["id"].ToString())));
         }
 
         public static ServerAccount GrabAccount(string session_key)

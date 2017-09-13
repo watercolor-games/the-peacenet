@@ -21,11 +21,11 @@ namespace Plex.Objects{    public class Hackable    {        [Order]
         public override string ToString()        {            return $"{FriendlyName} ({SystemName})";        }    }
 
     [Flags]    public enum SystemType    {
-        Computer,
-        Mobile,
-        WebServer,
-        MailServer,
-        NAS,
-        Database,
-        Router
+        Computer = 1,
+        Mobile = 2,
+        WebServer = 4,
+        MailServer = 8,
+        NAS = 16,
+        Database = 32,
+        Router = 64
     }    }
