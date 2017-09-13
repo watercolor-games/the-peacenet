@@ -181,11 +181,49 @@ namespace Plex.Server
                 try
                 {
                     Console.WriteLine("<worldgen> Loading from world.whoa...");
-                    GameWorld = JsonConvert.DeserializeObject<World>(File.ReadAllText("world.whoa"));
+                    using (var fobj = File.OpenRead("world.whoa"))
+                    {
+                        using (var reader = new BinaryReader(fobj))
+                        {
+                            var magic = new byte[4];
+                            magic = reader.ReadBytes(4);
+                            if (magic.SequenceEqual(worldmagic))
+                            {
+                                int worldDataCount = reader.ReadInt32();
+                                byte[] worldData = reader.ReadBytes(worldDataCount);
+                                using (var memory = new MemoryStream(worldData))
+                                {
+                                    GameWorld = Whoa.Whoa.DeserialiseObject<World>(memory);
+                                }
+                            }
+
+                        }
+                    }
                 }
-                catch
+                catch (Exception ex)
                 {
                     Console.WriteLine("<worldgen> Bad world file. Regenerating...");
+                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.Data);
+                    int i = 0;
+                    string digit = "0";
+                    while (File.Exists($"world.bak{digit}"))
+                    {
+                        i++;
+                        if (i >= 16)
+                        {
+                            Console.WriteLine("<worldgen> Wow, that's a lot of bad world files.");
+                            for (int j = 0; j < 16; j++)
+                            {
+                                digit = j.ToString("X");
+                                File.Delete($"world.bak{digit}");
+                            }
+                            i = 0;
+                            break;
+                        }
+                        digit = i.ToString("X");
+                    }
+                    File.Copy("world.whoa", $"world.bak{digit}");
                     File.Delete("world.whoa");
                     LoadWorld();
                 }
@@ -214,7 +252,21 @@ namespace Plex.Server
 
         public static void SaveWorld()
         {
-            File.WriteAllText("world.whoa", JsonConvert.SerializeObject(GameWorld, Formatting.Indented));
+            using(var fobj = File.OpenWrite("world.whoa"))
+            {
+                using(var writer = new BinaryWriter(fobj))
+                {
+                    writer.Write(worldmagic);
+                    byte[] worldbytes = null;
+                    using (var memory = new MemoryStream())
+                    {
+                        Whoa.Whoa.SerialiseObject(memory, GameWorld);
+                        worldbytes = memory.ToArray();
+                    }
+                    writer.Write(worldbytes.Length);
+                    writer.Write(worldbytes);
+                }
+            }
         }
 
         [Command("worldinfo")]

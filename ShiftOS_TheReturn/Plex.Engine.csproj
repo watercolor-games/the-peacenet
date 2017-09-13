@@ -134,8 +134,8 @@
     <Reference Include="DynamicLua, Version=1.1.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamicLua.1.1.2.0\lib\net40-Client\DynamicLua.dll</HintPath>
     </Reference>
-    <Reference Include="Whoa, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Whoa.1.2.0\lib\net45\Whoa.dll</HintPath>
+    <Reference Include="Whoa, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Whoa.1.3.0\lib\net45\Whoa.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
