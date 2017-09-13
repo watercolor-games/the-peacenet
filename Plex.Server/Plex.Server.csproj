@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="SaveManager.cs" />
     <Compile Include="SessionManager.cs" />
+    <Compile Include="WorldManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

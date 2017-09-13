@@ -31,7 +31,7 @@ namespace Plex.Server
                           LastLogin = DateTime.Now,
                            PasswordHash = "",
                             PasswordSalt = new byte[0],
-                             SaveID = SaveManager.SinglePlayerSave.ID.ToString(),
+                             SaveID = "main.rogue", //nyi
                               SessionID = sp_sessionkey,
                                Username = "campaign"
                     }
@@ -71,6 +71,62 @@ namespace Plex.Server
                 });
             }
         }
+
+        [ServerMessageHandler("acct_create")]
+        public static void CreateAccount(string session_id, string content, string ip)
+        {
+            var acct = JsonConvert.DeserializeObject<ServerAccount>(content);
+            var sessions = getAccts();
+            if(sessions.FirstOrDefault(x=>x.Username == acct.Username) != null)
+            {
+                Program.SendMessage(new PlexServerHeader
+                {
+                    IPForwardedBy = ip,
+                    Message = "acct_taken",
+                    SessionID = session_id,
+                    Content = ""
+                });
+
+                return;
+            }
+            Console.WriteLine("<acctmgr> New account {0} is being created.", acct.Username);
+            Console.WriteLine("<acctmgr> Generating password salt...");
+            acct.PasswordSalt = PasswordHasher.GenerateRandomSalt();
+            Console.WriteLine("<acctmgr> Done. Now hashing password...");
+            acct.PasswordHash = PasswordHasher.Hash(acct.PasswordHash, acct.PasswordSalt);
+            Console.WriteLine("<acctmgr> Yay. Everything's nice and secure......for now.");
+            Console.WriteLine("<sessions> Setting expiry date...");
+            acct.Expiry = DateTime.Now.AddDays(7);
+            Console.WriteLine("<sessions> Expiry: {0}", acct.Expiry);
+            Console.WriteLine("<sessions> Generating new session key...");
+            acct.LastLogin = DateTime.Now;
+            acct.SessionID = Guid.NewGuid().ToString();
+            sessions.Add(acct);
+            setSessions(sessions);
+            Console.WriteLine("<sessions> Account data updated.");
+            Program.SendMessage(new PlexServerHeader
+            {
+                IPForwardedBy = ip,
+                Message = "session_accessgranted",
+                SessionID = session_id,
+                Content = acct.SessionID
+            });
+
+        }
+
+        public static ServerAccount GrabAccount(string session_key)
+        {
+            return getAccts().FirstOrDefault(x => x.SessionID == session_key);
+        }
+
+        public static void SetSessionInfo(string session_key, ServerAccount acct)
+        {
+            var accts = getAccts();
+            int index = accts.IndexOf(accts.FirstOrDefault(x => x.SessionID == session_key));
+            accts[index] = acct;
+            setSessions(accts);
+        }
+
 
         [ServerMessageHandler("acct_get_key")]
         public static void AccountGetKey(string session_id, string content, string ip)

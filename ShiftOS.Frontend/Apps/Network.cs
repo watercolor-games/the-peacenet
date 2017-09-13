@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
@@ -18,6 +19,17 @@ namespace Plex.Frontend.Apps
     [DefaultTitle("Network")]
     public class Network : Control, IPlexWindow
     {
+        public static Objects.Plexnet plexnet = null;
+
+        [ClientMessageHandler("world")]
+        public static void World(string content, string ip)
+        {
+            plexnet = JsonConvert.DeserializeObject<Objects.Plexnet>(content);
+            WorldUpdated?.Invoke();
+        }
+
+        public static event Action WorldUpdated;
+
         public TextControl _title = new TextControl();
         public List<Node> _nodes = new List<Node>();
 
@@ -39,52 +51,61 @@ namespace Plex.Frontend.Apps
 
         public float ZoomLevel = 1;
 
+        private string netName = "";
+
 
         public Network()
         {
             Width = 720;
             Height = 480;
             AddControl(_title);
-            _nodes.Add(new Apps.Node
-            {
-                X = 0,
-                Y = 0,
-                Hackable = new Hackable
-                {
-                    Dependencies = "",
-                    Description = "This is your own system.",
-                    FriendlyName = SaveSystem.CurrentSave.SystemName,
-                    OnHackCompleteStoryEvent = "",
-                    OnHackFailedStoryEvent = "",
-                    SystemName = SaveSystem.CurrentSave.SystemName,
-                    SystemType = SystemType.Computer,
-                    WelcomeMessage = ""
-                },
-                 Icon = new PictureBox(),
-            });
+            WorldUpdated += Network_WorldUpdated;
+            ServerManager.SendMessage("get_world", "");
+        }
+
+        private void Network_WorldUpdated()
+        {
+            ResetUI();
         }
 
         public void ResetUI()
         {
+            if (plexnet == null)
+                return;
             ClearControls();
             AddControl(_title);
+            _nodes.Clear();
+            AddControl(_hoverTitle);
+            AddControl(_hoverdesc);
 
-            foreach(var hackable in Hacking.Hackables)
+            if (string.IsNullOrWhiteSpace(netName))
             {
-                var node = _nodes.FirstOrDefault(x => x.Hackable == hackable);
-                if(node == null)
+                _title.Text = "The Plexnet";
+                foreach(var network in plexnet.Networks)
                 {
-                    _nodes.Add(new Node
+                    _nodes.Add(new Apps.Node
                     {
-                        X = hackable.X,
-                        Y = hackable.Y,
-                        Connections = new List<int>(),
-                        Hackable = hackable,
+                        Tag = network.Name,
+                        Type = NodeType.Network,
+                        X = network.X,
+                        Y = network.Y
                     });
                 }
             }
-            AddControl(_hoverTitle);
-            AddControl(_hoverdesc);
+            else
+            {
+                _title.Text = plexnet.Networks.FirstOrDefault(x => x.Name == netName).FriendlyName;
+                foreach (var network in plexnet.Networks.FirstOrDefault(x=>x.Name == netName).Devices)
+                {
+                    _nodes.Add(new Apps.Node
+                    {
+                        Tag = network.SystemName,
+                        Type = NodeType.System,
+                        X = network.X,
+                        Y = network.Y
+                    });
+                }
+            }
 
             foreach (var ctrl in _nodes)
             {
@@ -105,19 +126,44 @@ namespace Plex.Frontend.Apps
                         Anim_OldOffsetX = WorldOffsetX;
                         Anim_OldOffsetY = WorldOffsetY;
                     }
+                    else
+                    {
+                        if(ctrl.Type == NodeType.Network)
+                        {
+                            netName = ctrl.Tag;
+                            ResetUI();
+                            Anim_NewOffsetX = 0;
+                            Anim_NewOffsetY = 0;
+                            Anim_OffsetValue = 0;
+                            Anim_IsMovingOffset = true;
+                            Anim_OldOffsetX = WorldOffsetX;
+                            Anim_OldOffsetY = WorldOffsetY;
+
+                        }
+                    }
                 };
                 ctrl.Icon.MouseEnter += () =>
                 {
                     _hoverTitle.Visible = true;
                     _hoverdesc.Visible = true;
-                    _hoverTitle.Text = ctrl.Hackable.SystemName;
-                    _hoverdesc.Text = $@"{ctrl.Hackable.SystemType}
+                    switch (ctrl.Type)
+                    {
+                        case NodeType.Network:
+                            var netinfo = plexnet.Networks.FirstOrDefault(x => x.Name == ctrl.Tag);
+                            _hoverTitle.Text = netinfo.FriendlyName;
+                            _hoverdesc.Text = $@"{ctrl.Type}
+{netinfo.Devices.Count} devices
 
-{ctrl.Hackable.Description}";
-
+{netinfo.Description}";
+                            break;
+                        case NodeType.System:
+                            var sys = plexnet.Networks.FirstOrDefault(x => x.Name == netName).Devices.FirstOrDefault(x => x.SystemName == ctrl.Tag);
+                            _hoverTitle.Text = $"{netName}.{sys.SystemName}";
+                            _hoverdesc.Text = $@"{sys.SystemType}";
+                            break;
+                    }
                     _hoverTitle.X = ctrl.Icon.X + (ctrl.Icon.Width / 2) + 10;
                     _hoverTitle.Y = ctrl.Icon.Y + (ctrl.Icon.Height / 2) + 10;
-
                 };
                 AddControl(ctrl.Icon);
 
@@ -203,8 +249,14 @@ namespace Plex.Frontend.Apps
     {
         public float X { get; set; }
         public float Y { get; set; }
-        public Hackable Hackable { get; set; }
         public PictureBox Icon { get; set; }
-        public List<int> Connections { get; set; } 
+        public string Tag { get; set; }
+        public NodeType Type { get; set; }
+    }
+
+    public enum NodeType
+    {
+        System,
+        Network
     }
 }

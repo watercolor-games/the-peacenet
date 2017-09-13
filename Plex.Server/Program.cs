@@ -34,7 +34,7 @@ namespace Plex.Server
             var _ipEP = new IPEndPoint(ip, _port);
             _server.Send(bytes, bytes.Length, _ipEP);
             if (IsMultiplayerServer)
-                Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3})", _ipEP.ToString(), header.Message, header.SessionID, header.Content);
+                Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
         }
 
         public static void Broadcast(PlexServerHeader header)
@@ -294,6 +294,7 @@ namespace Plex.Server
         {
             Console.WriteLine("<worldgen> Creating hackable...");
             var hackable = new HackableSystem();
+            hackable.IsNPC = true;
             Console.WriteLine("<worldgen> Creating system descriptor...");
             var save = new Save();
             save.SystemName = sysname;
@@ -322,12 +323,23 @@ namespace Plex.Server
             save.ViralInfections = new List<ViralInfection>();
             save.Upgrades = new Dictionary<string, bool>();
             save.LoadedUpgrades = new List<string>();
-
+            save.ID = Guid.NewGuid();
             hackable.SystemDescriptor = save;
             hackable.IsPwn3d = false;
             hackable.SystemType = type;
             Console.WriteLine("<worldgen> System type: {0}", type);
             return hackable;
+        }
+
+        /// <summary>
+        /// Gets the hackable at the specified Plexnet Resource Link (net.sysname).
+        /// </summary>
+        /// <param name="prl"></param>
+        /// <returns></returns>
+        public static HackableSystem GetSaveFromPrl(string prl)
+        {
+            string[] split = prl.Split('.');
+            return GameWorld.Networks.FirstOrDefault(x => x.Name == split[0]).NPCs.FirstOrDefault(x => x.SystemDescriptor.SystemName == split[1]);
         }
 
         public static int Clamp(int value, int min, int max)
@@ -337,6 +349,11 @@ namespace Plex.Server
             if (value > max)
                 return max;
             return value;
+        }
+
+        public static Subnet GetRandomSubnet()
+        {
+            return GameWorld.Networks[rnd.Next(0, GameWorld.Networks.Count)];
         }
 
         public static void Main(string[] args)
@@ -544,7 +561,7 @@ namespace Plex.Server
                     if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
                         header.IPForwardedBy = _ipEP.Address.ToString();
                     if (IsMultiplayerServer)
-                        Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3})", _ipEP.ToString(), header.Message, header.SessionID, header.Content);
+                        Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
 
                     ServerManager.HandleMessage(header);
                 }

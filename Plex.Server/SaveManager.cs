@@ -5,104 +5,61 @@ using System.Text;
 using System.Threading.Tasks;
 using Plex.Objects;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Plex.Server
 {
     public static class SaveManager
     {
-        private static readonly byte[] rst5 = Encoding.UTF8.GetBytes("p13x");
-
-        private static void save_system_descriptor(string name, Save data)
+        [SessionRequired]
+        [ServerMessageHandler("save_read")]
+        public static void ReadSave(string session_id, string content, string ip)
         {
-            if (!Directory.Exists("saves"))
-                Directory.CreateDirectory("saves");
-
-            string path = Path.Combine("saves", name);
-            using (var fobj = System.IO.File.OpenWrite(path))
+            var acct = SessionManager.GrabAccount(session_id);
+            if (string.IsNullOrWhiteSpace(acct.SaveID))
             {
-                var writer = new BinaryWriter(fobj);
-                writer.Write(rst5);
-                using (var memory = new MemoryStream())
-                {
-                    Whoa.Whoa.SerialiseObject(memory, data);
-                    byte[] bdata = memory.ToArray();
-                    writer.Write(bdata.Length);
-                    writer.Write(bdata);
-                }
-                writer.Close();
+                var subnet = Program.GetRandomSubnet();
+                int subnetIndex = Program.GameWorld.Networks.IndexOf(subnet);
+                var system = Program.GenerateSystem(0, SystemType.Computer, Program.GenerateSystemName(subnet) + "_" + acct.Username);
+                system.IsNPC = false;
+                system.SystemDescriptor.Username = acct.Username;
+                Program.GameWorld.Networks[subnetIndex].NPCs.Add(system);
+                acct.SaveID = subnet.Name + "." + system.SystemDescriptor.SystemName;
+                SessionManager.SetSessionInfo(session_id, acct);
+                Program.SaveWorld();
             }
-
+            var save = Program.GetSaveFromPrl(acct.SaveID);
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = JsonConvert.SerializeObject(save.SystemDescriptor),
+                IPForwardedBy = ip,
+                Message = "save_data",
+                SessionID = session_id
+            });
         }
 
-        private static Save new_system_descriptor()
+        [SessionRequired]
+        [ServerMessageHandler("save_write")]
+        public static void WriteSave(string session_id, string content, string ip)
         {
-            return new Save
+            var acct = SessionManager.GrabAccount(session_id);
+            Save save = JsonConvert.DeserializeObject<Save>(content);
+            if (string.IsNullOrWhiteSpace(acct.SaveID))
             {
-                Experience = 0,
-                ID = Guid.NewGuid(),
-                IsSandbox = false,
-                Language = "english",
-                MusicEnabled = false,
-                MusicVolume = 0,
-                PickupPoint = "",
-                ShiftnetSubscription = 0,
-                SoundEnabled = false,
-                StoriesExperienced = new List<string>(),
-                StoryPosition = 0,
-                SystemName = "",
-                Upgrades = new Dictionary<string, bool>(),
-                Username = "",
-                ViralInfections = new List<ViralInfection>()
-            };
-
-        }
-
-        private static Save read_system_descriptor(string name)
-        {
-            if (!Directory.Exists("saves"))
-                Directory.CreateDirectory("saves");
-            string savepath = Path.Combine("saves", name);
-            if (!File.Exists(savepath))
-                return new_system_descriptor();
-            using (var fobj = System.IO.File.OpenRead(savepath))
-            {
-                var magic = new byte[4];
-                var reader = new BinaryReader(fobj);
-                magic = reader.ReadBytes(4);
-                if (magic.SequenceEqual(rst5))
-                {
-                    int savelength = reader.ReadInt32();
-                    using (var memory = new System.IO.MemoryStream())
-                    {
-
-                        var savebytes = new byte[savelength];
-                        savebytes = reader.ReadBytes(savebytes.Length);
-                        memory.Write(savebytes, 0, savebytes.Length);
-                        memory.Position = 0;
-                        try
-                        {
-                            return Whoa.Whoa.DeserialiseObject<Save>(memory);
-                        }
-                        catch
-                        {
-                            return new_system_descriptor();
-                        }
-                    }
-                }
-                else
-                {
-                    return new_system_descriptor();
-                }
+                var subnet = Program.GetRandomSubnet();
+                int subnetIndex = Program.GameWorld.Networks.IndexOf(subnet);
+                var system = Program.GenerateSystem(0, SystemType.Computer, Program.GenerateSystemName(subnet) + "_" + acct.Username);
+                system.IsNPC = false;
+                save.SystemName = system.SystemDescriptor.SystemName;
+                system.SystemDescriptor = save;
+                system.SystemDescriptor.Username = acct.Username;
+                Program.GameWorld.Networks[subnetIndex].NPCs.Add(system);
+                acct.SaveID = subnet.Name + "." + system.SystemDescriptor.SystemName;
+                SessionManager.SetSessionInfo(session_id, acct);
+                Program.SaveWorld();
             }
-
+            Program.GetSaveFromPrl(acct.SaveID).SystemDescriptor = save;
         }
 
-        public static Save SinglePlayerSave
-        {
-            get
-            {
-                return read_system_descriptor("singleplayer.save");
-            }
-        }
     }
 }

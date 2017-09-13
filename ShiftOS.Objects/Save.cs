@@ -121,6 +121,8 @@ namespace Plex.Objects
         [Order]
         public float Y { get; set; }
 
+        [Order]
+        public bool IsNPC { get; set; }
     }
 
 

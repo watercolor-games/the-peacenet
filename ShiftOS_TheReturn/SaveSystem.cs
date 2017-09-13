@@ -102,8 +102,6 @@ namespace Plex.Engine
                 Console.WriteLine("{MISC_BUILDINGCMDS}");
                 TerminalBackend.PopulateTerminalCommands();
 
-                if (IsSandbox == false)
-                {
                     Console.WriteLine("{MISC_CONNECTINGTONETWORK}");
 
                     Ready.Reset();
@@ -117,48 +115,16 @@ namespace Plex.Engine
                     FinishBootstrap();
 
                     //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
-                }
-                else
-                {
-                    Console.WriteLine("{MISC_SANDBOXMODE}");
-                    CurrentSave = new Save
-                    {
-                        IsSandbox = true,
-                        Username = "user",
-                        SystemName = "Plex",
-                        ID = new Guid(),
-                        Upgrades = new Dictionary<string, bool>(),
-                        Language = "english",
-                        MusicEnabled = false,
-                        MusicVolume = 100,
-                        PickupPoint = "",
-                        ShiftnetSubscription = 0,
-                        SoundEnabled = true,
-                        StoriesExperienced = null,
-                        StoryPosition = 0,
-
-                    };
-
-                    Localization.SetupTHETRUEDefaultLocals();
-
-                    Upgrades.Init();
-
-                    TerminalBackend.InStory = false;
-                    TerminalBackend.PrefixEnabled = true;
-
-                    Desktop.InvokeOnWorkerThread(new Action(() =>
-                    {
-                        Plex.Engine.Scripting.LuaInterpreter.RunSft(Paths.GetPath("kernel.sft"));
-                    }));
-
-
-                    Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
-                    GameReady?.Invoke();
-                }
-
+                
             }));
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        [ClientMessageHandler("save_data")]
+        public static void MPSaveData(string content, string ip)
+        {
+            CurrentSave = JsonConvert.DeserializeObject<Save>(content);
         }
 
         /// <summary>
@@ -175,9 +141,12 @@ namespace Plex.Engine
 
             Upgrades.Init();
 
-            while (CurrentSave.StoryPosition < 1)
+            if (!IsSandbox)
             {
-                Thread.Sleep(10);
+                while (CurrentSave.StoryPosition < 1)
+                {
+                    Thread.Sleep(10);
+                }
             }
 
             Thread.Sleep(75);
@@ -420,6 +389,10 @@ namespace Plex.Engine
                     SkinEngine.SaveSkin();
                 }
 #endif
+            }
+            else
+            {
+                ServerManager.SendMessage("save_write", JsonConvert.SerializeObject(CurrentSave));
             }
             System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
         }

@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
+using Plex.Objects;
 
 namespace Plex.Engine
 {
@@ -148,6 +150,10 @@ After logging in once, you will not have to log in again unless you have been in
                 DisconnectOnClose = true;
                 AppearanceManager.Close(this);
             };
+            _createacct.Click += () =>
+            {
+                AppearanceManager.SetupDialog(new RegisterScreen());
+            };
         }
 
         public void OnLoad()
@@ -210,4 +216,155 @@ After logging in once, you will not have to log in again unless you have been in
         {
         }
     }
+
+    [DefaultTitle("Create account")]
+    public class RegisterScreen : Control, IPlexWindow
+    {
+        private TextControl _title = null;
+        private TextInput _usernameField = null;
+        private TextInput _passwordField = null;
+        private TextInput _passwordConfirmField = null;
+        private TextControl _uname = null;
+        private TextControl _password = null;
+        private TextControl _passwordConfirm = null;
+        private Button _ok = null;
+        private Button _cancel = null;
+
+        public RegisterScreen()
+        {
+            Width = 420;
+            Height = 400;
+
+            _title = new TextControl();
+            _usernameField = new Frontend.GUI.TextInput();
+            _passwordField = new TextInput();
+            _passwordConfirmField = new Frontend.GUI.TextInput();
+            _uname = new Frontend.GUI.TextControl();
+            _password = new Frontend.GUI.TextControl();
+            _passwordConfirm = new Frontend.GUI.TextControl();
+            _ok = new Frontend.GUI.Button();
+            _cancel = new Frontend.GUI.Button();
+
+            _title.Text = "Login";
+            _uname.Text = "Username:";
+            _password.Text = "Password:";
+            _passwordConfirm.Text = "Confirm:";
+            _ok.Text = "Register";
+            _cancel.Text = "Cancel";
+
+            _title.AutoSize = true;
+            _uname.AutoSize = true;
+            _password.AutoSize = true;
+            _passwordConfirm.AutoSize = true;
+            _ok.AutoSize = true;
+            _cancel.AutoSize = true;
+
+            AddControl(_title);
+            AddControl(_uname);
+            AddControl(_usernameField);
+            AddControl(_password);
+            AddControl(_passwordField);
+            AddControl(_passwordConfirm);
+            AddControl(_passwordConfirmField);
+            AddControl(_ok);
+            AddControl(_cancel);
+
+            _passwordField.PasswordChar = true;
+            _passwordConfirmField.PasswordChar = true;
+
+            _ok.Click += () =>
+            {
+                if (string.IsNullOrWhiteSpace(_usernameField.Text))
+                {
+                    Infobox.Show("Please enter a username.", "Please enter a username you'll use to login in the future.");
+                    return;
+                }
+                if(string.IsNullOrWhiteSpace(_passwordField.Text))
+                {
+                    Infobox.Show("Weak password", "You can't specify a blank string as your password.");
+                    return;
+                }
+                if(_passwordField.Text.Length < 8)
+                {
+                    Infobox.Show("Weak password", "Your password must contain at least 8 characters and at most infinity characters.");
+                    return;
+                }
+                if(_passwordField.Text != _passwordConfirmField.Text)
+                {
+                    Infobox.Show("Passwords don't match.", "You must prove you'll remember your password by typing the EXACT SAME PASSWORD twice. You didn't do that.");
+                    return;
+                }
+                var user = new ServerAccount();
+                user.Username = _usernameField.Text;
+                user.PasswordHash = _passwordField.Text;
+                ServerManager.SendMessage("acct_create", JsonConvert.SerializeObject(user));
+            };
+            _cancel.Click += () =>
+            {
+                AppearanceManager.Close(this);
+            };
+        }
+
+        public void OnLoad()
+        {
+        }
+
+        public void OnSkinLoad()
+        {
+        }
+
+        public bool OnUnload()
+        {
+            return true;
+        }
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            _title.X = 5;
+            _title.Y = 5;
+            _title.Font = SkinEngine.LoadedSkin.Header3Font;
+            _uname.X = 5;
+            _uname.Y = _title.Y + _title.Height + 10;
+
+            _usernameField.X = 5;
+            _usernameField.Y = _uname.Y + _uname.Height + 5;
+            _usernameField.MinWidth = Width - 10;
+            _usernameField.MinHeight = _usernameField.Font.Height + 6;
+            _usernameField.Width = 1;
+            _usernameField.Height = 1;
+
+
+            _password.X = 5;
+            _password.Y = _usernameField.Y + _usernameField.Height + 10;
+
+            _passwordField.X = 5;
+            _passwordField.Y = _password.Y + _password.Height + 5;
+            _passwordField.MinWidth = Width - 10;
+            _passwordField.MinHeight = _passwordField.Font.Height + 6;
+            _passwordField.Width = 1;
+            _passwordField.Height = 1;
+
+            _ok.X = Width - _ok.Width - 5;
+            _ok.Y = Height - _ok.Height - 5;
+            _cancel.X = _ok.X - _cancel.Width - 5;
+            _cancel.Y = _ok.Y;
+
+            _passwordConfirm.X = 5;
+            _passwordConfirm.Y = _passwordField.Y + _passwordField.Height + 10;
+
+            _passwordConfirmField.X = 5;
+            _passwordConfirmField.Y = _passwordConfirm.Y + _passwordConfirm.Height + 5;
+            _passwordConfirmField.MinWidth = Width - 10;
+            _passwordConfirmField.MinHeight = _passwordConfirmField.Font.Height + 6;
+            _passwordConfirmField.Width = 1;
+            _passwordConfirmField.Height = 1;
+
+
+        }
+
+        public void OnUpgrade()
+        {
+        }
+    }
+
 }
