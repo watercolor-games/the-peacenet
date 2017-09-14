@@ -16,7 +16,9 @@ namespace Plex.Server
         public static void ReadSave(string session_id, string content, string ip)
         {
             var acct = SessionManager.GrabAccount(session_id);
-            if (string.IsNullOrWhiteSpace(acct.SaveID))
+            var save = Program.GetSaveFromPrl(acct.SaveID);
+
+            if (string.IsNullOrWhiteSpace(acct.SaveID) || save == null)
             {
                 var subnet = Program.GetRandomSubnet();
                 int subnetIndex = Program.GameWorld.Networks.IndexOf(subnet);
@@ -27,8 +29,8 @@ namespace Plex.Server
                 acct.SaveID = subnet.Name + "." + system.SystemDescriptor.SystemName;
                 SessionManager.SetSessionInfo(session_id, acct);
                 Program.SaveWorld();
+                save = Program.GetSaveFromPrl(acct.SaveID);
             }
-            var save = Program.GetSaveFromPrl(acct.SaveID);
             Program.SendMessage(new PlexServerHeader
             {
                 Content = JsonConvert.SerializeObject(save.SystemDescriptor),
@@ -44,7 +46,7 @@ namespace Plex.Server
         {
             var acct = SessionManager.GrabAccount(session_id);
             Save save = JsonConvert.DeserializeObject<Save>(content);
-            if (string.IsNullOrWhiteSpace(acct.SaveID))
+            if (string.IsNullOrWhiteSpace(acct.SaveID) || save == null)
             {
                 var subnet = Program.GetRandomSubnet();
                 int subnetIndex = Program.GameWorld.Networks.IndexOf(subnet);
