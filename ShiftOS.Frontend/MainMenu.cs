@@ -243,7 +243,7 @@ namespace Plex.Frontend
             _close.Click += () =>
             {
                 SaveSystem.IsSandbox = true;
-                PlexCommands.Shutdown();
+                AppearanceManager.Exit();
             };
             var t = new System.Threading.Thread(() =>
             {

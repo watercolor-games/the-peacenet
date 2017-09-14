@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stories\BeginTutorials.cs" />
     <Compile Include="Stories\TheSyndicate.cs" />
+    <Compile Include="UIManagerTools.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>

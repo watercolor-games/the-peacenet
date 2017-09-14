@@ -490,13 +490,29 @@ There are no missions available for you to complete. Please check back later for
             return true;
         }
 
+        [Command("textmode")]
+        public static void TextMode()
+        {
+            UIManagerTools.EnterTextMode();
+            Console.WriteLine("Text mode initiated.");
+        }
+
         [RemoteLock]
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
         public static bool Shutdown()
         {
             if(Objects.ShiftFS.Utils.Mounts.Count > 0)
                 SaveSystem.SaveGame();
-            AppearanceManager.Exit();
+            UIManagerTools.EnterTextMode();
+            TerminalBackend.InStory = true;
+            TerminalBackend.PrefixEnabled = false;
+            new System.Threading.Thread(() =>
+            {
+                Console.WriteLine("Plexgate is shutting down...");
+                Thread.Sleep(5000);
+                Console.WriteLine("If you can read this you're not human. Goodbye.");
+                ServerManager.Disconnect(DisconnectType.UserRequested);
+            }).Start();
             return true;
         }
 

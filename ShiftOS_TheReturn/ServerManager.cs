@@ -50,6 +50,7 @@ namespace Plex.Engine
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
+            UIManager.ClearTopLevels();
             UIManager.Game.IPAddress = null;
             if (type == DisconnectType.UserRequested || type == DisconnectType.Error)
             {

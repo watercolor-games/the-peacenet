@@ -20,6 +20,15 @@ namespace Plex.Frontend.GraphicsSubsystem
     public static class UIManager
     {
         private static List<GUI.Control> topLevels = new List<GUI.Control>();
+
+        public static void ClearTopLevels()
+        {
+            while(topLevels.Count > 0)
+            {
+                StopHandling(topLevels[0]);
+            }
+        }
+
         private static List<GUI.Control> hudctrls = new List<GUI.Control>();
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
