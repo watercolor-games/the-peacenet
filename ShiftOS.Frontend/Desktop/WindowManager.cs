@@ -173,13 +173,16 @@ namespace Plex.Frontend.Desktop
             _hostedwindow.Height = height - bottomheight - titleheight;
             Width = width;
             Height = height;
-
         }
 
-        
+        private void Upgrades_Installed()
+        {
+            ParentWindow.OnUpgrade();
+        }
 
         public WindowBorder()
         {
+            Upgrades.Installed += Upgrades_Installed;
             //Enforce the 800x600 window rule.
             MaxWidth = 800;
             MaxHeight = 600;
@@ -279,6 +282,7 @@ namespace Plex.Frontend.Desktop
         {
             if (!ParentWindow.OnUnload())
                 return false;
+            Upgrades.Installed -= Upgrades_Installed;
             Visible = false;
             UIManager.StopHandling(this);
             return true;

@@ -145,7 +145,7 @@ namespace Plex.Engine
                 if (attr is RequiresUpgradeAttribute)
                 {
                     var rAttr = attr as RequiresUpgradeAttribute;
-                    return rAttr.Installed;
+                    return IsLoaded(rAttr.Upgrade);
                 }
             }
 
@@ -164,7 +164,7 @@ namespace Plex.Engine
                 if (attr is RequiresUpgradeAttribute)
                 {
                     var rAttr = attr as RequiresUpgradeAttribute;
-                    return rAttr.Installed;
+                    return IsLoaded(rAttr.Upgrade);
                 }
             }
 
@@ -183,7 +183,7 @@ namespace Plex.Engine
                 if (attr is RequiresUpgradeAttribute)
                 {
                     var rAttr = attr as RequiresUpgradeAttribute;
-                    return rAttr.Installed;
+                    return IsLoaded(rAttr.Upgrade);
                 }
             }
 
@@ -202,7 +202,7 @@ namespace Plex.Engine
                 if (attr is RequiresUpgradeAttribute)
                 {
                     var rAttr = attr as RequiresUpgradeAttribute;
-                    return rAttr.Installed;
+                    return IsLoaded(rAttr.Upgrade);
                 }
             }
 
@@ -428,9 +428,6 @@ namespace Plex.Engine
         /// <returns>Whether the upgrade is installed.</returns>
         public static bool UpgradeInstalled(string id)
         {
-            if (SaveSystem.IsSandbox == true)
-                return true;
-
             if (string.IsNullOrWhiteSpace(id))
                 return true;
             if (SaveSystem.CurrentSave != null)
@@ -478,6 +475,13 @@ namespace Plex.Engine
             if (SaveSystem.CurrentSave == null)
                 return false;
 
+            if (upgradeid.Contains(";"))
+            {
+                foreach (var id in upgradeid.Split(';'))
+                    if (!IsLoaded(id))
+                        return false;
+            }
+
             if (upgDb.FirstOrDefault(x => x.ID == upgradeid) == null)
                 return false;
 
@@ -498,6 +502,13 @@ namespace Plex.Engine
                 throw new UpgradeException(upgradeid, "This upgrade has already been loaded.");
             else
             {
+                var upgradedata = upgDb.FirstOrDefault(x => x.ID == upgradeid);
+                if(!string.IsNullOrWhiteSpace(upgradedata.Dependencies))
+                {
+                    if (!IsLoaded(upgradedata.Dependencies))
+                        throw new UpgradeException(upgradeid, "This upgrade is missing some dependencies which must be loaded before you can use it.");
+                }
+
                 if (SaveSystem.CurrentSave.LoadedUpgrades.Count < SaveSystem.CurrentSave.MaxLoadedUpgrades)
                 {
                     SaveSystem.CurrentSave.LoadedUpgrades.Add(upgradeid);
@@ -514,6 +525,16 @@ namespace Plex.Engine
                 throw new UpgradeException(upgradeid, "This upgrade has not been loaded.");
             else
             {
+                var upgrades = upgDb.Where(x => x.Dependencies?.Contains(upgradeid) == true);
+                if(upgrades.Count() > 0)
+                {
+                    foreach(var upg in upgrades)
+                    {
+                        if (IsLoaded(upg.ID))
+                            throw new UpgradeException(upgradeid, "An attempt was made to unload an upgrade which has children that are loaded.");
+                    }
+                }
+
                 SaveSystem.CurrentSave.LoadedUpgrades.Remove(upgradeid);
                 InvokeUpgradeInstalled();
             }
@@ -522,14 +543,6 @@ namespace Plex.Engine
 
         //LEAVE THIS AS FALSE. The game will set it when the save is loaded.
         public static bool LogOrphanedUpgrades = false;
-
-        private static IShiftoriumProvider _provider = null;
-
-        [Obsolete("Please annotate your provider with a [ShiftoriumProvider] attribute instead. This function doesn't do anything.")]
-        public static void RegisterProvider(IShiftoriumProvider p)
-        {
-            _provider = p;
-        }
 
         /// <summary>
         /// Gets every upgrade inside the frontend and all mods.

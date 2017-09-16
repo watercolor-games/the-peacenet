@@ -115,6 +115,9 @@ namespace Plex.Engine
         /// <param name="stid">The storyline ID to start.</param>
         public static void Start(string stid)
         {
+            if (SaveSystem.IsSandbox)
+                return;
+
             if (SaveSystem.CurrentSave.StoriesExperienced == null)
                 SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
             foreach (var type in ReflectMan.Types)

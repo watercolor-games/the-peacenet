@@ -17,6 +17,8 @@ namespace Plex.Engine
 
         public static bool Deduct(long amount, string to)
         {
+            if (amount == 0)
+                return true;
             if (_provider == null)
                 return false;
             return _provider.Deduct(amount, to);
@@ -24,6 +26,8 @@ namespace Plex.Engine
 
         public static bool Receive(long amount, string from)
         {
+            if (amount == 0)
+                return true;
             if (_provider == null)
                 return false;
             return _provider.Receive(amount, from);

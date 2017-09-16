@@ -399,7 +399,7 @@ namespace Plex.Server
         public static HackableSystem GetSaveFromPrl(string prl)
         {
             string[] split = prl.Split('.');
-            return GameWorld.Networks.FirstOrDefault(x => x.Name == split[0]).NPCs.FirstOrDefault(x => x.SystemDescriptor.SystemName == split[1]);
+            return GameWorld.Networks.FirstOrDefault(x => x.Name == split[0])?.NPCs.FirstOrDefault(x => x.SystemDescriptor.SystemName == split[1]);
         }
 
         public static int Clamp(int value, int min, int max)

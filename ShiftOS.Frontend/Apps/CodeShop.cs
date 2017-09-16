@@ -116,7 +116,8 @@ As you continue through your job, going further up the ranks, you will unlock ad
                             Upgrades.LoadUpgrade(selectedUpgrade.ID);
 
                         }
-                        SelectUpgrade(selectedUpgrade);
+                        PopulateList();
+                        SelectUpgrade(null);
                     }
                     catch (UpgradeException ex)
                     {
@@ -130,10 +131,6 @@ As you continue through your job, going further up the ranks, you will unlock ad
                         Engine.Infobox.Show("Upgrade installed!", "You have successfully bought and installed the " + selectedUpgrade.Name + " upgrade for " + selectedUpgrade.Cost + " Experience.");
                         SelectUpgrade(null);
                         PopulateList();
-                    }
-                    else
-                    {
-                        Engine.Infobox.Show("Insufficient funds.", "You do not have enough Experience to buy this upgrade. You need " + (selectedUpgrade.Cost - SaveSystem.CurrentSave.Experience) + " more.");
                     }
                 }
             };
@@ -159,6 +156,8 @@ As you continue through your job, going further up the ranks, you will unlock ad
             if(selectedUpgrade != upgrade)
             {
                 selectedUpgrade = upgrade;
+                if (upgrade == null)
+                    return;
                 if (upgrade.Installed)
                 {
                     string type = (Upgrades.IsLoaded(upgrade.ID)) ? "Unload" : "Load";
@@ -184,6 +183,8 @@ As you continue through your job, going further up the ranks, you will unlock ad
                 {
                     type = (Upgrades.IsLoaded(upgrade.ID)) ? "loaded" : "unloaded";
                 }
+                if (type == "unknown")
+                    continue; //Skip upgrades that aren't purchasable.
                 upgradelist.AddItem($"{upgrade.Category}: {upgrade.Name} ({type})");
                 Invalidate();
             }

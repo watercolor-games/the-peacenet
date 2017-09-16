@@ -19,6 +19,7 @@ using Plex.Objects.ShiftFS;
 using Plex.Engine;
 using Microsoft.Xna.Framework;
 using Plex.Frontend.GraphicsSubsystem;
+using static Plex.Engine.TerminalBackend;
 
 namespace Plex.Frontend
 {
@@ -338,6 +339,7 @@ namespace Plex.Frontend
         [Command("startmission")]
         [RequiresArgument("id")]
         [RequiresUpgrade("tutorial1")]
+        [AllowInMultiplayer(false)]
         public static void StartMission(Dictionary<string, object> args)
         {
             string id = args["id"].ToString();
@@ -358,6 +360,7 @@ namespace Plex.Frontend
 
         [Command("missions")]
         [RequiresUpgrade("tutorial1")]
+        [AllowInMultiplayer (false)]
         public static void Missions()
         {
             Console.WriteLine("Available missions");
@@ -429,6 +432,7 @@ There are no missions available for you to complete. Please check back later for
     {
 #if DEBUG
         [Command("debug")]
+        [AllowInMultiplayer (false)]
         public static void EnterDebug()
         {
             TerminalBackend.SetShellOverride("Plex_debug> ");

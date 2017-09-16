@@ -39,6 +39,17 @@ namespace Plex.Engine
             _shellOverrideString = value;
         }
 
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
+        public class AllowInMultiplayerAttribute : Attribute
+        {
+            public bool Allow { get; private set; }
+
+            public AllowInMultiplayerAttribute(bool allow)
+            {
+                Allow = allow;
+            }
+        }
+
         /// <summary>
         /// Occurs when a command is processed.
         /// </summary>
@@ -134,13 +145,14 @@ namespace Plex.Engine
         {
             public virtual bool MatchShell()
             {
-                if(ShellMatch != "metacmd")
+                if (ShellMatch != "metacmd")
                 {
                     return (ShellMatch == _shellOverrideString);
                 }
                 return true;
             }
 
+            public bool AllowInMP { get; set; }
             public string ShellMatch { get; set; }
 
             public override int GetHashCode()
@@ -187,6 +199,12 @@ namespace Plex.Engine
 
             public virtual void Invoke(Dictionary<string, object> args)
             {
+                if(AllowInMP == false && SaveSystem.IsSandbox == true)
+                {
+                    Console.WriteLine("You can't run this command right now.");
+                    return;
+                }
+
                 List<string> errors = new List<string>();
                 if (ShellMatch != "metacmd")
                 {
@@ -338,6 +356,12 @@ namespace Plex.Engine
                     if (cmd != null)
                     {
                         var tc = new TerminalCommand();
+                        var mpattr = mth.GetCustomAttributes(false).FirstOrDefault(x => x is AllowInMultiplayerAttribute) as AllowInMultiplayerAttribute;
+                        if (mpattr != null)
+                            tc.AllowInMP = mpattr.Allow;
+                        else
+                            tc.AllowInMP = true;
+
                         tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
 
                         var shellConstraint = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShellConstraintAttribute) as ShellConstraintAttribute;

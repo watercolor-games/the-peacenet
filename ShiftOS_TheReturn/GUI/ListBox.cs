@@ -28,6 +28,7 @@ namespace Plex.Frontend.GUI
                 int y = fontheight * (i - itemOffset);
                 int width = Width - 2;
                 int height = fontheight;
+                if(i >= 0 && i < items.Count)
                 {
                     gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont, Alignment);
 
@@ -154,12 +155,12 @@ namespace Plex.Frontend.GUI
                     selectedIndex = items.Count - 1;
                     RequireTextRerender();
                 }
-                while (this.itemOffset >= selectedIndex)
+                while (this.itemOffset > selectedIndex)
                 {
                     itemOffset--;
                     RequireTextRerender();
                 }
-                while (this.itemOffset + itemsPerPage <= selectedIndex )
+                while (this.itemOffset + itemsPerPage < selectedIndex )
                 {
                     itemOffset++;
                     RequireTextRerender();

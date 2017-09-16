@@ -246,31 +246,35 @@ namespace Plex.Frontend
                 {
                     if (this.IPAddress != null)
                     {
-                        var ep = new IPEndPoint(this.IPAddress, this.Port);
-                        var data = _mpClient.Receive(ref ep);
-                        Desktop.InvokeOnWorkerThread(() =>
+                        try
                         {
-                            var content = Encoding.UTF8.GetString(data);
-                            msSinceLastReply = 0.0;
-                            if (content == "beat")
+                            var ep = new IPEndPoint(this.IPAddress, this.Port);
+                            var data = _mpClient.Receive(ref ep);
+                            Desktop.InvokeOnWorkerThread(() =>
                             {
-                                System.Diagnostics.Debug.Print("Pong");
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Print("Message received.");
-                                try
+                                var content = Encoding.UTF8.GetString(data);
+                                msSinceLastReply = 0.0;
+                                if (content == "beat")
                                 {
-                                    var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
-                                    ServerManager.HandleMessage(msg);
+                                    System.Diagnostics.Debug.Print("Pong");
                                 }
-                                catch
+                                else
                                 {
+                                    System.Diagnostics.Debug.Print("Message received.");
+                                    try
+                                    {
+                                        var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
+                                        ServerManager.HandleMessage(msg);
+                                    }
+                                    catch
+                                    {
 
+                                    }
                                 }
-                            }
 
-                        });
+                            });
+                        }
+                        catch { }
                     }
                 }
             });

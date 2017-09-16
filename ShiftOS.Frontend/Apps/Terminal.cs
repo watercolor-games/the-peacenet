@@ -136,11 +136,13 @@ namespace Plex.Frontend.Apps
         }
 
         float _vertOffset = 0.0f;
+        System.Drawing.Point cloc = System.Drawing.Point.Empty;
+        Vector2 csize = Vector2.Zero;
 
         protected void RecalculateLayout()
         {
-            var cloc = GetPointAtIndex();
-            var csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style), Engine.GUI.TextAlignment.TopLeft);
+            cloc = GetPointAtIndex();
+            csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style), Engine.GUI.TextAlignment.TopLeft);
             if (cloc.Y - _vertOffset < 0)
             {
                 _vertOffset += cloc.Y - _vertOffset;
@@ -297,15 +299,9 @@ namespace Plex.Frontend.Apps
                         {
                             AppearanceManager.CurrentPosition--;
                             base.OnKeyEvent(a);
-                            RecalculateLayout();
+                            cloc = GetPointAtIndex();
                             InvalidateTopLevel();
                         }
-                    }
-                    else
-                    {
-                        base.OnKeyEvent(a);
-                        RecalculateLayout();
-                        InvalidateTopLevel();
                     }
                 }
                 catch
@@ -363,8 +359,8 @@ namespace Plex.Frontend.Apps
                     Text = Text.Insert(Index, a.KeyChar.ToString());
                     Index++;
                     AppearanceManager.CurrentPosition++;
-                    //                    RecalculateLayout();
-                    InvalidateTopLevel();
+                    cloc = GetPointAtIndex();
+                    Invalidate();
                 }
             }
             blinkStatus = true;
@@ -376,12 +372,15 @@ namespace Plex.Frontend.Apps
         protected override void RenderText(GraphicsContext gfx)
         {
             int textloc = 0 - (int)_vertOffset;
+            var font = LoadedSkin.TerminalFont;
             foreach (var line in Lines)
             {
-                var font = LoadedSkin.TerminalFont;
                 if (!(textloc < 0 || textloc - font.Height >= Height))
                     gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
-                textloc += font.Height;
+                if (string.IsNullOrEmpty(line))
+                    textloc += font.Height;
+                else
+                    textloc += (int)GraphicsContext.MeasureString(line, font, Engine.GUI.TextAlignment.TopLeft, Width).Y;
             }
 
         }
@@ -397,17 +396,7 @@ namespace Plex.Frontend.Apps
                 //Draw the caret.
                 if (blinkStatus == true)
                 {
-                    PointF cursorPos = GetPointAtIndex();
-                    string caret = (Index < Text.Length) ? Text[Index].ToString() : " ";
-                    var cursorSize = GraphicsContext.MeasureString(caret, font, Engine.GUI.TextAlignment.TopLeft);
-
-                    var lineMeasure = GraphicsContext.MeasureString(Lines[GetCurrentLine()], font, Engine.GUI.TextAlignment.TopLeft);
-                    if (cursorPos.X > lineMeasure.X)
-                    {
-                        cursorPos.X = lineMeasure.X;
-                    }
-
-                    gfx.DrawRectangle((int)cursorPos.X, (int)(cursorPos.Y - _vertOffset), (int)cursorSize.X, (int)cursorSize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+                    gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
                 }
                 //Draw the text
                 base.OnPaint(gfx, target);

@@ -364,6 +364,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ConnectToServer(string host, int port)
         {
+            _game._mpClient = new UdpClient();
             var he = Dns.GetHostEntry(host);
             var ip = he.AddressList.Last();
             bool isMP = false;
@@ -422,7 +423,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             if(done == false)
             {
                 t.Abort();
-                throw new NetworkTimeoutException(_game.IPAddress, _game.Port);
+                throw new NetworkTimeoutException(ip,port);
             }
             if (done == true && error != null)
                 throw error;
