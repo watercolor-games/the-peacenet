@@ -274,6 +274,9 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ResetSkinTextures(GraphicsDevice graphics)
         {
+            bool rgb101 = true;
+            if (SaveSystem.CurrentSave != null)
+                rgb101 = SaveSystem.CurrentSave.UseRGB101Compatibility;
             SkinTextures.Clear();
             foreach(var byteArray in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(byte[])))
             {
@@ -292,10 +295,30 @@ namespace Plex.Frontend.GraphicsSubsystem
                         for(int i = 0; i < data.Length; i += 4)
                         {
                             byte r = data[i];
+                            byte g = data[i + 1];
                             byte b = data[i + 2];
-                            if (r == 1 && b == 1 && data[i + 1] == 1)
+                            if (rgb101)
                             {
-                                data[i + 3] = 0;
+                                if (r == 1 && b == 1 && g == 0)
+                                {
+                                    data[i + 3] = 0;
+                                }
+                            }
+                            else
+                            {
+                                byte ar = SaveSystem.CurrentSave.AccentR;
+                                byte ag = SaveSystem.CurrentSave.AccentG;
+                                byte ab = SaveSystem.CurrentSave.AccentB;
+                                byte br = SkinEngine.LoadedSkin.AccentKey.R;
+                                byte bg = SkinEngine.LoadedSkin.AccentKey.G;
+                                byte bb = SkinEngine.LoadedSkin.AccentKey.B;
+
+                                if (br == r && bg == g && bb == b)
+                                {
+                                    r = ar;
+                                    data[i + 1] = ag;
+                                    b = ab;
+                                }
                             }
                             data[i] = b;
                             data[i + 2] = r;
@@ -310,6 +333,25 @@ namespace Plex.Frontend.GraphicsSubsystem
             {
                 var color = (System.Drawing.Color)colorfield.GetValue(SkinEngine.LoadedSkin);
                 var tex2 = new Texture2D(graphics, 1, 1);
+                if(rgb101)
+                {
+                    if (color.R == 1 && color.G == 0 && color.B == 1)
+                    {
+                        color = System.Drawing.Color.FromArgb(0, 0, 0, 0);
+                    }
+                }
+                else
+                {
+                    byte ar = SaveSystem.CurrentSave.AccentR;
+                    byte ag = SaveSystem.CurrentSave.AccentG;
+                    byte ab = SaveSystem.CurrentSave.AccentB;
+                    byte br = SkinEngine.LoadedSkin.AccentKey.R;
+                    byte bg = SkinEngine.LoadedSkin.AccentKey.G;
+                    byte bb = SkinEngine.LoadedSkin.AccentKey.B;
+                    if (color.R == br && color.G == bg && color.B == bb)
+                        color = System.Drawing.Color.FromArgb(ar, ag, ab);
+                }
+
                 tex2.SetData<byte>(new[] { color.R, color.G, color.B, color.A });
                 SkinTextures.Add(colorfield.Name, tex2);
             }

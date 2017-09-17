@@ -714,12 +714,7 @@ namespace Plex.Frontend
         public byte[] TitleRightInactiveBG = null;
 
 
-        [ShifterMeta("System")]
-        [ShifterCategory("General")]
-        [ShifterName("System color key-out")]
-        [ShifterDescription("This is a color that will be represented as \"transparent\" in windows. This does not affect the desktop.")]
-        public Color SystemKey = Color.FromArgb(1, 0, 1);
-
+        
         [ShifterMeta("Windows")]
         [ShifterCategory("Window border")]
         //[RequiresUpgrade("skinning;shift_window_borders")]

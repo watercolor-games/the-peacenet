@@ -102,6 +102,18 @@ namespace Plex.Objects
 
         [Order]
         public List<HackableSystem> CompletedHacks { get; set; }
+
+        [Order]
+        public byte AccentR = 32;
+
+        [Order]
+        public byte AccentG = 32;
+        [Order]
+        public byte AccentB = 32;
+
+        [Order]
+        public bool UseRGB101Compatibility = true;
+
     }
 
     public class HackableSystem

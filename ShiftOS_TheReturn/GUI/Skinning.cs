@@ -346,6 +346,13 @@ namespace Plex.Engine
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
+        [ShifterMeta("System")]
+        [ShifterCategory("General")]
+        [ShifterName("Accent key")]
+        [ShifterDescription("This is a color the system will replace with the user-defined Accent Color when rendering skin assets to the screen. Other color settings in PlexTheme that are set to this color will also be rendered as the user-defined accent color.")]
+        public Color AccentKey = Color.FromArgb(1, 0, 1);
+
+
         //we DO NOT want this showing in the shifter.
         [ShifterHidden]
         public Dictionary<string, ImageLayout> SkinImageLayouts = new Dictionary<string, ImageLayout>();
