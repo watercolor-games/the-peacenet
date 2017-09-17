@@ -173,6 +173,7 @@
     <Compile Include="GUI\ListBox.cs" />
     <Compile Include="GUI\ListView.cs" />
     <Compile Include="GUI\Menu.cs" />
+    <Compile Include="GUI\MenuBar.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\ScrollBar.cs" />

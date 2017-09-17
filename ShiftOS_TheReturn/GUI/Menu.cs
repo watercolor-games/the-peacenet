@@ -34,6 +34,99 @@ namespace Plex.Frontend.GUI
             }
         }
 
+        protected virtual void CalculateSelectedItem(int x, int y)
+        {
+            int _itemcount = (Height - _border) / _textheight;
+            for (int i = 0; i < _itemcount; i++)
+            {
+                int i_y = (i * _textheight) + (_border / 2);
+                int i_b = i_y + _textheight;
+                if (y >= i_y && y <= i_b)
+                {
+                    _selectedIndex = i;
+                    _selectedX = 0;
+                    _selectedY = i_y;
+                    _selectedW = Width;
+                    _selectedH = _textheight;
+                    RequireTextRerender();
+                    Invalidate();
+                    return;
+                }
+            }
+
+        }
+
+        protected virtual void OnClick()
+        {
+            if (_selectedIndex != -1 && _childMenus.Count != 0)
+            {
+                var item = _childMenus[_selectedIndex];
+                if (item.HasDropdown == true)
+                {
+                    if (_dropdown != null)
+                    {
+                        _dropdown.Hide();
+                        _dropdown = null;
+                    }
+                    _dropdown = item;
+                    int _ddX = X + Width;
+                    int _ddY = Y + (_border / 2) + (_textheight * _selectedIndex);
+                    _dropdown.Layout(new GameTime());
+                    int vpw = UIManager.Viewport.Width;
+                    int vph = UIManager.Viewport.Height;
+                    if (_ddY + _dropdown.Height >= vph)
+                    {
+                        int diff = (_ddY + _dropdown.Height) - vph;
+                        _ddY -= diff;
+                    }
+                    if (_ddX + _dropdown.Width >= vpw)
+                    {
+                        _ddX = X - _dropdown.Width;
+                    }
+                    _dropdown.X = _ddX;
+                    _dropdown.Y = _ddY;
+                    _dropdown.Show();
+                    UIManager.FocusedControl = this;
+                }
+                else
+                {
+                    item.Activate();
+                    Hide();
+                }
+            }
+            else
+            {
+                Hide();
+            }
+
+        }
+
+        public void SetDropdown(int x, int y, MenuItem item)
+        {
+            if(_dropdown != null)
+            {
+                _dropdown.Hide();
+                _dropdown = null;
+            }
+            _dropdown = item;
+            _dropdown.X = x;
+            _dropdown.Y = y;
+            _dropdown.Layout(new GameTime());
+            _dropdown.Show();
+        }
+
+
+        public void Select(int i, int x, int y, int w, int h)
+        {
+            _selectedH = h;
+            _selectedW = w;
+            _selectedX = x;
+            _selectedY = y;
+            _selectedIndex = i;
+            Invalidate();
+            RequireTextRerender();
+        }
+
         public Menu()
         {
             AutoSize = true;
@@ -56,66 +149,11 @@ namespace Plex.Frontend.GUI
             {
                 int x = loc.X;
                 int y = loc.Y;
-                int _itemcount = (Height - _border) / _textheight;
-                for (int i = 0; i < _itemcount; i++)
-                {
-                    int i_y = (i * _textheight) + (_border / 2);
-                    int i_b = i_y + _textheight;
-                    if (y >= i_y && y <= i_b)
-                    {
-                        _selectedIndex = i;
-                        _selectedX = 0;
-                        _selectedY = i_y;
-                        _selectedW = Width;
-                        _selectedH = _textheight;
-                        RequireTextRerender();
-                        Invalidate();
-                        return;
-                    }
-                }
+                CalculateSelectedItem(x, y);
             };
             Click += () =>
             {
-                if(_selectedIndex != -1 && _childMenus.Count != 0)
-                {
-                    var item = _childMenus[_selectedIndex];
-                    if(item.HasDropdown == true)
-                    {
-                        if(_dropdown != null)
-                        {
-                            _dropdown.Hide();
-                            _dropdown = null;
-                        }
-                        _dropdown = item;
-                        int _ddX = X + Width;
-                        int _ddY = Y+(_border / 2) + (_textheight * _selectedIndex);
-                        _dropdown.Layout(new GameTime());
-                        int vpw = UIManager.Viewport.Width;
-                        int vph = UIManager.Viewport.Height;
-                        if(_ddY + _dropdown.Height >= vph)
-                        {
-                            int diff = (_ddY + _dropdown.Height) - vph;
-                            _ddY -= diff;
-                        }
-                        if(_ddX + _dropdown.Width >= vpw)
-                        {
-                            _ddX = X - _dropdown.Width;
-                        }
-                        _dropdown.X = _ddX;
-                        _dropdown.Y = _ddY;
-                        _dropdown.Show();
-                        UIManager.FocusedControl = this;
-                    }
-                    else
-                    {
-                        item.Activate();
-                        Hide();
-                    }
-                }
-                else
-                {
-                    Hide();
-                }
+                OnClick();
             };
         }
 
@@ -211,6 +249,62 @@ namespace Plex.Frontend.GUI
                 }
             }
             base.OnPaint(gfx, target);
+        }
+
+        public int SelectedX
+        {
+            get
+            {
+                return _selectedX;
+            }
+        }
+
+        public int SelectedY
+        {
+            get
+            {
+                return _selectedY;
+            }
+        }
+
+        public int SelectedW
+        {
+            get
+            {
+                return _selectedW;
+            }
+        }
+
+        public int SelectedH
+        {
+            get
+            {
+                return _selectedH;
+            }
+        }
+
+        public int SelectedIndex
+        {
+            get
+            {
+                return _selectedIndex;
+            }
+        }
+
+        public int Border
+        {
+            get
+            {
+                return _border;
+            }
+        }
+
+        public MenuItem[] MenuItems
+        {
+            get
+            {
+                return _childMenus.ToArray();
+            }
         }
 
         protected override void OnLayout(GameTime gameTime)
