@@ -46,6 +46,7 @@ namespace Plex.Frontend
 
         public void OnLoad()
         {
+            AudioPlayerSubsystem.Infobox();
             AppearanceManager.SetWindowTitle(this, Title);
         }
 

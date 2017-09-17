@@ -144,6 +144,7 @@
     <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="ATextRenderer.cs" />
     <Compile Include="AudioManager.cs" />
+    <Compile Include="AudioPlayerSubsystem.cs" />
     <Compile Include="BFInterpreter.cs" />
     <Compile Include="CashManager.cs" />
     <Compile Include="CommandParser.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="GUI\ItemGroup.cs" />
     <Compile Include="GUI\ListBox.cs" />
     <Compile Include="GUI\ListView.cs" />
+    <Compile Include="GUI\Menu.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\ScrollBar.cs" />

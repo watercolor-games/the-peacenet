@@ -27,23 +27,23 @@ namespace Plex.Engine.TextRenderers
                 {
                     cgfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                     cgfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                    
-                    if (color != Microsoft.Xna.Framework.Color.Black)
-                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, GetFlags(alignment));
-                    else
-                        System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.Black, TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.TextBoxControl | TextFormatFlags.WordBreak);
+                    cgfx.Clear(System.Drawing.Color.Transparent);
+                    System.Windows.Forms.TextRenderer.DrawText(cgfx, text, font, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Color.White, System.Drawing.Color.Black, GetFlags(alignment));
                 }
                 var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 var bytes = new byte[Math.Abs(lck.Stride) * lck.Height];
                 Marshal.Copy(lck.Scan0, bytes, 0, bytes.Length);
+                for(int i = 0; i < bytes.Length; i += 4)
+                {
+                    var avg = (byte)(((int)bytes[i] + (int)bytes[i + 1] + (int)bytes[i + 2]) / 3);
+                    if (avg < 127)
+                        bytes[i + 3] = avg;
+                }
                 bmp.UnlockBits(lck);
                 using (var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height))
                 {
                     tex2.SetData<byte>(bytes);
-                    if (color != Microsoft.Xna.Framework.Color.Black)
-                        gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, ImageLayout.Stretch);
-                    else
-                        gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, Microsoft.Xna.Framework.Color.Black, ImageLayout.Stretch);
+                    gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, ImageLayout.Stretch);
                 }
 
             }

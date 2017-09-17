@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Media;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace Plex.Frontend
             RankManager.Init(new MGRankProvider());
 
             SkinEngine.SetSkinProvider(new PlexSkinProvider());
-
+            AudioPlayerSubsystem.Init(new AudioPlayer());
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
             FileSkimmerBackend.Init(new MGFSLayer());
@@ -77,6 +78,39 @@ namespace Plex.Frontend
             if(ServerThread != null)
                 if(ServerThread.ThreadState != ThreadState.Aborted)
                     ServerThread.Abort();
+        }
+    }
+
+    public class AudioPlayer : IAudioPlayer
+    {
+        SoundPlayer _player = new SoundPlayer();
+
+        public void Infobox()
+        {
+            _player.Stream = Properties.Resources.maximize;
+            _player.Load();
+            _player.Play();
+        }
+
+        public void Notification()
+        {
+            _player.Stream = Properties.Resources.openwindow;
+            _player.Load();
+            _player.Play();
+        }
+
+        public void Shutdown()
+        {
+            _player.Stream = Properties.Resources.shutdown1;
+            _player.Load();
+            _player.Play();
+        }
+
+        public void Startup()
+        {
+            _player.Stream = Properties.Resources.startup;
+            _player.Load();
+            _player.Play();
         }
     }
 

@@ -186,36 +186,7 @@ namespace Plex.Frontend.Stories
                    int pc_width = dp_width - pc_left;
                    int pb_width = dp_width - al_width - pc_width;
                    int pb_left = al_width;
-                   UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(0, dp_start, dp_width, dp_height), "That's how you do it. I've highlighted another area - this is called your Action Panel. Up here, you can switch between open windows, launch new programs, and see the time and the system you are connected to.", ()=>
-                   {
-                       UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(pc_left, dp_start, pc_width, dp_height), "Over here is your Connection Status. It tells you the current system time, and the hostname of the system you are currently connected to.", () =>
-                       {
-                           UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(pb_left, dp_start, pb_width, dp_height), "And here is your Task Switcher. It shows a list of all open windows, and clicking one of those buttons will bring the window to the front of the screen.", () =>
-                           {
-                               UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(0, dp_start, al_width, dp_height), "And over here? This mysterious do-hickey? This is your Launcher. Clicking it will open a menu full of programs you can launch.", () =>
-                                {
-                                    var al_item_to_click = (Engine.Desktop.CurrentDesktop as Desktop.Desktop).LauncherItems.FirstOrDefault(x => x.Data.LaunchType == typeof(Apps.SystemStatus));
-                                    int al_container_height = ((Engine.Desktop.CurrentDesktop as Desktop.Desktop).LauncherItems.Count * al_item_to_click.Height) + 2;
-                                    int al_item_width = al_item_to_click.Width;
-                                    int al_item_height = al_item_to_click.Height;
-                                    int al_c_y = (LoadedSkin.DesktopPanelPosition == 0) ? dp_start + dp_height : 720 - dp_height - al_container_height;
-                                    UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(al_item_to_click.X+1, al_c_y + al_item_to_click.Y+1, al_item_width-2, al_item_height), "You just opened your Launcher... I guess that was a bug with my tutorial overlay...it's not REALLY supposed to send click events directly to Plexgate...\r\n\r\nAhh well, I guess while you're here we might as well go over the System Status window. Go ahead and click here to open it.", () =>
-                                    {
-                                        var sstatus = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Apps.SystemStatus) as Desktop.WindowBorder;
-                                        var parent = (sstatus.ParentWindow as Apps.SystemStatus);
-                                        UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(sstatus.X + parent.X, sstatus.Y + parent.Y, parent.Width, parent.Height), "This is the System Status window. It does exactly what you think - it tells you about your system's status.\r\n\r\nJust reading this window, you can see how much experience you've gained within the Plex Usenet, how many programs are open, and more.\r\n\r\nIt's a pretty useful utility, and there are many more utilities hiding in your Launcher waiting for you to use! I'll let you explore the Plexgate and its wonderful tools, but first, click this area to confirm System Status is on your screen.\r\n\r\nIf you want to close the window, you can do so by clicking the red box on the window's titlebar at the very far right.", () =>
-                                        {
-                                            AppearanceManager.Close(parent);
-                                            UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(0, 0, 1280, 720), "This concludes the Alkaline Tutorial for the Plexgate Desktop.\r\n\r\nClick anywhere you'd like to begin using your new desktop environment.", () =>
-                                               {
-                                                   Story.Context.MarkComplete();
-                                               });
-                                        });
-                                    });
-                                });
-                           });
-                       });
-                   });
+
                });
         }
     }

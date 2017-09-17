@@ -82,7 +82,26 @@ namespace Plex.Frontend.GraphicsSubsystem
                 _maxheight = value;
             }
         }
+        
+        public void DrawPolygon(Color c, params int[] locs)
+        {
+            if ((locs.Length % 2) != 0)
+                throw new Exception("The locs argument count must be a multiple of 2.");
+            for(int i = 0; i < locs.Length; i+= 2)
+            {
+                int x = locs[i];
+                int y = locs[i + 1];
+                int x1 = locs[0];
+                int y1 = locs[1];
 
+                if (i < locs.Length - 2)
+                {
+                    x1 = locs[i + 2];
+                    y1 = locs[i + 3];
+                }
+                DrawLine(x, y, x1, y1, 1, c);
+            }
+        }
 
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spritebatch;

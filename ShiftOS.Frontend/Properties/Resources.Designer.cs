@@ -85,6 +85,15 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream closewindow {
+            get {
+                return ResourceManager.GetStream("closewindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [u][h1]Credits[/h1][/u]
         ///
         ///We need to put the names of any people who work on this game in here. We also need to put the names and sources of any third party libraries we use (such as monogame, CodeKicker.BBCode, JSON.NET etc).
@@ -112,6 +121,15 @@ namespace Plex.Frontend.Properties {
             get {
                 object obj = ResourceManager.GetObject("cursor_9x_pointer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream dropwindow {
+            get {
+                return ResourceManager.GetStream("dropwindow", resourceCulture);
             }
         }
         
@@ -386,21 +404,26 @@ namespace Plex.Frontend.Properties {
         ///	{
         ///		SystemName: &quot;shiftsyndicate_main&quot;,
         ///		FriendlyName: &quot;ShiftSyndicate file server&quot;,
-        ///		Password: &quot;h0ldy0urc0l0ur&quot;,
-        ///		PasswordHint: &quot;Prepare to hold your colour...&quot;,
         ///		WelcomeMessage: &quot;Don&apos;t make fun of SpamSyndicate web design.&quot;,
-        ///		FirewallStrength: 0,
-        ///		LootRarity: 1,
-        ///		LootAmount: 2,
-        ///		ConnectionTimeoutLevel: 4,
-        ///		SystemType: &quot;FileServer, SSHServer&quot;,
-        ///
+        ///		SystemType: &quot;Computer&quot;,
+        ///		Rank: 1,
+        ///		X: -450,
+        ///		Y: -405
         ///	}
         ///].
         /// </summary>
         internal static string Hackables {
             get {
                 return ResourceManager.GetString("Hackables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream iconover {
+            get {
+                return ResourceManager.GetStream("iconover", resourceCulture);
             }
         }
         
@@ -448,12 +471,39 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream maximize {
+            get {
+                return ResourceManager.GetStream("maximize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream minimize {
+            get {
+                return ResourceManager.GetStream("minimize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap moneymate_transparent {
             get {
                 object obj = ResourceManager.GetObject("moneymate_transparent", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream openwindow {
+            get {
+                return ResourceManager.GetStream("openwindow", resourceCulture);
             }
         }
         
@@ -468,23 +518,34 @@ namespace Plex.Frontend.Properties {
         ///	{
         ///		FriendlyName: &quot;FTP File Puller Payload&quot;,
         ///		PayloadName: &quot;ftpull&quot;,
-        ///		EffectiveAgainstFirewall: 1,
-        ///		EffectiveAgainst: &quot;FileServer&quot;,
+        ///		Port: 21,
         ///		Function: 2
         ///	},
         ///	{
-        ///		FriendlyName: &quot;Force Heartbeat&quot;,
-        ///		PayloadName: &quot;keepalive&quot;,
-        ///		EffectiveAgainstFirewall: 1,
-        ///		EffectiveAgainst: &quot;SSHServer&quot;,
-        ///		Function: 1,
-        ///		Dependencies: &quot;sploitset_keepalive&quot;,
-        ///	}
+        ///		FriendlyName: &quot;Reverse shell&quot;,
+        ///		PayloadName: &quot;rsh&quot;,
+        ///		Port: 22
+        ///	},
+        ///	/* This is for when we implement the ability to watch players you hack in Multiplayer.
+        ///	{
+        ///		FriendlyName: &quot;Plexnet VNC viewer&quot;,
+        ///		PayloadName: &quot;pvnc&quot;,
+        ///		Port: 5900
+        ///	}*/
         ///].
         /// </summary>
         internal static string Payloads {
             get {
                 return ResourceManager.GetString("Payloads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream pickupwindow {
+            get {
+                return ResourceManager.GetStream("pickupwindow", resourceCulture);
             }
         }
         
@@ -503,7 +564,7 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* Plex Ports data file        /// *        /// * This file contains information about all ports in the game&apos;s campaign.        /// *        /// */        ///        ///[        ///	{        ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,        ///		AttachTo: &quot;EmailServer&quot;,        ///		Value: 25,        ///		Name: &quot;smtp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;File Transfer Protocol&quot;,        ///		AttachTo: &quot;FileServer&quot;,        ///		Value: 21,        ///		Name: &quot;ftp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;ShiftSSH server&quot;,        ///		AttachTo: &quot;SSHServer&quot;,        ///		Value: 22,        ///		Name: &quot;ssh&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;MySQL server&quot;,        ///		AttachTo: &quot;Database&quot;,        ///		Value: 3306,        ///		Name: &quot;sql&quot;,        ///	} [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to /* Plex Ports data file        /// *        /// * This file contains information about all ports in the game&apos;s campaign.        /// *        /// */        ///        ///[        ///	{        ///		FriendlyName: &quot;SMTP mailserver (unencrypted)&quot;,        ///		AttachTo: &quot;MailServer&quot;,        ///		Value: 25,        ///		Name: &quot;smtp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;File Transfer Protocol&quot;,        ///		AttachTo: &quot;Computer, NAS, WebServer, Mobile&quot;,        ///		Value: 21,        ///		Name: &quot;ftp&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;Plexgate Terminal server&quot;,        ///		AttachTo: &quot;Computer, WebServer, Mobile&quot;,        ///		Value: 22,        ///		Name: &quot;ssh&quot;,        ///	},        ///	{        ///		FriendlyName: &quot;Plexgate Desktop server [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Ports {
             get {
@@ -548,6 +609,15 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream shutdown1 {
+            get {
+                return ResourceManager.GetStream("shutdown1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /* Plex setup data file
         /// * 
         /// * This file holds information used by a Plex &quot;Installer&quot; for setting up a system component.
@@ -563,6 +633,15 @@ namespace Plex.Frontend.Properties {
         internal static string sploitset_keepalive {
             get {
                 return ResourceManager.GetString("sploitset_keepalive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream startup {
+            get {
+                return ResourceManager.GetStream("startup", resourceCulture);
             }
         }
         

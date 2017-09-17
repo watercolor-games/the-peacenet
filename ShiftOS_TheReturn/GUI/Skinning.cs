@@ -359,6 +359,289 @@ namespace Plex.Engine
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
+
+        #region Menus -> Toolbars
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar Border")]
+        public Color Menu_ToolStripBorder = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Dropdown background")]
+        public Color Menu_ToolStripDropDownBackground = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient start")]
+        public Color Menu_ToolStripGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient middle")]
+        public Color Menu_ToolStripGradientMiddle = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Toolbar gradient end")]
+        public Color Menu_ToolStripGradientEnd = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button select highlight")]
+        public Color Menu_ButtonSelectedHighlight = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button select border")]
+        public Color Menu_ButtonSelectedHighlightBorder = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed highlight")]
+        public Color Menu_ButtonPressedHighlight = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed border")]
+        public Color Menu_ButtonPressedHighlightBorder = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button checked highlight")]
+        public Color Menu_ButtonCheckedHighlight = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button checked border")]
+        public Color Menu_ButtonCheckedHighlightBorder = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed gradient border")]
+        public Color Menu_ButtonPressedBorder = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button selected gradient border")]
+        public Color Menu_ButtonSelectedBorder = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button checked gradient start")]
+        public Color Menu_ButtonCheckedGradientBegin = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button checked gradient middle")]
+        public Color Menu_ButtonCheckedGradientMiddle = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button checked gradient end")]
+        public Color Menu_ButtonCheckedGradientEnd = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button selected gradient start")]
+        public Color Menu_ButtonSelectedGradientBegin = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button selected gradient middle")]
+        public Color Menu_ButtonSelectedGradientMiddle = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button selected gradient end")]
+        public Color Menu_ButtonSelectedGradientEnd = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed gradient start")]
+        public Color Menu_ButtonPressedGradientBegin = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed gradient middle")]
+        public Color Menu_ButtonPressedGradientMiddle = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Button pressed gradient end")]
+        public Color Menu_ButtonPressedGradientEnd = Color.Black;
+
+
+
+
+        #endregion
+
+        #region Menus -> General
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Menu text color")]
+        public Color Menu_TextColor = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Menu selected text color")]
+        public Color Menu_SelectedTextColor = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Rafter gradient start")]
+        public Color Menu_RaftingContainerGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Rafter gradient end")]
+        public Color Menu_RaftingContainerGradientEnd = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Separator Color 1")]
+        public Color Menu_SeparatorDark = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Separator Color 2")]
+        public Color Menu_SeparatorLight = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Check BG")]
+        public Color Menu_CheckBackground = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Check BG (Selected)")]
+        public Color Menu_CheckSelectedBackground = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("General")]
+        [ShifterName("Check BG (Pressed)")]
+        public Color Menu_CheckPressedBackground = Color.Black;
+
+
+
+
+        #endregion
+
+        #region Menus -> Menu Bars
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient start")]
+        public Color Menu_MenuItemPressedGradientBegin = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient middle")]
+        public Color Menu_MenuItemPressedGradientMiddle = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item pressed gradient end")]
+        public Color Menu_MenuItemPressedGradientEnd = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item selected gradient start")]
+        public Color Menu_MenuItemSelectedGradientBegin = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Toolbars")]
+        [ShifterName("Menu item selected gradient end")]
+        public Color Menu_MenuItemSelectedGradientEnd = Color.Black;
+
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Margin gradient start")]
+        public Color Menu_ImageMarginGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Margin gradient middle")]
+        public Color Menu_ImageMarginGradientMiddle = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Margin gradient end")]
+        public Color Menu_ImageMarginGradientEnd = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu gradient start")]
+        public Color Menu_MenuStripGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu gradient end")]
+        public Color Menu_MenuStripGradientEnd = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu item selected")]
+        public Color Menu_MenuItemSelected = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu item border")]
+        public Color Menu_MenuItemBorder = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu border")]
+        public Color Menu_MenuBorder = Color.White;
+
+
+
+
+        #endregion
+
+        #region Menus -> Status bars
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Status bars")]
+        [ShifterName("Status bar gradient start")]
+        public Color Menu_StatusStripGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Status bars")]
+        [ShifterName("Status bar gradient end")]
+        public Color Menu_StatusStripGradientEnd = Color.Gray;
+
+
+
+
+        #endregion
+
+        #region Menus -> Menu holders
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu holders")]
+        [ShifterName("Content panel gradient start")]
+        public Color Menu_ToolStripContentPanelGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu holders")]
+        [ShifterName("Content panel gradient end")]
+        public Color Menu_ToolStripContentPanelGradientEnd = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu holders")]
+        [ShifterName("Panel gradient start")]
+        public Color Menu_ToolStripPanelGradientBegin = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu holders")]
+        [ShifterName("Panel gradient end")]
+        public Color Menu_ToolStripPanelGradientEnd = Color.Gray;
+
+
+
+
+        #endregion
+
+
         [ShifterMeta("System")]
         [ShifterCategory("Buttons")]
         //[RequiresUpgrade("shift_buttons")]

@@ -24,14 +24,13 @@ namespace Plex.Frontend.Desktop
             }
         }
 
-        bool alOpen = false;
-        int alX = 0;
-        int alY = 0;
+        public Menu _appLauncher = new Menu();
 
         public Desktop()
         {
             SaveSystem.GameReady += () =>
             {
+                AudioPlayerSubsystem.Startup();
                 Show();
                 SetupDesktop();
                 if (!Upgrades.UpgradeInstalled("tutorial1"))
@@ -39,37 +38,28 @@ namespace Plex.Frontend.Desktop
                     Story.Start("tutorial1");
                 }
             };
-
-            MouseMove += (loc) =>
+            Click += () =>
             {
-                if(alOpen == true)
+                if (_appLauncher.Visible == false)
                 {
-                    if(loc.X >= alX && loc.Y >= alY)
+                    if (MouseX >= LoadedSkin.AppLauncherFromLeft.X && MouseX <= LoadedSkin.AppLauncherFromLeft.X + LoadedSkin.AppLauncherHolderSize.Width)
                     {
-                        int height = LauncherItems[0].Height * LauncherItems.Count;
-                        int width = LauncherItems[0].Width;
-                        if(loc.X <= alX + width && loc.Y <= alY + height)
+                        int dp_pos = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - LoadedSkin.DesktopPanelHeight;
+                        int dp_height = LoadedSkin.DesktopPanelHeight;
+                        if (MouseY >= dp_pos && MouseY <= dp_pos + dp_height)
                         {
-                            foreach(var item in LauncherItems)
-                            {
-                                if(loc.X >= alX && loc.Y >= alY + item.Y && loc.X <= alX + width && loc.Y <= alY + item.Y + item.Height)
-                                {
-                                    alSelectedItem = LauncherItems.IndexOf(item);
-                                    Invalidate();
-                                    return;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            alSelectedItem = -1;
-                            Invalidate();
-                            return;
+                            int al_x = LoadedSkin.AppLauncherFromLeft.X;
+                            _appLauncher.Layout(new GameTime());
+                            int al_y = (dp_pos == 0) ? dp_height : (dp_pos - _appLauncher.Height);
+                            OpenAppLauncher(new System.Drawing.Point(al_x, al_y));
                         }
                     }
                 }
+                else
+                {
+                    HideAppLauncher();
+                }
             };
-            //UIManager.AddHUD(this);
         }
 
         public string DesktopName
@@ -94,8 +84,7 @@ namespace Plex.Frontend.Desktop
 
         public void HideAppLauncher()
         {
-            alOpen = false;
-            Invalidate();
+            _appLauncher.Hide();
         }
 
         public void InvokeOnWorkerThread(Action act)
@@ -117,11 +106,9 @@ namespace Plex.Frontend.Desktop
 
         public void OpenAppLauncher(System.Drawing.Point loc)
         {
-            alX = loc.X;
-            alY = loc.Y;
-            alOpen = true;
-            alSelectedItem = -1;
-            Invalidate();
+            _appLauncher.X = loc.X;
+            _appLauncher.Y = loc.Y;
+            _appLauncher.Show();
         }
 
         protected override void RenderText(GraphicsContext gfx)
@@ -139,7 +126,7 @@ namespace Plex.Frontend.Desktop
             int panelclockleft = Width - (int)pcMeasure.X;
             int panelclockwidth = Width - panelclockleft;
             
-            gfx.DrawString(dateTimeString, panelclockleft, LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
+            gfx.DrawString(dateTimeString, panelclockleft, dp_position + LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
 
             int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
             
@@ -163,56 +150,44 @@ namespace Plex.Frontend.Desktop
 
                 offset += LoadedSkin.PanelButtonSize.Width;
             }
-
-
-            if (alOpen)
-            {
-                int height = (LauncherItems[0].Height * LauncherItems.Count) + 2;
-                int width = LauncherItems[0].Width + 2;
-                
-                foreach (var item in LauncherItems)
-                {
-                    gfx.DrawString(Localization.Parse(item.Data.DisplayData.Name), alX + 21, alY + item.Y + 1, LoadedSkin.Menu_TextColor.ToMonoColor(), LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
-                }
-            }
-
         }
 
 
         public void PopulateAppLauncher(LauncherItem[] items)
         {
-            int y = 0;
-            int height = 0;
-            int[] widths = new int[items.Length];
-                LauncherItems.Clear();
-                for(int i = 0; i < items.Length; i++)
-                {
-                    string name = Localization.Parse(items[i].DisplayData.Name);
-                    var measure = GraphicsContext.MeasureString(name, LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
-                    if (height < (int)measure.Y)
-                        height = (int)measure.Y;
-                    widths[i] = 120 + (int)measure.X;
-                    
-                }
+            _appLauncher.ClearItems();
+            List<string> cats = new List<string>();
+            foreach(var item in items.OrderBy(x => Localization.Parse(x.DisplayData.Category)))
+            {
+                if (!cats.Contains(Localization.Parse(item.DisplayData.Category)))
+                    cats.Add(Localization.Parse(item.DisplayData.Category));
+            }
+            foreach(var cat in cats)
+            {
+                var catitem = new MenuItem();
+                catitem.Text = cat;
 
-                int width = widths.Max();
-
-                foreach(var aitem in items)
+                foreach(var item in items.Where(x => Localization.Parse(x.DisplayData.Category) == cat).OrderBy(x=>Localization.Parse(x.DisplayData.Name)))
                 {
-                    var item = new AppLauncherItem
+                    var alitem = new MenuItem();
+                    alitem.Text = Localization.Parse(item.DisplayData.Name);
+                    alitem.ItemActivated += () =>
                     {
-                        Data = aitem,
-                        X = 0,
-                        Y = y,
-                        Height = height,
-                        Width = width
+                        AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.LaunchType, null));
+                        HideAppLauncher();
                     };
-                    LauncherItems.Add(item);
-                    y += item.Height;
+                    catitem.AddItem(alitem);
                 }
-                
-            
-            Invalidate();
+
+                _appLauncher.AddItem(catitem);
+            }
+
+            var shutdown = new MenuItem
+            {
+                Text = "Shut down",
+            };
+            shutdown.ItemActivated += () => { PlexCommands.Shutdown(); };
+            _appLauncher.AddItem(shutdown);
         }
 
         public void PopulatePanelButtons()
@@ -258,14 +233,11 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if (alOpen)
-                BringToFront();
-            else
-                SendToBack();
+            SendToBack();
             X = 0;
-            Y = 0;
             Width = GetSize().Width;
-            Height = GetSize().Height;
+            Height = LoadedSkin.DesktopPanelHeight;
+            Y = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : GetSize().Height - Height;
             var now = DateTime.Now.TimeOfDay;
             var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
                 if (SaveSystem.CurrentSave != null)
@@ -284,53 +256,7 @@ namespace Plex.Frontend.Desktop
         }
 
         private List<PanelButtonData> PanelButtons = new List<PanelButtonData>();
-        internal List<AppLauncherItem> LauncherItems = new List<AppLauncherItem>();
-
-        public override void MouseStateChanged()
-        {
-            //This statement closes the app launcher. If we do this after opening it, we can't open it at all as it instantly closes.
-            if (alOpen == true && MouseLeftDown == true)
-            {
-                if(alSelectedItem != -1)
-                {
-                    var item = LauncherItems[alSelectedItem];
-                    AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.Data.LaunchType, null));
-                }
-                alOpen = false;
-                RequireTextRerender();
-                Invalidate();
-                return;
-            }
-
-
-            var al_left = LoadedSkin.AppLauncherFromLeft;
-
-            int al_top = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - LoadedSkin.DesktopPanelHeight;
-
-
-            var al_size = LoadedSkin.AppLauncherHolderSize;
-            if(MouseX >= al_left.X && MouseY >= al_left.Y + al_top && MouseX <= al_left.X + al_size.Width && MouseY <= al_left.Y + al_top + al_size.Height)
-            {
-                if(alOpen == false && MouseLeftDown == true)
-                {
-                    alX = al_left.X;
-                    if(LoadedSkin.DesktopPanelPosition == 0)
-                    {
-                        alY = LoadedSkin.DesktopPanelHeight;
-                    }
-                    else
-                    {
-                        alY = (Height - LoadedSkin.DesktopPanelHeight) - (LauncherItems[0].Height * LauncherItems.Count);
-                    }
-                    alOpen = true;
-                    RequireTextRerender();
-                    Invalidate();
-                }
-                
-            }
-
-        }
-
+        
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             //Let's get data for the desktop panel.
@@ -373,9 +299,12 @@ namespace Plex.Frontend.Desktop
             }
             else
             {
-                //draw using the bg color
-                var pcBGColor = UIManager.SkinTextures["DesktopPanelClockBackgroundColor"];
-                gfx.DrawRectangle(panelclockleft, dp_position, panelclockwidth, dp_height, pcBGColor);
+                if (!UIManager.SkinTextures.ContainsKey("desktoppanel"))
+                {
+                    //draw using the bg color
+                    var pcBGColor = UIManager.SkinTextures["DesktopPanelClockBackgroundColor"];
+                    gfx.DrawRectangle(panelclockleft, dp_position, panelclockwidth, dp_height, pcBGColor);
+                }
             }
 
             int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
@@ -402,22 +331,6 @@ namespace Plex.Frontend.Desktop
                 offset += LoadedSkin.PanelButtonSize.Width;
             }
 
-            if (alOpen)
-            {
-                int height = (LauncherItems[0].Height * LauncherItems.Count) + 2;
-                int width = LauncherItems[0].Width + 2;
-                gfx.DrawRectangle(alX, alY, width, height, UIManager.SkinTextures["Menu_MenuBorder"]);
-                gfx.DrawRectangle(alX+1, alY+1, width-2, height-2, UIManager.SkinTextures["Menu_ToolStripDropDownBackground"]);
-                gfx.DrawRectangle(alX+1, alY+1, 18, height-2, UIManager.SkinTextures["Menu_ImageMarginGradientBegin"]);
-
-                foreach(var item in LauncherItems)
-                {
-                    if(LauncherItems.IndexOf(item) == alSelectedItem)
-                    {
-                        gfx.DrawRectangle(alX+1, alY + item.Y+1, item.Width-2, item.Height, UIManager.SkinTextures["Menu_MenuItemSelected"]);
-                    }
-                }
-            }
             base.OnPaint(gfx, target);
         }
     }

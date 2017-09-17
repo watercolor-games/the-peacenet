@@ -507,6 +507,7 @@ There are no missions available for you to complete. Please check back later for
         {
             if(Objects.ShiftFS.Utils.Mounts.Count > 0)
                 SaveSystem.SaveGame();
+            AudioPlayerSubsystem.Shutdown();
             UIManagerTools.EnterTextMode();
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
