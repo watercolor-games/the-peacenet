@@ -44,9 +44,9 @@ namespace Plex.Frontend.Desktop
                 {
                     if (MouseX >= LoadedSkin.AppLauncherFromLeft.X && MouseX <= LoadedSkin.AppLauncherFromLeft.X + LoadedSkin.AppLauncherHolderSize.Width)
                     {
-                        int dp_pos = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - LoadedSkin.DesktopPanelHeight;
+                        int dp_pos = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : GetSize().Height - LoadedSkin.DesktopPanelHeight;
                         int dp_height = LoadedSkin.DesktopPanelHeight;
-                        if (MouseY >= dp_pos && MouseY <= dp_pos + dp_height)
+                        if (MouseY >= 0 && MouseY <= dp_height)
                         {
                             int al_x = LoadedSkin.AppLauncherFromLeft.X;
                             _appLauncher.Layout(new GameTime());

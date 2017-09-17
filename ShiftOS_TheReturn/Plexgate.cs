@@ -382,21 +382,24 @@ namespace Plex.Frontend
                 _objectiveDesc.Y = (UIManager.Viewport.Height - _objectiveDesc.Height) - 15;
                 _objectiveTitle.Y = _objectiveDesc.Y - _objectiveTitle.Height - 15;
             }
-
-            if (IPAddress != null)
+            try
             {
-                msSinceLastReply += gameTime.ElapsedGameTime.TotalMilliseconds;
-                if ((int)msSinceLastReply >= 2000)
+                if (IPAddress != null)
                 {
-                    var bytes = Encoding.UTF8.GetBytes("heart");
-                    _mpClient.Send(bytes, bytes.Length);
-                    System.Diagnostics.Debug.Print("Ping.");
-                }
-                if(msSinceLastReply >= 10000)
-                {
-                    ServerManager.Disconnect(DisconnectType.Error, "The server took too long to respond.");
+                    msSinceLastReply += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if ((int)msSinceLastReply >= 2000)
+                    {
+                        var bytes = Encoding.UTF8.GetBytes("heart");
+                        _mpClient.Send(bytes, bytes.Length);
+                        System.Diagnostics.Debug.Print("Ping.");
+                    }
+                    if (msSinceLastReply >= 10000)
+                    {
+                        ServerManager.Disconnect(DisconnectType.Error, "The server took too long to respond.");
+                    }
                 }
             }
+            catch { }
             if (isFailing)
             {
                 if (failFadeInMS < failFadeMaxMS)
