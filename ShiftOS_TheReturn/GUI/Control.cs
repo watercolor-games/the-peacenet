@@ -664,9 +664,8 @@ namespace Plex.Frontend.GUI
                 if(_children.Count > 0)
                 {
                     //We do. We're going to iterate through them all and process the mouse state.
-                    foreach(var control in _children)
+                    foreach(var control in _children.OrderByDescending(x=>_children.IndexOf(x)))
                     {
-
                         //If the process method returns true, then we do not need to do anything else on our end.
 
                         //We need to first create a new mousestate object with the new coordinates

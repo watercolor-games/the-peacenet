@@ -91,6 +91,8 @@ namespace Plex.Frontend.Apps
 
         protected override void OnLayout(GameTime gameTime)
         {
+            _menuBar.Width = Width;
+            _menuBar.Height = 24;
             contentsLabel.X = 0;
             contentsLabel.Y = _menuBar.Height;
             contentsLabel.Width = Width;

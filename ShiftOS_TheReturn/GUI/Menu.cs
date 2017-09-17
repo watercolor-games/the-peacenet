@@ -157,6 +157,19 @@ namespace Plex.Frontend.GUI
             };
         }
 
+        private bool _pbg = true;
+        public bool PaintBG
+        {
+            get
+            {
+                return _pbg;
+            }
+            set
+            {
+                _pbg = value;
+            }
+        }
+
         public void ClearItems()
         {
             _childMenus.Clear();
@@ -222,30 +235,33 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(SkinEngine.LoadedSkin.Menu_MenuBorder.ToMonoColor());
-            gfx.DrawRectangle((_border / 2) + _imageMargin, _border / 2, Width - _border - _imageMargin, Height - _border, SkinEngine.LoadedSkin.Menu_ToolStripDropDownBackground.ToMonoColor());
-            gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, SkinEngine.LoadedSkin.Menu_MenuItemSelected.ToMonoColor());
-            for (int i = 0; i < _childMenus.Count; i++)
+            if (PaintBG)
             {
-                var dd = _childMenus[i];
-                if (dd.HasDropdown)
+                gfx.Clear(SkinEngine.LoadedSkin.Menu_MenuBorder.ToMonoColor());
+                gfx.DrawRectangle((_border / 2) + _imageMargin, _border / 2, Width - _border - _imageMargin, Height - _border, SkinEngine.LoadedSkin.Menu_ToolStripDropDownBackground.ToMonoColor());
+                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, SkinEngine.LoadedSkin.Menu_MenuItemSelected.ToMonoColor());
+                for (int i = 0; i < _childMenus.Count; i++)
                 {
-                    var ddColor = SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor();
-                    if (i == _selectedIndex)
-                        ddColor = SkinEngine.LoadedSkin.Menu_SelectedTextColor.ToMonoColor();
+                    var dd = _childMenus[i];
+                    if (dd.HasDropdown)
+                    {
+                        var ddColor = SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor();
+                        if (i == _selectedIndex)
+                            ddColor = SkinEngine.LoadedSkin.Menu_SelectedTextColor.ToMonoColor();
 
 
-                    int ddy = (_border / 2) + (_textheight * i);
-                    int ddh = _textheight;
-                    int ddw = 16;
-                    int ddx = Width - ddw;
-                    int arr_tl_x = ddx + (ddw / 4);
-                    int arr_tl_y = ddy + (ddh / 6);
-                    int arr_c_x = ddx + (ddw - (ddw / 4));
-                    int arr_c_y = ddy + (ddh / 2);
-                    int arr_bl_x = arr_tl_x;
-                    int arr_bl_y = ddy + (ddh - (ddh / 6));
-                    gfx.DrawPolygon(ddColor, arr_tl_x, arr_tl_y, arr_c_x, arr_c_y, arr_bl_x, arr_bl_y);
+                        int ddy = (_border / 2) + (_textheight * i);
+                        int ddh = _textheight;
+                        int ddw = 16;
+                        int ddx = Width - ddw;
+                        int arr_tl_x = ddx + (ddw / 4);
+                        int arr_tl_y = ddy + (ddh / 6);
+                        int arr_c_x = ddx + (ddw - (ddw / 4));
+                        int arr_c_y = ddy + (ddh / 2);
+                        int arr_bl_x = arr_tl_x;
+                        int arr_bl_y = ddy + (ddh - (ddh / 6));
+                        gfx.DrawPolygon(ddColor, arr_tl_x, arr_tl_y, arr_c_x, arr_c_y, arr_bl_x, arr_bl_y);
+                    }
                 }
             }
             base.OnPaint(gfx, target);
