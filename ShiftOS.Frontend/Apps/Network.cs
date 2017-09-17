@@ -132,13 +132,12 @@ namespace Plex.Frontend.Apps
                         {
                             netName = ctrl.Tag;
                             ResetUI();
-                            Anim_NewOffsetX = 0;
-                            Anim_NewOffsetY = 0;
-                            Anim_OffsetValue = 0;
-                            Anim_IsMovingOffset = true;
-                            Anim_OldOffsetX = WorldOffsetX;
-                            Anim_OldOffsetY = WorldOffsetY;
-
+                            WorldOffsetX = 0;
+                            WorldOffsetY = 0;
+                        }
+                        else
+                        {
+                            ServerManager.SendMessage("get_hackable", netName + "." + ctrl.Tag);
                         }
                     }
                 };
@@ -162,8 +161,8 @@ namespace Plex.Frontend.Apps
                             _hoverdesc.Text = $@"{sys.SystemType}";
                             break;
                     }
-                    _hoverTitle.X = ctrl.Icon.X + (ctrl.Icon.Width / 2) + 10;
-                    _hoverTitle.Y = ctrl.Icon.Y + (ctrl.Icon.Height / 2) + 10;
+                    _hoverTitle.X = ctrl.Icon.X + (ctrl.Icon.Width) + 10;
+                    _hoverTitle.Y = ctrl.Icon.Y + (ctrl.Icon.Height) + 10;
                 };
                 AddControl(ctrl.Icon);
 

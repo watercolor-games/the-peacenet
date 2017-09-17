@@ -125,6 +125,11 @@ namespace Plex.Frontend.Desktop
 
         public override void SetupWindow(IPlexWindow win)
         {
+            if (UIManagerTools.InProtectedGUI)
+            {
+                Engine.Infobox.Show("Protected GUI", "You can't open this program right now - you are in protected GUI mode.");
+                return;
+            }
             if (!Upgrades.UpgradeAttributesUnlocked(win.GetType()))
             {
                 Console.WriteLine("Application not found on system.");
@@ -135,7 +140,7 @@ namespace Plex.Frontend.Desktop
             wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
             wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
             wb.ParentWindow = win;
-            wb.IsDialog = true;
+            wb.IsDialog = false;
             wb.X = (UIManager.Viewport.Width - wb.Width) / 2;
             wb.Y = (UIManager.Viewport.Height - wb.Height) / 2;
 
@@ -291,6 +296,15 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
+            if (UIManagerTools.InProtectedGUI && !IsDialog)
+            {
+                Visible = false;
+                return;
+            }
+            else
+            {
+                Visible = true;
+            }
             if (IsFocusedControl || ContainsFocusedControl)
             {
                 UIManager.BringToFront(this);

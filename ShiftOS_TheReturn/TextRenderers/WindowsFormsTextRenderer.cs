@@ -21,6 +21,8 @@ namespace Plex.Engine.TextRenderers
         public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment)
         {
             var measure = MeasureText(text, font, maxwidth, alignment);
+            if ((int)measure.X == 0 || (int)measure.Y == 0)
+                return;
             using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
             {
                 using (var cgfx = System.Drawing.Graphics.FromImage(bmp))

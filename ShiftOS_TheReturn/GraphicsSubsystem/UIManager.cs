@@ -249,6 +249,14 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
+        public static Control[] TopLevels
+        {
+            get
+            {
+                return topLevels.ToArray();
+            }
+        }
+
         public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
             bool rclick = true;

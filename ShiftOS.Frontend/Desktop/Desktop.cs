@@ -53,6 +53,8 @@ namespace Plex.Frontend.Desktop
             };
             Click += () =>
             {
+                if (UIManagerTools.InProtectedGUI == true)
+                    return;
                 if (_appLauncher.Visible == false)
                 {
                     if (MouseX >= LoadedSkin.AppLauncherFromLeft.X && MouseX <= LoadedSkin.AppLauncherFromLeft.X + LoadedSkin.AppLauncherHolderSize.Width)
@@ -79,7 +81,7 @@ namespace Plex.Frontend.Desktop
         {
             get
             {
-                return "Plex MonoGame Desktop";
+                return "Plexgate";
             }
         }
 
@@ -124,6 +126,8 @@ namespace Plex.Frontend.Desktop
             _appLauncher.Show();
         }
 
+        private string _pguiAppName = "";
+
         protected override void RenderText(GraphicsContext gfx)
         {
             int dp_height = LoadedSkin.DesktopPanelHeight;
@@ -140,31 +144,39 @@ namespace Plex.Frontend.Desktop
             int panelclockwidth = Width - panelclockleft;
             
             gfx.DrawString(dateTimeString, panelclockleft, dp_position + LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
-
-            int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
-            
-            var almeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
-            gfx.DrawString(LoadedSkin.AppLauncherText, (al_holder_width - (int)almeasure.X) / 2, (LoadedSkin.AppLauncherHolderSize.Height - (int)almeasure.Y) / 2, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
-
-            int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
-            int offset = initialGap;
-
-            foreach (var pbtn in PanelButtons.ToArray())
+            if (UIManagerTools.InProtectedGUI)
             {
-                offset += LoadedSkin.PanelButtonFromLeft.X;
+                var appMeasure = GraphicsContext.MeasureString(_pguiAppName, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopLeft);
+                gfx.DrawString(_pguiAppName, 5, (Height - (int)appMeasure.Y) / 2, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopLeft);
+            }
+            else
+            {
+                int al_holder_width = LoadedSkin.AppLauncherHolderSize.Width;
 
-                int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
-                int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
-                int pbtnheight = LoadedSkin.PanelButtonSize.Height;
+                var almeasure = GraphicsContext.MeasureString(LoadedSkin.AppLauncherText, LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
+                gfx.DrawString(LoadedSkin.AppLauncherText, (al_holder_width - (int)almeasure.X) / 2, (LoadedSkin.AppLauncherHolderSize.Height - (int)almeasure.Y) / 2, LoadedSkin.AppLauncherTextColor.ToMonoColor(), LoadedSkin.AppLauncherFont, Engine.GUI.TextAlignment.TopLeft);
 
-                //now we draw the text
+                int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
+                int offset = initialGap;
 
-                gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont, Engine.GUI.TextAlignment.TopLeft);
+                foreach (var pbtn in PanelButtons.ToArray())
+                {
+                    offset += LoadedSkin.PanelButtonFromLeft.X;
 
-                offset += LoadedSkin.PanelButtonSize.Width;
+                    int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
+                    int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
+                    int pbtnheight = LoadedSkin.PanelButtonSize.Height;
+
+                    //now we draw the text
+
+                    gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont, Engine.GUI.TextAlignment.TopLeft);
+
+                    offset += LoadedSkin.PanelButtonSize.Width;
+                }
             }
         }
 
+        private bool _inpgui = false;
 
         public void PopulateAppLauncher(LauncherItem[] items)
         {
@@ -243,9 +255,21 @@ namespace Plex.Frontend.Desktop
         }
 
         private string dateTimeString = "";
+        private WindowBorder _pguiborder = null;
 
         protected override void OnLayout(GameTime gameTime)
         {
+            if(_inpgui != UIManagerTools.InProtectedGUI)
+            {
+                _inpgui = UIManagerTools.InProtectedGUI;
+                RequireTextRerender();
+                Invalidate();
+            }
+            if (_inpgui)
+            {
+                _pguiAppName = DesktopName + " - Protected GUI";
+            }
+
             SendToBack();
             X = 0;
             Width = GetSize().Width;
@@ -293,12 +317,15 @@ namespace Plex.Frontend.Desktop
                 gfx.DrawRectangle(0, dp_position, dp_width, dp_height, color);
             }
 
-            //Alright, now App Launcher.
-            var al_left = LoadedSkin.AppLauncherFromLeft;
-            var holderSize = LoadedSkin.AppLauncherHolderSize;
-            if (UIManager.SkinTextures.ContainsKey("applauncher"))
+            if (!_inpgui)
             {
-                gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"], SkinEngine.GetImageLayout("applauncher"));
+                //Alright, now App Launcher.
+                var al_left = LoadedSkin.AppLauncherFromLeft;
+                var holderSize = LoadedSkin.AppLauncherHolderSize;
+                if (UIManager.SkinTextures.ContainsKey("applauncher"))
+                {
+                    gfx.DrawRectangle(al_left.X, dp_position + al_left.Y, holderSize.Width, holderSize.Height, UIManager.SkinTextures["applauncher"], SkinEngine.GetImageLayout("applauncher"));
+                }
             }
 
             var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
@@ -320,30 +347,32 @@ namespace Plex.Frontend.Desktop
                 }
             }
 
-            int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
-            int offset = initialGap;
-
-            foreach(var pbtn in PanelButtons.ToArray())
+            if (!_inpgui)
             {
-                offset += LoadedSkin.PanelButtonFromLeft.X;
+                int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
+                int offset = initialGap;
 
-                int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
-                int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
-                int pbtnheight = LoadedSkin.PanelButtonSize.Height;
-
-                //Draw panel button background...
-                if (UIManager.SkinTextures.ContainsKey("panelbutton"))
+                foreach (var pbtn in PanelButtons.ToArray())
                 {
-                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["panelbutton"], SkinEngine.GetImageLayout("panelbutton"));
-                }
-                else
-                {
-                    gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonColor"]);
-                }
+                    offset += LoadedSkin.PanelButtonFromLeft.X;
 
-                offset += LoadedSkin.PanelButtonSize.Width;
+                    int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
+                    int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
+                    int pbtnheight = LoadedSkin.PanelButtonSize.Height;
+
+                    //Draw panel button background...
+                    if (UIManager.SkinTextures.ContainsKey("panelbutton"))
+                    {
+                        gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["panelbutton"], SkinEngine.GetImageLayout("panelbutton"));
+                    }
+                    else
+                    {
+                        gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonColor"]);
+                    }
+
+                    offset += LoadedSkin.PanelButtonSize.Width;
+                }
             }
-
             base.OnPaint(gfx, target);
         }
     }

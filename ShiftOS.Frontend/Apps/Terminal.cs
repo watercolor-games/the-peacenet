@@ -81,7 +81,6 @@ namespace Plex.Frontend.Apps
 
         public TerminalControl()
         {
-            Dock = GUI.DockStyle.Fill;
             
         }
         
