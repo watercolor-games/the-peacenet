@@ -251,12 +251,48 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ProcessMouseState(MouseState state, double lastLeftClickMS)
         {
+            bool rclick = true;
+            bool hidemenus = true;
             foreach (var ctrl in topLevels.ToArray().Where(x=>x != null).Where(x=>x.Visible == true).OrderByDescending(x=>topLevels.IndexOf(x)))
             {
                 if (ctrl.ProcessMouseState(state, lastLeftClickMS))
+                {
+                    if(ctrl is Menu||ctrl is MenuItem)
+                    {
+                        hidemenus = false;
+                    }
+                    rclick = false;
+                    break;
+                }
+            }
+            if (hidemenus == true)
+            {
+                if (!(state.LeftButton == ButtonState.Released && state.MiddleButton == ButtonState.Released && state.RightButton == ButtonState.Released))
+                {
+                    var menus = topLevels.Where(x => x is Menu || x is MenuItem);
+                    foreach (var menu in menus.ToArray())
+                        (menu as Menu).Hide();
+                }
+            }
+            if (rclick == true)
+            {
+                if (rmouselast == false && state.RightButton == ButtonState.Pressed)
+                {
+                    rmouselast = true;
+                    ScreenRightclicked?.Invoke(state.X, state.Y);
                     return;
+                }
+                if (rmouselast == true && state.RightButton == ButtonState.Released)
+                {
+                    rmouselast = false;
+                    return;
+                }
             }
         }
+
+        public static event Action<int, int> ScreenRightclicked;
+
+        private static bool rmouselast = false;
 
         public static void ProcessKeyEvent(KeyEvent e)
         {

@@ -28,6 +28,19 @@ namespace Plex.Frontend.Desktop
 
         public Desktop()
         {
+            UIManager.ScreenRightclicked += (x, y) =>
+            {
+                _appLauncher.Layout(new GameTime());
+                if(x+_appLauncher.Width >= UIManager.Viewport.Width)
+                {
+                    x -= (x + _appLauncher.Width) - UIManager.Viewport.Width;
+                }
+                if (y + _appLauncher.Height >= UIManager.Viewport.Height)
+                {
+                    y -= (y + _appLauncher.Height) - UIManager.Viewport.Height;
+                }
+                OpenAppLauncher(new System.Drawing.Point(x, y));
+            };
             SaveSystem.GameReady += () =>
             {
                 AudioPlayerSubsystem.Startup();
