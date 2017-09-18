@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,6 +49,7 @@ namespace Plex.Frontend.Apps
                     case 0:
                         UIManagerTools.EnterProtectedGUI(this);
                         _state = 1;
+                        StartHackerConsole();
                         break;
                     case 1:
                         Engine.Infobox.PromptYesNo("End hack session", "Do you really want to end the hack session now?", (answer) =>
@@ -56,7 +58,7 @@ namespace Plex.Frontend.Apps
                             {
                                 _state = 0;
                                 UIManagerTools.LeaveProtectedGUI();
-
+                                ServerManager.SendMessage("hack_abort", $"{_hackable.NetName}.{_hackable.SystemDescriptor}");
                             }
                         });
                         break;
@@ -66,6 +68,135 @@ namespace Plex.Frontend.Apps
             Width = 800;
             Height = 600;
             _hackable = system;
+        }
+
+        private static bool _sessionStarted = false;
+
+        private static string current_puzzle_id = "";
+        [Command("setpuzzle")]
+        [ShellConstraint("> ")]
+        [RequiresArgument("id")]
+        public static void SetPuzzle(Dictionary<string, object> args)
+        {
+            string id = args["id"].ToString();
+            if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.ID == id) != null)
+            {
+                Console.WriteLine("Current puzzle has been switched. The 'hint', 'solve' and 'unsetpuzzle' commands will act on {0} now.", id);
+                current_puzzle_id = id;
+            }
+            else
+            {
+                Console.WriteLine("Puzzle ID not found. Type 'lsports' for the next puzzle, if any.");
+            }
+        }
+
+        [ClientMessageHandler("hack_puzzlesolved")]
+        public static void PuzzleSolved(string content, string ip)
+        {
+            Console.WriteLine("This puzzle has already been solved.");
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+
+        }
+
+        [ClientMessageHandler("hack_puzzleresult")]
+        public static void PuzzleResult(string content, string ip)
+        {
+            if(content == "0")
+            {
+                Console.WriteLine("{0}: Incorrect answer.", current_puzzle_id);
+                Console.WriteLine("You can type 'hint' if you need a hint.");
+            }
+            else
+            {
+                Console.WriteLine("{0}: Solved! Puzzle unselected.", current_puzzle_id);
+                Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.ID == current_puzzle_id).Completed = true;
+                if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.Completed == false) == null)
+                {
+                    Console.WriteLine(" -> All puzzles solved! You can now use 'lsports' and bypass the system firewall. Good work. <-");
+                }
+            }
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+        }
+
+        [Command("solve")]
+        [RequiresArgument("id")]
+        [ShellConstraint("> ")]
+        public static void Solve(Dictionary<string, object> args)
+        {
+            if (!string.IsNullOrWhiteSpace(current_puzzle_id))
+            {
+                string id = args["id"].ToString();
+                TerminalBackend.PrefixEnabled = false;
+                TerminalBackend.InStory = true;
+                ServerManager.SendMessage("hack_solvepuzzle", JsonConvert.SerializeObject(new
+                {
+                    hackable = $"{Hacking.CurrentHackable.NetName}.{Hacking.CurrentHackable.SystemDescriptor.SystemName}",
+                    puzzle = current_puzzle_id,
+                    value = id
+                }));
+                return;
+            }
+            Console.WriteLine("No puzzle selected. Use 'setpuzzle <puzzleid>' to select a puzzle.");
+        }
+
+        [Command("lsports")]
+        [ShellConstraint("> ")]
+        public static void ListAvailablePorts()
+        {
+            if (Hacking.CurrentHackable.HasFirewall)
+            {
+                Console.WriteLine("Firewall detected. Attempting to bypass...");
+                if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.Completed == false) != null)
+                {
+                    Console.WriteLine("Access denied by {0}.", Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.Completed == false).ID);
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("Access granted.");
+                }
+            }
+        }
+
+        [ClientMessageHandler("hack_started")]
+        public static void HackStarted(string content, string ip)
+        {
+            _sessionStarted = true;
+        }
+
+        public void StartHackerConsole()
+        {
+            AppearanceManager.ConsoleOut = _terminal;
+            AppearanceManager.StartConsoleOut();
+            new System.Threading.Thread(() =>
+            {
+                _sessionStarted = false;
+                TerminalBackend.InStory = true;
+                TerminalBackend.PrefixEnabled = false;
+                Console.WriteLine("Plexgate Hacker Utility - v4.7");
+                Console.WriteLine("=============================");
+                Console.WriteLine();
+                Console.WriteLine("Starting Plexnet handshake with {0}.{1}...", _hackable.NetName, _hackable.SystemDescriptor.SystemName);
+                ServerManager.SendMessage("hack_start", $"{_hackable.NetName}.{_hackable.SystemDescriptor.SystemName}");
+                while (_sessionStarted == false)
+                    Thread.Sleep(10);
+                Thread.Sleep(245);
+                Console.WriteLine("Data received.");
+                Console.WriteLine("Rank: {0}", _hackable.SystemDescriptor.Rank);
+                Console.WriteLine("");
+                Hacking.BeginHack(_hackable);
+                Console.WriteLine("Starting command shell...");
+                Thread.Sleep(750);
+                Console.WriteLine("Type 'help' for a list of commands.");
+                TerminalBackend.SetShellOverride("> ");
+                TerminalBackend.InStory = false;
+                TerminalBackend.PrefixEnabled = true;
+                TerminalBackend.PrintPrompt();
+            }).Start();
         }
 
         [ClientMessageHandler("hackable_data")]

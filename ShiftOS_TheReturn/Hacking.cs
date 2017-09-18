@@ -88,6 +88,11 @@ namespace Plex.Engine
             throw new NaughtyDeveloperException("Seems like the loot system's trying to work without any loot. This isn't normal.");
         }
 
+        public static void BeginHack(HackableSystem _hackable)
+        {
+            CurrentHackable = _hackable;
+        }
+
         public static void InitHack(Objects.Hackable data)
         {
             if (SaveSystem.CurrentSave.CompletedHacks == null)

@@ -79,7 +79,7 @@ namespace Plex.Server
 
                 world.Rogue = main;
 
-                int subnets = rnd.Next(0, NATOCodeNames.Length - 1);
+                int subnets = NATOCodeNames.Length;
                 Console.WriteLine("<worldgen> This world will have {0} sub-networks.", subnets);
 
                 for (int i = 0; i < subnets; i++)
@@ -171,6 +171,53 @@ namespace Plex.Server
                             Console.WriteLine("<{0}.{1}> Adding cash: ${2}", net.Name, system.SystemDescriptor.SystemName, ((double)cashPerSystem / 100));
                             system.SystemDescriptor.Cash = (long)cashPerSystem;
                         }
+                    }
+                }
+                Console.WriteLine(@"============
+Done generating economy.
+Now generating defenses...
+============");
+                Console.WriteLine("<worldgen> Scanning for firewall puzzles...");
+                List<PuzzleAttribute> puzzles = new List<PuzzleAttribute>();
+                foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
+                {
+                    var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is PuzzleAttribute) as PuzzleAttribute;
+                    if(attr != null)
+                    {
+                        Console.WriteLine("<worldgen> Puzzle found: {0} - Rank {1}", type.Name, attr.Rank);
+                        puzzles.Add(attr);
+                    }
+                }
+                Console.WriteLine("<worldgen> {0} puzzles found", puzzles.Count);
+                foreach(var net in world.Networks)
+                {
+                    foreach(var sys in net.NPCs)
+                    {
+                        int chance = sys.SystemDescriptor.Rank * (100 / Ranks.Count);
+                        bool hasFirewall = rnd.Next(0, 100) <= chance;
+                        var availablePuzzles = puzzles.Where(x => x.Rank <= sys.SystemDescriptor.Rank).ToArray();
+                        if (availablePuzzles.Length == 0)
+                            hasFirewall = false;
+                        if (hasFirewall)
+                        {
+                            int puzzleCount = rnd.Next(1, availablePuzzles.Length);
+                            while(sys.Puzzles.Count < puzzleCount)
+                            {
+                                PuzzleAttribute atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
+                                while(sys.Puzzles.FirstOrDefault(x=>x.ID == atr.ID && x.Rank == atr.Rank) != null)
+                                {
+                                    atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
+                                }
+                                sys.Puzzles.Add(new Objects.Hacking.Puzzle
+                                {
+                                    ID = atr.ID,
+                                    Rank = atr.Rank,
+                                    Completed = false
+                                });
+                                Console.WriteLine("<worldgen> {0} - new puzzle: {1} {2}", sys.SystemDescriptor.SystemName, atr.ID, atr.Rank);
+                            }
+                        }
+                        sys.HasFirewall = hasFirewall;
                     }
                 }
                 Program.GameWorld = world;

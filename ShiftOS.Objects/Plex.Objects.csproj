@@ -56,6 +56,7 @@
     <Compile Include="Hacking\Payload.cs" />
     <Compile Include="Hacking\Exploit.cs" />
     <Compile Include="Hacking\Hackable.cs" />
+    <Compile Include="Hacking\Puzzle.cs" />
     <Compile Include="IRCNetwork.cs" />
     <Compile Include="MudAttributes.cs" />
     <Compile Include="Objects.cs" />

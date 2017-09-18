@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading;
+using Plex.Objects.Hacking;
 using Whoa;
 
 namespace Plex.Objects
@@ -135,6 +136,16 @@ namespace Plex.Objects
 
         [Order]
         public bool IsNPC { get; set; }
+
+        [Order]
+        public string NetName { get; set; }
+
+        [Order]
+        public List<Puzzle> Puzzles = new List<Puzzle>();
+
+        [Order]
+        public bool HasFirewall { get; set; }
+
     }
 
 
