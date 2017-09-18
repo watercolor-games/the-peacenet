@@ -49,6 +49,7 @@ namespace Plex.Server
                                 SessionID = session.SessionID
                             });
                         }
+                        Program.SaveWorld();
                     }
                     else
                     {
@@ -63,6 +64,26 @@ namespace Plex.Server
                 }
             }
         }
+
+        [SessionRequired]
+        [ServerMessageHandler("hack_puzzlehint")]
+        public static void PuzzleHint(string session_id, string content, string ip)
+        {
+            var puzzledata = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+            var hsession = _hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == puzzledata["hackable"]);
+            if (hsession != null)
+            {
+                var puzzle = hsession.Puzzles.FirstOrDefault(x => x.Data.ID == puzzledata["puzzle"]);
+                Program.SendMessage(new Objects.PlexServerHeader
+                {
+                    Message = "hack_hintmsg",
+                    Content = puzzle.GetHint(),
+                    IPForwardedBy = ip,
+                    SessionID = session_id
+                });
+            }
+        }
+
 
         [SessionRequired]
         [ServerMessageHandler("hack_abort")]

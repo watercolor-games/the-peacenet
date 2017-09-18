@@ -59,6 +59,8 @@ namespace Plex.Frontend.Apps
                                 _state = 0;
                                 UIManagerTools.LeaveProtectedGUI();
                                 ServerManager.SendMessage("hack_abort", $"{_hackable.NetName}.{_hackable.SystemDescriptor}");
+                                Hacking.BeginHack(null);
+                                TerminalBackend.SetShellOverride("");
                             }
                         });
                         break;
@@ -142,6 +144,34 @@ namespace Plex.Frontend.Apps
             }
             Console.WriteLine("No puzzle selected. Use 'setpuzzle <puzzleid>' to select a puzzle.");
         }
+
+        [ClientMessageHandler("hack_hintmsg")]
+        public static void PuzzleHint(string message, string ip)
+        {
+            Console.WriteLine(message);
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+        }
+
+        [Command("hint")]
+        [ShellConstraint("> ")]
+        public static void Hint()
+        {
+            if (!string.IsNullOrWhiteSpace(current_puzzle_id))
+            {
+                TerminalBackend.PrefixEnabled = false;
+                TerminalBackend.InStory = true;
+                ServerManager.SendMessage("hack_puzzlehint", JsonConvert.SerializeObject(new
+                {
+                    hackable = $"{Hacking.CurrentHackable.NetName}.{Hacking.CurrentHackable.SystemDescriptor.SystemName}",
+                    puzzle = current_puzzle_id
+                }));
+                return;
+            }
+            Console.WriteLine("No puzzle selected. Use 'setpuzzle <puzzleid>' to select a puzzle.");
+        }
+
 
         [Command("lsports")]
         [ShellConstraint("> ")]
