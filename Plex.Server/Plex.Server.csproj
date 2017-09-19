@@ -63,6 +63,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PuzzleAttribute.cs" />
+    <Compile Include="Puzzles\Crypt_Polybius.cs" />
     <Compile Include="Puzzles\Riddle.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="SessionManager.cs" />
