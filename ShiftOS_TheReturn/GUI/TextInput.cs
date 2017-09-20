@@ -111,6 +111,11 @@ namespace Plex.Frontend.GUI
                     _index--;
                 
             }
+            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Tab)
+            {
+                Text = Text.Insert(Index, "    ");
+                Index += 4;
+            }
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Back)
             {
                 if (_index > 0)
