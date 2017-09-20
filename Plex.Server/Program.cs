@@ -622,7 +622,7 @@ Now generating defenses...
             _server = new UdpClient();
             var _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sock.Bind(new IPEndPoint(IPAddress.Loopback, _MyPort));
+            sock.Bind(new IPEndPoint(IPAddress.Any, _MyPort));
             _server.Client = sock;
             
             while (true)
