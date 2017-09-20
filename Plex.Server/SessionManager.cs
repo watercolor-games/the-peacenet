@@ -102,6 +102,17 @@ namespace Plex.Server
             Console.WriteLine("<sessions> Generating new session key...");
             acct.LastLogin = DateTime.Now;
             acct.SessionID = Guid.NewGuid().ToString();
+            //Create the save file
+            var net = Program.GetRandomSubnet();
+            string sysname = Program.GenerateSystemName(net);
+
+            var sys = Program.GenerateSystem(0, SystemType.Computer, sysname);
+            sys.IsNPC = false;
+            net.NPCs.Add(sys);
+
+            acct.SaveID = net.Name + "." + sys.SystemDescriptor.SystemName;
+            Program.SaveWorld();
+
             sessions.Add(acct);
             setSessions(sessions);
             Console.WriteLine("<sessions> Account data updated.");
