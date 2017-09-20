@@ -328,10 +328,12 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            int titleheight = LoadedSkin.TitlebarHeight;
-            int leftborderwidth = LoadedSkin.LeftBorderWidth;
-            int rightborderwidth = LoadedSkin.RightBorderWidth;
-            int bottomborderwidth = LoadedSkin.BottomBorderWidth;
+            try
+            {
+                int titleheight = LoadedSkin.TitlebarHeight;
+                int leftborderwidth = LoadedSkin.LeftBorderWidth;
+                int rightborderwidth = LoadedSkin.RightBorderWidth;
+                int bottomborderwidth = LoadedSkin.BottomBorderWidth;
 
                 var titlebarcolor = UIManager.SkinTextures["TitleBackgroundColor"];
                 var titlefont = LoadedSkin.TitleFont;
@@ -349,7 +351,7 @@ namespace Plex.Frontend.Desktop
                     titlebarwidth -= titlebarleft;
                     titlebarwidth -= LoadedSkin.TitleRightCornerWidth;
 
-                    
+
                     //Let's get the left and right images.
                     //and the colors
                     var leftcolor = UIManager.SkinTextures["TitleLeftCornerBackground"];
@@ -359,7 +361,7 @@ namespace Plex.Frontend.Desktop
                     var rightwidth = LoadedSkin.TitleRightCornerWidth;
 
                     //draw left corner
-                    if(UIManager.SkinTextures.ContainsKey("titleleft"))
+                    if (UIManager.SkinTextures.ContainsKey("titleleft"))
                     {
                         gfx.DrawRectangle(0, 0, leftwidth, titleheight, UIManager.SkinTextures["titleleft"], SkinEngine.GetImageLayout("titleleft"));
                     }
@@ -393,50 +395,50 @@ namespace Plex.Frontend.Desktop
                 var tbuttonpos = LoadedSkin.TitleButtonPosition;
 
                 //Draw close button
-                    var closebuttonsize = LoadedSkin.CloseButtonSize;
-                    var closebuttonright = LoadedSkin.CloseButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                    if (!UIManager.SkinTextures.ContainsKey("closebutton"))
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["CloseButtonColor"]);
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"], SkinEngine.GetImageLayout("closebutton"));
-                    }
-                
+                var closebuttonsize = LoadedSkin.CloseButtonSize;
+                var closebuttonright = LoadedSkin.CloseButtonFromSide;
+                if (LoadedSkin.TitleButtonPosition == 0)
+                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                if (!UIManager.SkinTextures.ContainsKey("closebutton"))
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["CloseButtonColor"]);
+                }
+                else
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"], SkinEngine.GetImageLayout("closebutton"));
+                }
+
                 //Draw maximize button
                 closebuttonsize = LoadedSkin.MaximizeButtonSize;
                 closebuttonright = LoadedSkin.MaximizeButtonFromSide;
                 if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
-                    if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
-                    }
-                
+                if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
+                }
+                else
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
+                }
+
                 //Draw minimize button
                 closebuttonsize = LoadedSkin.MinimizeButtonSize;
                 closebuttonright = LoadedSkin.MinimizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-            if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
-            {
-                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
-            }
-            else
-            {
-                gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
-            }
+                if (LoadedSkin.TitleButtonPosition == 0)
+                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
+                }
+                else
+                {
+                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
+                }
 
-                
-            
+
+
                 //Some variables we'll need...
                 int bottomlocy = Height - LoadedSkin.BottomBorderWidth;
                 int bottomlocx = leftborderwidth;
@@ -491,24 +493,29 @@ namespace Plex.Frontend.Desktop
                     gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"], SkinEngine.GetImageLayout("leftborder"));
                 }
 
-            //RIGHT
-            if (!UIManager.SkinTextures.ContainsKey("rightborder"))
-            {
-                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
+                //RIGHT
+                if (!UIManager.SkinTextures.ContainsKey("rightborder"))
+                {
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
+                }
+                else
+                {
+                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"], SkinEngine.GetImageLayout("rightborder"));
+                }
+
+
+
+                gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["ControlColor"]);
+                //So here's what we're gonna do now.
+                //Now that we have a titlebar and window borders...
+                //We're going to composite the hosted window
+                //and draw it to the remaining area.
             }
-            else
+            catch (KeyNotFoundException)
             {
-                gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"], SkinEngine.GetImageLayout("rightborder"));
+                UIManager.ResetSkinTextures(gfx.Device);
+                OnPaint(gfx, target);
             }
-
-            
-
-            gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["ControlColor"]);
-            //So here's what we're gonna do now.
-            //Now that we have a titlebar and window borders...
-            //We're going to composite the hosted window
-            //and draw it to the remaining area.
-
             //Painting of the canvas is done by the Paint() method.
             base.OnPaint(gfx, target);
         }

@@ -227,6 +227,12 @@ namespace Plex.Engine
             return sys;
         }
 
+        public static IEnumerable<Port> GetPorts(HackableSystem currentHackable)
+        {
+            foreach (var port in Ports.Where(x => x.AttachTo.HasFlag(currentHackable.SystemType)))
+                yield return port;
+        }
+
         public static void EndHack()
         {
             if (CurrentHackable == null)

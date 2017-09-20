@@ -250,29 +250,26 @@ namespace Plex.Frontend
                         {
                             var ep = new IPEndPoint(this.IPAddress, this.Port);
                             var data = _mpClient.Receive(ref ep);
-                            Desktop.InvokeOnWorkerThread(() =>
+                            var content = Encoding.UTF8.GetString(data);
+                            msSinceLastReply = 0.0;
+                            if (content == "beat")
                             {
-                                var content = Encoding.UTF8.GetString(data);
-                                msSinceLastReply = 0.0;
-                                if (content == "beat")
+                                System.Diagnostics.Debug.Print("Pong");
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.Print("Message received.");
+                                try
                                 {
-                                    System.Diagnostics.Debug.Print("Pong");
+                                    var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
+                                    ServerManager.HandleMessage(msg);
                                 }
-                                else
+                                catch
                                 {
-                                    System.Diagnostics.Debug.Print("Message received.");
-                                    try
-                                    {
-                                        var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
-                                        ServerManager.HandleMessage(msg);
-                                    }
-                                    catch
-                                    {
 
-                                    }
                                 }
+                            }
 
-                            });
                         }
                         catch { }
                     }

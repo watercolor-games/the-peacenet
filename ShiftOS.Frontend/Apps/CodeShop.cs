@@ -47,8 +47,6 @@ namespace Plex.Frontend.Apps
                 upgradeprogress.Y = upgradelist.Y + upgradelist.Height + 10;
                 upgradeprogress.Width = upgradelist.Width;
                 upgradeprogress.Height = 24;
-                upgradeprogress.Maximum = Upgrades.GetAllPurchasable().Length;
-                upgradeprogress.Value = Upgrades.CountUpgrades();
                 buy.X = Width - buy.Width - 15;
                 buy.Y = Height - buy.Height - 15;
                 buy.Visible = (selectedUpgrade != null);
@@ -201,6 +199,8 @@ As you continue through your job, going further up the ranks, you will unlock ad
 
         public void OnUpgrade()
         {
+            upgradeprogress.Maximum = Upgrades.GetAllPurchasable().Length;
+            upgradeprogress.Value = Upgrades.CountUpgrades();
             PopulateList();
         }
 

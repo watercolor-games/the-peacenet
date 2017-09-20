@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Plex.Engine.SaveSystem;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Plex.Engine
 {
@@ -379,9 +380,21 @@ namespace Plex.Engine
             return available.ToArray();
         }
 
+        private static int? upgrade_installed_count = null;
+
+        [ClientMessageHandler("upgrades_count"), AsyncExecution]
+        public static void UpgradeCountHandler(string content, string ip)
+        {
+            upgrade_installed_count = Convert.ToInt32(content);
+        }
+
         public static int CountUpgrades()
         {
-            return upgDb.Where(x => UpgradeInstalled(x.ID) && x.Purchasable == true).Count();
+            upgrade_installed_count = null;
+            ServerManager.SendMessage("upgrades_getcount", "");
+            while (upgrade_installed_count == null)
+                Thread.Sleep(10);
+            return (int)upgrade_installed_count;
         }
 
         public static ShiftoriumUpgrade[] GetAllPurchasable()
@@ -421,6 +434,32 @@ namespace Plex.Engine
         /// </summary>
         public static event EmptyEventHandler Installed;
 
+        private static bool? upgrade_Installed_state = null;
+        private static bool? upgrade_loaded_state = null;
+
+        /// <summary>
+        /// Handles server replies for the "upgrade_getinstalled" request.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="ip"></param>
+        [ClientMessageHandler("upgrades_installed"), AsyncExecution]
+        public static void Upgrade_InstalledHandler(string content, string ip)
+        {
+            upgrade_Installed_state = (content == "1") ? true : false;
+        }
+
+        /// <summary>
+        /// Handles server replies for the "upgrade_getloaded" request.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="ip"></param>
+        [ClientMessageHandler("upgrades_loaded"), AsyncExecution]
+        public static void Upgrade_LoadedHandler(string content, string ip)
+        {
+            upgrade_loaded_state = (content == "1") ? true : false;
+        }
+
+
         /// <summary>
         /// Determines if an upgrade is installed.
         /// </summary>
@@ -430,49 +469,16 @@ namespace Plex.Engine
         {
             if (string.IsNullOrWhiteSpace(id))
                 return true;
-            if (SaveSystem.CurrentSave != null)
-            {
-                if (!IsInitiated)
-                    Init();
-            }
-            try
-            {
-                if (SaveSystem.CurrentSave == null)
-                    return false;
-
-                if (SaveSystem.CurrentSave.StoriesExperienced == null)
-                    SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
-
-                if (id.Contains(';'))
-                {
-                    foreach (var u in id.Split(';'))
-                    {
-                        if (UpgradeInstalled(u) == false)
-                            return false;
-                    }
-                    return true;
-                }
-
-                bool upgInstalled = false;
-                if (SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
-                    upgInstalled = SaveSystem.CurrentSave.Upgrades[id];
-
-                if (upgInstalled == false)
-                    return SaveSystem.CurrentSave.StoriesExperienced.Contains(id);
-                return true;
-            }
-            catch
-            {
-                Console.WriteLine("Upgrade " + id + "DNE.");
-                Console.WriteLine();
-                return false;
-            }
-
+            upgrade_Installed_state = null;
+            ServerManager.SendMessage("upgrades_getinstalled", id);
+            while (upgrade_Installed_state == null)
+                Thread.Sleep(10);
+            return (bool)upgrade_Installed_state;
         }
 
         public static bool IsLoaded(string upgradeid)
         {
-            if (SaveSystem.CurrentSave == null)
+            if (string.IsNullOrWhiteSpace(upgradeid))
                 return false;
 
             if (upgradeid.Contains(";"))
@@ -480,20 +486,14 @@ namespace Plex.Engine
                 foreach (var id in upgradeid.Split(';'))
                     if (!IsLoaded(id))
                         return false;
+                return true;
             }
 
-            if (upgDb.FirstOrDefault(x => x.ID == upgradeid) == null)
-                return false;
-
-            if (!UpgradeInstalled(upgradeid))
-                return false;
-
-            if(SaveSystem.CurrentSave.LoadedUpgrades == null)
-            {
-                SaveSystem.CurrentSave.LoadedUpgrades = new List<string>();
-                return false;
-            }
-            return SaveSystem.CurrentSave.LoadedUpgrades.Contains(upgradeid);
+            upgrade_loaded_state = null;
+            ServerManager.SendMessage("upgrades_getloaded", upgradeid);
+            while (upgrade_loaded_state == null)
+                Thread.Sleep(10);
+            return (bool)upgrade_loaded_state;
         }
 
         public static void LoadUpgrade(string upgradeid)

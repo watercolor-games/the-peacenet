@@ -27,6 +27,12 @@ namespace Plex.Engine
         EngineShutdown
     }
 
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class AsyncExecutionAttribute : Attribute
+    {
+
+    }
+
     /// <summary>
     /// Digital Society connection management class.
     /// </summary>
@@ -94,10 +100,17 @@ namespace Plex.Engine
             {
                 foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ClientMessageHandlerAttribute) != null))
                 {
+                    bool async = method.GetCustomAttributes(false).FirstOrDefault(x => x is AsyncExecutionAttribute) != null;
                     var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ClientMessageHandlerAttribute) as ClientMessageHandlerAttribute;
                     if (attribute.ID == header.Message)
                     {
-                        method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
+                        if (async)
+                            method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
+                        else
+                            Desktop.InvokeOnWorkerThread(() =>
+                            {
+                                method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
+                            });
                     }
                 }
             }

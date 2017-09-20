@@ -419,13 +419,17 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
-            batch.Draw(SkinTextures["DesktopColor"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
-
-            graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());
-            if (SkinTextures.ContainsKey("desktopbackground"))
+            try
             {
-                batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
+                batch.Draw(SkinTextures["DesktopColor"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
+
+                graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());
+                if (SkinTextures.ContainsKey("desktopbackground"))
+                {
+                    batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
+                }
             }
+            catch { }
         }
 
         public static Color ToMonoColor(this System.Drawing.Color color)

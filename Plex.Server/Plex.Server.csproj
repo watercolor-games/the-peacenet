@@ -67,6 +67,7 @@
     <Compile Include="Puzzles\Riddle.cs" />
     <Compile Include="SaveManager.cs" />
     <Compile Include="SessionManager.cs" />
+    <Compile Include="UpgradeManager.cs" />
     <Compile Include="WorldManager.cs" />
   </ItemGroup>
   <ItemGroup>

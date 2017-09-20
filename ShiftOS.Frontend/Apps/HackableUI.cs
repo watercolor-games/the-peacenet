@@ -180,7 +180,7 @@ namespace Plex.Frontend.Apps
             if (Hacking.CurrentHackable.HasFirewall)
             {
                 Console.WriteLine("Firewall detected. Attempting to bypass...");
-                if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.Completed == false) != null)
+                if (Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.Completed == false) != null)
                 {
                     Console.WriteLine("Access denied by {0}.", Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.Completed == false).ID);
                     return;
@@ -189,6 +189,13 @@ namespace Plex.Frontend.Apps
                 {
                     Console.WriteLine("Access granted.");
                 }
+            }
+            Console.WriteLine("Port #: Name");
+            Console.WriteLine("=====================");
+            Console.WriteLine();
+            foreach (var port in Hacking.GetPorts(Hacking.CurrentHackable))
+            {
+                Console.WriteLine($"{port.Value}: {port.FriendlyName}");
             }
         }
 
