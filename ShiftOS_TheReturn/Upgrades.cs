@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using static Plex.Engine.SaveSystem;
 using System.Diagnostics;
 using System.Threading;
+using Plex.Objects;
 
 namespace Plex.Engine
 {
@@ -104,7 +105,7 @@ namespace Plex.Engine
         /// <returns>Boolean value representing whether the user has installed all upgrades in the category.</returns>
         public static bool IsCategoryEmptied(string cat)
         {
-            return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => x.Installed == false) == null;
+            return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => !UpgradeInstalled(x.ID)) == null;
         }
 
         /// <summary>
@@ -212,9 +213,22 @@ namespace Plex.Engine
 
         private static List<ShiftoriumUpgrade> upgDb = null;
 
+        private static ShiftoriumUpgrade[] serverUpgrades = null;
+
+        [ClientMessageHandler("upgrades_db"), AsyncExecution]
+        public static void GetDB(string content, string ip)
+        {
+            serverUpgrades = JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(content);
+        }
+
         public static void CreateUpgradeDatabase()
         {
             upgDb = new List<ShiftoriumUpgrade>();
+            serverUpgrades = null;
+            ServerManager.SendMessage("upgrades_getdb", "");
+            while (serverUpgrades == null)
+                Thread.Sleep(10);
+            upgDb.AddRange(serverUpgrades);
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
             foreach (var type in ReflectMan.Types)
             {
@@ -230,7 +244,6 @@ namespace Plex.Engine
                         throw new ShiftoriumConflictException(attrib.Upgrade);
                     upgDb.Add(new ShiftoriumUpgrade
                     {
-                        Id = attrib.Upgrade,
                         Name = attrib.Name,
                         Cost = attrib.Cost,
                         Description = attrib.Description,
@@ -249,7 +262,6 @@ namespace Plex.Engine
                             throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
-                            Id = attrib.Upgrade,
                             Name = attrib.Name,
                             Cost = attrib.Cost,
                             Description = attrib.Description,
@@ -270,7 +282,6 @@ namespace Plex.Engine
                             throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
-                            Id = attrib.Upgrade,
                             Name = attrib.Name,
                             Cost = attrib.Cost,
                             Description = attrib.Description,
@@ -291,7 +302,6 @@ namespace Plex.Engine
                             throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
-                            Id = attrib.Upgrade,
                             Name = attrib.Name,
                             Cost = attrib.Cost,
                             Description = attrib.Description,
@@ -305,12 +315,16 @@ namespace Plex.Engine
 
             }
 
-
+            foreach(var duplicate in upgDb.Where(x=>serverUpgrades.FirstOrDefault(y=>y.ID == x.ID) != null && !serverUpgrades.Contains(x)).ToArray())
+            {
+                Debug.Print($"[WARN] Client-side upgrade {duplicate.ID} overlaps server-side upgrade with the same ID.");
+                upgDb.Remove(duplicate);
+            }
 
             foreach (var item in upgDb)
             {
                 if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
-                    throw new ShiftoriumConflictException(item.Id);
+                    throw new ShiftoriumConflictException(item.ID);
             }
         }
 
@@ -590,58 +604,7 @@ namespace Plex.Engine
 
     
 
-    public class ShiftoriumUpgrade
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ulong Cost { get; set; }
-        public string ID { get { return (this.Id != null ? this.Id : (Name.ToLower().Replace(" ", "_"))); } }
-        public string Id { get; set; }
-        public string Category { get; set; }
-        public bool Purchasable { get; set; }
-        public string Tutorial { get; set; }
-        public bool Installed
-        {
-            get
-            {
-                return Upgrades.UpgradeInstalled(ID);
-            }
-        }
-        public string Dependencies { get; set; }
-    }
 
-    public class ShiftoriumUpgradeAttribute : RequiresUpgradeAttribute
-    {
-        public ShiftoriumUpgradeAttribute(string name, ulong cost, string desc, string dependencies, string category, bool purchasable) : base(name.ToLower().Replace(" ", "_"))
-        {
-            Name = name;
-            Description = desc;
-            Dependencies = dependencies;
-            Cost = cost;
-            Category = category;
-            Purchasable = purchasable;
-        }
-
-        public bool Purchasable { get; private set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public ulong Cost { get; private set; }
-        public string Dependencies { get; private set; }
-        public string Category { get; private set; }
-    }
-
-    public class ShiftoriumConflictException : Exception
-    {
-        public ShiftoriumConflictException() : base("An upgrade conflict has occurred while loading Shiftorium Upgrades from an assembly. Is there a duplicate upgrade ID?")
-        {
-
-        }
-
-        public ShiftoriumConflictException(string id) : base("An upgrade conflict has occurred while loading Shiftorium Upgrades from an assembly. An upgrade with the ID \"" + id + "\" has already been loaded.")
-        {
-
-        }
-    }
 
     public class ShiftoriumProviderAttribute : Attribute
     {

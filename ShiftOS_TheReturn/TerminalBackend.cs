@@ -5,8 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Plex.Objects;
 using static Plex.Engine.SaveSystem;
 
 namespace Plex.Engine
@@ -272,55 +274,6 @@ namespace Plex.Engine
 
         public static event Action<string, Dictionary<string, object>> CommandFinished;
 
-        public class MemoryTextWriter : System.IO.TextWriter
-        {
-            public override Encoding Encoding
-            {
-                get
-                {
-                    return Encoding.Unicode;
-                }
-            }
-
-            private StringBuilder sb = null;
-
-            public MemoryTextWriter()
-            {
-                sb = new StringBuilder();
-            }
-
-            public override string ToString()
-            {
-                return sb.ToString();
-            }
-
-            public override void Write(char value)
-            {
-                sb.Append(value);
-            }
-
-            public override void WriteLine()
-            {
-                sb.AppendLine();
-            }
-
-            public override void Write(string value)
-            {
-                sb.Append(value);
-            }
-
-            public override void Close()
-            {
-                sb.Clear();
-                sb = null;
-                base.Close();
-            }
-
-            public override void WriteLine(string value)
-            {
-                sb.AppendLine(value);
-            }
-        }
 
         public static List<TerminalCommand> Commands { get; private set; }
 
@@ -332,7 +285,7 @@ namespace Plex.Engine
                 if (type.GetInterfaces().Contains(typeof(IPlexWindow)))
                 {
                     var winopenattrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is WinOpenAttribute) as WinOpenAttribute;
-                    if(winopenattrib != null)
+                    if (winopenattrib != null)
                     {
                         var winc = new WinOpenCommand();
                         winc.CommandType = type;
@@ -349,9 +302,11 @@ namespace Plex.Engine
                             throw new Exception("Ambiguity error. The program " + winc.CommandInfo.name + " collides with another program or terminal command with the same name. Please either change the already-existing program/command, or change this one's WinOpenAttribute value to compensate.");
                         Commands.Add(winc);
                     }
+                
                 }
                 foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
+                    
                     var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
                     if (cmd != null)
                     {
@@ -496,6 +451,17 @@ namespace Plex.Engine
             return RunClient(text, args, isRemote);
         }
 
+        private static bool? trm_invoke_result = null;
+
+        [ClientMessageHandler("trm_result"), AsyncExecution]
+        public static void TerminalInvokeResult(string content, string ip)
+        {
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
+            trm_invoke_result = (bool)dict["result"];
+            if (trm_invoke_result == true)
+                Console.WriteLine(dict["message"]);
+        }
+
         /// <summary>
         /// Runs a command on the client.
         /// </summary>
@@ -508,34 +474,54 @@ namespace Plex.Engine
             latestCommmand = text;
 
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
-
+            bool value = true;
 
             var cmd = Commands.FirstOrDefault(x => Localization.Parse(x.CommandInfo.name) == text);
             if (cmd == null)
-                return false;
-            if (!Upgrades.UpgradeInstalled(cmd.Dependencies))
-                return false;
-            bool res = false;
-            foreach (var arg in cmd.RequiredArguments)
+                value = false;
+            else if (!Upgrades.UpgradeInstalled(cmd.Dependencies))
+                value = false;
+            if (value == true)
             {
-                if (!args.ContainsKey(arg))
+                bool res = false;
+                foreach (var arg in cmd.RequiredArguments)
                 {
-                    res = true;
-                    Console.WriteLine("You are missing an argument with the key \"" + arg + "\".");
+                    if (!args.ContainsKey(arg))
+                    {
+                        res = true;
+                        Console.WriteLine("You are missing an argument with the key \"" + arg + "\".");
+                    }
+                }
+                if (res == true)
+                    return true;
+                try
+                {
+                    cmd.Invoke(args);
+                }
+                catch (TargetInvocationException ex)
+                {
+                    Console.WriteLine("Command error: " + ex.InnerException.Message);
+                }
+
+                return true;
+            }
+            else
+            {
+                if (isRemote == false)
+                {
+                    trm_invoke_result = null;
+                    ServerManager.SendMessage("trm_invoke", JsonConvert.SerializeObject(new
+                    {
+                        cmd = text,
+                        args = args,
+                        shell = _shellOverrideString
+                    }));
+                    while (trm_invoke_result == null)
+                        Thread.Sleep(10);
+                    return (bool)trm_invoke_result;
                 }
             }
-            if (res == true)
-                return true;
-            try
-            {
-                cmd.Invoke(args);
-            }
-            catch(TargetInvocationException ex)
-            {
-                Console.WriteLine("Command error: " + ex.InnerException.Message);
-            }
-
-            return true;
+            return value;
         }
 
 #if DEBUG
@@ -590,6 +576,15 @@ namespace Plex.Engine
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class MetaCommandAttribute : Attribute
+    {
+
+    }
+
+    /// <summary>
+    /// Declares this Terminal command as client-side.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ClientsideAttribute : Attribute
     {
 
     }

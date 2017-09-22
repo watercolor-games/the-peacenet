@@ -147,7 +147,6 @@
     <Compile Include="AudioPlayerSubsystem.cs" />
     <Compile Include="BFInterpreter.cs" />
     <Compile Include="CashManager.cs" />
-    <Compile Include="CommandParser.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConsoleEx.cs" />
     <Compile Include="CrashHandler.cs" />
@@ -204,7 +203,6 @@
     </Compile>
     <Compile Include="PythonAPI.cs" />
     <Compile Include="RankManager.cs" />
-    <Compile Include="ReflectMan.cs" />
     <Compile Include="SaveSystem.cs" />
     <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />

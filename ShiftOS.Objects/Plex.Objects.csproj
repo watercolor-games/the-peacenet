@@ -50,6 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandParser.cs" />
     <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="Hacking\Loot.cs" />
     <Compile Include="Hacking\Port.cs" />
@@ -65,10 +66,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rank.cs" />
     <Compile Include="RankManager.cs" />
+    <Compile Include="ReflectMan.cs" />
     <Compile Include="REST_Announcement.cs" />
     <Compile Include="Save.cs" />
     <Compile Include="ServerDetails.cs" />
     <Compile Include="ShiftFS.cs" />
+    <Compile Include="ShiftoriumUpgrade.cs" />
+    <Compile Include="Upgrades.cs" />
     <Compile Include="UserConfig.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>

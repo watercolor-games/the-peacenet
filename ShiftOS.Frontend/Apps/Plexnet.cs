@@ -7,6 +7,7 @@ using Plex.Engine;
 using Plex.Frontend.GUI;
 using Plex.Extras;
 using Microsoft.Xna.Framework;
+using Plex.Objects;
 
 namespace Plex.Frontend.Apps
 {

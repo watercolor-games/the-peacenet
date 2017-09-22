@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using Plex.Objects;
 using static Plex.Engine.SaveSystem;
 
 namespace Plex.Engine

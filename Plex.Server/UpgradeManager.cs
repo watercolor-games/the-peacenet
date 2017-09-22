@@ -17,7 +17,7 @@ namespace Plex.Server
             int result = 0;
             if (save != null)
             {
-                if(save.SystemDescriptor.Upgrades != null)
+                if(save.SystemDescriptor.Upgrades == null)
                 {
                     save.SystemDescriptor.Upgrades = new Dictionary<string, bool>();
                     Program.SaveWorld();

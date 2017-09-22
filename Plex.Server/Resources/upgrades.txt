@@ -1,0 +1,10 @@
+[
+	{
+		Category: "Server",
+		Name: "Test server upgrade",
+		Description: "This upgrade is stored on the server. This is possible thanks to the new upgrades system being server-side.",
+		Cost: 5000,
+		Dependencies: "",
+		Purchasable: true
+	}
+]

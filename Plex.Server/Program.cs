@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using Plex.Objects;
 using Newtonsoft.Json;
 using System.Reflection;
-using Plex.Engine;
 using System.IO;
 using System.Drawing;
 
@@ -179,19 +178,19 @@ Now generating defenses...
 ============");
                 Console.WriteLine("<worldgen> Scanning for firewall puzzles...");
                 List<PuzzleAttribute> puzzles = new List<PuzzleAttribute>();
-                foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
+                foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
                 {
                     var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is PuzzleAttribute) as PuzzleAttribute;
-                    if(attr != null)
+                    if (attr != null)
                     {
                         Console.WriteLine("<worldgen> Puzzle found: {0} - Rank {1}", type.Name, attr.Rank);
                         puzzles.Add(attr);
                     }
                 }
                 Console.WriteLine("<worldgen> {0} puzzles found", puzzles.Count);
-                foreach(var net in world.Networks)
+                foreach (var net in world.Networks)
                 {
-                    foreach(var sys in net.NPCs)
+                    foreach (var sys in net.NPCs)
                     {
                         int chance = sys.SystemDescriptor.Rank * (100 / Ranks.Count);
                         bool hasFirewall = rnd.Next(0, 100) <= chance;
@@ -201,10 +200,10 @@ Now generating defenses...
                         if (hasFirewall)
                         {
                             int puzzleCount = rnd.Next(1, availablePuzzles.Length);
-                            while(sys.Puzzles.Count < puzzleCount)
+                            while (sys.Puzzles.Count < puzzleCount)
                             {
                                 PuzzleAttribute atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
-                                while(sys.Puzzles.FirstOrDefault(x=>x.ID == atr.ID && x.Rank == atr.Rank) != null)
+                                while (sys.Puzzles.FirstOrDefault(x => x.ID == atr.ID && x.Rank == atr.Rank) != null)
                                 {
                                     atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
                                 }
@@ -250,7 +249,7 @@ Now generating defenses...
                             }
                         }
                     }
-                    if(tryJSON == true)
+                    if (tryJSON == true)
                     {
                         GameWorld = JsonConvert.DeserializeObject<World>(File.ReadAllText("world.whoa"));
                     }
@@ -285,31 +284,11 @@ Now generating defenses...
             }
         }
 
-        public class ServerSkin : Skin { }
-
-        public class ServerSkinProvider : ISkinProvider
-        {
-            public Skin GetDefaultSkin()
-            {
-                return new ServerSkin();
-            }
-
-            public Skin GetEasterEggSkin()
-            {
-                return new ServerSkin();
-            }
-
-            public Skin ReadSkin(string pfsPath)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public static void SaveWorld()
         {
-            using(var fobj = File.OpenWrite("world.whoa"))
+            using (var fobj = File.OpenWrite("world.whoa"))
             {
-                using(var writer = new BinaryWriter(fobj))
+                using (var writer = new BinaryWriter(fobj))
                 {
                     writer.Write(worldmagic);
                     byte[] worldbytes = null;
@@ -324,7 +303,7 @@ Now generating defenses...
             }
         }
 
-        [Command("worldinfo")]
+        [ServerCommand("worldinfo")]
         public static void WorldInfo()
         {
             Console.WriteLine("World info");
@@ -332,17 +311,17 @@ Now generating defenses...
             Console.WriteLine();
             Console.WriteLine("Subnet count (excluding rogue): {0}", GameWorld.Networks.Count);
             List<HackableSystem> systems = new List<HackableSystem>();
-            foreach(var net in GameWorld.Networks)
+            foreach (var net in GameWorld.Networks)
             {
                 systems.AddRange(net.NPCs);
             }
             Console.WriteLine("Systems: {0}", systems.Count);
-            foreach(SystemType stype in Enum.GetValues(typeof(SystemType)).Cast<SystemType>())
+            foreach (SystemType stype in Enum.GetValues(typeof(SystemType)).Cast<SystemType>())
             {
                 Console.WriteLine("  {0} of which are a {1}", systems.Where(x => x.SystemType == stype).Count(), stype);
             }
             long cash = 0;
-            foreach(var system in systems)
+            foreach (var system in systems)
             {
                 cash += system.SystemDescriptor.Cash;
             }
@@ -373,7 +352,7 @@ Now generating defenses...
         public static string GenerateSystemName(Subnet subnet)
         {
             string sysname = null;
-            while(sysname == null || subnet.NPCs.FirstOrDefault(x=>x.SystemDescriptor.SystemName == sysname) != null)
+            while (sysname == null || subnet.NPCs.FirstOrDefault(x => x.SystemDescriptor.SystemName == sysname) != null)
             {
                 string nato = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
                 char c = letters[rnd.Next(letters.Length)];
@@ -391,7 +370,7 @@ Now generating defenses...
             subnet.FriendlyName = friendlyname;
             subnet.FriendlyDescription = friendlydescription;
             subnet.NPCs = new List<HackableSystem>();
-            
+
             return subnet;
         }
 
@@ -409,7 +388,7 @@ Now generating defenses...
             save.Rank = rank;
             Console.WriteLine("<worldgen> Rank: " + rank);
 
-            if(rank == 1000)
+            if (rank == 1000)
             {
                 save.Cash = 0;
                 save.Experience = long.MaxValue;
@@ -471,8 +450,7 @@ Now generating defenses...
             }
             else
             {
-                
-                Console.SetOut(new LocalizedTextWriter());
+
 
                 if (!File.Exists("ranks.json"))
                 {
@@ -518,14 +496,12 @@ Now generating defenses...
 
                 Console.WriteLine("PROJECT: PLEX SERVER SOFTWARE - Copyright (c) 2017 Watercolor Games - Licensed under MIT");
                 Console.WriteLine("===============================");
-                SkinEngine.SetSkinProvider(new ServerSkinProvider());
                 Console.WriteLine();
                 LoadWorld();
 
                 Console.WriteLine("<plexsrv> Starting server...");
                 var t = new System.Threading.Thread(ServerLoop);
                 t.Start();
-                Localization.RegisterProvider(new ServerLanguageProvider());
                 Console.WriteLine("Server thread running and listening for requests.");
                 Console.WriteLine("Reading banned IP addresses...");
                 if (System.IO.File.Exists("banned-ips.json"))
@@ -534,14 +510,13 @@ Now generating defenses...
                 }
                 Console.WriteLine("{0} IP addresses have been banned.", BannedIPs.Count);
                 Console.WriteLine("Starting server shell. Type 'help' for a list of commands.");
-                TerminalBackend.PopulateTerminalCommands();
+                //Terminal.Populate();
+                var parser = CommandParser.GenerateSample();
                 while (true)
                 {
-                    TerminalBackend.PrefixEnabled = false;
-                    TerminalBackend.InStory = false;
                     Console.Write("> ");
                     string cmd = Console.ReadLine();
-                    if(cmd == "exit")
+                    if (cmd == "exit")
                     {
                         Console.WriteLine("<worldgen> Saving world...");
                         SaveWorld();
@@ -558,44 +533,21 @@ Now generating defenses...
                     }
                     else
                     {
-                        var parsed = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(cmd);
-                        TerminalBackend.InvokeCommand(parsed.Key, parsed.Value);
+                        var parsed = parser.ParseCommand(cmd);
+                        Dictionary<string, object> cargs = new Dictionary<string, object>();
+                        foreach (var arg in parsed.Value)
+                            cargs.Add(arg.Key, arg.Value);
+                        if (!Terminal.RunClient(parsed.Key, cargs))
+                        {
+                            Console.WriteLine("Command not found.");
+                        }
                     }
                 }
             }
 
         }
 
-        public class ServerLanguageProvider : ILanguageProvider
-        {
-            public string[] GetAllLanguages()
-            {
-                return new string[] { "server" };
-            }
-
-            public string GetCurrentTranscript()
-            {
-                WriteDefaultTranscript();
-                return File.ReadAllText("server.lang");
-            }
-
-            public List<string> GetJSONTranscripts()
-            {
-                return new List<string> { "server.lang" };
-            }
-
-            public void WriteDefaultTranscript()
-            {
-                File.WriteAllText("server.lang", Properties.Resources.server_lang);
-            }
-
-            public void WriteTranscript()
-            {
-                File.WriteAllText("server.lang", Properties.Resources.server_lang);
-            }
-        }
-
-        [Command("banip")]
+        [ServerCommand("banip")]
         [RequiresArgument("id")]
         public static void BanIP(Dictionary<string, object> args)
         {
@@ -606,7 +558,7 @@ Now generating defenses...
                 return;
             }
             IPAddress _ban = null;
-            if(IPAddress.TryParse(ip, out _ban) == false)
+            if (IPAddress.TryParse(ip, out _ban) == false)
             {
                 Console.WriteLine("Parse error: Input is not a valid IP address.");
                 return;
@@ -624,7 +576,7 @@ Now generating defenses...
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             sock.Bind(new IPEndPoint(IPAddress.Any, _MyPort));
             _server.Client = sock;
-            
+
             while (true)
             {
                 _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
@@ -649,7 +601,7 @@ Now generating defenses...
                 {
                     var beat = Encoding.UTF8.GetBytes("beat");
                     _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
-                    
+
                 }
                 else if (data == "ismp")
                 {
@@ -674,48 +626,6 @@ Now generating defenses...
                 }
             }
 
-        }
-
-        public class LocalizedTextWriter : System.IO.TextWriter
-        {
-            public override Encoding Encoding
-            {
-                get
-                {
-                    return Encoding.ASCII;
-                }
-            }
-
-            public override void Write(string value)
-            {
-                string localized = Localization.Parse(value);
-                Reset();
-                Console.Write(localized);
-                Console.SetOut(this);
-            }
-
-            public override void WriteLine()
-            {
-                Reset();
-                Console.WriteLine();
-                Console.SetOut(this);
-            }
-
-            public void Reset()
-            {
-                StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
-                standardOutput.AutoFlush = true;
-                Console.SetOut(standardOutput);
-
-            }
-
-            public override void WriteLine(string value)
-            {
-                string localized = Localization.Parse(value);
-                Reset();
-                Console.WriteLine($"[{DateTime.Now}] {localized}");
-                Console.SetOut(this);
-            }
         }
     }
 

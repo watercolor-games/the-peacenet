@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Plex.Engine
+namespace Plex.Objects
 {
     /// <summary>
     /// Provides functionality for parsing a Terminal command string

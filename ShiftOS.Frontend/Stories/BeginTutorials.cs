@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects;
+
 namespace Plex.Frontend.Stories
 {
     public static class BeginTutorials

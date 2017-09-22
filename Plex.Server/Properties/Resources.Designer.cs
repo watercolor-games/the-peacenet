@@ -61,13 +61,30 @@ namespace Plex.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [
-        ///	&quot;{SYNTAX_ERROR}&quot;: &quot;Syntax error.&quot;
-        ///].
+        ///   Looks up a localized string similar to {
+        ///	&quot;{ERR_SYNTAXERROR}&quot;: &quot;Syntax error.&quot;
+        ///}.
         /// </summary>
         internal static string server_lang {
             get {
                 return ResourceManager.GetString("server_lang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///	{
+        ///		Category: &quot;Server&quot;,
+        ///		Name: &quot;Test server upgrade&quot;,
+        ///		Description: &quot;This upgrade is stored on the server. This is possible thanks to the new upgrades system being server-side.&quot;,
+        ///		Cost: 5000,
+        ///		Dependencies: &quot;&quot;
+        ///	}
+        ///].
+        /// </summary>
+        internal static string upgrades {
+            get {
+                return ResourceManager.GetString("upgrades", resourceCulture);
             }
         }
     }

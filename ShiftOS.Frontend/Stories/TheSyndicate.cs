@@ -8,6 +8,7 @@ using Plex.Engine;
 using Plex.Extras;
 using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects;
 
 namespace Plex.Frontend.Stories
 {
@@ -98,7 +99,7 @@ namespace Plex.Frontend.Stories
                 var win = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is Apps.Plexnet);
                 if(win != null)
                 {
-                    return ((Plexnet)win.ParentWindow).CurrentUrl == "main.moneymate/home.rnp";
+                    return ((Apps.Plexnet)win.ParentWindow).CurrentUrl == "main.moneymate/home.rnp";
                 }
                 return false;
             }, () =>

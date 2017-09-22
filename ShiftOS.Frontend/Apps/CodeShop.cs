@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects;
 
 namespace Plex.Frontend.Apps
 {
@@ -50,27 +51,8 @@ namespace Plex.Frontend.Apps
                 buy.X = Width - buy.Width - 15;
                 buy.Y = Height - buy.Height - 15;
                 buy.Visible = (selectedUpgrade != null);
-                string title = "Welcome to the Shiftorium!";
-                string desc = @"The Shiftorium is a place where you can buy upgrades for your computer. These upgrades include hardware enhancements, kernel and software optimizations and features, new programs, upgrades to existing programs, and more.
-
-As you continue through your job, going further up the ranks, you will unlock additional upgrades which can be found here. You may also find upgrades which are not available within the Shiftorium when hacking more difficult and experienced targets. These upgrades are very rare and hard to find, though. You'll find them in the ""Installed Upgrades"" list.";
-
-                if (selectedUpgrade != null)
-                {
-                    title = selectedUpgrade.Category + ": " + selectedUpgrade.Name;
-                    if (selectedUpgrade.Installed)
-                    {
-                        desc = (string.IsNullOrEmpty(selectedUpgrade.Tutorial)) ? "No tutorial has been provided for this upgrade." : selectedUpgrade.Tutorial;
-                    }
-                    else
-                    {
-                        desc = selectedUpgrade.Description;
-                    }
-                }
                 _upgradeTitle.Font = SkinEngine.LoadedSkin.Header2Font;
                 _upgradeDescription.Font = SkinEngine.LoadedSkin.MainFont;
-                _upgradeTitle.Text = title;
-                _upgradeDescription.Text = desc;
                 _upgradeTitle.AutoSize = true;
                 int wrapwidth = (Width - (upgradelist.X + upgradelist.Width)) - 45;
                 _upgradeTitle.MaxWidth = wrapwidth;
@@ -101,7 +83,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
             buy.Font = SkinEngine.LoadedSkin.MainFont;
             buy.Click += () =>
             {
-                if (selectedUpgrade.Installed)
+                if (Upgrades.UpgradeInstalled(selectedUpgrade.ID))
                 {
                     try
                     {
@@ -156,7 +138,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
                 selectedUpgrade = upgrade;
                 if (upgrade == null)
                     return;
-                if (upgrade.Installed)
+                if (Upgrades.UpgradeInstalled(upgrade.ID))
                 {
                     string type = (Upgrades.IsLoaded(upgrade.ID)) ? "Unload" : "Load";
                     buy.Text = $"{type} upgrade";
@@ -167,6 +149,27 @@ As you continue through your job, going further up the ranks, you will unlock ad
                 }
                 Invalidate();
             }
+
+            string title = "Welcome to the Shiftorium!";
+            string desc = @"The Shiftorium is a place where you can buy upgrades for your computer. These upgrades include hardware enhancements, kernel and software optimizations and features, new programs, upgrades to existing programs, and more.
+
+As you continue through your job, going further up the ranks, you will unlock additional upgrades which can be found here. You may also find upgrades which are not available within the Shiftorium when hacking more difficult and experienced targets. These upgrades are very rare and hard to find, though. You'll find them in the ""Installed Upgrades"" list.";
+
+            if (selectedUpgrade != null)
+            {
+                title = selectedUpgrade.Category + ": " + selectedUpgrade.Name;
+                if (Upgrades.UpgradeInstalled(selectedUpgrade.ID))
+                {
+                    desc = (string.IsNullOrEmpty(selectedUpgrade.Tutorial)) ? "No tutorial has been provided for this upgrade." : selectedUpgrade.Tutorial;
+                }
+                else
+                {
+                    desc = selectedUpgrade.Description;
+                }
+            }
+            _upgradeTitle.Text = title;
+            _upgradeDescription.Text = desc;
+
         }
 
         public void PopulateList()
@@ -177,7 +180,7 @@ As you continue through your job, going further up the ranks, you will unlock ad
                 string type = "unknown";
                 if (upgrade.Purchasable)
                     type = $"${((double)upgrade.Cost) / 100}";
-                if (upgrade.Installed)
+                if (Upgrades.UpgradeInstalled(upgrade.ID))
                 {
                     type = (Upgrades.IsLoaded(upgrade.ID)) ? "loaded" : "unloaded";
                 }

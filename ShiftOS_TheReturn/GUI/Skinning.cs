@@ -11,6 +11,8 @@ using static Plex.Engine.SaveSystem;
 using Plex.Objects.ShiftFS;
 using System.Reflection;
 using Plex.Engine.Scripting;
+using Plex.Objects;
+
 namespace Plex.Engine
 {
     /// <summary>
