@@ -184,6 +184,8 @@ namespace Plex.Server
                 return false;
 
             var save = Program.GetSaveFromPrl(session.SaveID);
+            if (save == null)
+                return false;
             bool save_world = false;
             if (save.SystemDescriptor.Upgrades == null)
             {
@@ -224,6 +226,8 @@ namespace Plex.Server
                 return false;
 
             var save = Program.GetSaveFromPrl(session.SaveID);
+            if (save == null)
+                return false;
             bool save_world = false;
             if (save.SystemDescriptor.LoadedUpgrades == null)
             {

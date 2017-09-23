@@ -58,28 +58,11 @@ namespace Plex.Server
 
         private static List<ServerAccount> getAccts()
         {
-            if (Program.IsMultiplayerServer)
+            if (!File.Exists("accts.json"))
             {
-                if (!File.Exists("accts.json"))
-                    return new List<ServerAccount>();
-                return JsonConvert.DeserializeObject<List<ServerAccount>>(File.ReadAllText("accts.json"));
+                return new List<ServerAccount>();
             }
-            else
-            {
-                return new List<ServerAccount>
-                {
-                    new ServerAccount
-                    {
-                         Expiry = DateTime.Now.AddMonths(60),
-                          LastLogin = DateTime.Now,
-                           PasswordHash = "",
-                            PasswordSalt = new byte[0],
-                             SaveID = "main.rogue", //nyi
-                              SessionID = sp_sessionkey,
-                               Username = "campaign"
-                    }
-                };
-            }
+            return JsonConvert.DeserializeObject<List<ServerAccount>>(File.ReadAllText("accts.json"));
         }
 
         private static void setSessions(List<ServerAccount> info)
@@ -98,20 +81,59 @@ namespace Plex.Server
         [ServerMessageHandler("session_verify")]
         public static void SessionVerify(string session_id, string content, string ip, int port)
         {
-            bool nosession = string.IsNullOrWhiteSpace(session_id);
-            if (!nosession)
+            if (Program.IsMultiplayerServer)
             {
-                nosession = IsExpired(session_id);
+                bool nosession = string.IsNullOrWhiteSpace(session_id);
+                if (!nosession)
+                {
+                    nosession = IsExpired(session_id);
+                }
+                if (nosession)
+                {
+                    Program.SendMessage(new PlexServerHeader
+                    {
+                        Content = "",
+                        IPForwardedBy = ip,
+                        Message = "login_required",
+                        SessionID = session_id
+                    }, port);
+                }
             }
-            if (nosession)
+            else
             {
+                var accts = getAccts();
+                if (accts.Count == 0)
+                {
+                    accts.Add(new ServerAccount
+                    {
+                        Expiry = DateTime.MaxValue,
+                        LastLogin = DateTime.Now,
+                        PasswordHash = "",
+                        PasswordSalt = null,
+                        SaveID = "alfa.system",
+                        SessionID = "singleplayer",
+                        Username = "user"
+                    });
+                    setSessions(accts);
+
+                }
+                var save = Program.GetSaveFromPrl("alfa.system");
+                if (save == null)
+                {
+                    var subnet = Program.GameWorld.Networks.FirstOrDefault(x => x.Name == "alfa");
+                    var sys = Program.GenerateSystem(0, SystemType.Computer, "system");
+                    sys.IsNPC = false;
+                    subnet.NPCs.Add(sys);
+                    Program.SaveWorld();
+                }
                 Program.SendMessage(new PlexServerHeader
                 {
-                    Content = "",
                     IPForwardedBy = ip,
-                    Message = "login_required",
-                    SessionID = session_id
+                    Message = "session_accessgranted",
+                    SessionID = session_id,
+                    Content = getAccts()[0].SessionID
                 }, port);
+
             }
         }
 
@@ -248,6 +270,32 @@ namespace Plex.Server
             }
             else
             {
+                var accts = getAccts();
+                if(accts.Count == 0)
+                {
+                    accts.Add(new ServerAccount
+                    {
+                        Expiry = DateTime.MaxValue,
+                        LastLogin = DateTime.Now,
+                        PasswordHash = "",
+                        PasswordSalt = null,
+                        SaveID = "alfa.system",
+                        SessionID = "singleplayer",
+                        Username = "user"
+                    });
+                    setSessions(accts);
+                    
+                }
+                var save = Program.GetSaveFromPrl("alfa.system");
+                if (save == null)
+                {
+                    var subnet = Program.GameWorld.Networks.FirstOrDefault(x => x.Name == "alfa");
+                    var sys = Program.GenerateSystem(0, SystemType.Computer, "system");
+                    sys.IsNPC = false;
+                    subnet.NPCs.Add(sys);
+                    Program.SaveWorld();
+                }
+
                 Program.SendMessage(new PlexServerHeader
                 {
                     IPForwardedBy = ip,

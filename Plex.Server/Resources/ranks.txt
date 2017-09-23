@@ -1,0 +1,64 @@
+/* Rank example
+ *
+ * Ranks are used by the server to give players a sense of progression. As the user ranks up,
+ * they earn perks such as more upgrade slots and a bigger MoneyMate budget.
+ *
+ * The rank system is also used by the server's world generator to generate cash and resources
+ * for each NPC system in the world based on their rank.
+ * 
+ * Your server's economy ultimately depends on the budget given to each rank, and the amount of NPCs
+ * generated for each rank, so we let you decide the values for each rank in this file.
+ *
+ * Note that ranks are ordered by experience, starting at 0. Rank 0 is the base rank, and its experience value is
+ * completely ignored. All new players start at rank 0, so use it to set what your players can and can't do until they rank up.
+ *
+ * When you're ready, rename this file to 'ranks.json', and fire up your server, and the next phase of setup will begin.
+ *
+ *
+ * Note: All cash values are expressed in cents. 500 = $5.
+ */
+[
+  {
+    "Name": "Inexperienced",
+    "Experience": 0,
+    "UpgradeMax": 5,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 500000
+  },
+  {
+    "Name": "n00b",
+    "Experience": 1500,
+    "UpgradeMax": 10,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 750000
+  },
+  {
+    "Name": "skiddie",
+    "Experience": 3750,
+    "UpgradeMax": 15,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 1250000,
+  },
+  {
+    "Name": "script0r",
+    "Experience": 5000,
+    "UpgradeMax": 25,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 2500000,
+  },
+  {
+    "Name": "c0der",
+    "Experience": 7500,
+    "UpgradeMax": 50,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 5000000,
+  },
+  {
+    "Name": "m4573r",
+    "Experience": 10000,
+    "UpgradeMax": 75,
+    "UnlockedUpgrades": null,
+    "MaximumCash": 10000000,
+  },
+
+]

@@ -6,6 +6,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Frontend.GUI;
 using Plex.Objects;
 
 namespace Plex.Frontend
@@ -15,6 +16,8 @@ namespace Plex.Frontend
     /// </summary>
     public static class Program
     {
+        public static event Action WorldLoadCompleted;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -36,6 +39,14 @@ namespace Plex.Frontend
             //Also initiate the desktop
             Engine.Desktop.Init(new Desktop.Desktop());
 
+            TextControl _status = new TextControl();
+            _status.Font = new System.Drawing.Font("Monda", 25f, System.Drawing.FontStyle.Regular);
+            _status.Text = "Project: Plex is generating the world...\r\nPlease be patient.";
+            _status.AutoSize = false;
+            _status.X = 0;
+            _status.Y = 0;
+            _status.Alignment = Engine.GUI.TextAlignment.Middle;
+
             Thread ServerThread = null;
 
             UIManager.SinglePlayerStarted += () =>
@@ -43,12 +54,28 @@ namespace Plex.Frontend
                 ServerThread = new Thread(() =>
                 {
                     System.Diagnostics.Debug.Print("Starting local server...");
+                    Server.Program.SetServerPort(3252);
+                    _status.Width = UIManager.Viewport.Width;
+                    _status.Height = UIManager.Viewport.Height;
+                    UIManager.AddTopLevel(_status);
+                    Server.Program.LoadRanks();
+                    Server.Program.LoadWorld();
+                    Engine.Desktop.InvokeOnWorkerThread(() =>
+                    {
+                        WorldLoadCompleted?.Invoke();
+                    });
                     Plex.Server.Program.Main(null, false);
                 });
                 ServerThread.IsBackground = true;
                 ServerThread.Start();
-                Thread.Sleep(1000);
-                UIManager.ConnectToServer("localhost", 3251);
+            };
+
+            WorldLoadCompleted += () =>
+            {
+                _status.Text = "World loaded successfully.\r\n\r\nHere'we go.";
+                Thread.Sleep(2000);
+                UIManager.StopHandling(_status);
+                UIManager.ConnectToServer("localhost", 3252);
             };
 
             TerminalBackend.TerminalRequested += () =>

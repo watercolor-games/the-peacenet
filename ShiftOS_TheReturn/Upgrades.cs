@@ -242,8 +242,6 @@ namespace Plex.Engine
                 ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                 if (attrib != null)
                 {
-                    if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                        throw new ShiftoriumConflictException(attrib.Upgrade);
                     upgDb.Add(new ShiftoriumUpgrade
                     {
                         Name = attrib.Name,
@@ -260,8 +258,6 @@ namespace Plex.Engine
                     attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                     if (attrib != null)
                     {
-                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                            throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
                             Name = attrib.Name,
@@ -280,8 +276,6 @@ namespace Plex.Engine
                     attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                     if (attrib != null)
                     {
-                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                            throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
                             Name = attrib.Name,
@@ -300,8 +294,6 @@ namespace Plex.Engine
                     attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
                     if (attrib != null)
                     {
-                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
-                            throw new ShiftoriumConflictException(attrib.Upgrade);
                         upgDb.Add(new ShiftoriumUpgrade
                         {
                             Name = attrib.Name,

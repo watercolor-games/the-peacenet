@@ -61,6 +61,24 @@ namespace Plex.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /* Rank example
+        /// *
+        /// * Ranks are used by the server to give players a sense of progression. As the user ranks up,
+        /// * they earn perks such as more upgrade slots and a bigger MoneyMate budget.
+        /// *
+        /// * The rank system is also used by the server&apos;s world generator to generate cash and resources
+        /// * for each NPC system in the world based on their rank.
+        /// * 
+        /// * Your server&apos;s economy ultimately depends on the budget given to each rank, and the amount of NPCs
+        /// * generated for each rank, so we let you decide the  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ranks {
+            get {
+                return ResourceManager.GetString("ranks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///	&quot;{ERR_SYNTAXERROR}&quot;: &quot;Syntax error.&quot;
         ///}.
@@ -78,7 +96,8 @@ namespace Plex.Server.Properties {
         ///		Name: &quot;Test server upgrade&quot;,
         ///		Description: &quot;This upgrade is stored on the server. This is possible thanks to the new upgrades system being server-side.&quot;,
         ///		Cost: 5000,
-        ///		Dependencies: &quot;&quot;
+        ///		Dependencies: &quot;&quot;,
+        ///		Purchasable: true
         ///	}
         ///].
         /// </summary>

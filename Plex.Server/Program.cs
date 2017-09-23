@@ -104,6 +104,13 @@ namespace Plex.Server
 
         public static World GameWorld = null;
 
+        private static int _port = 3251;
+
+        public static void SetServerPort(int port)
+        {
+            _port = port;
+        }
+
         public static void SendMessage(PlexServerHeader header, int port)
         {
             var ip = IPAddress.Parse(header.IPForwardedBy);
@@ -128,8 +135,14 @@ namespace Plex.Server
 
         private static List<int> ports = new List<int>();
 
+        public static void LoadRanks()
+        {
+            Ranks = JsonConvert.DeserializeObject<List<Rank>>(Properties.Resources.ranks);
+        }
+
         public static void Main(string[] args, bool isMP)
         {
+            LoadRanks();
             IsMultiplayerServer = isMP;
             Main(args);
         }
@@ -532,50 +545,6 @@ Now generating defenses...
             }
             else
             {
-
-
-                if (!File.Exists("ranks.json"))
-                {
-                    Console.WriteLine("<ranksys> No ranks found on server. Please configure the ranks. An example file has been written to ranks.example.json. Press a key to continue.");
-                    string comment = @"/* Rank example
- *
- * Ranks are used by the server to give players a sense of progression. As the user ranks up,
- * they earn perks such as more upgrade slots and a bigger MoneyMate budget.
- *
- * The rank system is also used by the server's world generator to generate cash and resources
- * for each NPC system in the world based on their rank.
- * 
- * Your server's economy ultimately depends on the budget given to each rank, and the amount of NPCs
- * generated for each rank, so we let you decide the values for each rank in this file.
- *
- * Note that ranks are ordered by experience, starting at 0. Rank 0 is the base rank, and its experience value is
- * completely ignored. All new players start at rank 0, so use it to set what your players can and can't do until they rank up.
- *
- * When you're ready, rename this file to 'ranks.json', and fire up your server, and the next phase of setup will begin.
- *
- *
- * Note: All cash values are expressed in cents. 500 = $5.
- */";
-                    var ranksex = new List<Rank>
-                    {
-                        new Rank
-                        {
-                            Experience = 0,
-                             MaximumCash = 500000,
-                              Name = "Inexperienced",
-                               UnlockedUpgrades = null,
-                                UpgradeMax = 5
-                        }
-                    };
-                    comment += Environment.NewLine;
-                    comment += JsonConvert.SerializeObject(ranksex, Formatting.Indented);
-                    if (!File.Exists("ranks.example.json"))
-                        File.WriteAllText("ranks.example.json", comment);
-                    Console.ReadKey(true);
-                    Environment.Exit(0);
-                }
-                Ranks = JsonConvert.DeserializeObject<List<Rank>>(File.ReadAllText("ranks.json"));
-
                 Console.WriteLine("PROJECT: PLEX SERVER SOFTWARE - Copyright (c) 2017 Watercolor Games - Licensed under MIT");
                 Console.WriteLine("===============================");
                 Console.WriteLine();
@@ -651,6 +620,21 @@ Now generating defenses...
             Console.WriteLine("The IP address {0} has been banned. Any attempts to query the server from this address will result in a 'server_banned' result. Banlist saved.");
         }
 
+        public static event Action SPLeft;
+
+        [ServerMessageHandler("leave")]
+        public static void Leave(string session_id, string content, string ip, int port)
+        {
+            if(IsMultiplayerServer == false)
+            {
+                SPLeft?.Invoke();
+            }
+            else
+            {
+                Console.WriteLine($"{ip}:{port} - Disconnected.");
+            }
+        }
+
         public static void ServerLoop()
         {
             for(int i = 0; i < threadCount; i++)
@@ -662,14 +646,21 @@ Now generating defenses...
             }
 
             _server = new UdpClient();
-            var _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
+            var _ipEP = new IPEndPoint(IPAddress.Any, _port);
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sock.Bind(new IPEndPoint(IPAddress.Any, _MyPort));
+            sock.Bind(new IPEndPoint(IPAddress.Any, _port));
             _server.Client = sock;
-
+            SPLeft += () =>
+            {
+                SaveWorld();
+                _server.Close();
+                sock.Close();
+                sock.Dispose();
+                Thread.CurrentThread.Abort();
+            };
             while (true)
             {
-                _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
+                _ipEP = new IPEndPoint(IPAddress.Any, _port);
                 var receive = _server.Receive(ref _ipEP);
                 int port = _ipEP.Port;
                 string address = _ipEP.Address.ToString();
