@@ -2,43 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Plex.Engine
 {
     public static class CashManager
     {
-        private static ICashProvider _provider = null;
-        
-        public static void Init(ICashProvider provider)
+        private static bool? cash_deduct_state = null;
+
+        [ClientMessageHandler("cash_deductresult"), AsyncExecution]
+        public static void DeductResult(string content, string ip)
         {
-            _provider = provider;
+            cash_deduct_state = (content == "1") ? true : false; //boy I love redundancy
+            //fuck my life
         }
 
         public static bool Deduct(long amount, string to)
         {
             if (amount == 0)
                 return true;
-            if (_provider == null)
-                return false;
-            return _provider.Deduct(amount, to);
+            cash_deduct_state = null;
+            ServerManager.SendMessage("cash_deduct", JsonConvert.SerializeObject(new
+            {
+                cash = amount,
+                to = to
+            }));
+            while (cash_deduct_state == null)
+                Thread.Sleep(10);
+            return (bool)cash_deduct_state;
         }
-
-        public static bool Receive(long amount, string from)
-        {
-            if (amount == 0)
-                return true;
-            if (_provider == null)
-                return false;
-            return _provider.Receive(amount, from);
-        }
-
-    }
-
-    public interface ICashProvider
-    {
-        bool Deduct(long cents, string to);
-        bool Receive(long cents, string from);
-
     }
 }
