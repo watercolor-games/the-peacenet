@@ -265,8 +265,6 @@ you with your mission.");
                 Console.WriteLine("<kernel> Setup complete. You're ready.");
                 Thread.Sleep(500);
                 save.StoryPosition = 123456789; //HERE. YOU DO THE MATH.
-                SaveSystem.CurrentSave = save;
-                SaveSystem.SaveGame();
                 GraphicsSubsystem.UIManager.StopHandling(progress);
                 GraphicsSubsystem.UIManager.StopHandling(term);
                 GraphicsSubsystem.UIManager.StopHandling(status);

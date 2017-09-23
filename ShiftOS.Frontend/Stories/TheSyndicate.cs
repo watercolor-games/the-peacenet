@@ -41,7 +41,7 @@ namespace Plex.Frontend.Stories
                                 },
                                 new Objects.IRCUser
                                 {
-                                    Nickname = SaveSystem.CurrentSave.Username,
+                                    Nickname = SaveSystem.GetUsername(),
                                     Permission = Objects.IRCPermission.User
                                 }
                            }
@@ -53,7 +53,7 @@ namespace Plex.Frontend.Stories
             }
             _client = irc;
             Thread.Sleep(4000);
-            _client.SendClientMessage("alkaline", $"Welcome to The Syndicate Network, {SaveSystem.CurrentSave.Username}. My name's...alkaline.");
+            _client.SendClientMessage("alkaline", $"Welcome to The Syndicate Network, {SaveSystem.GetUsername()}. My name's...alkaline.");
             Thread.Sleep(4000);
             _client.SendClientMessage("alkaline", $"I'm the creator of Plexgate, and I've got some things you need to know.");
             Thread.Sleep(4000);
@@ -74,25 +74,25 @@ namespace Plex.Frontend.Stories
             Thread.Sleep(4000);
             _client.SendClientMessage("alkaline", "Hello, Jonathan.");
             Thread.Sleep(4000);
-            _client.SendClientMessage("jonnythesweetness4", $"alkaline: Who's {SaveSystem.CurrentSave.Username}? What are they doing here?");
+            _client.SendClientMessage("jonnythesweetness4", $"alkaline: Who's {SaveSystem.GetUsername()}? What are they doing here?");
             Thread.Sleep(4000);
             _client.SendClientMessage("alkaline", "Relax. They're fine. In fact they may be able to help with Project: Greenlight.");
             Thread.Sleep(4000);
-            _client.SendClientMessage("alkaline", $"{SaveSystem.CurrentSave.Username}: Don't worry about Jonathan. He gets a bit...uncomfortable...when I invite new people to the server.");
+            _client.SendClientMessage("alkaline", $"{SaveSystem.GetUsername()}: Don't worry about Jonathan. He gets a bit...uncomfortable...when I invite new people to the server.");
             Thread.Sleep(4000);
             _client.SendClientMessage("alkaline", $"He's...gone through quite a few things...he's just looking out for us and our safety. Once you get to know Jonny you'll find out he's a fuckin' amazing friend to have.");
             Thread.Sleep(4000);
             _client.SendClientMessage("jonnythesweetness4", "alkaline: Don't you dare tell them! Not until they've gotten through our initiation test!");
             Thread.Sleep(4000);
-            _client.SendClientMessage("alkaline", $"Right. Let's get to it. {SaveSystem.CurrentSave.Username} and I were just talking about MoneyMate, and system upgrades, before you joined.");
+            _client.SendClientMessage("alkaline", $"Right. Let's get to it. {SaveSystem.GetUsername()} and I were just talking about MoneyMate, and system upgrades, before you joined.");
             Thread.Sleep(4000);
             _client.SendClientMessage("jonnythesweetness4", "MoneyMate?");
             Thread.Sleep(4000);
-            _client.SendClientMessage("alkaline", $"Yea. What about it? MoneyMate's perfect for {SaveSystem.CurrentSave.Username}.");
+            _client.SendClientMessage("alkaline", $"Yea. What about it? MoneyMate's perfect for {SaveSystem.GetUsername()}.");
             Thread.Sleep(4000);
             _client.SendClientMessage("jonnythesweetness4", "Hm, I've had bad experiences with them...but whatever you say, alkaline...");
             Thread.Sleep(4000);
-            _client.SendClientMessage("jonnythesweetness4", $"Alright, {SaveSystem.CurrentSave.Username}. Open the Plexnet Browser and head to 'main.moneymate/home.rnp'");
+            _client.SendClientMessage("jonnythesweetness4", $"Alright, {SaveSystem.GetUsername()}. Open the Plexnet Browser and head to 'main.moneymate/home.rnp'");
 
             Story.PushObjective("Get MoneyMate", "Follow Jonny's request, and visit 'main.moneymate' in the Plexnet Browser.", () =>
             {
@@ -105,7 +105,7 @@ namespace Plex.Frontend.Stories
             }, () =>
             {
                 Thread.Sleep(2000);
-                _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.CurrentSave.Username}, you there yet? If you are, click the big 'download' link towards the bottom.");
+                _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.GetUsername()}, you there yet? If you are, click the big 'download' link towards the bottom.");
                 Thread.Sleep(4000);
                 _client.SendClientMessage("jonnythesweetness4", "It'll give you a .pst file. Open it in Installer and it'll install MoneyMate manager.");
                 Story.PushObjective("Download & install MoneyMate.", "You've got a big download link right there! Go ahead and click it and install MoneyMate Manager.", () =>
@@ -115,11 +115,11 @@ namespace Plex.Frontend.Stories
                 }, () =>
                 {
                     Thread.Sleep(2000);
-                    _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.CurrentSave.Username}: Installed yet?");
+                    _client.SendClientMessage("jonnythesweetness4", $"{SaveSystem.GetUsername()}: Installed yet?");
                     Thread.Sleep(4000);
                     _client.SendClientMessage("alkaline", "jonnythesweetness4: In this amount of time? They must've.");
                     Thread.Sleep(4000);
-                    _client.SendClientMessage("alkaline", $"Anyway {SaveSystem.CurrentSave.Username}, now that you've installed MoneyMate Manager, you must load its upgrades in order for you to use it.");
+                    _client.SendClientMessage("alkaline", $"Anyway {SaveSystem.GetUsername()}, now that you've installed MoneyMate Manager, you must load its upgrades in order for you to use it.");
                     Thread.Sleep(4000);
                     _client.SendClientMessage("alkaline", $"To do this, open your 'Upgrades' application...");
                     Story.PushObjective("Open the Upgrade Manager", "Open the Upgrade Manager (from App Launcher or Terminal) to load MoneyMate's upgrades.", () =>
@@ -144,13 +144,13 @@ namespace Plex.Frontend.Stories
                             _client.SendClientMessage("alkaline", "That's...not something you need to know, Jonny.");
                             //Coder's note: I keep getting SendMessage and SendClientMessage mixed up. Why?
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("alkaline", $"Anyway, {SaveSystem.CurrentSave.Username}, a word on upgrades... Right now you can only have 5 loaded at once.");
+                            _client.SendClientMessage("alkaline", $"Anyway, {SaveSystem.GetUsername()}, a word on upgrades... Right now you can only have 5 loaded at once.");
                             Thread.Sleep(4000);
                             _client.SendClientMessage("jonnythesweetness4", "OOH! Ranks! These are fun to explain!");
                             Thread.Sleep(4000);
                             _client.SendClientMessage("alkaline", "ugh, take it away Jonny... -_-");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("jonnythesweetness", $"{SaveSystem.CurrentSave.Username}: In the Plexnet, tasks you perform (such as the ones we're getting you to) earn you Experience Points (XP, as we like to shorten it to). The more XP you earn, the higher your System Rank goes. As you earn more ranks, you can gain more upgrade slots and even earn special upgrades you can't get anywhere else!");
+                            _client.SendClientMessage("jonnythesweetness", $"{SaveSystem.GetUsername()}: In the Plexnet, tasks you perform (such as the ones we're getting you to) earn you Experience Points (XP, as we like to shorten it to). The more XP you earn, the higher your System Rank goes. As you earn more ranks, you can gain more upgrade slots and even earn special upgrades you can't get anywhere else!");
                             Thread.Sleep(4000);
                             _client.SendClientMessage("alkaline", "Right now, you can only load 5 upgrades at once, this includes MoneyMate Manager. Ranking up will allow you to load more upgrades at once.");
                             Thread.Sleep(4000);
@@ -164,7 +164,7 @@ namespace Plex.Frontend.Stories
                             Thread.Sleep(4000);
                             _client.SendClientMessage("alkaline", "We'll let ya get off and go explore the net some more on your own. Come see me again and I'll teach you how to earn your first money.");
                             Thread.Sleep(4000);
-                            _client.SendClientMessage("jonnythesweetness4", $"Oh, and, {SaveSystem.CurrentSave.Username}, I uhh... have something I wanna tell you in private.... so when you get the chance please come find me.");
+                            _client.SendClientMessage("jonnythesweetness4", $"Oh, and, {SaveSystem.GetUsername()}, I uhh... have something I wanna tell you in private.... so when you get the chance please come find me.");
                             Story.Context.MarkComplete();
                         });
 

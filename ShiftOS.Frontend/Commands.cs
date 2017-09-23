@@ -95,7 +95,6 @@ There are no missions available for you to complete. Please check back later for
 
 
 
-    [TutorialLock]
     public static class TerminalCommands
     {
         [Command("echo")]
@@ -130,8 +129,6 @@ There are no missions available for you to complete. Please check back later for
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
         public static bool Shutdown()
         {
-            if(Objects.ShiftFS.Utils.Mounts.Count > 0)
-                SaveSystem.SaveGame();
             AudioPlayerSubsystem.Shutdown();
             UIManagerTools.EnterTextMode();
             TerminalBackend.InStory = true;

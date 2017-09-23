@@ -21,8 +21,6 @@ namespace Plex.Frontend
         [STAThread]
         static void Main()
         {
-            RankManager.Init(new MGRankProvider());
-
             SkinEngine.SetSkinProvider(new PlexSkinProvider());
             AudioPlayerSubsystem.Init(new AudioPlayer());
             //Let's get localization going.
@@ -138,19 +136,6 @@ namespace Plex.Frontend
         public List<ShiftoriumUpgrade> GetDefaults()
         {
             return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
-        }
-    }
-
-    public class MGRankProvider : IRankProvider
-    {
-        public Rank[] GetRanks()
-        {
-            return JsonConvert.DeserializeObject<Rank[]>(Properties.Resources.ranks);
-        }
-
-        public void OnRankUp(Rank rank)
-        {
-            AppearanceManager.SetupDialog(new Apps.RankUpDialog(rank));
         }
     }
 

@@ -100,8 +100,6 @@ namespace Plex.Engine
 
         public static void Start(Exception e)
         {
-            if(SaveSystem.CurrentSave != null)
-                TerminalBackend.InvokeCommand("save");  // SAVE BEFORE CRASHING
             ServerManager.Disconnect( DisconnectType.Error, "The client has crashed.");
 
             while (Application.OpenForms.Count > 0)
@@ -157,9 +155,7 @@ Plex Date:       {lastModified.ToString()}
 Plex environment information:
 ---------------------------------
 
-Is Save loaded:             {(SaveSystem.CurrentSave != null)}
 Paths loaded in system:     {JsonConvert.SerializeObject(Paths.GetAll())}
-
 
 Crash: {HandledException.GetType().Name}
 --------------------------------------------

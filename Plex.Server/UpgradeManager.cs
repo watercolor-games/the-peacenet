@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Plex.Server
 {
@@ -10,7 +11,7 @@ namespace Plex.Server
     {
         [SessionRequired]
         [ServerMessageHandler("upgrades_getinstalled")]
-        public static void GetInstalled(string session_id, string content, string ip)
+        public static void GetInstalled(string session_id, string content, string ip, int port)
         {
             int result = IsUpgradeInstalled(content, session_id) ? 1 : 0;
             Program.SendMessage(new Objects.PlexServerHeader
@@ -19,12 +20,114 @@ namespace Plex.Server
                 IPForwardedBy = ip,
                 Message = "upgrades_installed",
                 SessionID = session_id
-            });
+            }, port);
         }
 
         [SessionRequired]
+        [ServerMessageHandler("upgrades_load")]
+        public static void LoadUpgrade(string session_id, string content, string ip, int port)
+        {
+            string result = "uncaught_error";
+
+            bool installed = IsUpgradeInstalled(content, session_id);
+            if(installed == false)
+            {
+                result = "missing_upgrade";
+            }
+            else
+            {
+                bool loaded = IsUpgradeLoaded(content, session_id);
+                if(loaded == true)
+                {
+                    result = "already_loaded";
+                }
+                else
+                {
+                    var session = SessionManager.GrabAccount(session_id);
+                    var save = Program.GetSaveFromPrl(session.SaveID);
+                    var upgcount = save.SystemDescriptor.MaxLoadedUpgrades;
+                    if(save.SystemDescriptor.LoadedUpgrades.Count + 1 >= upgcount)
+                    {
+                        result = "no_slots";
+                    }
+                    else
+                    {
+                        save.SystemDescriptor.LoadedUpgrades.Add(content);
+                        result = "loaded";
+                        Program.SaveWorld();
+                    }
+                }
+            }
+
+            Program.SendMessage(new Objects.PlexServerHeader
+            {
+                Message = "upgrades_loadresult",
+                Content = result,
+                IPForwardedBy = ip,
+                SessionID = session_id
+            }, port);
+        }
+
+        [SessionRequired]
+        [ServerMessageHandler("upgrades_unload")]
+        public static void UnloadUpgrade(string session_id, string content, string ip, int port)
+        {
+            string result = "uncaught_error";
+
+            bool installed = IsUpgradeInstalled(content, session_id);
+            if (installed == false)
+            {
+                result = "missing_upgrade";
+            }
+            else
+            {
+                bool loaded = !IsUpgradeLoaded(content, session_id);
+                if (loaded == true)
+                {
+                    result = "already_unloaded";
+                }
+                else
+                {
+                    var session = SessionManager.GrabAccount(session_id);
+                    var save = Program.GetSaveFromPrl(session.SaveID);
+                    var upgcount = save.SystemDescriptor.MaxLoadedUpgrades;
+                    save.SystemDescriptor.LoadedUpgrades.Remove(content);
+                    result = "unloaded";
+                    Program.SaveWorld();
+                }
+            }
+
+            Program.SendMessage(new Objects.PlexServerHeader
+            {
+                Message = "upgrades_unloadresult",
+                Content = result,
+                IPForwardedBy = ip,
+                SessionID = session_id
+            }, port);
+        }
+
+
+        [SessionRequired]
+        [ServerMessageHandler("upgrades_set")]
+        public static void SetUpgradeValue(string session_id, string content, string ip, int port)
+        {
+            var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
+            bool value = (bool)args["value"];
+            string id = args["id"].ToString();
+            bool isinstalled = IsUpgradeInstalled(id, session_id);
+            if(isinstalled != value)
+            {
+                var session = SessionManager.GrabAccount(session_id);
+                var save = Program.GetSaveFromPrl(session.SaveID);
+                save.SystemDescriptor.Upgrades[id] = value;
+                Program.SaveWorld();
+            }
+        }
+
+
+        [SessionRequired]
         [ServerMessageHandler("upgrades_getcount")]
-        public static void GetCount(string session_id, string content, string ip)
+        public static void GetCount(string session_id, string content, string ip, int port)
         {
             var session = SessionManager.GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
@@ -44,13 +147,13 @@ namespace Plex.Server
                 IPForwardedBy = ip,
                 Message = "upgrades_count",
                 SessionID = session_id
-            });
+            }, port);
         }
 
 
         [SessionRequired]
         [ServerMessageHandler("upgrades_getloaded")]
-        public static void GetLoaded(string session_id, string content, string ip)
+        public static void GetLoaded(string session_id, string content, string ip, int port)
         {
             int result = IsUpgradeLoaded(content, session_id) ? 1 : 0;
             Program.SendMessage(new Objects.PlexServerHeader
@@ -59,7 +162,7 @@ namespace Plex.Server
                 IPForwardedBy = ip,
                 Message = "upgrades_loaded",
                 SessionID = session_id
-            });
+            }, port);
         }
 
         internal static bool IsUpgradeInstalled(string upg, string session_id)

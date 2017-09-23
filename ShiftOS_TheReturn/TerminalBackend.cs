@@ -27,6 +27,11 @@ namespace Plex.Engine
             }
         }
         
+        public static string GetSystemShell()
+        {
+            return $"{SaveSystem.GetUsername()}@{GetSystemName()}:~$ ";
+        }
+
         /// <summary>
         /// Gets the current shell prompt override string.
         /// </summary>
@@ -34,7 +39,7 @@ namespace Plex.Engine
         {
             get
             {
-                return (string.IsNullOrWhiteSpace(_shellOverrideString) || SaveSystem.CurrentSave == null) ? $"{SaveSystem.CurrentSave.Username}@{SaveSystem.CurrentSave.SystemName}:~$ " : _shellOverrideString;
+                return (string.IsNullOrWhiteSpace(_shellOverrideString)) ? GetSystemShell() : _shellOverrideString;
             }
         }
 

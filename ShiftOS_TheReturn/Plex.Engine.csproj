@@ -202,7 +202,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PythonAPI.cs" />
-    <Compile Include="RankManager.cs" />
     <Compile Include="SaveSystem.cs" />
     <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />
@@ -217,9 +216,7 @@
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
     <Compile Include="TerminalTextWriter.cs" />
-    <Compile Include="GUI\TutorialManager.cs" />
     <Compile Include="UserManagementCommands.cs" />
-    <Compile Include="VirusManager.cs" />
     <Compile Include="GUI\WinOpenAttribute.cs" />
     <EmbeddedResource Include="CrashHandlerUI.resx">
       <DependentUpon>CrashHandlerUI.cs</DependentUpon>

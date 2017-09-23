@@ -36,7 +36,7 @@ namespace Plex.Frontend.Apps
         public TextControl _hoverTitle = new TextControl();
         public TextControl _hoverdesc = new TextControl();
 
-        public const int WorldSize = 1000; //NOTE: The world is this size, squared.
+        public const int WorldSize = 500; //NOTE: The world is this size, squared.
 
         public float WorldOffsetX = 0;
         public float WorldOffsetY = 0;

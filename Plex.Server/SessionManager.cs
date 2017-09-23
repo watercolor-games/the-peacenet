@@ -13,6 +13,49 @@ namespace Plex.Server
     {
         private static readonly string sp_sessionkey = Guid.NewGuid().ToString();
 
+        [ServerMessageHandler("acct_getsysname")]
+        [SessionRequired]
+        public static void GetSysname(string session_id, string content, string ip, int port)
+        {
+            var session = GrabAccount(session_id);
+            Program.SendMessage(new PlexServerHeader
+            {
+                Message = "acct_sysname",
+                Content = session.SaveID,
+                IPForwardedBy = ip,
+                SessionID = session_id
+            }, port);
+        }
+
+        [ServerMessageHandler("acct_getxp")]
+        [SessionRequired]
+        public static void GetXP(string session_id, string content, string ip, int port)
+        {
+            var session = GrabAccount(session_id);
+            var save = Program.GetSaveFromPrl(session.SaveID);
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = save.SystemDescriptor.Experience.ToString(),
+                IPForwardedBy = ip,
+                Message = "acct_xp",
+                SessionID = session_id
+            }, port);
+        }
+
+        [ServerMessageHandler("acct_getusername")]
+        [SessionRequired]
+        public static void GetUsername(string session_id, string content, string ip, int port)
+        {
+            var session = GrabAccount(session_id);
+            Program.SendMessage(new PlexServerHeader
+            {
+                Message = "acct_username",
+                Content = session.Username,
+                IPForwardedBy = ip,
+                SessionID = session_id
+            }, port);
+        }
+
         private static List<ServerAccount> getAccts()
         {
             if (Program.IsMultiplayerServer)
@@ -53,7 +96,7 @@ namespace Plex.Server
         }
 
         [ServerMessageHandler("session_verify")]
-        public static void SessionVerify(string session_id, string content, string ip)
+        public static void SessionVerify(string session_id, string content, string ip, int port)
         {
             bool nosession = string.IsNullOrWhiteSpace(session_id);
             if (!nosession)
@@ -68,12 +111,12 @@ namespace Plex.Server
                     IPForwardedBy = ip,
                     Message = "login_required",
                     SessionID = session_id
-                });
+                }, port);
             }
         }
 
         [ServerMessageHandler("acct_create")]
-        public static void CreateAccount(string session_id, string content, string ip)
+        public static void CreateAccount(string session_id, string content, string ip, int port)
         {
             var acct = JsonConvert.DeserializeObject<ServerAccount>(content);
             var sessions = getAccts();
@@ -85,7 +128,7 @@ namespace Plex.Server
                     Message = "acct_taken",
                     SessionID = session_id,
                     Content = ""
-                });
+                }, port);
 
                 return;
             }
@@ -121,7 +164,7 @@ namespace Plex.Server
                 Message = "session_accessgranted",
                 SessionID = session_id,
                 Content = acct.SessionID
-            });
+            }, port);
 
         }
 
@@ -140,7 +183,7 @@ namespace Plex.Server
 
 
         [ServerMessageHandler("acct_get_key")]
-        public static void AccountGetKey(string session_id, string content, string ip)
+        public static void AccountGetKey(string session_id, string content, string ip, int port)
         {
             if (Program.IsMultiplayerServer)
             {
@@ -153,7 +196,7 @@ namespace Plex.Server
                         Message = "malformed_data",
                         SessionID = session_id,
                         Content = ""
-                    });
+                    }, port);
                     return;
                 }
                 string username = split[0];
@@ -167,7 +210,7 @@ namespace Plex.Server
                         Message = "session_accessdenied",
                         SessionID = session_id,
                         Content = ""
-                    });
+                    }, port);
                     return;
                 }
                 var hashedpass = PasswordHasher.Hash(password, user.PasswordSalt);
@@ -179,7 +222,7 @@ namespace Plex.Server
                         Message = "session_accessdenied",
                         SessionID = session_id,
                         Content = session_id
-                    });
+                    }, port);
                     return;
 
                 }
@@ -201,7 +244,7 @@ namespace Plex.Server
                     Message = "session_accessgranted",
                     SessionID = session_id,
                     Content = user.SessionID
-                });
+                }, port);
             }
             else
             {
@@ -211,7 +254,7 @@ namespace Plex.Server
                     Message = "session_accessgranted",
                     SessionID = session_id,
                     Content = getAccts()[0].SessionID
-                });
+                }, port);
             }
 
         }

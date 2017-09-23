@@ -14,7 +14,7 @@ namespace Plex.Server
 
         [SessionRequired]
         [ServerMessageHandler("hack_solvepuzzle")]
-        public static void SolvePuzzle(string session_id, string content, string ip)
+        public static void SolvePuzzle(string session_id, string content, string ip, int port)
         {
             var puzzledata = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
             var hsession = _hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == puzzledata["hackable"]);
@@ -30,7 +30,7 @@ namespace Plex.Server
                         IPForwardedBy = ip,
                         Message = "hack_puzzlesolved",
                         Content = ""
-                    });
+                    }, port);
                 }
                 else
                 {
@@ -39,16 +39,13 @@ namespace Plex.Server
                     puzzle.Data.Completed = completed;
                     if (completed == true)
                     {
-                        foreach (var session in _hsessions.Where(x => x.HackableID == hsession.HackableID))
+                        Program.SendMessage(new Objects.PlexServerHeader
                         {
-                            Program.Broadcast(new Objects.PlexServerHeader
-                            {
-                                Content = res,
-                                IPForwardedBy = ip,
-                                Message = "hack_puzzleresult",
-                                SessionID = session.SessionID
-                            });
-                        }
+                            Content = res,
+                            IPForwardedBy = ip,
+                            Message = "hack_puzzleresult",
+                            SessionID = session_id
+                        }, port);
                         Program.SaveWorld();
                     }
                     else
@@ -59,7 +56,7 @@ namespace Plex.Server
                             IPForwardedBy = ip,
                             SessionID = session_id,
                             Message = "hack_puzzleresult"
-                        });
+                        }, port);
                     }
                 }
             }
@@ -67,7 +64,7 @@ namespace Plex.Server
 
         [SessionRequired]
         [ServerMessageHandler("hack_puzzlehint")]
-        public static void PuzzleHint(string session_id, string content, string ip)
+        public static void PuzzleHint(string session_id, string content, string ip, int port)
         {
             var puzzledata = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
             var hsession = _hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == puzzledata["hackable"]);
@@ -80,14 +77,14 @@ namespace Plex.Server
                     Content = puzzle.GetHint(),
                     IPForwardedBy = ip,
                     SessionID = session_id
-                });
+                }, port);
             }
         }
 
 
         [SessionRequired]
         [ServerMessageHandler("hack_abort")]
-        public static void AbortHack(string session_id, string content, string ip)
+        public static void AbortHack(string session_id, string content, string ip, int port)
         {
             var hsession = _hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == content);
             if(hsession != null)
@@ -99,7 +96,7 @@ namespace Plex.Server
 
         [SessionRequired]
         [ServerMessageHandler("hack_start")]
-        public static void StartHack(string session_id, string content, string ip)
+        public static void StartHack(string session_id, string content, string ip, int port)
         {
             if (_hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == content) != null)
             {
@@ -109,7 +106,7 @@ namespace Plex.Server
                     IPForwardedBy = ip,
                     SessionID = session_id,
                     Content = ""
-                });
+                }, port);
                 return;
             }
             var system = Program.GetSaveFromPrl(content);
@@ -141,14 +138,14 @@ namespace Plex.Server
                     IPForwardedBy = ip,
                     SessionID = session_id,
                     Content = ""
-                });
+                }, port);
                 _hsessions.Add(session);
             }
         }
 
         [SessionRequired]
         [ServerMessageHandler("get_hackable")]
-        public static void GetHackable(string session_id, string content, string ip)
+        public static void GetHackable(string session_id, string content, string ip, int port)
         {
             var system = Program.GetSaveFromPrl(content);
             if(system != null)
@@ -160,7 +157,7 @@ namespace Plex.Server
                     Message = "hackable_data",
                     IPForwardedBy = ip,
                     SessionID = session_id
-                });
+                }, port);
             }
         }
     }

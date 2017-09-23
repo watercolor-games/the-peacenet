@@ -259,7 +259,7 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if(_inpgui != UIManagerTools.InProtectedGUI)
+            if (_inpgui != UIManagerTools.InProtectedGUI)
             {
                 _inpgui = UIManagerTools.InProtectedGUI;
                 RequireTextRerender();
@@ -277,10 +277,7 @@ namespace Plex.Frontend.Desktop
             Y = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : GetSize().Height - Height;
             var now = DateTime.Now.TimeOfDay;
             var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
-                if (SaveSystem.CurrentSave != null)
-                    newDateTimeString += SaveSystem.CurrentSave.SystemName;
-                else
-                    newDateTimeString += "localhost";
+           
             if (newDateTimeString != dateTimeString)
             {
                 dateTimeString = newDateTimeString;

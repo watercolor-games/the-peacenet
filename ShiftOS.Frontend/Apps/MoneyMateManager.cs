@@ -9,6 +9,8 @@ using Plex.Extras;
 using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using Plex.Objects;
+using Newtonsoft.Json;
+using System.Threading;
 
 namespace Plex.Frontend.Apps
 {
@@ -26,6 +28,22 @@ namespace Plex.Frontend.Apps
         public ListBox _transactions = new ListBox();
         public Button _transactionsButton = new Button();
 
+        private static CashTransaction[] tdata = null;
+
+        [ClientMessageHandler("moneymate_transactions"), AsyncExecution]
+        public static void CashTransactionReceive(string content, string ip)
+        {
+            tdata = JsonConvert.DeserializeObject<CashTransaction[]>(content);
+        }
+
+        public static CashTransaction[] GetCashTransactions()
+        {
+            tdata = null;
+            ServerManager.SendMessage("moneymate_gettransactions", "");
+            while (tdata == null)
+                Thread.Sleep(10);
+            return tdata;
+        }
 
         private int UIState = 0;
 
@@ -51,14 +69,15 @@ namespace Plex.Frontend.Apps
             {
                 UIState = 1;
                 _transactions.ClearItems();
-                if (SaveSystem.CurrentSave.Transactions == null)
-                    SaveSystem.CurrentSave.Transactions = new List<CashTransaction>();
-                if(SaveSystem.CurrentSave.Transactions.Count == 0)
+
+                CashTransaction[] transactions = GetCashTransactions();
+
+                if (transactions.Length == 0)
                 {
                     _transactions.AddItem("No transactions to display.");
                     return;
                 }
-                foreach (var transaction in SaveSystem.CurrentSave.Transactions.OrderByDescending(x => x.Date))
+                foreach (var transaction in transactions.OrderByDescending(x => x.Date))
                 {
                     _transactions.AddItem($"{transaction.Date}: ${((double)transaction.Amount) / 100} - {transaction.From} -> {transaction.To}");
                 }
@@ -91,12 +110,12 @@ namespace Plex.Frontend.Apps
             _accountTitle.MaxWidth = Width - 60;
             _accountTitle.AutoSize = true;
             _accountTitle.Font = SkinEngine.LoadedSkin.HeaderFont;
-            _accountTitle.Text = SaveSystem.CurrentSave.Username;
+            _accountTitle.Text = SaveSystem.GetUsername();
             _accountBalance.Visible = UIState == 0;
             _transactions.Visible = UIState == 1;
             if (_accountBalance.Visible)
             {
-                _accountBalance.Text = $"Account balance: ${((double)SaveSystem.CurrentSave.Cash) / 100}";
+                _accountBalance.Text = $"Account balance: ${((double)SaveSystem.GetCash()) / 100}";
                 _accountBalance.AutoSize = true;
                 _accountBalance.Font = SkinEngine.LoadedSkin.Header3Font;
                 _accountBalance.Y = _accountTitle.Y + _accountTitle.Height + 5;

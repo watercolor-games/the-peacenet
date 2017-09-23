@@ -319,8 +319,6 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static void ResetSkinTextures(GraphicsDevice graphics)
         {
             bool rgb101 = true;
-            if (SaveSystem.CurrentSave != null)
-                rgb101 = SaveSystem.CurrentSave.UseRGB101Compatibility;
             SkinTextures.Clear();
             foreach(var byteArray in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(byte[])))
             {
@@ -348,22 +346,6 @@ namespace Plex.Frontend.GraphicsSubsystem
                                     data[i + 3] = 0;
                                 }
                             }
-                            else
-                            {
-                                byte ar = SaveSystem.CurrentSave.AccentR;
-                                byte ag = SaveSystem.CurrentSave.AccentG;
-                                byte ab = SaveSystem.CurrentSave.AccentB;
-                                byte br = SkinEngine.LoadedSkin.AccentKey.R;
-                                byte bg = SkinEngine.LoadedSkin.AccentKey.G;
-                                byte bb = SkinEngine.LoadedSkin.AccentKey.B;
-
-                                if (br == r && bg == g && bb == b)
-                                {
-                                    r = ar;
-                                    data[i + 1] = ag;
-                                    b = ab;
-                                }
-                            }
                             data[i] = b;
                             data[i + 2] = r;
                         }
@@ -383,17 +365,6 @@ namespace Plex.Frontend.GraphicsSubsystem
                     {
                         color = System.Drawing.Color.FromArgb(0, 0, 0, 0);
                     }
-                }
-                else
-                {
-                    byte ar = SaveSystem.CurrentSave.AccentR;
-                    byte ag = SaveSystem.CurrentSave.AccentG;
-                    byte ab = SaveSystem.CurrentSave.AccentB;
-                    byte br = SkinEngine.LoadedSkin.AccentKey.R;
-                    byte bg = SkinEngine.LoadedSkin.AccentKey.G;
-                    byte bb = SkinEngine.LoadedSkin.AccentKey.B;
-                    if (color.R == br && color.G == bg && color.B == bb)
-                        color = System.Drawing.Color.FromArgb(ar, ag, ab);
                 }
 
                 tex2.SetData<byte>(new[] { color.R, color.G, color.B, color.A });

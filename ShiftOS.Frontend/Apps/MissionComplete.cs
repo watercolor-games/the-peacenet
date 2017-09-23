@@ -49,7 +49,6 @@ namespace Plex.Frontend.Apps
             AddControl(_continue);
             _continue.Click += () =>
             {
-                SaveSystem.SaveGame();
                 AppearanceManager.Close(this);
             };
         }

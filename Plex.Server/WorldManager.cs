@@ -12,7 +12,7 @@ namespace Plex.Server
     {
         [SessionRequired]
         [ServerMessageHandler("get_world")]
-        public static void GetWorld(string session_id, string content, string ip)
+        public static void GetWorld(string session_id, string content, string ip, int port)
         {
             var world = new Plexnet();
             world.Networks = new List<Network>();
@@ -65,7 +65,7 @@ namespace Plex.Server
                 Content = JsonConvert.SerializeObject(world),
                 IPForwardedBy = ip,
                 SessionID = session_id
-            });
+            }, port);
         }
     }
 }

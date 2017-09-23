@@ -25,7 +25,7 @@ namespace Plex.Engine
 
         public void MarkComplete()
         {
-            SaveSystem.CurrentSave.StoriesExperienced.Add(Id);
+            SaveSystem.CompleteStory(Id);
             OnComplete?.Invoke();
         }
 
@@ -119,8 +119,6 @@ namespace Plex.Engine
             if (SaveSystem.IsSandbox)
                 return;
 
-            if (SaveSystem.CurrentSave.StoriesExperienced == null)
-                SaveSystem.CurrentSave.StoriesExperienced = new List<string>();
             foreach (var type in ReflectMan.Types)
             {
                 foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
@@ -138,20 +136,20 @@ namespace Plex.Engine
                                     Method = mth,
                                     AutoComplete = true,
                                 };
-                                SaveSystem.CurrentSave.PickupPoint = Context.Id;
+                                SaveSystem.SetStoryPickup(Context.Id);
                                 Context.OnComplete += () =>
                                 {
                                     if (story is MissionAttribute)
                                     {
                                         var mission = story as MissionAttribute;
-                                        SaveSystem.CurrentSave.Experience += mission.CodepointAward;
+                                        SaveSystem.AddExperience(mission.CodepointAward);
                                         TerminalBackend.PrintPrompt();
                                         TerminalBackend.PrefixEnabled = true;
                                         TerminalBackend.InStory = false;
                                         MissionComplete?.Invoke(mission);
                                     }
                                     StoryComplete?.Invoke(stid);
-                                    SaveSystem.CurrentSave.PickupPoint = "";
+                                    SaveSystem.SetStoryPickup("");
                                 };
                                 mth.Invoke(null, null);
                                 if (Context.AutoComplete)

@@ -101,7 +101,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = true;
             ctl.WriteLine("As you can see, your system doesn't have much value within the usenet.");
             Thread.Sleep(1000);
-            ctl.WriteLine($"You have {SaveSystem.CurrentSave.Experience} Experience Points - and {SaveSystem.CurrentSave.CountUpgrades()} system upgrades.");
+            ctl.WriteLine($"You have {SaveSystem.GetExperience()} Experience Points - and {Upgrades.CountUpgrades()} system upgrades.");
             ctl.WriteLine("");
             ctl.WriteLine("");
             Thread.Sleep(500);
@@ -133,9 +133,8 @@ namespace Plex.Frontend.Stories
             Thread.Sleep(1000);
             ctl.WriteLine("<plexgate> Basic system usage tutorial complete.");
             Thread.Sleep(500);
-            ctl.WriteLine("<cpd> 200 Experience earned.");
-            SaveSystem.CurrentSave.Experience += 200;
-            SaveSystem.SaveGame();
+            ctl.WriteLine("<xpd> 200 Experience earned.");
+            SaveSystem.AddExperience(200);
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.InStory = false;
             Story.Context.MarkComplete();
@@ -177,7 +176,7 @@ namespace Plex.Frontend.Stories
             UIManager.SetTutorialOverlay(new Microsoft.Xna.Framework.Rectangle(50, 50, 50, 50), "Welcome to the Plexgate Desktop tutorial! My name is Alkaline. I'll help you out by blanking out the screen and showing you where to go by keeping that area onscreen, just like this box over here!\r\n\r\nJust click it to continue!", () =>
                {
                    var now = DateTime.Now.TimeOfDay;
-                   var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - {SaveSystem.CurrentSave.SystemName}";
+                   var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds}";
                    var dtmeasure = GraphicsContext.MeasureString(newDateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
                    int dp_height = LoadedSkin.DesktopPanelHeight;
                    int dp_start = (UIManager.Viewport.Height - dp_height) * LoadedSkin.DesktopPanelPosition;

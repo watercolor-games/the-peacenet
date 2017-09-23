@@ -70,9 +70,7 @@ namespace Plex.Engine
         {
             get
             {
-                if (SaveSystem.CurrentSave.CompletedHacks == null)
-                    SaveSystem.CurrentSave.CompletedHacks = new List<HackableSystem>();
-                return SaveSystem.CurrentSave.CompletedHacks.Where(x => x.IsPwn3d).ToArray();
+                return new HackableSystem[] { };//Todo: This should be a server-side call.
             }
         }
 
@@ -93,138 +91,10 @@ namespace Plex.Engine
             CurrentHackable = _hackable;
         }
 
-        public static void InitHack(Objects.Hackable data)
-        {
-            if (SaveSystem.CurrentSave.CompletedHacks == null)
-                SaveSystem.CurrentSave.CompletedHacks = new List<HackableSystem>();
-            var sys = SaveSystem.CurrentSave.CompletedHacks.FirstOrDefault(x => x.SystemDescriptor.SystemName == data.SystemName);
-            if (sys == null)
-            {
-                sys = ProcgenHackable(data);
-                SaveSystem.CurrentSave.CompletedHacks.Add(sys);
-            }
-            CurrentHackable = sys;
-        }
-
-        public static void FailHack()
-        {
-            if (CurrentHackable == null)
-                throw new NaughtyDeveloperException("Someone tried to fail a non-existent hack.");
-            if (CurrentHackable.IsPwn3d)
-                throw new NaughtyDeveloperException("A developer tried to un-pwn a pwn3d hackable.");
-            Console.WriteLine();
-            Console.WriteLine("[sploitset] [FAIL] disconnected - connection terminated by remote machine ");
-            if (!string.IsNullOrWhiteSpace(GetData(CurrentHackable).OnHackFailedStoryEvent))
-                Story.Start(GetData(CurrentHackable).OnHackFailedStoryEvent);
-            CurrentHackable = null;
-            TerminalBackend.SetShellOverride("");
-            TerminalBackend.PrintPrompt();
-        }
-
         public static Hackable GetData(HackableSystem system)
         {
             var data = Hacking.Hackables.FirstOrDefault(x => x.SystemName == system.SystemDescriptor.SystemName);
             return data;
-        }
-
-        public static HackableSystem ProcgenHackable(Hackable data)
-        {
-            var sys = new HackableSystem();
-            var save = new Save();
-            //First we fill in the values we KNOW about this system.
-            save.SystemName = data.SystemName;
-            save.Rank = data.Rank;
-
-            //Now let's set the systemtype of this system from the data
-            sys.SystemType = data.SystemType;
-
-            //Now we get the min and max XP range from the rank
-            //this is done by getting the XP value for current rank, and
-            //XP value for next rank
-            var currentRank = RankManager.GetRankData(save.Rank);
-            var nextRank = RankManager.GetRankData(save.Rank + 1); //will return current rank if next rank doesn't exist.
-            //We can also get the previous rank for cash gen.
-            var prevRank = RankManager.GetRankData(save.Rank - 1);
-
-            //create random number generator
-            var rnd = new Random();
-
-            //generate XP
-            save.Experience = (ulong)rnd.Next((int)currentRank.Experience, (int)nextRank.Experience);
-
-            //We can do the same for cash.
-            save.Cash = (long)rnd.Next((int)prevRank.MaximumCash, (int)currentRank.MaximumCash);
-
-            //Now, using the rank system we can determine
-            //what upgrades this system will have loaded.
-
-            //We do this by first generating a random number between 0 and the rank's max upgrade slots...
-            int maxUpgrades = rnd.Next(currentRank.UpgradeMax);
-            //We'll use this later. Next, we need to initiate this save's
-            //Upgrade DB.
-
-            //...Algorithmically.
-
-            save.Upgrades = new Dictionary<string, bool>();
-
-            //So here's how this algorithm will work.
-
-            //While the upgrade DB's count is below that of the upgrades in the engine...
-            while(save.Upgrades.Count < Upgrades.AllUpgrades.Count)
-            {
-                //Grab a list of all upgrades whose dependencies are satisfied by the upgrade DB...
-                var satisfied = Upgrades.AllUpgrades.Where(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x.Dependencies))
-                        return true;
-                    string[] ids = x.Dependencies.Split(';');
-                    bool isSatisfied = true;
-                    foreach(var id in ids)
-                    {
-                        if (!save.Upgrades.ContainsKey(id))
-                            isSatisfied = false;
-                        else if (save.Upgrades[id] == false)
-                            isSatisfied = false;
-                        if (isSatisfied == false)
-                            break;
-                    }
-                    return isSatisfied;
-                });
-                //Now we populate the upgrade DB with these upgrades, randomly choosing whether they're installed.
-                foreach (var upg in satisfied)
-                {
-                    bool installed = rnd.Next(0, 100) > 50;
-                    if (!save.Upgrades.ContainsKey(upg.ID))
-                        save.Upgrades.Add(upg.ID, false);
-                    save.Upgrades[upg.ID] = installed;
-
-                }
-            }
-            //This algorithm is a very neat way of procedurally generating an upgrade DB as if
-            //an actual player had bought these upgrades.
-            //
-            //It only chooses upgrades whose dependencies are satisfied, making it feel more
-            //natural to the player.
-            //
-            //I wrote it myself :D
-            //Now we pick random upgrades to actually load.
-            save.LoadedUpgrades = new List<string>();
-            for (int i = 0; i < maxUpgrades; i++)
-            {
-                var available = save.Upgrades.Where(x => x.Value == true);
-                string id = null;
-                while(id == null || !save.LoadedUpgrades.Contains(id))
-                {
-                    id = available.ToArray()[rnd.Next(0, available.Count())].Key;
-                }
-                save.LoadedUpgrades.Add(id);
-            }
-            //set system descriptor
-            sys.SystemDescriptor = save;
-
-            //We've procgen'd all we really can.
-
-            return sys;
         }
 
         public static IEnumerable<Port> GetPorts(HackableSystem currentHackable)

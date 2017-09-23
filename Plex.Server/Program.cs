@@ -10,11 +10,90 @@ using Newtonsoft.Json;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
+using System.Threading;
 
 namespace Plex.Server
 {
     public class Program
     {
+        public enum ServerThreadState
+        {
+            Waiting,
+            Active,
+            Stopped
+        }
+
+        public class ServerThread
+        {
+            private Thread _thread = null;
+            private Queue<Action> _messageQueue = new Queue<Action>();
+            private ServerThreadState _state = ServerThreadState.Stopped;
+
+            public ServerThread()
+            {
+                _thread = new Thread(() =>
+                {
+                    while(true)
+                    {
+                        while (_messageQueue.Count == 0)
+                        {
+                            Thread.Sleep(2);
+                            _state = ServerThreadState.Waiting;
+                        }
+                        _state = ServerThreadState.Active;
+                        _messageQueue.Dequeue().Invoke();
+                    }
+                });
+            }
+
+            public int Count
+            {
+                get
+                {
+                    return _messageQueue.Count;
+                }
+            }
+
+            public ServerThreadState State
+            {
+                get
+                {
+                    return _state;
+                }
+            }
+
+            public void Queue(Action action)
+            {
+                if (action != null)
+                    _messageQueue.Enqueue(action);
+            }
+
+            public void Start()
+            {
+                if(_state == ServerThreadState.Stopped)
+                {
+                    _thread.Start();
+                }
+                else
+                {
+                    throw new Exception("The thread is already running.");
+                }
+            }
+
+            public void Stop()
+            {
+                if (_state == ServerThreadState.Stopped)
+                    throw new Exception("The thread is not running.");
+                while (_state == ServerThreadState.Active)
+                    Thread.Sleep(10);
+                _thread.Abort();
+                _state = ServerThreadState.Stopped;
+            }
+        }
+
+        private static List<ServerThread> threads = new List<ServerThread>();
+        private const int threadCount = 16;
+
         private static readonly string[] NATOCodeNames = { "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu" };
         private const int _MyPort = 3251;
         private static UdpClient _server = null;
@@ -25,12 +104,12 @@ namespace Plex.Server
 
         public static World GameWorld = null;
 
-        public static void SendMessage(PlexServerHeader header)
+        public static void SendMessage(PlexServerHeader header, int port)
         {
             var ip = IPAddress.Parse(header.IPForwardedBy);
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
-            var _ipEP = new IPEndPoint(ip, _port);
+            var _ipEP = new IPEndPoint(ip, port);
             _server.Send(bytes, bytes.Length, _ipEP);
             if (IsMultiplayerServer)
                 Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
@@ -41,10 +120,13 @@ namespace Plex.Server
             var ip = IPAddress.Broadcast;
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
-            _server.Send(bytes, bytes.Length, new IPEndPoint(ip, _port));
+            foreach (var port in ports)
+            {
+                _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
+            }
         }
 
-        private static int _port = 0;
+        private static List<int> ports = new List<int>();
 
         public static void Main(string[] args, bool isMP)
         {
@@ -571,6 +653,14 @@ Now generating defenses...
 
         public static void ServerLoop()
         {
+            for(int i = 0; i < threadCount; i++)
+            {
+                var thread = new ServerThread();
+                Console.WriteLine("Starting server thread {0}...", i);
+                thread.Start();
+                threads.Add(thread);
+            }
+
             _server = new UdpClient();
             var _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
             var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -581,49 +671,58 @@ Now generating defenses...
             {
                 _ipEP = new IPEndPoint(IPAddress.Any, _MyPort);
                 var receive = _server.Receive(ref _ipEP);
-                _port = _ipEP.Port;
-                if (BannedIPs.Contains(_ipEP.Address.ToString()))
+                int port = _ipEP.Port;
+                string address = _ipEP.Address.ToString();
+
+                var thread = threads.Aggregate((curMin, x) => (curMin == null || (x.Count) < curMin.Count ? x : curMin));
+                thread.Queue(() =>
                 {
-                    SendMessage(new PlexServerHeader
+                    if (BannedIPs.Contains(_ipEP.Address.ToString()))
                     {
-                        IPForwardedBy = _ipEP.Address.ToString(),
-                        Message = "server_banned",
-                        SessionID = "",
-                        Content = ""
-                    });
-                    if (IsMultiplayerServer)
-                        Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
+                        
+                        SendMessage(new PlexServerHeader
+                        {
+                            IPForwardedBy = _ipEP.Address.ToString(),
+                            Message = "server_banned",
+                            SessionID = "",
+                            Content = ""
+                        }, port);
+                        if (IsMultiplayerServer)
+                            Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
 
-                    continue;
-                }
-                string data = Encoding.UTF8.GetString(receive);
-                if (data == "heart")
-                {
-                    var beat = Encoding.UTF8.GetBytes("beat");
-                    _server.Send(beat, beat.Length, new IPEndPoint(_ipEP.Address, _ipEP.Port));
+                        return;
+                    }
+                    if (!ports.Contains(port))
+                        ports.Add(port);
+                    string data = Encoding.UTF8.GetString(receive);
+                    if (data == "heart")
+                    {
+                        var beat = Encoding.UTF8.GetBytes("beat");
+                        _server.Send(beat, beat.Length, new IPEndPoint(IPAddress.Parse(address), port));
 
-                }
-                else if (data == "ismp")
-                {
-                    int value = (IsMultiplayerServer) ? 1 : 0;
-                    _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(_ipEP.Address, _ipEP.Port));
-                    if (IsMultiplayerServer)
-                        Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
-                    if (IsMultiplayerServer)
-                        Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
+                    }
+                    else if (data == "ismp")
+                    {
+                        int value = (IsMultiplayerServer) ? 1 : 0;
+                        _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(IPAddress.Parse(address), port));
+                        if (IsMultiplayerServer)
+                            Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
+                        if (IsMultiplayerServer)
+                            Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
 
-                }
-                else
-                {
-                    var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
-                    IPAddress test = null;
-                    if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
-                        header.IPForwardedBy = _ipEP.Address.ToString();
-                    if (IsMultiplayerServer)
-                        Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
+                    }
+                    else
+                    {
+                        var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
+                        IPAddress test = null;
+                        if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
+                            header.IPForwardedBy = address;
+                        if (IsMultiplayerServer)
+                            Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
 
-                    ServerManager.HandleMessage(header);
-                }
+                        ServerManager.HandleMessage(header, port);
+                    }
+                });
             }
 
         }
@@ -634,7 +733,7 @@ Now generating defenses...
     /// </summary>
     public static class ServerManager
     {
-        internal static void HandleMessage(PlexServerHeader header)
+        internal static void HandleMessage(PlexServerHeader header, int port)
         {
             foreach (var type in ReflectMan.Types)
             {
@@ -659,11 +758,11 @@ Now generating defenses...
                                     IPForwardedBy = header.IPForwardedBy,
                                     Message = "login_required",
                                     Content = ""
-                                });
+                                }, port);
                                 return;
                             }
                         }
-                        method.Invoke(null, new[] { header.SessionID, header.Content, header.IPForwardedBy });
+                        method.Invoke(null, new object[] { header.SessionID, header.Content, header.IPForwardedBy, port });
                         return;
                     }
                 }

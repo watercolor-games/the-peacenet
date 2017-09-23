@@ -57,7 +57,7 @@ namespace Plex.Frontend.Apps
                     gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     var nnColor = Color.LightGreen;
 
-                    if (msg.Author == SaveSystem.CurrentSave.Username)
+                    if (msg.Author == SaveSystem.GetUsername())
                         nnColor = Color.Red;
                     else
                     {
@@ -87,7 +87,7 @@ namespace Plex.Frontend.Apps
 
                     gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
                     var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
-                    if (msg.Message.Contains(SaveSystem.CurrentSave.Username))
+                    if (msg.Message.Contains(SaveSystem.GetUsername()))
                         mcolor = Color.Orange;
                     gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft, (Width - vertSeparatorLeft - 4) - messagesFromRight);
                 }
@@ -107,7 +107,7 @@ namespace Plex.Frontend.Apps
                         var measure = GraphicsContext.MeasureString(user.Nickname, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
 
                         var nnColor = Color.LightGreen;
-                        if (user.Nickname == SaveSystem.CurrentSave.Username)
+                        if (user.Nickname == SaveSystem.GetUsername())
                             nnColor = Color.Red;
                         else
                         {
@@ -203,7 +203,7 @@ namespace Plex.Frontend.Apps
 
         public void SendMessage()
         {
-            SendClientMessage(SaveSystem.CurrentSave.Username, _input.Text);
+            SendClientMessage(SaveSystem.GetUsername(), _input.Text);
             _input.Text = "";
 
             //Let's try the AI stuff... :P
@@ -330,17 +330,17 @@ namespace Plex.Frontend.Apps
                 Thread.Sleep(250);
                 SendClientMessage("*", "Capabilities acknowledged: account-notify extended-join identify-msg multi-prefix");
                 Thread.Sleep(500);
-                SendClientMessage("*", $"Welcome to the {net.FriendlyName} {SaveSystem.CurrentSave.Username}");
+                SendClientMessage("*", $"Welcome to the {net.FriendlyName} {SaveSystem.GetUsername()}");
                 NetworkConnected = true;
                 Thread.Sleep(250);
-                SendClientMessage("*", $"{SaveSystem.CurrentSave.Username} sets mode +i on {SaveSystem.CurrentSave.Username}");
+                SendClientMessage("*", $"{SaveSystem.GetUsername()} sets mode +i on {SaveSystem.GetUsername()}");
                 Thread.Sleep(300);
                 SendClientMessage("Plex", "Joining #" + net.Channel.Tag);
                 Thread.Sleep(100);
                 ChannelConnected = true;
                 SendClientMessage("Plex", $"{net.Channel.Topic}: {net.Channel.OnlineUsers.Count} users online");
                 Thread.Sleep(10);
-                SendClientMessage("ChanServ", "ChanServ sets mode -v on " + SaveSystem.CurrentSave.Username);
+                SendClientMessage("ChanServ", "ChanServ sets mode -v on " + SaveSystem.GetUsername());
             });
             t.Start();
         }

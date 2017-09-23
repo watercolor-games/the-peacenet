@@ -18,14 +18,6 @@ using static Whoa.Whoa;
 
 namespace Plex.Engine
 {
-    [Obsolete("Use the servers.conf file instead.")]
-    public class EngineConfig
-    {
-        public bool ConnectToMud = true;
-        public string MudDefaultIP = "dome.rol.im";
-        public int MudDefaultPort = 13370;
-    }
-
     /// <summary>
     /// Management class for the Plex save system.
     /// </summary>
@@ -46,12 +38,6 @@ namespace Plex.Engine
         /// Occurs before the save system connects to the Plex Digital Society.
         /// </summary>
         public static event Action PreDigitalSocietyConnection;
-
-        /// <summary>
-        /// Gets or sets the current server-side save file.
-        /// </summary>
-        public static Save CurrentSave { get; set; }
-
 
         /// <summary>
         /// Start the entire Plex engine.
@@ -121,80 +107,100 @@ namespace Plex.Engine
             thread.Start();
         }
 
-        [ClientMessageHandler("save_data")]
-        public static void MPSaveData(string content, string ip)
+        [ClientMessageHandler("acct_username"), AsyncExecution]
+        public static void UsernameResult(string content, string ip)
         {
-            CurrentSave = JsonConvert.DeserializeObject<Save>(content);
+            username_result = content;
         }
+
+        private static string username_result = null;
+
+        public static string GetUsername()
+        {
+            username_result = null;
+            ServerManager.SendMessage("acct_getusername", "");
+            while (username_result == null)
+                Thread.Sleep(10);
+            return username_result;
+        }
+
+        [ClientMessageHandler("moneymate_cash"), AsyncExecution]
+        public static void CashResult(string content, string ip)
+        {
+            cash_result = Convert.ToInt64(content);
+        }
+
+        private static long? cash_result = null;
+
+        private static ulong? xp_result = null;
+        
+        [ClientMessageHandler("acct_xp"), AsyncExecution]
+        public static void XPResult(string content, string ip)
+        {
+            xp_result = Convert.ToUInt64(content);
+        }
+
+        public static ulong GetExperience()
+        {
+            xp_result = null;
+            ServerManager.SendMessage("acct_getxp", "");
+            while (xp_result == null)
+                Thread.Sleep(10);
+            return (ulong)xp_result;
+        }
+
+        public static long GetCash()
+        {
+            cash_result = null;
+            ServerManager.SendMessage("moneymate_getcash", "");
+            while (cash_result == null)
+                Thread.Sleep(10);
+            return (long)cash_result;
+        }
+
+        public static void CompleteStory(string id)
+        {
+            ServerManager.SendMessage("sp_completestory", id);
+        }
+
+        public static void AddExperience(ulong value)
+        {
+            ServerManager.SendMessage("sp_addexperience", value.ToString());
+        }
+
+        [ClientMessageHandler("acct_sysname"), AsyncExecution]
+        public static void SysnameResult(string content, string ip)
+        {
+            sysname_result = content;
+        }
+
+        public static void SetStoryPickup(string id)
+        {
+            ServerManager.SendMessage("sp_setpickup", id);
+        }
+
+        private static string sysname_result = null;
+
+        public static string GetSystemName()
+        {
+            sysname_result = null;
+            ServerManager.SendMessage("acct_getsysname", "");
+            while (sysname_result == null)
+                Thread.Sleep(10);
+            return sysname_result;
+        }
+
 
         /// <summary>
         /// Finish bootstrapping the engine.
         /// </summary>
         private static void FinishBootstrap()
         {
-            ReadSave();
-
-            while (CurrentSave == null)
-            {
-                Thread.Sleep(10);
-            }
-
             Upgrades.Init();
-
-            if (!IsSandbox)
-            {
-                while (CurrentSave.StoryPosition < 1)
-                {
-                    Thread.Sleep(10);
-                }
-            }
-
             Thread.Sleep(75);
 
             Thread.Sleep(50);
             Console.WriteLine("{MISC_ACCEPTINGLOGINS}");
-
-            Sysname:
-            bool waitingForNewSysName = false;
-            bool gobacktosysname = false;
-
-            if (string.IsNullOrWhiteSpace(CurrentSave.SystemName))
-            {
-                Infobox.PromptText("{TITLE_ENTERSYSNAME}", "{PROMPT_ENTERSYSNAME}", (name) =>
-                {
-                    if (string.IsNullOrWhiteSpace(name))
-                        Infobox.Show("{TITLE_INVALIDNAME}", "{PROMPT_INVALIDNAME}.", () =>
-                        {
-                            gobacktosysname = true;
-                            waitingForNewSysName = false;
-                        });
-                    else if (name.Length < 5)
-                        Infobox.Show("{TITLE_VALUESMALL}", "{PROMPT_SMALLSYSNAME}", () =>
-                        {
-                            gobacktosysname = true;
-                            waitingForNewSysName = false;
-                        });
-                    else
-                    {
-                        CurrentSave.SystemName = name;
-                        SaveSystem.SaveGame();
-                        gobacktosysname = false;
-                        waitingForNewSysName = false;
-                    }
-                });
-
-
-            }
-
-            while (waitingForNewSysName)
-            {
-                Thread.Sleep(10);
-            }
-
-            if (gobacktosysname)
-            {
-                goto Sysname;
-            }
 
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
@@ -203,18 +209,6 @@ namespace Plex.Engine
 
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
-
-            if (!string.IsNullOrWhiteSpace(CurrentSave.PickupPoint))
-            {
-                try
-                {
-                    if (Story.Context == null)
-                    {
-                        Story.Start(CurrentSave.PickupPoint);
-                    }
-                }
-                catch { }
-            }
         }
 
         /// <summary>
@@ -228,184 +222,12 @@ namespace Plex.Engine
         public static event EmptyEventHandler GameReady;
 
         /// <summary>
-        /// Deducts a set amount of Experience from the save file... and sends them to a place where they'll never be seen again.
-        /// </summary>
-        /// <param name="amount">The amount of Experience to deduct.</param>
-        public static void TransferExperienceToVoid(ulong amount)
-        {
-            CurrentSave.Experience -= amount;
-            NotificationDaemon.AddNotification(NotificationType.ExperienceSent, amount);
-        }
-
-        /// <summary>
         /// Restarts the game.
         /// </summary>
         public static void Restart()
         {
             TerminalBackend.InvokeCommand("sos.shutdown");
             System.Windows.Forms.Application.Restart();
-        }
-
-        public static readonly byte[] rst5 = Encoding.UTF8.GetBytes("p13x");
-
-        /// <summary>
-        /// Requests the save file from the server. If authentication fails, this will cause the user to be prompted for their website login and a new save will be created if none is associated with the login.
-        /// </summary>
-        public static void ReadSave()
-        {
-            if (IsSandbox == false)
-            {
-                string path;
-
-                path = Path.Combine(Paths.SaveDirectory, "autosave.save");
-
-                if (System.IO.File.Exists(path))
-                {
-                    using (var fobj = System.IO.File.OpenRead(path))
-                    {
-                        var magic = new byte[4];
-                        var reader = new BinaryReader(fobj);
-                        magic = reader.ReadBytes(4);
-                        if (magic.SequenceEqual(rst5))
-                        {
-                            var checksum = reader.ReadBytes(64);
-                            int savelength = reader.ReadInt32();
-                            var savebytes = reader.ReadBytes(savelength);
-                            if (!checksum.SequenceEqual(new System.Security.Cryptography.SHA512Managed().ComputeHash(savebytes)))
-                            {
-                                Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read due to a checksum mismatch.", () =>
-                                {
-                                    NewSave();
-                                });
-                                return;
-                            }
-                            using (var memory = new System.IO.MemoryStream())
-                            {
-                                memory.Write(savebytes, 0, savelength);
-                                memory.Position = 0;
-                                try
-                                {
-                                    CurrentSave = DeserialiseObject<Save>(memory);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Infobox.Show("Unreadable save file", "Your save file " + path + " could not be read." + Environment.NewLine + ex.ToString());
-                                }
-                            }
-                        }
-                        else
-                        {
-                            TryFallbackReader(path);
-                        }
-                    }
-                }
-                else
-                    NewSave();
-            }
-            else
-            {
-                ServerManager.SendMessage("save_read", "");
-            }
-
-        }
-
-        public static void TryFallbackReader(string path)
-        {
-            Infobox.PromptYesNo("Unreadable save file", "Your save file is from an older version of Plex and can't be read. We can fall back to the old reader to convert your save, but this will break older versions. Would you like to continue?", (yes) =>
-                            {
-                                if (yes)
-                                {
-                                    try
-                                    {
-                                        using (var newreader = System.IO.File.OpenRead(path))
-                                        {
-                                            var reader = new BinaryReader(newreader);
-                                            var bytes = new byte[newreader.Length];
-                                            reader.Read(bytes, 0, bytes.Length);
-                                            var save = Encoding.ASCII.GetString(bytes);
-                                            CurrentSave = JsonConvert.DeserializeObject<Save>(save);
-                                            SaveGame();
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        Infobox.Show("Unsalvagable save file", "This save file was unsalvagable using the fallback JSON reader. Creating a new save...", () =>
-                                        {
-                                            NewSave();
-                                        });
-                                    }
-                                }
-                                else
-                                {
-                                    NewSave();
-                                }
-                            });
-        }
-
-
-        /// <summary>
-        /// Creates a new save, starting the Out Of Box Experience (OOBE).
-        /// </summary>
-        public static void NewSave()
-        {
-            AppearanceManager.Invoke(new Action(() =>
-            {
-                CurrentSave = new Save();
-                CurrentSave.Experience = 0;
-                CurrentSave.Upgrades = new Dictionary<string, bool>();
-                Upgrades.Init();
-                oobe.Start(CurrentSave);
-            }));
-        }
-
-        /// <summary>
-        /// Saves the game to the server, updating website stats if possible.
-        /// </summary>
-        public static void SaveGame()
-        {
-            if (!IsSandbox)
-            {
-#if !NOSAVE
-                if (SaveSystem.CurrentSave != null)
-                {
-                    if (!System.IO.Directory.Exists(Paths.SaveDirectory))
-                        System.IO.Directory.CreateDirectory(Paths.SaveDirectory);
-
-                    using (var fobj = System.IO.File.OpenWrite(Path.Combine(Paths.SaveDirectory, "autosave.save")))
-                    {
-                        var writer = new BinaryWriter(fobj);
-                        writer.Write(rst5);
-                        byte[] data;
-                        using (var memory = new MemoryStream())
-                        {
-                            SerialiseObject(memory, CurrentSave);
-                            data = memory.ToArray();
-                        }
-                        writer.Write(new System.Security.Cryptography.SHA512Managed().ComputeHash(data));
-						writer.Write(data.Length);
-						writer.Write(data);
-                        writer.Close();
-                    }
-                    SkinEngine.SaveSkin();
-                }
-#endif
-            }
-            else
-            {
-                ServerManager.SendMessage("save_write", JsonConvert.SerializeObject(CurrentSave));
-            }
-            System.IO.File.WriteAllText(Paths.SaveFile, Utils.ExportMount(0));
-        }
-
-        /// <summary>
-        /// Transfers Experience from an arbitrary character to the save file.
-        /// </summary>
-        /// <param name="who">The character name</param>
-        /// <param name="amount">The amount of Experience.</param>
-        public static void TransferExperienceFrom(string who, ulong amount)
-        {
-            NotificationDaemon.AddNotification(NotificationType.ExperienceReceived, amount);
-            CurrentSave.Experience += amount;
         }
     }
 
@@ -414,12 +236,4 @@ namespace Plex.Engine
     /// </summary>
     /// <param name="text">The text inputted by the user (including prompt text).</param>
     public delegate void TextSentEventHandler(string text);
-
-    /// <summary>
-    /// Denotes that this Terminal command or namespace is for developers.
-    /// </summary>
-    public class DeveloperAttribute : Attribute
-    {
-
-    }
 }

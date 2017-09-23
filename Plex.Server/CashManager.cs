@@ -12,7 +12,7 @@ namespace Plex.Server
     {
         [ServerMessageHandler("cash_deduct")]
         [SessionRequired]
-        public static void CashDeduct(string session, string content, string ip)
+        public static void CashDeduct(string session, string content, string ip, int port)
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var save = Program.GetSaveFromPrl(sessiondata.SaveID);
@@ -67,7 +67,7 @@ namespace Plex.Server
                 Content = result.ToString(),
                 IPForwardedBy = ip,
                 SessionID = session
-            });
+            }, port);
         }
     }
 }

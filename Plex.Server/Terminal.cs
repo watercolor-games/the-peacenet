@@ -104,7 +104,7 @@ namespace Plex.Server
 
         [ServerMessageHandler("trm_invoke")]
         [SessionRequired]
-        public static void InvokeCMD(string session_id, string content, string ip)
+        public static void InvokeCMD(string session_id, string content, string ip, int port)
         {
             var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
             var memwriter = new MemoryTextWriter();
@@ -127,7 +127,7 @@ namespace Plex.Server
                 }),
                 IPForwardedBy = ip,
                 SessionID = session_id
-            });
+            }, port);
         }
     }
 }

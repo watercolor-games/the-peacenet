@@ -118,9 +118,11 @@ namespace Plex.Engine
         {
             if(CashManager.Deduct((long)cost, "upgrademgr") == true)
             {
-                if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(id))
-                    SaveSystem.CurrentSave.Upgrades.Add(id, false);
-                SaveSystem.CurrentSave.Upgrades[id] = true;
+                ServerManager.SendMessage("upgrades_set", JsonConvert.SerializeObject(new
+                {
+                    id = id,
+                    value = true
+                }));
                 Installed?.Invoke();
                 return true;
             }
@@ -345,21 +347,6 @@ namespace Plex.Engine
                 IsInitiated = true;
                 //Let the crash handler deal with this one...
                 CreateUpgradeDatabase();
-                var dict = upgDb;
-                foreach (var itm in dict)
-                {
-                    if (!SaveSystem.CurrentSave.Upgrades.ContainsKey(itm.ID))
-                    {
-                        try
-                        {
-                            SaveSystem.CurrentSave.Upgrades.Add(itm.ID, false);
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                }
             }
 
         }
@@ -510,48 +497,72 @@ namespace Plex.Engine
             return (bool)upgrade_loaded_state;
         }
 
+        private static string upgrade_load_result = null;
+
+        [ClientMessageHandler("upgrades_loadresult"), AsyncExecution]
+        public static void UpgradeLoadResult(string content, string ip)
+        {
+            switch (content)
+            {
+                case "loaded":
+                    upgrade_load_result = "loaded";
+                    break;
+                case "uncaught_error":
+                    upgrade_load_result = "An unknown error was detected while trying to load this upgrade. Please try again.";
+                    break;
+                case "already_loaded":
+                    upgrade_load_result = "This upgrade has already been loaded.";
+                    break;
+                case "no_slots":
+                    upgrade_load_result = "You do not have enough upgrade slots to load this upgrade.";
+                    break;
+                case "missing_upgrade":
+                    upgrade_load_result = "You don't own this upgrade.";
+                    break;
+            }
+        }
+
+        private static string upgrade_unload_result = null;
+
+        [ClientMessageHandler("upgrades_unloadresult"), AsyncExecution]
+        public static void UpgradeUnloadResult(string content, string ip)
+        {
+            switch (content)
+            {
+                case "unloaded":
+                    upgrade_unload_result = "unloaded";
+                    break;
+                case "uncaught_error":
+                    upgrade_unload_result = "An unknown error was detected while trying to unload this upgrade. Please try again.";
+                    break;
+                case "already_unloaded":
+                    upgrade_unload_result = "You haven't loaded this upgrade. Unloading it is not necessary.";
+                    break;
+                case "missing_upgrade":
+                    upgrade_unload_result = "You don't own this upgrade.";
+                    break;
+            }
+        }
+
+
         public static void LoadUpgrade(string upgradeid)
         {
-            if (IsLoaded(upgradeid))
-                throw new UpgradeException(upgradeid, "This upgrade has already been loaded.");
-            else
-            {
-                var upgradedata = upgDb.FirstOrDefault(x => x.ID == upgradeid);
-                if(!string.IsNullOrWhiteSpace(upgradedata.Dependencies))
-                {
-                    if (!IsLoaded(upgradedata.Dependencies))
-                        throw new UpgradeException(upgradeid, "This upgrade is missing some dependencies which must be loaded before you can use it.");
-                }
-
-                if (SaveSystem.CurrentSave.LoadedUpgrades.Count < SaveSystem.CurrentSave.MaxLoadedUpgrades)
-                {
-                    SaveSystem.CurrentSave.LoadedUpgrades.Add(upgradeid);
-                    InvokeUpgradeInstalled();
-                }
-                else
-                    throw new UpgradeException(upgradeid, "The maximum number of upgrades has already been loaded.");
-            }
+            upgrade_load_result = null;
+            ServerManager.SendMessage("upgrades_load", upgradeid);
+            while (upgrade_load_result == null)
+                Thread.Sleep(10);
+            if (upgrade_load_result != "loaded")
+                throw new UpgradeException(upgradeid, upgrade_load_result);
         }
 
         public static void UnloadUpgrade(string upgradeid)
         {
-            if (!IsLoaded(upgradeid))
-                throw new UpgradeException(upgradeid, "This upgrade has not been loaded.");
-            else
-            {
-                var upgrades = upgDb.Where(x => x.Dependencies?.Contains(upgradeid) == true);
-                if(upgrades.Count() > 0)
-                {
-                    foreach(var upg in upgrades)
-                    {
-                        if (IsLoaded(upg.ID))
-                            throw new UpgradeException(upgradeid, "An attempt was made to unload an upgrade which has children that are loaded.");
-                    }
-                }
-
-                SaveSystem.CurrentSave.LoadedUpgrades.Remove(upgradeid);
-                InvokeUpgradeInstalled();
-            }
+            upgrade_unload_result = null;
+            ServerManager.SendMessage("upgrades_unload", upgradeid);
+            while (upgrade_unload_result == null)
+                Thread.Sleep(10);
+            if (upgrade_unload_result != "loaded")
+                throw new UpgradeException(upgradeid, upgrade_unload_result);
         }
 
 

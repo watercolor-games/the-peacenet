@@ -49,7 +49,6 @@ namespace Plex.Frontend.Apps
             SaveSystem.GameReady += () =>
             {
                 Console.WriteLine("[sessionmgr] Starting system UI...");
-                AppearanceManager.SetupWindow(new SystemStatus());
                 TerminalBackend.PrintPrompt();
             };
         }
@@ -320,23 +319,21 @@ namespace Plex.Frontend.Apps
             }
             else if (a.Key == Keys.Left)
             {
-                if (SaveSystem.CurrentSave != null)
+                var getstring = Lines[Lines.Length - 1];
+                var stringlen = getstring.Length + 1;
+                var header = TerminalBackend.ShellOverride;
+                var headerlen = header.Length + 1;
+                var selstart = Index;
+                var remstrlen = Text.Length - stringlen;
+                var finalnum = selstart - remstrlen;
+                if (!PerformTerminalBehaviours)
+                    headerlen = 0;
+                if (finalnum > headerlen)
                 {
-                    var getstring = Lines[Lines.Length - 1];
-                    var stringlen = getstring.Length + 1;
-                    var header = TerminalBackend.ShellOverride;
-                    var headerlen = header.Length + 1;
-                    var selstart = Index;
-                    var remstrlen = Text.Length - stringlen;
-                    var finalnum = selstart - remstrlen;
-                    if (!PerformTerminalBehaviours)
-                        headerlen = 0;
-                    if (finalnum > headerlen)
-                    {
-                        AppearanceManager.CurrentPosition--;
-                        base.OnKeyEvent(a);
-                    }
+                    AppearanceManager.CurrentPosition--;
+                    base.OnKeyEvent(a);
                 }
+
             }
             else if (a.Key == Keys.Up && PerformTerminalBehaviours)
             {
