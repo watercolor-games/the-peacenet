@@ -19,7 +19,13 @@ namespace Plex.Engine
     public static class TerminalBackend
     {
         private static string _shellOverrideString = "";
-
+        public static string RawShellOverride
+        {
+            get
+            {
+                return _shellOverrideString;
+            }
+        }
         
         /// <summary>
         /// Gets the current shell prompt override string.
@@ -143,104 +149,6 @@ namespace Plex.Engine
             return JsonConvert.SerializeObject(args);
         }
 
-        public class TerminalCommand
-        {
-            public virtual bool MatchShell()
-            {
-                if (ShellMatch != "metacmd")
-                {
-                    return (ShellMatch == _shellOverrideString);
-                }
-                return true;
-            }
-
-            public bool AllowInMP { get; set; }
-            public string ShellMatch { get; set; }
-
-            public override int GetHashCode()
-            {
-                int hash = 0;
-                foreach (char c in ToString())
-                {
-                    hash += (int)c;
-                }
-                return hash;
-            }
-
-            public Command CommandInfo { get; set; }
-
-            public List<string> RequiredArguments { get; set; }
-            public string Dependencies { get; set; }
-
-            public MethodInfo CommandHandler;
-
-            public Type CommandType;
-
-            public override string ToString()
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append(this.CommandInfo.name);
-                if (this.RequiredArguments.Count > 0)
-                {
-                    sb.Append(" ");
-                    foreach (var arg in RequiredArguments)
-                    {
-                        sb.Append("--" + arg);
-                        sb.Append(" ");
-                        if (RequiredArguments.IndexOf(arg) < RequiredArguments.Count - 1)
-                            sb.Append(',');
-                    }
-                    sb.Append("}");
-                }
-                sb.Append("|");
-                sb.Append(CommandHandler.Name + "()");
-                return sb.ToString();
-            }
-
-            public bool RequiresElevation { get; set; }
-
-            public virtual void Invoke(Dictionary<string, object> args)
-            {
-                if(AllowInMP == false && SaveSystem.IsSandbox == true)
-                {
-                    Console.WriteLine("You can't run this command right now.");
-                    return;
-                }
-
-                List<string> errors = new List<string>();
-                if (ShellMatch != "metacmd")
-                {
-                    if (ShellMatch != TerminalBackend._shellOverrideString)
-                    {
-                        errors.Add("Command not found.");
-                    }
-                }
-                
-                if (errors.Count > 0)
-                {
-                    foreach (var error in errors)
-                    {
-                        Console.WriteLine(error);
-                    }
-                    return;
-                }
-                try
-                {
-                    CommandHandler.Invoke(null, new[] { args });
-
-                }
-                catch (System.Reflection.TargetParameterCountException)
-                {
-                    CommandHandler.Invoke(null, null);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                CommandFinished?.Invoke(Localization.Parse(this.CommandInfo.name), args);
-            }
-        }
-
         [MetaCommand]
         [Command("exit")]
         public static void Exit()
@@ -258,13 +166,13 @@ namespace Plex.Engine
         {
             public Type PlexWindow { get; set; }
 
-            public override bool MatchShell()
+            public override bool MatchShell(string shell)
             {
-                return (_shellOverrideString == "");
+                return (shell == "");
             }
 
 
-            public override void Invoke(Dictionary<string, object> args)
+            public override void Invoke(Dictionary<string, object> args, string shell)
             {
                 AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(PlexWindow, null));
             }
@@ -292,7 +200,7 @@ namespace Plex.Engine
                         var rupg = type.GetCustomAttributes().FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
                         if (rupg != null)
                             winc.Dependencies = rupg.Upgrade;
-                        winc.CommandInfo = new Engine.Command(winopenattrib.ID, "", "Opens the \"" + winopenattrib.ID + " program.");
+                        winc.CommandInfo = new Command(winopenattrib.ID, "", "Opens the \"" + winopenattrib.ID + " program.");
                         winc.RequiredArguments = new List<string>();
                         winc.RequiresElevation = false;
                         winc.PlexWindow = type;
@@ -307,7 +215,7 @@ namespace Plex.Engine
                 foreach (var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
                 {
                     
-                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x is Command);
+                    var cmd = mth.GetCustomAttributes(false).FirstOrDefault(x => x.GetType() ==  typeof(Command)); //If we don't do it this shitty way, the game picks up server commands.
                     if (cmd != null)
                     {
                         var tc = new TerminalCommand();
@@ -496,7 +404,7 @@ namespace Plex.Engine
                     return true;
                 try
                 {
-                    cmd.Invoke(args);
+                    cmd.Invoke(args, _shellOverrideString);
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -571,40 +479,4 @@ namespace Plex.Engine
 
     }
 
-    /// <summary>
-    /// Marks this command so that it can be run in ANY shell.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class MetaCommandAttribute : Attribute
-    {
-
-    }
-
-    /// <summary>
-    /// Declares this Terminal command as client-side.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class ClientsideAttribute : Attribute
-    {
-
-    }
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class ShellConstraintAttribute : Attribute
-    {
-        /// <summary>
-        /// Instructs the terminal command interpreter to disallow running of this command unless the user shell override matches up with the value provided here.
-        /// </summary>
-        /// <param name="shell">The required shell string. Null or whitespace to match with the default Plex shell.</param>
-        public ShellConstraintAttribute(string shell)
-        {
-            Shell = shell;
-        }
-
-
-        /// <summary>
-        /// Gets the required shell string for the command.
-        /// </summary>
-        public string Shell { get; private set; }
-    }
 }

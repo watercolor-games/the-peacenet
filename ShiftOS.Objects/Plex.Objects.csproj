@@ -72,6 +72,7 @@
     <Compile Include="ServerDetails.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftoriumUpgrade.cs" />
+    <Compile Include="TerminalCommand.cs" />
     <Compile Include="Upgrades.cs" />
     <Compile Include="UserConfig.cs" />
     <Compile Include="World.cs" />

@@ -303,7 +303,7 @@ Now generating defenses...
             }
         }
 
-        [ServerCommand("worldinfo")]
+        [ServerCommand("worldinfo", "Displays world information.")]
         public static void WorldInfo()
         {
             Console.WriteLine("World info");
@@ -510,7 +510,7 @@ Now generating defenses...
                 }
                 Console.WriteLine("{0} IP addresses have been banned.", BannedIPs.Count);
                 Console.WriteLine("Starting server shell. Type 'help' for a list of commands.");
-                //Terminal.Populate();
+                Terminal.Populate();
                 var parser = CommandParser.GenerateSample();
                 while (true)
                 {
@@ -537,7 +537,7 @@ Now generating defenses...
                         Dictionary<string, object> cargs = new Dictionary<string, object>();
                         foreach (var arg in parsed.Value)
                             cargs.Add(arg.Key, arg.Value);
-                        if (!Terminal.RunClient(parsed.Key, cargs))
+                        if (!Terminal.RunClient(parsed.Key, cargs, "server"))
                         {
                             Console.WriteLine("Command not found.");
                         }
@@ -547,7 +547,7 @@ Now generating defenses...
 
         }
 
-        [ServerCommand("banip")]
+        [ServerCommand("banip", "Ban an IP address from this server.")]
         [RequiresArgument("id")]
         public static void BanIP(Dictionary<string, object> args)
         {

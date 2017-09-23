@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Plex.Objects;
 
 namespace Plex.Server
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class ServerCommand : Attribute
+    public class ServerCommand : Command
     {
-        public ServerCommand(string name)
+        public ServerCommand(string name, string desc) : base(name, "", desc)
         {
-            Name = name;
         }
-
-        public string Name { get; private set; }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]

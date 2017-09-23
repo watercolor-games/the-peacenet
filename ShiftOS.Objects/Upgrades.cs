@@ -6,6 +6,36 @@ using System.Threading.Tasks;
 
 namespace Plex.Objects
 {
+
+    /// <summary>
+    /// Marks this command so that it can be run in ANY shell.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class MetaCommandAttribute : Attribute
+    {
+
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ShellConstraintAttribute : Attribute
+    {
+        /// <summary>
+        /// Instructs the terminal command interpreter to disallow running of this command unless the user shell override matches up with the value provided here.
+        /// </summary>
+        /// <param name="shell">The required shell string. Null or whitespace to match with the default Plex shell.</param>
+        public ShellConstraintAttribute(string shell)
+        {
+            Shell = shell;
+        }
+
+
+        /// <summary>
+        /// Gets the required shell string for the command.
+        /// </summary>
+        public string Shell { get; private set; }
+    }
+
+
     public class ShiftoriumConflictException : Exception
     {
         public ShiftoriumConflictException() : base("An upgrade conflict has occurred while loading Shiftorium Upgrades from an assembly. Is there a duplicate upgrade ID?")
