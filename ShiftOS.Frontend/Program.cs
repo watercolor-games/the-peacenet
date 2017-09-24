@@ -60,6 +60,7 @@ namespace Plex.Frontend
                     UIManager.AddTopLevel(_status);
                     Server.Program.LoadRanks();
                     Server.Program.LoadWorld();
+                    Server.Terminal.Populate();
                     Engine.Desktop.InvokeOnWorkerThread(() =>
                     {
                         WorldLoadCompleted?.Invoke();

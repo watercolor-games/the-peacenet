@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="CashManager.cs" />
     <Compile Include="Hacking.cs" />
+    <Compile Include="HackingCommands.cs" />
     <Compile Include="PasswordHasher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +98,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ranks.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HardcodedPorts_temp.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

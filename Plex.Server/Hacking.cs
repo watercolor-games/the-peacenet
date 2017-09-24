@@ -62,6 +62,18 @@ namespace Plex.Server
             }
         }
 
+        public static IEnumerable<Port> GetPorts(SystemType systemType)
+        {
+            var ports = JsonConvert.DeserializeObject<Port[]>(Properties.Resources.HardcodedPorts_temp);
+            foreach (var port in ports)
+                yield return port;
+        }
+
+        public static HackSession GrabSession(string _sessionID)
+        {
+            return _hsessions.FirstOrDefault(x => x.SessionID == _sessionID);
+        }
+
         [SessionRequired]
         [ServerMessageHandler("hack_puzzlehint")]
         public static void PuzzleHint(string session_id, string content, string ip, int port)

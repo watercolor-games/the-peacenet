@@ -13,6 +13,8 @@ namespace Plex.Server
     {
         private static string _shelloverride = "";
 
+        public static string SessionID { get; private set; }
+
         public static void SetShellOverride(string value)
         {
             _shelloverride = value;
@@ -74,6 +76,7 @@ namespace Plex.Server
 
         public static bool RunClient(string text, Dictionary<string, object> args, string session_id)
         {
+            SessionID = session_id;
             var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
             if (cmd == null)
                 return false;
@@ -106,16 +109,14 @@ namespace Plex.Server
         [SessionRequired]
         public static void InvokeCMD(string session_id, string content, string ip, int port)
         {
+            var outstream = Console.Out;
             var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
             var memwriter = new MemoryTextWriter();
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
-            bool result = RunClient(data["cmd"].ToString(), data["args"] as Dictionary<string, object>, session_id);
+            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"].ToString())), session_id);
             SetShellOverride("");
-            var str = Console.OpenStandardOutput();
-            var writer = new System.IO.StreamWriter(str);
-            writer.AutoFlush = true;
-            Console.SetOut(writer);
+            Console.SetOut(outstream);
 
             Program.SendMessage(new Objects.PlexServerHeader
             {

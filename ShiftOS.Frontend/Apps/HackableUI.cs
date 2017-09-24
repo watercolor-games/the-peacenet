@@ -74,131 +74,6 @@ namespace Plex.Frontend.Apps
 
         private static bool _sessionStarted = false;
 
-        private static string current_puzzle_id = "";
-        [Command("setpuzzle")]
-        [ShellConstraint("> ")]
-        [RequiresArgument("id")]
-        public static void SetPuzzle(Dictionary<string, object> args)
-        {
-            string id = args["id"].ToString();
-            if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.ID == id) != null)
-            {
-                Console.WriteLine("Current puzzle has been switched. The 'hint', 'solve' and 'unsetpuzzle' commands will act on {0} now.", id);
-                current_puzzle_id = id;
-            }
-            else
-            {
-                Console.WriteLine("Puzzle ID not found. Type 'lsports' for the next puzzle, if any.");
-            }
-        }
-
-        [ClientMessageHandler("hack_puzzlesolved")]
-        public static void PuzzleSolved(string content, string ip)
-        {
-            Console.WriteLine("This puzzle has already been solved.");
-            TerminalBackend.InStory = false;
-            TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.PrintPrompt();
-
-        }
-
-        [ClientMessageHandler("hack_puzzleresult")]
-        public static void PuzzleResult(string content, string ip)
-        {
-            if(content == "0")
-            {
-                Console.WriteLine("{0}: Incorrect answer.", current_puzzle_id);
-                Console.WriteLine("You can type 'hint' if you need a hint.");
-            }
-            else
-            {
-                Console.WriteLine("{0}: Solved! Puzzle unselected.", current_puzzle_id);
-                Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.ID == current_puzzle_id).Completed = true;
-                if(Hacking.CurrentHackable.Puzzles.FirstOrDefault(x=>x.Completed == false) == null)
-                {
-                    Console.WriteLine(" -> All puzzles solved! You can now use 'lsports' and bypass the system firewall. Good work. <-");
-                }
-            }
-            TerminalBackend.InStory = false;
-            TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.PrintPrompt();
-        }
-
-        [Command("solve")]
-        [RequiresArgument("id")]
-        [ShellConstraint("> ")]
-        public static void Solve(Dictionary<string, object> args)
-        {
-            if (!string.IsNullOrWhiteSpace(current_puzzle_id))
-            {
-                string id = args["id"].ToString();
-                TerminalBackend.PrefixEnabled = false;
-                TerminalBackend.InStory = true;
-                ServerManager.SendMessage("hack_solvepuzzle", JsonConvert.SerializeObject(new
-                {
-                    hackable = $"{Hacking.CurrentHackable.NetName}.{Hacking.CurrentHackable.SystemDescriptor.SystemName}",
-                    puzzle = current_puzzle_id,
-                    value = id
-                }));
-                return;
-            }
-            Console.WriteLine("No puzzle selected. Use 'setpuzzle <puzzleid>' to select a puzzle.");
-        }
-
-        [ClientMessageHandler("hack_hintmsg")]
-        public static void PuzzleHint(string message, string ip)
-        {
-            Console.WriteLine(message);
-            TerminalBackend.InStory = false;
-            TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.PrintPrompt();
-        }
-
-        [Command("hint")]
-        [ShellConstraint("> ")]
-        public static void Hint()
-        {
-            if (!string.IsNullOrWhiteSpace(current_puzzle_id))
-            {
-                TerminalBackend.PrefixEnabled = false;
-                TerminalBackend.InStory = true;
-                ServerManager.SendMessage("hack_puzzlehint", JsonConvert.SerializeObject(new
-                {
-                    hackable = $"{Hacking.CurrentHackable.NetName}.{Hacking.CurrentHackable.SystemDescriptor.SystemName}",
-                    puzzle = current_puzzle_id
-                }));
-                return;
-            }
-            Console.WriteLine("No puzzle selected. Use 'setpuzzle <puzzleid>' to select a puzzle.");
-        }
-
-
-        [Command("lsports")]
-        [ShellConstraint("> ")]
-        public static void ListAvailablePorts()
-        {
-            if (Hacking.CurrentHackable.HasFirewall)
-            {
-                Console.WriteLine("Firewall detected. Attempting to bypass...");
-                if (Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.Completed == false) != null)
-                {
-                    Console.WriteLine("Access denied by {0}.", Hacking.CurrentHackable.Puzzles.FirstOrDefault(x => x.Completed == false).ID);
-                    return;
-                }
-                else
-                {
-                    Console.WriteLine("Access granted.");
-                }
-            }
-            Console.WriteLine("Port #: Name");
-            Console.WriteLine("=====================");
-            Console.WriteLine();
-            foreach (var port in Hacking.GetPorts(Hacking.CurrentHackable))
-            {
-                Console.WriteLine($"{port.Value}: {port.FriendlyName}");
-            }
-        }
-
         [ClientMessageHandler("hack_started")]
         public static void HackStarted(string content, string ip)
         {
@@ -225,7 +100,6 @@ namespace Plex.Frontend.Apps
                 Console.WriteLine("Data received.");
                 Console.WriteLine("Rank: {0}", _hackable.SystemDescriptor.Rank);
                 Console.WriteLine("");
-                Hacking.BeginHack(_hackable);
                 Console.WriteLine("Starting command shell...");
                 Thread.Sleep(750);
                 Console.WriteLine("Type 'help' for a list of commands.");
