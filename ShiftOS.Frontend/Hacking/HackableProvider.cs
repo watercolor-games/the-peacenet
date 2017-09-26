@@ -57,11 +57,6 @@ namespace Plex.Frontend
             return JsonConvert.DeserializeObject<Payload[]>(Properties.Resources.Payloads);
         }
 
-        public Port[] GetPorts()
-        {
-            return JsonConvert.DeserializeObject<Port[]>(Properties.Resources.Ports);
-        }
-
         public byte[] GetLootFromResource(string resId)
         {
             return new byte[] { 0xDE, 0xAD, 0xBE, 0xEF }; //nyi

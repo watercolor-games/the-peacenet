@@ -50,6 +50,7 @@
     <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\ColorDialog.cs" />
     <Compile Include="Apps\Community.cs" />
+    <Compile Include="Apps\Disclaimer.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\FontDialog.cs" />
     <Compile Include="Apps\GraphicPicker.cs" />

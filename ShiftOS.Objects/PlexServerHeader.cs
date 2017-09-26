@@ -23,6 +23,7 @@ namespace Plex.Objects
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public bool IsNPC = false;
     }
 
     public class SessionInfo

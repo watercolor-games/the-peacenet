@@ -10,6 +10,50 @@ namespace Plex.Server
 {
     public static class CashManager
     {
+        [ServerCommand("sendcash", "Send a specified amount of cash to another user.")]
+        [RequiresArgument("id")]
+        [RequiresArgument("cash")]
+        public static void SendCash(Dictionary<string, object> args)
+        {
+            string sys = args["id"].ToString();
+            long cash = Convert.ToInt64(args["cash"].ToString());
+            var you = SessionManager.GrabAccount(Terminal.SessionID);
+            if(you == null)
+            {
+                Console.WriteLine("Error: No usersession detected. Command possibly ran through server console.");
+                return;
+            }
+            var yousys = Program.GetSaveFromPrl(you.SaveID);
+            if(yousys.SystemDescriptor.Cash < cash)
+            {
+                Console.WriteLine("Error: Not enough cash.");
+                return;
+            }
+            var target = Program.GetSaveFromPrl(sys);
+            if(target == null)
+            {
+                Console.WriteLine("Error: Target system not found!");
+                return;
+            }
+            yousys.SystemDescriptor.Cash -= cash;
+            target.SystemDescriptor.Cash += cash;
+            var transaction = new CashTransaction
+            {
+                Amount = cash,
+                Date = DateTime.Now.ToString(),
+                From = you.SaveID,
+                To = sys
+            };
+            if (target.SystemDescriptor.Transactions == null)
+                target.SystemDescriptor.Transactions = new List<CashTransaction>();
+            if (yousys.SystemDescriptor.Transactions == null)
+                yousys.SystemDescriptor.Transactions = new List<CashTransaction>();
+            target.SystemDescriptor.Transactions.Add(transaction);
+            yousys.SystemDescriptor.Transactions.Add(transaction);
+            Console.WriteLine("${0}: {1} -> {2}", ((double)transaction.Amount) / 100, transaction.From, transaction.To);
+        }
+
+
         [ServerMessageHandler("cash_deduct")]
         [SessionRequired]
         public static void CashDeduct(string session, string content, string ip, int port)

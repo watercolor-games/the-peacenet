@@ -105,30 +105,114 @@ namespace Plex.Server
             return true;
         }
 
+        [ServerCommand("echo", "Prints the desired text on-screen.")]
+        [RequiresArgument("id")]
+        public static void Echo(Dictionary<string, object> args)
+        {
+            Console.WriteLine(args["id"].ToString());
+        }
+
+        public static RequestInfo SessionInfo { get; private set; }
+
+        [ServerCommand("exit", "Disconnects you from the remote system.")]
+        public static void ExitSyschange()
+        {
+            if(SessionInfo == null)
+            {
+                Console.WriteLine("Usersession required.");
+                return;
+            }
+
+            Console.WriteLine("Disconnecting from remote system...");
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = "",
+                IPForwardedBy = SessionInfo.IPAddress,
+                Message = "trm_esyschange",
+                SessionID = SessionInfo.SessionID
+            }, SessionInfo.Port);
+        }
+
         [ServerMessageHandler("trm_invoke")]
         [SessionRequired]
         public static void InvokeCMD(string session_id, string content, string ip, int port)
         {
+            Program.LogDispatches = false;
+            SessionInfo = new RequestInfo
+            {
+                IPAddress = ip,
+                Port = port,
+                SessionID = session_id
+            };
             var outstream = Console.Out;
             var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-            var memwriter = new MemoryTextWriter();
+            var memwriter = new RemoteTextWriter(ip, port, session_id); //We use this to forward all console writes to the client that ran this command.
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
-            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"].ToString())), session_id);
+            string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
+            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
             SetShellOverride("");
             Console.SetOut(outstream);
-
-            Program.SendMessage(new Objects.PlexServerHeader
+            Program.LogDispatches = true;
+            Program.SendMessage(new PlexServerHeader
             {
-                Message = "trm_result",
-                Content = JsonConvert.SerializeObject(new
-                {
-                    result = result,
-                    message = memwriter.ToString()
-                }),
+                Content = "",
                 IPForwardedBy = ip,
+                Message = "trm_done",
                 SessionID = session_id
             }, port);
         }
+    }
+
+    public class RequestInfo
+    {
+        public string IPAddress { get; set; }
+        public int Port { get; set; }
+        public string SessionID { get; set; }
+    }
+
+    public class RemoteTextWriter : System.IO.TextWriter
+    {
+        public override Encoding Encoding
+        {
+            get
+            {
+                return Encoding.UTF8;
+            }
+        }
+
+        private string _ipaddress = "";
+        private int _port = 0;
+        private string _session = "";
+
+        public RemoteTextWriter(string ip, int port, string session)
+        {
+            _ipaddress = ip;
+            _port = port;
+            _session = session;
+        }
+
+        public override void Write(string value)
+        {
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = value,
+                IPForwardedBy = _ipaddress,
+                Message = "trm_write",
+                SessionID = _session
+            }, _port);
+        }
+
+        public override void WriteLine(string value)
+        {
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = value,
+                IPForwardedBy = _ipaddress,
+                Message = "trm_writeline",
+                SessionID = _session
+            }, _port);
+        }
+
     }
 }

@@ -149,16 +149,16 @@ namespace Plex.Frontend.GUI
                         }
                         foreach (var word in words)
                         {
-                            var measure = GraphicsContext.MeasureString(word + " ", font, Engine.GUI.TextAlignment.TopLeft);
-                            if(drawText)
-                                gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft);
-
-                            text_x += (int)measure.X;
-                            if (text_x > Width)
+                            var measure = GraphicsContext.MeasureString(word.Replace("\r", "").Replace("\n", "") + " ", font, Engine.GUI.TextAlignment.TopLeft);
+                            if (text_x + (int)measure.X > Width)
                             {
                                 text_x = 0;
                                 text_y += (int)measure.Y;
                             }
+                            if (drawText)
+                                gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft);
+                            text_x += (int)measure.X;
+
                             if (word.EndsWith("\r"))
                             {
                                 text_x = 0;

@@ -118,9 +118,11 @@ namespace Plex.Server
             var bytes = Encoding.UTF8.GetBytes(data);
             var _ipEP = new IPEndPoint(ip, port);
             _server.Send(bytes, bytes.Length, _ipEP);
-            if (IsMultiplayerServer)
+            if (IsMultiplayerServer && LogDispatches)
                 Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
         }
+
+        public static bool LogDispatches = true;
 
         public static void Broadcast(PlexServerHeader header)
         {

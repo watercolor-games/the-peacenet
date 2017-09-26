@@ -15,7 +15,7 @@ namespace Plex.Server
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class RequiresArgument : Attribute
     {
         public RequiresArgument(string name)

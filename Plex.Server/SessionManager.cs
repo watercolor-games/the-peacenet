@@ -6,12 +6,18 @@ using System.Threading.Tasks;
 using Plex.Objects;
 using System.IO;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Plex.Server
 {
     public static class SessionManager
     {
         private static readonly string sp_sessionkey = Guid.NewGuid().ToString();
+
+        public static List<ServerAccount> GetSessions()
+        {
+            return getAccts();
+        }
 
         [ServerMessageHandler("acct_getsysname")]
         [SessionRequired]
@@ -190,6 +196,101 @@ namespace Plex.Server
 
         }
 
+        [ServerCommand("connect", "Attempt to connect to a specific port on the current system.")]
+        [RequiresArgument("id")]
+        public static void ConnectToPort(Dictionary<string, object> args)
+        {
+            string sysid = args["id"].ToString();
+            bool listPorts = !sysid.Contains(":");
+            if (listPorts)
+            {
+                if (sysid.Contains("."))
+                {
+                    var sys = Program.GetSaveFromPrl(sysid);
+                    if (sys != null)
+                    {
+                        Console.WriteLine("Port #: Name");
+                        Console.WriteLine("=====================");
+                        Console.WriteLine();
+                        foreach (var port in Hacking.GetPorts(sys.SystemType))
+                        {
+                            Console.WriteLine($"{port.Value}: {port.FriendlyName}");
+                        }
+
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                if (sysid.Contains("."))
+                {
+                    int portstart = sysid.IndexOf(":");
+                    int len = sysid.Length - portstart;
+                    string sysaddress = sysid.Remove(portstart, len);
+                    int port = 0;
+                    if (int.TryParse(sysid.Remove(0, sysaddress.Length + 1), out port) == true)
+                    {
+                        var sys = Program.GetSaveFromPrl(sysaddress);
+                        if (sys != null)
+                        {
+                            Console.WriteLine("Connecting to {0}...", sysaddress);
+                            var portdata = Hacking.GetPorts(sys.SystemType).FirstOrDefault(x => x.Value == port);
+                            if (portdata == null)
+                            {
+                                Console.WriteLine("Connection refused. Port not open.");
+                                return;
+                            }
+                            if (sys.HasFirewall == true)
+                            {
+                                bool hasPuzzle = sys.Puzzles.FirstOrDefault(x => x.Completed == false) != null;
+                                if (hasPuzzle)
+                                {
+                                    Console.WriteLine("Port is open, but connection blocked by firewall.");
+                                    Console.WriteLine("Initiating firewall breach console...");
+                                    Thread.Sleep(750);
+                                    Console.WriteLine("Complete the puzzles provided by the firewall to continue connection.");
+                                    Console.WriteLine("When you have completed them all, the connection attempt will continue.");
+                                    Hacking.StartHack(Terminal.SessionInfo.SessionID, sysaddress, Terminal.SessionInfo.IPAddress, Terminal.SessionInfo.Port);
+                                    return;
+                                }
+                                Console.WriteLine("Firewall detected, but is offline.");
+                            }
+                            Console.WriteLine("Connection successful, but authentication isn't implemented.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid port value! Must be a valid integer.");
+                        return;
+                    }
+                }
+            }
+
+            Console.WriteLine("Error: Can't find the system on the address '{0}'. Remember that system address follow the 'subnet.device:port' syntax.\r\n\r\nYou can omit the :port if you want to see a list of ports.");
+        }
+
+        [ServerCommand("status", "Shows system status.")]
+        public static void Status()
+        {
+            if(Terminal.SessionInfo == null)
+            {
+                Console.WriteLine("Usersession required.");
+                return;
+            }
+
+            var session = SessionManager.GrabAccount(Terminal.SessionID);
+            var save = Program.GetSaveFromPrl(session.SaveID);
+            Console.WriteLine("System status");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine();
+            Console.WriteLine("Experience: {0}", save.SystemDescriptor.Experience);
+            Console.WriteLine("Rank: {0}", save.SystemDescriptor.Rank);
+            Console.WriteLine("Cash: ${0}", (double)save.SystemDescriptor.Cash / 100);
+
+        }
+
         public static ServerAccount GrabAccount(string session_key)
         {
             return getAccts().FirstOrDefault(x => x.SessionID == session_key);
@@ -198,8 +299,15 @@ namespace Plex.Server
         public static void SetSessionInfo(string session_key, ServerAccount acct)
         {
             var accts = getAccts();
-            int index = accts.IndexOf(accts.FirstOrDefault(x => x.SessionID == session_key));
-            accts[index] = acct;
+            try
+            {
+                int index = accts.IndexOf(accts.FirstOrDefault(x => x.SessionID == session_key));
+                accts[index] = acct;
+            }
+            catch
+            {
+                accts.Add(acct);
+            }
             setSessions(accts);
         }
 

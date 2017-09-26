@@ -347,6 +347,8 @@ namespace Plex.Engine
             return true;
         }
 
+        private static string _terminal_forward_session_id = "";
+
         /// <summary>
         /// Runs a command on the client.
         /// </summary>
@@ -364,17 +366,41 @@ namespace Plex.Engine
             return RunClient(text, args, isRemote);
         }
 
-        private static bool? trm_invoke_result = null;
-
-        [ClientMessageHandler("trm_result"), AsyncExecution]
-        public static void TerminalInvokeResult(string content, string ip)
+        [ClientMessageHandler("trm_write")]
+        public static void TRMWrite(string content, string ip)
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-            trm_invoke_result = (bool)dict["result"];
-            if (trm_invoke_result == true)
-                Console.WriteLine(dict["message"]);
+            if (AppearanceManager.ConsoleOut != null)
+                AppearanceManager.ConsoleOut.Write(content);
         }
 
+        [ClientMessageHandler("trm_writeline")]
+        public static void TRMWriteLine(string content, string ip)
+        {
+            if (AppearanceManager.ConsoleOut != null)
+                AppearanceManager.ConsoleOut.WriteLine(content);
+        }
+
+
+        [ClientMessageHandler("trm_done")]
+        public static void TerminalDone(string content, string ip)
+        {
+            InStory = false;
+            PrefixEnabled = true;
+            PrintPrompt();
+        }
+        
+        [ClientMessageHandler("trm_esyschange")]
+        public static void ExitSyschange(string content, string ip)
+        {
+            _terminal_forward_session_id = null;
+        }
+
+        [ClientMessageHandler("trm_syschange")]
+        public static void SysChange(string content, string ip)
+        {
+            _terminal_forward_session_id = content;
+        }
+        
         /// <summary>
         /// Runs a command on the client.
         /// </summary>
@@ -393,6 +419,8 @@ namespace Plex.Engine
             if (cmd == null)
                 value = false;
             else if (!Upgrades.UpgradeInstalled(cmd.Dependencies))
+                value = false;
+            if (!string.IsNullOrWhiteSpace(_terminal_forward_session_id))
                 value = false;
             if (value == true)
             {
@@ -422,16 +450,16 @@ namespace Plex.Engine
             {
                 if (isRemote == false)
                 {
-                    trm_invoke_result = null;
+                    InStory = true;
+                    PrefixEnabled = false;
                     ServerManager.SendMessage("trm_invoke", JsonConvert.SerializeObject(new
                     {
                         cmd = text,
                         args = args,
-                        shell = _shellOverrideString
+                        shell = _shellOverrideString,
+                        sessionfwd = _terminal_forward_session_id
                     }));
-                    while (trm_invoke_result == null)
-                        Thread.Sleep(10);
-                    return (bool)trm_invoke_result;
+                    return true;
                 }
             }
             return value;

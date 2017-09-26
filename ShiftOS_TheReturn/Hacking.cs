@@ -13,7 +13,6 @@ namespace Plex.Engine
         public static List<Objects.Hackable> Hackables = new List<Objects.Hackable>();
         private static List<Objects.Exploit> Exploits = new List<Objects.Exploit>();
         private static List<Objects.Payload> Payloads = new List<Objects.Payload>();
-        private static List<Objects.Port> Ports = new List<Objects.Port>();
         private static List<Objects.Loot> LootFiles = new List<Objects.Loot>();
 
         public static HackableSystem CurrentHackable { get; private set; } 
@@ -39,14 +38,6 @@ namespace Plex.Engine
             get
             {
                 return Payloads.Where(x => Upgrades.UpgradeInstalled(x.Dependencies) && !Upgrades.UpgradeInstalled(x.ID)).ToArray();
-            }
-        }
-
-        public static Objects.Port[] AvailablePorts
-        {
-            get
-            {
-                return Ports.ToArray();
             }
         }
 
@@ -97,12 +88,6 @@ namespace Plex.Engine
             return data;
         }
 
-        public static IEnumerable<Port> GetPorts(HackableSystem currentHackable)
-        {
-            foreach (var port in Ports.Where(x => x.AttachTo.HasFlag(currentHackable.SystemType)))
-                yield return port;
-        }
-
         public static void EndHack()
         {
             if (CurrentHackable == null)
@@ -127,7 +112,6 @@ namespace Plex.Engine
             {
                 var @interface = (IHackableProvider)Activator.CreateInstance(type, null);
                 Hackables.AddRange(@interface.GetHackables());
-                Ports.AddRange(@interface.GetPorts());
                 Payloads.AddRange(@interface.GetPayloads());
                 Exploits.AddRange(@interface.GetExploits());
                 LootFiles.AddRange(@interface.GetLoot());
@@ -136,9 +120,6 @@ namespace Plex.Engine
             var hackable = Hackables.FirstOrDefault(x => Hackables.Where(y => x.SystemName == y.SystemName).Count() > 1);
             if(hackable != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more hackables were found with the same hostname \"" + hackable.SystemName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
-            var ports = Ports.FirstOrDefault(x => Ports.Where(y => x.Name == y.Name).Count() > 1);
-            if (ports != null)
-                throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more ports were found with the same name \"" + ports.Name + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
             var payloads = Payloads.FirstOrDefault(x => Payloads.Where(y => x.PayloadName == y.PayloadName).Count() > 1);
             if (payloads != null)
                 throw new DataConflictException("Data conflict encountered while initiating the hacking engine. Two or more payloads were found with the same name \"" + payloads.PayloadName + "\". This is a direct violation of the Plex save system and Shiftorium backend.");
@@ -179,7 +160,6 @@ namespace Plex.Engine
         Objects.Hackable[] GetHackables();
         Objects.Exploit[] GetExploits();
         Objects.Payload[] GetPayloads();
-        Objects.Port[] GetPorts();
         Objects.Loot[] GetLoot();
         byte[] FindLootBytes(string lootid);
     }

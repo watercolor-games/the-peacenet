@@ -12,6 +12,52 @@ namespace Plex.Server
     {
         private static List<HackSession> _hsessions = new List<HackSession>();
 
+        [ServerCommand("test_syschange", "Debug: Send a test 'trm_syschange' message to the client.")]
+        [RequiresArgument("id")]
+        public static void TestSyschange(Dictionary<string, object> args)
+        {
+            if(Terminal.SessionInfo == null)
+            {
+                Console.WriteLine("Usersession required.");
+                return;
+            }
+            string _system = args["id"].ToString();
+            var session = SessionManager.GetSessions().FirstOrDefault(x => x.SaveID == _system);
+
+            if (session == null)
+            {
+                //obvi. NPC
+                var save = Program.GetSaveFromPrl(_system);
+                if (save != null)
+                {
+                    session = new ServerAccount
+                    {
+                        Expiry = DateTime.Now.AddDays(1),
+                        IsNPC = true,
+                        LastLogin = DateTime.Now,
+                        PasswordHash = "",
+                        PasswordSalt = null,
+                        SaveID = _system,
+                        SessionID = Guid.NewGuid().ToString(),
+                        Username = save.SystemDescriptor.Username
+                    };
+                    SessionManager.SetSessionInfo(session.SessionID, session);
+                }
+                else
+                {
+                    Console.WriteLine("System not found.");
+                    return;
+                }
+            }
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = session.SessionID,
+                IPForwardedBy = Terminal.SessionInfo.IPAddress,
+                Message = "trm_syschange",
+                SessionID = Terminal.SessionInfo.SessionID
+            }, Terminal.SessionInfo.Port);
+        }
+
         [SessionRequired]
         [ServerMessageHandler("hack_solvepuzzle")]
         public static void SolvePuzzle(string session_id, string content, string ip, int port)
@@ -62,9 +108,9 @@ namespace Plex.Server
             }
         }
 
-        public static IEnumerable<Port> GetPorts(SystemType systemType)
+        public static IEnumerable<PortAttribute> GetPorts(SystemType systemType)
         {
-            var ports = JsonConvert.DeserializeObject<Port[]>(Properties.Resources.HardcodedPorts_temp);
+            var ports = JsonConvert.DeserializeObject<PortAttribute[]>(Properties.Resources.HardcodedPorts_temp);
             foreach (var port in ports)
                 yield return port;
         }

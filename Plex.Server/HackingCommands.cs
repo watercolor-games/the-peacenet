@@ -9,40 +9,6 @@ namespace Plex.Server
 {
     public static class HackingCommands
     {
-        [ServerCommand("lsports", "Attempts to list all available ports on this system.")]
-        [ShellConstraint("> ")]
-        public static void ListAvailablePorts()
-        {
-            string _sessionID = Terminal.SessionID;
-            var hackable = Hacking.GrabSession(_sessionID);
-            if(hackable == null)
-            {
-                Console.WriteLine("Error: You are not in a hacking session.");
-                return;
-            }
-            var sys = Program.GetSaveFromPrl(hackable.HackableID);
-            if (sys.HasFirewall)
-            {
-                Console.WriteLine("Firewall detected. Attempting to bypass...");
-                if (hackable.Puzzles.FirstOrDefault(x => x.Data.Completed == false) != null)
-                {
-                    Console.WriteLine("Access denied by {0}.", hackable.Puzzles.FirstOrDefault(x => x.Data.Completed == false).Data.ID);
-                    return;
-                }
-                else
-                {
-                    Console.WriteLine("Access granted.");
-                }
-            }
-            Console.WriteLine("Port #: Name");
-            Console.WriteLine("=====================");
-            Console.WriteLine();
-            foreach (var port in Hacking.GetPorts(sys.SystemType))
-            {
-                Console.WriteLine($"{port.Value}: {port.FriendlyName}");
-            }
-        }
-
         [ServerCommand("solve", "Solve the current firewall puzzle if any.")]
         [RequiresArgument("id")]
         [ShellConstraint("> ")]
