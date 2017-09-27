@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -193,12 +194,25 @@ namespace Plex.Frontend.Desktop
             MaxHeight = 600;
             MinWidth = 100;
             MinHeight = 100;
+            this.MouseDown += () =>
+            {
+                var mstate = Mouse.GetState();
+                moving = (mstate.LeftButton == ButtonState.Pressed && mstate.Y >= Y && mstate.Y <= Y + LoadedSkin.TitlebarHeight && mstate.X >= X && mstate.X <= X + Width);
+                CaptureMouse = true;
+                dist_x = Mouse.GetState().X - X;
+                dist_y = Mouse.GetState().Y - Y;
+            };
+            MouseUp += () =>
+            {
+                moving = false;
+                CaptureMouse = false;
+            };
             Click += () =>
             {
                 var cbtnloc = LoadedSkin.CloseButtonFromSide;
                 var cbtnsize = LoadedSkin.CloseButtonSize;
                 var realcloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleLeftCornerWidth - LoadedSkin.TitleRightCornerWidth) - cbtnsize.Width,
+                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - cbtnsize.Width,
                         cbtnloc.Y
                     );
                 if(MouseX >= realcloc.X && MouseY >= realcloc.Y && MouseX <= realcloc.X + cbtnsize.Width && MouseY <= realcloc.Y + cbtnsize.Height)
@@ -208,35 +222,6 @@ namespace Plex.Frontend.Desktop
             };
             X = 720;
             Y = 480;
-            MouseMove += (pt) =>
-            {
-                if (moving)
-                {
-                    var screenpos = PointToScreen(MouseX, MouseY);
-                    if (_mouseXLast == int.MinValue)
-                        _mouseXLast = screenpos.X;
-                    if (_mouseYLast == int.MinValue)
-                        _mouseYLast = screenpos.Y;
-                    int diff_x = screenpos.X - _mouseXLast;
-                    
-                    int diff_y = screenpos.Y - _mouseYLast;
-                    if (diff_x != 0)
-                        X += diff_x;
-                    if (diff_y != 0)
-                    {
-                        Y += diff_y;
-                    }
-                    _mouseXLast = screenpos.X;
-                    _mouseYLast = screenpos.Y;
-                    Microsoft.Xna.Framework.Input.Mouse.SetPosition(MathHelper.Clamp(screenpos.X, X+5, X + (Width-10)), MathHelper.Clamp(screenpos.Y, Y+5, Y + (LoadedSkin.TitlebarHeight-10)));
-                }
-                else
-                {
-                    _mouseXLast = int.MinValue;
-                    _mouseYLast = int.MinValue;
-                }
-
-            };
         }
 
         private bool moving = false;
@@ -309,6 +294,13 @@ namespace Plex.Frontend.Desktop
             {
                 UIManager.BringToFront(this);
             }
+            var mstate = Mouse.GetState();
+            if (moving)
+            {
+                X = mstate.X - dist_x;
+                Y = mstate.Y - dist_y;
+            }
+
             int titlebarheight = LoadedSkin.TitlebarHeight;
             int borderleft = LoadedSkin.LeftBorderWidth;
             int borderright = LoadedSkin.RightBorderWidth;
@@ -407,36 +399,37 @@ namespace Plex.Frontend.Desktop
                 {
                     gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"], SkinEngine.GetImageLayout("closebutton"));
                 }
-
-                //Draw maximize button
-                closebuttonsize = LoadedSkin.MaximizeButtonSize;
-                closebuttonright = LoadedSkin.MaximizeButtonFromSide;
-                if (LoadedSkin.TitleButtonPosition == 0)
-                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-
-                if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
+                if (!IsDialog)
                 {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
-                }
-                else
-                {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
-                }
+                    //Draw maximize button
+                    closebuttonsize = LoadedSkin.MaximizeButtonSize;
+                    closebuttonright = LoadedSkin.MaximizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
 
-                //Draw minimize button
-                closebuttonsize = LoadedSkin.MinimizeButtonSize;
-                closebuttonright = LoadedSkin.MinimizeButtonFromSide;
-                if (LoadedSkin.TitleButtonPosition == 0)
-                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
-                {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
-                }
-                else
-                {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
-                }
+                    if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
+                    {
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
+                    }
+                    else
+                    {
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
+                    }
 
+                    //Draw minimize button
+                    closebuttonsize = LoadedSkin.MinimizeButtonSize;
+                    closebuttonright = LoadedSkin.MinimizeButtonFromSide;
+                    if (LoadedSkin.TitleButtonPosition == 0)
+                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
+                    if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
+                    {
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
+                    }
+                    else
+                    {
+                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
+                    }
+                }
 
 
                 //Some variables we'll need...
@@ -520,17 +513,11 @@ namespace Plex.Frontend.Desktop
             base.OnPaint(gfx, target);
         }
 
-        private int _mouseXLast = int.MinValue;
-        private int _mouseYLast = int.MinValue;
+        int dist_x = 0;
+        int dist_y = 0;
 
         public override void MouseStateChanged()
         {
-            moving = (MouseLeftDown && MouseY >= 0 && MouseY <= LoadedSkin.TitlebarHeight && MouseX >= 0 && MouseX <= Width);
-            if(moving == false)
-            {
-                _mouseXLast = int.MinValue;
-                _mouseYLast = int.MinValue;
-            }
             base.MouseStateChanged();
         }
     }

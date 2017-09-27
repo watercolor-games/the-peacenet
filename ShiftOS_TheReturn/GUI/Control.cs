@@ -584,6 +584,13 @@ namespace Plex.Frontend.GUI
                         break;
                 }
             }
+            if (CaptureMouse)
+            {
+                var mstate = Mouse.GetState();
+                var coords = PointToScreen(0, 0); //get the screen coordinates of this control.
+                if (coords.X >= mstate.X || coords.Y >= mstate.Y || coords.X + Width < mstate.X || coords.Y + Height < mstate.Y)
+                    Mouse.SetPosition(MathHelper.Clamp(mstate.X, coords.X+1, coords.X + Width-2), MathHelper.Clamp(mstate.Y+1, coords.Y, coords.Y + Height-2));
+            }
             OnLayout(gameTime);
             foreach (var child in _children)
                 if(child.Visible)
@@ -755,16 +762,7 @@ namespace Plex.Frontend.GUI
                     }
                 }
             }
-            if (CaptureMouse == true)
-            {
-                _mouseX = coords.X;
-                _mouseY = coords.Y;
-                _wasMouseInControl = true;
-                int newX = MathHelper.Clamp(state.X, X, X + Width);
-                int newY = MathHelper.Clamp(state.Y, Y, Y + Height);
-                Mouse.SetPosition(newX, newY);
-                return true;
-            }
+            
 
             //Mouse is not in the local space, don't do anything.
             return false;
