@@ -672,50 +672,73 @@ Now generating defenses...
                     var thread = threads.Aggregate((curMin, x) => (curMin == null || (x.Count) < curMin.Count ? x : curMin));
                     thread.Queue(() =>
                     {
-                        if (BannedIPs.Contains(_ipEP.Address.ToString()))
+                        try
                         {
+                            if (BannedIPs.Contains(_ipEP.Address.ToString()))
+                            {
 
+                                SendMessage(new PlexServerHeader
+                                {
+                                    IPForwardedBy = _ipEP.Address.ToString(),
+                                    Message = "server_banned",
+                                    SessionID = "",
+                                    Content = ""
+                                }, port);
+                                if (IsMultiplayerServer)
+                                    Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
+
+                                return;
+                            }
+                            if (!ports.Contains(port))
+                                ports.Add(port);
+                            string data = Encoding.UTF8.GetString(receive);
+                            if (data == "heart")
+                            {
+                                var beat = Encoding.UTF8.GetBytes("beat");
+                                _server.Send(beat, beat.Length, new IPEndPoint(IPAddress.Parse(address), port));
+
+                            }
+                            else if (data == "ismp")
+                            {
+                                int value = (IsMultiplayerServer) ? 1 : 0;
+                                _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(IPAddress.Parse(address), port));
+                                if (IsMultiplayerServer)
+                                    Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
+                                if (IsMultiplayerServer)
+                                    Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
+
+                            }
+                            else
+                            {
+                                var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
+                                IPAddress test = null;
+                                if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
+                                    header.IPForwardedBy = address;
+                                if (IsMultiplayerServer)
+                                    Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
+
+                                ServerManager.HandleMessage(header, port);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
                             SendMessage(new PlexServerHeader
                             {
-                                IPForwardedBy = _ipEP.Address.ToString(),
-                                Message = "server_banned",
-                                SessionID = "",
-                                Content = ""
+                                Content = "",
+                                IPForwardedBy = address,
+                                Message = "server_error",
+                                SessionID = ""
                             }, port);
-                            if (IsMultiplayerServer)
-                                Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
-
-                            return;
-                        }
-                        if (!ports.Contains(port))
-                            ports.Add(port);
-                        string data = Encoding.UTF8.GetString(receive);
-                        if (data == "heart")
-                        {
-                            var beat = Encoding.UTF8.GetBytes("beat");
-                            _server.Send(beat, beat.Length, new IPEndPoint(IPAddress.Parse(address), port));
-
-                        }
-                        else if (data == "ismp")
-                        {
-                            int value = (IsMultiplayerServer) ? 1 : 0;
-                            _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(IPAddress.Parse(address), port));
-                            if (IsMultiplayerServer)
-                                Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
-                            if (IsMultiplayerServer)
-                                Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
-
-                        }
-                        else
-                        {
-                            var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
-                            IPAddress test = null;
-                            if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
-                                header.IPForwardedBy = address;
-                            if (IsMultiplayerServer)
-                                Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
-
-                            ServerManager.HandleMessage(header, port);
+                            Console.WriteLine("ERROR: {0}", ex);
+                            var inner = ex.InnerException;
+                            int innerIndent = 0;
+                            while (inner != null)
+                            {
+                                string innermsg = "Inner " + (innerIndent+1).ToString() +  ": " + inner.ToString();
+                                Console.WriteLine(innermsg);
+                                innerIndent++;
+                                inner = inner.InnerException;
+                            }
                         }
                     });
                 }
@@ -727,7 +750,15 @@ Now generating defenses...
 
             }
         }
+
+        [ServerCommand("crash", "Attempts to crash the server.")]
+        public static void Crash()
+        {
+            throw new Exception("NO YOU STUPID");
+        }
     }
+
+
 
     /// <summary>
     /// Digital Society connection management class.

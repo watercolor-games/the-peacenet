@@ -40,6 +40,13 @@ namespace Plex.Engine
     {
         public static SessionInfo SessionInfo { get; internal set; }
 
+        [ClientMessageHandler("server_error")]
+        public static void ErrorHandler(string content, string ip)
+        {
+            Disconnect(DisconnectType.Error, "The server has experienced an unexpected error with that request. You have been disconnected to prevent further errors.");
+        }
+
+
         [ClientMessageHandler("server_banned")]
         public static void BannedHandler(string content, string ip)
         {
