@@ -201,6 +201,13 @@ namespace Plex.Server
         public static void ConnectToPort(Dictionary<string, object> args)
         {
             string sysid = args["id"].ToString();
+            string user = "";
+            if (args.ContainsKey("u"))
+                user = args["u"].ToString();
+            string pass = "";
+            if (args.ContainsKey("p"))
+                pass = args["p"].ToString();
+
             bool listPorts = !sysid.Contains(":");
             if (listPorts)
             {
@@ -256,7 +263,17 @@ namespace Plex.Server
                                 }
                                 Console.WriteLine("Firewall detected, but is offline.");
                             }
-                            Console.WriteLine("Connection successful, but authentication isn't implemented.");
+                            string auth_token = "";
+                            if(AuthenticationManager.Authenticate(Terminal.SessionInfo.SessionID, Terminal.SessionInfo.IPAddress, Terminal.SessionInfo.Port, sysaddress, port, user, pass, out auth_token) == true)
+                            {
+                                Console.WriteLine("Connection successful.");
+                                Hacking.PortConnect(auth_token, port, Terminal.SessionInfo.SessionID, Terminal.SessionInfo.IPAddress, Terminal.SessionInfo.Port);
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("Access denied: authentication required");
+                            }
                             return;
                         }
                     }

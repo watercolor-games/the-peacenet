@@ -751,11 +751,7 @@ Now generating defenses...
             }
         }
 
-        [ServerCommand("crash", "Attempts to crash the server.")]
-        public static void Crash()
-        {
-            throw new Exception("NO YOU STUPID");
-        }
+        
     }
 
 

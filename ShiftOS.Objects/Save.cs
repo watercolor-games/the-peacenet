@@ -115,6 +115,23 @@ namespace Plex.Objects
         [Order]
         public bool UseRGB101Compatibility = true;
 
+        [Order]
+        public List<UsedCredential> UsedCredentials { get; set; }
+
+        [Order]
+        public string Password { get; set; }
+    }
+
+    public class UsedCredential
+    {
+        [Order]
+        public string Address { get; set; }
+        [Order]
+        public int Port { get; set; }
+        [Order]
+        public string Username { get; set; }
+        [Order]
+        public string Password { get; set; }
     }
 
     public class HackableSystem
