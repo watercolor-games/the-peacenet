@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
+using static System.Math;
 
 namespace Plex.Objects.PlexFS
 {
@@ -24,7 +26,7 @@ namespace Plex.Objects.PlexFS
     // files.
     public class PlexFAT
     {
-        public static class Helpers
+        private static class Helpers
         {
             public static BinaryReader MakeBR(Stream fobj)
             {
@@ -36,9 +38,9 @@ namespace Plex.Objects.PlexFS
             }
         }
         
-        private static const ushort FREE = 0; // unused space
-        private static const ushort RESERVED = 1; // the FAT
-        private static const ushort END = 2; // last sector of an entry
+        private const ushort FREE = 0; // unused space
+        private const ushort RESERVED = 1; // the FAT
+        private const ushort END = 2; // last sector of an entry
         
         private class LocalSubstream: Stream
         {
@@ -64,7 +66,7 @@ namespace Plex.Objects.PlexFS
                     this.possec = 0;
                     this.isecpos = 0;
                     vol.fobj.Position = lenpos;
-                    this.flen = read.ReadUInt32();
+                    this.flen = read.ReadInt32();
                     this.sectorMap = new List<ushort>();
                     ushort sec = firstSector;
                     while (sec != END)
@@ -137,47 +139,47 @@ namespace Plex.Objects.PlexFS
                 possec = DivRem((int) newpos, 8192, out isecpos);
                 return newpos;
             }
-            public override long SetLength(long value)
+            public override void SetLength(long value)
             {
                 if (flen == value)
                     return;
-                int origSectors = sectorMap.Length;
-                int newSectors = (value + 8191) / 8192;
+                int origSectors = sectorMap.Count;
+                int newSectors = (int)((value + 8191) / 8192);
                 if (flen < value)
                 {
                     int lostSectors = origSectors - newSectors;
-                    for (int i = sectorMap.Length - lostSectors; i < sectorMap.Length; i++)
+                    for (int i = sectorMap.Count - lostSectors; i < sectorMap.Count; i++)
                         vol.setFAT(sectorMap[i], FREE);
-                    sectorMap.RemoveRange(sectorMap.Length - lostSectors, lostSectors);
-                    vol.setFAT(sectorMap[sectorMap.Length - 1], END);
+                    sectorMap.RemoveRange(sectorMap.Count - lostSectors, lostSectors);
+                    vol.setFAT(sectorMap[sectorMap.Count - 1], END);
                 }
                 else
                 {
-                    int gainedSectors = newSdctros - origSectors;
+                    int gainedSectors = newSectors - origSectors;
                     for (int i = 0; i < gainedSectors; i++)
                     {
                         // yuck
-                        vol.setFAT(sectorMap[sectorMap.Length - 1], vol.getFreeSector());
-                        sectorMap.Add(vol.theFAT[sectorMap[sectorMap.Length - 1]]);
-                        vol.setFAT(sectorMap[sectorMap.Length - 1], END);
+                        vol.setFAT(sectorMap[sectorMap.Count - 1], vol.getFreeSector());
+                        sectorMap.Add(vol.theFAT[sectorMap[sectorMap.Count - 1]]);
+                        vol.setFAT(sectorMap[sectorMap.Count - 1], END);
                     }
                 }
                 flen = (int) value;
                 vol.fobj.Position = lenpos;
-                using (var write = Helpers.MakeBW(fobj))
+                using (var write = Helpers.MakeBW(vol.fobj))
                     write.Write(flen);
             }
         }
         
         public class Directory: IDirectory
         {
-            private Directory()
+            internal Directory()
             {
             }
             
-            private PlexFAT vol;
-            private Dictionary<string, Tuple<ushort, int>> entries;
-            private ushort firstSector;
+            internal PlexFAT vol;
+            internal Dictionary<string, Tuple<ushort, int>> entries;
+            internal ushort firstSector;
             
             public static Directory FromVol(PlexFAT vol)
             {
@@ -196,10 +198,10 @@ namespace Plex.Objects.PlexFS
                         for (fnameLength = 0; fnameLength < 250 && fnameRaw[fnameLength] != 0; fnameLength++)
                         {
                         }
-                        string fname = Encoding.UTF8.GetString(fnameRaw, fnameLength);
+                        string fname = Encoding.UTF8.GetString(fnameRaw, 0, fnameLength);
                         ushort firstSector = read.ReadUInt16();
                         if (fnameLength != 0)
-                            ret.entries.Add(fname, Tuple.Create(firstSector, (int) fobj.Position));
+                            ret.entries.Add(fname, Tuple.Create(ret.firstSector, (int) vol.fobj.Position));
                         vol.fobj.Position += 4; // don't read length here
                         i++;
                         if (i == 32) // 32 entries fit in one sector
@@ -216,7 +218,7 @@ namespace Plex.Objects.PlexFS
             
             private void addEntry(string fname, ushort firstSector, int flen)
             {
-                if (fname.IsNullOrEmpty || fname == "." || fname == ".." || fname.Contains((char) 0) || fname.Contains('/'))
+                if (String.IsNullOrEmpty(fname) || fname == "." || fname == ".." || fname.Contains(((char) 0).ToString()) || fname.Contains("/"))
                     throw new IOException("The entry name is invalid.");
                 if (entries.ContainsKey(fname))
                     throw new IOException("An entry with that name already exists.");
@@ -246,7 +248,7 @@ namespace Plex.Objects.PlexFS
                     }
                 }
                 vol.fobj.Position -= 1;
-                entries.Add(fname, Tuple.Create(firstSector, (int) fobj.Position));
+                entries.Add(fname, Tuple.Create(firstSector, (int) vol.fobj.Position));
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
                     write.Write(Encoding.UTF8.GetBytes(fname));
@@ -261,7 +263,7 @@ namespace Plex.Objects.PlexFS
                 return entries.ContainsKey(fname);
             }
             
-            public List<string> Contents { get { return entries.Keys(); } };
+            public IEnumerable<string> Contents { get { return entries.Keys; } }
             
             public void Delete(string fname)
             {
@@ -269,14 +271,14 @@ namespace Plex.Objects.PlexFS
                 vol.fobj.Position = entry.Item2;
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
-                    vol.fobj.Write(new byte[252]);
+                    write.Write(new byte[252]);
                     using (var read = Helpers.MakeBR(vol.fobj))
                         if (read.ReadInt32() < 0) // directory
                         {
                             vol.fobj.Position = entry.Item1 * 8192;
                             var subdir = Directory.FromVol(vol);
-                            foreach (string fname in subdir.Contents)
-                                subdir.Delete(fname);
+                            foreach (string sname in subdir.Contents)
+                                subdir.Delete(sname);
                         }
                     ushort sec = entry.Item1;
                     while (sec != END)
@@ -293,39 +295,41 @@ namespace Plex.Objects.PlexFS
                 if (oldName == newName)
                     return;
                 if (!entries.ContainsKey(oldName))
-                    throw new IOExceptiopn($"'{oldName}' does not exist.");
+                    throw new IOException($"'{oldName}' does not exist.");
                 if (entries.ContainsKey(newName))
                     Delete(newName);
                 vol.fobj.Position = entries[oldName].Item2;
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
-                    vol.fobj.Write(Encoding.UTF8.GetBytes(newName));
-                    vol.fobj.Write(new byte[250 - newName.Length]);
+                    write.Write(Encoding.UTF8.GetBytes(newName));
+                    write.Write(new byte[250 - newName.Length]);
                 }
             }
             
             public void Move(string fname, IDirectory destDir, string destName)
             {
-                if (destDir.ReferenceEquals(this))
+                if (!(destDir is Directory))
+                    throw new NotSupportedException("Directory.Move() cannot move from a local Directory to another implementation of IDirectory.");
+                if (ReferenceEquals(this, destDir))
                 {
                     Rename(fname, destName);
                     return;
                 }
-                if (!destDir.vol.ReferenceEquals(vol))
+                if (!ReferenceEquals(this.vol, (destDir as Directory).vol))
                     throw new NotSupportedException("Directory.Move() cannot move an entry across volumes.");
-                if (destDir.Exists(newName))
-                    destDir.Delete(newName);
-                vol.fobj.Position = entries[oldName].Item2;
+                if (destDir.Exists(destName))
+                    destDir.Delete(destName);
+                vol.fobj.Position = entries[fname].Item2;
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
                     write.Write(new byte[252]);
                     int flen;
                     using (var read = Helpers.MakeBR(vol.fobj))
                         flen = read.ReadInt32();
-                    destDir.addEntry(newName, firstSector, flen);
+                    (destDir as Directory).addEntry(destName, firstSector, flen);
                     if (flen < 0)
                     {
-                        vol.fobj.Position = entries[oldName].Item1 * 8192 + 250;
+                        vol.fobj.Position = entries[fname].Item1 * 8192 + 250;
                         write.Write(this.firstSector);
                     }
                 }
@@ -349,15 +353,17 @@ namespace Plex.Objects.PlexFS
                     ret.firstSector = vol.getFreeSector();
                     
                     // write parent directory
-                    vol.fobj.Position = ret.firstSector * 8192;
-                    write.Write(Encoding.UTF8.GetBytes(".."));
-                    write.Write(new byte[248]);
-                    write.Write(this.firstSector);
-                    write.Write(-1);
-                    
-                    // zero out the rest of the sector
                     using (var write = Helpers.MakeBW(vol.fobj))
+                    {
+                        vol.fobj.Position = ret.firstSector * 8192;
+                        write.Write(Encoding.UTF8.GetBytes(".."));
+                        write.Write(new byte[248]);
+                        write.Write(this.firstSector);
+                        write.Write(-1);
+                        
+                        // zero out the rest of the sector
                         write.Write(new byte[7936]);
+                    }
                     
                     vol.setFAT(ret.firstSector, END);
                     
@@ -377,7 +383,7 @@ namespace Plex.Objects.PlexFS
                 }
                 if (entries[fname].Item2 < 0)
                     throw new IOException($"'{fname}' is a directory.");
-                fobj.Position = this.firstSector * 8192;
+                vol.fobj.Position = this.firstSector * 8192;
                 
                 return new LocalSubstream(vol, entries[fname].Item1, entries[fname].Item2 + 252);
             }
@@ -390,7 +396,7 @@ namespace Plex.Objects.PlexFS
         private Stream fobj;
         private ushort[] theFAT;
         
-        public IDirectory root { get; private set; };
+        public IDirectory root { get; private set; }
         
         public static PlexFAT FromStream(Stream fobj)
         {
@@ -426,6 +432,13 @@ namespace Plex.Objects.PlexFS
                 // root directory FAT entry
                 write.Write(END);
                 ret.theFAT[16] = END;
+                
+                ret.root = new Directory()
+                {
+                    vol = ret,
+                    entries = new Dictionary<string, Tuple<ushort, int>>(),
+                    firstSector = 16
+                };
                 
                 // zero out rest of FAT and root dir
                 write.Write(new byte[139230]); 
