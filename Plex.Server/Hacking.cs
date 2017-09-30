@@ -12,52 +12,6 @@ namespace Plex.Server
     {
         private static List<HackSession> _hsessions = new List<HackSession>();
 
-        [ServerCommand("test_syschange", "Debug: Send a test 'trm_syschange' message to the client.")]
-        [RequiresArgument("id")]
-        public static void TestSyschange(Dictionary<string, object> args)
-        {
-            if(Terminal.SessionInfo == null)
-            {
-                Console.WriteLine("Usersession required.");
-                return;
-            }
-            string _system = args["id"].ToString();
-            var session = SessionManager.GetSessions().FirstOrDefault(x => x.SaveID == _system);
-
-            if (session == null)
-            {
-                //obvi. NPC
-                var save = Program.GetSaveFromPrl(_system);
-                if (save != null)
-                {
-                    session = new ServerAccount
-                    {
-                        Expiry = DateTime.Now.AddDays(1),
-                        IsNPC = true,
-                        LastLogin = DateTime.Now,
-                        PasswordHash = "",
-                        PasswordSalt = null,
-                        SaveID = _system,
-                        SessionID = Guid.NewGuid().ToString(),
-                        Username = save.SystemDescriptor.Username
-                    };
-                    SessionManager.SetSessionInfo(session.SessionID, session);
-                }
-                else
-                {
-                    Console.WriteLine("System not found.");
-                    return;
-                }
-            }
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = session.SessionID,
-                IPForwardedBy = Terminal.SessionInfo.IPAddress,
-                Message = "trm_syschange",
-                SessionID = Terminal.SessionInfo.SessionID
-            }, Terminal.SessionInfo.Port);
-        }
-
         [SessionRequired]
         [ServerMessageHandler("hack_solvepuzzle")]
         public static void SolvePuzzle(string session_id, string content, string ip, int port)
@@ -110,9 +64,16 @@ namespace Plex.Server
 
         public static IEnumerable<PortAttribute> GetPorts(SystemType systemType)
         {
-            var ports = JsonConvert.DeserializeObject<PortAttribute[]>(Properties.Resources.HardcodedPorts_temp);
-            foreach (var port in ports)
-                yield return port;
+            foreach (var type in ReflectMan.Types)
+            {
+                foreach (var method in type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is PortAttribute) != null))
+                {
+                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is PortAttribute) as PortAttribute;
+                    if(attr.AttachTo.HasFlag(systemType))
+                        yield return attr;
+                }
+            }
+
         }
 
         public static HackSession GrabSession(string _sessionID)
@@ -145,7 +106,7 @@ namespace Plex.Server
         public static void AbortHack(string session_id, string content, string ip, int port)
         {
             var hsession = _hsessions.FirstOrDefault(x => x.SessionID == session_id && x.HackableID == content);
-            if(hsession != null)
+            if (hsession != null)
             {
                 _hsessions.Remove(hsession);
             }
@@ -176,13 +137,13 @@ namespace Plex.Server
                     HackableID = content,
                     Puzzles = new List<IPuzzle>()
                 };
-                foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
+                foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
                 {
                     var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is PuzzleAttribute) as PuzzleAttribute;
-                    if(attrib != null)
+                    if (attrib != null)
                     {
                         var puzzle = system.Puzzles.FirstOrDefault(x => x.ID == attrib.ID && x.Rank == attrib.Rank);
-                        if(puzzle != null)
+                        if (puzzle != null)
                         {
                             IPuzzle p = (IPuzzle)Activator.CreateInstance(type, null);
                             p.Data = puzzle;
@@ -206,7 +167,7 @@ namespace Plex.Server
         public static void GetHackable(string session_id, string content, string ip, int port)
         {
             var system = Program.GetSaveFromPrl(content);
-            if(system != null)
+            if (system != null)
             {
                 system.NetName = content.Split('.')[0];
                 Program.SendMessage(new Objects.PlexServerHeader
@@ -217,6 +178,36 @@ namespace Plex.Server
                     SessionID = session_id
                 }, port);
             }
+        }
+
+        [Port("ssh", "Secure-ish shell", 22, SystemType.Computer | SystemType.Mobile)]
+        public static void SSHConnect(string auth, string session, string ip, int port)
+        {
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = auth,
+                IPForwardedBy = ip,
+                Message = "trm_syschange",
+                SessionID = session
+            }, port);
+        }
+
+
+        internal static void PortConnect(string auth_token, int port1, string sessionID, string iPAddress, int port2)
+        {
+            foreach(var type in ReflectMan.Types)
+            {
+                foreach(var method in type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Where(x=>x.GetCustomAttributes(false).FirstOrDefault(y=>y is PortAttribute) != null))
+                {
+                    var attr = method.GetCustomAttributes(false).FirstOrDefault(x => x is PortAttribute) as PortAttribute;
+                    if(attr.Value == port1)
+                    {
+                        method.Invoke(null, new object[] { auth_token, sessionID, iPAddress, port2 });
+                        return;
+                    }
+                }
+            }
+            throw new Exception("This port has no server-side connection method implemented.");
         }
     }
 }

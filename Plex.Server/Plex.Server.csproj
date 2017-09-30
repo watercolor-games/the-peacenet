@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationManager.cs" />
     <Compile Include="CashManager.cs" />
     <Compile Include="Hacking.cs" />
     <Compile Include="HackingCommands.cs" />
