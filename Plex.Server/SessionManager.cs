@@ -385,6 +385,31 @@ namespace Plex.Server
                     user.SessionID = sessionkey;
                 }
 
+                var usersys = Program.GetSaveFromPrl(user.SaveID);
+                if(usersys == null)
+                {
+                    if (string.IsNullOrWhiteSpace(user.SaveID))
+                    {
+                        var sn = Program.GetRandomSubnet();
+                        string sysname = Program.GenerateSystemName(sn);
+                        var sys = Program.GenerateSystem(0, SystemType.Computer, sysname);
+                        sys.IsNPC = false;
+                        sn.NPCs.Add(sys);
+                        user.SaveID = $"{sn.Name}.{sysname}";
+                        SetSessionInfo(user.SessionID, user);
+                        Program.SaveWorld();
+                    }
+                    else
+                    {
+                        string[] usplit = user.SaveID.Split('.');
+                        var sn = Program.GameWorld.Networks.FirstOrDefault(x => x.Name == usplit[0]);
+                        var sys = Program.GenerateSystem(0, SystemType.Computer, usplit[1]);
+                        sys.IsNPC = false;
+                        sn.NPCs.Add(sys);
+                        Program.SaveWorld();
+                    }
+                }
+
                 Program.SendMessage(new PlexServerHeader
                 {
                     IPForwardedBy = ip,

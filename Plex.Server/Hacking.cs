@@ -211,6 +211,11 @@ Password: """"");
             Console.WriteLine($@"Access granted.
 Username: ""{hackable.SystemDescriptor.Username}""
 Password: ""{hackable.SystemDescriptor.Password}""");
+            if(hackable.IsNPC == true)
+            {
+                hackable.IsPwn3d = true;
+                Program.SaveWorld();
+            }
         }
 
         [SessionRequired]

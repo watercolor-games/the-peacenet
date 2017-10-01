@@ -160,6 +160,8 @@ namespace Plex.Server
 
         public static void LoadWorld()
         {
+            if (Ranks == null)
+                LoadRanks();
             if (!File.Exists("world.whoa"))
             {
                 Console.WriteLine("<worldgen> No world detected on filesystem. Generating world...");
@@ -531,6 +533,7 @@ Now generating defenses...
             hackable.SystemDescriptor = save;
             hackable.IsPwn3d = false;
             hackable.SystemType = type;
+            hackable.Filesystems = new List<MountInformation>();
             Console.WriteLine("<worldgen> System type: {0}", type);
             return hackable;
         }

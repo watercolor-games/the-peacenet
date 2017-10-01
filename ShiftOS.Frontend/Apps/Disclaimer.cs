@@ -33,7 +33,7 @@ namespace Plex.Frontend.Apps
             };
             _viewRules.Click += () =>
             {
-                System.Diagnostics.Process.Start("https://getshiftos.net/node/16");
+                System.Diagnostics.Process.Start("http://forums.getshiftos.net/about");
             };
 
             _close.AutoSize = true;
