@@ -173,7 +173,7 @@ namespace Plex.Objects.PlexFS
             }
         }
         
-        public class Directory: IDirectory
+        public class Directory
         {
             internal Directory()
             {
@@ -310,16 +310,14 @@ namespace Plex.Objects.PlexFS
                 }
             }
             
-            public void Move(string fname, IDirectory destDir, string destName)
+            public void Move(string fname, Directory destDir, string destName)
             {
-                if (!(destDir is Directory))
-                    throw new NotSupportedException("Directory.Move() cannot move from a local Directory to another implementation of IDirectory.");
                 if (ReferenceEquals(this, destDir))
                 {
                     Rename(fname, destName);
                     return;
                 }
-                if (!ReferenceEquals(this.vol, (destDir as Directory).vol))
+                if (!ReferenceEquals(this.vol, destDir.vol))
                     throw new NotSupportedException("Directory.Move() cannot move an entry across volumes.");
                 if (destDir.Exists(destName))
                     destDir.Delete(destName);
@@ -330,7 +328,7 @@ namespace Plex.Objects.PlexFS
                     int flen;
                     using (var read = Helpers.MakeBR(vol.fobj))
                         flen = read.ReadInt32();
-                    (destDir as Directory).addEntry(destName, firstSector, flen);
+                    destDir.addEntry(destName, firstSector, flen);
                     if (flen < 0)
                     {
                         vol.fobj.Position = entries[fname].Item1 * 8192 + 250;
@@ -340,13 +338,15 @@ namespace Plex.Objects.PlexFS
                 this.entries.Remove(fname);
             }
             
-            public IDirectory GetSubdirectory(string dname)
+            public Directory GetSubdirectory(string dname)
             {
                 if (entries.ContainsKey(dname))
                 {
-                    if (entries[dname].Item2 >= 0)
-                        throw new IOException($"'{dname}' is a file.");
-                    vol.fobj.Position = entries[dname].Item1;
+                    vol.fobj.Position = entries[dname].Item2 + 252;
+                    using (var read = Helpers.MakeBR(vol.fobj))
+                        if (read.ReadInt32() >= 0)
+                            throw new IOException($"'{dname}' is a file.");
+                    vol.fobj.Position = entries[dname].Item1 * 8192;
                     return Directory.FromVol(vol);
                 }
                 else
@@ -388,11 +388,21 @@ namespace Plex.Objects.PlexFS
                         write.Write(new byte[8192]);
                     addEntry(fname, firstSector, 0);
                 }
-                if (entries[fname].Item2 < 0)
-                    throw new IOException($"'{fname}' is a directory.");
-                vol.fobj.Position = this.firstSector * 8192;
+                vol.fobj.Position = entries[fname].Item2 + 252;
+                using (var read = Helpers.MakeBR(vol.fobj))
+                    if (read.ReadInt32() < 0)
+                        throw new IOException($"'{fname}' is a directory.");
                 
                 return new LocalSubstream(vol, entries[fname].Item1, entries[fname].Item2 + 252);
+            }
+            
+            public EntryType TypeOf(string fname)
+            {
+                if (!entries.ContainsKey(fname))
+                    return EntryType.NONEXISTENT;
+                vol.fobj.Position = entries[fname].Item2 + 252;
+                using (var read = Helpers.MakeBR(vol.fobj))
+                    return read.ReadInt32() < 0 ? EntryType.DIRECTORY : EntryType.FILE;
             }
         }
         
@@ -403,7 +413,7 @@ namespace Plex.Objects.PlexFS
         private Stream fobj;
         private ushort[] theFAT;
         
-        public IDirectory root { get; private set; }
+        public Directory root { get; private set; }
         
         public static PlexFAT FromStream(Stream fobj)
         {
