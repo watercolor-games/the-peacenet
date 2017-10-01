@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Plex.Objects;
@@ -160,6 +161,56 @@ namespace Plex.Server
                 }, port);
                 _hsessions.Add(session);
             }
+        }
+
+        [ServerCommand("pbrute", "Attempt to brute-force a password.")]
+        [RequiresArgument("id")]
+        public static void PBrute(Dictionary<string, object> args)
+        {
+            string sys = args["id"].ToString();
+            
+            var hackable = Program.GetSaveFromPrl(sys);
+            if(hackable == null)
+            {
+                Console.WriteLine("Error: System not found.");
+                return;
+            }
+            if(hackable.HasFirewall && hackable.Puzzles.FirstOrDefault(x=>x.Completed == false) != null)
+            {
+                Console.WriteLine("Error: Access denied by firewall.");
+                return;
+            }
+            int passLength = hackable.SystemDescriptor.Password.Length;
+            Console.WriteLine("Trying empty password...");
+            if(passLength == 0)
+            {
+                Console.WriteLine($@"Access granted.
+Username: ""{hackable.SystemDescriptor.Username}""
+Password: """"");
+                return;
+            }
+            Console.WriteLine("Access denied. Hint: Password length is {0}", passLength);
+            if(passLength > 16)
+            {
+                Console.WriteLine("Error: PBrute cannot bruteforce a password of this length.");
+                return;
+            }
+            int failchance = (passLength * 10) / 8; //this will always be below 100 because we have a max length of 16. We legitimately can't bruteforce anything much longer without being WAY TOO OP.
+            var rnd = new Random();
+            for(int i = 0; i < passLength; i++)
+            {
+                Console.WriteLine("Attempting to brute-force char {0}", i + 1);
+                Thread.Sleep(750);
+                bool failed = rnd.Next(0, 100) < failchance;
+                if (failed)
+                {
+                    Console.WriteLine("Failure: Unexpected error. Please try again.");
+                    return;
+                }
+            }
+            Console.WriteLine($@"Access granted.
+Username: ""{hackable.SystemDescriptor.Username}""
+Password: ""{hackable.SystemDescriptor.Password}""");
         }
 
         [SessionRequired]

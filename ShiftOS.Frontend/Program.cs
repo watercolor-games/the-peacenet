@@ -63,22 +63,21 @@ namespace Plex.Frontend
                     Server.Program.LoadRanks();
                     Server.Program.LoadWorld();
                     Server.Terminal.Populate();
-                    Engine.Desktop.InvokeOnWorkerThread(() =>
-                    {
-                        WorldLoadCompleted?.Invoke();
-                    });
                     Plex.Server.Program.Main(null, false);
                 });
                 ServerThread.IsBackground = true;
                 ServerThread.Start();
             };
 
-            WorldLoadCompleted += () =>
+
+            Server.Program.ServerStarted += () =>
             {
-                _status.Text = "World loaded successfully.\r\n\r\nHere'we go.";
-                Thread.Sleep(2000);
                 UIManager.StopHandling(_status);
-                UIManager.ConnectToServer("localhost", 3252);
+                Engine.Desktop.InvokeOnWorkerThread(() =>
+                {
+                    Thread.Sleep(500);
+                    UIManager.ConnectToServer("localhost", 3252);
+                });
             };
 
             TerminalBackend.TerminalRequested += () =>

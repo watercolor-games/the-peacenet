@@ -462,6 +462,7 @@ namespace Plex.Engine
                     return true;
                 }
             }
+            CommandFinished?.Invoke(text, args);
             return value;
         }
 

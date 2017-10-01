@@ -117,9 +117,16 @@ namespace Plex.Server
             var data = JsonConvert.SerializeObject(header);
             var bytes = Encoding.UTF8.GetBytes(data);
             var _ipEP = new IPEndPoint(ip, port);
-            _server.Send(bytes, bytes.Length, _ipEP);
-            if (IsMultiplayerServer && LogDispatches)
-                Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
+            try
+            {
+                _server.Send(bytes, bytes.Length, _ipEP);
+                if (IsMultiplayerServer && LogDispatches)
+                    Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
+            }
+            catch
+            {
+
+            }
         }
 
         public static bool LogDispatches = true;
@@ -148,6 +155,8 @@ namespace Plex.Server
             IsMultiplayerServer = isMP;
             Main(args);
         }
+
+        public static event Action ServerStarted;
 
         public static void LoadWorld()
         {
@@ -830,6 +839,7 @@ Now generating defenses...
                 sock.Dispose();
                 Thread.CurrentThread.Abort();
             };
+            ServerStarted?.Invoke();
             try
             {
                 while (true)
