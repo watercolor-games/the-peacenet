@@ -71,6 +71,8 @@ namespace Plex.Objects.PlexFS
                     ushort sec = firstSector;
                     while (sec != END)
                     {
+                        if (sec == RESERVED)
+                            throw new InvalidOperationException("Reached a reserved block.");
                         this.sectorMap.Add(sec);
                         sec = vol.theFAT[sec];
                     }
@@ -193,6 +195,7 @@ namespace Plex.Objects.PlexFS
                     int i = 0;
                     while (true)
                     {
+                        int entpos = (int) vol.fobj.Position;
                         byte[] fnameRaw = read.ReadBytes(250);
                         int fnameLength;
                         for (fnameLength = 0; fnameLength < 250 && fnameRaw[fnameLength] != 0; fnameLength++)
@@ -201,7 +204,7 @@ namespace Plex.Objects.PlexFS
                         string fname = Encoding.UTF8.GetString(fnameRaw, 0, fnameLength);
                         ushort firstSector = read.ReadUInt16();
                         if (fnameLength != 0)
-                            ret.entries.Add(fname, Tuple.Create(ret.firstSector, (int) vol.fobj.Position));
+                            ret.entries.Add(fname, Tuple.Create(firstSector, entpos));
                         vol.fobj.Position += 4; // don't read length here
                         i++;
                         if (i == 32) // 32 entries fit in one sector
@@ -233,8 +236,9 @@ namespace Plex.Objects.PlexFS
                     {
                         if (vol.theFAT[curSector] == END)
                         {
-                            curSector = vol.theFAT[curSector] = vol.getFreeSector();
-                            vol.theFAT[curSector] = END;
+                            vol.setFAT(curSector, vol.getFreeSector());
+                            curSector = vol.theFAT[curSector];
+                            vol.setFAT(curSector, END);
                             vol.fobj.Position = curSector * 8192;
                             using (var write = Helpers.MakeBW(vol.fobj))
                                 write.Write(new byte[8192]);
@@ -379,6 +383,9 @@ namespace Plex.Objects.PlexFS
                 {
                     ushort firstSector = vol.getFreeSector();
                     vol.setFAT(firstSector, END);
+                    vol.fobj.Position = firstSector * 8192;
+                    using (var write = Helpers.MakeBW(vol.fobj))
+                        write.Write(new byte[8192]);
                     addEntry(fname, firstSector, 0);
                 }
                 if (entries[fname].Item2 < 0)
@@ -449,12 +456,9 @@ namespace Plex.Objects.PlexFS
         private void setFAT(ushort index, ushort val)
         {
             theFAT[index] = val;
-            fobj.Position = index;
+            fobj.Position = index * 2;
             using (var write = Helpers.MakeBW(fobj))
                 write.Write(val);
-            
-            // don't end up off a sector
-            fobj.Position += 8192 - index;
         }
         
         private ushort getFreeSector()
