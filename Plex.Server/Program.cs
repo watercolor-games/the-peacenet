@@ -795,6 +795,23 @@ Now generating defenses...
                 threads.Add(thread);
             }
 
+            Console.WriteLine("Validating npc/player filesystems...");
+            bool requireSave = false;
+            foreach (var net in GameWorld.Networks)
+            {
+                foreach(var npc in net.NPCs)
+                {
+                    if (npc.Filesystems == null)
+                    {
+                        npc.Filesystems = new List<MountInformation>();
+                        requireSave = true;
+                    }
+                }
+            }
+
+            if (requireSave)
+                SaveWorld();
+
             var worldThread = new ServerThread();
             Console.WriteLine("Starting world manager thread...");
             worldThread.Queue(WorldManager);

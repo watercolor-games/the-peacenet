@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine;
 using Plex.Frontend.GUI;
+using static Plex.Engine.FSUtils;
 
 namespace Plex.Frontend.Apps
 {
@@ -46,7 +47,7 @@ namespace Plex.Frontend.Apps
             {
                 FileSkimmerBackend.GetFile(new[] { ".txt" }, FileOpenerStyle.Open, (path) =>
                  {
-                     contentsLabel.Text = Objects.ShiftFS.Utils.ReadAllText(path);
+                     contentsLabel.Text = ReadAllText(path);
                  });
             };
             _menuBar.AddItem(o);
@@ -59,7 +60,7 @@ namespace Plex.Frontend.Apps
             {
                 FileSkimmerBackend.GetFile(new[] { ".txt" }, FileOpenerStyle.Save, (path) =>
                  {
-                     Objects.ShiftFS.Utils.WriteAllText(path, contentsLabel.Text);
+                     WriteAllText(path, contentsLabel.Text);
                  });
             };
             _menuBar.AddItem(s);
@@ -85,7 +86,7 @@ namespace Plex.Frontend.Apps
 
         public void OpenFile(string file)
         {
-            contentsLabel.Text = Objects.ShiftFS.Utils.ReadAllText(file);
+            contentsLabel.Text = ReadAllText(file);
             AppearanceManager.SetupWindow(this);
         }
 

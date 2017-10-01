@@ -163,6 +163,9 @@ namespace Plex.Objects
         [Order]
         public bool HasFirewall { get; set; }
 
+        [Order]
+        public List<MountInformation> Filesystems { get; set; }
+
     }
 
 
@@ -236,12 +239,25 @@ namespace Plex.Objects
         public int ThreatLevel { get; set; }
     }
 
-    public class PlexSystem
+    public class MountInformation
     {
-        public Save SystemDescriptor { get; set; }
-        public ShiftFS.Directory RootDirectory { get; set; }
-        public DateTime LastAccessed { get; set; }
+        [Order]
+        public int DriveNumber { get; set; }
 
-        public string SavePath { get; set; }
+        [Order]
+        public DriveSpec Specification { get; set; }
+
+        [Order]
+        public string VolumeLabel { get; set; }
+
+        [Order]
+        public string ImageFilePath { get; set; }
     }
+
+    public enum DriveSpec
+    {
+        ShiftFS,
+        PlexFAT
+    }
+    
 }

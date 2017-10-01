@@ -160,6 +160,7 @@
       <DependentUpon>CrashHandlerUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Desktop.cs" />
+    <Compile Include="FSUtils.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\BBCodeLabel.cs" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Plex.Engine;
 using Plex.Frontend.GUI;
 using Newtonsoft.Json;
-using static Plex.Objects.ShiftFS.Utils;
+using static Plex.Engine.FSUtils;
 using Microsoft.Xna.Framework;
 using Plex.Extras;
 

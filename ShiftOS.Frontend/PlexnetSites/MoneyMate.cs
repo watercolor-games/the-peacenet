@@ -10,6 +10,7 @@ using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GUI;
+using static Plex.Engine.FSUtils;
 
 namespace Plex.Frontend.PlexnetSites
 {
@@ -50,7 +51,7 @@ The MoneyMate Manager allows you to manage your account balance, transactions, a
                 var stp = Apps.Installer.Generate<Apps.MoneyMateManager>();
                 FileSkimmerBackend.GetFile(new[] { ".pst" }, FileOpenerStyle.Save, (path) =>
                  {
-                     Objects.ShiftFS.Utils.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(stp));
+                     WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(stp));
                  });
             };
         }

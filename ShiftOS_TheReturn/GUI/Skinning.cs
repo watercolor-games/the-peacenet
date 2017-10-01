@@ -15,50 +15,6 @@ using Plex.Objects;
 
 namespace Plex.Engine
 {
-    /// <summary>
-    /// Skinning API for Lua.
-    /// </summary>
-    [Exposed("skinning")]
-    public class SkinFunctions
-    {
-        /// <summary>
-        /// Reload the current skin.
-        /// </summary>
-        public void loadSkin()
-        {
-            SkinEngine.LoadSkin();
-        }
-
-        /// <summary>
-        /// Get the current skin info.
-        /// </summary>
-        /// <returns>A proxy object containing all skin variables.</returns>
-        public dynamic getSkin()
-        {
-            return SkinEngine.LoadedSkin;
-        }
-
-        /// <summary>
-        /// Set the current skin to the specified <see cref="Skin"/> class. 
-        /// </summary>
-        /// <param name="skn">The <see cref="Skin"/> class to load.</param>
-        public void setSkin(Skin skn)
-        {
-            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(skn));
-            SkinEngine.LoadSkin();
-        }
-
-        /// <summary>
-        /// Retrieves an image from the skin file.
-        /// </summary>
-        /// <param name="id">The skin image ID</param>
-        /// <returns>The loaded image, null (nil in Lua) if none is found.</returns>
-        public dynamic getImage(string id)
-        {
-            return SkinEngine.GetImage(id);
-        }
-    }
-
     public interface ISkinProvider
     {
         Skin GetDefaultSkin();
@@ -201,9 +157,9 @@ namespace Plex.Engine
             {
                 SaveSkin();
             };
-            if (Utils.Mounts.Count > 0)
+            if (ServerManager.SessionInfo != null)
             {
-                if (!Utils.FileExists(Paths.GetPath("themedata.plex")))
+                if (!FSUtils.FileExists(Paths.GetPath("themedata.plex")))
                 {
                     LoadedSkin = SkinProvider.GetDefaultSkin();
                     SaveSkin();
@@ -249,7 +205,7 @@ namespace Plex.Engine
         /// </summary>
         public static void SaveSkin()
         {
-            Utils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
+            FSUtils.WriteAllText(Paths.GetPath("themedata.plex"), JsonConvert.SerializeObject(LoadedSkin, Formatting.Indented));
         }
 
         private static IIconProber _iconProber = null;

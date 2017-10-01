@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Plex.Frontend.GUI;
 using Plex.Engine;
 using Microsoft.Xna.Framework;
+using static Plex.Engine.FSUtils;
+
 
 namespace Plex.Frontend.Apps
 {
@@ -72,7 +74,7 @@ namespace Plex.Frontend.Apps
                  {
                      try
                      {
-                         _image = SkinEngine.ImageFromBinary(Objects.ShiftFS.Utils.ReadAllBytes(file));
+                         _image = SkinEngine.ImageFromBinary(ReadAllBytes(file));
                          LoadPreview();
                      }
                      catch

@@ -50,15 +50,8 @@ namespace Plex.Engine
                 CrashHandler.Start((Exception)a.ExceptionObject);
             };
 
-            if (!System.IO.File.Exists(Paths.SaveFile))
-            {
-                var root = new Plex.Objects.ShiftFS.Directory();
-                root.Name = "System";
-                System.IO.File.WriteAllText(Paths.SaveFile, JsonConvert.SerializeObject(root));
-            }
+            FSUtils.CreateMountIfNotExists();
 
-            if (Utils.Mounts.Count == 0)
-                Utils.Mount(System.IO.File.ReadAllText(Paths.SaveFile));
             Paths.Init();
             SkinEngine.Init();
             Localization.SetupTHETRUEDefaultLocals();

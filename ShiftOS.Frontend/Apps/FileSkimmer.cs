@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
-using static Plex.Objects.ShiftFS.Utils;
+using static Plex.Engine.FSUtils;
 
 namespace Plex.Frontend.Apps
 {
@@ -312,10 +312,10 @@ namespace Plex.Frontend.Apps
 
             if(_currentdirectory == SD_SYSTEM)
             {
-                foreach(var mount in Mounts)
+                foreach(var mount in GetMounts())
                 {
-                    string mountpath = $"{Mounts.IndexOf(mount)}:";
-                    string name = $"{mount.Name} ({mountpath})";
+                    string mountpath = $"{mount.DriveNumber}:";
+                    string name = mount.VolumeLabel;
                     _fList.AddItem(new ListViewItem
                     {
                         Text = name,
@@ -328,7 +328,7 @@ namespace Plex.Frontend.Apps
             {
                 foreach(var dir in GetDirectories(_currentdirectory))
                 {
-                    var dinf = GetDirectoryInfo(dir);
+                    var dinf = GetFileInfo(dir);
                     _fList.AddItem(new ListViewItem
                     {
                         Text = dinf.Name,
@@ -338,19 +338,21 @@ namespace Plex.Frontend.Apps
                 }
                 foreach (var dir in GetFiles(_currentdirectory))
                 {
+                    if (this.IsDialog)
+                        if (!dir.EndsWith(FileFilters[SelectedFilter]))
+                            continue;
+
                     var dinf = GetFileInfo(dir);
-                    if (dinf.Name.EndsWith(FileFilters[SelectedFilter]))
+                    var ext = FileSkimmerBackend.GetFileType(dir);
+
+
+                    _fList.AddItem(new ListViewItem
                     {
-                        var ext = FileSkimmerBackend.GetFileType(dir);
+                        Text = dinf.Name,
+                        Tag = dir,
+                        ImageKey = ext.ToString()
+                    });
 
-
-                        _fList.AddItem(new ListViewItem
-                        {
-                            Text = dinf.Name,
-                            Tag = dir,
-                            ImageKey = ext.ToString()
-                        });
-                    }
                 }
 
             }

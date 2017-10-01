@@ -8,6 +8,8 @@ using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
 using Plex.Objects;
+using static Plex.Engine.FSUtils;
+
 
 namespace Plex.Frontend
 {
@@ -155,7 +157,7 @@ namespace Plex.Frontend
 
         public Skin ReadSkin(string pfsPath)
         {
-            return JsonConvert.DeserializeObject<PlexSkin>(Objects.ShiftFS.Utils.ReadAllText(pfsPath));
+            return JsonConvert.DeserializeObject<PlexSkin>(ReadAllText(pfsPath));
         }
     }
 
@@ -209,7 +211,7 @@ namespace Plex.Frontend
 
         public void OpenDirectory(string path)
         {
-            if (!Objects.ShiftFS.Utils.DirectoryExists(path))
+            if (!DirectoryExists(path))
                 return;
             var fs = new Apps.FileSkimmer();
             fs.Navigate(path);

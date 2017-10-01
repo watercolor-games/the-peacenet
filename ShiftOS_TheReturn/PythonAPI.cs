@@ -186,4 +186,4 @@ Console.WriteLine(code);
             }            catch
             {
 
-            }        }    }#if DEBUG    public static class PythonCmds    {        [Command("runpystring", description = "Run some Python code. (Only present in DEBUG builds of Plex)")]        [RequiresArgument("script")]        public static bool RunPyString(Dictionary<string, object> args)        {            try            {                PythonHelper.RunCode(args["script"].ToString());            }            catch (Exception ex) { Console.WriteLine(ex.ToString()); }            return true;        }                [Command("runpyfile", description = "Run some Python code from a file. (Only present in DEBUG builds of Plex)")]        [RequiresArgument("script")]        public static bool RunPyFile(Dictionary<string, object> args)        {            try            {                PythonHelper.RunCode(Objects.ShiftFS.Utils.ReadAllText(args["script"].ToString()));            }            catch (Exception ex) { Console.WriteLine(ex.ToString()); }            return true;        }    }#endif}
+            }        }    }}
