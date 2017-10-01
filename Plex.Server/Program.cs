@@ -200,7 +200,7 @@ namespace Plex.Server
 
                     for (int j = 1; j <= router.SystemDescriptor.Rank; j++)
                     {
-                        int max_systems = 20 / j;
+                        int max_systems = 40 / j;
                         int generatedsystems = rnd.Next(1, max_systems);
 
                         Console.WriteLine("<{0}> Generating {1} rank {2} systems...", subnet.Name, generatedsystems, j);
@@ -251,24 +251,8 @@ namespace Plex.Server
                 Console.WriteLine("Generating world economy...");
                 Console.WriteLine("---------------------------");
 
-                foreach (var net in world.Networks)
-                {
-                    var computers = net.NPCs.Where(x => x.SystemType != SystemType.Router);
-                    var routerRank = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router).SystemDescriptor.Rank;
-                    for (int i = 1; i < routerRank; i++)
-                    {
-                        var rank = Ranks[i];
-                        var systemsWithRank = computers.Where(x => x.SystemDescriptor.Rank == i);
-                        if (systemsWithRank.Count() == 0)
-                            continue;
-                        ulong cashPerSystem = rank.MaximumCash / (ulong)systemsWithRank.Count();
-                        foreach (var system in systemsWithRank)
-                        {
-                            Console.WriteLine("<{0}.{1}> Adding cash: ${2}", net.Name, system.SystemDescriptor.SystemName, ((double)cashPerSystem / 100));
-                            system.SystemDescriptor.Cash = (long)cashPerSystem;
-                        }
-                    }
-                }
+                DistributeEconomy(world, 100000000);
+
                 Console.WriteLine(@"============
 Done generating economy.
 Now generating defenses...
@@ -378,6 +362,34 @@ Now generating defenses...
                     File.Delete("world.whoa");
                     LoadWorld();
                 }
+            }
+        }
+
+        public static void DistributeEconomy(World world, long cash)
+        {
+            foreach (var net in world.Networks)
+            {
+                var computers = net.NPCs.Where(x => x.SystemType != SystemType.Router);
+                var routerRank = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router).SystemDescriptor.Rank;
+                for (int i = 1; i < routerRank; i++)
+                {
+                    var rank = Ranks[i];
+                    var systemsWithRank = computers.Where(x => x.SystemDescriptor.Rank == i&& x.IsPwn3d == false && x.IsNPC == true);
+                    if (systemsWithRank.Count() == 0)
+                        continue;
+                    long cashPerSystem = (cash / (long)rank.MaximumCash) / systemsWithRank.Count();
+                    foreach (var system in systemsWithRank)
+                    {
+                        Console.WriteLine("<{0}.{1}> Adding cash: ${2}", net.Name, system.SystemDescriptor.SystemName, ((double)cashPerSystem / 100));
+                        system.SystemDescriptor.Cash += (long)cashPerSystem;
+                        cash -= cashPerSystem;
+                    }
+                }
+            }
+            if(cash > 0)
+            {
+                Console.WriteLine("Cash left over for future use: ${0}", ((double)cash / 100));
+                world.Rogue.NPCs[0].SystemDescriptor.Cash += cash;
             }
         }
 
@@ -637,6 +649,142 @@ Now generating defenses...
             }
         }
 
+        public static void WorldManager()
+        {
+            while(GameWorld != null)
+            {
+                Console.WriteLine("Finding breached hackables...");
+
+                List<HackableSystem> breached = new List<HackableSystem>();
+                foreach(var net in GameWorld.Networks)
+                {
+                    breached.AddRange(net.NPCs.Where(x => x.IsPwn3d == true).ToList());
+                }
+                Console.WriteLine("Breached systems: {0}", breached.Count);
+                if(breached.Count == 0)
+                {
+                    Console.WriteLine("Nothing to do...");
+                }
+                else
+                {
+                    Console.WriteLine("Extracting available cash from NPCs...");
+                    long cash = 0;
+                    foreach(var npc in breached)
+                    {
+                        if (npc.IsNPC)
+                        {
+                            if(npc.SystemDescriptor.Cash >= 0)
+                            {
+                                cash += npc.SystemDescriptor.Cash;
+                                npc.SystemDescriptor.Cash = 0;
+                            }
+                        }
+                    }
+                    Console.WriteLine("Cash found: ${0}", ((double)cash / 100));
+                    if(cash == 0)
+                    {
+                        Console.WriteLine("Skipping cash distribution.");
+                    }
+                    else
+                    {
+                        DistributeEconomy(GameWorld, cash);
+                    }
+
+                    Console.WriteLine("Destroying breached NPCs...");
+
+                    foreach(var net in GameWorld.Networks)
+                    {
+                        while(net.NPCs.FirstOrDefault(x=>x.IsNPC == true && x.IsPwn3d == true) != null)
+                        {
+                            var npc = net.NPCs.FirstOrDefault(x => x.IsNPC == true && x.IsPwn3d == true);
+                            if(npc != null)
+                            {
+                                Console.WriteLine("Destroying: {0}.{1}", net.Name, npc.SystemDescriptor.SystemName);
+                                net.NPCs.Remove(npc);
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("Resetting player breach statuses...");
+
+                    foreach (var net in GameWorld.Networks)
+                    {
+                        while (net.NPCs.FirstOrDefault(x => x.IsNPC == false && x.IsPwn3d == true) != null)
+                        {
+                            var npc = net.NPCs.FirstOrDefault(x => x.IsNPC == false && x.IsPwn3d == true);
+                            if (npc != null)
+                            {
+                                Console.WriteLine("Resetting: {0}.{1}", net.Name, npc.SystemDescriptor.SystemName);
+                                npc.IsPwn3d = false;
+                                foreach(var puzzle in npc.Puzzles)
+                                {
+                                    if(puzzle.Completed == true)
+                                    {
+                                        Console.WriteLine("Uncompleting {0} on {1}.{2}...", puzzle.ID, net.Name, npc.SystemDescriptor.SystemName);
+                                        puzzle.Completed = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+                }
+
+                Console.WriteLine("Updating system descriptors with no passwords...");
+
+                foreach(var net in GameWorld.Networks)
+                {
+                    foreach(var npc in net.NPCs)
+                    {
+                        if (string.IsNullOrWhiteSpace(npc.SystemDescriptor.Password))
+                        {
+                            Console.WriteLine("On {0}.{1}: ", net.Name, npc.SystemDescriptor.SystemName);
+                            bool hasPassword = rnd.Next(0, 100) > 50;
+                            if (hasPassword)
+                            {
+                                int passwordLength = 4 * (npc.SystemDescriptor.Rank * 2);
+                                string alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$%^&*()_+";
+                                string password = "";
+                                CharGen:
+                                char c = alphabet[rnd.Next(0, alphabet.Length)];
+                                password += c;
+                                if (password.Length < passwordLength)
+                                    goto CharGen;
+                                npc.SystemDescriptor.Password = password;
+                                Console.WriteLine("New password set.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("[evil maniac laughter] You get to have NO PASSWORD :D");
+                                npc.SystemDescriptor.Password = "";
+                            }
+                        }
+                    }
+                }
+
+                Console.WriteLine("Repositioning systems that need repositioning...");
+                foreach(var net in GameWorld.Networks)
+                {
+                    foreach (var npc in net.NPCs.Where(x => x.SystemType != SystemType.Router && x.X == 0 && x.Y == 0))
+                    {
+                        int nradius = 50 * Math.Max(1, npc.SystemDescriptor.Rank);
+                        int ndegrees = rnd.Next(360);
+                        var npoint = GetPositionFromRadius(new PointF(0,0), nradius, ndegrees);
+                        npc.X = npoint.X;
+                        npc.Y = npoint.Y;
+                        Console.WriteLine("<{0}.{1}> New location: {2}, {3}", net.Name, npc.SystemDescriptor.SystemName, npoint.X, npoint.Y);
+
+                    }
+
+                }
+
+                //Sleep for two hours.
+                Sleep(new TimeSpan(2, 0, 0));
+            }
+        }
+
         public static void ServerLoop()
         {
             for (int i = 0; i < threadCount; i++)
@@ -646,6 +794,11 @@ Now generating defenses...
                 thread.Start();
                 threads.Add(thread);
             }
+
+            var worldThread = new ServerThread();
+            Console.WriteLine("Starting world manager thread...");
+            worldThread.Queue(WorldManager);
+            worldThread.Start();
 
             _server = new UdpClient();
             var _ipEP = new IPEndPoint(IPAddress.Any, _port);
@@ -751,6 +904,14 @@ Now generating defenses...
             }
         }
 
+        /// <summary>
+        /// Block the current thread for the specified amount of time.
+        /// </summary>
+        /// <param name="span">The amount of time to block.</param>
+        public static void Sleep(TimeSpan span)
+        {
+            Thread.Sleep((int)span.TotalMilliseconds);
+        }
         
     }
 

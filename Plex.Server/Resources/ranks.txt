@@ -23,42 +23,42 @@
     "Experience": 0,
     "UpgradeMax": 5,
     "UnlockedUpgrades": null,
-    "MaximumCash": 500000
+    "MaximumCash": 5
   },
   {
     "Name": "n00b",
     "Experience": 1500,
     "UpgradeMax": 10,
     "UnlockedUpgrades": null,
-    "MaximumCash": 750000
+    "MaximumCash": 10
   },
   {
     "Name": "skiddie",
     "Experience": 3750,
     "UpgradeMax": 15,
     "UnlockedUpgrades": null,
-    "MaximumCash": 1250000,
+    "MaximumCash": 25,
   },
   {
     "Name": "script0r",
     "Experience": 5000,
     "UpgradeMax": 25,
     "UnlockedUpgrades": null,
-    "MaximumCash": 2500000,
+    "MaximumCash": 45,
   },
   {
     "Name": "c0der",
     "Experience": 7500,
     "UpgradeMax": 50,
     "UnlockedUpgrades": null,
-    "MaximumCash": 5000000,
+    "MaximumCash": 75,
   },
   {
     "Name": "m4573r",
     "Experience": 10000,
     "UpgradeMax": 75,
     "UnlockedUpgrades": null,
-    "MaximumCash": 10000000,
+    "MaximumCash": 100,
   },
 
 ]
