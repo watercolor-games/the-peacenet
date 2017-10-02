@@ -30,6 +30,7 @@ namespace Plex.Objects
         public int ScreenWidth = 1920;
         public int ScreenHeight = 1080;
         public bool Fullscreen = true;
+        public bool SuppressTypeLoadErrors = true;
 
         private static UserConfig def = new UserConfig
         {
@@ -40,8 +41,13 @@ namespace Plex.Objects
             Fullscreen = true,
             ScreenWidth = 1920,
             ScreenHeight = 1080,
-            Servers = new List<ServerDetails>()
-            };
+            Servers = new List<ServerDetails>(),
+#if DEBUG
+            SuppressTypeLoadErrors = false
+#else
+            SuppressTypeLoadErrors = true
+#endif
+        };
 
         public static UserConfig current = null;
 
