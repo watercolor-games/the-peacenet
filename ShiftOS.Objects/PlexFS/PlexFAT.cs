@@ -271,6 +271,8 @@ namespace Plex.Objects.PlexFS
             
             public void Delete(string fname)
             {
+				if (!entries.ContainsKey(fname))
+					throw new IOException($"'{fname}' does not exist.");
                 var entry = entries[fname];
                 vol.fobj.Position = entry.Item2;
                 using (var write = Helpers.MakeBW(vol.fobj))
@@ -287,8 +289,9 @@ namespace Plex.Objects.PlexFS
                     ushort sec = entry.Item1;
                     while (sec != END)
                     {
+						ushort next = vol.theFAT[sec];
                         vol.setFAT(sec, FREE);
-                        sec = vol.theFAT[sec];
+                        sec = next;
                     }
                 }
                 entries.Remove(fname);
@@ -338,7 +341,7 @@ namespace Plex.Objects.PlexFS
                 this.entries.Remove(fname);
             }
             
-            public Directory GetSubdirectory(string dname)
+            public Directory GetSubdirectory(string dname, OpenMode mode = OpenMode.Open)
             {
                 if (entries.ContainsKey(dname))
                 {
@@ -349,7 +352,7 @@ namespace Plex.Objects.PlexFS
                     vol.fobj.Position = entries[dname].Item1 * 8192;
                     return Directory.FromVol(vol);
                 }
-                else
+                else if (mode == OpenMode.OpenOrCreate)
                 {
                     var ret = new Directory();
                     ret.vol = vol;
@@ -375,18 +378,25 @@ namespace Plex.Objects.PlexFS
                     
                     return ret;
                 }
+                else
+                    throw new DirectoryNotFoundException($"'{dname}' does not exist.");
             }
             
-            public Stream OpenFile(string fname)
+            public Stream OpenFile(string fname, OpenMode mode = OpenMode.Open)
             {
                 if (!entries.ContainsKey(fname))
                 {
-                    ushort firstSector = vol.getFreeSector();
-                    vol.setFAT(firstSector, END);
-                    vol.fobj.Position = firstSector * 8192;
-                    using (var write = Helpers.MakeBW(vol.fobj))
-                        write.Write(new byte[8192]);
-                    addEntry(fname, firstSector, 0);
+                    if (mode == OpenMode.OpenOrCreate)
+                    {
+                        ushort firstSector = vol.getFreeSector();
+                        vol.setFAT(firstSector, END);
+                        vol.fobj.Position = firstSector * 8192;
+                        using (var write = Helpers.MakeBW(vol.fobj))
+                            write.Write(new byte[8192]);
+                        addEntry(fname, firstSector, 0);
+                    }
+                    else
+                        throw new FileNotFoundException($"'{fname}' does not exist.");
                 }
                 vol.fobj.Position = entries[fname].Item2 + 252;
                 using (var read = Helpers.MakeBR(vol.fobj))
@@ -404,6 +414,17 @@ namespace Plex.Objects.PlexFS
                 using (var read = Helpers.MakeBR(vol.fobj))
                     return read.ReadInt32() < 0 ? EntryType.DIRECTORY : EntryType.FILE;
             }
+            
+            public int SizeOf(string fname)
+            {
+                int ret;
+                vol.fobj.Position = entries[fname].Item2 + 252;
+                using (var read = Helpers.MakeBR(vol.fobj))
+                    ret = read.ReadInt32();
+                if (ret < 0)
+                    throw new IOException("Cannot take the length of a directory.");
+                return ret;
+            }
         }
         
         private PlexFAT()
@@ -413,7 +434,7 @@ namespace Plex.Objects.PlexFS
         private Stream fobj;
         private ushort[] theFAT;
         
-        public Directory root { get; private set; }
+        public Directory Root { get; private set; }
         
         public static PlexFAT FromStream(Stream fobj)
         {
@@ -427,7 +448,7 @@ namespace Plex.Objects.PlexFS
                 ret.theFAT = new ushort[65536];
                 Buffer.BlockCopy(read.ReadBytes(131072), 0, ret.theFAT, 0, 131072);
             }
-            ret.root = Directory.FromVol(ret);
+            ret.Root = Directory.FromVol(ret);
             return ret;
         }
         
@@ -450,7 +471,7 @@ namespace Plex.Objects.PlexFS
                 write.Write(END);
                 ret.theFAT[16] = END;
                 
-                ret.root = new Directory()
+                ret.Root = new Directory()
                 {
                     vol = ret,
                     entries = new Dictionary<string, Tuple<ushort, int>>(),

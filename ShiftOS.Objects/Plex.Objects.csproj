@@ -61,6 +61,9 @@
     <Compile Include="IRCNetwork.cs" />
     <Compile Include="MudAttributes.cs" />
     <Compile Include="Objects.cs" />
+    <Compile Include="PlexFS\EntryType.cs" />
+    <Compile Include="PlexFS\OpenMode.cs" />
+    <Compile Include="PlexFS\PlexFAT.cs" />
     <Compile Include="Plexnet.cs" />
     <Compile Include="PlexServerHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
