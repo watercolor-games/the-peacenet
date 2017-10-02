@@ -219,12 +219,22 @@ namespace Plex.Objects.PlexFS
                 return ret;
             }
             
-            private void addEntry(string fname, ushort firstSector, int flen)
+            // validates name & converts to UTF8
+            private byte[] getNameBytes(string fname)
             {
                 if (String.IsNullOrEmpty(fname) || fname == "." || fname == ".." || fname.Contains(((char) 0).ToString()) || fname.Contains("/"))
                     throw new IOException("The entry name is invalid.");
+                byte[] ret = Encoding.UTF8.GetBytes(fname);
+                if (ret.Length > 250)
+                    throw new IOException("The entry name is too long.");
                 if (entries.ContainsKey(fname))
                     throw new IOException("An entry with that name already exists.");
+                return ret;
+            }
+            
+            private void addEntry(string fname, ushort firstSector, int flen)
+            {
+                byte[] namebytes = getNameBytes(fname);
                 ushort curSector = this.firstSector;
                 vol.fobj.Position = this.firstSector * 8192;
                 int i = 0;
@@ -255,8 +265,8 @@ namespace Plex.Objects.PlexFS
                 entries.Add(fname, Tuple.Create(firstSector, (int) vol.fobj.Position));
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
-                    write.Write(Encoding.UTF8.GetBytes(fname));
-                    write.Write(new byte[250 - fname.Length]);
+                    write.Write(namebytes);
+                    write.Write(new byte[250 - namebytes.Length]);
                     write.Write(firstSector);
                     write.Write(flen);
                 }
@@ -305,16 +315,20 @@ namespace Plex.Objects.PlexFS
                     throw new IOException($"'{oldName}' does not exist.");
                 if (entries.ContainsKey(newName))
                     Delete(newName);
+                byte[] namebytes = getNameBytes(newName);
                 vol.fobj.Position = entries[oldName].Item2;
                 using (var write = Helpers.MakeBW(vol.fobj))
                 {
                     write.Write(Encoding.UTF8.GetBytes(newName));
-                    write.Write(new byte[250 - newName.Length]);
+                    write.Write(new byte[250 - namebytes.Length]);
                 }
             }
             
             public void Move(string fname, Directory destDir, string destName)
             {
+                // Validate the destination name.
+                getNameBytes(destName);
+                
                 if (ReferenceEquals(this, destDir))
                 {
                     Rename(fname, destName);
