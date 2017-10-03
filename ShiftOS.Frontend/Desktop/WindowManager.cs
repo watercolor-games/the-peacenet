@@ -96,6 +96,12 @@ namespace Plex.Frontend.Desktop
 
         public override void SetupDialog(IPlexWindow win)
         {
+            if (UIManagerTools.InTextMode)
+            {
+                Console.WriteLine("You can't run this program in textmode.");
+                return;
+            }
+
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
             var ctl = win as GUI.Control;
@@ -126,6 +132,13 @@ namespace Plex.Frontend.Desktop
 
         public override void SetupWindow(IPlexWindow win)
         {
+            if (UIManagerTools.InTextMode)
+            {
+                Console.WriteLine("You can't run this program in textmode.");
+                return;
+            }
+
+
             if (UIManagerTools.InProtectedGUI)
             {
                 Engine.Infobox.Show("Protected GUI", "You can't open this program right now - you are in protected GUI mode.");

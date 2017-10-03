@@ -7,13 +7,31 @@ using Plex.Engine;
 using Plex.Frontend.Apps;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
+using Plex.Objects;
 
 namespace Plex.Frontend
 {
     public static class UIManagerTools
     {
+        private static bool _intextmode = false;
+
+        public static bool InTextMode
+        {
+            get
+            {
+                return _intextmode;
+            }
+        }
+
         public static void EnterTextMode()
         {
+            if (_intextmode)
+            {
+                Console.WriteLine("You are already in text mode.");
+                return;
+            }
+            _intextmode = true;
+
             //Close all windows in the ui
             while(AppearanceManager.OpenForms.Count > 0)
             {
@@ -30,6 +48,24 @@ namespace Plex.Frontend
             term.Height = UIManager.Viewport.Height;
 
             UIManager.AddTopLevel(term);
+        }
+
+        public static void LeaveTextMode()
+        {
+            if(_intextmode == false)
+            {
+                Engine.Infobox.Show("Plexgate Desktop Environment", "An attempt was made to start an X11 server while the Plexgate X11 server is already running and functional. You can't do that.");
+                return;
+            }
+            _intextmode = false;
+            UIManager.ClearTopLevels();
+            Engine.Desktop.CurrentDesktop.Show();
+        }
+
+        [Command("startx", description = "Start the Plexgate X11 server.")]
+        public static void StartX()
+        {
+            LeaveTextMode();
         }
 
         public static bool InProtectedGUI

@@ -132,6 +132,7 @@ There are no missions available for you to complete. Please check back later for
                 Console.WriteLine("Plexgate is shutting down...");
                 Thread.Sleep(5000);
                 Console.WriteLine("If you can read this you're not human. Goodbye.");
+                UIManagerTools.LeaveTextMode();
                 ServerManager.Disconnect(DisconnectType.UserRequested);
             }).Start();
             return true;
