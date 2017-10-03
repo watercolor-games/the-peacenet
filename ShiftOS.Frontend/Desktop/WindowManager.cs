@@ -170,6 +170,57 @@ namespace Plex.Frontend.Desktop
 
     public class WindowBorder : GUI.TextControl, IWindowBorder
     {
+        private bool _maximized = false;
+        private int _normalx = 0;
+        private int _normaly = 0;
+        private int _normalw = 0;
+        private int _normalh = 0;
+
+        public void ToggleMaximized()
+        {
+            if(_maximized == false)
+            {
+                _normalx = X;
+                _normaly = Y;
+                _normalw = Width;
+                _normalh = Height;
+                MaxWidth = int.MaxValue;
+                MaxHeight = int.MaxValue;
+                X = 0;
+                Y = (LoadedSkin.DesktopPanelPosition == 0) ? LoadedSkin.DesktopPanelHeight : 0;
+                Width = UIManager.Viewport.Width;
+                Height = UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight;
+                _maximized = true;
+            }
+            else
+            {
+                X = _normalx;
+                Y = _normaly;
+                Width = _normalw;
+                Height = _normalh;
+                MaxWidth = 800;
+                MaxHeight = 600;
+                _maximized = false;
+            }
+            ResetChildWindowSize();
+        }
+
+        public void ResetChildWindowSize()
+        {
+            int titlebar = LoadedSkin.TitlebarHeight;
+            int bleft = LoadedSkin.LeftBorderWidth;
+            int bright = LoadedSkin.RightBorderWidth;
+            int bbottom = LoadedSkin.BottomBorderWidth;
+
+            _hostedwindow.X = bleft;
+            _hostedwindow.Y = titlebar;
+            _hostedwindow.MaxWidth = Width - bright - bleft;
+            _hostedwindow.MaxHeight = Height - bbottom - titlebar;
+            _hostedwindow.Width = _hostedwindow.MaxWidth;
+            _hostedwindow.Height = _hostedwindow.MaxHeight;
+
+        }
+
         public PlexSkin LoadedSkin
         {
             get
@@ -225,13 +276,25 @@ namespace Plex.Frontend.Desktop
                 var cbtnloc = LoadedSkin.CloseButtonFromSide;
                 var cbtnsize = LoadedSkin.CloseButtonSize;
                 var realcloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - cbtnsize.Width,
+                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - cbtnloc.X - cbtnsize.Width,
                         cbtnloc.Y
                     );
                 if(MouseX >= realcloc.X && MouseY >= realcloc.Y && MouseX <= realcloc.X + cbtnsize.Width && MouseY <= realcloc.Y + cbtnsize.Height)
                 {
                     AppearanceManager.Close(ParentWindow);
+                    return;
                 }
+                var mxbtnloc = LoadedSkin.MaximizeButtonFromSide;
+                var mxbtnsize = LoadedSkin.MaximizeButtonSize;
+                var realmxloc = new Vector2(
+                        (LoadedSkin.TitleButtonPosition == 1) ? mxbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - mxbtnloc.X - mxbtnsize.Width,
+                        mxbtnloc.Y
+                    );
+                if (MouseX >= realmxloc.X && MouseY >= realmxloc.Y && MouseX <= realmxloc.X + mxbtnsize.Width && MouseY <= realmxloc.Y + mxbtnsize.Height)
+                {
+                    ToggleMaximized();
+                }
+
             };
             X = 720;
             Y = 480;
@@ -308,7 +371,7 @@ namespace Plex.Frontend.Desktop
                 UIManager.BringToFront(this);
             }
             var mstate = Mouse.GetState();
-            if (moving)
+            if (moving && _maximized == false)
             {
                 X = mstate.X - dist_x;
                 Y = mstate.Y - dist_y;
