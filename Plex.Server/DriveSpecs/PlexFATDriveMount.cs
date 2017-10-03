@@ -15,23 +15,40 @@ namespace Plex.Server.DriveSpecs
     {
         private PlexFAT.Directory getDirectory(string path)
         {
-            string pathvnum = path.Split(new[] {':'})[0];
-            if (DriveNumber.ToString() != pathvnum)
-                throw new IO.IOException($"This is drive {DriveNumber}, the path specifies {pathvnum}.");
+            //No need for this check. Server already does this.
+            //string pathvnum = path.Split(new[] {':'})[0];
+            //if (DriveNumber.ToString() != pathvnum)
+            //    throw new IO.IOException($"This is drive {DriveNumber}, the path specifies {pathvnum}.");
             string[] components = path.Split(new[] {'/'});
             PlexFAT.Directory ret = vol.Root;
-            for (int i = 1; i < components.Length; i++)
+            if (components.Length >= 2)
             {
-                ret = ret.GetSubdirectory(components[i]);
+                for (int i = 1; i < components.Length; i++)
+                {
+                    ret = ret.GetSubdirectory(components[i]);
+                }
             }
             return ret;
         }
         
         private void getParent(string path, out PlexFAT.Directory parent, out string fname)
         {
-            int slashpos = path.LastIndexOf("/");
-            fname = path.Substring(slashpos + 1);
-            parent = getDirectory(path.Substring(0, slashpos));
+            if(path.EndsWith("/"))
+            {
+                //Remove last slash if it's the last char in the string.
+                path = path.Remove(path.LastIndexOf("/"), 1);
+            }
+            if (path.Contains("/"))
+            {
+                int slashpos = path.LastIndexOf("/");
+                fname = path.Substring(slashpos + 1);
+                parent = getDirectory(path.Substring(0, slashpos));
+            }
+            else
+            {
+                fname = "";
+                parent = vol.Root;
+            }
         }
         
         private IO.Stream fobj = null;

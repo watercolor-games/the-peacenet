@@ -23,8 +23,8 @@ namespace Plex.Server
             var mountinfo = new MountInformation
             {
                 DriveNumber = num,
-                ImageFilePath = $"userdrives/{sys.SystemDescriptor.SystemName}_{num}_{label}.mfs",
-                Specification = DriveSpec.ShiftFS,
+                ImageFilePath = $"userdrives/{sys.SystemDescriptor.SystemName}_{num}_{label}.pfs",
+                Specification = DriveSpec.PlexFAT,
                 VolumeLabel = label
             };
             return mountinfo;
