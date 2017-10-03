@@ -16,6 +16,8 @@ namespace Plex.Frontend.Desktop
 {
     public class Desktop : GUI.TextControl, IDesktop
     {
+        private ItemGroup _panelButtonGroup = new ItemGroup();
+
         public PlexSkin LoadedSkin
         {
             get
@@ -28,6 +30,7 @@ namespace Plex.Frontend.Desktop
 
         public Desktop()
         {
+            AddControl(_panelButtonGroup);
             UIManager.ScreenRightclicked += (x, y) =>
             {
                 _appLauncher.Layout(new GameTime());
@@ -158,21 +161,6 @@ namespace Plex.Frontend.Desktop
 
                 int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
                 int offset = initialGap;
-
-                foreach (var pbtn in PanelButtons.ToArray())
-                {
-                    offset += LoadedSkin.PanelButtonFromLeft.X;
-
-                    int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
-                    int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
-                    int pbtnheight = LoadedSkin.PanelButtonSize.Height;
-
-                    //now we draw the text
-
-                    gfx.DrawString(pbtn.Title, offset + 2, dp_position + pbtnfromtop + 2, LoadedSkin.PanelButtonTextColor.ToMonoColor(), LoadedSkin.PanelButtonFont, Engine.GUI.TextAlignment.TopLeft);
-
-                    offset += LoadedSkin.PanelButtonSize.Width;
-                }
             }
         }
 
@@ -217,17 +205,52 @@ namespace Plex.Frontend.Desktop
 
         public void PopulatePanelButtons()
         {
-            PanelButtons.Clear();
-            foreach(var win in AppearanceManager.OpenForms)
+            _panelButtonGroup.ClearControls();
+
+            foreach(var pbtn in AppearanceManager.OpenForms)
             {
-                var border = win as WindowBorder;
-                var pbtn = new PanelButtonData();
-                pbtn.Title = border.Text;
-                pbtn.Window = border;
-                PanelButtons.Add(pbtn);
+                var image = new PictureBox();
+                //Draw panel button background...
+                if (UIManager.SkinTextures.ContainsKey("panelbutton"))
+                {
+                    image.Image = UIManager.SkinTextures["panelbutton"];
+                    image.ImageLayout = SkinEngine.GetImageLayout("panelbutton");
+                }
+                else
+                {
+                    image.Image = UIManager.SkinTextures["PanelButtonColor"];
+                    image.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+                }
+                image.Width = LoadedSkin.PanelButtonSize.Width;
+                image.Height = LoadedSkin.PanelButtonSize.Height;
+                var text = new TextControl();
+                text.Font = LoadedSkin.PanelButtonFont;
+                text.Text = pbtn.Text;
+                text.AutoSize = true;
+                text.Layout(new GameTime());
+                text.X = 4;
+                text.Y = (image.Height - text.Height) / 2;
+                image.AddControl(text);
+                _panelButtonGroup.AddControl(image);
+
+                Action _click = () =>
+                {
+                    var wb = pbtn as WindowBorder;
+                    if(!(wb.IsFocusedControl || wb.ContainsFocusedControl))
+                    {
+                        UIManager.FocusedControl = wb;
+                        UIManager.BringToFront(wb);
+                    }
+                    else
+                    {
+                        //todo: minimizing/restoring of windows
+                        //wb.ToggleMinimized();
+                    }
+                };
+                text.Click += _click;
+                image.Click += _click;
+
             }
-            RequireTextRerender();
-            Invalidate();            
         }
 
         public void PushNotification(string app, string title, string message)
@@ -285,7 +308,11 @@ namespace Plex.Frontend.Desktop
                 Invalidate();
             }
 
-
+            _panelButtonGroup.Visible = !_inpgui;
+            _panelButtonGroup.X = LoadedSkin.PanelButtonHolderFromLeft;
+            _panelButtonGroup.Y = 0;
+            _panelButtonGroup.Height = Height;
+            _panelButtonGroup.Width = Width - _panelButtonGroup.X;
 
         }
 
@@ -344,32 +371,6 @@ namespace Plex.Frontend.Desktop
                 }
             }
 
-            if (!_inpgui)
-            {
-                int initialGap = LoadedSkin.PanelButtonHolderFromLeft;
-                int offset = initialGap;
-
-                foreach (var pbtn in PanelButtons.ToArray())
-                {
-                    offset += LoadedSkin.PanelButtonFromLeft.X;
-
-                    int pbtnfromtop = LoadedSkin.PanelButtonFromTop;
-                    int pbtnwidth = LoadedSkin.PanelButtonSize.Width;
-                    int pbtnheight = LoadedSkin.PanelButtonSize.Height;
-
-                    //Draw panel button background...
-                    if (UIManager.SkinTextures.ContainsKey("panelbutton"))
-                    {
-                        gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["panelbutton"], SkinEngine.GetImageLayout("panelbutton"));
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(offset, dp_position + pbtnfromtop, pbtnwidth, pbtnheight, UIManager.SkinTextures["PanelButtonColor"]);
-                    }
-
-                    offset += LoadedSkin.PanelButtonSize.Width;
-                }
-            }
             base.OnPaint(gfx, target);
         }
     }
