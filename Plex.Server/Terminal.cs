@@ -133,6 +133,26 @@ namespace Plex.Server
             }, SessionInfo.Port);
         }
 
+        [ServerMessageHandler("cmd_gethelp")]
+        [SessionRequired]
+        public static void GetHelp(string session_id, string content, string ip, int port)
+        {
+            Dictionary<string, string> commands = new Dictionary<string, string>();
+            foreach(var cmd in Terminal.Commands)
+            {
+                if (UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
+                    commands.Add(cmd.CommandInfo.name, cmd.CommandInfo.description);
+            }
+            Program.SendMessage(new PlexServerHeader
+            {
+                Message = "cmd_help",
+                Content = JsonConvert.SerializeObject(commands),
+                IPForwardedBy = ip,
+                SessionID = session_id
+            }, port);
+        }
+
+
         [ServerMessageHandler("trm_invoke")]
         [SessionRequired]
         public static void InvokeCMD(string session_id, string content, string ip, int port)

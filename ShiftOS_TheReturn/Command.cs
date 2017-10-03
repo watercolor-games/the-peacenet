@@ -48,21 +48,42 @@ using System;using System.Collections.Generic;using System.Linq;using System.
 
 namespace Plex.Engine{    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    public class RequiresArgument : Attribute    {        /// <summary>        /// The argument name        /// </summary>        public string argument;        /// <summary>        /// Creates a new instance of the <see cref="RequiresArgument"/> attribute         /// </summary>        /// <param name="argument">The argument name associated with this attribute</param>        public RequiresArgument(string argument)        {            this.argument = argument;        }        public override object TypeId        {            get            {                return this;            }        }    }    /// <summary>    /// Prevents a command from being run in a remote session.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]    public class RemoteLockAttribute : Attribute    {    }    public static class EngineCommands
     {
+        [ClientMessageHandler("cmd_help"), AsyncExecution]
+        public static void CMDHelp(string content, string ip)
+        {
+            _cmdhelpresult = content;
+        }
+
+        private static string _cmdhelpresult = null;
+
         [MetaCommand]
         [Command("help", "", "{DESC_COMMANDS}")]
         public static bool Commands()
         {
-            var sb = new StringBuilder();
+            Dictionary<string, string> cmds = new Dictionary<string, string>();
+            _cmdhelpresult = null;
+            ServerManager.SendMessage("cmd_gethelp", TerminalBackend.RawShellOverride);
+            while(_cmdhelpresult == null)
+            {
+                System.Threading.Thread.Sleep(10);
+            }
+            cmds = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(_cmdhelpresult);
+            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell(TerminalBackend.RawShellOverride) == true).OrderBy(x => x.CommandInfo.name))
+            {
+                if(!cmds.ContainsKey(n.CommandInfo.name))
+                    cmds.Add(n.CommandInfo.name, n.CommandInfo.description);
+            }
+
+                var sb = new StringBuilder();
             sb.AppendLine("{GEN_COMMANDS}");
             sb.AppendLine("=================");
             sb.AppendLine();
             //print all unique namespaces.
-            foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell(TerminalBackend.RawShellOverride) == true).OrderBy(x => x.CommandInfo.name))
+            foreach (var cmd in cmds.OrderBy(x=>x.Key))
             {
-                sb.Append(" - " + n.CommandInfo.name);
-                if (!string.IsNullOrWhiteSpace(n.CommandInfo.description))
-                    if (Upgrades.UpgradeInstalled("help_description"))
-                        sb.Append(" - " + n.CommandInfo.description);
+                sb.Append(" - " + cmd.Key);
+                if (!string.IsNullOrWhiteSpace(cmd.Value))
+                        sb.Append(": " + cmd.Value);
                 sb.AppendLine();
             }
 
