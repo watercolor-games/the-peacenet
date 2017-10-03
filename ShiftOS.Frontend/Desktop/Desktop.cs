@@ -203,6 +203,8 @@ namespace Plex.Frontend.Desktop
             _appLauncher.AddItem(shutdown);
         }
 
+        private Control _currentwin = null;
+
         public void PopulatePanelButtons()
         {
             _panelButtonGroup.ClearControls();
@@ -236,16 +238,17 @@ namespace Plex.Frontend.Desktop
                 Action _click = () =>
                 {
                     var wb = pbtn as WindowBorder;
-                    if(!(wb.IsFocusedControl || wb.ContainsFocusedControl))
+                    if(wb != _currentwin)
                     {
+                        _currentwin = wb;
                         UIManager.FocusedControl = wb;
                         UIManager.BringToFront(wb);
                     }
                     else
                     {
-                        //todo: minimizing/restoring of windows
-                        //wb.ToggleMinimized();
+                        wb.ToggleMinimized();
                     }
+                    this.MouseHandled ();
                 };
                 text.Click += _click;
                 image.Click += _click;

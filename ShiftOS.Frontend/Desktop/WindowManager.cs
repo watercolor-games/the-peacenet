@@ -205,6 +205,13 @@ namespace Plex.Frontend.Desktop
             ResetChildWindowSize();
         }
 
+        private bool _minimized = false;
+
+        public void ToggleMinimized()
+        {
+            _minimized = !_minimized;
+        }
+
         public void ResetChildWindowSize()
         {
             int titlebar = LoadedSkin.TitlebarHeight;
@@ -293,7 +300,21 @@ namespace Plex.Frontend.Desktop
                 if (MouseX >= realmxloc.X && MouseY >= realmxloc.Y && MouseX <= realmxloc.X + mxbtnsize.Width && MouseY <= realmxloc.Y + mxbtnsize.Height)
                 {
                     ToggleMaximized();
+                    return;
                 }
+
+                var mnbtnloc = LoadedSkin.MinimizeButtonFromSide;
+                var mnbtnsize = LoadedSkin.MinimizeButtonSize;
+                var realmnloc = new Vector2(
+                        (LoadedSkin.TitleButtonPosition == 1) ? mnbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - mnbtnloc.X - mnbtnsize.Width,
+                        mnbtnloc.Y
+                    );
+                if (MouseX >= realmnloc.X && MouseY >= realmnloc.Y && MouseX <= realmnloc.X + mnbtnsize.Width && MouseY <= realmnloc.Y + mnbtnsize.Height)
+                {
+                    ToggleMinimized();
+                    return;
+                }
+
 
             };
             X = 720;
@@ -357,41 +378,47 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if (UIManagerTools.InProtectedGUI && !IsDialog)
+            if (_minimized == true)
             {
                 Visible = false;
-                return;
             }
             else
             {
-                Visible = true;
-            }
-            if (IsFocusedControl || ContainsFocusedControl)
-            {
-                UIManager.BringToFront(this);
-            }
-            var mstate = Mouse.GetState();
-            if (moving && _maximized == false)
-            {
-                X = mstate.X - dist_x;
-                Y = mstate.Y - dist_y;
-            }
+                if (UIManagerTools.InProtectedGUI && !IsDialog)
+                {
+                    Visible = false;
+                    return;
+                }
+                else
+                {
+                    Visible = true;
+                }
+                if (IsFocusedControl || ContainsFocusedControl)
+                {
+                    UIManager.BringToFront(this);
+                }
+                var mstate = Mouse.GetState();
+                if (moving && _maximized == false)
+                {
+                    X = mstate.X - dist_x;
+                    Y = mstate.Y - dist_y;
+                }
 
-            int titlebarheight = LoadedSkin.TitlebarHeight;
-            int borderleft = LoadedSkin.LeftBorderWidth;
-            int borderright = LoadedSkin.RightBorderWidth;
-            int borderbottom = LoadedSkin.BottomBorderWidth;
-            int maxwidth = (MaxWidth - LoadedSkin.LeftBorderWidth) - LoadedSkin.RightBorderWidth;
-            int maxheight = (MaxHeight - LoadedSkin.TitlebarHeight) - LoadedSkin.BottomBorderWidth;
-            _hostedwindow.MaxWidth = maxwidth;
-            _hostedwindow.MaxHeight = maxheight;
-            _hostedwindow.X = borderleft;
-            _hostedwindow.Y = titlebarheight;
-            Width = borderleft + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
-            Height = titlebarheight + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
+                int titlebarheight = LoadedSkin.TitlebarHeight;
+                int borderleft = LoadedSkin.LeftBorderWidth;
+                int borderright = LoadedSkin.RightBorderWidth;
+                int borderbottom = LoadedSkin.BottomBorderWidth;
+                int maxwidth = (MaxWidth - LoadedSkin.LeftBorderWidth) - LoadedSkin.RightBorderWidth;
+                int maxheight = (MaxHeight - LoadedSkin.TitlebarHeight) - LoadedSkin.BottomBorderWidth;
+                _hostedwindow.MaxWidth = maxwidth;
+                _hostedwindow.MaxHeight = maxheight;
+                _hostedwindow.X = borderleft;
+                _hostedwindow.Y = titlebarheight;
+                Width = borderleft + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
+                Height = titlebarheight + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
 
+            }
         }
-
 
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
