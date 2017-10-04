@@ -147,7 +147,7 @@ namespace Plex.Objects.PlexFS
                     return;
                 int origSectors = sectorMap.Count;
                 int newSectors = (int)((value + 8191) / 8192);
-                if (flen < value)
+                if (flen > value)
                 {
                     int lostSectors = origSectors - newSectors;
                     for (int i = sectorMap.Count - lostSectors; i < sectorMap.Count; i++)

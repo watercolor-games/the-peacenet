@@ -247,12 +247,25 @@ namespace Plex.Frontend
             };
             var t = new System.Threading.Thread(() =>
             {
-                var wc = new System.Net.WebClient();
-                string json = wc.DownloadString("https://getshiftos.net/api/announcements");
-                var announcement = JsonConvert.DeserializeObject<List<Announcement>>(json).First();
-                _bodyTitle.Text = "Latest announcement";
-                _bodySubtitle.Text = announcement.title[0].value;
-                _bodyText.Text = Regex.Replace(announcement.body[0].value, "<.*?>", String.Empty);
+                try
+                {
+                    var wc = new System.Net.WebClient();
+                    string json = wc.DownloadString("https://getshiftos.net/api/announcements");
+                    var announcement = JsonConvert.DeserializeObject<List<Announcement>>(json).First();
+                    _bodyTitle.Text = "Latest announcement";
+                    _bodySubtitle.Text = announcement.title[0].value;
+                    _bodyText.Text = Regex.Replace(announcement.body[0].value, "<.*?>", String.Empty);
+                }
+                catch
+                {
+                    _bodyTitle.Text = "Can't connect to Watercolor Cloud.";
+                    _bodySubtitle.Text = "We couldn't fetch the latest community announcement from the Watercolor Cloud.";
+                    _bodyText.Text = @"An error occured while connecting to the Watercolor Cloud which has prevented us from retrieving the latest community announcement.
+
+This could be a result of either a bad Internet connection, the Watercolor servers being blocked by a firewall or security software, or the Watercolor servers being offline.
+
+Please check your Internet connection and make sure https://getshiftos.net/ is accessible and isn't blocked. If the problem still persists, please try again later as our servers are currently offline.";
+                }
             });
             t.Start();
         }

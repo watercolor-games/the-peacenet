@@ -328,6 +328,8 @@ namespace Plex.Frontend.Apps
             {
                 foreach(var dir in GetDirectories(_currentdirectory))
                 {
+                    if (dir.EndsWith(".."))
+                        continue;
                     var dinf = GetFileInfo(dir);
                     _fList.AddItem(new ListViewItem
                     {

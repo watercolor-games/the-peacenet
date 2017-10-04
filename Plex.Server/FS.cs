@@ -117,8 +117,15 @@ namespace Plex.Server
             var pdata = GetPathData(content);
             var mount = GetDriveMount(content, session);
             bool result = mount != null;
-            if (result)
-                result = mount.DirectoryExists(pdata.Path);
+            if (!pdata.Path.Contains("/")) //obvi. root dir
+            {
+                result = true;
+            }
+            else
+            {
+                if (result)
+                    result = mount.DirectoryExists(pdata.Path);
+            }
             DispatchExistsResult(result, session, ip, port);
         }
 

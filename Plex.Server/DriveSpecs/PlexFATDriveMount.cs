@@ -108,6 +108,8 @@ namespace Plex.Server.DriveSpecs
         
         public override bool DirectoryExists(string path)
         {
+            if (!path.Contains("/"))
+                return true; //obvi. root
             PlexFAT.Directory parent;
             string dname;
             getParent(path, out parent, out dname);
@@ -135,7 +137,16 @@ namespace Plex.Server.DriveSpecs
         private string[] searchType(string path, EntryType type)
         {
             PlexFAT.Directory dir = getDirectory(path);
-            return dir.Contents.Where(n => dir.TypeOf(n) == type).ToArray();
+            var arr = dir.Contents.Where(n => dir.TypeOf(n) == type).ToArray();
+            var lst = new List<string>();
+            if (path.EndsWith("/"))
+                path = path.Remove(path.LastIndexOf("/"), 1);
+            foreach(var entry in arr)
+            {
+                lst.Add(DriveNumber + path + "/" + entry);
+            }
+            
+            return lst.ToArray();
         }
         
         public override string[] GetDirectories(string path)

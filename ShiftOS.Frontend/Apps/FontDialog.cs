@@ -18,7 +18,7 @@ namespace Plex.Frontend.Apps
         private Action<System.Drawing.Font> _callback = null;
 
         private TextControl _preview = new TextControl();
-        private ComboBox _families = new ComboBox();
+        private TextInput _families = new TextInput();
         private TextInput _size = new TextInput();
 
         private Button _ok = new Button();
@@ -59,18 +59,17 @@ namespace Plex.Frontend.Apps
             _preview.AutoSize = true;
             _preview.Text = "The quick brown fox jumped over the lazy dog.";
 
-            _families.SelectedItemChanged += () =>
+            _families.TextChanged += () =>
             {
-                if(_families.SelectedIndex != -1)
+                if (_font.Name == _families.Text)
+                    return;
+                try
                 {
-                    try
-                    {
-                        UpdateFont();
-                    }
-                    catch
-                    {
-                        //_size.Text = ((int)_font.Size).ToString();
-                    }
+                    UpdateFont();
+                }
+                catch
+                {
+                    //_size.Text = ((int)_font.Size).ToString();
                 }
             };
             _families.AutoSize = true;
@@ -90,35 +89,12 @@ namespace Plex.Frontend.Apps
             _size.AutoSize = true;
             _size.MinWidth = 150;
             _size.MinHeight = 6 + _size.Font.Height;
-            PopulateFonts();
-        }
-
-        public void PopulateFonts()
-        {
-            if (_families.SelectedItem?.ToString() == _font.Name)
-                return;
-
-            _families.ClearItems();
-            using(var installedfonts = new InstalledFontCollection())
-            {
-                var fams = installedfonts.Families;
-                foreach(var family in fams)
-                {
-                    _families.AddItem(family.Name);
-                    
-                }
-                var fam = fams.FirstOrDefault(x => x.Name == _font.Name);
-                var findex = fams.ToList().IndexOf(fam);
-                if (_families.SelectedIndex != findex)
-                    _families.SelectedIndex = findex;
-            }
         }
 
         public void UpdateFont()
         {
-            _font = new System.Drawing.Font(_families.SelectedItem.ToString(), _size.Value);
+            _font = new System.Drawing.Font(_families.Text, _size.Value);
             _preview.Font = _font;
-            PopulateFonts();
         }
 
         protected override void OnLayout(GameTime gameTime)
@@ -127,6 +103,8 @@ namespace Plex.Frontend.Apps
 
             _families.X = 15;
             _families.Y = 15;
+            _families.MinWidth = 175;
+            _families.MinHeight = _families.Font.Height + 4;
             _size.X = _families.X + _families.Width + 10;
             _size.Y = 15;
 

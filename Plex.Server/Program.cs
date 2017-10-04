@@ -565,6 +565,9 @@ Now generating defenses...
 
         public static void Main(string[] args)
         {
+            if (!Directory.Exists("userdrives"))
+                Directory.CreateDirectory("userdrives");
+
             if (!IsMultiplayerServer)
             {
                 ServerLoop();

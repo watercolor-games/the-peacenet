@@ -111,7 +111,7 @@ namespace Plex.Engine
         {
             foreach(var path in Locations)
             {
-                if (!path.Value.Contains(".") && path.Key != "classic")
+                if (!path.Value.Contains(".") && path.Key != "classic" && !path.Value.EndsWith(":"))
                 {
                     if (!FSUtils.DirectoryExists(path.Value))
                     {
