@@ -357,6 +357,8 @@ namespace Plex.Objects.PlexFS
             
             public Directory GetSubdirectory(string dname, OpenMode mode = OpenMode.Open)
             {
+                if (dname == ".")
+                    return this;
                 if (entries.ContainsKey(dname))
                 {
                     vol.fobj.Position = entries[dname].Item2 + 252;
@@ -398,6 +400,8 @@ namespace Plex.Objects.PlexFS
             
             public Stream OpenFile(string fname, OpenMode mode = OpenMode.Open)
             {
+                if (fname == ".")
+                    throw new IOException($"'.' is a directory.");
                 if (!entries.ContainsKey(fname))
                 {
                     if (mode == OpenMode.OpenOrCreate)
