@@ -136,15 +136,6 @@ namespace Plex.Frontend.GraphicsSubsystem
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
 
-                    batch.Draw(SkinTextures["PureWhite"], new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.Red);
-                    if (ExperimentalEffects)
-                    {
-                        for (int i = 5; i > 0; i--)
-                        {
-                            batch.Draw(_target, new Rectangle(ctrl.X - i, ctrl.Y - i, ctrl.Width + (i * 2), ctrl.Height + (i * 2)), new Color(Color.Black, 255 / (i * 2)));
-                        }
-                    }
-
                     batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), _game.UITint);
                     batch.End();
                 }
@@ -200,9 +191,8 @@ namespace Plex.Frontend.GraphicsSubsystem
                     batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                                     SamplerState.LinearWrap, GraphicsDevice.DepthStencilState,
                                     RasterizerState.CullNone);
-                    graphics.Clear(Color.Black);
+                    graphics.Clear(Color.Transparent);
                     var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
-                    gfxContext.Clear(Color.Black);
                     ctrl.Paint(gfxContext, _target);
                     QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
                     QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
@@ -231,6 +221,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void StartSPServer()
         {
+            ClearTopLevels();
             SinglePlayerStarted?.Invoke();
         }
 

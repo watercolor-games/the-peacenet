@@ -386,20 +386,19 @@ namespace Plex.Frontend.Apps
             PaintBackground = false;
             gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
 
-            var font = new System.Drawing.Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style); 
-            if (!string.IsNullOrEmpty(Text))
-            {
-                //Draw the caret.
-                if (blinkStatus == true)
-                {
-                    gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
-                }
-                //Draw the text
-                base.OnPaint(gfx, target);
+            //Draw the text
+            base.OnPaint(gfx, target);
 
-            }
         }
 
+        protected override void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
+        {
+            //Draw the caret.
+            if (blinkStatus == true)
+            {
+                gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+            }
+        }
     }
 
 

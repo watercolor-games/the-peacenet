@@ -247,6 +247,14 @@ namespace Plex.Frontend.GUI
                 gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
                 gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
             }
+
+            OnPaintCaret(gfx, target);
+
+            base.OnPaint(gfx, target);
+        }
+
+        protected virtual void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
+        {
             int textY = (Height - Font.Height) / 2;
             int caretHeight = Font.Height;
 
@@ -259,7 +267,6 @@ namespace Plex.Frontend.GUI
                 }
             }
 
-            base.OnPaint(gfx, target);
         }
 
         private double caretMS = 0;

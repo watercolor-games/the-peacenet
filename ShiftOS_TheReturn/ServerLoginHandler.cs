@@ -39,6 +39,7 @@ namespace Plex.Engine
         [ClientMessageHandler("session_accessgranted")]
         public static void SessionGranted(string content, string ip)
         {
+            UIManager.ClearTopLevels();
             ServerManager.SessionInfo.SessionID = content;
             SaveSystem.Begin();
         }
@@ -62,6 +63,7 @@ namespace Plex.Engine
             {
                 AppearanceManager.Close(screen.ParentWindow);
             }
+            UIManager.ClearTopLevels();
             _loginScreen = new LoginScreen();
             AppearanceManager.SetupDialog(_loginScreen);
             _loginScreen.CredentialsEntered += (username, password) =>
