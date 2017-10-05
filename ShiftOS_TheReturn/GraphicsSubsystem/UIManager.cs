@@ -130,8 +130,13 @@ namespace Plex.Frontend.GraphicsSubsystem
                     if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
                     {
                         ctrl.Invalidate();
-                        continue;
+                        
                     }
+                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
+                            RasterizerState.CullNone);
+
+                    batch.Draw(SkinTextures["PureWhite"], new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.Red);
                     if (ExperimentalEffects)
                     {
                         for (int i = 5; i > 0; i--)
@@ -141,6 +146,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                     }
 
                     batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), _game.UITint);
+                    batch.End();
                 }
             }
         }
@@ -152,55 +158,71 @@ namespace Plex.Frontend.GraphicsSubsystem
             topLevels.Insert(0, ctrl);
         }
 
-        public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
+public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
+{
+    foreach (var ctrl in controls.ToArray().Where(x=>x.Visible==true))
+    {
+        RenderTarget2D _target;
+        int hc = ctrl.GetHashCode();
+        if (!targets.ContainsKey(hc))
         {
-            foreach (var ctrl in controls.ToArray().Where(x=>x.Visible==true))
+            _target = new RenderTarget2D(
+                            graphics,
+                            Math.Max(1,ctrl.Width),
+                            Math.Max(1,ctrl.Height),
+                            false,
+                            graphics.PresentationParameters.BackBufferFormat,
+                            DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            targets.Add(hc, _target);
+            ctrl.Invalidate();
+        }
+        else
+        {
+            _target = targets[hc];
+            if(_target.Width != ctrl.Width || _target.Height != ctrl.Height)
             {
-                RenderTarget2D _target;
-                int hc = ctrl.GetHashCode();
-                if (!targets.ContainsKey(hc))
-                {
-                    _target = new RenderTarget2D(
-                                    graphics,
-                                    Math.Max(1,ctrl.Width),
-                                    Math.Max(1,ctrl.Height),
-                                    false,
-                                    graphics.PresentationParameters.BackBufferFormat,
-                                    DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                    targets.Add(hc, _target);
-                }
-                else
-                {
-                    _target = targets[hc];
-                    if(_target.Width != ctrl.Width || _target.Height != ctrl.Height)
-                    {
-                        _target = new RenderTarget2D(
-                graphics,
-                Math.Max(1,ctrl.Width),
-                Math.Max(1,ctrl.Height),
-                false,
-                graphics.PresentationParameters.BackBufferFormat,
-                DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                        targets[hc] = _target;
-
-                    }
-                }
-                if (ctrl.RequiresPaint)
-                {
-                    graphics.SetRenderTarget(_target);
-                    graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearClamp, GraphicsDevice.DepthStencilState,
-                                    RasterizerState.CullNone);
-                    graphics.Clear(Color.Transparent);
-                    var gfxContext = new GraphicsContext(graphics, batch, 0, 0, _target.Width, _target.Height);
-                    ctrl.Paint(gfxContext, _target);
-
-                    batch.End();
-                    graphics.SetRenderTarget(_game.GameRenderTarget);
-                    TextureCaches[hc] = _target;
-                }
+                _target = new RenderTarget2D(
+        graphics,
+        Math.Max(1,ctrl.Width),
+        Math.Max(1,ctrl.Height),
+        false,
+        graphics.PresentationParameters.BackBufferFormat,
+        DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                targets[hc] = _target;
+                //ENSURE the target gets repainted
+                ctrl.Invalidate();
             }
+        }
+        if (ctrl.RequiresPaint)
+        {
+            graphics.SetRenderTarget(_target);
+            graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = false };
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearClamp, GraphicsDevice.DepthStencilState,
+                            RasterizerState.CullNone);
+            graphics.Clear(Color.Black);
+            var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
+            gfxContext.Clear(Color.Black);
+            ctrl.Paint(gfxContext, _target);
+            QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+            QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                    
+
+            batch.End();
+            QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+            QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+            graphics.SetRenderTarget(_game.GameRenderTarget);
+            targets[hc] = _target;
+        }
+    }
+}
+
+        public static long Average(this byte[] bytes)
+        {
+            long total = 0;
+            foreach (var b in bytes)
+                total += b;
+            return total / bytes.Length;
         }
 
         public static event Action SinglePlayerStarted;

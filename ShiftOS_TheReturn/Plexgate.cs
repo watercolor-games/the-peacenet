@@ -601,9 +601,15 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
 
+            spriteBatch.End();
+
+
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawTArgets(spriteBatch);
 
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
+                            rasterizerState);
 
             //draw tutorial overlay
             if (IsInTutorial)
@@ -653,9 +659,16 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             }
 
 #endif
+            spriteBatch.End();
+
             //Since we've drawn all the shrouds and stuff...
             //we can draw the HUD.
             UIManager.DrawHUD(spriteBatch);
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
+                            rasterizerState);
+
             //Draw a mouse cursor
             var mousepos = LastMouseState;
             spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);

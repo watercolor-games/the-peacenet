@@ -195,7 +195,6 @@ namespace Plex.Frontend.GUI
                 gfx.Y = 0;
                 gfx.Width = Width;
                 gfx.Height = Height;
-                gfx.Device.SetRenderTarget(null);
                 gfx.Device.SetRenderTarget(_textBuffer);
                 gfx.Device.Clear(Microsoft.Xna.Framework.Color.Transparent);
                 gfx.Device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
@@ -203,8 +202,8 @@ namespace Plex.Frontend.GUI
                                     SamplerState.LinearClamp, DepthStencilState.Default,
                                     RasterizerState.CullNone);
                 RenderText(gfx);
-                gfx.Device.SetRenderTarget(target);
                 gfx.Batch.End();
+                gfx.Device.SetRenderTarget(target);
                 gfx.Device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                 gfx.X = x;
                 gfx.Y = y;
