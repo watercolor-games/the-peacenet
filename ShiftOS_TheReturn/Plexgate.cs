@@ -114,7 +114,7 @@ namespace Plex.Frontend
                 );
 
             Content.RootDirectory = "Content";
-            graphicsDevice.PreferMultiSampling = true;
+            graphicsDevice.PreferMultiSampling = false;
 
             //Make window borderless
             Window.IsBorderless = false;
@@ -293,8 +293,7 @@ namespace Plex.Frontend
 
         private Thread ClientThread = null;
 
-        private double timeSinceLastPurge = 0;
-
+        
         private Texture2D MouseTexture = null;
 
          /// <summary>
@@ -303,7 +302,7 @@ namespace Plex.Frontend
         /// </summary>
         protected override void LoadContent()
         {
-            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, graphicsDevice.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
@@ -588,14 +587,10 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
 
 
-            var rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            rasterizerState.MultiSampleAntiAlias = true;
-
             graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
-                            rasterizerState);
+                            RasterizerState.CullNone);
             //Create a graphics context so we can draw shit
             var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0, 0, 1280, 720);
             //Draw the desktop BG.
@@ -609,7 +604,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
-                            rasterizerState);
+                            RasterizerState.CullNone);
 
             //draw tutorial overlay
             if (IsInTutorial)
@@ -667,7 +662,7 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
-                            rasterizerState);
+                            RasterizerState.CullNone);
 
             //Draw a mouse cursor
             var mousepos = LastMouseState;
@@ -678,11 +673,10 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
                             SamplerState.LinearWrap, DepthStencilState.Default,
-                            rasterizerState);
+                            RasterizerState.CullNone);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
             spriteBatch.End();
         
-            graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             framesdrawn++;
             base.Draw(gameTime);
 #if DEBUG

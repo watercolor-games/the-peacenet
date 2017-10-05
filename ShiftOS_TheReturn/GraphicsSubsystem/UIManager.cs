@@ -130,7 +130,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                     if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
                     {
                         ctrl.Invalidate();
-                        
+                        DrawControlsToTargets(batch.GraphicsDevice, batch);
                     }
                     batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
@@ -158,64 +158,66 @@ namespace Plex.Frontend.GraphicsSubsystem
             topLevels.Insert(0, ctrl);
         }
 
-public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
-{
-    foreach (var ctrl in controls.ToArray().Where(x=>x.Visible==true))
-    {
-        RenderTarget2D _target;
-        int hc = ctrl.GetHashCode();
-        if (!targets.ContainsKey(hc))
+        public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
         {
-            _target = new RenderTarget2D(
-                            graphics,
-                            Math.Max(1,ctrl.Width),
-                            Math.Max(1,ctrl.Height),
-                            false,
-                            graphics.PresentationParameters.BackBufferFormat,
-                            DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-            targets.Add(hc, _target);
-            ctrl.Invalidate();
-        }
-        else
-        {
-            _target = targets[hc];
-            if(_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+            foreach (var ctrl in controls.ToArray().Where(x => x.Visible == true))
             {
-                _target = new RenderTarget2D(
-        graphics,
-        Math.Max(1,ctrl.Width),
-        Math.Max(1,ctrl.Height),
-        false,
-        graphics.PresentationParameters.BackBufferFormat,
-        DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                targets[hc] = _target;
-                //ENSURE the target gets repainted
-                ctrl.Invalidate();
+                RenderTarget2D _target;
+                int hc = ctrl.GetHashCode();
+                if (!targets.ContainsKey(hc))
+                {
+                    _target = new RenderTarget2D(
+                                    graphics,
+                                    Math.Max(1, ctrl.Width),
+                                    Math.Max(1, ctrl.Height),
+                                    false,
+                                    graphics.PresentationParameters.BackBufferFormat,
+                                    DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                    targets.Add(hc, _target);
+                    ctrl.Invalidate();
+                }
+                else
+                {
+                    _target = targets[hc];
+                    if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+                    {
+                        _target = new RenderTarget2D(
+                graphics,
+                Math.Max(1, ctrl.Width),
+                Math.Max(1, ctrl.Height),
+                false,
+                graphics.PresentationParameters.BackBufferFormat,
+                DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                        targets[hc] = _target;
+                        //ENSURE the target gets repainted
+                        ctrl.Invalidate();
+                    }
+                }
+                if (ctrl.RequiresPaint)
+                {
+                    QA.Assert(_target == null, false, "Null render target in UI subsystem");
+                    graphics.SetRenderTarget(_target);
+                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                    SamplerState.LinearWrap, GraphicsDevice.DepthStencilState,
+                                    RasterizerState.CullNone);
+                    graphics.Clear(Color.Black);
+                    var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
+                    gfxContext.Clear(Color.Black);
+                    ctrl.Paint(gfxContext, _target);
+                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+
+
+                    batch.End();
+                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                    graphics.SetRenderTarget(_game.GameRenderTarget);
+                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                    targets[hc] = _target;
+                }
             }
         }
-        if (ctrl.RequiresPaint)
-        {
-            graphics.SetRenderTarget(_target);
-            graphics.DepthStencilState = new DepthStencilState() { DepthBufferEnable = false };
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearClamp, GraphicsDevice.DepthStencilState,
-                            RasterizerState.CullNone);
-            graphics.Clear(Color.Black);
-            var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
-            gfxContext.Clear(Color.Black);
-            ctrl.Paint(gfxContext, _target);
-            QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-            QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
-                    
-
-            batch.End();
-            QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-            QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
-            graphics.SetRenderTarget(_game.GameRenderTarget);
-            targets[hc] = _target;
-        }
-    }
-}
 
         public static long Average(this byte[] bytes)
         {
@@ -245,30 +247,39 @@ public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, Sprite
 
         public static void AddTopLevel(GUI.Control ctrl)
         {
-            if (!topLevels.Contains(ctrl))
-                topLevels.Add(ctrl);
-            FocusedControl = ctrl;
-            ctrl.Invalidate();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                if (!topLevels.Contains(ctrl))
+                    topLevels.Add(ctrl);
+                FocusedControl = ctrl;
+                ctrl.Invalidate();
+            });
         }
 
         public static void AddHUD(GUI.Control ctrl)
         {
-            if (!hudctrls.Contains(ctrl))
-                hudctrls.Add(ctrl);
-            ctrl.Invalidate();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                if (!hudctrls.Contains(ctrl))
+                    hudctrls.Add(ctrl);
+                ctrl.Invalidate();
+            });
         }
 
 
         public static void InvalidateAll()
         {
-            foreach(var ctrl in topLevels)
+            Desktop.InvokeOnWorkerThread(() =>
             {
-                ctrl.Invalidate();
-            }
-            foreach (var ctrl in hudctrls)
-            {
-                ctrl.Invalidate();
-            }
+                foreach (var ctrl in topLevels)
+                {
+                    ctrl.Invalidate();
+                }
+                foreach (var ctrl in hudctrls)
+                {
+                    ctrl.Invalidate();
+                }
+            });
         }
 
         public static Control[] TopLevels
