@@ -145,7 +145,7 @@ namespace Plex.Frontend.GUI
                         {
                             var linemeasure = GraphicsContext.MeasureString(line, font, Engine.GUI.TextAlignment.TopLeft, Width);
                             if(!drawText)
-                                gfx.DrawRectangle(0, text_y, Width, (int)linemeasure.Y, SkinEngine.LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
+                                gfx.DrawRectangle(0, text_y, Width, (int)linemeasure.Y, SkinEngine.LoadedSkin.TerminalBackColor.ToMonoColor());
                         }
                         foreach (var word in words)
                         {
@@ -156,7 +156,7 @@ namespace Plex.Frontend.GUI
                                 text_y += (int)measure.Y;
                             }
                             if (drawText)
-                                gfx.DrawString(word + "  ", text_x, text_y, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft);
+                                gfx.DrawString(word + "  ", text_x, text_y, SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft);
                             text_x += (int)measure.X;
 
                             if (word.EndsWith("\r"))

@@ -144,7 +144,7 @@ namespace Plex.Frontend.GUI
             
 
             //draw button
-            var buttonbg = SkinEngine.LoadedSkin.ButtonBackgroundColor.ToMonoColor();
+            var buttonbg = SkinEngine.LoadedSkin.ButtonIdleColor.ToMonoColor();
             if (ContainsMouse)
                 buttonbg = SkinEngine.LoadedSkin.ButtonHoverColor.ToMonoColor();
             if (MouseLeftDown)

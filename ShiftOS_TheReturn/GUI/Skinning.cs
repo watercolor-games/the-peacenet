@@ -324,404 +324,71 @@ namespace Plex.Engine
         [ShifterHidden]
         public Dictionary<string, byte[]> AppIcons = new Dictionary<string, byte[]>();
 
-
-        #region Menus -> Toolbars
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar Border")]
-        public Color Menu_ToolStripBorder = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Dropdown background")]
-        public Color Menu_ToolStripDropDownBackground = Color.White;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient start")]
-        public Color Menu_ToolStripGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient middle")]
-        public Color Menu_ToolStripGradientMiddle = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Toolbar gradient end")]
-        public Color Menu_ToolStripGradientEnd = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button select highlight")]
-        public Color Menu_ButtonSelectedHighlight = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button select border")]
-        public Color Menu_ButtonSelectedHighlightBorder = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed highlight")]
-        public Color Menu_ButtonPressedHighlight = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed border")]
-        public Color Menu_ButtonPressedHighlightBorder = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button checked highlight")]
-        public Color Menu_ButtonCheckedHighlight = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button checked border")]
-        public Color Menu_ButtonCheckedHighlightBorder = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed gradient border")]
-        public Color Menu_ButtonPressedBorder = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button selected gradient border")]
-        public Color Menu_ButtonSelectedBorder = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button checked gradient start")]
-        public Color Menu_ButtonCheckedGradientBegin = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button checked gradient middle")]
-        public Color Menu_ButtonCheckedGradientMiddle = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button checked gradient end")]
-        public Color Menu_ButtonCheckedGradientEnd = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button selected gradient start")]
-        public Color Menu_ButtonSelectedGradientBegin = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button selected gradient middle")]
-        public Color Menu_ButtonSelectedGradientMiddle = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button selected gradient end")]
-        public Color Menu_ButtonSelectedGradientEnd = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed gradient start")]
-        public Color Menu_ButtonPressedGradientBegin = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed gradient middle")]
-        public Color Menu_ButtonPressedGradientMiddle = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Button pressed gradient end")]
-        public Color Menu_ButtonPressedGradientEnd = Color.Black;
-
-
-
-
-        #endregion
-
-        #region Menus -> General
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Menu text color")]
-        public Color Menu_TextColor = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Menu selected text color")]
-        public Color Menu_SelectedTextColor = Color.White;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Rafter gradient start")]
-        public Color Menu_RaftingContainerGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Rafter gradient end")]
-        public Color Menu_RaftingContainerGradientEnd = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Separator Color 1")]
-        public Color Menu_SeparatorDark = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Separator Color 2")]
-        public Color Menu_SeparatorLight = Color.White;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Check BG")]
-        public Color Menu_CheckBackground = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Check BG (Selected)")]
-        public Color Menu_CheckSelectedBackground = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("General")]
-        [ShifterName("Check BG (Pressed)")]
-        public Color Menu_CheckPressedBackground = Color.Black;
-
-
-
-
-        #endregion
-
-        #region Menus -> Menu Bars
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient start")]
-        public Color Menu_MenuItemPressedGradientBegin = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient middle")]
-        public Color Menu_MenuItemPressedGradientMiddle = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item pressed gradient end")]
-        public Color Menu_MenuItemPressedGradientEnd = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item selected gradient start")]
-        public Color Menu_MenuItemSelectedGradientBegin = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Toolbars")]
-        [ShifterName("Menu item selected gradient end")]
-        public Color Menu_MenuItemSelectedGradientEnd = Color.Black;
-
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Margin gradient start")]
-        public Color Menu_ImageMarginGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Margin gradient middle")]
-        public Color Menu_ImageMarginGradientMiddle = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Margin gradient end")]
-        public Color Menu_ImageMarginGradientEnd = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Menu gradient start")]
-        public Color Menu_MenuStripGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Menu gradient end")]
-        public Color Menu_MenuStripGradientEnd = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Menu item selected")]
-        public Color Menu_MenuItemSelected = Color.Black;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Menu item border")]
-        public Color Menu_MenuItemBorder = Color.White;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu bars")]
-        [ShifterName("Menu border")]
-        public Color Menu_MenuBorder = Color.White;
-
-
-
-
-        #endregion
-
-        #region Menus -> Status bars
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Status bars")]
-        [ShifterName("Status bar gradient start")]
-        public Color Menu_StatusStripGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Status bars")]
-        [ShifterName("Status bar gradient end")]
-        public Color Menu_StatusStripGradientEnd = Color.Gray;
-
-
-
-
-        #endregion
-
-        #region Menus -> Menu holders
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu holders")]
-        [ShifterName("Content panel gradient start")]
-        public Color Menu_ToolStripContentPanelGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu holders")]
-        [ShifterName("Content panel gradient end")]
-        public Color Menu_ToolStripContentPanelGradientEnd = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu holders")]
-        [ShifterName("Panel gradient start")]
-        public Color Menu_ToolStripPanelGradientBegin = Color.Gray;
-
-        [ShifterMeta("Menus")]
-        [ShifterCategory("Menu holders")]
-        [ShifterName("Panel gradient end")]
-        public Color Menu_ToolStripPanelGradientEnd = Color.Gray;
-
-
-
-
-        #endregion
-
-
+        #region System -> Terminal
         [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button background color")]
-        [ShifterDescription("Set the background color for each button's Idle state.")]
-        public Color ButtonBackgroundColor = Color.White;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons;skinning")]
-        [Image("buttonhover")]
-        [ShifterName("Button hover image")]
-        [ShifterDescription("Set the image that's displayed when the mouse hovers over a button.")]
-        public byte[] ButtonHoverImage = null;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("skinning;shift_buttons")]
-        [Image("buttonpressed")]
-        [ShifterName("Button pressed image")]
-        [ShifterDescription("Select an image to show when the user presses a button.")]
-        public byte[] ButtonPressedImage = null;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button hover color")]
-        [ShifterDescription("Choose the color that displays on a button when the mouse hovers over it.")]
-        public Color ButtonHoverColor = Color.Gray;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Progress Bar")]
-        [ShifterName("Progress bar foreground color")]
-        [ShifterDescription("Set the color of the progress indicator.")]
-        public Color ProgressColor = Color.Gray;
-
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button pressed color")]
-        [ShifterDescription("Select the background color for the button when the mouse clicks it.")]
-        public Color ButtonPressedColor = Color.Black;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button foreground color")]
-        [ShifterDescription("Select the text and border color for each button.")]
-        public Color ButtonForegroundColor = Color.Black;
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button font")]
-        [ShifterDescription("Select the font for the button's text.")]
-        public Font ButtonTextFont = new Font("Microsoft Sans Serif", 9F);
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons;skinning")]
-        [Image("buttonidle")]
-        [ShifterName("Button background color")]
-        [ShifterDescription("Select an image to show as the button's Idle state.")]
-        public byte[] ButtonBG = null;
-
-
-
-        [ShifterMeta("System")]
-        [ShifterCategory("Buttons")]
-        //[RequiresUpgrade("shift_buttons")]
-        [ShifterName("Button border width")]
-        [ShifterDescription("Set the width, in pixels, of the button's border.")]
-        public int ButtonBorderWidth = 2;
-
-
-        #region System -> General
-        [ShifterMeta("System")]
-        [ShifterCategory("General")]
+        [ShifterCategory("Terminal")]
         [ShifterName("Terminal font")]
+        [ShifterDescription("The font used by the Terminal for text display.")]
         public Font TerminalFont = new Font("Lucida Console", 9F, FontStyle.Regular);
 
         [ShifterMeta("System")]
-        [ShifterCategory("General")]
+        [ShifterCategory("Terminal")]
         [ShifterName("Terminal text color")]
-        public ConsoleColor TerminalForeColorCC = ConsoleColor.White;
+        [ShifterDescription("The color used by the Terminal for text and the caret.")]
+        public Color TerminalForeColor = Color.White;
 
         [ShifterMeta("System")]
-        [ShifterCategory("General")]
+        [ShifterCategory("Terminal")]
         [ShifterName("Terminal background color")]
-        public ConsoleColor TerminalBackColorCC = ConsoleColor.Black;
+        [ShifterDescription("The color used by the Terminal for the background.")]
+        public Color TerminalBackColor = Color.Black;
 
 
         #endregion
 
-
+        #region UI typography
         [ShifterMeta("System")]
-        [ShifterCategory("Header Fonts")]
+        [ShifterCategory("UI typography")]
         [ShifterName("1st level header")]
         [ShifterDescription("The font used in level 1 (title) headers.")]
         public Font HeaderFont = new Font("Microsoft Sans Serif", 20F);
 
+        [ShifterMeta("System")]
+        [ShifterCategory("General")]
+        [ShifterName("Inset/outset background color")]
+        [ShifterDescription("A color used by elements such as list boxes, list views, and other content elements that makes them stand out from the rest of the UI, giving the UI some more depth.")]
+        public Color InsetBackgroundColor = Color.LightGray;
 
         [ShifterMeta("System")]
-        [ShifterCategory("Header Fonts")]
+        [ShifterCategory("UI typography")]
+        [ShifterName("1st level header color")]
+        [ShifterDescription("The color used for first-level headers.")]
+        public Color FirstLevelHeaderColor = Color.Black;
+
+        [ShifterMeta("System")]
+        [ShifterCategory("UI typography")]
         [ShifterName("2nd level header")]
         [ShifterDescription("The font used in level 2 (subtitle) headers.")]
         public Font Header2Font = new Font("Microsoft Sans Serif", 15F);
 
+        [ShifterMeta("System")]
+        [ShifterCategory("UI typography")]
+        [ShifterName("2nd level header color")]
+        [ShifterDescription("The color used for second-level headers.")]
+        public Color SecondLevelHeaderColor = Color.Black;
+
 
         [ShifterMeta("System")]
-        [ShifterCategory("Header Fonts")]
+        [ShifterCategory("UI typography")]
         [ShifterName("3rd level header")]
         [ShifterDescription("The font used in level 3 (section) headers.")]
         public Font Header3Font = new Font("Microsoft Sans Serif", 12F);
+
+        [ShifterMeta("System")]
+        [ShifterCategory("UI typography")]
+        [ShifterName("3rd level header color")]
+        [ShifterDescription("The color used for third-level headers.")]
+        public Color ThirdLevelHeaderColor = Color.Black;
 
 
         [ShifterMeta("Desktop")]
@@ -731,50 +398,85 @@ namespace Plex.Engine
         public Color DesktopColor = Color.Black;
 
         [ShifterMeta("System")]
-        [ShifterCategory("Progress Bar")]
-        //[RequiresUpgrade("shift_progress_bar")]
-        [ShifterName("Progress bar background color")]
-        [ShifterDescription("The background color of the progress bar.")]
-        public Color ProgressBarBackgroundColor = Color.Black;
-
-
-        [ShifterMeta("System")]
         [ShifterCategory("General")]
         [ShifterName("System Background")]
-        [ShifterDescription("The background color of all system controls in the UI.")]
+        [ShifterDescription("The background color of any UI elements that don't have their own background style.")]
         public Color ControlColor = Color.White;
 
         [ShifterMeta("System")]
-        [ShifterCategory("General")]
-        [ShifterName("System Foreground")]
-        [ShifterDescription("The foreground color of all system controls in the UI.")]
+        [ShifterCategory("UI typography")]
+        [ShifterName("General text color")]
+        [ShifterDescription("The foreground color of any text element that doesn't define its own typographic style.")]
         public Color ControlTextColor = Color.Black;
 
         [ShifterMeta("System")]
-        [ShifterCategory("General")]
+        [ShifterCategory("UI typography")]
         [ShifterName("System Font")]
         [ShifterDescription("The font style used by the system.")]
         public Font MainFont = new Font("Microsoft Sans Serif", 9F);
+        #endregion
 
+
+        #region Buttons
+
+        public Color ButtonIdleColor = Color.White;
+        public Color ButtonIdleTextColor = Color.Black;
+        public Color ButtonHoverColor = Color.Gray;
+        public Color ButtonHoverTextColor = Color.White;
+        public Color ButtonPressedColor = Color.Black;
+        public Color ButtonPressedTextColor = Color.White;
+
+        public Font ButtonFont = new Font("Microsoft Sans Serif", 9F);
+
+        public Size ButtonMargins = new Size(10, 5);
+
+        #endregion
+
+        #region Progress bars
+
+        public Color ProgressColor = Color.Gray;
+        public Color ProgressBarBackgroundColor = Color.Black;
+
+        #endregion
+
+        #region Menu dropdowns
+
+        public Color DropdownBackground = Color.White;
+        public Color DropdownItemSelected = Color.Gray;
+        public Color DropdownItemTextColor = Color.Black;
+        public Color DropdownItemSelectedTextColor = Color.White;
+        public Font DropdownFont = new Font("Microsoft Sans Serif", 9F);
+        public Color DropdownMarginColor = Color.Gray;
+
+        #endregion
+
+        #region Menu bars
+
+        public Color MenuItemTextColor = Color.Black;
+        public Color MenuItemSelectedColor = Color.Black;
+        public Color MenuItemSelectedTextColor = Color.White;
+        public Color MenuBarBackgroundColor = Color.Gray;
+        public Font MenuFont = new Font("Microsoft Sans Serif", 9F);
+
+        #endregion
+
+        #region Listbox
+
+        public Color ListBoxSelectedItemColor = Color.Gray;
+        public Color ListBoxHoverItemColor = Color.White;
+        public Color ListBoxTextColor = Color.Black;
+        public Color ListBoxSelectedItemTextColor = Color.White;
+        public Color ListBoxHoverTextColor = Color.Black;
+        public Font ListBoxFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold);
+
+        #endregion
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public enum ButtonRenderStyle
+    {
+        Colored,
+        Textured
+    }
 
     /// <summary>
     /// Marks a skin spec field as hidden from the Shifter.

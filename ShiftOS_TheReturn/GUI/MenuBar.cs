@@ -46,7 +46,7 @@ namespace Plex.Frontend.GUI
             int ry = (Height-_fontHeight)/2;
             for(int i = 0; i < MenuItems.Length; i++)
             {
-                var loc = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
+                var loc = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MenuFont, Engine.GUI.TextAlignment.TopLeft);
                 int w = (int)loc.X+6;
                 int h = _fontHeight;
                 if(x >= rx && x <= rx+w && y >= ry && y <= ry + h)
@@ -61,7 +61,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            _fontHeight = SkinEngine.LoadedSkin.MainFont.Height + 6;
+            _fontHeight = SkinEngine.LoadedSkin.MenuFont.Height + 6;
             this.Width = Parent.Width;
             this.Height = _fontHeight + 6;
             this.X = 0;
@@ -76,15 +76,15 @@ namespace Plex.Frontend.GUI
             {
                 for (int i = 0; i < MenuItems.Length; i++)
                 {
-                    var measure = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
+                    var measure = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MenuFont, Engine.GUI.TextAlignment.TopLeft);
                     bool selected = i == SelectedIndex;
-                    Color _text = SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor();
+                    Color _text = SkinEngine.LoadedSkin.MenuItemTextColor.ToMonoColor();
                     if (selected)
-                        _text = SkinEngine.LoadedSkin.Menu_SelectedTextColor.ToMonoColor();
+                        _text = SkinEngine.LoadedSkin.MenuItemSelectedTextColor.ToMonoColor();
 
                     int t_y = text_y + ((_fontHeight - (int)measure.Y) / 2);
                     int t_x = text_x + 3;
-                    gfx.DrawString(MenuItems[i].Text, t_x, t_y, _text, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
+                    gfx.DrawString(MenuItems[i].Text, t_x, t_y, _text, SkinEngine.LoadedSkin.MenuFont, Engine.GUI.TextAlignment.TopLeft);
                     text_x += (int)measure.X + 16;
                 }
             }
@@ -92,10 +92,9 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(SkinEngine.LoadedSkin.Menu_MenuStripGradientBegin.ToMonoColor());
-            gfx.DrawRectangle(SelectedX, SelectedY, SelectedW, SelectedH, SkinEngine.LoadedSkin.Menu_MenuItemBorder.ToMonoColor());
-            gfx.DrawRectangle(SelectedX+2, SelectedY+2, SelectedW-4, SelectedH-4, SkinEngine.LoadedSkin.Menu_MenuItemSelected.ToMonoColor());
-
+            gfx.Clear(SkinEngine.LoadedSkin.MenuBarBackgroundColor.ToMonoColor());
+            gfx.DrawRectangle(SelectedX, SelectedY, SelectedW, SelectedH, SkinEngine.LoadedSkin.MenuItemSelectedColor.ToMonoColor());
+            
             base.PaintBG = false;
             base.OnPaint(gfx, target);
         }

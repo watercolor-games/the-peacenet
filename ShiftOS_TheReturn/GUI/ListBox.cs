@@ -30,8 +30,20 @@ namespace Plex.Frontend.GUI
                 int height = fontheight;
                 if(i >= 0 && i < items.Count)
                 {
-                    gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.MainFont, Alignment);
+                    if (i == _itemOver)
+                    {
+                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxHoverTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
 
+                    }
+                    else if (i == selectedIndex)
+                    {
+                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxSelectedItemTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
+
+                    }
+                    else
+                    {
+                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
+                    }
                 }
             }
 
@@ -63,6 +75,9 @@ namespace Plex.Frontend.GUI
                         return;
                     }
                 }
+                selectedIndex = -1;
+                Invalidate();
+                RequireTextRerender();
             };
         }
 
@@ -194,9 +209,8 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(LoadedSkin.ControlTextColor.ToMonoColor());
-            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
-            for(int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
+            gfx.Clear(LoadedSkin.InsetBackgroundColor.ToMonoColor());
+            for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
             {
                 int x = 1;
                 int y = fontheight * (i - itemOffset);
@@ -205,15 +219,11 @@ namespace Plex.Frontend.GUI
                 if (i == selectedIndex)
                 {
                     //draw the string as selected
-                    gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlTextColor"]);
+                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ListBoxSelectedItemColor.ToMonoColor());
                 }
                 else if (i == _itemOver)
                 {
-                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ButtonHoverColor.ToMonoColor());
-                }
-                else
-                {
-                    gfx.DrawRectangle(x, y + 2, width, height, UIManager.SkinTextures["ControlColor"]);
+                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ListBoxHoverItemColor.ToMonoColor());
                 }
             }
             base.OnPaint(gfx, target);
@@ -221,9 +231,9 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if(fontheight != LoadedSkin.MainFont.Height)
+            if(fontheight != LoadedSkin.ListBoxFont.Height)
             {
-                fontheight = LoadedSkin.MainFont.Height;
+                fontheight = LoadedSkin.ListBoxFont.Height;
                 Invalidate();
             }
             base.OnLayout(gameTime);

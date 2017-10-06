@@ -217,17 +217,17 @@ namespace Plex.Frontend.GUI
             int text_y = (_border / 2);
             if(_childMenus.Count == 0)
             {
-                gfx.DrawString(_emptyText, text_x, text_y, SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor(), SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
+                gfx.DrawString(_emptyText, text_x, text_y, SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor(), SkinEngine.LoadedSkin.DropdownFont, Engine.GUI.TextAlignment.TopLeft);
             }
             else
             {
                 for(int i = 0; i < _childMenus.Count; i++)
                 {
                     bool selected = i == _selectedIndex;
-                    Color _text = SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor();
+                    Color _text = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
                     if (selected)
-                        _text = SkinEngine.LoadedSkin.Menu_SelectedTextColor.ToMonoColor();
-                    gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft);
+                        _text = SkinEngine.LoadedSkin.DropdownItemSelectedTextColor.ToMonoColor();
+                    gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, SkinEngine.LoadedSkin.DropdownFont, Engine.GUI.TextAlignment.TopLeft);
                     text_y += _textheight;
                 }
             }
@@ -237,17 +237,17 @@ namespace Plex.Frontend.GUI
         {
             if (PaintBG)
             {
-                gfx.Clear(SkinEngine.LoadedSkin.Menu_MenuBorder.ToMonoColor());
-                gfx.DrawRectangle((_border / 2) + _imageMargin, _border / 2, Width - _border - _imageMargin, Height - _border, SkinEngine.LoadedSkin.Menu_ToolStripDropDownBackground.ToMonoColor());
-                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, SkinEngine.LoadedSkin.Menu_MenuItemSelected.ToMonoColor());
+                gfx.Clear(SkinEngine.LoadedSkin.DropdownBackground.ToMonoColor());
+                gfx.DrawRectangle(0, 0, _border + _imageMargin, Height, SkinEngine.LoadedSkin.DropdownMarginColor.ToMonoColor());
+                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, SkinEngine.LoadedSkin.DropdownItemSelected.ToMonoColor());
                 for (int i = 0; i < _childMenus.Count; i++)
                 {
                     var dd = _childMenus[i];
                     if (dd.HasDropdown)
                     {
-                        var ddColor = SkinEngine.LoadedSkin.Menu_TextColor.ToMonoColor();
+                        var ddColor = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
                         if (i == _selectedIndex)
-                            ddColor = SkinEngine.LoadedSkin.Menu_SelectedTextColor.ToMonoColor();
+                            ddColor = SkinEngine.LoadedSkin.DropdownItemSelectedTextColor.ToMonoColor();
 
 
                         int ddy = (_border / 2) + (_textheight * i);
@@ -334,7 +334,7 @@ namespace Plex.Frontend.GUI
             if (this.TextRerenderRequired)
             {
                 string longest = (_childMenus.Count == 0) ? _emptyText : GetLongestString();
-                var measure = TextRenderer.MeasureText(longest, SkinEngine.LoadedSkin.MainFont, int.MaxValue, Engine.GUI.TextAlignment.TopLeft);
+                var measure = TextRenderer.MeasureText(longest, SkinEngine.LoadedSkin.DropdownFont, int.MaxValue, Engine.GUI.TextAlignment.TopLeft);
                 _textwidth = (int)measure.X;
                 _textheight = (int)measure.Y;
             }

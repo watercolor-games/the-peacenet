@@ -69,8 +69,8 @@ namespace Plex.Engine
             _continue.Top = _quit.Top;
 
             _crashdata.Text = _summary;
-            _crashdata.BackColor = SkinEngine.LoadedSkin.TerminalBackColorCC.ToColor();
-            _crashdata.ForeColor = SkinEngine.LoadedSkin.TerminalForeColorCC.ToColor();
+            _crashdata.BackColor = SkinEngine.LoadedSkin.TerminalBackColor;
+            _crashdata.ForeColor = SkinEngine.LoadedSkin.TerminalForeColor;
             _crashdata.Font = SkinEngine.LoadedSkin.TerminalFont;
             _crashdata.Left = 15;
             _crashdata.Top = _description.Top + _description.Height + 15;

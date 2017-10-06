@@ -33,7 +33,6 @@ namespace Plex.Frontend
         private CheckBox _fullscreen = new CheckBox();
         private Button _community = new Button();
         private Button _close = new Button();
-        private TextControl _tips = new TextControl();
         
         public MainMenu()
         {
@@ -57,8 +56,7 @@ namespace Plex.Frontend
             AddControl(_optionsSave);
             AddControl(_fullscreen);
             AddControl(_community);
-            AddControl(_tips);
-
+            
             _bodyTitle.X = _bodystart + 45;
             _bodyTitle.Y = 45;
             _bodyTitle.Font = SkinEngine.LoadedSkin.HeaderFont;
@@ -314,17 +312,14 @@ Please check your Internet connection and make sure https://getshiftos.net/ is a
 
 		private static readonly string[] funnyXD = new string[]
 		{
-			"Sentience choppy? Try adjusting sentience quality settings in\nOptions.",
-			"Want to hear about the latest Plex news and events? Check out the Community menu!",
-			"What's a 'tip of advice'?",
-			"Welcome to the Digital\nSociety. Do you wish to continue?",
-			"Open-source projects are pretty\ncool. This isn't one.",
-			"Sure, you can toggle fullscreen in Options, but you can also use your F11 key to toggle it on and off in-game!",
-			"Multithreading is the mayonnaise in the sandwich of\nPlex\u00ae.",
-			"Ammunition is precious, so don't waste it.",
-			"Your experienceing a lethal virus which i like to call (death)",
-			"We ran out of things to say."
-		};
+            "Cash is a very valuable and useful, but limited resource in the Plexnet. Spend it wisely.",
+            "Feeling slow today, young sentience?\r\n\r\nIf you're experiencing slowdowns, try adjusting the game UI quality in Options.",
+            "Have you ever tried running Terminal in Text Mode? I heard it is quite neat.",
+            "Running out of disk space? Use File Skimmer to delete unneeded files or folders to clear up disk space.",
+            "\"It's all Greek to me...\"\r\n\r\nHaving trouble finding your way around the Terminal? Type the 'help' command for a list of commands you can run.",
+            "Did you know that you can hack the game itself? Yeah! Visit our GitLab at https://gitlab.com/watercolorgames/projectplex - go to town!",
+            ""
+        };
 		
 		private static List<string> remainingTips = null;
 
@@ -382,16 +377,6 @@ Please check your Internet connection and make sure https://getshiftos.net/ is a
                 }
             }
 
-            _tips.Visible = true;
-            _tips.Opacity = _tipFade;
-            _tips.Text = _tipText;
-            _tips.Width = _tipWidth;
-            _tips.Height = _tipHeight;
-            _tips.X = 30;
-            _tips.Y = (Height - _tips.Height) - 30;
-            _tips.Height = Height - _tips.Y; // ugh
-            _tips.Font = _campaign.Font;
-
             _resDown.Visible = (_menuTitle.Text == "Options" && _resIndex > 0);
 
             _resUp.Visible = (_menuTitle.Text == "Options" && _resIndex < _screenResolutions.Count - 1);
@@ -414,11 +399,12 @@ Please check your Internet connection and make sure https://getshiftos.net/ is a
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
+            gfx.Clear(SkinEngine.LoadedSkin.ControlColor.ToMonoColor());
             gfx.DrawRectangle(0, 0, Width / 4, Height, Color.White * 0.35F);
 
-            //var measure = GraphicsContext.MeasureString(_tipText, _campaign.Font, (Width / 4) - 30);
-            //int _height = (Height - (int)measure.Y) - 30;
-            //gfx.DrawString(_tipText, 30, _height, Color.White * _tipFade, _campaign.Font, (Width / 4) - 30);
+            var measure = GraphicsContext.MeasureString(_tipText, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.TopLeft, (Width / 4) - 30);
+            int _height = (Height - (int)measure.Y) - 30;
+            gfx.DrawString(_tipText, 30, _height, Color.White * _tipFade, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.TopLeft, (Width / 4) - 30);
         }
     }
 }

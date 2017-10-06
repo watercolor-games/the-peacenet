@@ -372,7 +372,7 @@ namespace Plex.Frontend.Apps
             foreach (var line in Lines)
             {
                 if (!(textloc < 0 || textloc - font.Height >= Height))
-                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
+                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColor.ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
                 if (string.IsNullOrEmpty(line))
                     textloc += font.Height;
                 else
@@ -384,7 +384,7 @@ namespace Plex.Frontend.Apps
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             PaintBackground = false;
-            gfx.Clear(LoadedSkin.TerminalBackColorCC.ToColor().ToMonoColor());
+            gfx.Clear(LoadedSkin.TerminalBackColor.ToMonoColor());
 
             //Draw the text
             base.OnPaint(gfx, target);
@@ -396,7 +396,7 @@ namespace Plex.Frontend.Apps
             //Draw the caret.
             if (blinkStatus == true)
             {
-                gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColorCC.ToColor().ToMonoColor());
+                gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColor.ToMonoColor());
             }
         }
     }
