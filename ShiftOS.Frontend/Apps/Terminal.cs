@@ -80,7 +80,6 @@ namespace Plex.Frontend.Apps
 
         public TerminalControl()
         {
-            
         }
         
         private static readonly string[] delimiters = { Environment.NewLine };
@@ -156,6 +155,10 @@ namespace Plex.Frontend.Apps
 
         protected override void OnLayout(GameTime gameTime)
         {
+            OverrideDefaultStyle = true;
+            FontStyle = GUI.TextControlFontStyle.Custom;
+            Font = SkinEngine.LoadedSkin.TerminalFont;
+            TextColor = LoadedSkin.TerminalForeColor.ToMonoColor();
             blinkTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (blinkTime > 500.0)
                 blinkTime = 0;
@@ -372,7 +375,7 @@ namespace Plex.Frontend.Apps
             foreach (var line in Lines)
             {
                 if (!(textloc < 0 || textloc - font.Height >= Height))
-                    gfx.DrawString(line, 0, textloc, LoadedSkin.TerminalForeColor.ToMonoColor(), font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
+                    gfx.DrawString(line, 0, textloc, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
                 if (string.IsNullOrEmpty(line))
                     textloc += font.Height;
                 else

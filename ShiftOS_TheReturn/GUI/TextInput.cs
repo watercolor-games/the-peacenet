@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 
@@ -65,7 +66,7 @@ namespace Plex.Frontend.GUI
                 text = "*".Repeat(Text.Length);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, LoadedSkin.ControlTextColor.ToMonoColor(), Font, Engine.GUI.TextAlignment.TopLeft);
+                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, Microsoft.Xna.Framework.Color.White, Font, Engine.GUI.TextAlignment.TopLeft);
             }
             if(!IsFocusedControl)
             {
@@ -220,7 +221,7 @@ namespace Plex.Frontend.GUI
             if (_index < 0)
                 _index = 0;
             string toCaret = text.Substring(0, _index);
-            var measure = GraphicsContext.MeasureString(toCaret, Font, Engine.GUI.TextAlignment.TopLeft);
+            var measure = GraphicsContext.MeasureString(toCaret, SkinEngine.LoadedSkin.TextBoxFont, Engine.GUI.TextAlignment.TopLeft);
             caretPos = 2 + measure.X;
             if (caretPos - TextDrawOffset < 0)
             {
@@ -242,10 +243,51 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
+            int borderWidth = SkinEngine.LoadedSkin.TextBoxBorderWidth;
+            bool useClassicBorders = SkinEngine.LoadedSkin.TextBoxBorderStyle == TextBoxBorderStyle.Classic;
+            var borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorIdle.ToMonoColor();
+            var bgColor = SkinEngine.LoadedSkin.TextBoxBackColor.ToMonoColor();
+            if (ContainsMouse)
+            {
+                borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorHover.ToMonoColor();
+            }
+            if (IsFocusedControl)
+            {
+                borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorFocused.ToMonoColor();
+            }
             if (PaintBackground == true)
             {
-                gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
-                gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
+                if (useClassicBorders == true)
+                {
+                    gfx.DrawRectangle(0, 0, Width, Height, borderColor);
+                    gfx.DrawRectangle(borderWidth, borderWidth, Width - (borderWidth * 2), Height - (borderWidth * 2), bgColor);
+                }
+                else
+                {
+                    //Material design-esque borders.
+
+
+                    //First we get the border start y...
+                    int bStartY = Height - (Height / 4);
+                    //just a quarter of the height above the bottom
+                    //draw a rectangle on the left
+                    gfx.DrawRectangle(0, bStartY, borderWidth, Height - bStartY, borderColor);
+                    //now on the right
+                    gfx.DrawRectangle(Width - borderWidth, bStartY, borderWidth, Height - bStartY, borderColor);
+                    //now along the bottom
+                    gfx.DrawRectangle(borderWidth, Height - borderWidth, Width - (borderWidth*2), borderWidth, borderColor);
+                    //done with the border
+                    //now we must draw the actual background.
+                    //This'll handle the inner BG
+                    gfx.DrawRectangle(borderWidth, 0, Width - (borderWidth * 2),Height -  borderWidth, bgColor);
+                    //now for the outer edges
+                    //draw a rectangle on the left
+                    gfx.DrawRectangle(0, 0, borderWidth, bStartY, bgColor);
+                    //now on the right
+                    gfx.DrawRectangle(Width - borderWidth, 0, borderWidth, bStartY, bgColor);
+                    //done.
+
+                }
             }
 
             OnPaintCaret(gfx, target);
@@ -255,15 +297,15 @@ namespace Plex.Frontend.GUI
 
         protected virtual void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
         {
-            int textY = (Height - Font.Height) / 2;
-            int caretHeight = Font.Height;
+            int textY = (Height - SkinEngine.LoadedSkin.TextBoxFont.Height) / 2;
+            int caretHeight = LoadedSkin.TextBoxFont.Height;
 
             if (IsFocusedControl)
             {
                 if (caretMS <= 250)
                 {
                     //draw caret
-                    gfx.DrawRectangle((int)(caretPos - TextDrawOffset), textY, 2, caretHeight, UIManager.SkinTextures["ControlTextColor"]);
+                    gfx.DrawRectangle((int)(caretPos - TextDrawOffset), textY, 2, caretHeight, LoadedSkin.TextBoxTextColor.ToMonoColor());
                 }
             }
 
@@ -271,12 +313,36 @@ namespace Plex.Frontend.GUI
 
         private double caretMS = 0;
 
+        private bool _overrideDefaultStyle = false;
+
+        public bool OverrideDefaultStyle
+        {
+            get
+            {
+                return _overrideDefaultStyle;
+            }
+            set
+            {
+                if (_overrideDefaultStyle == value)
+                    return;
+                _overrideDefaultStyle = value;
+
+            }
+        }
+
         protected override void OnLayout(GameTime gameTime)
         {
+            if (_overrideDefaultStyle == false)
+            {
+                FontStyle = TextControlFontStyle.Custom;
+                Font = SkinEngine.LoadedSkin.TextBoxFont;
+                TextColor = LoadedSkin.TextBoxTextColor.ToMonoColor();
+            }
             caretMS += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (caretMS >= 500)
                 caretMS = 0;
             Invalidate();
+            base.OnLayout(gameTime);
         }
     }
     

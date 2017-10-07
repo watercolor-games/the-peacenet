@@ -208,6 +208,9 @@ namespace Plex.Frontend.Desktop
         public void PopulatePanelButtons()
         {
             _panelButtonGroup.ClearControls();
+            _panelButtonGroup.ItemGroupLayout = ItemGroupLayout.Custom;
+            _panelButtonGroup.InitialGap = (LoadedSkin.DesktopPanelHeight - LoadedSkin.PanelButtonSize.Height) / 2;
+            _panelButtonGroup.Gap = 2;
 
             foreach(var pbtn in AppearanceManager.OpenForms)
             {
@@ -226,7 +229,9 @@ namespace Plex.Frontend.Desktop
                 image.Width = LoadedSkin.PanelButtonSize.Width;
                 image.Height = LoadedSkin.PanelButtonSize.Height;
                 var text = new TextControl();
+                text.FontStyle = TextControlFontStyle.Custom;
                 text.Font = LoadedSkin.PanelButtonFont;
+                text.TextColor = LoadedSkin.PanelButtonTextColor.ToMonoColor();
                 text.Text = pbtn.Text;
                 text.AutoSize = true;
                 text.Layout(new GameTime());

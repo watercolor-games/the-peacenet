@@ -93,7 +93,7 @@ namespace Plex.Frontend.Apps
             try
             {
                 int width = Width - _scrollBar.Width;
-                Title.Font = SkinEngine.LoadedSkin.HeaderFont;
+                Title.FontStyle = TextControlFontStyle.Header1;
                 Title.X = 15;
                 Title.Y = 15 - _scrollBar.Value;
                 Title.AutoSize = true;
@@ -108,7 +108,7 @@ namespace Plex.Frontend.Apps
                     {
                         group.Title.Y = current_y - _scrollBar.Value;
                         group.Title.X = 15;
-                        group.Title.Font = SkinEngine.LoadedSkin.Header3Font;
+                        group.Title.FontStyle = TextControlFontStyle.Header2;
                         current_y += group.Title.Height + 5;
                         group.ListView.Y = current_y - _scrollBar.Value;
                         group.ListView.X = 15;
@@ -128,7 +128,7 @@ namespace Plex.Frontend.Apps
                     foreach(var property in Properties)
                     {
                         property.Name.Y = current_y - _scrollBar.Value;
-                        property.Name.Font = SkinEngine.LoadedSkin.Header3Font;
+                        property.Name.FontStyle = TextControlFontStyle.Header2;
                         property.Name.AutoSize = true;
                         property.Name.X = 15;
                         property.Value.Y = current_y - _scrollBar.Value;

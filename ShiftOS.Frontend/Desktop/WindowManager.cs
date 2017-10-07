@@ -291,6 +291,8 @@ namespace Plex.Frontend.Desktop
                     AppearanceManager.Close(ParentWindow);
                     return;
                 }
+                if (IsDialog)
+                    return;
                 var mxbtnloc = LoadedSkin.MaximizeButtonFromSide;
                 var mxbtnsize = LoadedSkin.MaximizeButtonSize;
                 var realmxloc = new Vector2(

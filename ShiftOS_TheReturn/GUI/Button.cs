@@ -15,7 +15,7 @@ namespace Plex.Frontend.GUI
     {
         public Button()
         {
-            TextAlign = TextAlign.MiddleCenter;
+            Alignment = Engine.GUI.TextAlignment.Middle;
             Text = "Click me!";
         }
 

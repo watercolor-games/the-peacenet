@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine;
 using Plex.Engine.GUI;
 using Plex.Frontend.GraphicsSubsystem;
 
@@ -14,11 +15,12 @@ namespace Plex.Frontend.GUI
     public class TextControl : Control
     {
         private string _text = "";
-        private TextAlign _textAlign = TextAlign.TopLeft;
         private Font _font = new Font("Tahoma", 9f);
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
         private TextAlignment alignment = TextAlignment.TopLeft;
+        private Microsoft.Xna.Framework.Color _foreground = Microsoft.Xna.Framework.Color.Black;
+        private TextControlFontStyle _fs = TextControlFontStyle.System;
 
         public TextAlignment Alignment
         {
@@ -31,6 +33,39 @@ namespace Plex.Frontend.GUI
                 if (alignment == value)
                     return;
                 alignment = value;
+                RequireTextRerender();
+                Invalidate();
+            }
+        }
+
+        public Microsoft.Xna.Framework.Color TextColor
+        {
+            get
+            {
+                return _foreground;
+            }
+            set
+            {
+                if (_foreground == value)
+                    return;
+                _foreground = value;
+                Invalidate();
+            }
+        }
+
+        public TextControlFontStyle FontStyle
+        {
+            get
+            {
+                return _fs;
+            }
+            set
+            {
+                if (_fs == value)
+                    return;
+
+                ResetStyle();
+                _fs = value;
                 RequireTextRerender();
                 Invalidate();
             }
@@ -62,40 +97,40 @@ namespace Plex.Frontend.GUI
             PointF loc = new PointF(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;
-            switch (_textAlign)
+            switch (this.alignment)
             {
-                case TextAlign.TopCenter:
+                case TextAlignment.Top:
                     loc.X = centerH;
                     break;
-                case TextAlign.TopRight:
+                case TextAlignment.TopRight:
                     loc.X = Width - sMeasure.X;
                     break;
-                case TextAlign.MiddleLeft:
+                case TextAlignment.Left:
                     loc.Y = centerV;
                     break;
-                case TextAlign.MiddleCenter:
+                case TextAlignment.Middle:
                     loc.Y = centerV;
                     loc.X = centerH;
                     break;
-                case TextAlign.MiddleRight:
+                case TextAlignment.Right:
                     loc.Y = centerV;
                     loc.X = (Width - sMeasure.Y);
                     break;
-                case TextAlign.BottomLeft:
+                case TextAlignment.BottomLeft:
                     loc.Y = (Height - sMeasure.Y);
                     break;
-                case TextAlign.BottomCenter:
+                case TextAlignment.Bottom:
                     loc.Y = (Height - sMeasure.Y);
                     loc.X = centerH;
                     break;
-                case TextAlign.BottomRight:
+                case TextAlignment.BottomRight:
                     loc.Y = (Height - sMeasure.Y);
                     loc.X = (Width - sMeasure.X);
                     break;
 
             }
 
-            gfx.DrawString(_text, 0, 0, Engine.SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor(), _font, Alignment, this.Width);
+            gfx.DrawString(_text, 0, 0, Microsoft.Xna.Framework.Color.White, _font, Alignment, this.Width);
 
         }
 
@@ -106,6 +141,37 @@ namespace Plex.Frontend.GUI
                 return this.requiresTextRerender;
             }
         }
+
+        public void ResetStyle()
+        {
+            switch (_fs)
+            {
+                case TextControlFontStyle.Header1:
+                    Font = SkinEngine.LoadedSkin.HeaderFont;
+                    TextColor = SkinEngine.LoadedSkin.FirstLevelHeaderColor.ToMonoColor();
+                    break;
+                case TextControlFontStyle.Header2:
+                    Font = SkinEngine.LoadedSkin.Header2Font;
+                    TextColor = SkinEngine.LoadedSkin.SecondLevelHeaderColor.ToMonoColor();
+                    break;
+                case TextControlFontStyle.Header3:
+                    Font = SkinEngine.LoadedSkin.Header3Font;
+                    TextColor = SkinEngine.LoadedSkin.ThirdLevelHeaderColor.ToMonoColor();
+                    break;
+                case TextControlFontStyle.System:
+                    Font = SkinEngine.LoadedSkin.MainFont;
+                    TextColor = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
+                    break;
+                case TextControlFontStyle.Mono:
+                    Font = SkinEngine.LoadedSkin.TerminalFont;
+                    TextColor = SkinEngine.LoadedSkin.TerminalForeColor.ToMonoColor();
+                    break;
+
+
+            }
+        }
+
+        private bool _requirerestyle = true;
 
         protected override void OnLayout(GameTime gameTime)
         {
@@ -164,12 +230,6 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        public TextAlign TextAlign
-        {
-            get { return _textAlign; }
-            set { _textAlign = value; }
-        }
-
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             if(_textBuffer != null)
@@ -214,20 +274,17 @@ namespace Plex.Frontend.GUI
                                     RasterizerState.CullNone);
 
             }
-            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, Microsoft.Xna.Framework.Color.White * (float)Opacity);
+            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity);
         }
     }
 
-    public enum TextAlign
+    public enum TextControlFontStyle
     {
-        TopLeft,
-        TopCenter,
-        TopRight,
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-        BottomLeft,
-        BottomCenter,
-        BottomRight
+        System,
+        Header1,
+        Header2,
+        Header3,
+        Mono,
+        Custom
     }
 }

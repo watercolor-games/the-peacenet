@@ -78,7 +78,7 @@ namespace Plex.Frontend.Apps
                     server.FriendlyName = name;
                     Engine.Infobox.PromptText("Please enter the server's hostname", "Please enter the hostname we should connect to.\r\n\r\nExamples:\r\ntheplexnet.com\r\nlocalhost\r\n127.0.0.1\r\ntheplexnet.com:420\r\nlocalhost:1337", (hn) =>
                     {
-                        int port = 62252;
+                        int port = 3251;
                         string host = hn;
                         bool parsePort = false;
                         if (string.IsNullOrWhiteSpace(hn))
@@ -168,7 +168,6 @@ namespace Plex.Frontend.Apps
         {
             _title.X = 15;
             _title.Y = 15;
-            _title.Font = SkinEngine.LoadedSkin.HeaderFont;
             _title.AutoSize = true;
             _title.Text = "Select a server";
 
@@ -200,6 +199,7 @@ namespace Plex.Frontend.Apps
 
         public void OnSkinLoad()
         {
+            _title.FontStyle = TextControlFontStyle.Header1;
         }
 
         public bool OnUnload()

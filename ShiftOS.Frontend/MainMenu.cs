@@ -56,17 +56,20 @@ namespace Plex.Frontend
             AddControl(_optionsSave);
             AddControl(_fullscreen);
             AddControl(_community);
-            
+
+            _bodyTitle.FontStyle = TextControlFontStyle.Header1;
+            _bodySubtitle.FontStyle = TextControlFontStyle.Header2;
+            _menuTitle.FontStyle = TextControlFontStyle.Header2;
+            _mainTitle.FontStyle = TextControlFontStyle.Custom;
+
             _bodyTitle.X = _bodystart + 45;
             _bodyTitle.Y = 45;
-            _bodyTitle.Font = SkinEngine.LoadedSkin.HeaderFont;
             _bodyTitle.Height = SkinEngine.LoadedSkin.HeaderFont.Height;
             _bodyTitle.AutoSize = true;
             _bodyTitle.Text = "Loading latest announcement...";
 
             _bodySubtitle.X = _bodyTitle.X;
             _bodySubtitle.Y = _bodyTitle.Y + _bodyTitle.Height + 15;
-            _bodySubtitle.Font = SkinEngine.LoadedSkin.Header2Font;
             _bodySubtitle.Height = _bodySubtitle.Font.Height;
             _bodySubtitle.AutoSize = true;
             _bodySubtitle.Text = "Plex is connecting to servers to load the latest announcement.";
@@ -122,7 +125,6 @@ namespace Plex.Frontend
             _mainTitle.Text = "Plex";
 
             _menuTitle.Text = "Main menu";
-            _menuTitle.Font = new System.Drawing.Font(_menuTitle.Font.Name, 16F);
             _menuTitle.X = 30;
             _menuTitle.Y = _mainTitle.Y + _mainTitle.Font.Height + 10;
             _menuTitle.AutoSize = true;
@@ -170,7 +172,7 @@ namespace Plex.Frontend
             _resDisplay.Width = (_resUp.X - _resDown.X);
             _resDisplay.Y = _resDown.Y;
             _resDisplay.Height = _resDown.Height;
-            _resDisplay.TextAlign = TextAlign.MiddleCenter;
+            _resDisplay.Alignment = Engine.GUI.TextAlignment.Middle;
             _resDown.Click += () =>
             {
                 if (_resIndex > 0)

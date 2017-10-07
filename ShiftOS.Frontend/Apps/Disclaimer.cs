@@ -87,7 +87,7 @@ Also, [b]DO NOT STORE PERSONAL INFORMATION SUCH AS ADDRESSES, CREDIT CARDS, PRIV
 
         public void OnSkinLoad()
         {
-            _title.Font = SkinEngine.LoadedSkin.HeaderFont;
+            _title.FontStyle = TextControlFontStyle.Header1;
             _close.Font = SkinEngine.LoadedSkin.MainFont;
             _viewRules.Font = SkinEngine.LoadedSkin.MainFont;
             _body.Font = SkinEngine.LoadedSkin.MainFont;

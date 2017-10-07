@@ -137,7 +137,7 @@ namespace Plex.Frontend
            this.lbmessage.Width = 213;
             this.lbmessage.Height = 94;
             this.lbmessage.Text = "label1";
-            this.lbmessage.TextAlign = TextAlign.MiddleLeft;
+            this.lbmessage.Alignment = Engine.GUI.TextAlignment.Left;
             // 
             // flyesno
             // 

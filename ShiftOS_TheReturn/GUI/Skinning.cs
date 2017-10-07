@@ -470,6 +470,38 @@ namespace Plex.Engine
         public Font ListBoxFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold);
 
         #endregion
+
+        #region Textbox
+
+        public Color TextBoxTextColor = Color.Black;
+        public Font TextBoxFont = new Font("Microsoft Sans-Serif", 9F);
+        public int TextBoxBorderWidth = 2;
+        public TextBoxBorderStyle TextBoxBorderStyle = TextBoxBorderStyle.MaterialDesign;
+        public Color TextBoxBorderColorIdle = Color.Gray;
+        public Color TextBoxBorderColorHover = Color.LightGray;
+        public Color TextBoxBorderColorFocused = Color.Black;
+        public Color TextBoxBackColor = Color.White;
+
+        #endregion
+
+        #region Item group
+
+        public int ItemGroupInitialGap = 10;
+        public int ItemGroupGap = 5;
+
+        #endregion
+    }
+
+    public enum ItemGroupLayout
+    {
+        SkinDefined,
+        Custom
+    }
+
+    public enum TextBoxBorderStyle
+    {
+        Classic, //like ShiftOS
+        MaterialDesign //android-style text borders
     }
 
     public enum ButtonRenderStyle
