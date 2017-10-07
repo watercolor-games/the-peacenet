@@ -91,8 +91,7 @@ namespace Plex.Server
             }
         }
 
-        private static List<ServerThread> threads = new List<ServerThread>();
-        private const int threadCount = 16;
+        private static List<ServerThread> threads = new List<ServerThread>(Environment.ProcessorCount);
 
         private static readonly string[] NATOCodeNames = { "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu" };
         private const int _MyPort = 3251;
@@ -802,7 +801,7 @@ Now generating defenses...
 
         public static void ServerLoop()
         {
-            for (int i = 0; i < threadCount; i++)
+            for (int i = 0; i < Environment.ProcessorCount; i++)
             {
                 var thread = new ServerThread();
                 Console.WriteLine("Starting server thread {0}...", i);
