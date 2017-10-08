@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 using static System.Math;
 
 namespace Plex.Objects.PlexFS
@@ -453,6 +454,13 @@ namespace Plex.Objects.PlexFS
         private ushort[] theFAT;
         
         public Directory Root { get; private set; }
+        public int FreeSpace
+        {
+            get
+            {
+                return theFAT.Count(e => e == 0) * 8192;
+            }
+        }
         
         public static PlexFAT FromStream(Stream fobj)
         {

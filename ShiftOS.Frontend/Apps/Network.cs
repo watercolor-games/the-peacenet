@@ -221,7 +221,7 @@ namespace Plex.Frontend.Apps
         {
             foreach(var node in _nodes)
             {
-                gfx.DrawRectangle(node.Icon.X, node.Icon.Y, node.Icon.Width, node.Icon.Height, Color.White);
+                gfx.DrawRectangle(node.Icon.X, node.Icon.Y, node.Icon.Width, node.Icon.Height, Color.Gray);
             }
         }
 
