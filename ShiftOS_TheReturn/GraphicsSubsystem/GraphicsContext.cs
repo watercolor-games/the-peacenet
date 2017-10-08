@@ -228,11 +228,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             float adj = x - x2;
             float opp = y - y2;
             float tan = opp / adj;
-            float res = MathHelper.ToDegrees((float)Math.Atan2(opp, adj));
-            res = (res - 180) % 360;
-            if (res < 0) { res += 360; }
-            res = MathHelper.ToRadians(res);
-            return res;
+            return (float) Math.Atan2(opp, adj) - (float) Math.PI;
         }
     }
 

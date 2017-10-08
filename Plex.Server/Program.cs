@@ -191,11 +191,12 @@ namespace Plex.Server
                 for (int i = 0; i < subnets; i++)
                 {
                     Console.WriteLine("<worldgen> Generating sub-network {0}...", i);
-                    string name = null;
-                    while (name == null || world.Networks.FirstOrDefault(x => x.Name == name) != null)
+                    string name;
+                    do
                     {
                         name = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
                     }
+                    while (world.Networks.FirstOrDefault(x => x.Name == name) != null);
                     Console.WriteLine("<{0}> Subnet generated.", name);
 
                     var subnet = CreateSubnet(name, $"{name} subnet", "");

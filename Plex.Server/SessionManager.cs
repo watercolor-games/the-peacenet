@@ -439,7 +439,7 @@ namespace Plex.Server
                 var save = Program.GetSaveFromPrl("alfa.system");
                 if (save == null)
                 {
-                    var subnet = Program.GameWorld.Networks.FirstOrDefault(x => x.Name == "alfa");
+                    var subnet = Program.GameWorld.Networks.First(x => x.Name == "alfa");
                     var sys = Program.GenerateSystem(0, SystemType.Computer, "system");
                     sys.IsNPC = false;
                     subnet.NPCs.Add(sys);
