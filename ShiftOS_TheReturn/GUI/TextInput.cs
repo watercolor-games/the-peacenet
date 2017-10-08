@@ -220,6 +220,8 @@ namespace Plex.Frontend.GUI
                 text = "*".Repeat(Text.Length);
             if (_index < 0)
                 _index = 0;
+            if (_index > text.Length)
+                _index = text.Length;
             string toCaret = text.Substring(0, _index);
             var measure = GraphicsContext.MeasureString(toCaret, SkinEngine.LoadedSkin.TextBoxFont, Engine.GUI.TextAlignment.TopLeft);
             caretPos = 2 + measure.X;

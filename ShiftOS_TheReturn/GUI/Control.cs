@@ -512,11 +512,34 @@ namespace Plex.Frontend.GUI
             parent.Invalidate();
         }
 
+        protected virtual void BeforePaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+
+        }
+
+        protected virtual void AfterPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+
+        }
+
+        public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
+
         public void Paint(GraphicsContext gfx, RenderTarget2D target)
         {
+            gfx.Batch.End();
+            var oldScissor = gfx.Device.ScissorRectangle;
+            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                    SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
+                                    RasterizerState);
+            
+
             if (_visible == true)
             {
-                OnPaint(gfx, target);
+                BeforePaint(gfx, target);
+                //In case we've got a different target...
+                var rt = (RenderTarget2D)gfx.Device.GetRenderTargets().First().RenderTarget;
+
+                OnPaint(gfx, rt);
                 int draw_x = gfx.X;
                 int draw_y = gfx.Y;
                 int draw_width = gfx.Width;
@@ -525,21 +548,19 @@ namespace Plex.Frontend.GUI
                 {
                     if (ctrl.Visible == true)
                     {
-                        //Cull any controls that fall outside the bounds of our own.
-                        if (ctrl.X >= 0 && ctrl.Y >= 0 && ctrl.X  < Width && ctrl.Y < Height)
-                        {
-                            gfx.X = draw_x + ctrl.X;
-                            gfx.Y = draw_y + ctrl.Y;
-                            gfx.Width = ctrl.Width;
-                            gfx.Height = ctrl.Height;
-                            ctrl.Paint(gfx, target);
-                            gfx.X = draw_x;
-                            gfx.Y = draw_y;
-                        }
+                        gfx.X = draw_x + ctrl.X;
+                        gfx.Y = draw_y + ctrl.Y;
+                        gfx.Width = ctrl.Width;
+                        gfx.Height = ctrl.Height;
+                        ctrl.Paint(gfx, rt);
+                        gfx.X = draw_x;
+                        gfx.Y = draw_y;
                     }
                     gfx.Width = draw_width;
                     gfx.Height = draw_height;
                 }
+                //this lets us reset the target.
+                AfterPaint(gfx, target);
                 _invalidated = false;
             }
         }
@@ -635,19 +656,20 @@ namespace Plex.Frontend.GUI
 
         private int _lastScrollValue = 0;
 
-        public virtual bool ProcessMouseState(MouseState state, double lastLeftClickMS)
+        public virtual bool ProcessMouseState(MouseState state, double lastLeftClickMS, int width = 0, int height = 0)
         {
             //If we aren't rendering the control, we aren't accepting input.
             if (_visible == false)
                 return false;
-
+            int _bw = (width == 0) ? this._w : width;
+            int _bh = (height == 0) ? this._h : height;
             _mouseHandled = false;
             //Firstly, we get the mouse coordinates in the local space
             var coords = PointToLocal(state.Position.X, state.Position.Y);
             _mouseX = coords.X;
             _mouseY = coords.Y;
             //Now we check if the mouse is within the bounds of the control
-            if(coords.X >= 0 && coords.Y >= 0 && coords.X <= _w && coords.Y <= _h)
+            if(coords.X >= 0 && coords.Y >= 0 && coords.X <= _bw && coords.Y <= _bh)
             {
                 //We're in the local space. Let's fire the MouseMove event.
                 if (IsFocusedControl)

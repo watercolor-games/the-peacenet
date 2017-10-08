@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
+using Plex.Objects;
 using static Plex.Engine.FSUtils;
 
 namespace Plex.Frontend.Apps
@@ -26,7 +27,12 @@ namespace Plex.Frontend.Apps
         private GUI.TextControl _fileFilter = null;
         private GUI.TextControl _filePrompt = null;
         private GUI.TextInput _fileBox = null;
-
+        private ScrollView _scrollView = null;
+        private MenuItem _newFolder = null;
+        private MenuItem _delete = null;
+        private MenuItem _importFile = null;
+        private MenuItem _exportFile = null;
+        private MenuBar _menuBar = null;
 
         public bool IsDialog = false;
         public Action<string> DialogCallback = null;
@@ -41,7 +47,10 @@ namespace Plex.Frontend.Apps
             _filePrompt = new TextControl();
             _fileFilter = new TextControl();
             _openFile = new Button();
+            _scrollView = new ScrollView();
+            _menuBar = new MenuBar();
 
+            AddControl(_menuBar);
             AddControl(_openFile);
             AddControl(_fileBox);
             AddControl(_filePrompt);
@@ -54,15 +63,6 @@ namespace Plex.Frontend.Apps
             Width = 720;
             Height = 480;
             _fList = new GUI.ListView();
-            //TODO: keyboard support in listviews
-            /*
-            _fList.KeyEvent += (e) =>
-            {
-                if(e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
-                {
-                    Navigate(_fList.SelectedItem.ToString());
-                }
-            };*/
             _fList.DoubleClick += () =>
             {
                 try
@@ -71,28 +71,143 @@ namespace Plex.Frontend.Apps
                 }
                 catch { }
             };
-            AddControl(_fList);
+            AddControl(_scrollView);
+            _scrollView.AddControl(_fList);
             _currentdirtext = new GUI.TextControl();
             _currentdirtext.AutoSize = true;
             AddControl(_currentdirtext);
-            ResetList();
 
+
+            _newFolder = new MenuItem
+            {
+                Text = "New Folder",
+            };
+            _delete = new MenuItem
+            {
+                Text = "Delete"
+            };
+            _importFile = new MenuItem
+            {
+                Text = "Import file"
+            };
+            _exportFile = new MenuItem
+            {
+                Text = "Export file"
+            };
+            _newFolder.ItemActivated += () =>
+            {
+                Engine.Infobox.PromptText("New folder", "Please name your new folder.", (dname) =>
+                {
+                    if(string.IsNullOrWhiteSpace(dname))
+                    {
+                        Engine.Infobox.Show("New folder", "You can't have a blank directory name!");
+                        return;
+                    }
+                    if(dname.Contains("/") || dname.Contains(":") || dname == "." || dname.Contains(".."))
+                    {
+                        Engine.Infobox.Show("New folder", $"Illegal folder name {dname}. Folders can't have '/' or ':' in their names and can't be either '.' or '..'.");
+                        return;
+                    }
+                    string fpath = _currentdirectory + "/" + dname;
+                    if (FSUtils.DirectoryExists(fpath))
+                    {
+                        Engine.Infobox.Show("New folder", "That folder already exists. Try specifying a different name?");
+                        return;
+                    }
+                    try
+                    {
+                        FSUtils.CreateDirectory(fpath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Engine.Infobox.Show("IO error", ex.Message);
+                        return;
+                    }
+                    ResetList();
+                });
+            };
+
+            _delete.ItemActivated += () =>
+            {
+                if(_fList.SelectedItem != null)
+                {
+                    try
+                    {
+                        string path = _fList.SelectedItem.Tag;
+                        if (FileExists(path) || DirectoryExists(path))
+                            Engine.Infobox.PromptYesNo("Delete file", "Are you sure you want to delete the file/directory at " + path + "?", (answer) =>
+                            {
+                                if(answer == true)
+                                {
+                                    Delete(path);
+                                    ResetList();
+                                }
+                            });
+                    }
+                    catch(Exception ex)
+                    {
+                        Engine.Infobox.Show("IO error", ex.Message);
+                    }
+                }
+            };
+
+            _importFile.ItemActivated += () =>
+            {
+                string path = "";
+                string filter = "";
+                foreach (var type in ReflectMan.Types.Where(x=>x.GetInterfaces().Contains(typeof(IPlexWindow))))
+                {
+                    var fattribs = type.GetCustomAttributes(false).Where(x => x is FileHandlerAttribute);
+                    foreach (var attrib in fattribs)
+                    {
+                        var fattrib = attrib as FileHandlerAttribute;
+                        if (fattrib != null)
+                        {
+                            filter += fattrib.Name + "|*" + fattrib.Extension + "|";
+                        }
+                    }
+                }
+                if (filter.EndsWith("|"))
+                    filter = filter.Remove(filter.LastIndexOf("|"), 1);
+                if (string.IsNullOrWhiteSpace(filter))
+                {
+                    Engine.Infobox.Show("Import file", "You can't import files right now because there are no known file types to import.");
+                    return;
+                }
+
+                if(UIManager.FourthWall.GetFilePath("Import file into Project: Plex at " + _currentdirectory, filter, FileOpenerStyle.Open, out path))
+                {
+                    var finf = new System.IO.FileInfo(path);
+                    string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-.";
+                    string filteredfname = finf.Name;
+                    foreach(char c in filteredfname)
+                    {
+                        if (!alphabet.Contains(c.ToString()))
+                            filteredfname = filteredfname.Replace(c.ToString(), "_");
+                    }
+                    string fpath = _currentdirectory + "/" + filteredfname;
+                    if (FileExists(fpath))
+                    {
+                        Engine.Infobox.Show("File exists", "This file already exists.");
+                        return;
+                    }
+                    byte[] data = System.IO.File.ReadAllBytes(finf.FullName);
+                    WriteAllBytes(fpath, data);
+                    ResetList();
+                }
+            };
+
+            _menuBar.AddItem(_newFolder);
+            _menuBar.AddItem(_delete);
+            _menuBar.AddItem(_importFile);
+            _menuBar.AddItem(_exportFile);
+            _menuBar.Visible = true;
         }
 
         public void OnLoad()
         {
             Width = 720;
             Height = 480;
-            _fList = new GUI.ListView();
-            //TODO: keyboard support in listviews
-            /*
-            _fList.KeyEvent += (e) =>
-            {
-                if(e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
-                {
-                    Navigate(_fList.SelectedItem.ToString());
-                }
-            };*/
             _fList.Click += () =>
             {
                 if(_fList.SelectedItem != null)
@@ -106,14 +221,6 @@ namespace Plex.Frontend.Apps
                     }
                 }
             };
-            _fList.DoubleClick += () =>
-            {
-                try
-                {
-                    Navigate(_fList.SelectedItem.Tag);
-                }
-                catch { }
-            };
             _fileBox.KeyEvent += (key) =>
             {
                 if (key.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
@@ -125,10 +232,6 @@ namespace Plex.Frontend.Apps
             {
                 HandleFileSelect();
             };
-            AddControl(_fList);
-            _currentdirtext = new GUI.TextControl();
-            _currentdirtext.AutoSize = true;
-            AddControl(_currentdirtext);
             ResetList();
         }
 
@@ -370,12 +473,38 @@ namespace Plex.Frontend.Apps
             if (IsDialog)
                 listbottom -= _fileselectboxheight;
 
+
+            //Menu items
+            _newFolder.Enabled = (_currentdirectory != SD_SYSTEM);
+            bool hasFileOrDir = _fList.SelectedItem != null;
+            if(hasFileOrDir == true)
+                hasFileOrDir = _fList.SelectedItem.ImageKey != "Mount" && _fList.SelectedItem.ImageKey != "UpOne";
+            _delete.Enabled = hasFileOrDir;
+            _exportFile.Enabled = hasFileOrDir;
+            if (_exportFile.Enabled)
+                _exportFile.Enabled = _exportFile.Enabled && _fList.SelectedItem.ImageKey != "Directory";
+            _importFile.Enabled = _newFolder.Enabled;
+
+            _menuBar.X = 0;
+            _menuBar.Y = 0;
+            _menuBar.Width = Width;
+            _menuBar.AutoSize = true;
+            _menuBar.Layout(gameTime);
+
             _fList.X = 0;
             _fList.Y = 0;
-            _fList.Width = Width;
-            _fList.Height = listbottom;
+            _fList.MaxWidth = Width;
+            _fList.MaxHeight = int.MaxValue;
+            _fList.AutoSize = true;
+            _fList.Layout(gameTime);
+
+            _scrollView.Y = _menuBar.Height;
+            _scrollView.Width = Width;
+            _scrollView.Height = listbottom - _scrollView.Y;
+            _scrollView.X = 0;
+
             _currentdirtext.X = (Width - _currentdirtext.Width) / 2;
-            _currentdirtext.Y = _fList.Height;
+            _currentdirtext.Y = _scrollView.Height;
 
             if (IsDialog)
             {
@@ -408,7 +537,13 @@ namespace Plex.Frontend.Apps
                 _fileBox.Y = _fileselectstart + ((_fileselectboxheight - _fileBox.Height) / 2);
                 _fileBox.Visible = true;
             }
-
+            else
+            {
+                _fileBox.Visible = false;
+                this._filePrompt.Visible = false;
+                this._openFile.Visible = false;
+                this._fileFilter.Visible = false;
+            }
         }
     }
 }

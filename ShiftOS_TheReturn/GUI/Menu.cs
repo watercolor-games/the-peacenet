@@ -61,6 +61,8 @@ namespace Plex.Frontend.GUI
             if (_selectedIndex != -1 && _childMenus.Count != 0)
             {
                 var item = _childMenus[_selectedIndex];
+                if (item.Enabled == false)
+                    return;
                 if (item.HasDropdown == true)
                 {
                     if (_dropdown != null)
@@ -155,6 +157,17 @@ namespace Plex.Frontend.GUI
             {
                 OnClick();
             };
+            MenuItem.EnabledChanged += MenuItem_EnabledChanged;
+        }
+
+        private void MenuItem_EnabledChanged(MenuItem obj)
+        {
+            if(this._childMenus.Contains(obj)&&Visible)
+            {
+                Select(-1, 0, 0, 0, 0);
+                RequireTextRerender();
+                Invalidate();
+            }
         }
 
         private bool _pbg = true;
@@ -182,6 +195,7 @@ namespace Plex.Frontend.GUI
             Invalidate();
         }
 
+        
         public void AddItem(MenuItem item)
         {
             if (_childMenus.Contains(item))
@@ -227,6 +241,8 @@ namespace Plex.Frontend.GUI
                     Color _text = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
                     if (selected)
                         _text = SkinEngine.LoadedSkin.DropdownItemSelectedTextColor.ToMonoColor();
+                    if (_childMenus[i].Enabled == false)
+                        _text = SkinEngine.LoadedSkin.DropdownItemDisabledText.ToMonoColor();
                     gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, SkinEngine.LoadedSkin.DropdownFont, Engine.GUI.TextAlignment.TopLeft);
                     text_y += _textheight;
                 }
@@ -243,7 +259,7 @@ namespace Plex.Frontend.GUI
                 for (int i = 0; i < _childMenus.Count; i++)
                 {
                     var dd = _childMenus[i];
-                    if (dd.HasDropdown)
+                    if (dd.HasDropdown && dd.Enabled == true)
                     {
                         var ddColor = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
                         if (i == _selectedIndex)
@@ -266,6 +282,8 @@ namespace Plex.Frontend.GUI
             }
             base.OnPaint(gfx, target);
         }
+
+        private MenuItem[] disabled = null;
 
         public int SelectedX
         {
@@ -325,6 +343,10 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            TextColor = Color.White;
+            Font = SkinEngine.LoadedSkin.DropdownFont;
+
             //Ignore min/max width
             MaxWidth = int.MaxValue;
             MaxHeight = int.MaxValue;
@@ -375,12 +397,34 @@ namespace Plex.Frontend.GUI
     public class MenuItem : Menu
     {
         public object Tag { get; set; }
+        public MenuItem()
+        {
+            Enabled = true;
+        }
 
         public void Activate()
         {
             ItemActivated?.Invoke();
         }
 
+        private bool _enabled = true;
+        public bool Enabled
+        {
+            get
+            {
+                return _enabled;
+            }
+            set
+            {
+                if (_enabled == value)
+                    return;
+                _enabled = value;
+                EnabledChanged?.Invoke(this);
+            }
+        }
+
+        
         public event Action ItemActivated;
+        public static event Action<MenuItem> EnabledChanged;
     }
 }

@@ -209,6 +209,55 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
+        public static class FourthWall
+        {
+            public static bool GetFilePath(string title, string wfFilter, FileOpenerStyle style, out string resPath)
+            {
+                string initDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                bool isFullscreen = _game.graphicsDevice.IsFullScreen;
+                string p = "";
+                if (isFullscreen)
+                {
+                    //knock the player out of fullscreen
+                    _game.graphicsDevice.IsFullScreen = false;
+                    _game.graphicsDevice.ApplyChanges();
+                }
+                switch (style)
+                {
+                    case FileOpenerStyle.Open:
+                        var opener = new System.Windows.Forms.OpenFileDialog();
+                        opener.Filter = wfFilter;
+                        opener.Title = title;
+                        opener.InitialDirectory = initDir;
+                        if (opener.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            p = opener.FileName;
+                        }
+                        break;
+                    case FileOpenerStyle.Save:
+                        var saver = new System.Windows.Forms.SaveFileDialog();
+                        saver.Filter = wfFilter;
+                        saver.Title = title;
+                        saver.InitialDirectory = initDir;
+                        if (saver.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            p = saver.FileName;
+                        }
+                        break;
+                }
+                resPath = p;
+                if (isFullscreen)
+                {
+                    //boot the player back into fullscreen
+                    _game.graphicsDevice.IsFullScreen = true;
+                    _game.graphicsDevice.ApplyChanges();
+                }
+
+                return !string.IsNullOrWhiteSpace(resPath);
+            }
+        }
+
+
         public static long Average(this byte[] bytes)
         {
             long total = 0;

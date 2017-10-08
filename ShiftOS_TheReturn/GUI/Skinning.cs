@@ -418,55 +418,188 @@ namespace Plex.Engine
 
 
         #region Buttons
-
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button color (idle)")]
+        [ShifterDescription("The background color of buttons in their 'idle' state.")]
         public Color ButtonIdleColor = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button text color (idle)")]
+        [ShifterDescription("The text color of buttons in their 'idle' state")]
         public Color ButtonIdleTextColor = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button color (hover)")]
+        [ShifterDescription("The color of buttons when the mouse hovers over them")]
         public Color ButtonHoverColor = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterDescription("The text color of buttons when you hover over them")]
+        [ShifterName("Button text color (hover)")]
         public Color ButtonHoverTextColor = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button color (pressed)")]
+        [ShifterDescription("The color of buttons when they're pressed down.")]
         public Color ButtonPressedColor = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button text color (pressed)")]
+        [ShifterDescription("The text color of buttons when they are pressed down.")]
         public Color ButtonPressedTextColor = Color.White;
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button font")]
+        [ShifterDescription("The font for the text on buttons.")]
         public Font ButtonFont = new Font("Microsoft Sans Serif", 9F);
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Buttons")]
+        [ShifterName("Button margins")]
+        [ShifterDescription("These values specify the amount of space in pixels between the edges of a button and its text. The first value is the horizontal margin and the second is the vertical margin. Play around with these values and see how they affect the button's look!")]
         public Size ButtonMargins = new Size(10, 5);
 
         #endregion
 
         #region Progress bars
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Progress bars")]
+        [ShifterName("Progress color")]
+        [ShifterDescription("The foreground color of progress bars. This color is used to indicate progress.")]
         public Color ProgressColor = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Progress bars")]
+        [ShifterName("Progress bar background color")]
+        [ShifterDescription("The background color of progress bars.")]
         public Color ProgressBarBackgroundColor = Color.Black;
 
         #endregion
 
         #region Menu dropdowns
 
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown background")]
+        [ShifterDescription("The background color of the itemlist area of dropdown menus.")]
         public Color DropdownBackground = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown - Item selected color")]
+        [ShifterDescription("The background color used when a dropdown menu item is selected.")]
         public Color DropdownItemSelected = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown item text color")]
+        [ShifterDescription("The text color of unselected dropdown menu items.")]
         public Color DropdownItemTextColor = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown item text color (selected)")]
+        [ShifterDescription("The text color of selected dropdown menu items.")]
         public Color DropdownItemSelectedTextColor = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown font")]
+        [ShifterDescription("The font style used for menu items in a dropdown.")]
         public Font DropdownFont = new Font("Microsoft Sans Serif", 9F);
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown margin color")]
+        [ShifterDescription("The background color of the Image Margin area of dropdowns.")]
         public Color DropdownMarginColor = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Dropdowns")]
+        [ShifterName("Dropdown item text color (disabled)")]
+        [ShifterDescription("The text color of disabled dropdown menu items.")]
+        public Color DropdownItemDisabledText = Color.Gray;
 
         #endregion
 
         #region Menu bars
 
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu item text color")]
+        [ShifterDescription("The text color used for menu items.")]
         public Color MenuItemTextColor = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu item color (selected)")]
+        [ShifterDescription("The background color of selected menu items.")]
         public Color MenuItemSelectedColor = Color.Black;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu item text color (selected)")]
+        [ShifterDescription("The text color of selected menu items.")]
         public Color MenuItemSelectedTextColor = Color.White;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu bar background")]
+        [ShifterDescription("The background used for menu bars.")]
         public Color MenuBarBackgroundColor = Color.Gray;
+
+        [ShifterMeta("Menus")]
+        [ShifterCategory("Menu bars")]
+        [ShifterName("Menu font")]
+        [ShifterDescription("The font style used on the text of menu items.")]
         public Font MenuFont = new Font("Microsoft Sans Serif", 9F);
 
         #endregion
 
         #region Listbox
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item color (selected)")]
+        [ShifterDescription("The background color of selected list items.")]
         public Color ListBoxSelectedItemColor = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item color (hover)")]
+        [ShifterDescription("The background color of list items when the mouse is hovered over them - Note, this only affects Listboxes and not Listviews.")]
         public Color ListBoxHoverItemColor = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item text color")]
+        [ShifterDescription("The text color of list items")]
         public Color ListBoxTextColor = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item text color (selected)")]
+        [ShifterDescription("The text color of selected list items")]
         public Color ListBoxSelectedItemTextColor = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item text color (hover)")]
+        [ShifterDescription("The text color of list items when the mouse is hovered over them - Note, this only affects Listboxes and not Listviews.")]
         public Color ListBoxHoverTextColor = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Listboxes and Listviews")]
+        [ShifterName("List item font")]
+        [ShifterDescription("The font style used for text in list items.")]
         public Font ListBoxFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold);
 
         #endregion
@@ -488,6 +621,26 @@ namespace Plex.Engine
 
         public int ItemGroupInitialGap = 10;
         public int ItemGroupGap = 5;
+
+        #endregion
+
+        #region Scroll view
+
+        public int ScrollViewScrollbarWidth = 20;
+        public int ScrollViewScrollNubWidth = 16;
+        public Color ScrollViewScrollbarBackground = Color.White;
+        public Color ScrollViewScrollNubColorIdle = Color.Gray;
+        public Color ScrollViewScrollNubColorHover = Color.LightGray;
+        public Color ScrollViewScrollNubColorPressed = Color.Black;
+
+
+        public Color ScrollViewArrowBackgroundIdle = Color.Gray;
+        public Color ScrollViewArrowBackgroundHover = Color.LightGray;
+        public Color ScrollViewArrowBackgroundPressed = Color.Black;
+        public Color ScrollViewArrowColorIdle = Color.White;
+        public Color ScrollViewArrowColorHover = Color.Black;
+        public Color ScrollViewArrowColorPressed = Color.White;
+
 
         #endregion
     }

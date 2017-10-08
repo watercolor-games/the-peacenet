@@ -24,6 +24,8 @@ namespace Plex.Frontend.GUI
             if (SelectedIndex != -1)
             {
                 var item = MenuItems[SelectedIndex];
+                if (item.Enabled == false)
+                    return;
                 if (item.HasDropdown)
                 {
                     int x = SelectedX;
@@ -46,6 +48,8 @@ namespace Plex.Frontend.GUI
             int ry = (Height-_fontHeight)/2;
             for(int i = 0; i < MenuItems.Length; i++)
             {
+                if (MenuItems[i].Enabled == false)
+                    continue;
                 var loc = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MenuFont, Engine.GUI.TextAlignment.TopLeft);
                 int w = (int)loc.X+6;
                 int h = _fontHeight;
@@ -59,8 +63,13 @@ namespace Plex.Frontend.GUI
             Select(-1, 0, 0, 0, 0);
         }
 
+        private MenuItem[] disabled = null;
+
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            TextColor = Color.White;
+            Font = SkinEngine.LoadedSkin.DropdownFont;
             _fontHeight = SkinEngine.LoadedSkin.MenuFont.Height + 6;
             this.Width = Parent.Width;
             this.Height = _fontHeight + 6;
@@ -76,6 +85,8 @@ namespace Plex.Frontend.GUI
             {
                 for (int i = 0; i < MenuItems.Length; i++)
                 {
+                    if (MenuItems[i].Enabled == false)
+                        continue;
                     var measure = GraphicsContext.MeasureString(MenuItems[i].Text, SkinEngine.LoadedSkin.MenuFont, Engine.GUI.TextAlignment.TopLeft);
                     bool selected = i == SelectedIndex;
                     Color _text = SkinEngine.LoadedSkin.MenuItemTextColor.ToMonoColor();

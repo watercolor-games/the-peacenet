@@ -29,21 +29,15 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
         }
 
-        private int _startx = 0;
-        private int _starty = 0;
-
-        private int _maxwidth = 1;
-        private int _maxheight = 1;
-        
         public int X
         {
             get
             {
-                return _startx;
+                return Device.ScissorRectangle.X;
             }
             set
             {
-                _startx = value;
+                Device.ScissorRectangle = new Rectangle(value, Y, Width, Height);
             }
         }
 
@@ -51,11 +45,11 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             get
             {
-                return _starty;
+                return Device.ScissorRectangle.Y;
             }
             set
             {
-                _starty = value;
+                Device.ScissorRectangle = new Rectangle(X, value, Width, Height);
             }
         }
 
@@ -63,11 +57,11 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             get
             {
-                return _maxwidth;
+                return Device.ScissorRectangle.Width;
             }
             set
             {
-                _maxwidth = value;
+                Device.ScissorRectangle = new Rectangle(X, Y, value, Height);
             }
         }
 
@@ -75,11 +69,11 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             get
             {
-                return _maxheight;
+                return Device.ScissorRectangle.Height;
             }
             set
             {
-                _maxheight = value;
+                Device.ScissorRectangle = new Rectangle(X, Y, Width, value);
             }
         }
         
@@ -110,15 +104,15 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             _graphicsDevice = device;
             _spritebatch = batch;
-            _maxwidth = width;
-            _maxheight = height;
-            _startx = x;
-            _starty = y;
+            Width = width;
+            Height = height;
+            X = x;
+            Y = y;
         }
 
         public void Clear(Color c)
         {
-            DrawRectangle(0, 0, _maxwidth, _maxheight, c);
+            DrawRectangle(0, 0, Width, Height, c);
         }
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2)
@@ -128,10 +122,10 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2, Color tint)
         {
-            x += _startx;
-            y += _starty;
-            x1 += _startx;
-            y1 += _starty;
+            x += X;
+            y += Y;
+            x1 += X;
+            y1 += Y;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, tint, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -139,10 +133,10 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Color color)
         {
-            x += _startx;
-            y += _starty;
-            x1 += _startx;
-            y1 += _starty;
+            x += X;
+            y += Y;
+            x1 += X;
+            y1 += Y;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -150,8 +144,8 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
-            x += _startx;
-            y += _starty;
+            x += X;
+            y += Y;
             _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, width, height), color);
         }
 
@@ -160,19 +154,21 @@ namespace Plex.Frontend.GraphicsSubsystem
             DrawRectangle(x, y, width, height, tex2, Color.White, layout);
         }
 
+        public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
+
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch)
         {
             if (tex2 == null)
                 return;
-            x += _startx;
-            y += _starty;
+            x += X;
+            y += Y;
             _spritebatch.End();
             var state = SamplerState.LinearClamp;
             if (layout == ImageLayout.Tile)
                 state = SamplerState.LinearWrap;
             _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    state, DepthStencilState.Default,
-                                    RasterizerState.CullNone);
+                                    state, Device.DepthStencilState,
+                                    RasterizerState);
             switch (layout)
             {
                 case ImageLayout.Tile:
@@ -199,7 +195,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             }
             _spritebatch.End();
             _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearClamp, DepthStencilState.Default,
+                                    SamplerState.LinearClamp, Device.DepthStencilState,
                                     RasterizerState.CullNone);
 
         }
@@ -214,9 +210,8 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (string.IsNullOrEmpty(text))
                 return;
-            x += _startx;
-            y += _starty;
-
+            x += X;
+            y += Y;
             Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment);
         }
 

@@ -29,7 +29,7 @@ namespace Plex.Frontend.Apps
         public TextControl Title = new TextControl();
         public Button BackButton = new Button();
         private List<PropertyUI> Properties = new List<PropertyUI>();
-        private ScrollBar _scrollBar = new ScrollBar();
+        private ScrollView _scrollView = new ScrollView();
 
         public class SettingGroup
         {
@@ -40,14 +40,6 @@ namespace Plex.Frontend.Apps
             {
                 Properties = new List<Property>();
             }
-        }
-
-        protected override void OnMouseScroll(int value)
-        {
-            if (value < 0)
-                _scrollBar.Value += 32;
-            else if (value > 0)
-                _scrollBar.Value -= 32;
         }
 
         public class PropertyUI
@@ -76,7 +68,6 @@ namespace Plex.Frontend.Apps
         {
             Width = 750;
             Height = 600;
-            _scrollBar.Position = ScrollbarPosition.VerticalRight;
             UIState = GetHashCode().ToString();
             AddControl(BackButton);
             BackButton.Click += () =>
@@ -85,20 +76,26 @@ namespace Plex.Frontend.Apps
             };
             AddControl(Title);
             Title.AutoSize = true;
-            AddControl(_scrollBar);
+            AddControl(_scrollView);
         }
 
         protected override void OnLayout(GameTime gameTime)
         {
             try
             {
-                int width = Width - _scrollBar.Width;
+                int width = Width;
                 Title.FontStyle = TextControlFontStyle.Header1;
                 Title.X = 15;
-                Title.Y = 15 - _scrollBar.Value;
+                Title.Y = 15;
                 Title.AutoSize = true;
 
-                int current_y = (Title.Y + Title.Height + 20);
+                _scrollView.Width = width;
+                _scrollView.X = 0;
+                _scrollView.Y = Title.Y + Title.Height + 15;
+                _scrollView.Height = Height - _scrollView.Y;
+
+
+                int current_y = 15;
 
                 if (UIState == this.GetHashCode().ToString())
                 {
@@ -106,11 +103,11 @@ namespace Plex.Frontend.Apps
                     BackButton.Visible = false;
                     foreach (var group in groups)
                     {
-                        group.Title.Y = current_y - _scrollBar.Value;
+                        group.Title.Y = current_y;
                         group.Title.X = 15;
                         group.Title.FontStyle = TextControlFontStyle.Header2;
                         current_y += group.Title.Height + 5;
-                        group.ListView.Y = current_y - _scrollBar.Value;
+                        group.ListView.Y = current_y;
                         group.ListView.X = 15;
                         group.ListView.MaxWidth = width - 30;
                         current_y += group.ListView.Height + 10;
@@ -127,32 +124,29 @@ namespace Plex.Frontend.Apps
                     Title.Text = CurrentSettingGroup.Title;
                     foreach(var property in Properties)
                     {
-                        property.Name.Y = current_y - _scrollBar.Value;
+                        property.Name.Y = current_y;
                         property.Name.FontStyle = TextControlFontStyle.Header2;
                         property.Name.AutoSize = true;
                         property.Name.X = 15;
-                        property.Value.Y = current_y - _scrollBar.Value;
+                        property.Value.Y = current_y;
                         property.Value.X = (width - property.Value.Width) - 30;
                         property.Name.MaxWidth = (property.Value.X) - 30;
                         current_y += Math.Max(property.Name.Height, property.Value.Height) + 10;
                         property.Description.X = 15;
-                        property.Description.Y = current_y - _scrollBar.Value;
-                        property.Description.Font = SkinEngine.LoadedSkin.MainFont;
+                        property.Description.Y = current_y;
+                        property.Description.FontStyle = TextControlFontStyle.System;
                         property.Description.AutoSize = true;
                         property.Description.MaxWidth = width - 30;
                         current_y += property.Description.Height + 15;
                     }
                 }
-                _scrollBar.Maximum = Math.Max(Height, current_y);
             }
             catch { }
         }
 
         public void SetUIState(string state)
         {
-            this.ClearControls();
-            AddControl(BackButton);
-            AddControl(Title);
+            _scrollView.ClearControls();
             UIState = state;
             if(UIState == this.GetHashCode().ToString())
             {
@@ -350,9 +344,9 @@ namespace Plex.Frontend.Apps
                             valstr = val.ToString();
                         ((TextControl)value).Text = valstr;
                     }
-                    AddControl(name);
-                    AddControl(description);
-                    AddControl(value);
+                    _scrollView.AddControl(name);
+                    _scrollView.AddControl(description);
+                    _scrollView.AddControl(value);
 
                     Properties.Add(new PropertyUI
                     {
@@ -362,7 +356,6 @@ namespace Plex.Frontend.Apps
                     });
                 }
             }
-            AddControl(_scrollBar);
         }
 
         public void ResetMetaListing()
@@ -380,8 +373,6 @@ namespace Plex.Frontend.Apps
             }
             while(groups.Count > 0)
             {
-                RemoveControl(groups[0].Title);
-                RemoveControl(groups[0].ListView);
                 ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; //IT'S THE SEMICOLON PARTYFEST
                 //that's actually valid C#
                 //like, VS isn't fucking freaking out
@@ -396,7 +387,7 @@ namespace Plex.Frontend.Apps
                 tc.Font = SkinEngine.LoadedSkin.Header3Font;
                 tc.AutoSize = true;
                 tc.Text = Localization.Parse(meta);
-                AddControl(tc);
+                _scrollView.AddControl(tc);
                 var lv = new ListView();
                 foreach(var cat in GetCategoryListing(meta))
                 {
@@ -416,7 +407,7 @@ namespace Plex.Frontend.Apps
                     }
                 };
                 lv.AutoSize = true;
-                AddControl(lv);
+                _scrollView.AddControl(lv);
                 groups.Add(new Group
                 {
                     Title = tc,

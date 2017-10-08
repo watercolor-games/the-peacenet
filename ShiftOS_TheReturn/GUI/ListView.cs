@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 
@@ -219,21 +220,21 @@ namespace Plex.Frontend.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 if(image != null)
                 {
                     int imageDrawX = _itemx + ((textwidth - texwidth) / 2);
                     Color tint = Color.White;
-                    if (_items.IndexOf(item) == _selected)
+                    if (_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
                         tint = LoadedSkin.ListBoxSelectedItemColor.ToMonoColor();
                     gfx.DrawRectangle(imageDrawX, _itemy, texwidth, texheight, image, tint);
                 }
 
                 int texty = _itemy + texheight;
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
-                if(_items.IndexOf(item) == _selected)
+                if(_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
                 {
                     gfx.DrawRectangle(textx, texty, (int)textmeasure.X, (int)textmeasure.Y, LoadedSkin.ListBoxSelectedItemColor.ToMonoColor());
                 }
@@ -249,6 +250,8 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            TextColor = Color.White;
                         if (AutoSize)
             {
                 int end_width = MinWidth;
@@ -284,6 +287,9 @@ namespace Plex.Frontend.GUI
                 }
                 Width = end_width;
                 Height = end_height;
+                QA.Assert(Width == 1, false, "ListView autosize failure - width can't be 1");
+                QA.Assert(Height == 1, false, "ListView autosize failure - height can't be 1");
+
             }
         }
     }

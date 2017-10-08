@@ -21,6 +21,19 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            Font = SkinEngine.LoadedSkin.ButtonFont;
+            var fgCol = SkinEngine.LoadedSkin.ButtonIdleTextColor.ToMonoColor();
+            if (ContainsMouse)
+            {
+                fgCol = SkinEngine.LoadedSkin.ButtonHoverTextColor.ToMonoColor();
+
+            }
+            if (MouseLeftDown)
+            {
+                fgCol = SkinEngine.LoadedSkin.ButtonPressedTextColor.ToMonoColor();
+            }
+            TextColor = fgCol;
             AutoSize = true;
             Font = SkinEngine.LoadedSkin.ButtonFont;
             if (AutoSize == true)
@@ -37,24 +50,11 @@ namespace Plex.Frontend.GUI
 
         protected override void RenderText(GraphicsContext gfx)
         {
-            var bgCol = SkinEngine.LoadedSkin.ButtonIdleColor.ToMonoColor();
-            var fgCol = SkinEngine.LoadedSkin.ButtonIdleTextColor.ToMonoColor();
-            if (ContainsMouse)
-            {
-                bgCol = SkinEngine.LoadedSkin.ButtonHoverColor.ToMonoColor();
-                fgCol = SkinEngine.LoadedSkin.ButtonHoverTextColor.ToMonoColor();
-
-            }
-            if (MouseLeftDown)
-            {
-                bgCol = SkinEngine.LoadedSkin.ButtonPressedColor.ToMonoColor();
-                fgCol = SkinEngine.LoadedSkin.ButtonPressedTextColor.ToMonoColor();
-            }
             var measure = GraphicsContext.MeasureString(Text, Font, Engine.GUI.TextAlignment.Middle);
 
             var loc = new Vector2((Width - measure.X) / 2, (Height - measure.Y) / 2);
 
-            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, fgCol, Font, Engine.GUI.TextAlignment.Middle);
+            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, Microsoft.Xna.Framework.Color.White, Font, Engine.GUI.TextAlignment.Middle);
 
         }
 

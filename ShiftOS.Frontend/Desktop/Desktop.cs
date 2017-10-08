@@ -290,6 +290,8 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            TextColor = Microsoft.Xna.Framework.Color.White;
             if (_inpgui != UIManagerTools.InProtectedGUI)
             {
                 _inpgui = UIManagerTools.InProtectedGUI;

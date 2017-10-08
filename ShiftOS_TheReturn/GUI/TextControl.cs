@@ -61,12 +61,8 @@ namespace Plex.Frontend.GUI
             }
             set
             {
-                if (_fs == value)
-                    return;
-
-                ResetStyle();
                 _fs = value;
-                RequireTextRerender();
+                ResetStyle();
                 Invalidate();
             }
         }
@@ -175,6 +171,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
+            ResetStyle();
             if (AutoSize)
             {
                 if (requiresTextRerender)
@@ -259,8 +256,8 @@ namespace Plex.Frontend.GUI
                 gfx.Device.Clear(Microsoft.Xna.Framework.Color.Transparent);
                 gfx.Device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                 gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearClamp, DepthStencilState.Default,
-                                    RasterizerState.CullNone);
+                                    SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
+                                    RasterizerState);
                 RenderText(gfx);
                 gfx.Batch.End();
                 gfx.Device.SetRenderTarget(target);
@@ -270,8 +267,8 @@ namespace Plex.Frontend.GUI
                 gfx.Width = w;
                 gfx.Height = h;
                 gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearClamp, DepthStencilState.Default,
-                                    RasterizerState.CullNone);
+                                    SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
+                                    RasterizerState);
 
             }
             gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity);

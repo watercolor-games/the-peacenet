@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using static Plex.Engine.SkinEngine;
 
@@ -231,6 +232,10 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            Font = SkinEngine.LoadedSkin.ListBoxFont;
+            TextColor = Color.White;
+
             if(fontheight != LoadedSkin.ListBoxFont.Height)
             {
                 fontheight = LoadedSkin.ListBoxFont.Height;

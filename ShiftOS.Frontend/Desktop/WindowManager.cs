@@ -380,6 +380,8 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = GUI.TextControlFontStyle.Custom;
+            TextColor = Microsoft.Xna.Framework.Color.White;
             if (_minimized == true)
             {
                 Visible = false;
