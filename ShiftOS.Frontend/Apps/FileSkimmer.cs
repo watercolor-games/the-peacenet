@@ -151,6 +151,32 @@ namespace Plex.Frontend.Apps
                 }
             };
 
+            _exportFile.ItemActivated += () =>
+            {
+                if (_fList.SelectedItem != null)
+                {
+                    try
+                    {
+                        string path = _fList.SelectedItem.Tag;
+                        if (FileExists(path))
+                        {
+                            string outputPath = "";
+                            string ext = path.Substring(path.LastIndexOf("."));
+                            if(UIManager.FourthWall.GetFilePath($"Save {path} from Project: Plex to disk", "Source file type|*"+ext, FileOpenerStyle.Save, out outputPath) == true)
+                            {
+                                byte[] contents = ReadAllBytes(path);
+                                System.IO.File.WriteAllBytes(outputPath, contents);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Engine.Infobox.Show("IO error", ex.Message);
+                    }
+                }
+
+            };
+
             _importFile.ItemActivated += () =>
             {
                 string path = "";

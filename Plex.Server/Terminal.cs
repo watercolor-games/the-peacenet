@@ -74,12 +74,17 @@ namespace Plex.Server
         }
 
 
-        public static bool RunClient(string text, Dictionary<string, object> args, string session_id)
+        public static bool RunClient(string text, Dictionary<string, object> args, string session_id, bool isServerAdmin = false)
         {
             SessionID = session_id;
             var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
             if (cmd == null)
                 return false;
+            if(((ServerCommand)cmd.CommandInfo).ServerOnly == true && isServerAdmin == false)
+            {
+                Console.WriteLine("You can't run this command as you are not a server admin.");
+                return true;
+            }
             if (!UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                 return false;
             bool res = false;

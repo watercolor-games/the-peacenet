@@ -132,7 +132,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                         ctrl.Invalidate();
                         DrawControlsToTargets(batch.GraphicsDevice, batch);
                     }
-                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
 

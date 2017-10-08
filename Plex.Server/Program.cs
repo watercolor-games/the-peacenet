@@ -619,7 +619,7 @@ Now generating defenses...
                         Dictionary<string, object> cargs = new Dictionary<string, object>();
                         foreach (var arg in parsed.Value)
                             cargs.Add(arg.Key, arg.Value);
-                        if (!Terminal.RunClient(parsed.Key, cargs, "server"))
+                        if (!Terminal.RunClient(parsed.Key, cargs, "server", true))
                         {
                             Console.WriteLine("Command not found.");
                         }
@@ -629,7 +629,7 @@ Now generating defenses...
 
         }
 
-        [ServerCommand("banip", "Ban an IP address from this server.")]
+        [ServerCommand("banip", "Ban an IP address from this server.", true)]
         [RequiresArgument("id")]
         public static void BanIP(Dictionary<string, object> args)
         {
@@ -810,7 +810,8 @@ Now generating defenses...
             {
                 var client = _tcpListener.AcceptTcpClient();
                 var connectThread = new ServerThread();
-                Console.WriteLine($"{client.Client.LocalEndPoint} has connected through TCP.");
+                if(IsMultiplayerServer)
+                    Console.WriteLine($"{client.Client.LocalEndPoint} has connected through TCP.");
                 connectThread.Queue(() =>
                 {
                     try
@@ -823,7 +824,8 @@ Now generating defenses...
                             string json = reader.ReadString();
                             ServerManager.HandleTcpMessage(JsonConvert.DeserializeObject<PlexServerHeader>(json), writer);
                         }
-                        Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
+                        if (IsMultiplayerServer)
+                            Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
                     }
                     catch { }
                 });

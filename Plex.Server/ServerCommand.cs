@@ -10,9 +10,12 @@ namespace Plex.Server
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ServerCommand : Command
     {
-        public ServerCommand(string name, string desc) : base(name, "", desc)
+        public ServerCommand(string name, string desc, bool serverOnly = false) : base(name, "", desc)
         {
+            ServerOnly = serverOnly;
         }
+
+        public bool ServerOnly { get; private set; }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]

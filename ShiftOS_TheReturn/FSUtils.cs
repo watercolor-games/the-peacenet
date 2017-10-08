@@ -180,14 +180,7 @@ namespace Plex.Engine
 
         public static void WriteAllText(string path, string contents)
         {
-            _fs_result = null;
-            var pathsplit = _createPathData(path);
-            pathsplit.AdditionalData = contents;
-            ServerManager.SendMessage("fs_writetext", JsonConvert.SerializeObject(pathsplit));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
+            WriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
         }
 
         public static MountInformation[] GetMounts()
@@ -232,32 +225,27 @@ namespace Plex.Engine
             var writer = new System.IO.BinaryWriter(tcpStream);
             var reader = new System.IO.BinaryReader(tcpStream);
             //The upload stream has been started on the server so we can start pushing data to it.
-            foreach (var bbuffer in contents.Split(4096))
+            string json = JsonConvert.SerializeObject(new
             {
-
-                //Send this block to the server
-                _fs_result = null;
-                string json = JsonConvert.SerializeObject(new
-                {
-                    StreamID = _wstrguid,
-                    Buffer = bbuffer.ToArray()
-                });
-                writer.Write(JsonConvert.SerializeObject(new PlexServerHeader
-                {
-                    Content = json,
-                    IPForwardedBy = "0.0.0.0",
-                    Message = "fs_write",
-                    SessionID = ServerManager.SessionInfo.SessionID
-                }));
+                StreamID = _wstrguid,
+                Buffer = contents
+            });
+            writer.Write(JsonConvert.SerializeObject(new PlexServerHeader
+            {
+                Content = json,
+                IPForwardedBy = "0.0.0.0",
+                Message = "fs_write",
+                SessionID = ServerManager.SessionInfo.SessionID
+            }));
                 _fs_result = reader.ReadString();
-                if (_fs_result != "success")
-                {
-                    writer.Close();
-                    reader.Close();
-                    tcpClient.Close();
-                    return _fs_result;
-                }
+            if (_fs_result != "success")
+            {
+                writer.Close();
+                reader.Close();
+                tcpClient.Close();
+                return _fs_result;
             }
+            
             writer.Close();
             reader.Close();
             tcpClient.Close();
@@ -298,6 +286,7 @@ namespace Plex.Engine
             string result = task.Result;
             if (result != "success")
                 throw new System.IO.IOException(result);
+            Thread.Sleep(500);
         }
 
         public static bool DirectoryExists(string path)

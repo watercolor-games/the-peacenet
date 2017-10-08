@@ -268,6 +268,32 @@ namespace Plex.Server
             DispatchExistsResult(result, session, ip, port);
         }
 
+        [ServerMessageHandler("fs_delete"), SessionRequired]
+        public static void FSDelete(string session, string content, string ip, int port)
+        {
+            var pdata = GetPathData(content);
+            var mount = GetDriveMount(content, session);
+            if(mount == null)
+            {
+                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                return;
+            }
+            if (mount.FileExists(pdata.Path))
+            {
+                mount.DeleteFile(pdata.Path);
+                DispatchFSResult("success", session, ip, port);
+                return;
+            }
+            if (mount.DirectoryExists(pdata.Path))
+            {
+                mount.DeleteDirectory(pdata.Path);
+                DispatchFSResult("success", session, ip, port);
+                return;
+            }
+            DispatchFSResult("File or directory not found.", session, ip, port);
+
+        }
+
         [ServerMessageHandler("fs_fileexists"), SessionRequired]
         public static void FileExists(string session, string content, string ip, int port)
         {

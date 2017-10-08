@@ -22,6 +22,8 @@ namespace Plex.Frontend.Apps
 
         public GraphicViewer()
         {
+            Width = 640;
+            Height = 500;
             _imgPreview = new PictureBox();
 
             AddControl(_imgPreview);

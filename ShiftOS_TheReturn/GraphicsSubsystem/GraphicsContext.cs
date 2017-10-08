@@ -202,7 +202,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                     ;
             }
             _spritebatch.End();
-            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                                     SamplerState.LinearClamp, Device.DepthStencilState,
                                     RasterizerState.CullNone);
 
