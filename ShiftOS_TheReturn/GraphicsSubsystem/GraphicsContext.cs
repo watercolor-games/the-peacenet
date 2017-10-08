@@ -149,6 +149,14 @@ namespace Plex.Frontend.GraphicsSubsystem
             _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, width, height), color);
         }
 
+        public void DrawCircle(int x, int y, int radius, Color color)
+        {
+            float step = (float) Math.PI / (radius * 4);
+            var rect = new Rectangle(x, y, radius, 1);
+            for (float theta = 0; theta < 2 * Math.PI; theta += step)
+                _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], rect, null, color, theta, Vector2.Zero, SpriteEffects.None, 0);
+        }
+
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, ImageLayout layout = ImageLayout.Stretch)
         {
             DrawRectangle(x, y, width, height, tex2, Color.White, layout);
