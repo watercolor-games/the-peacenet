@@ -1,4 +1,0 @@
-namespace Plex.Objects.PlexFS
-{
-}
-
