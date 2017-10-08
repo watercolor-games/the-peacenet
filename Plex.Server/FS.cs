@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -11,7 +12,145 @@ namespace Plex.Server
 {
     public static class FS
     {
-        private static List<ADriveMount> Mounts = new List<ADriveMount>(); 
+        private static List<ADriveMount> Mounts = new List<ADriveMount>();
+        private static List<FSStreamData> _writers = new List<FSStreamData>();
+        
+        public class BufferData
+        {
+            public string StreamID { get; set; }
+            public byte[] Buffer { get; set; }
+        }
+
+        public class FSStreamData
+        {
+            private System.IO.MemoryStream _stream = null;
+
+            public FSStreamData()
+            {
+                _stream = new System.IO.MemoryStream();
+                Stream = new System.IO.BinaryWriter(_stream);
+            }
+
+            public string SessionID { get; set; }
+            public PathData PathData { get; set; }
+            public string StreamID { get; set; }
+            public ADriveMount Mount { get; set; }
+            public int ContentLength { get; set; }
+
+            public System.IO.BinaryWriter Stream { get; private set; }
+
+            public void Close(string ip, int port)
+            {
+                var pdata = PathData;
+                var mount = Mount;
+                if (mount == null)
+                {
+                    DispatchFSResult("Mountpoint not found.", SessionID, ip, port);
+                    return;
+                }
+                try
+                {
+                    var bytes = _stream.ToArray();
+                    if (bytes.Length != ContentLength)
+                    {
+                        DispatchFSResult("The uploaded data does not match the expected content length.", SessionID, ip, port);
+                    }
+                    else
+                    {
+                        mount.WriteAllBytes(pdata.Path, bytes);
+                        DispatchFSResult("success", SessionID, ip, port);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DispatchFSResult(ex.Message, SessionID, ip, port);
+                }
+                Stream.Close();
+                _stream.Close();
+            }
+        }
+
+        [ServerMessageHandler("fs_close"), SessionRequired]
+        public static void CloseWrite(string session, string content, string ip, int port)
+        {
+            var writer = _writers.FirstOrDefault(x => x.StreamID == content && x.SessionID == session);
+            if (writer == null)
+            {
+                DispatchFSResult("A stream with the specified stream ID and session ID was not found.", session, ip, port);
+                return;
+            }
+            try
+            {
+                writer.Close(ip, port);
+                DispatchFSResult("success", session, ip, port);
+            }
+            catch (Exception ex)
+            {
+                DispatchFSResult(ex.Message, session, ip, port);
+
+            }
+
+        }
+
+
+        [ServerMessageHandler("fs_write"), SessionRequired, Tcp]
+        public static void FSWrite(string session, string content, System.IO.BinaryWriter _tcp)
+        {
+            var bufferdata = JsonConvert.DeserializeObject<BufferData>(content);
+            var writer = _writers.FirstOrDefault(x => x.StreamID == bufferdata.StreamID && x.SessionID == session);
+            if(writer == null)
+            {
+                _tcp.Write("A stream with the specified stream and session IDs was not found.");                
+                return;
+            }
+            writer.Stream.Write(bufferdata.Buffer);
+            _tcp.Write("success");
+        }
+
+        [ServerMessageHandler("fs_allocwrite")]
+        [SessionRequired]
+        public static void AllocWrite(string session, string content, string ip, int port)
+        {
+            var pdata = GetPathData(content);
+            var mount = GetDriveMount(content, session);
+            if (mount == null)
+            {
+                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                return;
+            }
+            int length = -1;
+            if(int.TryParse(pdata.AdditionalData, out length) == false)
+            {
+                DispatchStreamID("Incorrect content length specified.", "", session, ip, port);
+                return;
+            }
+            var str = new FSStreamData
+            {
+                ContentLength = length,
+                Mount = mount,
+                PathData = pdata,
+                SessionID = session,
+                StreamID = Guid.NewGuid().ToString()
+            };
+            _writers.Add(str);
+            DispatchStreamID("success", str.StreamID, session, ip, port);
+        }
+
+        public static void DispatchStreamID(string result, string stream, string session, string ip, int port)
+        {
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = JsonConvert.SerializeObject(new
+                {
+                    result = result,
+                    streamid = stream
+                }),
+                IPForwardedBy = ip,
+                Message = "fs_streamid",
+                SessionID = session
+            }, port);
+        }
+
 
         public static MountInformation CreateVolume(HackableSystem sys, int num, string label, string sessionid)
         {
@@ -206,23 +345,53 @@ namespace Plex.Server
             DispatchFileInfo(mount.GetFileInfo(pdata.Path), session, ip, port);
         }
 
-        [ServerMessageHandler("fs_readbytes"), SessionRequired]
-        public static void ReadBytes(string session, string content, string ip, int port)
+        [ServerMessageHandler("fs_readbytes"), SessionRequired, Tcp]
+        public static void ReadBytes(string session, string content, System.IO.BinaryWriter _tcp)
         {
             var pdata = GetPathData(content);
             var mount = GetDriveMount(content, session);
             if (mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                _tcp.Write("Mountpoint not found.");
                 return;
             }
             if(!mount.FileExists(pdata.Path))
             {
-                DispatchFSResult("File not found.", session, ip, port);
+                _tcp.Write("File not found.");
                 return;
 
             }
-            DispatchBytes(mount.ReadAllBytes(pdata.Path), session, ip, port);
+            _tcp.Write("success");
+            byte[] data = mount.ReadAllBytes(pdata.Path);
+            _tcp.Write(data.Length);
+            _tcp.Write(data);
+        }
+
+        /// <summary>
+        /// Splits an array into several smaller arrays.
+        /// </summary>
+        /// <typeparam name="T">The type of the array.</typeparam>
+        /// <param name="array">The array to split.</param>
+        /// <param name="size">The size of the smaller arrays.</param>
+        /// <returns>An array containing smaller arrays.</returns>
+        public static IEnumerable<IEnumerable<T>> Split<T>(this T[] array, int size)
+        {
+            for (var i = 0; i < (float)array.Length / size; i++)
+            {
+                yield return array.Skip(i * size).Take(size);
+            }
+        }
+
+        public static void DispatchReadDone(string session, string ip, int port)
+        {
+            Program.SendMessage(new PlexServerHeader
+            {
+                Content = "",
+                IPForwardedBy = ip,
+                Message = "fs_readdone",
+                SessionID = session
+            }, port);
+
         }
 
         public static void DispatchBytes(byte[] bytes, string session, string ip, int port)
@@ -231,7 +400,7 @@ namespace Plex.Server
             {
                 Content = Convert.ToBase64String(bytes),
                 IPForwardedBy = ip,
-                Message = "fs_bytes",
+                Message = "fs_rbytes",
                 SessionID = session
             }, port);
         }

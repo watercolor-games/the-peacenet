@@ -16,6 +16,8 @@ namespace Plex.Server
 {
     public class Program
     {
+        private static TcpListener _tcpListener = null;
+
         public enum ServerThreadState
         {
             Waiting,
@@ -800,6 +802,35 @@ Now generating defenses...
             }
         }
 
+        public static void TcpLoop()
+        {
+            _tcpListener = new TcpListener(IPAddress.Any, _port);
+            _tcpListener.Start();
+            while (true)
+            {
+                var client = _tcpListener.AcceptTcpClient();
+                var connectThread = new ServerThread();
+                Console.WriteLine($"{client.Client.LocalEndPoint} has connected through TCP.");
+                connectThread.Queue(() =>
+                {
+                    try
+                    {
+                        var stream = client.GetStream();
+                        var reader = new BinaryReader(stream);
+                        var writer = new BinaryWriter(stream);
+                        while (client.Connected)
+                        {
+                            string json = reader.ReadString();
+                            ServerManager.HandleTcpMessage(JsonConvert.DeserializeObject<PlexServerHeader>(json), writer);
+                        }
+                        Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
+                    }
+                    catch { }
+                });
+                connectThread.Start();
+            }
+        }
+
         public static void ServerLoop()
         {
             for (int i = 0; i < Environment.ProcessorCount; i++)
@@ -831,6 +862,11 @@ Now generating defenses...
             Console.WriteLine("Starting world manager thread...");
             worldThread.Queue(WorldManager);
             worldThread.Start();
+
+            var tcpThread = new ServerThread();
+            Console.WriteLine("Starting TCP listener for filesystem requests...");
+            tcpThread.Queue(TcpLoop);
+            tcpThread.Start();
 
             _server = new UdpClient();
             var _ipEP = new IPEndPoint(IPAddress.Any, _port);
@@ -955,6 +991,48 @@ Now generating defenses...
     /// </summary>
     public static class ServerManager
     {
+
+        internal static void HandleTcpMessage(PlexServerHeader header, BinaryWriter tcpStreamWriter)
+        {
+            foreach (var type in ReflectMan.Types)
+            {
+                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ServerMessageHandlerAttribute) != null))
+                {
+                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
+                    bool tcpRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is TcpAttribute) != null;
+                    if (tcpRequired == false)
+                        continue;
+                    if (attribute.ID == header.Message)
+                    {
+                        
+                        var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
+                        if (sessionRequired != null)
+                        {
+                            bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
+                            if (nosession == false)
+                            {
+                                nosession = SessionManager.IsExpired(header.SessionID);
+                            }
+
+                            if (nosession)
+                            {
+                                tcpStreamWriter.Write(JsonConvert.SerializeObject(new PlexServerHeader
+                                {
+                                    IPForwardedBy = header.IPForwardedBy,
+                                    Message = "login_required",
+                                    Content = ""
+                                }));
+                                return;
+                            }
+                        }
+                        method.Invoke(null, new object[] { header.SessionID, header.Content, tcpStreamWriter });
+                        return;
+                    }
+                }
+            }
+        }
+
+
         internal static void HandleMessage(PlexServerHeader header, int port)
         {
             foreach (var type in ReflectMan.Types)
@@ -962,6 +1040,9 @@ Now generating defenses...
                 foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ServerMessageHandlerAttribute) != null))
                 {
                     var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
+                    bool tcpRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is TcpAttribute) != null;
+                    if (tcpRequired == true)
+                        continue;
                     if (attribute.ID == header.Message)
                     {
                         var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
@@ -997,6 +1078,13 @@ Now generating defenses...
     {
 
     }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class TcpAttribute : Attribute
+    {
+
+    }
+
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ServerMessageHandlerAttribute : Attribute
