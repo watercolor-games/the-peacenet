@@ -63,10 +63,6 @@ extern "C" EXPORT int64_t CALLMODE MeasureString(char* text, int32_t textlen, ch
 // alignment - one of the Alignment constants above
 // wrapmode - one of the WrapMode constants above
 // wrapwidth - the width to wrap at if wrapmode is not WrapMode::None
-// r - red channel of main text colour in range 0 to 1
-// g - green channel of main text colour in range 0 to 1
-// b - blue channel of main text colour in range 0 to 1
-// a - alpha channel of main text colour in range 0 to 1
 // w - width of image in pixels (obtained from MeasureString)
 // h - height of image in pixels (obtained from MeasureString)
 // OUT:

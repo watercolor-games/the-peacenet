@@ -14,7 +14,7 @@ namespace Plex.Engine.TextRenderers
 			public static extern long MeasureString(string text, int textlen, string typeface, int typefacelen, double pointsize, int styles, int alignment, int wrapmode, int wrapwidth);
 			
 			[System.Runtime.InteropServices.DllImport("PlexNative", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl)]
-			public static extern void DrawString(string text, int textlen, string typeface, int typefacelen, double pointsize, int styles, int alignment, int wrapmode, int wrapwidth, double r, double g, double b, double a, int w, int h, byte[] buffer);
+			public static extern void DrawString(string text, int textlen, string typeface, int typefacelen, double pointsize, int styles, int alignment, int wrapmode, int wrapwidth, int w, int h, byte[] buffer);
 			
 			public enum WrapMode
 			{
@@ -43,10 +43,10 @@ namespace Plex.Engine.TextRenderers
 			var data = new byte[(int)measure.X * (int)measure.Y * 4];
 			if (data.Length == 0)
 				return;
-            Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)Implementation.WrapMode.Words, maxwidth, color.B / 255.0, color.G / 255.0, color.R / 255.0, color.A / 255.0, (int)measure.X, (int)measure.Y, data);
+            Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)Implementation.WrapMode.Words, maxwidth, (int)measure.X, (int)measure.Y, data);
             var tex2 = new Microsoft.Xna.Framework.Graphics.Texture2D(gfx.Device, (int)measure.X, (int)measure.Y);
 			tex2.SetData<byte>(data);
-			gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2);
+			gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2, color);
 		}
 	}
 }
