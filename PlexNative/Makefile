@@ -39,11 +39,11 @@ $(OUTDIR)/x86/libPlexNative.so: PangoTextRenderer_lin32.o
 
 $(OUTDIR)/x64/PlexNative.dll: PangoTextRenderer.cpp
 	mkdir -p $(OUTDIR)/x64
-	$(CXXW64) -fPIC -shared -m64 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES))
+	$(CXXW64) -fPIC -shared -m64 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES)) -Wl,--add-stdcall-alias
 
 $(OUTDIR)/x86/PlexNative.dll: PangoTextRenderer.cpp
 	mkdir -p $(OUTDIR)/x86
-	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES))
+	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES)) -Wl,--add-stdcall-alias
 
 linux64: $(OUTDIR)/x64/libPlexNative.so
 linux32: $(OUTDIR)/x86/libPlexNative.so
