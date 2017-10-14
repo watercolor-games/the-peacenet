@@ -182,7 +182,7 @@ namespace Plex.Frontend.Apps
             var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
             int currline = GetCurrentLine();
             string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
-			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Engine.GUI.TextAlignment.TopLeft, Width).Y - font.Height);
+			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Engine.GUI.TextAlignment.TopLeft, Width, Engine.TextRenderers.WrapMode.Letters).Y - font.Height);
 
             int linestart = String.Join(Environment.NewLine, Lines.Take(GetCurrentLine())).Length;
 
@@ -375,7 +375,7 @@ namespace Plex.Frontend.Apps
             foreach (var line in Lines)
             {
                 if (!(textloc < 0 || textloc - font.Height >= Height))
-                    gfx.DrawString(line, 0, textloc, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft, Width - 4);
+                    gfx.DrawString(line, 0, textloc, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft, Width - 4, Engine.TextRenderers.WrapMode.Letters);
                 if (string.IsNullOrEmpty(line))
                     textloc += font.Height;
                 else

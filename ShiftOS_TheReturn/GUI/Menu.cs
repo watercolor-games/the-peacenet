@@ -356,7 +356,7 @@ namespace Plex.Frontend.GUI
             if (this.TextRerenderRequired)
             {
                 string longest = (_childMenus.Count == 0) ? _emptyText : GetLongestString();
-                var measure = TextRenderer.MeasureText(longest, SkinEngine.LoadedSkin.DropdownFont, int.MaxValue, Engine.GUI.TextAlignment.TopLeft);
+                var measure = TextRenderer.MeasureText(longest, SkinEngine.LoadedSkin.DropdownFont, int.MaxValue, Engine.GUI.TextAlignment.TopLeft, Engine.TextRenderers.WrapMode.None);
                 _textwidth = (int)measure.X;
                 _textheight = (int)measure.Y;
             }
