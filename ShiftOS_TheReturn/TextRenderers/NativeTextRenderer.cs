@@ -43,10 +43,17 @@ namespace Plex.Engine.TextRenderers
 			var data = new byte[(int)measure.X * (int)measure.Y * 4];
 			if (data.Length == 0)
 				return;
-            Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)Implementation.WrapMode.Words, maxwidth, color.B / 255.0, color.G / 255.0, color.R / 255.0, color.A / 255.0, (int)measure.X, (int)measure.Y, data);
+            Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)Implementation.WrapMode.Words, maxwidth, 0, 0, 0, 1, (int)measure.X, (int)measure.Y, data);
+            for(int i = 0; i < data.Length; i += 4)
+            {
+                data[i] = (byte)(255 - data[i]);
+                data[i+1] = (byte)(255 - data[i+1]);
+                data[i+2] = (byte)(255 - data[i+2]);
+
+            }
             var tex2 = new Microsoft.Xna.Framework.Graphics.Texture2D(gfx.Device, (int)measure.X, (int)measure.Y);
 			tex2.SetData<byte>(data);
-			gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2);
+            gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2, color, System.Windows.Forms.ImageLayout.Stretch, true);
 		}
 	}
 }

@@ -164,7 +164,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
 
-        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch)
+        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch, bool premultiplied = false)
         {
             if (tex2 == null)
                 return;
@@ -174,9 +174,18 @@ namespace Plex.Frontend.GraphicsSubsystem
             var state = SamplerState.LinearClamp;
             if (layout == ImageLayout.Tile)
                 state = SamplerState.LinearWrap;
-            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    state, Device.DepthStencilState,
-                                    RasterizerState);
+            if (premultiplied)
+            {
+                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                                        state, Device.DepthStencilState,
+                                        RasterizerState);
+            }
+            else
+            {
+                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                        state, Device.DepthStencilState,
+                                        RasterizerState);
+            }
             switch (layout)
             {
                 case ImageLayout.Tile:
