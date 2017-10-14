@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine;
+using Plex.Engine.TextRenderers;
 using Plex.Frontend.GUI;
 using Plex.Objects;
 
@@ -377,6 +378,20 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ProcessKeyEvent(KeyEvent e)
         {
+#if DEBUG
+            if(e.ControlDown && e.Key == Keys.S)
+            {
+                //ask for sharpfont
+                Infobox.PromptYesNo("Switch to SharpFont renderer?", "Would you like to switch to the experimental SharpFont renderer? (NOTE: THIS CAN BREAK YOUR GAME. IF IT DOES, REBOOT THE GAME AND REPORT ANY ISSUES!!)", (answer)=>
+                {
+                    if(answer == true)
+                    {
+                        TextRenderer.Init(new SharpFontTextRenderer());
+                        Infobox.Show("SharpFont test", "If you can see this, the switch was successful.");
+                    }
+                });
+            }
+#endif
             if (e.ControlDown && e.Key == Keys.T)
             {
                 TerminalBackend.OpenTerminal();

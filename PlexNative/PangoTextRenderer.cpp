@@ -6,6 +6,7 @@
 #include <pangomm/init.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
+#include <windows.h>
 #include "ATextRenderer.h"
 
 template <typename T> Glib::RefPtr<Pango::Layout> CreateLayout(std::string text, std::string typeface, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, T context)
