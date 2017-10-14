@@ -67,5 +67,5 @@ extern "C" EXPORT int64_t CALLMODE MeasureString(char* text, int32_t textlen, ch
 // h - height of image in pixels (obtained from MeasureString)
 // OUT:
 // buffer - a buffer allocated to w * h * 4 that will take RGBA pixels
-extern "C" EXPORT void CALLMODE DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer);
+extern "C" EXPORT void CALLMODE DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, int32_t w, int32_t h, unsigned char* buffer);
 
