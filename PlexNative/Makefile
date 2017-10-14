@@ -70,6 +70,7 @@ $(OUTDIR)/x86/PlexNative.dll: PangoTextRenderer.cpp
 	cp /c/msys64/mingw32/bin/libsigc-2.0-0.dll $(OUTDIR)/x86/libsigc-2.0-0.dll
 	cp /c/msys64/mingw32/bin/libstdc++-6.dll $(OUTDIR)/x86/libstdc++-6.dll
 	cp /c/msys64/mingw32/bin/libwinpthread-1.dll $(OUTDIR)/x86/libwinpthread-1.dll
+	cp /c/msys64/mingw32/bin/zlib1.dll $(OUTDIR)/x86/zlib1.dll
 	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES)) -Wl,--add-stdcall-alias
 
 linux64: $(OUTDIR)/x64/libPlexNative.so
