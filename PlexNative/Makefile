@@ -39,17 +39,17 @@ $(OUTDIR)/x86/libPlexNative.so: PangoTextRenderer_lin32.o
 
 $(OUTDIR)/x64/PlexNative.dll: PangoTextRenderer.cpp
 	mkdir -p $(OUTDIR)/x64
-	$(CXXW64) -fPIC -shared -m64 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES))
+	$(CXXW64) -fPIC -shared -m64 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES)) -Wl,--add-stdcall-alias
 
 $(OUTDIR)/x86/PlexNative.dll: PangoTextRenderer.cpp
 	mkdir -p $(OUTDIR)/x86
-	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES))
 	cp /c/msys64/mingw32/bin/libgcc_s_dw2-1.dll $(OUTDIR)/x86/libgcc_s_dw2-1.dll
 	cp /c/msys64/mingw32/bin/libcairomm-1.0-1.dll $(OUTDIR)/x86/libcairomm-1.0-1.dll
 	cp /c/msys64/mingw32/bin/libglibmm-2.4-1.dll $(OUTDIR)/x86/libglibmm-2.4-1.dll
 	cp /c/msys64/mingw32/bin/libpangomm-1.4-1.dll $(OUTDIR)/x86/libpangomm-1.4-1.dll
 	cp /c/Windows/System32/vcruntime140.dll $(OUTDIR)/x86/vcruntime140.dll
 	cp /c/Windows/System32/msvcp140.dll $(OUTDIR)/x86/msvcp140.dll
+	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES)) -Wl,--add-stdcall-alias
 
 linux64: $(OUTDIR)/x64/libPlexNative.so
 linux32: $(OUTDIR)/x86/libPlexNative.so
