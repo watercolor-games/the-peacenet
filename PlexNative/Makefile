@@ -4,7 +4,7 @@ CXX := c++
 CXXW32 := i686-w64-mingw32-c++
 CXXW64 := x86_64-w64-mingw32-c++
 PACKAGES := pangomm-1.4
-CFLAGSBASE := -fPIC -static
+CFLAGSBASE := -fPIC -shared
 CFLAGS := $(CFLAGSBASE) $(shell pkg-config --cflags --libs $(PACKAGES))
 
 ifeq ($(OS),Windows_NT)

@@ -6,7 +6,6 @@
 #include <pangomm/init.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
-#include <windows.h>
 #include "ATextRenderer.h"
 
 template <typename T> Glib::RefPtr<Pango::Layout> CreateLayout(std::string text, std::string typeface, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, T context)
@@ -69,7 +68,7 @@ int64_t MeasureString(char* text, int32_t textlen, char* typeface, int32_t typef
 	return COMBINE_INT32(w, h);
 }
 
-void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer)
+void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, int32_t w, int32_t h, unsigned char* buffer)
 {
 	Pango::init();
 	
@@ -77,11 +76,20 @@ void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen
 	auto context = Cairo::Context::create(surface);
 	context->set_source_rgba(0, 0, 0, 0);
 	context->paint();
-	context->set_source_rgba(r, g, b, a);
+	context->set_source_rgba(0, 0, 0, 1);
 	auto layout = CreateLayout(std::string(text, textlen), std::string(typeface, typefacelen), pointsize, styles, alignment, wrapmode, wrapwidth, context);
 	layout->show_in_cairo_context(context);
 	
-	std::memcpy(buffer, surface->get_data(), w * h * 4);
+	const unsigned char* srcbuf = surface->get_data();
+	const size_t bufsz = w * h * 4;
+	size_t i = 0;
+	while (i < bufsz)
+	{
+		buffer[i] = 255 - srcbuf[i]; i++;
+		buffer[i] = 255 - srcbuf[i]; i++;
+		buffer[i] = 255 - srcbuf[i]; i++;
+		buffer[i] = srcbuf[i]; i++;
+	}
 }
 
 
