@@ -4,10 +4,10 @@
 
 #ifdef WIN32
 #define EXPORT __declspec(dllexport)
-#define STDCALL __stdcall
+#define CALLMODE __cdecl
 #else
 #define EXPORT
-#define STDCALL
+#define CALLMODE
 #endif
 
 namespace WrapMode
@@ -51,7 +51,7 @@ namespace Alignment
 // wrapwidth - the width to wrap at if wrapmode is not WrapMode::None
 // RETURNS:
 // the width and height as ints combined into a long
-extern "C" EXPORT int64_t STDCALL MeasureString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth);
+extern "C" EXPORT int64_t CALLMODE MeasureString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth);
 
 // IN:
 // text - the text to be drawn as a C string
@@ -71,5 +71,5 @@ extern "C" EXPORT int64_t STDCALL MeasureString(char* text, int32_t textlen, cha
 // h - height of image in pixels (obtained from MeasureString)
 // OUT:
 // buffer - a buffer allocated to w * h * 4 that will take RGBA pixels
-extern "C" EXPORT void STDCALL DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer);
+extern "C" EXPORT void CALLMODE DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, double r, double g, double b, double a, int32_t w, int32_t h, unsigned char* buffer);
 

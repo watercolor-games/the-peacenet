@@ -10,10 +10,10 @@ namespace Plex.Engine.TextRenderers
 	{
 		private static class Implementation
 		{
-			[System.Runtime.InteropServices.DllImport("PlexNative")]
+			[System.Runtime.InteropServices.DllImport("PlexNative", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl)]
 			public static extern long MeasureString(string text, int textlen, string typeface, int typefacelen, double pointsize, int styles, int alignment, int wrapmode, int wrapwidth);
 			
-			[System.Runtime.InteropServices.DllImport("PlexNative")]
+			[System.Runtime.InteropServices.DllImport("PlexNative", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl)]
 			public static extern void DrawString(string text, int textlen, string typeface, int typefacelen, double pointsize, int styles, int alignment, int wrapmode, int wrapwidth, double r, double g, double b, double a, int w, int h, byte[] buffer);
 			
 			public enum WrapMode
