@@ -21,33 +21,24 @@ namespace Plex.Frontend.Stories
                 AppearanceManager.Close(frm.ParentWindow);
             }
             int position = 0;
-            Action<KeyEvent> keylistener = (e) =>
-            {
-                switch (position)
-                {
-                    case 0:
-                        if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
-                        {
-                            position = 1;
-                        }
-                        break;
-                }
-            };
-
             Action<string, Dictionary<string, object>> commandListener = (text, args) =>
             {
                 Thread.Sleep(25);
                 switch (position)
                 {
-                    case 1:
+                    case 0:
                         if (text == "help")
                         {
                             position++;
 
                         }
                         break;
-                    case 2:
+                    case 1:
                         if (text == "status")
+                            position++;
+                        break;
+                    case 2:
+                        if (text == "upgrades")
                             position++;
                         break;
                 }
@@ -57,90 +48,70 @@ namespace Plex.Frontend.Stories
             Engine.Story.Context.AutoComplete = false;
             TerminalBackend.PrefixEnabled = false;
             TerminalBackend.InStory = true;
-            var term = new Apps.Terminal();
-            AppearanceManager.SetupWindow(term);
-            var ctl = term.TerminalControl;
-            ctl.KeyEvent += keylistener;
-            ctl.WriteLine("<plexkrnl> System installation completed successfully.");
-            ctl.WriteLine("<plexgate> Starting system tutorial...");
-            Thread.Sleep(500);
-            ctl.WriteLine("");
-            ctl.WriteLine("");
-            ctl.WriteLine("Welcome to the Plexgate Terminal. You are now running the system usage tutorial.");
-            ctl.WriteLine("This tutorial will teach you the basic skills of using Plex and the Plexgate Desktop.");
-            ctl.WriteLine("When you are ready, strike the [ENTER] key.");
-            ctl.WriteLine("");
+            UIManagerTools.EnterTextMode();
+            Thread.Sleep(1000);
+            var ctl = UIManager.TopLevels.FirstOrDefault(x => x is Apps.TerminalControl) as Apps.TerminalControl;
+            ctl.Clear();
+            Console.WriteLine("Welcome to the Plexnet.");
+            Thread.Sleep(4000);
+            Console.WriteLine("You need not worry, as your questions will be answered in due time.");
+            Thread.Sleep(4000);
+            Console.WriteLine("First, we must begin the training sequence.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Below is what is called a Command Shell. It is an indicator that the system is waiting for a command. You can type a command into the shell and hit [ENTER] to confirm it.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Please run the 'help' command to confirm your understanding.");
+            Thread.Sleep(4000);
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
             while (position == 0)
                 Thread.Sleep(10);
-            ctl.WriteLine("Enter keypress detected.");
-            Thread.Sleep(244);
-            ctl.WriteLine("");
-            ctl.WriteLine("<plexshell> Starting command shell on tty0.");
-            Thread.Sleep(100);
-            ctl.WriteLine("The below prompt is a Command Shell. This shell allows you to input commands into Plexgate Terminal to tell it what to do.");
-            ctl.WriteLine("To get a list of usable Plexgate commands, type the \"help\" command.");
+            TerminalBackend.InStory = true;
+            TerminalBackend.PrefixEnabled = false;
+            Console.WriteLine("The Plexgate recognizes your will to obey orders.");
+            Thread.Sleep(4000);
+            Console.WriteLine("The 'help' command is context-sensitive. It will list all available commands in the current shell.");
+            Thread.Sleep(4000);
+            Console.WriteLine("You want to know more about your environment, but first, you must know about your system.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Firstly, when in the System Shell, you'll always know what system you are connected to and what user you're authenticated as");
+            Thread.Sleep(4000);
+            Console.WriteLine("because it will display on your shell prompt. Currently, you are logged in as {0} on the {1} system.", SaveSystem.GetUsername(), SaveSystem.GetSystemName());
+            Thread.Sleep(4000);
+            Console.WriteLine("AKA, you're logged in as yourself, on your own system.");
+            Thread.Sleep(4000);
+            Console.WriteLine("To know more about your system, run the 'status' command.");
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
             while (position == 1)
                 Thread.Sleep(10);
+            
+            TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
-            Thread.Sleep(1000);
-            ctl.WriteLine("");
-            ctl.WriteLine("Any time you are unsure of a command to run, type the help command.");
-            ctl.WriteLine("Now, try typing the \"status\" command to see your current system status.");
+            Console.WriteLine("Good job. You seem to be quite literate compared to the others.");
+            Thread.Sleep(4000);
 
+            Console.WriteLine("You are currently in Text mode, but there is more to this operating system than just a terminal.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Before I can show you this stuff, you need to learn how to purchase and load system upgrades.");
+            Thread.Sleep(4000);
+            Console.WriteLine("System upgrades are a purchasable resource that enhance Plexgate and your system's code to allow you to access more features.");
+            Thread.Sleep(4000);
+            Console.WriteLine("To list all available upgrades, simply type the 'upgrades' command.");
+            Thread.Sleep(4000);
+            TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
             while (position == 2)
                 Thread.Sleep(10);
-            Thread.Sleep(1000);
-            ctl.WriteLine("");
-            ctl.WriteLine("");
-            TerminalBackend.PrefixEnabled = false;
+
             TerminalBackend.InStory = true;
-            ctl.WriteLine("As you can see, your system doesn't have much value within the usenet.");
-            Thread.Sleep(1000);
-            ctl.WriteLine($"You have {SaveSystem.GetExperience()} Experience Points - and {Upgrades.CountUpgrades()} system upgrades.");
-            ctl.WriteLine("");
-            ctl.WriteLine("");
-            Thread.Sleep(500);
-            ctl.WriteLine("Experience can be earned by completing objectives within Plex or by playing minigames.");
-            Thread.Sleep(250);
-            ctl.WriteLine("When you have Experience, you can use them to buy system upgrades from the Upgrade Centre, to add new programs and enhancements to Plexgate.");
-            Thread.Sleep(200);
-            ctl.WriteLine("Tasks that can give you Experience can be found using the missions command.");
-            Thread.Sleep(200);
-            ctl.WriteLine("You can start a mission using the startmission command, and specifying the mission ID as a command-line argument.");
-            Thread.Sleep(750);
-            ctl.WriteLine("<plexkrnl> Careful. The user doesn't know how arguments work in Plex.");
-            Thread.Sleep(490);
-            ctl.WriteLine("That reminds me... Command-line arguments are pretty easy in Plex.");
-            Thread.Sleep(200);
-            ctl.WriteLine("Most commands don't require arguments at all, like \"help\", \"status\" and \"missions\". However, others like \"buy\" and \"close\" will.");
-            Thread.Sleep(200);
-            ctl.WriteLine("Most commands that require arguments will take the implicit syntax, i.e \"open pong\".");
-            Thread.Sleep(200);
-            ctl.WriteLine("Others will require the explicit syntax, for example \"fileskimmer --dir 0:/home\".");
-            Thread.Sleep(200);
-            ctl.WriteLine("And others will accept both, for example \"inject ftpwn --port 21\".");
-            Thread.Sleep(200);
-            ctl.WriteLine("When you run a command and you have forgotten to supply its arguments, the Shell will tell you which arguments you are missing.");
-            Thread.Sleep(200);
-            ctl.WriteLine("If the Shell says you are missing an \"id\" argument, you can pass it using either the implicit syntax, i.e \"command value\", or the explicit syntax, i.e \"command --id value\". Both will be accepted by the command interpreter.");
-            Thread.Sleep(200);
-            ctl.WriteLine("However, for other arguments, the explicit syntax is required - the command interpreter won't be able to tell what argument you're supplying data to if you use the implicit syntax, and thus it will assume you are supplying data for the \"id\" argument.");
-            Thread.Sleep(1000);
-            ctl.WriteLine("<plexgate> Basic system usage tutorial complete.");
-            Thread.Sleep(500);
-            ctl.WriteLine("<xpd> 200 Experience earned.");
-            SaveSystem.AddExperience(200);
-            TerminalBackend.PrefixEnabled = true;
-            TerminalBackend.InStory = false;
-            Story.Context.MarkComplete();
-            TerminalBackend.PrintPrompt();
+            TerminalBackend.PrefixEnabled = false;
+
         }
-        
+
         public static PlexSkin LoadedSkin
         {
             get

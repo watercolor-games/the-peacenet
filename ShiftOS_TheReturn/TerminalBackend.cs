@@ -130,6 +130,7 @@ namespace Plex.Engine
                 }
 
                 CommandProcessed?.Invoke(command, JsonConvert.SerializeObject(arguments));
+                CommandFinished?.Invoke(command, JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(arguments)));
             }
             catch (Exception ex)
             {
@@ -387,8 +388,9 @@ namespace Plex.Engine
             InStory = false;
             PrefixEnabled = true;
             PrintPrompt();
+            CommandFinished?.Invoke(_ranCMD, _ranArgs);
         }
-        
+
         [ClientMessageHandler("trm_esyschange")]
         public static void ExitSyschange(string content, string ip)
         {
@@ -400,7 +402,10 @@ namespace Plex.Engine
         {
             _terminal_forward_session_id = content;
         }
-        
+
+        private static string _ranCMD = "";
+        private static Dictionary<string, object> _ranArgs = null;
+
         /// <summary>
         /// Runs a command on the client.
         /// </summary>
@@ -438,6 +443,7 @@ namespace Plex.Engine
                 try
                 {
                     cmd.Invoke(args, _shellOverrideString);
+                    CommandFinished?.Invoke(text, args);
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -452,6 +458,8 @@ namespace Plex.Engine
                 {
                     InStory = true;
                     PrefixEnabled = false;
+                    _ranCMD = text;
+                    _ranArgs = args;
                     ServerManager.SendMessage("trm_invoke", JsonConvert.SerializeObject(new
                     {
                         cmd = text,
@@ -462,7 +470,6 @@ namespace Plex.Engine
                     return true;
                 }
             }
-            CommandFinished?.Invoke(text, args);
             return value;
         }
 

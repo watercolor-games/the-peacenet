@@ -4,7 +4,7 @@ CXX := c++
 CXXW32 := i686-w64-mingw32-c++
 CXXW64 := x86_64-w64-mingw32-c++
 PACKAGES := pangomm-1.4
-CFLAGSBASE := -fPIC -shared
+CFLAGSBASE := -fPIC -static
 CFLAGS := $(CFLAGSBASE) $(shell pkg-config --cflags --libs $(PACKAGES))
 
 ifeq ($(OS),Windows_NT)
@@ -44,6 +44,12 @@ $(OUTDIR)/x64/PlexNative.dll: PangoTextRenderer.cpp
 $(OUTDIR)/x86/PlexNative.dll: PangoTextRenderer.cpp
 	mkdir -p $(OUTDIR)/x86
 	$(CXXW32) -fPIC -shared -m32 $(shell pkg-config --cflags $(PACKAGES)) $< -o $@ $(shell pkg-config --libs $(PACKAGES))
+	cp /c/msys64/mingw32/bin/libgcc_s_dw2-1.dll $(OUTDIR)/x86/libgcc_s_dw2-1.dll
+	cp /c/msys64/mingw32/bin/libcairomm-1.0-1.dll $(OUTDIR)/x86/libcairomm-1.0-1.dll
+	cp /c/msys64/mingw32/bin/libglibmm-2.4-1.dll $(OUTDIR)/x86/libglibmm-2.4-1.dll
+	cp /c/msys64/mingw32/bin/libpangomm-1.4-1.dll $(OUTDIR)/x86/libpangomm-1.4-1.dll
+	cp /c/Windows/System32/vcruntime140.dll $(OUTDIR)/x86/vcruntime140.dll
+	cp /c/Windows/System32/msvcp140.dll $(OUTDIR)/x86/msvcp140.dll
 
 linux64: $(OUTDIR)/x64/libPlexNative.so
 linux32: $(OUTDIR)/x86/libPlexNative.so

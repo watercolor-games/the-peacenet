@@ -210,7 +210,7 @@ namespace Plex.Frontend
             ATextRenderer strategy = null;
             try
             {
-				strategy = new Engine.TextRenderers.NativeTextRenderer();
+                strategy = new Engine.TextRenderers.NativeTextRenderer();
             }
             catch
             {
