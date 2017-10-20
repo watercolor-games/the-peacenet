@@ -98,7 +98,6 @@ namespace Plex.Frontend
                     //Create a main menu
                     var mm = new MainMenu();
                     UIManager.AddTopLevel(mm);
-                    AppearanceManager.SetupDialog(new Apps.Disclaimer());
                 };
                 game.Run();
             }

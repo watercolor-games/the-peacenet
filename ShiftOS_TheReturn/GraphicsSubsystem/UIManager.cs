@@ -445,6 +445,9 @@ namespace Plex.Frontend.GraphicsSubsystem
 
             foreach(var colorfield in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(System.Drawing.Color)))
             {
+                if (SkinTextures.ContainsKey(colorfield.Name))
+                    continue;
+
                 var color = (System.Drawing.Color)colorfield.GetValue(SkinEngine.LoadedSkin);
                 var tex2 = new Texture2D(graphics, 1, 1);
                 if(rgb101)
@@ -461,7 +464,8 @@ namespace Plex.Frontend.GraphicsSubsystem
 
             var pureWhite = new Texture2D(graphics, 1, 1);
             pureWhite.SetData<byte>(new byte[] { 255, 255, 255, 255 });
-            SkinTextures.Add("PureWhite", pureWhite);
+            if(!SkinTextures.ContainsKey("PureWhite"))
+                SkinTextures.Add("PureWhite", pureWhite);
 
         }
 

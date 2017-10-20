@@ -219,6 +219,8 @@
     <None Include="Resources\LootInfo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\thepeacenet_text.png" />
+    <None Include="Resources\Watercolor_Full.png" />
     <None Include="Resources\startup.wav" />
     <None Include="Resources\shutdown1.wav" />
     <None Include="Resources\ranks.txt" />
@@ -256,6 +258,7 @@
     <None Include="Resources\minimize.wav" />
     <None Include="Resources\openwindow.wav" />
     <None Include="Resources\pickupwindow.wav" />
+    <None Include="Resources\peacenet_welcome.png" />
     <Content Include="Resources\Ports.txt" />
     <Content Include="Resources\Payloads.txt" />
     <Content Include="Resources\Exploits.txt" />

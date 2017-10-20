@@ -541,6 +541,16 @@ namespace Plex.Frontend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap peacenet_welcome {
+            get {
+                object obj = ResourceManager.GetObject("peacenet_welcome", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
         internal static System.IO.UnmanagedMemoryStream pickupwindow {
@@ -669,6 +679,26 @@ namespace Plex.Frontend.Properties {
         internal static string strings_fr {
             get {
                 return ResourceManager.GetString("strings_fr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap thepeacenet_text {
+            get {
+                object obj = ResourceManager.GetObject("thepeacenet_text", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Watercolor_Full {
+            get {
+                object obj = ResourceManager.GetObject("Watercolor_Full", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

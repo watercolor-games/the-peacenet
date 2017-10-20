@@ -52,14 +52,17 @@ namespace Plex.Frontend.GUI
         {
             if (AutoSize)
             {
-                Width = (img == null) ? 0 : img.Width;
-                Height = (img == null) ? 0 : img.Height;
+                MaxWidth = int.MaxValue;
+                MaxHeight = MaxWidth;
+                Width = (img != null) ? img.Width : 0;
+                Height = (img != null) ? img.Height : 0;
+
             }
         }
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, img, _layout);
+           gfx.DrawRectangle(0, 0, Width, Height, img, Microsoft.Xna.Framework.Color.White * (float)Opacity, _layout);
         }
 
         //Again, thanks StackOverflow
