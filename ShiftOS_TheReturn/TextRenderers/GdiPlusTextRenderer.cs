@@ -18,9 +18,9 @@ namespace Plex.Engine.TextRenderers
     /// </summary>
     public class GdiPlusTextRenderer : ATextRenderer
     {
-        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment)
+        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
-            var measure = MeasureText(text, font, maxwidth, alignment);
+            var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
             using(var bmp = new Bitmap((int)measure.X, (int)measure.Y))
             {
                 using(var cgfx = Graphics.FromImage(bmp))
@@ -31,6 +31,8 @@ namespace Plex.Engine.TextRenderers
 
                     var format = StringFormat.GenericDefault;
                     format.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoClip;
+                    if (wrapMode == WrapMode.None)
+                        format.FormatFlags |= StringFormatFlags.NoWrap;
 
                     cgfx.DrawString(text, font, Brushes.Black, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), format);
 
@@ -52,12 +54,14 @@ namespace Plex.Engine.TextRenderers
             }
         }
 
-        public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment)
+        public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             using(var gfx = Graphics.FromHwnd(IntPtr.Zero))
             {
                 var format = StringFormat.GenericDefault;
                 format.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoClip;
+                if (wrapMode == WrapMode.None)
+                    format.FormatFlags |= StringFormatFlags.NoWrap;
                 var measure = gfx.MeasureString(text, font, maxwidth, format);
                 return new Vector2(measure.Width, measure.Height);
             }

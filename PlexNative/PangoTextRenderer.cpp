@@ -53,7 +53,7 @@ template <typename T> Glib::RefPtr<Pango::Layout> CreateLayout(std::string text,
 	return layout;
 }
 
-int64_t MeasureString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth)
+int64_t MeasureString(const char* text, int32_t textlen, const char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth)
 {
 	Pango::init();
 	
@@ -68,7 +68,7 @@ int64_t MeasureString(char* text, int32_t textlen, char* typeface, int32_t typef
 	return COMBINE_INT32(w, h);
 }
 
-void DrawString(char* text, int32_t textlen, char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, int32_t w, int32_t h, unsigned char* buffer)
+void DrawString(const char* text, int32_t textlen, const char* typeface, int32_t typefacelen, double pointsize, int32_t styles, int32_t alignment, int32_t wrapmode, int32_t wrapwidth, int32_t w, int32_t h, unsigned char* buffer)
 {
 	Pango::init();
 	

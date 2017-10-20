@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GUI;
+using Plex.Engine.TextRenderers;
 
 namespace Plex.Frontend.GraphicsSubsystem
 {
@@ -217,19 +218,19 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         }
 
-        public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue)
+        public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
-            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, alignment);
+            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, alignment, wrapMode);
 
         }
 
-        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue)
+        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
             if (string.IsNullOrEmpty(text))
                 return;
             x += X;
             y += Y;
-            Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment);
+            Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment, wrapMode);
         }
 
         private float getRotation(float x, float y, float x2, float y2)
