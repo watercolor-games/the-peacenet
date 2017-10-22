@@ -170,7 +170,7 @@ namespace Plex.Frontend
             this.pbicon.Y = 19;
             this.pbicon.Width = 64;
             this.pbicon.Height = 64;
-            this.pbicon.Image = Properties.Resources.justthes.ToTexture2D(UIManager.GraphicsDevice);
+            this.pbicon.Image = FontAwesome.warning.ToTexture2D(UIManager.GraphicsDevice);
             this.pbicon.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             // 
             // Dialog

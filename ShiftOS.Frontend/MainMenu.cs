@@ -42,6 +42,10 @@ namespace Plex.Frontend
         //Watercolor Animator button
         private Button _animate = new Button();
 
+        private PictureBox _faUser = new PictureBox();
+        private PictureBox _faGroup = new PictureBox();
+        private PictureBox _faSettings = new PictureBox();
+
 
         public MainMenu()
         {
@@ -55,6 +59,11 @@ namespace Plex.Frontend
             AddControl(_animate);
 
             AddControl(_tcMain);
+
+            AddControl(_faUser);
+            AddControl(_faGroup);
+            AddControl(_faSettings);
+            
             _watercolorgames.Image = Properties.Resources.Watercolor_Full.ToTexture2D(UIManager.GraphicsDevice);
             _watercolorgames.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
@@ -73,6 +82,14 @@ namespace Plex.Frontend
             {
                 Engine.Infobox.Show("Not yet implemented", "Sorry about that... [pats back] It'll come soon.");
             };
+
+            _faUser.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);
+            _faGroup.Image = FontAwesome.group.ToTexture2D(UIManager.GraphicsDevice);
+            _faSettings.Image = FontAwesome.cog.ToTexture2D(UIManager.GraphicsDevice);
+            _faUser.AutoSize = true;
+            _faGroup.AutoSize = true;
+            _faSettings.AutoSize = true;
+
         }
 
         protected override void OnLayout(GameTime gameTime)
@@ -208,6 +225,9 @@ namespace Plex.Frontend
             _btnMultiplayer.Visible = buttonsVisible;
             _btnOptions.Visible = buttonsVisible;
             _animate.Visible = buttonsVisible;
+            _faUser.Visible = buttonsVisible;
+            _faGroup.Visible = buttonsVisible;
+            _faSettings.Visible = buttonsVisible;
             if (buttonsVisible)
             {
                 //Set button text
@@ -215,18 +235,32 @@ namespace Plex.Frontend
                 _btnSinglePlayer.Text = "Single player";
                 _btnOptions.Text = "Settings";
 
+
+                //Set location of "group" icon
+                _faGroup.X = (Width - _faGroup.Width) / 2;
+                _faGroup.Y = (Height - _faGroup.Height) / 2;
+
+                _faUser.X = (_faGroup.X - _faUser.Width) - 15;
+                _faUser.Y = _faGroup.Y;
+
+                _faSettings.X = (_faGroup.X + _faGroup.Width) + 15;
+                _faSettings.Y = _faUser.Y;
+                
                 //Calculate position of multiplayer
 
-                _btnMultiplayer.X = (Width - _btnMultiplayer.Width) / 2;
-                _btnMultiplayer.Y = (Height - _btnMultiplayer.Height) / 2;
 
-                //single player goes above MP
-                _btnSinglePlayer.X = (Width - _btnSinglePlayer.Width) / 2;
-                _btnSinglePlayer.Y = (_btnMultiplayer.Y - 5) - _btnSinglePlayer.Height;
 
-                //options below MP
-                _btnOptions.X = (Width - _btnOptions.Width) / 2;
-                _btnOptions.Y = _btnMultiplayer.Y + _btnMultiplayer.Height + 5;
+
+                _btnMultiplayer.X = _faGroup.X + ((_faGroup.Width - _btnMultiplayer.Width) / 2);
+                _btnMultiplayer.Y = _faGroup.Y + _faGroup.Height + 10;
+
+                //single player goes to the left of MP
+                _btnSinglePlayer.X = _faUser.X + ((_faUser.Width - _btnSinglePlayer.Width) / 2);
+                _btnSinglePlayer.Y = _faUser.Y + _faUser.Height + 10;
+
+                //options to the right
+                _btnOptions.X = _faSettings.X + ((_faSettings.Width - _btnOptions.Width) / 2);
+                _btnOptions.Y = _faSettings.Y + _faSettings.Height + 10;
 
                 _animate.Text = "Watercolor Animator";
                 _animate.X = 15;

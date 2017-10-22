@@ -131,7 +131,7 @@ namespace Plex.Frontend.Apps
                         property.Value.Y = current_y;
                         property.Value.X = (width - property.Value.Width) - 30;
                         property.Name.MaxWidth = (property.Value.X) - 30;
-                        current_y += Math.Max(property.Name.Height, property.Value.Height) + 10;
+                        current_y += Math.Max(property.Name.Height, property.Value.Height) + 5;
                         property.Description.X = 15;
                         property.Description.Y = current_y;
                         property.Description.FontStyle = TextControlFontStyle.System;
@@ -240,6 +240,7 @@ namespace Plex.Frontend.Apps
                                     _skin.SkinImageLayouts[imgattrib.Name] = nlayout;
                                     GraphicsSubsystem.UIManager.ResetSkinTextures(GraphicsSubsystem.UIManager.GraphicsDevice);
                                     GraphicsSubsystem.UIManager.InvalidateAll();
+                                    SkinEngine.SaveSkin();
                                 }));
                             };
                             value = btn;

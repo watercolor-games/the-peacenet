@@ -393,24 +393,22 @@ namespace Plex.Frontend.Apps
             switch (type)
             {
                 case FileType.UpOne:
-                    return Properties.Resources.fileicon5;
+                    return FontAwesome.arrow_circle_up;
                 case FileType.Mount:
                 case FileType.Directory:
-                    return Properties.Resources.fileicon0;
+                    return FontAwesome.folder;
                 case FileType.Executable:
                 case FileType.Lua:
                 case FileType.Python:
-                    return Properties.Resources.fileiconsaa;
+                    return FontAwesome.file_code_o;
                 case FileType.Image:
-                    return Properties.Resources.fileicon3;
+                    return FontAwesome.file_picture_o;
                 case FileType.Skin:
-                    return Properties.Resources.fileicon10;
+                    return FontAwesome.cogs;
                 case FileType.TextFile:
-                    return Properties.Resources.fileicon2;
-                case FileType.CommandFormat:
-                    return Properties.Resources.fileiconcf;
+                    return FontAwesome.file_text_o;
                 default:
-                    return Properties.Resources.fileicon1;
+                    return FontAwesome.file_o;
             }
         }
 

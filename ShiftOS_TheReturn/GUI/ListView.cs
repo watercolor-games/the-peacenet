@@ -19,7 +19,7 @@ namespace Plex.Frontend.GUI
         private const int _initialmargin = 10;
         private const int _itemgap = 5;
         private int scroll = 0;
-        private const int defaulttexturesize = 42;
+        private int defaulttexturesize = 42;
         private int _selected = -1;
 
         protected override void RenderText(GraphicsContext gfx)
@@ -36,8 +36,6 @@ namespace Plex.Frontend.GUI
                 {
                     if (_images.ContainsKey(item.ImageKey))
                     {
-                        texwidth = _images[item.ImageKey].Width;
-                        texheight = _images[item.ImageKey].Height;
                         image = _images[item.ImageKey];
                     }
                 }
@@ -83,8 +81,6 @@ namespace Plex.Frontend.GUI
                     {
                         if (_images.ContainsKey(item.ImageKey))
                         {
-                            texwidth = _images[item.ImageKey].Width;
-                            texheight = _images[item.ImageKey].Height;
                             image = _images[item.ImageKey];
                         }
                     }
@@ -214,8 +210,6 @@ namespace Plex.Frontend.GUI
                 {
                     if (_images.ContainsKey(item.ImageKey))
                     {
-                        texwidth = _images[item.ImageKey].Width;
-                        texheight = _images[item.ImageKey].Height;
                         image = _images[item.ImageKey];
                     }
                 }
@@ -266,8 +260,6 @@ namespace Plex.Frontend.GUI
                     int texheight = defaulttexturesize;
                     if (_images.ContainsKey(item.ImageKey))
                     {
-                        texwidth = _images[item.ImageKey].Width;
-                        texheight = _images[item.ImageKey].Height;
                         image = _images[item.ImageKey];
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
