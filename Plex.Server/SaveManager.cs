@@ -12,8 +12,8 @@ namespace Plex.Server
     public static class SaveManager
     {
         [SessionRequired]
-        [ServerMessageHandler("upgrades_getdb")]
-        public static void GetDB(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.UPG_GETUPGRADES)]
+        public static void GetDB(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var upgDb = new List<ShiftoriumUpgrade>();
             upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(Properties.Resources.upgrades));
@@ -104,13 +104,9 @@ namespace Plex.Server
                 if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
                     throw new ShiftoriumConflictException(item.ID);
             }
-            Program.SendMessage(new PlexServerHeader
-            {
-                Message = "upgrades_db",
-                Content = JsonConvert.SerializeObject(upgDb),
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(JsonConvert.SerializeObject(upgDb));
         }
     }
 }

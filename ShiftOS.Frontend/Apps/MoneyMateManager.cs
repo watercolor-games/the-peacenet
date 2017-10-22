@@ -38,11 +38,12 @@ namespace Plex.Frontend.Apps
 
         public static CashTransaction[] GetCashTransactions()
         {
-            tdata = null;
-            ServerManager.SendMessage("moneymate_gettransactions", "");
-            while (tdata == null)
-                Thread.Sleep(10);
-            return tdata;
+            //            tdata = null;
+            //            ServerManager.SendMessage("moneymate_gettransactions", "");
+            //            while (tdata == null)
+            //                Thread.Sleep(10);
+            //            return tdata;
+            return null; //Protocol doesn't support this yet
         }
 
         private int UIState = 0;

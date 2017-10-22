@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace Plex.Server
     public static class WorldManager
     {
         [SessionRequired]
-        [ServerMessageHandler("get_world")]
-        public static void GetWorld(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.WORLD)]
+        public static void GetWorld(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var world = new Plexnet();
             world.Networks = new List<Network>();
@@ -59,13 +60,9 @@ namespace Plex.Server
             }
             world.Networks.Add(rrnet);
 
-            Program.SendMessage(new PlexServerHeader
-            {
-                Message = "world",
-                Content = JsonConvert.SerializeObject(world),
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(JsonConvert.SerializeObject(world));
         }
     }
 }

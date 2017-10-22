@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,13 +21,6 @@ namespace Plex.Frontend.Apps
     public class Network : Control, IPlexWindow
     {
         public static Objects.Plexnet plexnet = null;
-
-        [ClientMessageHandler("world")]
-        public static void World(string content, string ip)
-        {
-            plexnet = JsonConvert.DeserializeObject<Objects.Plexnet>(content);
-            WorldUpdated?.Invoke();
-        }
 
         public static event Action WorldUpdated;
 
@@ -60,7 +54,10 @@ namespace Plex.Frontend.Apps
             Height = 480;
             AddControl(_title);
             WorldUpdated += Network_WorldUpdated;
-            ServerManager.SendMessage("get_world", "");
+            BinaryReader _reader = null;
+            ServerManager.SendMessage(ServerMessageType.WORLD, null, out _reader);
+            plexnet = JsonConvert.DeserializeObject<Objects.Plexnet>(_reader.ReadString());
+            WorldUpdated?.Invoke();
         }
 
         private void Network_WorldUpdated()
@@ -137,7 +134,7 @@ namespace Plex.Frontend.Apps
                         }
                         else
                         {
-                            ServerManager.SendMessage("get_hackable", netName + "." + ctrl.Tag);
+                            //ServerManager.SendMessage("get_hackable", netName + "." + ctrl.Tag);
                         }
                     }
                 };

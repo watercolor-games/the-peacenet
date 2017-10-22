@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,23 +55,22 @@ namespace Plex.Server
         }
 
 
-        [ServerMessageHandler("cash_deduct")]
+        [ServerMessageHandler( ServerMessageType.CASH_DEDUCT )]
         [SessionRequired]
-        public static void CashDeduct(string session, string content, string ip, int port)
+        public static void CashDeduct(string session, byte[] content, BinaryReader reader, BinaryWriter writer)
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var save = Program.GetSaveFromPrl(sessiondata.SaveID);
-            int result = 0;
+            ServerResponseType result = ServerResponseType.REQ_ERROR;
             if (save != null)
             {
-                var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-                string to = args["to"].ToString();
-                long amount = (long)args["cash"];
+                long amount = reader.ReadInt64();
+                string to = reader.ReadString();
                 if(save.SystemDescriptor != null)
                 {
                     if(save.SystemDescriptor.Cash >= amount)
                     {
-                        result = 1; //We can deduct.
+                        result =  ServerResponseType.REQ_SUCCESS; //We can deduct.
                         save.SystemDescriptor.Cash -= amount;
                         //Bye bye, cash.
                         //Now we determine the system to send it to.
@@ -105,13 +105,8 @@ namespace Plex.Server
                     }
                 }
             }
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Message = "cash_deductresult",
-                Content = result.ToString(),
-                IPForwardedBy = ip,
-                SessionID = session
-            }, port);
+            writer.Write((byte)result);
+            writer.Write(session);
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Plex.Objects;
 
 namespace Plex.Engine
 {
@@ -23,15 +25,19 @@ namespace Plex.Engine
         {
             if (amount == 0)
                 return true;
-            cash_deduct_state = null;
-            ServerManager.SendMessage("cash_deduct", JsonConvert.SerializeObject(new
+            BinaryReader r = null;
+            if (ServerManager.SendMessage(Objects.ServerMessageType.CASH_DEDUCT, (w) =>
+           {
+               w.Write(amount);
+               w.Write(to);
+           }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
             {
-                cash = amount,
-                to = to
-            }));
-            while (cash_deduct_state == null)
-                Thread.Sleep(10);
-            return (bool)cash_deduct_state;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

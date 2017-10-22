@@ -1,45 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Plex.Objects;
 
 namespace Plex.Server
 {
     public static class UpgradeManager
     {
         [SessionRequired]
-        [ServerMessageHandler("upgrades_getinstalled")]
-        public static void GetInstalled(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( Objects.ServerMessageType.UPG_ISINSTALLED)]
+        public static void GetInstalled(string session_id, BinaryReader reader, BinaryWriter writer)
         {
-            int result = IsUpgradeInstalled(content, session_id) ? 1 : 0;
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Content = result.ToString(),
-                IPForwardedBy = ip,
-                Message = "upgrades_installed",
-                SessionID = session_id
-            }, port);
+            string upgid = reader.ReadString();
+            byte result = IsUpgradeInstalled(upgid, session_id) ? (byte)1 : (byte)0;
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(result);
         }
 
-        [SessionRequired]
-        [ServerMessageHandler("upgrades_load")]
-        public static void LoadUpgrade(string session_id, string content, string ip, int port)
-        {
-            string result = "uncaught_error";
 
+        [SessionRequired]
+        [ServerMessageHandler( ServerMessageType.UPG_LOAD)]
+        public static void LoadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
+        {
+            byte result = (byte) UpgradeResult.UNCAUGHT_ERROR;
+            string content = reader.ReadString();
             bool installed = IsUpgradeInstalled(content, session_id);
             if(installed == false)
             {
-                result = "missing_upgrade";
+                result = (byte)UpgradeResult.MISSING_UPGRADE;
             }
             else
             {
                 bool loaded = IsUpgradeLoaded(content, session_id);
                 if(loaded == true)
                 {
-                    result = "already_loaded";
+                    result = (byte)UpgradeResult.ALREADY_LOADED;
                 }
                 else
                 {
@@ -48,43 +48,39 @@ namespace Plex.Server
                     var upgcount = save.SystemDescriptor.MaxLoadedUpgrades;
                     if(save.SystemDescriptor.LoadedUpgrades.Count + 1 >= upgcount)
                     {
-                        result = "no_slots";
+                        result = (byte)UpgradeResult.NO_SLOTS;
                     }
                     else
                     {
                         save.SystemDescriptor.LoadedUpgrades.Add(content);
-                        result = "loaded";
+                        result = (byte)UpgradeResult.LOADED;
                         Program.SaveWorld();
                     }
                 }
             }
 
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Message = "upgrades_loadresult",
-                Content = result,
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(result);
         }
 
         [SessionRequired]
-        [ServerMessageHandler("upgrades_unload")]
-        public static void UnloadUpgrade(string session_id, string content, string ip, int port)
+        [ServerMessageHandler(ServerMessageType.UPG_UNLOAD)]
+        public static void UnloadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
         {
-            string result = "uncaught_error";
-
+            var result = UpgradeResult.UNCAUGHT_ERROR;
+            string content = reader.ReadString();
             bool installed = IsUpgradeInstalled(content, session_id);
             if (installed == false)
             {
-                result = "missing_upgrade";
+                result = UpgradeResult.MISSING_UPGRADE;
             }
             else
             {
                 bool loaded = !IsUpgradeLoaded(content, session_id);
                 if (loaded == true)
                 {
-                    result = "already_unloaded";
+                    result = UpgradeResult.ALREADY_UNLOADED;
                 }
                 else
                 {
@@ -92,18 +88,14 @@ namespace Plex.Server
                     var save = Program.GetSaveFromPrl(session.SaveID);
                     var upgcount = save.SystemDescriptor.MaxLoadedUpgrades;
                     save.SystemDescriptor.LoadedUpgrades.Remove(content);
-                    result = "unloaded";
+                    result = UpgradeResult.UNLOADED;
                     Program.SaveWorld();
                 }
             }
 
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Message = "upgrades_unloadresult",
-                Content = result,
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write((byte)result);
         }
 
         [ServerCommand("upgload", "Load the specified upgrade.")]
@@ -150,9 +142,10 @@ namespace Plex.Server
 
 
         [SessionRequired]
-        [ServerMessageHandler("upgrades_set")]
-        public static void SetUpgradeValue(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.UPG_SETINSTALLED)]
+        public static void SetUpgradeValue(string session_id, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
             bool value = (bool)args["value"];
             string id = args["id"].ToString();
@@ -164,12 +157,14 @@ namespace Plex.Server
                 save.SystemDescriptor.Upgrades[id] = value;
                 Program.SaveWorld();
             }
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
         }
 
 
         [SessionRequired]
-        [ServerMessageHandler("upgrades_getcount")]
-        public static void GetCount(string session_id, string content, string ip, int port)
+        [ServerMessageHandler(ServerMessageType.UPG_GETCOUNT)]
+        public static void GetCount(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = SessionManager.GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
@@ -183,28 +178,21 @@ namespace Plex.Server
                 }
                 result = save.SystemDescriptor.Upgrades.Where(x => x.Value == true).Count();
             }
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Content = result.ToString(),
-                IPForwardedBy = ip,
-                Message = "upgrades_count",
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(result);
         }
 
 
         [SessionRequired]
-        [ServerMessageHandler("upgrades_getloaded")]
-        public static void GetLoaded(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.UPG_ISLOADED)]
+        public static void GetLoaded(string session_id, BinaryReader reader, BinaryWriter writer)
         {
-            int result = IsUpgradeLoaded(content, session_id) ? 1 : 0;
-            Program.SendMessage(new Objects.PlexServerHeader
-            {
-                Content = result.ToString(),
-                IPForwardedBy = ip,
-                Message = "upgrades_loaded",
-                SessionID = session_id
-            }, port);
+            string upgid = reader.ReadString();
+            byte result = IsUpgradeLoaded(upgid, session_id) ? (byte)0x01 : (byte)0x00;
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(result);
         }
 
         internal static bool IsUpgradeInstalled(string upg, string session_id)

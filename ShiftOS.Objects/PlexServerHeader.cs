@@ -8,9 +8,7 @@ namespace Plex.Objects
 {
     public class PlexServerHeader
     {
-        public string Message { get; set; }
-        public string Content { get; set; }
-        public string IPForwardedBy { get; set; }
+        public byte Message { get; set; }
         public string SessionID { get; set; }
     }
 

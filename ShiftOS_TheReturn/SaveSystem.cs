@@ -110,11 +110,12 @@ namespace Plex.Engine
 
         public static string GetUsername()
         {
-            username_result = null;
-            ServerManager.SendMessage("acct_getusername", "");
-            while (username_result == null)
-                Thread.Sleep(10);
-            return username_result;
+            BinaryReader reader = null;
+            if(ServerManager.SendMessage( ServerMessageType.USR_GETUSERNAME, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return reader.ReadString();
+            }
+            return null;
         }
 
         [ClientMessageHandler("moneymate_cash"), AsyncExecution]
@@ -135,30 +136,40 @@ namespace Plex.Engine
 
         public static ulong GetExperience()
         {
-            xp_result = null;
-            ServerManager.SendMessage("acct_getxp", "");
-            while (xp_result == null)
-                Thread.Sleep(10);
-            return (ulong)xp_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.USR_GETXP, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return reader.ReadUInt64();
+            }
+            return 0;
         }
 
         public static long GetCash()
         {
-            cash_result = null;
-            ServerManager.SendMessage("moneymate_getcash", "");
-            while (cash_result == null)
-                Thread.Sleep(10);
-            return (long)cash_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.USR_GETCASH, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return reader.ReadInt64();
+            }
+            return 0;
         }
 
         public static void CompleteStory(string id)
         {
-            ServerManager.SendMessage("sp_completestory", id);
+            BinaryReader reader = null;
+            ServerManager.SendMessage(ServerMessageType.SP_COMPLETESTORY, (w) =>
+            {
+                w.Write(id);
+            }, out reader);
         }
 
         public static void AddExperience(ulong value)
         {
-            ServerManager.SendMessage("sp_addexperience", value.ToString());
+            BinaryReader reader = null;
+            ServerManager.SendMessage(ServerMessageType.USR_ADDXP, (w) =>
+            {
+                w.Write(value);
+            }, out reader);
         }
 
         [ClientMessageHandler("acct_sysname"), AsyncExecution]
@@ -169,18 +180,23 @@ namespace Plex.Engine
 
         public static void SetStoryPickup(string id)
         {
-            ServerManager.SendMessage("sp_setpickup", id);
+            BinaryReader reader = null;
+            ServerManager.SendMessage(ServerMessageType.SP_SETPICKUP, (w) =>
+            {
+                w.Write(id);
+            }, out reader);
         }
 
         private static string sysname_result = null;
 
         public static string GetSystemName()
         {
-            sysname_result = null;
-            ServerManager.SendMessage("acct_getsysname", "");
-            while (sysname_result == null)
-                Thread.Sleep(10);
-            return sysname_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.USR_GETSYSNAME, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return reader.ReadString();
+            }
+            return null;
         }
 
 

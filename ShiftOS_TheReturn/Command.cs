@@ -44,7 +44,8 @@
 
 
 
-using System;using System.Collections.Generic;using System.Linq;using System.Text;using System.Threading.Tasks;using Plex.Objects;
+using System;using System.Collections.Generic;using System.IO;
+using System.Linq;using System.Text;using System.Threading.Tasks;using Plex.Objects;
 
 namespace Plex.Engine{    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    public class RequiresArgument : Attribute    {        /// <summary>        /// The argument name        /// </summary>        public string argument;        /// <summary>        /// Creates a new instance of the <see cref="RequiresArgument"/> attribute         /// </summary>        /// <param name="argument">The argument name associated with this attribute</param>        public RequiresArgument(string argument)        {            this.argument = argument;        }        public override object TypeId        {            get            {                return this;            }        }    }    /// <summary>    /// Prevents a command from being run in a remote session.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]    public class RemoteLockAttribute : Attribute    {    }    public static class EngineCommands
     {
@@ -61,13 +62,15 @@ namespace Plex.Engine{    /// <summary>    /// Denotes that the following ter
         public static bool Commands()
         {
             Dictionary<string, string> cmds = new Dictionary<string, string>();
-            _cmdhelpresult = null;
-            ServerManager.SendMessage("cmd_gethelp", TerminalBackend.RawShellOverride);
-            while(_cmdhelpresult == null)
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.TRM_GETCMDS, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
             {
-                System.Threading.Thread.Sleep(10);
+                int count = reader.ReadInt32();
+                for(int i = 0; i < count; i++)
+                {
+                    cmds.Add(reader.ReadString(), reader.ReadString());
+                }
             }
-            cmds = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(_cmdhelpresult);
             foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell(TerminalBackend.RawShellOverride) == true).OrderBy(x => x.CommandInfo.name))
             {
                 if(!cmds.ContainsKey(n.CommandInfo.name))

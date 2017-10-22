@@ -237,48 +237,6 @@ namespace Plex.Frontend
             //While we're having a damn initiation fuckfest, let's get the hacking engine running.
             Hacking.Initiate();
 
-
-
-
-            ClientThread = new Thread(() =>
-            {
-                while (true)
-                {
-                    if (this.IPAddress != null)
-                    {
-                        try
-                        {
-                            var ep = new IPEndPoint(this.IPAddress, this.Port);
-                            var data = _mpClient.Receive(ref ep);
-                            var content = Encoding.UTF8.GetString(data);
-                            msSinceLastReply = 0.0;
-                            if (content == "beat")
-                            {
-                                System.Diagnostics.Debug.Print("Pong");
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Print("Message received.");
-                                try
-                                {
-                                    var msg = JsonConvert.DeserializeObject<PlexServerHeader>(content);
-                                    ServerManager.HandleMessage(msg);
-                                }
-                                catch
-                                {
-
-                                }
-                            }
-
-                        }
-                        catch { }
-                    }
-                }
-            });
-            ClientThread.Start();
-
-
-
             UIManager.Init(this);
 
             _mpClient = new UdpClient();

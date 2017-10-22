@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -104,73 +105,63 @@ namespace Plex.Engine
 
         public static void CreateDirectory(string path)
         {
-            _fs_result = null;
-            var split = _createPathData(path);
-            ServerManager.SendMessage("fs_createdirectory", JsonConvert.SerializeObject(split));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_CREATEDIR, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message != (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                throw new IOException(reader.ReadString());
+            }
         }
 
         public static FileRecord GetFileInfo(string path)
         {
-            _fr_result = null;
-            _fs_result = null;
-            ServerManager.SendMessage("fs_getfileinfo", JsonConvert.SerializeObject(_createPathData(path)));
-            while (_fr_result == null && _fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            return _fr_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_RECORDINFO, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return JsonConvert.DeserializeObject<FileRecord>(reader.ReadString());
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
         }
 
         public static void CreateMountIfNotExists()
         {
-            _fs_result = null;
-            ServerManager.SendMessage("fs_createifnotexist", JsonConvert.SerializeObject(new
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_CREATEMOUNT, (writer) =>
             {
-                volume = 0,
-                label = "System",
-            }));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
+                writer.Write(JsonConvert.SerializeObject(new
+                {
+                    volume = 0,
+                    label = "System",
+                }));
+            }, out reader).Message != (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                throw new IOException(reader.ReadString());
+            }
         }
 
         public static byte[] ReadAllBytes(string path)
         {
-            _fs_result = null;
-            var pdata = _createPathData(path);
-            var tcpClient = new TcpClient();
-            tcpClient.Connect(ServerManager.SessionInfo.ServerIP, ServerManager.SessionInfo.ServerPort);
-            var tcpStream = tcpClient.GetStream();
-            var writer = new System.IO.BinaryWriter(tcpStream);
-            var reader = new System.IO.BinaryReader(tcpStream);
-
-            writer.Write(JsonConvert.SerializeObject(new PlexServerHeader
+            BinaryReader reader = null;
+            if(ServerManager.SendMessage(ServerMessageType.FS_READFROMFILE, (writer) =>
             {
-                Message = "fs_readbytes",
-                IPForwardedBy = "0.0.0.0",
-                Content = JsonConvert.SerializeObject(pdata),
-                SessionID = ServerManager.SessionInfo.SessionID
-            }));
-            string result = reader.ReadString();
-            byte[] data = null;
-            if (result == "success")
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
             {
-                int count = reader.ReadInt32();
-                data = reader.ReadBytes(count);
+                int len = reader.ReadInt32();
+                return reader.ReadBytes(len);
             }
-            
-            writer.Close();
-            reader.Close();
-            tcpClient.Close();
-
-            if (data == null)
-                throw new System.IO.IOException(result);
-            return data;
+            else
+            {
+                return null;
+            }
         }
 
         public static bool IsMountpoint(string path)
@@ -185,82 +176,43 @@ namespace Plex.Engine
 
         public static MountInformation[] GetMounts()
         {
-            _mountinfo = null;
-            ServerManager.SendMessage("fs_getmounts", "");
-            while (_mountinfo == null)
-                Thread.Sleep(10);
-            return _mountinfo;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_GETMOUNTS, (writer) =>
+            {
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                int len = reader.ReadInt32();
+                MountInformation[] mounts = new MountInformation[len];
+                for(int i = 0; i < len; i++)
+                {
+                    string label = reader.ReadString();
+                    int num = reader.ReadInt32();
+                    mounts[i] = new MountInformation
+                    {
+                        DriveNumber = num,
+                        VolumeLabel = label
+                    };
+                }
+                return mounts;
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
+
         }
 
         public static void Delete(string path)
         {
-            _fs_result = null;
-            var split = _createPathData(path);
-            ServerManager.SendMessage("fs_delete", JsonConvert.SerializeObject(split));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-
-        }
-
-        private static async Task<string> _startUpload(string path, byte[] contents)
-        {
-            if (_wstrguid != null)
-                return "An upload operation is currently running. You can't start a new one.";
-            _fs_result = null;
-            var pdata = _createPathData(path);
-            pdata.AdditionalData = contents.Length.ToString();
-            await Task.Run(() =>
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_DELETE, (writer) =>
             {
-                ServerManager.SendMessage("fs_allocwrite", JsonConvert.SerializeObject(pdata));
-            });
-            while (_fs_result == null || _wstrguid == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                return _fs_result;
-            var tcpClient = new TcpClient();
-            tcpClient.Connect(ServerManager.SessionInfo.ServerIP, ServerManager.SessionInfo.ServerPort);
-            var tcpStream = tcpClient.GetStream();
-            var writer = new System.IO.BinaryWriter(tcpStream);
-            var reader = new System.IO.BinaryReader(tcpStream);
-            //The upload stream has been started on the server so we can start pushing data to it.
-            string json = JsonConvert.SerializeObject(new
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message != (byte)ServerResponseType.REQ_SUCCESS)
             {
-                StreamID = _wstrguid,
-                Buffer = contents
-            });
-            writer.Write(JsonConvert.SerializeObject(new PlexServerHeader
-            {
-                Content = json,
-                IPForwardedBy = "0.0.0.0",
-                Message = "fs_write",
-                SessionID = ServerManager.SessionInfo.SessionID
-            }));
-                _fs_result = reader.ReadString();
-            if (_fs_result != "success")
-            {
-                writer.Close();
-                reader.Close();
-                tcpClient.Close();
-                return _fs_result;
+                throw new IOException(reader.ReadString());
             }
-            
-            writer.Close();
-            reader.Close();
-            tcpClient.Close();
 
-            _fs_result = null;
-            await Task.Run(() =>
-            {
-                ServerManager.SendMessage("fs_close", _wstrguid);
-            });
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            _wstrguid = null;
-            if (_fs_result != "success")
-                return _fs_result;
-            return "success";
         }
 
         /// <summary>
@@ -281,37 +233,53 @@ namespace Plex.Engine
 
         public static void WriteAllBytes(string path, byte[] contents)
         {
-            var task = _startUpload(path, contents);
-            task.Wait();
-            string result = task.Result;
-            if (result != "success")
-                throw new System.IO.IOException(result);
-            Thread.Sleep(500);
+            BinaryReader reader = null;
+            if(ServerManager.SendMessage(ServerMessageType.FS_WRITETOFILE, (writer)=>
+            {
+                string pdata = JsonConvert.SerializeObject(_createPathData(path));
+                writer.Write(pdata);
+                writer.Write(contents.Length);
+                writer.Write(contents);
+            }, out reader).Message != (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                throw new IOException(reader.ReadString());
+            }
+
         }
 
         public static bool DirectoryExists(string path)
         {
-            _fs_exists_result = null;
-            _fs_result = null;
-            ServerManager.SendMessage("fs_direxists", JsonConvert.SerializeObject(_createPathData(path)));
-            while (_fs_exists_result == null && _fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            return (bool)_fs_exists_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_DIREXISTS, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                byte res = reader.ReadByte();
+                return res == 1;
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
 
         }
 
         public static bool FileExists(string path)
         {
-            _fs_exists_result = null;
-            _fs_result = null;
-            ServerManager.SendMessage("fs_fileexists", JsonConvert.SerializeObject(_createPathData(path)));
-            while (_fs_exists_result == null && _fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            return (bool)_fs_exists_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_FILEEXISTS, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                byte res = reader.ReadByte();
+                return res == 1;
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
 
         }
 
@@ -322,63 +290,47 @@ namespace Plex.Engine
 
         public static string[] GetDirectories(string path)
         {
-            _filelist_result = null;
-            _fs_result = null;
-            ServerManager.SendMessage("fs_getdirs", JsonConvert.SerializeObject(_createPathData(path)));
-            while (_filelist_result == null && _fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            return _filelist_result;
-                                                                                          }
-
-        /// <summary>
-        /// Copies a file or directory from one path to another, deleting the original.
-        /// </summary>
-        /// <param name="path">THe input path, must be a valid directory or file.</param>
-        /// <param name="target">The output path.</param>
-        public static void Move(string path, string target)
-        {
-            _fs_result = null;
-            var split = _createPathData(path);
-            split.AdditionalData = target;
-            ServerManager.SendMessage("fs_move", JsonConvert.SerializeObject(split));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            
-        }
-
-
-        /// <summary>
-        /// Copies a file or directory from one path to another.
-        /// </summary>
-        /// <param name="path">The input path, must be a valid directory or file.</param>
-        /// <param name="target">The output path.</param>
-        public static void Copy(string path, string target)
-        {
-            _fs_result = null;
-            var split = _createPathData(path);
-            split.AdditionalData = target;
-            ServerManager.SendMessage("fs_copy", JsonConvert.SerializeObject(split));
-            while (_fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_GETDIRS, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                int len = reader.ReadInt32();
+                string[] dirs = new string[len];
+                for(int i = 0; i < len; i++)
+                {
+                    dirs[i] = reader.ReadString();
+                }
+                return dirs;
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
 
         }
 
         public static string[] GetFiles(string path)
         {
-            _filelist_result = null;
-            _fs_result = null;
-            ServerManager.SendMessage("fs_getfiles", JsonConvert.SerializeObject(_createPathData(path)));
-            while (_filelist_result == null && _fs_result == null)
-                Thread.Sleep(10);
-            if (_fs_result != "success")
-                throw new System.IO.IOException(_fs_result);
-            return _filelist_result;
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.FS_GETFILES, (writer) =>
+            {
+                writer.Write(JsonConvert.SerializeObject(_createPathData(path)));
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                int len = reader.ReadInt32();
+                string[] dirs = new string[len];
+                for (int i = 0; i < len; i++)
+                {
+                    dirs[i] = reader.ReadString();
+                }
+                return dirs;
+            }
+            else
+            {
+                throw new IOException(reader.ReadString());
+            }
         }
     }
 }

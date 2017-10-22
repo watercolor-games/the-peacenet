@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -13,144 +14,6 @@ namespace Plex.Server
     public static class FS
     {
         private static List<ADriveMount> Mounts = new List<ADriveMount>();
-        private static List<FSStreamData> _writers = new List<FSStreamData>();
-        
-        public class BufferData
-        {
-            public string StreamID { get; set; }
-            public byte[] Buffer { get; set; }
-        }
-
-        public class FSStreamData
-        {
-            private System.IO.MemoryStream _stream = null;
-
-            public FSStreamData()
-            {
-                _stream = new System.IO.MemoryStream();
-                Stream = new System.IO.BinaryWriter(_stream);
-            }
-
-            public string SessionID { get; set; }
-            public PathData PathData { get; set; }
-            public string StreamID { get; set; }
-            public ADriveMount Mount { get; set; }
-            public int ContentLength { get; set; }
-
-            public System.IO.BinaryWriter Stream { get; private set; }
-
-            public void Close(string ip, int port)
-            {
-                var pdata = PathData;
-                var mount = Mount;
-                if (mount == null)
-                {
-                    DispatchFSResult("Mountpoint not found.", SessionID, ip, port);
-                    return;
-                }
-                try
-                {
-                    var bytes = _stream.ToArray();
-                    if (bytes.Length != ContentLength)
-                    {
-                        DispatchFSResult("The uploaded data does not match the expected content length.", SessionID, ip, port);
-                    }
-                    else
-                    {
-                        mount.WriteAllBytes(pdata.Path, bytes);
-                        DispatchFSResult("success", SessionID, ip, port);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DispatchFSResult(ex.Message, SessionID, ip, port);
-                }
-                Stream.Close();
-                _stream.Close();
-            }
-        }
-
-        [ServerMessageHandler("fs_close"), SessionRequired]
-        public static void CloseWrite(string session, string content, string ip, int port)
-        {
-            var writer = _writers.FirstOrDefault(x => x.StreamID == content && x.SessionID == session);
-            if (writer == null)
-            {
-                DispatchFSResult("A stream with the specified stream ID and session ID was not found.", session, ip, port);
-                return;
-            }
-            try
-            {
-                writer.Close(ip, port);
-                DispatchFSResult("success", session, ip, port);
-            }
-            catch (Exception ex)
-            {
-                DispatchFSResult(ex.Message, session, ip, port);
-
-            }
-
-        }
-
-
-        [ServerMessageHandler("fs_write"), SessionRequired, Tcp]
-        public static void FSWrite(string session, string content, System.IO.BinaryWriter _tcp)
-        {
-            var bufferdata = JsonConvert.DeserializeObject<BufferData>(content);
-            var writer = _writers.FirstOrDefault(x => x.StreamID == bufferdata.StreamID && x.SessionID == session);
-            if(writer == null)
-            {
-                _tcp.Write("A stream with the specified stream and session IDs was not found.");                
-                return;
-            }
-            writer.Stream.Write(bufferdata.Buffer);
-            _tcp.Write("success");
-        }
-
-        [ServerMessageHandler("fs_allocwrite")]
-        [SessionRequired]
-        public static void AllocWrite(string session, string content, string ip, int port)
-        {
-            var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
-            if (mount == null)
-            {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
-                return;
-            }
-            int length = -1;
-            if(int.TryParse(pdata.AdditionalData, out length) == false)
-            {
-                DispatchStreamID("Incorrect content length specified.", "", session, ip, port);
-                return;
-            }
-            var str = new FSStreamData
-            {
-                ContentLength = length,
-                Mount = mount,
-                PathData = pdata,
-                SessionID = session,
-                StreamID = Guid.NewGuid().ToString()
-            };
-            _writers.Add(str);
-            DispatchStreamID("success", str.StreamID, session, ip, port);
-        }
-
-        public static void DispatchStreamID(string result, string stream, string session, string ip, int port)
-        {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = JsonConvert.SerializeObject(new
-                {
-                    result = result,
-                    streamid = stream
-                }),
-                IPForwardedBy = ip,
-                Message = "fs_streamid",
-                SessionID = session
-            }, port);
-        }
-
 
         public static MountInformation CreateVolume(HackableSystem sys, int num, string label, string sessionid)
         {
@@ -186,10 +49,11 @@ namespace Plex.Server
             }
         }
 
-        [ServerMessageHandler("fs_createifnotexist")]
+        [ServerMessageHandler( ServerMessageType.FS_CREATEMOUNT)]
         [SessionRequired]
-        public static void CreateFSIfNotExisting(string session_id, string content, string ip, int port)
+        public static void CreateFSIfNotExisting(string session_id, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var session = SessionManager.GrabAccount(session_id);
             var hackable = Program.GetSaveFromPrl(session.SaveID);
             var volumeinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
@@ -202,41 +66,8 @@ namespace Plex.Server
             }
             if(Mounts.FirstOrDefault(x=>x.SessionID == session_id && x.DriveNumber == volume.DriveNumber) == null)
                 MountFS(volume, session_id);
-            DispatchFSResult("success", session_id, ip, port);
-        }
-
-        public static void DispatchFSResult(string result, string session, string ip, int port)
-        {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = result,
-                IPForwardedBy = ip,
-                Message = "fs_result",
-                SessionID = session
-            }, port);
-        }
-
-        public static void DispatchFileList(string[] result, string session, string ip, int port)
-        {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = JsonConvert.SerializeObject(result),
-                IPForwardedBy = ip,
-                Message = "fs_filelist",
-                SessionID = session
-            }, port);
-        }
-
-
-        public static void DispatchExistsResult(bool result, string session, string ip, int port)
-        {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = (result) ? "1" : "0",
-                IPForwardedBy = ip,
-                Message = "fs_exists",
-                SessionID = session
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
         }
 
         public static PathData GetPathData(string data)
@@ -244,17 +75,17 @@ namespace Plex.Server
             return JsonConvert.DeserializeObject<PathData>(data);
         }
 
-        public static ADriveMount GetDriveMount(string pdata, string session)
+        public static ADriveMount GetDriveMount(int dnum, string session)
         {
-            var dataparsed = GetPathData(pdata);
-            return Mounts.FirstOrDefault(x => x.DriveNumber == dataparsed.DriveNumber && x.SessionID == session);
+            return Mounts.FirstOrDefault(x => x.DriveNumber == dnum && x.SessionID == session);
         }
 
-        [ServerMessageHandler("fs_direxists"), SessionRequired]
-        public static void DirectoryExists(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_DIREXISTS), SessionRequired]
+        public static void DirectoryExists(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             bool result = mount != null;
             if (!pdata.Path.Contains("/")) //obvi. root dir
             {
@@ -265,132 +96,162 @@ namespace Plex.Server
                 if (result)
                     result = mount.DirectoryExists(pdata.Path);
             }
-            DispatchExistsResult(result, session, ip, port);
+            byte real = result ? (byte)1 : (byte)0;
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+            writer.Write(real);
         }
 
-        [ServerMessageHandler("fs_delete"), SessionRequired]
-        public static void FSDelete(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_DELETE), SessionRequired]
+        public static void FSDelete(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if(mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
                 return;
             }
             if (mount.FileExists(pdata.Path))
             {
                 mount.DeleteFile(pdata.Path);
-                DispatchFSResult("success", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session);
                 return;
             }
-            if (mount.DirectoryExists(pdata.Path))
+            else if (mount.DirectoryExists(pdata.Path))
             {
                 mount.DeleteDirectory(pdata.Path);
-                DispatchFSResult("success", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session);
                 return;
             }
-            DispatchFSResult("File or directory not found.", session, ip, port);
-
+            writer.Write((byte)ServerResponseType.REQ_ERROR);
+            writer.Write(session);
+            writer.Write("File or directory does not exist.");
         }
 
-        [ServerMessageHandler("fs_fileexists"), SessionRequired]
-        public static void FileExists(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_FILEEXISTS), SessionRequired]
+        public static void FileExists(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             bool result = mount != null;
             if (result)
                 result = mount.FileExists(pdata.Path);
-            DispatchExistsResult(result, session, ip, port);
+            byte real = result ? (byte)1 : (byte)0;
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+            writer.Write(real);
         }
 
-        [ServerMessageHandler("fs_getfiles"), SessionRequired]
-        public static void GetFiles(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_GETFILES), SessionRequired]
+        public static void GetFiles(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if(mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
+
                 return;
             }
             if (!mount.DirectoryExists(pdata.Path))
             {
-                DispatchFSResult("Directory not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Directory not found.");
                 return;
             }
-            DispatchFileList(mount.GetFiles(pdata.Path), session, ip, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+
+            var dirs = mount.GetFiles(pdata.Path);
+            writer.Write(dirs.Length);
+            foreach(var dir in dirs)
+            {
+                writer.Write(dir);
+            }
         }
 
-        [ServerMessageHandler("fs_createdirectory"), SessionRequired]
-        public static void CreateDirectory(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_CREATEDIR), SessionRequired]
+        public static void CreateDirectory(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
                 return;
             }
             if (mount.DirectoryExists(pdata.Path))
             {
-                DispatchFSResult("Directory already exists.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Directory already exists.");
                 return;
             }
             mount.CreateDirectory(pdata.Path);
-            DispatchFileList(mount.GetFiles(pdata.Path), session, ip, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
         }
 
-        public static void DispatchFileInfo(FileRecord record, string session, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_RECORDINFO), SessionRequired]
+        public static void GetFileInfo(string session, BinaryReader reader, BinaryWriter writer)
         {
-            if (record == null)
-            {
-                DispatchFSResult("File or directory not found.", session, ip, port);
-                return;
-            }
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = JsonConvert.SerializeObject(record),
-                Message = "fs_fileinfo",
-                IPForwardedBy = ip,
-                SessionID = session
-            }, port);
-        }
-
-        [ServerMessageHandler("fs_getfileinfo"), SessionRequired]
-        public static void GetFileInfo(string session, string content, string ip, int port)
-        {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
                 return;
             }
-            DispatchFileInfo(mount.GetFileInfo(pdata.Path), session, ip, port);
+            var finf = mount.GetFileInfo(pdata.Path);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+            writer.Write(JsonConvert.SerializeObject(finf));
+
         }
 
-        [ServerMessageHandler("fs_readbytes"), SessionRequired, Tcp]
-        public static void ReadBytes(string session, string content, System.IO.BinaryWriter _tcp)
+        [ServerMessageHandler( ServerMessageType.FS_READFROMFILE), SessionRequired]
+        public static void ReadBytes(string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                _tcp.Write("Mountpoint not found.");
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
                 return;
             }
             if(!mount.FileExists(pdata.Path))
             {
-                _tcp.Write("File not found.");
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("File not found.");
                 return;
 
             }
-            _tcp.Write("success");
             byte[] data = mount.ReadAllBytes(pdata.Path);
-            _tcp.Write(data.Length);
-            _tcp.Write(data);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+            writer.Write(data.Length);
+            writer.Write(data);
         }
 
         /// <summary>
@@ -408,102 +269,78 @@ namespace Plex.Server
             }
         }
 
-        public static void DispatchReadDone(string session, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_GETDIRS), SessionRequired]
+        public static void GetDirectories(string session, BinaryReader reader, BinaryWriter writer)
         {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = "",
-                IPForwardedBy = ip,
-                Message = "fs_readdone",
-                SessionID = session
-            }, port);
-
-        }
-
-        public static void DispatchBytes(byte[] bytes, string session, string ip, int port)
-        {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = Convert.ToBase64String(bytes),
-                IPForwardedBy = ip,
-                Message = "fs_rbytes",
-                SessionID = session
-            }, port);
-        }
-
-        [ServerMessageHandler("fs_getdirs"), SessionRequired]
-        public static void GetDirectories(string session, string content, string ip, int port)
-        {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
+
                 return;
             }
             if (!mount.DirectoryExists(pdata.Path))
             {
-                DispatchFSResult("Directory not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Directory not found.");
                 return;
             }
-            DispatchFileList(mount.GetDirectories(pdata.Path), session, ip, port);
-        }
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
 
-        [ServerMessageHandler("fs_writetext"), SessionRequired]
-        public static void WriteText(string session, string content, string ip, int port)
-        {
-            var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
-            if (mount == null)
+            var dirs = mount.GetDirectories(pdata.Path);
+            writer.Write(dirs.Length);
+            foreach (var dir in dirs)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
-                return;
-            }
-            try
-            {
-                mount.WriteAllText(pdata.Path, pdata.AdditionalData);
-                DispatchFSResult("success", session, ip, port);
-            }
-            catch (Exception ex)
-            {
-                DispatchFSResult(ex.Message, session, ip, port);
+                writer.Write(dir);
             }
         }
 
-
-        [ServerMessageHandler("fs_writebytes"), SessionRequired]
-        public static void WriteBytes   (string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_WRITETOFILE), SessionRequired]
+        public static void WriteBytes   (string session, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var pdata = GetPathData(content);
-            var mount = GetDriveMount(content, session);
+            var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                DispatchFSResult("Mountpoint not found.", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write("Mountpoint not found.");
                 return;
             }
             try
             {
                 mount.WriteAllBytes(pdata.Path, Convert.FromBase64String(pdata.AdditionalData));
-                DispatchFSResult("success", session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                DispatchFSResult(ex.Message, session, ip, port);
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session);
+                writer.Write(ex.Message);
             }
         }
 
-        [ServerMessageHandler("fs_getmounts"), SessionRequired]
-        public static void GetMounts(string session, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.FS_GETMOUNTS), SessionRequired]
+        public static void GetMounts(string session, BinaryReader reader, BinaryWriter writer)
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var hackable = Program.GetSaveFromPrl(sessiondata.SaveID);
-            Program.SendMessage(new PlexServerHeader
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session);
+            writer.Write(hackable.Filesystems.Count);
+            foreach(var fs in hackable.Filesystems)
             {
-                Message = "fs_mounts",
-                Content = JsonConvert.SerializeObject(hackable.Filesystems),
-                IPForwardedBy = ip,
-                SessionID = session
-            }, port);
+                writer.Write(fs.VolumeLabel);
+                writer.Write(fs.DriveNumber);
+            }
         }
     }
 

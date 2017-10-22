@@ -19,47 +19,35 @@ namespace Plex.Server
             return getAccts();
         }
 
-        [ServerMessageHandler("acct_getsysname")]
+        [ServerMessageHandler( ServerMessageType.USR_GETSYSNAME)]
         [SessionRequired]
-        public static void GetSysname(string session_id, string content, string ip, int port)
+        public static void GetSysname(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
-            Program.SendMessage(new PlexServerHeader
-            {
-                Message = "acct_sysname",
-                Content = session.SaveID,
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(session.SaveID);
         }
 
-        [ServerMessageHandler("acct_getxp")]
+        [ServerMessageHandler( ServerMessageType.USR_GETXP)]
         [SessionRequired]
-        public static void GetXP(string session_id, string content, string ip, int port)
+        public static void GetXP(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = save.SystemDescriptor.Experience.ToString(),
-                IPForwardedBy = ip,
-                Message = "acct_xp",
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(save.SystemDescriptor.Experience);
         }
 
-        [ServerMessageHandler("acct_getusername")]
+        [ServerMessageHandler( ServerMessageType.USR_GETUSERNAME)]
         [SessionRequired]
-        public static void GetUsername(string session_id, string content, string ip, int port)
+        public static void GetUsername(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
-            Program.SendMessage(new PlexServerHeader
-            {
-                Message = "acct_username",
-                Content = session.Username,
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(session.Username);
         }
 
         private static List<ServerAccount> getAccts()
@@ -84,8 +72,8 @@ namespace Plex.Server
             return DateTime.Now > acct.Expiry;
         }
 
-        [ServerMessageHandler("session_verify")]
-        public static void SessionVerify(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.USR_VALIDATEKEY)]
+        public static void SessionVerify(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             if (Program.IsMultiplayerServer)
             {
@@ -96,13 +84,9 @@ namespace Plex.Server
                 }
                 if (nosession)
                 {
-                    Program.SendMessage(new PlexServerHeader
-                    {
-                        Content = "",
-                        IPForwardedBy = ip,
-                        Message = "login_required",
-                        SessionID = session_id
-                    }, port);
+                    writer.Write((byte)ServerResponseType.REQ_LOGINREQUIRED);
+                    writer.Write(session_id);
+                    return;
                 }
             }
             else
@@ -132,39 +116,37 @@ namespace Plex.Server
                     subnet.NPCs.Add(sys);
                     Program.SaveWorld();
                 }
-                Program.SendMessage(new PlexServerHeader
-                {
-                    IPForwardedBy = ip,
-                    Message = "session_accessgranted",
-                    SessionID = session_id,
-                    Content = getAccts()[0].SessionID
-                }, port);
-
-            }
-        }
-
-        [ServerMessageHandler("acct_create")]
-        public static void CreateAccount(string session_id, string content, string ip, int port)
-        {
-            var acct = JsonConvert.DeserializeObject<ServerAccount>(content);
-            var sessions = getAccts();
-            if(sessions.FirstOrDefault(x=>x.Username == acct.Username) != null)
-            {
-                Program.SendMessage(new PlexServerHeader
-                {
-                    IPForwardedBy = ip,
-                    Message = "acct_taken",
-                    SessionID = session_id,
-                    Content = ""
-                }, port);
-
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session_id);
+                writer.Write(accts[0].SessionID);
                 return;
             }
-            Console.WriteLine("<acctmgr> New account {0} is being created.", acct.Username);
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(session_id); //we do this twice, once because lol, again because lol
+
+        }
+
+        [ServerMessageHandler( ServerMessageType.USR_REGISTER)]
+        public static void CreateAccount(string session_id, BinaryReader reader, BinaryWriter writer)
+        {
+            string username = reader.ReadString();
+            string password = reader.ReadString();
+            
+            var sessions = getAccts();
+            if(sessions.FirstOrDefault(x=>x.Username == username) != null)
+            {
+                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write(session_id);
+                return;
+            }
+            var acct = new ServerAccount();
+            acct.Username = username;
+            Console.WriteLine("<acctmgr> New account {0} is being created.", username);
             Console.WriteLine("<acctmgr> Generating password salt...");
             acct.PasswordSalt = PasswordHasher.GenerateRandomSalt();
             Console.WriteLine("<acctmgr> Done. Now hashing password...");
-            acct.PasswordHash = PasswordHasher.Hash(acct.PasswordHash, acct.PasswordSalt);
+            acct.PasswordHash = PasswordHasher.Hash(password, acct.PasswordSalt);
             Console.WriteLine("<acctmgr> Yay. Everything's nice and secure......for now.");
             Console.WriteLine("<sessions> Setting expiry date...");
             acct.Expiry = DateTime.Now.AddDays(7);
@@ -186,14 +168,9 @@ namespace Plex.Server
             sessions.Add(acct);
             setSessions(sessions);
             Console.WriteLine("<sessions> Account data updated.");
-            Program.SendMessage(new PlexServerHeader
-            {
-                IPForwardedBy = ip,
-                Message = "session_accessgranted",
-                SessionID = session_id,
-                Content = acct.SessionID
-            }, port);
-
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(acct.SessionID);
         }
 
         [ServerCommand("connect", "Attempt to connect to a specific port on the current system.")]
@@ -258,7 +235,7 @@ namespace Plex.Server
                                     Thread.Sleep(750);
                                     Console.WriteLine("Complete the puzzles provided by the firewall to continue connection.");
                                     Console.WriteLine("When you have completed them all, the connection attempt will continue.");
-                                    Hacking.StartHack(Terminal.SessionInfo.SessionID, sysaddress, Terminal.SessionInfo.IPAddress, Terminal.SessionInfo.Port);
+                                    //Hacking.StartHack(Terminal.SessionInfo.SessionID, sysaddress, Terminal.SessionInfo.IPAddress, Terminal.SessionInfo.Port);
                                     return;
                                 }
                                 Console.WriteLine("Firewall detected, but is offline.");
@@ -329,47 +306,25 @@ namespace Plex.Server
         }
 
 
-        [ServerMessageHandler("acct_get_key")]
-        public static void AccountGetKey(string session_id, string content, string ip, int port)
+        [ServerMessageHandler( ServerMessageType.USR_LOGIN)]
+        public static void AccountGetKey(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             if (Program.IsMultiplayerServer)
             {
-                string[] split = content.Split('\t');
-                if (split.Length != 2)
-                {
-                    Program.SendMessage(new PlexServerHeader
-                    {
-                        IPForwardedBy = ip,
-                        Message = "malformed_data",
-                        SessionID = session_id,
-                        Content = ""
-                    }, port);
-                    return;
-                }
-                string username = split[0];
-                string password = split[1];
+                string username = reader.ReadString();
+                string password = reader.ReadString();
                 var user = getAccts().FirstOrDefault(x => x.Username == username);
                 if (user == null)
                 {
-                    Program.SendMessage(new PlexServerHeader
-                    {
-                        IPForwardedBy = ip,
-                        Message = "session_accessdenied",
-                        SessionID = session_id,
-                        Content = ""
-                    }, port);
+                    writer.Write((byte)ServerResponseType.REQ_ERROR);
+                    writer.Write(session_id);
                     return;
                 }
                 var hashedpass = PasswordHasher.Hash(password, user.PasswordSalt);
                 if (hashedpass != user.PasswordHash)
                 {
-                    Program.SendMessage(new PlexServerHeader
-                    {
-                        IPForwardedBy = ip,
-                        Message = "session_accessdenied",
-                        SessionID = session_id,
-                        Content = session_id
-                    }, port);
+                    writer.Write((byte)ServerResponseType.REQ_ERROR);
+                    writer.Write(session_id);
                     return;
 
                 }
@@ -410,13 +365,9 @@ namespace Plex.Server
                     }
                 }
 
-                Program.SendMessage(new PlexServerHeader
-                {
-                    IPForwardedBy = ip,
-                    Message = "session_accessgranted",
-                    SessionID = session_id,
-                    Content = user.SessionID
-                }, port);
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session_id);
+                writer.Write(user.SessionID);
             }
             else
             {
@@ -446,21 +397,18 @@ namespace Plex.Server
                     Program.SaveWorld();
                 }
 
-                Program.SendMessage(new PlexServerHeader
-                {
-                    IPForwardedBy = ip,
-                    Message = "session_accessgranted",
-                    SessionID = session_id,
-                    Content = getAccts()[0].SessionID
-                }, port);
+                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write(session_id);
+                writer.Write(getAccts()[0].SessionID);
             }
 
         }
 
-        [ServerMessageHandler("sp_completestory")]
+        [ServerMessageHandler( ServerMessageType.SP_COMPLETESTORY)]
         [SessionRequired]
-        public static void CompleteStory(string session_id, string content, string ip, int port)
+        public static void CompleteStory(string session_id, BinaryReader reader, BinaryWriter writer)
         {
+            string content = reader.ReadString();
             var session = GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
             if(save != null)
@@ -474,6 +422,8 @@ namespace Plex.Server
                     Program.SaveWorld();
                 }
             }
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
         }
     }
 }

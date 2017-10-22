@@ -55,7 +55,6 @@
     <Compile Include="Apps\FontDialog.cs" />
     <Compile Include="Apps\GraphicPicker.cs" />
     <Compile Include="Apps\GraphicViewer.cs" />
-    <Compile Include="Apps\HackableUI.cs" />
     <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\MissionComplete.cs" />
     <Compile Include="Apps\MoneyMateManager.cs" />

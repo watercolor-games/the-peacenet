@@ -112,39 +112,6 @@ namespace Plex.Server
             _port = port;
         }
 
-        public static void SendMessage(PlexServerHeader header, int port)
-        {
-            var ip = IPAddress.Parse(header.IPForwardedBy);
-            var data = JsonConvert.SerializeObject(header);
-            var bytes = Encoding.UTF8.GetBytes(data);
-            var _ipEP = new IPEndPoint(ip, port);
-            try
-            {
-                _server.Send(bytes, bytes.Length, _ipEP);
-                if (IsMultiplayerServer && LogDispatches)
-                    Console.WriteLine("<server> me -> {0}: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
-            }
-            catch
-            {
-
-            }
-        }
-
-        public static bool LogDispatches = true;
-
-        public static void Broadcast(PlexServerHeader header)
-        {
-            var ip = IPAddress.Broadcast;
-            var data = JsonConvert.SerializeObject(header);
-            var bytes = Encoding.UTF8.GetBytes(data);
-            foreach (var port in ports)
-            {
-                _server.Send(bytes, bytes.Length, new IPEndPoint(ip, port));
-            }
-        }
-
-        private static List<int> ports = new List<int>();
-
         public static void LoadRanks()
         {
             Ranks = JsonConvert.DeserializeObject<List<Rank>>(Properties.Resources.ranks);
@@ -602,15 +569,6 @@ Now generating defenses...
                     {
                         Console.WriteLine("<worldgen> Saving world...");
                         SaveWorld();
-                        Broadcast(new PlexServerHeader
-                        {
-                            Message = "server_shutdown",
-                            SessionID = "",
-                            IPForwardedBy = "",
-                            Content = ""
-                        });
-                        Console.WriteLine("<plexsrv> Broadcasting shutdown message to connected clients... waiting 5 seconds before closing.");
-                        System.Threading.Thread.Sleep(5000);
                         Environment.Exit(-1);
                     }
                     else
@@ -649,21 +607,6 @@ Now generating defenses...
             BannedIPs.Add(ip);
             System.IO.File.WriteAllText("banned-ips.json", JsonConvert.SerializeObject(BannedIPs, Formatting.Indented));
             Console.WriteLine("The IP address {0} has been banned. Any attempts to query the server from this address will result in a 'server_banned' result. Banlist saved.");
-        }
-
-        public static event Action SPLeft;
-
-        [ServerMessageHandler("leave")]
-        public static void Leave(string session_id, string content, string ip, int port)
-        {
-            if(IsMultiplayerServer == false)
-            {
-                SPLeft?.Invoke();
-            }
-            else
-            {
-                Console.WriteLine($"{ip}:{port} - Disconnected.");
-            }
         }
 
         public static void WorldManager()
@@ -821,8 +764,19 @@ Now generating defenses...
                         var writer = new BinaryWriter(stream);
                         while (client.Connected)
                         {
-                            string json = reader.ReadString();
-                            ServerManager.HandleTcpMessage(JsonConvert.DeserializeObject<PlexServerHeader>(json), writer);
+                            byte _messagetype = reader.ReadByte();
+                            string session_id = reader.ReadString();
+                            int _contentLength = reader.ReadInt32();
+                            byte[] content = null;
+                            if(_contentLength > 0)
+                            {
+                                content = reader.ReadBytes(_contentLength);
+                            }
+                            ServerManager.HandleTcpMessage(new PlexServerHeader
+                            {
+                                Message = _messagetype,
+                                SessionID = session_id
+                            }, reader, writer);
                         }
                         if (IsMultiplayerServer)
                             Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
@@ -835,19 +789,12 @@ Now generating defenses...
 
         public static void ServerLoop()
         {
-            for (int i = 0; i < Environment.ProcessorCount; i++)
-            {
-                var thread = new ServerThread();
-                Console.WriteLine("Starting server thread {0}...", i);
-                thread.Start();
-                threads.Add(thread);
-            }
-
+            ServerManager.LocateHandlers();
             Console.WriteLine("Validating npc/player filesystems...");
             bool requireSave = false;
             foreach (var net in GameWorld.Networks)
             {
-                foreach(var npc in net.NPCs)
+                foreach (var npc in net.NPCs)
                 {
                     if (npc.Filesystems == null)
                     {
@@ -866,113 +813,8 @@ Now generating defenses...
             worldThread.Start();
 
             var tcpThread = new ServerThread();
-            Console.WriteLine("Starting TCP listener for filesystem requests...");
-            tcpThread.Queue(TcpLoop);
-            tcpThread.Start();
-
-            _server = new UdpClient();
-            var _ipEP = new IPEndPoint(IPAddress.Any, _port);
-            var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sock.Bind(new IPEndPoint(IPAddress.Any, _port));
-            _server.Client = sock;
-            SPLeft += () =>
-            {
-                SaveWorld();
-                _server.Close();
-                sock.Close();
-                sock.Dispose();
-                Thread.CurrentThread.Abort();
-            };
-            ServerStarted?.Invoke();
-            try
-            {
-                while (true)
-                {
-                    _ipEP = new IPEndPoint(IPAddress.Any, _port);
-                    var receive = _server.Receive(ref _ipEP);
-                    int port = _ipEP.Port;
-                    string address = _ipEP.Address.ToString();
-
-                    var thread = threads.Aggregate((curMin, x) => (curMin == null || (x.Count) < curMin.Count ? x : curMin));
-                    thread.Queue(() =>
-                    {
-                        try
-                        {
-                            if (BannedIPs.Contains(_ipEP.Address.ToString()))
-                            {
-
-                                SendMessage(new PlexServerHeader
-                                {
-                                    IPForwardedBy = _ipEP.Address.ToString(),
-                                    Message = "server_banned",
-                                    SessionID = "",
-                                    Content = ""
-                                }, port);
-                                if (IsMultiplayerServer)
-                                    Console.WriteLine("<server/banhammer> Attempted connection from banned IP address {0} has been blocked.", _ipEP.ToString());
-
-                                return;
-                            }
-                            if (!ports.Contains(port))
-                                ports.Add(port);
-                            string data = Encoding.UTF8.GetString(receive);
-                            if (data == "heart")
-                            {
-                                var beat = Encoding.UTF8.GetBytes("beat");
-                                _server.Send(beat, beat.Length, new IPEndPoint(IPAddress.Parse(address), port));
-
-                            }
-                            else if (data == "ismp")
-                            {
-                                int value = (IsMultiplayerServer) ? 1 : 0;
-                                _server.Send(new byte[] { (byte)value }, 1, new IPEndPoint(IPAddress.Parse(address), port));
-                                if (IsMultiplayerServer)
-                                    Console.WriteLine("<server> {0} -> me: Are you a multiplayer server?", _ipEP.ToString());
-                                if (IsMultiplayerServer)
-                                    Console.WriteLine("<server> me -> {0}: {1}", _ipEP.ToString(), (value == 1) ? "Yes." : "No.");
-
-                            }
-                            else
-                            {
-                                var header = JsonConvert.DeserializeObject<PlexServerHeader>(data);
-                                IPAddress test = null;
-                                if (IPAddress.TryParse(header.IPForwardedBy, out test) == false)
-                                    header.IPForwardedBy = address;
-                                if (IsMultiplayerServer)
-                                    Console.WriteLine("<server> {0} -> me: {1} (session id: \"{2}\", content: {3} chars long)", _ipEP.ToString(), header.Message, header.SessionID, header.Content.Length);
-
-                                ServerManager.HandleMessage(header, port);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SendMessage(new PlexServerHeader
-                            {
-                                Content = "",
-                                IPForwardedBy = address,
-                                Message = "server_error",
-                                SessionID = ""
-                            }, port);
-                            Console.WriteLine("ERROR: {0}", ex);
-                            var inner = ex.InnerException;
-                            int innerIndent = 0;
-                            while (inner != null)
-                            {
-                                string innermsg = "Inner " + (innerIndent+1).ToString() +  ": " + inner.ToString();
-                                Console.WriteLine(innermsg);
-                                innerIndent++;
-                                inner = inner.InnerException;
-                            }
-                        }
-                    });
-                }
-
-            }
-
-            catch(SocketException)
-            {
-
-            }
+            Console.WriteLine("Starting TCP listener...");
+            TcpLoop();
         }
 
         /// <summary>
@@ -987,92 +829,68 @@ Now generating defenses...
     }
 
 
-
     /// <summary>
     /// Digital Society connection management class.
     /// </summary>
-    public static class ServerManager
+    internal static class ServerManager
     {
+        private static Dictionary<ServerMessageType, MethodInfo> _handlers = new Dictionary<ServerMessageType, MethodInfo>();
 
-        internal static void HandleTcpMessage(PlexServerHeader header, BinaryWriter tcpStreamWriter)
+
+        internal static void LocateHandlers()
         {
+            _handlers.Clear();
             foreach (var type in ReflectMan.Types)
             {
                 foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ServerMessageHandlerAttribute) != null))
                 {
                     var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
-                    bool tcpRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is TcpAttribute) != null;
-                    if (tcpRequired == false)
-                        continue;
-                    if (attribute.ID == header.Message)
+                    if (!_handlers.ContainsKey(attribute.ID))
                     {
+                        _handlers.Add(attribute.ID, method);
+                        Console.WriteLine("{0}: {1}", attribute.ID, method.Name);
                         
-                        var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
-                        if (sessionRequired != null)
-                        {
-                            bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
-                            if (nosession == false)
-                            {
-                                nosession = SessionManager.IsExpired(header.SessionID);
-                            }
-
-                            if (nosession)
-                            {
-                                tcpStreamWriter.Write(JsonConvert.SerializeObject(new PlexServerHeader
-                                {
-                                    IPForwardedBy = header.IPForwardedBy,
-                                    Message = "login_required",
-                                    Content = ""
-                                }));
-                                return;
-                            }
-                        }
-                        method.Invoke(null, new object[] { header.SessionID, header.Content, tcpStreamWriter });
-                        return;
                     }
-                }
-            }
-        }
-
-
-        internal static void HandleMessage(PlexServerHeader header, int port)
-        {
-            foreach (var type in ReflectMan.Types)
-            {
-                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ServerMessageHandlerAttribute) != null))
-                {
-                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ServerMessageHandlerAttribute) as ServerMessageHandlerAttribute;
-                    bool tcpRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is TcpAttribute) != null;
-                    if (tcpRequired == true)
-                        continue;
-                    if (attribute.ID == header.Message)
+                    else
                     {
-                        var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
-                        if(sessionRequired != null)
-                        {
-                            bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
-                            if(nosession == false)
-                            {
-                                nosession = SessionManager.IsExpired(header.SessionID);
-                            }
-
-                            if (nosession)
-                            {
-                                Program.SendMessage(new PlexServerHeader
-                                {
-                                    IPForwardedBy = header.IPForwardedBy,
-                                    Message = "login_required",
-                                    Content = ""
-                                }, port);
-                                return;
-                            }
-                        }
-                        method.Invoke(null, new object[] { header.SessionID, header.Content, header.IPForwardedBy, port });
-                        return;
+                        throw new InvalidOperationException("Two or more message handlers were found with the same ID: " + attribute.ID + " - This is not allowed.");
                     }
                 }
             }
+
         }
+
+
+
+        internal static void HandleTcpMessage(PlexServerHeader header, BinaryReader reader, BinaryWriter tcpStreamWriter)
+        {
+            if (_handlers.ContainsKey((ServerMessageType)header.Message))
+            {
+                var method = _handlers[(ServerMessageType)header.Message];
+
+                var sessionRequired = method.GetCustomAttributes(false).FirstOrDefault(x => x is SessionRequired) as SessionRequired;
+                if (sessionRequired != null)
+                {
+                    bool nosession = string.IsNullOrWhiteSpace(header.SessionID);
+                    if (nosession == false)
+                    {
+                        nosession = SessionManager.IsExpired(header.SessionID);
+                    }
+
+                    if (nosession)
+                    {
+                        tcpStreamWriter.Write((byte)ServerResponseType.REQ_LOGINREQUIRED);
+                        tcpStreamWriter.Write("");
+                        tcpStreamWriter.Write(0);
+                        return;
+                    }
+                }
+                method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
+                return;
+            }
+        }
+
+
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -1082,21 +900,14 @@ Now generating defenses...
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class TcpAttribute : Attribute
-    {
-
-    }
-
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ServerMessageHandlerAttribute : Attribute
     {
-        public ServerMessageHandlerAttribute(string id)
+        public ServerMessageHandlerAttribute(ServerMessageType id)
         {
             ID = id;
         }
 
-        public string ID { get; private set; }
+        public ServerMessageType ID { get; private set; }
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,10 +16,9 @@ namespace Plex.Engine
     public static class ServerLoginHandler
     {
         private static LoginScreen _loginScreen = null;
-        private static int triesLeft = 4;
+        internal static int triesLeft = 4;
 
-        [ClientMessageHandler("session_accessdenied")]
-        public static void AccessDenied(string content, string ip)
+        public static void AccessDenied()
         {
             if (triesLeft > 0)
             {
@@ -36,14 +36,6 @@ namespace Plex.Engine
             }
         }
 
-        [ClientMessageHandler("session_accessgranted")]
-        public static void SessionGranted(string content, string ip)
-        {
-            UIManager.ClearTopLevels();
-            ServerManager.SessionInfo.SessionID = content;
-            SaveSystem.Begin();
-        }
-
         [ClientMessageHandler("malformed_data")]
         public static void MalformedDataHandler(string content, string ip)
         {
@@ -55,8 +47,7 @@ namespace Plex.Engine
             ServerManager.Disconnect(DisconnectType.Error, "The client has sent an incorrect or malformed request to the server and has been kicked out for security purposes.");
         }
 
-        [ClientMessageHandler("login_required")]
-        public static void LoginRequired(string content, string ip)
+        public static void LoginRequired()
         {
             triesLeft = 4;
             foreach(var screen in AppearanceManager.OpenForms.Where(x=>x.ParentWindow is LoginScreen).ToArray())
@@ -68,8 +59,23 @@ namespace Plex.Engine
             AppearanceManager.SetupDialog(_loginScreen);
             _loginScreen.CredentialsEntered += (username, password) =>
             {
+                BinaryReader _r = null;
                 string combined = $"{username}\t{password}";
-                ServerManager.SendMessage("acct_get_key", combined);
+                if (ServerManager.SendMessage(ServerMessageType.USR_LOGIN, (w) =>
+                 {
+                     w.Write(username);
+                     w.Write(password);
+                 }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
+                {
+                    AccessDenied();
+                }
+                else
+                {
+                    UIManager.ClearTopLevels();
+                    ServerManager.SessionInfo.SessionID = _r.ReadString();
+                    SaveSystem.Begin();
+
+                }
             };
             _loginScreen.Disconnected += () =>
             {
@@ -296,10 +302,22 @@ After logging in once, you will not have to log in again unless you have been in
                     Infobox.Show("Passwords don't match.", "You must prove you'll remember your password by typing the EXACT SAME PASSWORD twice. You didn't do that.");
                     return;
                 }
-                var user = new ServerAccount();
-                user.Username = _usernameField.Text;
-                user.PasswordHash = _passwordField.Text;
-                ServerManager.SendMessage("acct_create", JsonConvert.SerializeObject(user));
+                BinaryReader _r = null;
+                if (ServerManager.SendMessage(ServerMessageType.USR_REGISTER, (w) =>
+                {
+                    w.Write(_usernameField.Text);
+                    w.Write(_passwordField.Text);
+                }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
+                {
+                    Engine.Infobox.Show("Error", "An error occurred while servicing the request.");
+                }
+                else
+                {
+                    UIManager.ClearTopLevels();
+                    ServerManager.SessionInfo.SessionID = _r.ReadString();
+                    SaveSystem.Begin();
+
+                }
             };
             _cancel.Click += () =>
             {

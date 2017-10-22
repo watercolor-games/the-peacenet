@@ -33,6 +33,7 @@ using static Plex.Engine.SaveSystem;
 using System.Diagnostics;
 using System.Threading;
 using Plex.Objects;
+using System.IO;
 
 namespace Plex.Engine
 {
@@ -118,11 +119,14 @@ namespace Plex.Engine
         {
             if(CashManager.Deduct((long)cost, "upgrademgr") == true)
             {
-                ServerManager.SendMessage("upgrades_set", JsonConvert.SerializeObject(new
-                {
-                    id = id,
-                    value = true
-                }));
+                BinaryReader reader = null;
+                ServerManager.SendMessage(ServerMessageType.UPG_SETINSTALLED, (w) => {
+                    w.Write(JsonConvert.SerializeObject(new
+                    {
+                        id = id,
+                        value = true
+                    }));
+                }, out reader);
                 Installed?.Invoke();
                 return true;
             }
@@ -227,10 +231,9 @@ namespace Plex.Engine
         {
             upgDb = new List<ShiftoriumUpgrade>();
             serverUpgrades = null;
-            ServerManager.SendMessage("upgrades_getdb", "");
-            while (serverUpgrades == null)
-                Thread.Sleep(10);
-            upgDb.AddRange(serverUpgrades);
+            BinaryReader reader = null;
+            ServerManager.SendMessage(ServerMessageType.WORLD, null, out reader);
+            upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString()));
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
             foreach (var type in ReflectMan.Types)
             {
@@ -383,11 +386,12 @@ namespace Plex.Engine
 
         public static int CountUpgrades()
         {
-            upgrade_installed_count = null;
-            ServerManager.SendMessage("upgrades_getcount", "");
-            while (upgrade_installed_count == null)
-                Thread.Sleep(10);
-            return (int)upgrade_installed_count;
+            BinaryReader r = null;
+            if (ServerManager.SendMessage(ServerMessageType.UPG_GETCOUNT, null, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return r.ReadInt32();
+            }
+            return 0;
         }
 
         public static ShiftoriumUpgrade[] GetAllPurchasable()
@@ -462,99 +466,92 @@ namespace Plex.Engine
         {
             if (string.IsNullOrWhiteSpace(id))
                 return true;
-            upgrade_Installed_state = null;
-            ServerManager.SendMessage("upgrades_getinstalled", id);
-            while (upgrade_Installed_state == null)
-                Thread.Sleep(10);
-            return (bool)upgrade_Installed_state;
-        }
-
-        public static bool IsLoaded(string upgradeid)
-        {
-            if (string.IsNullOrWhiteSpace(upgradeid))
-                return false;
-
-            if (upgradeid.Contains(";"))
+            if (id.Contains(":"))
             {
-                foreach (var id in upgradeid.Split(';'))
-                    if (!IsLoaded(id))
+                foreach (var sid in id.Split(';'))
+                    if (UpgradeInstalled(sid) == false)
                         return false;
                 return true;
             }
-
-            upgrade_loaded_state = null;
-            ServerManager.SendMessage("upgrades_getloaded", upgradeid);
-            while (upgrade_loaded_state == null)
-                Thread.Sleep(10);
-            return (bool)upgrade_loaded_state;
-        }
-
-        private static string upgrade_load_result = null;
-
-        [ClientMessageHandler("upgrades_loadresult"), AsyncExecution]
-        public static void UpgradeLoadResult(string content, string ip)
-        {
-            switch (content)
+            BinaryReader r = null;
+            if (ServerManager.SendMessage( ServerMessageType.UPG_ISINSTALLED, (w)=>
             {
-                case "loaded":
-                    upgrade_load_result = "loaded";
-                    break;
-                case "uncaught_error":
-                    upgrade_load_result = "An unknown error was detected while trying to load this upgrade. Please try again.";
-                    break;
-                case "already_loaded":
-                    upgrade_load_result = "This upgrade has already been loaded.";
-                    break;
-                case "no_slots":
-                    upgrade_load_result = "You do not have enough upgrade slots to load this upgrade.";
-                    break;
-                case "missing_upgrade":
-                    upgrade_load_result = "You don't own this upgrade.";
-                    break;
-            }
-        }
-
-        private static string upgrade_unload_result = null;
-
-        [ClientMessageHandler("upgrades_unloadresult"), AsyncExecution]
-        public static void UpgradeUnloadResult(string content, string ip)
-        {
-            switch (content)
+                w.Write(id);
+            }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
             {
-                case "unloaded":
-                    upgrade_unload_result = "unloaded";
-                    break;
-                case "uncaught_error":
-                    upgrade_unload_result = "An unknown error was detected while trying to unload this upgrade. Please try again.";
-                    break;
-                case "already_unloaded":
-                    upgrade_unload_result = "You haven't loaded this upgrade. Unloading it is not necessary.";
-                    break;
-                case "missing_upgrade":
-                    upgrade_unload_result = "You don't own this upgrade.";
-                    break;
+                return r.ReadByte() == 1;
             }
+            return false;
         }
 
+        public static bool IsLoaded(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return true;
+            if (id.Contains(":"))
+            {
+                foreach (var sid in id.Split(';'))
+                    if (IsLoaded(sid) == false)
+                        return false;
+                return true;
+            }
+            BinaryReader r = null;
+            if (ServerManager.SendMessage(ServerMessageType.UPG_ISLOADED, (w) =>
+            {
+                w.Write(id);
+            }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                return r.ReadByte() == 1;
+            }
+            return false;
+        }
 
         public static void LoadUpgrade(string upgradeid)
         {
-            upgrade_load_result = null;
-            ServerManager.SendMessage("upgrades_load", upgradeid);
-            while (upgrade_load_result == null)
-                Thread.Sleep(10);
-            if (upgrade_load_result != "loaded")
-                throw new UpgradeException(upgradeid, upgrade_load_result);
+            BinaryReader reader = null;
+            if(ServerManager.SendMessage(ServerMessageType.UPG_LOAD, (w) =>
+            {
+                w.Write(upgradeid);
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                byte r = reader.ReadByte();
+                HandleUpgradeResult((UpgradeResult)r, upgradeid);
+            }
+        }
+
+        public static void HandleUpgradeResult(UpgradeResult res, string id)
+        {
+            switch (res)
+            {
+                case UpgradeResult.ALREADY_LOADED:
+                    throw new UpgradeException(id, "The requested upgrade is already loaded.");
+                case UpgradeResult.ALREADY_UNLOADED:
+                    throw new UpgradeException(id, "The requested upgrade is already unloaded.");
+                case UpgradeResult.LOADED:
+                case UpgradeResult.UNLOADED:
+                    Upgrades.InvokeUpgradeInstalled();
+                    break;
+                case UpgradeResult.MISSING_UPGRADE:
+                    throw new UpgradeException(id, "You do not own this upgrade.");
+                case UpgradeResult.NO_SLOTS:
+                    throw new UpgradeException(id, "You do not have enough slots to load this upgrade.");
+                case UpgradeResult.UNCAUGHT_ERROR:
+                    throw new UpgradeException(id, "An unknown error occurred servicing the upgrade request.");
+
+            }
         }
 
         public static void UnloadUpgrade(string upgradeid)
         {
-            upgrade_unload_result = null;
-            ServerManager.SendMessage("upgrades_unload", upgradeid);
-            while (upgrade_unload_result == null)
-                Thread.Sleep(10);
-            if (upgrade_unload_result != "loaded")
-                throw new UpgradeException(upgradeid, upgrade_unload_result);
+            BinaryReader reader = null;
+            if (ServerManager.SendMessage(ServerMessageType.UPG_UNLOAD, (w) =>
+            {
+                w.Write(upgradeid);
+            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                byte r = reader.ReadByte();
+                HandleUpgradeResult((UpgradeResult)r, upgradeid);
+            }
         }
 
 

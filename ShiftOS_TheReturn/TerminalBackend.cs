@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -460,13 +461,26 @@ namespace Plex.Engine
                     PrefixEnabled = false;
                     _ranCMD = text;
                     _ranArgs = args;
-                    ServerManager.SendMessage("trm_invoke", JsonConvert.SerializeObject(new
+                    BinaryReader reader = null;
+                    if (ServerManager.SendMessage( ServerMessageType.TRM_INVOKE, (w) =>
                     {
-                        cmd = text,
-                        args = args,
-                        shell = _shellOverrideString,
-                        sessionfwd = _terminal_forward_session_id
-                    }));
+                        w.Write(JsonConvert.SerializeObject(new
+                        {
+                            cmd = text,
+                            args = args,
+                            shell = _shellOverrideString,
+                            sessionfwd = _terminal_forward_session_id
+                        }));
+                    }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+                    {
+                        while(true)
+                        {
+                            string ln = reader.ReadString();
+                            if (ln == "\u0013\u0014")
+                                break;
+                            Console.Write(ln);
+                        }
+                    }
                     return true;
                 }
             }

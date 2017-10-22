@@ -73,6 +73,7 @@
     <Compile Include="REST_Announcement.cs" />
     <Compile Include="Save.cs" />
     <Compile Include="ServerDetails.cs" />
+    <Compile Include="ServerEnums.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftoriumUpgrade.cs" />
     <Compile Include="TerminalCommand.cs" />

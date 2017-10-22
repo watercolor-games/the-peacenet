@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -119,73 +120,48 @@ namespace Plex.Server
 
         public static RequestInfo SessionInfo { get; private set; }
 
-        [ServerCommand("exit", "Disconnects you from the remote system.")]
-        public static void ExitSyschange()
-        {
-            if(SessionInfo == null)
-            {
-                Console.WriteLine("Usersession required.");
-                return;
-            }
-
-            Console.WriteLine("Disconnecting from remote system...");
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = "",
-                IPForwardedBy = SessionInfo.IPAddress,
-                Message = "trm_esyschange",
-                SessionID = SessionInfo.SessionID
-            }, SessionInfo.Port);
-        }
-
-        [ServerMessageHandler("cmd_gethelp")]
+        [ServerMessageHandler( ServerMessageType.TRM_GETCMDS)]
         [SessionRequired]
-        public static void GetHelp(string session_id, string content, string ip, int port)
+        public static void GetHelp(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             Dictionary<string, string> commands = new Dictionary<string, string>();
-            foreach(var cmd in Terminal.Commands)
+            foreach (var cmd in Terminal.Commands)
             {
                 if (UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                     commands.Add(cmd.CommandInfo.name, cmd.CommandInfo.description);
             }
-            Program.SendMessage(new PlexServerHeader
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(commands.Count);
+            foreach(var cmd in commands)
             {
-                Message = "cmd_help",
-                Content = JsonConvert.SerializeObject(commands),
-                IPForwardedBy = ip,
-                SessionID = session_id
-            }, port);
+                writer.Write(cmd.Key);
+                writer.Write(cmd.Value);
+            }
         }
 
 
-        [ServerMessageHandler("trm_invoke")]
+        [ServerMessageHandler( ServerMessageType.TRM_INVOKE)]
         [SessionRequired]
-        public static void InvokeCMD(string session_id, string content, string ip, int port)
+        public static void InvokeCMD(string session_id, BinaryReader reader, BinaryWriter writer)
         {
-            Program.LogDispatches = false;
+            string datajson = reader.ReadString();
             SessionInfo = new RequestInfo
             {
-                IPAddress = ip,
-                Port = port,
                 SessionID = session_id
             };
             var outstream = Console.Out;
-            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-            var memwriter = new RemoteTextWriter(ip, port, session_id); //We use this to forward all console writes to the client that ran this command.
+            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(datajson);
+            var memwriter = new RemoteTextWriter(writer, session_id); //We use this to forward all console writes to the client that ran this command.
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
             string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
+            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
             bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
             SetShellOverride("");
             Console.SetOut(outstream);
-            Program.LogDispatches = true;
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = "",
-                IPForwardedBy = ip,
-                Message = "trm_done",
-                SessionID = session_id
-            }, port);
+            writer.Write("\u0013\u0014");
         }
     }
 
@@ -206,37 +182,23 @@ namespace Plex.Server
             }
         }
 
-        private string _ipaddress = "";
-        private int _port = 0;
+        private BinaryWriter _writer = null;
         private string _session = "";
 
-        public RemoteTextWriter(string ip, int port, string session)
+        public RemoteTextWriter(BinaryWriter writer, string session)
         {
-            _ipaddress = ip;
-            _port = port;
+            _writer = writer;
             _session = session;
         }
 
         public override void Write(string value)
         {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = value,
-                IPForwardedBy = _ipaddress,
-                Message = "trm_write",
-                SessionID = _session
-            }, _port);
+            _writer.Write(value);
         }
 
         public override void WriteLine(string value)
         {
-            Program.SendMessage(new PlexServerHeader
-            {
-                Content = value,
-                IPForwardedBy = _ipaddress,
-                Message = "trm_writeline",
-                SessionID = _session
-            }, _port);
+            Write(value + Environment.NewLine);
         }
 
     }

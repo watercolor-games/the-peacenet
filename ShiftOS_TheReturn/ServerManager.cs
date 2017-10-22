@@ -39,6 +39,18 @@ namespace Plex.Engine
     public static class ServerManager
     {
         public static SessionInfo SessionInfo { get; internal set; }
+        private static TcpClient _tcpClient = new TcpClient();
+        private static BinaryWriter _tcpWriter = null;
+        private static BinaryReader _tcpReader = null;
+        private static Stream _tcpStream = null;
+
+        public static void ConnectToServer(string hostname, int port)
+        {
+            _tcpClient = new TcpClient(hostname, port);
+            _tcpStream = _tcpClient.GetStream();
+            _tcpReader = new BinaryReader(_tcpStream);
+            _tcpWriter = new BinaryWriter(_tcpStream);
+        }
 
         [ClientMessageHandler("server_error")]
         public static void ErrorHandler(string content, string ip)
@@ -63,18 +75,6 @@ namespace Plex.Engine
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
-            if(type == DisconnectType.EngineShutdown || type == DisconnectType.UserRequested)
-            {
-                try
-                {
-                    SendMessage("leave", "");
-                }
-                catch
-                {
-
-                }
-            }
-            UIManager.NetworkClient.Close();
             UIManager.ClearTopLevels();
             UIManager.Game.IPAddress = null;
             if (type == DisconnectType.UserRequested || type == DisconnectType.Error)
@@ -87,51 +87,22 @@ namespace Plex.Engine
             }
         }
 
-        public static void SendMessage(string message, string contents)
+        public static PlexServerHeader SendMessage(ServerMessageType message, Action<BinaryWriter> contentWriter, out BinaryReader reader)
         {
             string sessionKey = "";
             if (SessionInfo != null)
                 sessionKey = SessionInfo.SessionID;
-            var header = new PlexServerHeader
+            _tcpWriter.Write((byte)message);
+            _tcpWriter.Write(sessionKey);
+            contentWriter?.Invoke(_tcpWriter);
+            byte returncode = _tcpReader.ReadByte();
+            string _returnsessionid = _tcpReader.ReadString();
+            reader = _tcpReader;
+            return new PlexServerHeader
             {
-                Content = contents,
-                IPForwardedBy = "",
-                Message = message,
-                SessionID = sessionKey
+                Message = returncode,
+                SessionID = _returnsessionid
             };
-            byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
-            UIManager.NetworkClient.Send(data, data.Length);
-        }
-
-        internal static void HandleMessage(PlexServerHeader header)
-        {
-            if (!string.IsNullOrWhiteSpace(header.SessionID))
-            {
-                if (SessionInfo == null)
-                    return;
-                if (SessionInfo != null)
-                    if (SessionInfo.SessionID != header.SessionID)
-                        return;
-            }
-
-            foreach (var type in ReflectMan.Types)
-            {
-                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static).Where(x => x.GetCustomAttributes(false).FirstOrDefault(y => y is ClientMessageHandlerAttribute) != null))
-                {
-                    bool async = method.GetCustomAttributes(false).FirstOrDefault(x => x is AsyncExecutionAttribute) != null;
-                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(x => x is ClientMessageHandlerAttribute) as ClientMessageHandlerAttribute;
-                    if (attribute.ID == header.Message)
-                    {
-                        if (async)
-                            method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
-                        else
-                            Desktop.InvokeOnWorkerThread(() =>
-                            {
-                                method.Invoke(null, new[] { header.Content, header.IPForwardedBy });
-                            });
-                    }
-                }
-            }
         }
 
         internal static void StartSessionManager(string host, int port)
@@ -150,7 +121,21 @@ namespace Plex.Engine
                 session.SessionID = "";
             }
             SessionInfo = session;
-            SendMessage("session_verify", session.SessionID);
+            BinaryReader _r = null;
+            if(SendMessage(ServerMessageType.USR_VALIDATEKEY, (w) =>
+            {
+                w.Write(session.SessionID);
+            }, out _r).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                UIManager.ClearTopLevels();
+                ServerManager.SessionInfo.SessionID = _r.ReadString();
+                SaveSystem.Begin();
+
+            }
+            else
+            {
+                ServerLoginHandler.LoginRequired();
+            }
         }
 
         internal static void StartSinglePlayer(string host, int port)
@@ -159,7 +144,22 @@ namespace Plex.Engine
             session.ServerIP = host;
             session.ServerPort = port;
             SessionInfo = session;
-            SendMessage("acct_get_key", session.SessionID);
+            BinaryReader _r = null;
+            if (ServerManager.SendMessage(ServerMessageType.USR_LOGIN, (w) =>
+            {
+                w.Write("You");
+                w.Write("suck");
+            }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                ServerLoginHandler.AccessDenied();
+            }
+            else
+            {
+                UIManager.ClearTopLevels();
+                ServerManager.SessionInfo.SessionID = _r.ReadString();
+                SaveSystem.Begin();
+
+            }
         }
     }
 
