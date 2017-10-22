@@ -49,11 +49,11 @@ namespace Plex.Frontend.GUI
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                 if (_items.IndexOf(item) == _selected)
                 {
-                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxSelectedItemTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
+                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxSelectedItemTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
                 }
                 else
                 {
-                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
+                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
                 }
                 _itemx += textwidth + _itemgap;
                 if (_itemx >= (Width - (_initialmargin * 2)))

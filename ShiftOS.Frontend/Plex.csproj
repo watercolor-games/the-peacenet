@@ -193,6 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Content.mgcb" />
     <None Include="packages.config" />
     <None Include="Resources\arnix.skn" />
     <None Include="Resources\cursor_9x_pointer.png" />

@@ -606,13 +606,52 @@ namespace Plex.Engine
 
         #region Textbox
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box text color")]
+        [ShifterDescription("The color used for rendering text within a text box.")]
         public Color TextBoxTextColor = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box font")]
+        [ShifterDescription("The font used by text in a text box.")]
         public Font TextBoxFont = new Font("Microsoft Sans-Serif", 9F);
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box border width")]
+        [ShifterDescription("The width of the border in a text box.")]
         public int TextBoxBorderWidth = 2;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box border style")]
+        [ShifterDescription("The style of the text box border.\r\n\r\nAvailable options:\r\n - MaterialDesign: The default look of the text box border.\r\n - Classic: The look of text boxes in beta versions of the Peacegate.")]
         public TextBoxBorderStyle TextBoxBorderStyle = TextBoxBorderStyle.MaterialDesign;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterDescription("The border color used for text boxes when they are not in focus or hovered over by the mouse.")]
+        [ShifterName("Text box border color (Idle)")]
         public Color TextBoxBorderColorIdle = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box border color (Hover)")]
+        [ShifterDescription("The color of a text box's border when the mouse is hovering over the box.")]
         public Color TextBoxBorderColorHover = Color.LightGray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box border color (Focused)")]
+        [ShifterDescription("The color of a text box's border when it is in focus.")]
         public Color TextBoxBorderColorFocused = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Text Boxes")]
+        [ShifterName("Text box background color")]
+        [ShifterDescription("The background color of all text boxes.")]
         public Color TextBoxBackColor = Color.White;
 
         #endregion
@@ -626,19 +665,76 @@ namespace Plex.Engine
 
         #region Scroll view
 
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scroll view scrollbar width")]
+        [ShifterDescription("The width of the scroll bar situated at the right of a scroll view.")]
         public int ScrollViewScrollbarWidth = 20;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar nub width")]
+        [ShifterDescription("The width of the inner portion, otherwise known as the nub, of the scrollbar which indicates where the scroll view is looking.")]
         public int ScrollViewScrollNubWidth = 16;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scroll view scrollbar background")]
+        [ShifterDescription("The background color of the scroll view's scrollbar.")]
         public Color ScrollViewScrollbarBackground = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar nub color (Idle)")]
+        [ShifterDescription("The color of the scroll nub while it is idle.")]
         public Color ScrollViewScrollNubColorIdle = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar nub color (Hover)")]
+        [ShifterDescription("The color of the nub while the mouse is hovering over it.")]
         public Color ScrollViewScrollNubColorHover = Color.LightGray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar nub color (Pressed)")]
+        [ShifterDescription("The color of the nub when it is pressed down.")]
         public Color ScrollViewScrollNubColorPressed = Color.Black;
 
-
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow background (Idle)")]
+        [ShifterDescription("The background color of the scrollbar's arrows when idle.")]
         public Color ScrollViewArrowBackgroundIdle = Color.Gray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow background (Hover)")]
+        [ShifterDescription("The background color of the scrollbar's arrows when hovered over by the mouse.")]
         public Color ScrollViewArrowBackgroundHover = Color.LightGray;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow background (Pressed)")]
+        [ShifterDescription("The background color of the scrollbar's arrows when pressed.")]
         public Color ScrollViewArrowBackgroundPressed = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow color (Idle)")]
+        [ShifterDescription("The foreground color of the scrollbar's arrows when idle.")]
         public Color ScrollViewArrowColorIdle = Color.White;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow color (Hover)")]
+        [ShifterDescription("The foreground color of the scrollbar's arrows when hovered over by the mouse.")]
         public Color ScrollViewArrowColorHover = Color.Black;
+
+        [ShifterMeta("UI elements")]
+        [ShifterCategory("Scroll views")]
+        [ShifterName("Scrollbar arrow color (Pressed)")]
+        [ShifterDescription("The foreground color of the scrollbar's arrows when pressed down.")]
         public Color ScrollViewArrowColorPressed = Color.White;
 
 

@@ -173,6 +173,7 @@ namespace Plex.Frontend.GraphicsSubsystem
                     _target = targets[hc];
                     if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
                     {
+                        _target.Dispose();
                         _target = new RenderTarget2D(
                 graphics,
                 Math.Max(1, ctrl.Width),
@@ -393,7 +394,11 @@ namespace Plex.Frontend.GraphicsSubsystem
         public static void ResetSkinTextures(GraphicsDevice graphics)
         {
             bool rgb101 = true;
-            SkinTextures.Clear();
+            while(SkinTextures.Count != 0)
+            {
+                SkinTextures.First().Value.Dispose();
+                SkinTextures.Remove(SkinTextures.First().Key);
+            }
             foreach(var byteArray in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(byte[])))
             {
                 var imgAttrib = byteArray.GetCustomAttributes(false).FirstOrDefault(x => x is ImageAttribute) as ImageAttribute;

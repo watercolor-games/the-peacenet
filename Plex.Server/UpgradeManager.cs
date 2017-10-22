@@ -106,6 +106,48 @@ namespace Plex.Server
             }, port);
         }
 
+        [ServerCommand("upgload", "Load the specified upgrade.")]
+        [RequiresArgument("id")]
+        public static void LoadUpgradeCMD(Dictionary<string, object> args)
+        {
+            string content = args["id"].ToString();
+            string session_id = Terminal.SessionID;
+            string result = "Upgrade loaded.";
+
+            bool installed = IsUpgradeInstalled(content, session_id);
+            if (installed == false)
+            {
+                result = "That upgrade was not found on your system.";
+            }
+            else
+            {
+                bool loaded = IsUpgradeLoaded(content, session_id);
+                if (loaded == true)
+                {
+                    result = "This upgrade has already been loaded.";
+                }
+                else
+                {
+                    var session = SessionManager.GrabAccount(session_id);
+                    var save = Program.GetSaveFromPrl(session.SaveID);
+                    var upgcount = save.SystemDescriptor.MaxLoadedUpgrades;
+                    if (save.SystemDescriptor.LoadedUpgrades.Count + 1 >= upgcount)
+                    {
+                        result = "You do not have any more upgrade slots.";
+                    }
+                    else
+                    {
+                        save.SystemDescriptor.LoadedUpgrades.Add(content);
+                        result = "Upgrade loaded.";
+                        Program.SaveWorld();
+                    }
+                }
+                
+            }
+
+            Console.WriteLine(result);
+        }
+
 
         [SessionRequired]
         [ServerMessageHandler("upgrades_set")]
@@ -187,6 +229,17 @@ namespace Plex.Server
             if (save == null)
                 return false;
             bool save_world = false;
+            if(save.SystemDescriptor.StoriesExperienced == null)
+            {
+                save.SystemDescriptor.StoriesExperienced = new List<string>();
+                save_world = true;
+            }
+            if (save.SystemDescriptor.StoriesExperienced.Contains(upg))
+            {
+                if (save_world)
+                    Program.SaveWorld();
+                return true;
+            }
             if (save.SystemDescriptor.Upgrades == null)
             {
                 save.SystemDescriptor.Upgrades = new Dictionary<string, bool>();

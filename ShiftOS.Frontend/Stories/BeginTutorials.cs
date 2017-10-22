@@ -41,6 +41,10 @@ namespace Plex.Frontend.Stories
                         if (text == "upgrades")
                             position++;
                         break;
+                    case 3:
+                        if (text == "echo")
+                            position++;
+                        break;
                 }
             };
             TerminalBackend.CommandFinished += commandListener;
@@ -110,10 +114,103 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
 
+            Console.WriteLine("Your ability to obey orders is clearly demonstrated well.");
+            Thread.Sleep(4000);
+            Console.WriteLine("But, you are not a computer like me. I obey. You should control.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Unfortunately, your ability to control has not yet been demonstrated.");
+            Thread.Sleep(4000);
+            Console.WriteLine("To continue with your use of the Peacenet you must first learn about Command-Line Arguments.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Command-Line Arguments are little pieces of data you can give programs and commands to make the computer do different things.");
+            Thread.Sleep(4000);
+            Console.WriteLine("For example, an 'addcash' command would ask for a 'cash' argument specifying the amount of money you would like to receive.");
+            Thread.Sleep(4000);
+            Console.WriteLine("The command can then use that value and give you that amount of money.");
+            Thread.Sleep(4000);
+            Console.WriteLine("The syntax for that command would be 'addcash --cash 500'. Note the spaces between the argument name and its value, and between the command name and arguments. You cannot have a space within an argument's value.");
+            Thread.Sleep(4000);
+            Console.WriteLine("If, for some reason, you desire to have a space or other special symbol within the value of an argument, you must surround the argument's value with double-quotes (--cash \"500 dollars\").");
+            Thread.Sleep(4000);
+            Console.WriteLine("A command may also ask for an 'id' argument. In this case, the argument name may be omitted. ('addcash 500' and 'addcash --id 500' are the exact same command.)");
+            Thread.Sleep(4000);
+            Console.WriteLine("Why not make me say something arbitrary? Use the 'echo' command, specifying an 'id' argument containing what you want me to say.");
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+            while (position == 3)
+                Thread.Sleep(10);
+            Thread.Sleep(1000);
+            TerminalBackend.InStory = true;
+            TerminalBackend.PrefixEnabled = false;
+            Console.WriteLine("Your will to control is now known.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Now that you know the basics of your Peacegate terminal, it is time to enable the Peacegate Desktop, and in turn, leave my sandbox.");
+            Thread.Sleep(4000);
+            Console.WriteLine("Use the skills you have acquired to buy the 'peacegate_desktop_enabler' upgrade.");
+            Thread.Sleep(4000);
+            Console.WriteLine("(Tip of advice: Your current objective is displayed at the bottom left of the screen.)");
+            //Holy fuck this gets easier.
+            TerminalBackend.InStory = false;
+            TerminalBackend.PrefixEnabled = true;
+            TerminalBackend.PrintPrompt();
+            Story.PushObjective("Buy the Peacegate Desktop Enabler.", "You are capable of both obeying and controlling. It is now time to break yourself free of the tutorial sandbox.",
+                () =>
+                {
+                    return Upgrades.UpgradeInstalled("peacegate_desktop_enabler");
+                },
+                () =>
+                {
+                    TerminalBackend.PrefixEnabled = false;
+                    TerminalBackend.InStory = true;
+                    Console.WriteLine("It seems the upgrade has been installed.");
+                    Thread.Sleep(4000);
+                    Console.WriteLine("Before you can use it though, you must enable it.");
+                    TerminalBackend.InStory = false;
+                    TerminalBackend.PrefixEnabled = true;
+                    TerminalBackend.PrintPrompt();
+                    Story.PushObjective("Enable the upgrade", "How ironic that an upgrade that enables full unrestricted use of your system must first be enabled before use. Use your Terminal to load the upgrade.", () =>
+                    {
+                        return Upgrades.IsLoaded("peacegate_desktop_enabler");
+                    }, () =>
+                    {
+                        TerminalBackend.InStory = true;
+                        TerminalBackend.PrefixEnabled = false;
+                        Thread.Sleep(4000);
+                        Console.WriteLine("The upgrade's been loaded, I see.");
+                        Thread.Sleep(4000);
+                        Console.WriteLine("Now, invoke its one command - 'enable_desktop'.");
+                        TerminalBackend.InStory = false;
+                        TerminalBackend.PrefixEnabled = true;
+                        TerminalBackend.PrintPrompt();
+                        Story.PushObjective("Enable the system.", "You've enabled the upgrade. Now it is time to use it.", () =>
+                        {
+                            return !UIManagerTools.InTextMode;
+                        }, () =>
+                        {
+                            TerminalBackend.CommandFinished -= commandListener;
+                            TerminalBackend.InStory = true;
+                            TerminalBackend.PrefixEnabled = false;
+                            Console.WriteLine("You've done well. Now, go. Explore the Peacenet.");
+                            TerminalBackend.InStory = false;
+                            TerminalBackend.PrefixEnabled = true;
+                            TerminalBackend.PrintPrompt();
+                            Story.Context.MarkComplete();
+                        });
+                    });
+                });
+        }
+
+        [ShiftoriumUpgrade("Peacegate Desktop Enabler", 0, "A single command - enable_desktop - that installs necessary system files and enables the Peacegate Desktop.", "", "System", true)]
+        [Command("enable_desktop")]
+        public static void PeacegateDesktopEnabler()
+        {
+            UIManagerTools.LeaveTextMode();
         }
 
         public static PlexSkin LoadedSkin
         {
+            
             get
             {
                 return (PlexSkin)SkinEngine.LoadedSkin;

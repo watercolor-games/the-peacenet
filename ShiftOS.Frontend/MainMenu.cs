@@ -39,6 +39,9 @@ namespace Plex.Frontend
 
         private TextControl _tcMain = new TextControl();
 
+        //Watercolor Animator button
+        private Button _animate = new Button();
+
 
         public MainMenu()
         {
@@ -49,6 +52,7 @@ namespace Plex.Frontend
             AddControl(_btnSinglePlayer);
             AddControl(_btnMultiplayer);
             AddControl(_btnOptions);
+            AddControl(_animate);
 
             AddControl(_tcMain);
             _watercolorgames.Image = Properties.Resources.Watercolor_Full.ToTexture2D(UIManager.GraphicsDevice);
@@ -203,6 +207,7 @@ namespace Plex.Frontend
             _btnSinglePlayer.Visible = buttonsVisible;
             _btnMultiplayer.Visible = buttonsVisible;
             _btnOptions.Visible = buttonsVisible;
+            _animate.Visible = buttonsVisible;
             if (buttonsVisible)
             {
                 //Set button text
@@ -222,6 +227,10 @@ namespace Plex.Frontend
                 //options below MP
                 _btnOptions.X = (Width - _btnOptions.Width) / 2;
                 _btnOptions.Y = _btnMultiplayer.Y + _btnMultiplayer.Height + 5;
+
+                _animate.Text = "Watercolor Animator";
+                _animate.X = 15;
+                _animate.Y = (Height - _animate.Height) - 15;
 
             }
 

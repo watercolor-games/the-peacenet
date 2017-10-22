@@ -456,5 +456,24 @@ namespace Plex.Server
             }
 
         }
+
+        [ServerMessageHandler("sp_completestory")]
+        [SessionRequired]
+        public static void CompleteStory(string session_id, string content, string ip, int port)
+        {
+            var session = GrabAccount(session_id);
+            var save = Program.GetSaveFromPrl(session.SaveID);
+            if(save != null)
+            {
+                var sys = save.SystemDescriptor;
+                if (sys.StoriesExperienced == null)
+                    sys.StoriesExperienced = new List<string>();
+                if (!sys.StoriesExperienced.Contains(content))
+                {
+                    sys.StoriesExperienced.Add(content);
+                    Program.SaveWorld();
+                }
+            }
+        }
     }
 }
