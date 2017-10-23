@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandParser.cs" />
+    <Compile Include="DebugBinaryStreams.cs" />
     <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="Hacking\Loot.cs" />
     <Compile Include="Hacking\Port.cs" />

@@ -770,20 +770,19 @@ Now generating defenses...
                     {
                         var stream = client.GetStream();
                         var reader = new BinaryReader(stream);
-                        var writer = new BinaryWriter(stream);
+                        var writer = new DebugBinaryWriter(stream);
                         
                         while (client.Connected)
                         {
-                            Thread.Sleep(6);
+                            
                             var _messagetype = reader.ReadInt32();
-                            Thread.Sleep(6);
+                            
                             string session_id = reader.ReadString();
                             ServerManager.HandleTcpMessage(new PlexServerHeader
                             {
                                 Message = (byte)_messagetype,
                                 SessionID = session_id
                             }, reader, writer);
-                            Thread.Sleep(6);
                         }
                         if (IsMultiplayerServer)
                             Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");

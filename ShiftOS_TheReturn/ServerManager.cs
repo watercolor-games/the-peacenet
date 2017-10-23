@@ -56,9 +56,9 @@ namespace Plex.Engine
             {
                 while (true)
                 {
-                    while (_actionQueue.Count == 0)
-                        Thread.Sleep(1);
-                    _actionQueue.Dequeue()?.Invoke();
+                    while (_actionQueue.Count > 0)
+                        _actionQueue.Dequeue()?.Invoke();
+                    Thread.Sleep(1);
                 }
             });
             _thread.Start();
@@ -109,9 +109,9 @@ namespace Plex.Engine
             _tcpWriter.Write((int)message);
             _tcpWriter.Write(sessionKey);
             await Task.Run(() => contentWriter?.Invoke(_tcpWriter));
-            Thread.Sleep(6);
+            
             byte returncode = (byte)_tcpReader.ReadInt32();
-            Thread.Sleep(6);
+            
             string _returnsessionid = _tcpReader.ReadString();
             return new PlexServerHeader
             {

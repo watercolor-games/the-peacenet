@@ -48,6 +48,7 @@ namespace Plex.Server
             writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(session.Username);
+            
         }
 
         private static List<ServerAccount> getAccts()
@@ -101,7 +102,7 @@ namespace Plex.Server
                         PasswordHash = "",
                         PasswordSalt = null,
                         SaveID = "alfa.system",
-                        SessionID = "singleplayer",
+                        SessionID = "singleplayers",
                         Username = "user"
                     });
                     setSessions(accts);
@@ -381,7 +382,7 @@ namespace Plex.Server
                         PasswordHash = "",
                         PasswordSalt = null,
                         SaveID = "alfa.system",
-                        SessionID = "singleplayer",
+                        SessionID = "singleplayers",
                         Username = "user"
                     });
                     setSessions(accts);
