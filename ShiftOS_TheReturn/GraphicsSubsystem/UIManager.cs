@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -188,25 +189,33 @@ namespace Plex.Frontend.GraphicsSubsystem
                 }
                 if (ctrl.RequiresPaint)
                 {
-                    QA.Assert(_target == null, false, "Null render target in UI subsystem");
-                    graphics.SetRenderTarget(_target);
-                    batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                    SamplerState.LinearWrap, GraphicsDevice.DepthStencilState,
-                                    RasterizerState.CullNone);
-                    graphics.Clear(Color.Transparent);
-                    var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
-                    ctrl.Paint(gfxContext, _target);
-                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                    try
+                    {
+                        QA.Assert(_target == null, false, "Null render target in UI subsystem");
+                        QA.Assert(_target.IsDisposed, false, "Attempting to paint disposed render target");
+                        graphics.SetRenderTarget(_target);
+                        batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                        SamplerState.LinearWrap, GraphicsDevice.DepthStencilState,
+                                        RasterizerState.CullNone);
+                        graphics.Clear(Color.Transparent);
+                        var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
+                        ctrl.Paint(gfxContext, _target);
+                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
 
 
-                    batch.End();
-                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
-                    graphics.SetRenderTarget(_game.GameRenderTarget);
-                    QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                    QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
-                    targets[hc] = _target;
+                        batch.End();
+                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                        graphics.SetRenderTarget(_game.GameRenderTarget);
+                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
+                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                        targets[hc] = _target;
+                    }
+                    catch (AccessViolationException)
+                    {
+
+                    }
                 }
             }
         }
@@ -283,7 +292,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void DrawHUDToTargets(GraphicsDevice device, SpriteBatch batch)
         {
-            DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
+                DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
         }
 
 
@@ -508,17 +517,14 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ConnectToServer(string host, int port)
         {
-            _game._mpClient = new UdpClient();
-            var he = Dns.GetHostEntry(host);
-            var ip = he.AddressList.Last();
-            bool isMP = false;
-            NetworkClient.Connect(ip, port);
-            PingServer(ip, port);
-            NetworkClient.Send(Encoding.UTF8.GetBytes("ismp"), Encoding.UTF8.GetBytes("ismp").Length);
-            var ep = new IPEndPoint(ip, port);
-            var dgram = NetworkClient.Receive(ref ep);
-            isMP = (dgram[0] == 1) ? true : false;
-            _game.IPAddress = ip;
+            ServerManager.ConnectToServer(host, port);
+            bool isMP = true;
+            BinaryReader reader = null;
+            if(ServerManager.SendMessage(ServerMessageType.U_CONF, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            {
+                isMP = reader.ReadBoolean();
+            }
+
             _game.Port = port;
             //Start session management for this server...
             SaveSystem.IsSandbox = isMP; //If we're on a multiplayer server then disable the story system.

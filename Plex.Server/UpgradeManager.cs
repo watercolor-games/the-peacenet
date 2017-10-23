@@ -17,7 +17,7 @@ namespace Plex.Server
         {
             string upgid = reader.ReadString();
             byte result = IsUpgradeInstalled(upgid, session_id) ? (byte)1 : (byte)0;
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(result);
         }
@@ -59,7 +59,7 @@ namespace Plex.Server
                 }
             }
 
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(result);
         }
@@ -93,9 +93,9 @@ namespace Plex.Server
                 }
             }
 
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
-            writer.Write((byte)result);
+            writer.Write((int)result);
         }
 
         [ServerCommand("upgload", "Load the specified upgrade.")]
@@ -157,7 +157,7 @@ namespace Plex.Server
                 save.SystemDescriptor.Upgrades[id] = value;
                 Program.SaveWorld();
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
         }
 
@@ -178,7 +178,7 @@ namespace Plex.Server
                 }
                 result = save.SystemDescriptor.Upgrades.Where(x => x.Value == true).Count();
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(result);
         }
@@ -190,7 +190,7 @@ namespace Plex.Server
         {
             string upgid = reader.ReadString();
             byte result = IsUpgradeLoaded(upgid, session_id) ? (byte)0x01 : (byte)0x00;
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(result);
         }

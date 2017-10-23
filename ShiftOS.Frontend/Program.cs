@@ -155,7 +155,15 @@ namespace Plex.Frontend
 
         public Skin ReadSkin(string pfsPath)
         {
-            return JsonConvert.DeserializeObject<PlexSkin>(ReadAllText(pfsPath));
+            try
+            {
+                return JsonConvert.DeserializeObject<PlexSkin>(ReadAllText(pfsPath));
+            }
+            catch
+            {
+                Engine.Infobox.Show("Peacegate Initializer", "An error occurred trying to load the system UI skin. The skin has been reset.");
+                return GetDefaultSkin();
+            }
         }
     }
 

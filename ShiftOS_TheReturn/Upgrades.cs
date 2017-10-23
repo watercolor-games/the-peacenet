@@ -232,8 +232,9 @@ namespace Plex.Engine
             upgDb = new List<ShiftoriumUpgrade>();
             serverUpgrades = null;
             BinaryReader reader = null;
-            ServerManager.SendMessage(ServerMessageType.WORLD, null, out reader);
-            upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString()));
+            ServerManager.SendMessage(ServerMessageType.UPG_GETUPGRADES, null, out reader);
+            serverUpgrades = (JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString()));
+            upgDb.AddRange(serverUpgrades);
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
             foreach (var type in ReflectMan.Types)
             {

@@ -130,7 +130,7 @@ namespace Plex.Server
                 if (UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                     commands.Add(cmd.CommandInfo.name, cmd.CommandInfo.description);
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(commands.Count);
             foreach(var cmd in commands)
@@ -156,7 +156,7 @@ namespace Plex.Server
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
             string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
             SetShellOverride("");

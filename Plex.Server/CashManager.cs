@@ -105,7 +105,7 @@ namespace Plex.Server
                     }
                 }
             }
-            writer.Write((byte)result);
+            writer.Write((int)result);
             writer.Write(session);
         }
     }

@@ -66,7 +66,7 @@ namespace Plex.Server
             }
             if(Mounts.FirstOrDefault(x=>x.SessionID == session_id && x.DriveNumber == volume.DriveNumber) == null)
                 MountFS(volume, session_id);
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
         }
 
@@ -97,7 +97,7 @@ namespace Plex.Server
                     result = mount.DirectoryExists(pdata.Path);
             }
             byte real = result ? (byte)1 : (byte)0;
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
             writer.Write(real);
         }
@@ -110,7 +110,7 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if(mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
                 return;
@@ -118,18 +118,18 @@ namespace Plex.Server
             if (mount.FileExists(pdata.Path))
             {
                 mount.DeleteFile(pdata.Path);
-                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write((int)ServerResponseType.REQ_SUCCESS);
                 writer.Write(session);
                 return;
             }
             else if (mount.DirectoryExists(pdata.Path))
             {
                 mount.DeleteDirectory(pdata.Path);
-                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                writer.Write((int)ServerResponseType.REQ_SUCCESS);
                 writer.Write(session);
                 return;
             }
-            writer.Write((byte)ServerResponseType.REQ_ERROR);
+            writer.Write((int)ServerResponseType.REQ_ERROR);
             writer.Write(session);
             writer.Write("File or directory does not exist.");
         }
@@ -144,7 +144,7 @@ namespace Plex.Server
             if (result)
                 result = mount.FileExists(pdata.Path);
             byte real = result ? (byte)1 : (byte)0;
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
             writer.Write(real);
         }
@@ -157,7 +157,7 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if(mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
 
@@ -165,12 +165,12 @@ namespace Plex.Server
             }
             if (!mount.DirectoryExists(pdata.Path))
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Directory not found.");
                 return;
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
 
             var dirs = mount.GetFiles(pdata.Path);
@@ -189,20 +189,20 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
                 return;
             }
             if (mount.DirectoryExists(pdata.Path))
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Directory already exists.");
                 return;
             }
             mount.CreateDirectory(pdata.Path);
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
         }
 
@@ -214,13 +214,13 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
                 return;
             }
             var finf = mount.GetFileInfo(pdata.Path);
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
             writer.Write(JsonConvert.SerializeObject(finf));
 
@@ -234,21 +234,21 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
                 return;
             }
             if(!mount.FileExists(pdata.Path))
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("File not found.");
                 return;
 
             }
             byte[] data = mount.ReadAllBytes(pdata.Path);
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
             writer.Write(data.Length);
             writer.Write(data);
@@ -277,7 +277,7 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
 
@@ -285,12 +285,12 @@ namespace Plex.Server
             }
             if (!mount.DirectoryExists(pdata.Path))
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Directory not found.");
                 return;
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
 
             var dirs = mount.GetDirectories(pdata.Path);
@@ -309,20 +309,22 @@ namespace Plex.Server
             var mount = GetDriveMount(pdata.DriveNumber, session);
             if (mount == null)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write("Mountpoint not found.");
                 return;
             }
             try
             {
-                mount.WriteAllBytes(pdata.Path, Convert.FromBase64String(pdata.AdditionalData));
-                writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+                int len = reader.ReadInt32();
+                byte[] data = reader.ReadBytes(len);
+                mount.WriteAllBytes(pdata.Path, data);
+                writer.Write((int)ServerResponseType.REQ_SUCCESS);
                 writer.Write(session);
             }
             catch (Exception ex)
             {
-                writer.Write((byte)ServerResponseType.REQ_ERROR);
+                writer.Write((int)ServerResponseType.REQ_ERROR);
                 writer.Write(session);
                 writer.Write(ex.Message);
             }
@@ -333,7 +335,7 @@ namespace Plex.Server
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var hackable = Program.GetSaveFromPrl(sessiondata.SaveID);
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session);
             writer.Write(hackable.Filesystems.Count);
             foreach(var fs in hackable.Filesystems)

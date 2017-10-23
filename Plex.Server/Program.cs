@@ -101,6 +101,14 @@ namespace Plex.Server
         internal static bool IsMultiplayerServer = true;
         public static List<string> BannedIPs = new List<string>();
 
+        [ServerMessageHandler(ServerMessageType.U_CONF)]
+        public static void UConf(string session_id, BinaryReader reader, BinaryWriter writer)
+        {
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
+            writer.Write(session_id);
+            writer.Write(IsMultiplayerServer);
+        }
+
         public static List<Rank> Ranks { get; set; }
 
         public static World GameWorld = null;
@@ -749,6 +757,7 @@ Now generating defenses...
         {
             _tcpListener = new TcpListener(IPAddress.Any, _port);
             _tcpListener.Start();
+            ServerStarted?.Invoke();
             while (true)
             {
                 var client = _tcpListener.AcceptTcpClient();
@@ -762,21 +771,19 @@ Now generating defenses...
                         var stream = client.GetStream();
                         var reader = new BinaryReader(stream);
                         var writer = new BinaryWriter(stream);
+                        
                         while (client.Connected)
                         {
-                            byte _messagetype = reader.ReadByte();
+                            Thread.Sleep(6);
+                            var _messagetype = reader.ReadInt32();
+                            Thread.Sleep(6);
                             string session_id = reader.ReadString();
-                            int _contentLength = reader.ReadInt32();
-                            byte[] content = null;
-                            if(_contentLength > 0)
-                            {
-                                content = reader.ReadBytes(_contentLength);
-                            }
                             ServerManager.HandleTcpMessage(new PlexServerHeader
                             {
-                                Message = _messagetype,
+                                Message = (byte)_messagetype,
                                 SessionID = session_id
                             }, reader, writer);
+                            Thread.Sleep(6);
                         }
                         if (IsMultiplayerServer)
                             Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
@@ -879,14 +886,18 @@ Now generating defenses...
 
                     if (nosession)
                     {
-                        tcpStreamWriter.Write((byte)ServerResponseType.REQ_LOGINREQUIRED);
+                        tcpStreamWriter.Write((int)ServerResponseType.REQ_LOGINREQUIRED);
                         tcpStreamWriter.Write("");
-                        tcpStreamWriter.Write(0);
                         return;
                     }
                 }
                 method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
                 return;
+            }
+            else
+            {
+                tcpStreamWriter.Write((int)ServerResponseType.REQ_ERROR);
+                tcpStreamWriter.Write(header.SessionID);
             }
         }
 

@@ -43,6 +43,8 @@ namespace Plex.Engine
         private static BinaryWriter _tcpWriter = null;
         private static BinaryReader _tcpReader = null;
         private static Stream _tcpStream = null;
+        private static Queue<Action> _actionQueue = new Queue<Action>();
+        private static Thread _thread = null;
 
         public static void ConnectToServer(string hostname, int port)
         {
@@ -50,6 +52,16 @@ namespace Plex.Engine
             _tcpStream = _tcpClient.GetStream();
             _tcpReader = new BinaryReader(_tcpStream);
             _tcpWriter = new BinaryWriter(_tcpStream);
+            _thread = new Thread(() =>
+            {
+                while (true)
+                {
+                    while (_actionQueue.Count == 0)
+                        Thread.Sleep(1);
+                    _actionQueue.Dequeue()?.Invoke();
+                }
+            });
+            _thread.Start();
         }
 
         [ClientMessageHandler("server_error")]
@@ -87,22 +99,48 @@ namespace Plex.Engine
             }
         }
 
-        public static PlexServerHeader SendMessage(ServerMessageType message, Action<BinaryWriter> contentWriter, out BinaryReader reader)
+        private static async Task<PlexServerHeader> _sendMessageInternal(ServerMessageType message, Action<BinaryWriter> contentWriter)
         {
             string sessionKey = "";
             if (SessionInfo != null)
                 sessionKey = SessionInfo.SessionID;
-            _tcpWriter.Write((byte)message);
+            if (sessionKey == null)
+                sessionKey = "";
+            _tcpWriter.Write((int)message);
             _tcpWriter.Write(sessionKey);
-            contentWriter?.Invoke(_tcpWriter);
-            byte returncode = _tcpReader.ReadByte();
+            await Task.Run(() => contentWriter?.Invoke(_tcpWriter));
+            Thread.Sleep(6);
+            byte returncode = (byte)_tcpReader.ReadInt32();
+            Thread.Sleep(6);
             string _returnsessionid = _tcpReader.ReadString();
-            reader = _tcpReader;
             return new PlexServerHeader
             {
                 Message = returncode,
                 SessionID = _returnsessionid
             };
+
+        }
+
+        public static PlexServerHeader SendMessage(ServerMessageType message, Action<BinaryWriter> contentWriter, out BinaryReader reader)
+        {
+            PlexServerHeader header = null;
+            _actionQueue.Enqueue(() =>
+            {
+                var task = _sendMessageInternal(message, contentWriter);
+                task.Wait();
+                header = task.Result;
+            });
+            while (header == null)
+            {
+                Thread.Sleep(1);
+            }
+            if(header.Message == (byte)ServerResponseType.REQ_LOGINREQUIRED)
+            {
+                ServerLoginHandler.LoginRequired();
+                header.Message = 0x00;
+            }
+            reader = _tcpReader;
+            return header;
         }
 
         internal static void StartSessionManager(string host, int port)

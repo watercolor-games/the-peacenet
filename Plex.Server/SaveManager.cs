@@ -104,7 +104,7 @@ namespace Plex.Server
                 if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
                     throw new ShiftoriumConflictException(item.ID);
             }
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(JsonConvert.SerializeObject(upgDb));
         }

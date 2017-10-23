@@ -60,7 +60,7 @@ namespace Plex.Server
             }
             world.Networks.Add(rrnet);
 
-            writer.Write((byte)ServerResponseType.REQ_SUCCESS);
+            writer.Write((int)ServerResponseType.REQ_SUCCESS);
             writer.Write(session_id);
             writer.Write(JsonConvert.SerializeObject(world));
         }
