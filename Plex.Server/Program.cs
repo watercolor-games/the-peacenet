@@ -795,7 +795,7 @@ Now generating defenses...
                                     }, bwriter);
 
                                 }
-                                writer.Write(r);
+                                writer.Write((int)r);
                                 writer.Flush();
                                 writer.Write(session_id);
                                 writer.Flush();
@@ -915,7 +915,13 @@ Now generating defenses...
                 {
                     using (var reader = new BinaryReader(mstr, Encoding.UTF8, true))
                     {
-                        return (byte)method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
+                        var result = method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
+                        if(result == null)
+                        {
+                            System.Diagnostics.Debug.Print($"[server] [WARN] {method.Name} returns void. Byte required.");
+                            return (byte)ServerResponseType.REQ_ERROR;
+                        }
+                        return (byte)result;
                     }
                 }
             }

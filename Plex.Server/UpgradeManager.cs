@@ -13,19 +13,18 @@ namespace Plex.Server
     {
         [SessionRequired]
         [ServerMessageHandler( Objects.ServerMessageType.UPG_ISINSTALLED)]
-        public static void GetInstalled(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetInstalled(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string upgid = reader.ReadString();
-            byte result = IsUpgradeInstalled(upgid, session_id) ? (byte)1 : (byte)0;
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
+            bool result = IsUpgradeInstalled(upgid, session_id);
             writer.Write(result);
+            return 0x00;
         }
 
 
         [SessionRequired]
         [ServerMessageHandler( ServerMessageType.UPG_LOAD)]
-        public static void LoadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte LoadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             byte result = (byte) UpgradeResult.UNCAUGHT_ERROR;
             string content = reader.ReadString();
@@ -59,14 +58,13 @@ namespace Plex.Server
                 }
             }
 
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
-            writer.Write(result);
+            writer.Write((int)result);
+            return 0x00;
         }
 
         [SessionRequired]
         [ServerMessageHandler(ServerMessageType.UPG_UNLOAD)]
-        public static void UnloadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte UnloadUpgrade(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var result = UpgradeResult.UNCAUGHT_ERROR;
             string content = reader.ReadString();
@@ -93,9 +91,8 @@ namespace Plex.Server
                 }
             }
 
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write((int)result);
+            return 0x00;
         }
 
         [ServerCommand("upgload", "Load the specified upgrade.")]
@@ -143,7 +140,7 @@ namespace Plex.Server
 
         [SessionRequired]
         [ServerMessageHandler( ServerMessageType.UPG_SETINSTALLED)]
-        public static void SetUpgradeValue(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte SetUpgradeValue(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string content = reader.ReadString();
             var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
@@ -157,14 +154,13 @@ namespace Plex.Server
                 save.SystemDescriptor.Upgrades[id] = value;
                 Program.SaveWorld();
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
+            return 0x00;
         }
 
 
         [SessionRequired]
         [ServerMessageHandler(ServerMessageType.UPG_GETCOUNT)]
-        public static void GetCount(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetCount(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = SessionManager.GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
@@ -178,21 +174,19 @@ namespace Plex.Server
                 }
                 result = save.SystemDescriptor.Upgrades.Where(x => x.Value == true).Count();
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(result);
+            return 0x00;
         }
 
 
         [SessionRequired]
         [ServerMessageHandler( ServerMessageType.UPG_ISLOADED)]
-        public static void GetLoaded(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetLoaded(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string upgid = reader.ReadString();
-            byte result = IsUpgradeLoaded(upgid, session_id) ? (byte)0x01 : (byte)0x00;
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
+            bool result = IsUpgradeLoaded(upgid, session_id);
             writer.Write(result);
+            return 0x00;
         }
 
         internal static bool IsUpgradeInstalled(string upg, string session_id)

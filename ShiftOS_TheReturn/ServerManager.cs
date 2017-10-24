@@ -121,7 +121,7 @@ namespace Plex.Engine
             
             string _returnsessionid = _tcpReader.ReadString();
             byte[] retdgram = new byte[] { };
-            int len = _tcpReader.ReadInt32();
+            int len = _tcpReader.ReadInt32(); //This hangs.
             if (len > 0)
                 retdgram = _tcpReader.ReadBytes(len);
             return new PlexServerHeader

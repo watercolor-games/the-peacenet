@@ -492,7 +492,7 @@ namespace Plex.Engine
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        return reader.ReadByte() == 1;
+                        return reader.ReadBoolean();
                     }
                 }
                 return false;
@@ -518,7 +518,7 @@ namespace Plex.Engine
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        return reader.ReadByte() == 1;
+                        return reader.ReadBoolean();
                     }
                 }
                 return false;
@@ -535,7 +535,7 @@ namespace Plex.Engine
                 {
                     using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        byte r = reader.ReadByte();
+                        byte r = (byte)reader.ReadInt32();
                         HandleUpgradeResult((UpgradeResult)r, upgradeid);
 
                     }
@@ -575,7 +575,7 @@ namespace Plex.Engine
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        byte r = reader.ReadByte();
+                        byte r = (byte)reader.ReadInt32();
                         HandleUpgradeResult((UpgradeResult)r, upgradeid);
 
                     }

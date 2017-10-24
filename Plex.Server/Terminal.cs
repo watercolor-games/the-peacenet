@@ -122,7 +122,7 @@ namespace Plex.Server
 
         [ServerMessageHandler( ServerMessageType.TRM_GETCMDS)]
         [SessionRequired]
-        public static void GetHelp(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetHelp(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             Dictionary<string, string> commands = new Dictionary<string, string>();
             foreach (var cmd in Terminal.Commands)
@@ -130,20 +130,19 @@ namespace Plex.Server
                 if (UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                     commands.Add(cmd.CommandInfo.name, cmd.CommandInfo.description);
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(commands.Count);
             foreach(var cmd in commands)
             {
                 writer.Write(cmd.Key);
                 writer.Write(cmd.Value);
             }
+            return 0x00;
         }
 
 
         [ServerMessageHandler( ServerMessageType.TRM_INVOKE)]
         [SessionRequired]
-        public static void InvokeCMD(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte InvokeCMD(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string datajson = reader.ReadString();
             SessionInfo = new RequestInfo
@@ -156,12 +155,11 @@ namespace Plex.Server
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
             string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
             SetShellOverride("");
             Console.SetOut(outstream);
             writer.Write("\u0013\u0014");
+            return 0x00;
         }
     }
 

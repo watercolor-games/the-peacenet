@@ -57,7 +57,7 @@ namespace Plex.Server
 
         [ServerMessageHandler( ServerMessageType.CASH_DEDUCT )]
         [SessionRequired]
-        public static void CashDeduct(string session, byte[] content, BinaryReader reader, BinaryWriter writer)
+        public static byte CashDeduct(string session, byte[] content, BinaryReader reader, BinaryWriter writer)
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var save = Program.GetSaveFromPrl(sessiondata.SaveID);
@@ -105,8 +105,7 @@ namespace Plex.Server
                     }
                 }
             }
-            writer.Write((int)result);
-            writer.Write(session);
+            return (byte)result;
         }
     }
 }

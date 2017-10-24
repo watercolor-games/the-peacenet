@@ -13,7 +13,7 @@ namespace Plex.Server
     {
         [SessionRequired]
         [ServerMessageHandler( ServerMessageType.UPG_GETUPGRADES)]
-        public static void GetDB(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetDB(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var upgDb = new List<ShiftoriumUpgrade>();
             upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(Properties.Resources.upgrades));
@@ -104,9 +104,8 @@ namespace Plex.Server
                 if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
                     throw new ShiftoriumConflictException(item.ID);
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(JsonConvert.SerializeObject(upgDb));
+            return 0x00;
         }
     }
 }

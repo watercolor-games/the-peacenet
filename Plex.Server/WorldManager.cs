@@ -13,7 +13,7 @@ namespace Plex.Server
     {
         [SessionRequired]
         [ServerMessageHandler( ServerMessageType.WORLD)]
-        public static void GetWorld(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetWorld(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var world = new Plexnet();
             world.Networks = new List<Network>();
@@ -60,9 +60,8 @@ namespace Plex.Server
             }
             world.Networks.Add(rrnet);
 
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(JsonConvert.SerializeObject(world));
+            return 0x00;
         }
     }
 }
