@@ -102,11 +102,10 @@ namespace Plex.Server
         public static List<string> BannedIPs = new List<string>();
 
         [ServerMessageHandler(ServerMessageType.U_CONF)]
-        public static void UConf(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte UConf(string session_id, BinaryReader reader, BinaryWriter writer)
         {
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(IsMultiplayerServer);
+            return 0x00;
         }
 
         public static List<Rank> Ranks { get; set; }
@@ -769,8 +768,8 @@ Now generating defenses...
                     try
                     {
                         var stream = client.GetStream();
-                        var reader = new BinaryReader(stream);
-                        var writer = new DebugBinaryWriter(stream);
+                        var reader = new BinaryReader(stream, Encoding.UTF8, true);
+                        var writer = new DebugBinaryWriter(stream, Encoding.UTF8, true);
                         
                         while (client.Connected)
                         {
@@ -778,11 +777,35 @@ Now generating defenses...
                             var _messagetype = reader.ReadInt32();
                             
                             string session_id = reader.ReadString();
-                            ServerManager.HandleTcpMessage(new PlexServerHeader
+                            byte[] content = new byte[] { };
+                            int contentLength = reader.ReadInt32();
+                            if (contentLength > 0)
+                                content = reader.ReadBytes(contentLength);
+                            
+                            using (var mstr = new MemoryStream())
                             {
-                                Message = (byte)_messagetype,
-                                SessionID = session_id
-                            }, reader, writer);
+                                byte r = 0x00;
+                                using (var bwriter = new BinaryWriter(mstr, Encoding.UTF8, true))
+                                {
+                                    r = ServerManager.HandleTcpMessage(new PlexServerHeader
+                                    {
+                                        Message = (byte)_messagetype,
+                                        SessionID = session_id,
+                                        Content = content
+                                    }, bwriter);
+
+                                }
+                                writer.Write(r);
+                                writer.Flush();
+                                writer.Write(session_id);
+                                writer.Flush();
+                                byte[] bc = mstr.ToArray();
+                                writer.Write((int)bc.Length);
+                                writer.Flush();
+                                if (bc.Length > 0)
+                                    writer.Write(bc);
+                                writer.Flush();
+                            }
                         }
                         if (IsMultiplayerServer)
                             Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
@@ -868,7 +891,7 @@ Now generating defenses...
 
 
 
-        internal static void HandleTcpMessage(PlexServerHeader header, BinaryReader reader, BinaryWriter tcpStreamWriter)
+        internal static byte HandleTcpMessage(PlexServerHeader header, BinaryWriter tcpStreamWriter)
         {
             if (_handlers.ContainsKey((ServerMessageType)header.Message))
             {
@@ -885,18 +908,20 @@ Now generating defenses...
 
                     if (nosession)
                     {
-                        tcpStreamWriter.Write((int)ServerResponseType.REQ_LOGINREQUIRED);
-                        tcpStreamWriter.Write("");
-                        return;
+                        return (byte)ServerResponseType.REQ_LOGINREQUIRED;
                     }
                 }
-                method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
-                return;
+                using (var mstr = new MemoryStream(header.Content))
+                {
+                    using (var reader = new BinaryReader(mstr, Encoding.UTF8, true))
+                    {
+                        return (byte)method.Invoke(null, new object[] { header.SessionID, reader, tcpStreamWriter });
+                    }
+                }
             }
             else
             {
-                tcpStreamWriter.Write((int)ServerResponseType.REQ_ERROR);
-                tcpStreamWriter.Write(header.SessionID);
+                return (byte)ServerResponseType.REQ_ERROR;
             }
         }
 

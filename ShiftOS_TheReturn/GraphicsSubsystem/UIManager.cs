@@ -519,10 +519,14 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             ServerManager.ConnectToServer(host, port);
             bool isMP = true;
-            BinaryReader reader = null;
-            if(ServerManager.SendMessage(ServerMessageType.U_CONF, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            
+            using(var sstr = new ServerStream(ServerMessageType.U_CONF))
             {
-                isMP = reader.ReadBoolean();
+                var result = sstr.Send();
+                using(var reader= new BinaryReader(ServerManager.GetResponseStream(result)))
+                {
+                    isMP = reader.ReadBoolean();
+                }
             }
 
             _game.Port = port;

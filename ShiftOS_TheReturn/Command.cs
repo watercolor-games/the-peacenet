@@ -62,13 +62,19 @@ namespace Plex.Engine{    /// <summary>    /// Denotes that the following ter
         public static bool Commands()
         {
             Dictionary<string, string> cmds = new Dictionary<string, string>();
-            BinaryReader reader = null;
-            if (ServerManager.SendMessage(ServerMessageType.TRM_GETCMDS, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using (var w = new ServerStream(ServerMessageType.TRM_GETCMDS))
             {
-                int count = reader.ReadInt32();
-                for(int i = 0; i < count; i++)
+                var result = w.Send();
+                if (result.Message == 0x00)
                 {
-                    cmds.Add(reader.ReadString(), reader.ReadString());
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        int count = reader.ReadInt32();
+                        for (int i = 0; i < count; i++)
+                        {
+                            cmds.Add(reader.ReadString(), reader.ReadString());
+                        }
+                    }
                 }
             }
             foreach (var n in TerminalBackend.Commands.Where(x => !(x is TerminalBackend.WinOpenCommand) && Upgrades.UpgradeInstalled(x.Dependencies) && x.CommandInfo.hide == false && x.MatchShell(TerminalBackend.RawShellOverride) == true).OrderBy(x => x.CommandInfo.name))

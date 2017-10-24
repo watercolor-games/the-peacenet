@@ -10,7 +10,7 @@ namespace Plex.Objects
 {
     public sealed class DebugBinaryWriter : BinaryWriter
     {
-        public DebugBinaryWriter(Stream str) : base(str)
+        public DebugBinaryWriter(Stream str, Encoding enc, bool keepopen) : base(str,enc,keepopen)
         {
 
         }

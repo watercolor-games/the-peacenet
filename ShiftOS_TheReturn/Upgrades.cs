@@ -119,14 +119,15 @@ namespace Plex.Engine
         {
             if(CashManager.Deduct((long)cost, "upgrademgr") == true)
             {
-                BinaryReader reader = null;
-                ServerManager.SendMessage(ServerMessageType.UPG_SETINSTALLED, (w) => {
+                using (var w = new ServerStream(ServerMessageType.UPG_SETINSTALLED))
+                {
                     w.Write(JsonConvert.SerializeObject(new
                     {
                         id = id,
                         value = true
                     }));
-                }, out reader);
+                    w.Send();
+                }
                 Installed?.Invoke();
                 return true;
             }
@@ -231,9 +232,14 @@ namespace Plex.Engine
         {
             upgDb = new List<ShiftoriumUpgrade>();
             serverUpgrades = null;
-            BinaryReader reader = null;
-            ServerManager.SendMessage(ServerMessageType.UPG_GETUPGRADES, null, out reader);
-            serverUpgrades = (JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString()));
+            using(var sstr = new ServerStream(ServerMessageType.UPG_GETUPGRADES))
+            {
+                var result = sstr.Send();
+                using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                {
+                    serverUpgrades = JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString());
+                }
+            }
             upgDb.AddRange(serverUpgrades);
             //Now we probe for ShiftoriumUpgradeAttributes for mods.
             foreach (var type in ReflectMan.Types)
@@ -387,10 +393,14 @@ namespace Plex.Engine
 
         public static int CountUpgrades()
         {
-            BinaryReader r = null;
-            if (ServerManager.SendMessage(ServerMessageType.UPG_GETCOUNT, null, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using(var sstr = new ServerStream(ServerMessageType.UPG_GETCOUNT))
             {
-                return r.ReadInt32();
+                var result = sstr.Send();
+                if(result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                        return reader.ReadInt32();
+                }
             }
             return 0;
         }
@@ -474,15 +484,19 @@ namespace Plex.Engine
                         return false;
                 return true;
             }
-            BinaryReader r = null;
-            if (ServerManager.SendMessage( ServerMessageType.UPG_ISINSTALLED, (w)=>
+            using (var w = new ServerStream(ServerMessageType.UPG_ISINSTALLED))
             {
                 w.Write(id);
-            }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                return r.ReadByte() == 1;
+                var result = w.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadByte() == 1;
+                    }
+                }
+                return false;
             }
-            return false;
         }
 
         public static bool IsLoaded(string id)
@@ -496,27 +510,36 @@ namespace Plex.Engine
                         return false;
                 return true;
             }
-            BinaryReader r = null;
-            if (ServerManager.SendMessage(ServerMessageType.UPG_ISLOADED, (w) =>
+            using (var w = new ServerStream(ServerMessageType.UPG_ISLOADED))
             {
                 w.Write(id);
-            }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                return r.ReadByte() == 1;
+                var result = w.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadByte() == 1;
+                    }
+                }
+                return false;
             }
-            return false;
         }
 
         public static void LoadUpgrade(string upgradeid)
         {
-            BinaryReader reader = null;
-            if(ServerManager.SendMessage(ServerMessageType.UPG_LOAD, (w) =>
+            using(var sstr = new ServerStream(ServerMessageType.UPG_LOAD))
             {
-                w.Write(upgradeid);
-            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                byte r = reader.ReadByte();
-                HandleUpgradeResult((UpgradeResult)r, upgradeid);
+                sstr.Write(upgradeid);
+                var result = sstr.Send();
+                if(result.Message == 0x00)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        byte r = reader.ReadByte();
+                        HandleUpgradeResult((UpgradeResult)r, upgradeid);
+
+                    }
+                }
             }
         }
 
@@ -544,14 +567,19 @@ namespace Plex.Engine
 
         public static void UnloadUpgrade(string upgradeid)
         {
-            BinaryReader reader = null;
-            if (ServerManager.SendMessage(ServerMessageType.UPG_UNLOAD, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.UPG_UNLOAD))
             {
-                w.Write(upgradeid);
-            }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                byte r = reader.ReadByte();
-                HandleUpgradeResult((UpgradeResult)r, upgradeid);
+                sstr.Write(upgradeid);
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        byte r = reader.ReadByte();
+                        HandleUpgradeResult((UpgradeResult)r, upgradeid);
+
+                    }
+                }
             }
         }
 

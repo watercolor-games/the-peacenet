@@ -54,10 +54,13 @@ namespace Plex.Frontend.Apps
             Height = 480;
             AddControl(_title);
             WorldUpdated += Network_WorldUpdated;
-            BinaryReader _reader = null;
-            ServerManager.SendMessage(ServerMessageType.WORLD, null, out _reader);
-            plexnet = JsonConvert.DeserializeObject<Objects.Plexnet>(_reader.ReadString());
-            WorldUpdated?.Invoke();
+            using (var sstr = new ServerStream(ServerMessageType.WORLD))
+            {
+                using (var reader = new BinaryReader(ServerManager.GetResponseStream(sstr.Send())))
+                {
+                    plexnet = JsonConvert.DeserializeObject<Objects.Plexnet>(reader.ReadString());
+                }
+            }
         }
 
         private void Network_WorldUpdated()

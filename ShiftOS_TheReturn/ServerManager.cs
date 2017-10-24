@@ -50,8 +50,8 @@ namespace Plex.Engine
         {
             _tcpClient = new TcpClient(hostname, port);
             _tcpStream = _tcpClient.GetStream();
-            _tcpReader = new BinaryReader(_tcpStream);
-            _tcpWriter = new BinaryWriter(_tcpStream);
+            _tcpReader = new BinaryReader(_tcpStream, Encoding.UTF8, true);
+            _tcpWriter = new DebugBinaryWriter(_tcpStream, Encoding.UTF8, true);
             _thread = new Thread(() =>
             {
                 while (true)
@@ -99,7 +99,7 @@ namespace Plex.Engine
             }
         }
 
-        private static async Task<PlexServerHeader> _sendMessageInternal(ServerMessageType message, Action<BinaryWriter> contentWriter)
+        private static async Task<PlexServerHeader> _sendMessageInternal(ServerMessageType message, byte[] dgram)
         {
             string sessionKey = "";
             if (SessionInfo != null)
@@ -108,25 +108,37 @@ namespace Plex.Engine
                 sessionKey = "";
             _tcpWriter.Write((int)message);
             _tcpWriter.Write(sessionKey);
-            await Task.Run(() => contentWriter?.Invoke(_tcpWriter));
+            await Task.Run(() =>
+            {
+                if (dgram == null)
+                    dgram = new byte[] { };
+                _tcpWriter.Write(dgram.Length);
+                if (dgram.Length > 0)
+                    _tcpWriter.Write(dgram);
+            });
             
             byte returncode = (byte)_tcpReader.ReadInt32();
             
             string _returnsessionid = _tcpReader.ReadString();
+            byte[] retdgram = new byte[] { };
+            int len = _tcpReader.ReadInt32();
+            if (len > 0)
+                retdgram = _tcpReader.ReadBytes(len);
             return new PlexServerHeader
             {
                 Message = returncode,
-                SessionID = _returnsessionid
+                SessionID = _returnsessionid,
+                Content = retdgram
             };
 
         }
 
-        public static PlexServerHeader SendMessage(ServerMessageType message, Action<BinaryWriter> contentWriter, out BinaryReader reader)
+        public static PlexServerHeader SendMessage(ServerMessageType message, byte[] dgram)
         {
             PlexServerHeader header = null;
             _actionQueue.Enqueue(() =>
             {
-                var task = _sendMessageInternal(message, contentWriter);
+                var task = _sendMessageInternal(message, dgram);
                 task.Wait();
                 header = task.Result;
             });
@@ -139,9 +151,18 @@ namespace Plex.Engine
                 ServerLoginHandler.LoginRequired();
                 header.Message = 0x00;
             }
-            reader = _tcpReader;
+            
             return header;
         }
+
+        public static MemoryStream GetResponseStream(PlexServerHeader header)
+        {
+            if (header.Content.Length == 0)
+                throw new InvalidOperationException("No body in the message, can't read.");
+            return new MemoryStream(header.Content);
+        }
+
+
 
         internal static void StartSessionManager(string host, int port)
         {
@@ -159,20 +180,25 @@ namespace Plex.Engine
                 session.SessionID = "";
             }
             SessionInfo = session;
-            BinaryReader _r = null;
-            if(SendMessage(ServerMessageType.USR_VALIDATEKEY, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.USR_VALIDATEKEY))
             {
-                w.Write(session.SessionID);
-            }, out _r).Message == (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                UIManager.ClearTopLevels();
-                ServerManager.SessionInfo.SessionID = _r.ReadString();
-                SaveSystem.Begin();
+                sstr.Write(SessionInfo.SessionID);
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(GetResponseStream(result)))
+                    {
+                        UIManager.ClearTopLevels();
+                        ServerManager.SessionInfo.SessionID = reader.ReadString();
+                        SaveSystem.Begin();
+                    }
 
-            }
-            else
-            {
-                ServerLoginHandler.LoginRequired();
+                }
+                else
+                {
+                    ServerLoginHandler.LoginRequired();
+                }
+
             }
         }
 
@@ -182,21 +208,25 @@ namespace Plex.Engine
             session.ServerIP = host;
             session.ServerPort = port;
             SessionInfo = session;
-            BinaryReader _r = null;
-            if (ServerManager.SendMessage(ServerMessageType.USR_LOGIN, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.USR_LOGIN))
             {
-                w.Write("You");
-                w.Write("suck");
-            }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
-            {
-                ServerLoginHandler.AccessDenied();
-            }
-            else
-            {
-                UIManager.ClearTopLevels();
-                ServerManager.SessionInfo.SessionID = _r.ReadString();
-                SaveSystem.Begin();
+                sstr.Write("Anal");
+                sstr.Write("bacteria");
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        UIManager.ClearTopLevels();
+                        ServerManager.SessionInfo.SessionID = reader.ReadString();
+                        SaveSystem.Begin();
+                    }
 
+                }
+                else
+                {
+                    ServerLoginHandler.AccessDenied();
+                }
             }
         }
     }
@@ -210,5 +240,20 @@ namespace Plex.Engine
         }
 
         public string ID { get; private set; }
+    }
+
+    public class ServerStream : BinaryWriter
+    {
+        private ServerMessageType _type;
+
+        public ServerStream(ServerMessageType type) : base(new MemoryStream())
+        {
+            _type = type;
+        }
+
+        public PlexServerHeader Send()
+        {
+            return ServerManager.SendMessage(_type, (BaseStream as MemoryStream).ToArray());
+        }
     }
 }

@@ -59,22 +59,25 @@ namespace Plex.Engine
             AppearanceManager.SetupDialog(_loginScreen);
             _loginScreen.CredentialsEntered += (username, password) =>
             {
-                BinaryReader _r = null;
-                string combined = $"{username}\t{password}";
-                if (ServerManager.SendMessage(ServerMessageType.USR_LOGIN, (w) =>
-                 {
-                     w.Write(username);
-                     w.Write(password);
-                 }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
+                using(var sstr = new ServerStream(ServerMessageType.USR_LOGIN))
                 {
-                    AccessDenied();
-                }
-                else
-                {
-                    UIManager.ClearTopLevels();
-                    ServerManager.SessionInfo.SessionID = _r.ReadString();
-                    SaveSystem.Begin();
+                    sstr.Write(username);
+                    sstr.Write(password);
+                    var result = sstr.Send();
+                    if(result.Message == 0x00)
+                    {
+                        using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                        {
+                            UIManager.ClearTopLevels();
+                            ServerManager.SessionInfo.SessionID = reader.ReadString();
+                            SaveSystem.Begin();
+                        }
 
+                    }
+                    else
+                    {
+                        AccessDenied();
+                    }
                 }
             };
             _loginScreen.Disconnected += () =>
@@ -302,21 +305,26 @@ After logging in once, you will not have to log in again unless you have been in
                     Infobox.Show("Passwords don't match.", "You must prove you'll remember your password by typing the EXACT SAME PASSWORD twice. You didn't do that.");
                     return;
                 }
-                BinaryReader _r = null;
-                if (ServerManager.SendMessage(ServerMessageType.USR_REGISTER, (w) =>
-                {
-                    w.Write(_usernameField.Text);
-                    w.Write(_passwordField.Text);
-                }, out _r).Message != (byte)ServerResponseType.REQ_SUCCESS)
-                {
-                    Engine.Infobox.Show("Error", "An error occurred while servicing the request.");
-                }
-                else
-                {
-                    UIManager.ClearTopLevels();
-                    ServerManager.SessionInfo.SessionID = _r.ReadString();
-                    SaveSystem.Begin();
 
+                using (var sstr = new ServerStream(ServerMessageType.USR_REGISTER))
+                {
+                    sstr.Write(_usernameField.Text);
+                    sstr.Write(_passwordField.Text);
+                    var result = sstr.Send();
+                    if (result.Message == 0x00)
+                    {
+                        using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                        {
+                            UIManager.ClearTopLevels();
+                            ServerManager.SessionInfo.SessionID = reader.ReadString();
+                            SaveSystem.Begin();
+                        }
+
+                    }
+                    else
+                    {
+                        Engine.Infobox.Show("Error", "An error occurred while servicing the request.");
+                    }
                 }
             };
             _cancel.Click += () =>

@@ -25,17 +25,15 @@ namespace Plex.Engine
         {
             if (amount == 0)
                 return true;
-            BinaryReader r = null;
-            if (ServerManager.SendMessage(Objects.ServerMessageType.CASH_DEDUCT, (w) =>
-           {
-               w.Write(amount);
-               w.Write(to);
-           }, out r).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using (var w = new ServerStream(ServerMessageType.CASH_DEDUCT))
             {
-                return true;
-            }
-            else
-            {
+                w.Write(to);
+                w.Write(amount);
+                var result = w.Send();
+                if (result.Message == 0x00)
+                {
+                    return true;
+                }
                 return false;
             }
         }

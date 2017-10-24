@@ -110,10 +110,16 @@ namespace Plex.Engine
 
         public static string GetUsername()
         {
-            BinaryReader reader = null;
-            if(ServerManager.SendMessage( ServerMessageType.USR_GETUSERNAME, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using(var sstr = new ServerStream(ServerMessageType.USR_GETUSERNAME))
             {
-                return reader.ReadString();
+                var result = sstr.Send();
+                if(result.Message == 0x00)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadString();
+                    }
+                }
             }
             return null;
         }
@@ -136,40 +142,52 @@ namespace Plex.Engine
 
         public static ulong GetExperience()
         {
-            BinaryReader reader = null;
-            if (ServerManager.SendMessage(ServerMessageType.USR_GETXP, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using (var sstr = new ServerStream(ServerMessageType.USR_GETXP))
             {
-                return reader.ReadUInt64();
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadUInt64();
+                    }
+                }
             }
             return 0;
         }
 
         public static long GetCash()
         {
-            BinaryReader reader = null;
-            if (ServerManager.SendMessage(ServerMessageType.USR_GETCASH, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using (var sstr = new ServerStream(ServerMessageType.USR_GETCASH))
             {
-                return reader.ReadInt64();
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadInt64();
+                    }
+                }
             }
             return 0;
         }
 
         public static void CompleteStory(string id)
         {
-            BinaryReader reader = null;
-            ServerManager.SendMessage(ServerMessageType.SP_COMPLETESTORY, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.SP_COMPLETESTORY))
             {
-                w.Write(id);
-            }, out reader);
+                sstr.Write(id);
+                sstr.Send();
+            }
         }
 
         public static void AddExperience(ulong value)
         {
-            BinaryReader reader = null;
-            ServerManager.SendMessage(ServerMessageType.USR_ADDXP, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.USR_ADDXP))
             {
-                w.Write(value);
-            }, out reader);
+                sstr.Write(value);
+                sstr.Send();
+            }
         }
 
         [ClientMessageHandler("acct_sysname"), AsyncExecution]
@@ -180,21 +198,27 @@ namespace Plex.Engine
 
         public static void SetStoryPickup(string id)
         {
-            BinaryReader reader = null;
-            ServerManager.SendMessage(ServerMessageType.SP_SETPICKUP, (w) =>
+            using (var sstr = new ServerStream(ServerMessageType.SP_SETPICKUP))
             {
-                w.Write(id);
-            }, out reader);
+                sstr.Write(id);
+                sstr.Send();
+            }
         }
 
         private static string sysname_result = null;
 
         public static string GetSystemName()
         {
-            BinaryReader reader = null;
-            if (ServerManager.SendMessage(ServerMessageType.USR_GETSYSNAME, null, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
+            using (var sstr = new ServerStream(ServerMessageType.USR_GETSYSNAME))
             {
-                return reader.ReadString();
+                var result = sstr.Send();
+                if (result.Message == 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return reader.ReadString();
+                    }
+                }
             }
             return null;
         }

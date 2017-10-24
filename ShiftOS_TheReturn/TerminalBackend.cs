@@ -461,27 +461,33 @@ namespace Plex.Engine
                     PrefixEnabled = false;
                     _ranCMD = text;
                     _ranArgs = args;
-                    BinaryReader reader = null;
-                    if (ServerManager.SendMessage( ServerMessageType.TRM_INVOKE, (w) =>
+                    using (ServerStream sstr = new ServerStream(ServerMessageType.TRM_INVOKE))
                     {
-                        w.Write(JsonConvert.SerializeObject(new
+                        sstr.Write(JsonConvert.SerializeObject(new
                         {
                             cmd = text,
                             args = args,
                             shell = _shellOverrideString,
                             sessionfwd = _terminal_forward_session_id
                         }));
-                    }, out reader).Message == (byte)ServerResponseType.REQ_SUCCESS)
-                    {
-                        while(true)
+
+                        var result = sstr.Send();
+                        if (result.Message == (byte)ServerResponseType.REQ_SUCCESS)
                         {
-                            string ln = reader.ReadString();
-                            if (ln == "\u0013\u0014")
-                                break;
-                            Console.Write(ln);
+                            using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                            {
+                                while (true)
+                                {
+
+                                    string ln = reader.ReadString();
+                                    if (ln == "\u0013\u0014")
+                                        break;
+                                    Console.Write(ln);
+                                }
+                            }
                         }
+                        return true;
                     }
-                    return true;
                 }
             }
             return value;

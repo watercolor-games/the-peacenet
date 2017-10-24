@@ -21,33 +21,30 @@ namespace Plex.Server
 
         [ServerMessageHandler( ServerMessageType.USR_GETSYSNAME)]
         [SessionRequired]
-        public static void GetSysname(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetSysname(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(session.SaveID);
+            return 0x00;
         }
 
         [ServerMessageHandler( ServerMessageType.USR_GETXP)]
         [SessionRequired]
-        public static void GetXP(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetXP(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
             var save = Program.GetSaveFromPrl(session.SaveID);
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(save.SystemDescriptor.Experience);
+            return 0x00;
         }
 
         [ServerMessageHandler( ServerMessageType.USR_GETUSERNAME)]
         [SessionRequired]
-        public static void GetUsername(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte GetUsername(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             var session = GrabAccount(session_id);
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(session.Username);
+            return 0x00;
             
         }
 
@@ -74,7 +71,7 @@ namespace Plex.Server
         }
 
         [ServerMessageHandler( ServerMessageType.USR_VALIDATEKEY)]
-        public static void SessionVerify(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte SessionVerify(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             if (Program.IsMultiplayerServer)
             {
@@ -85,9 +82,7 @@ namespace Plex.Server
                 }
                 if (nosession)
                 {
-                    writer.Write((int)ServerResponseType.REQ_LOGINREQUIRED);
-                    writer.Write(session_id);
-                    return;
+                    return (byte)ServerResponseType.REQ_LOGINREQUIRED;
                 }
             }
             else
@@ -117,19 +112,15 @@ namespace Plex.Server
                     subnet.NPCs.Add(sys);
                     Program.SaveWorld();
                 }
-                writer.Write((int)ServerResponseType.REQ_SUCCESS);
-                writer.Write(session_id);
                 writer.Write(accts[0].SessionID);
-                return;
+                return 0x00;
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(session_id); //we do this twice, once because lol, again because lol
-
+            return 0x00;
         }
 
         [ServerMessageHandler( ServerMessageType.USR_REGISTER)]
-        public static void CreateAccount(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte CreateAccount(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string username = reader.ReadString();
             string password = reader.ReadString();
@@ -137,9 +128,7 @@ namespace Plex.Server
             var sessions = getAccts();
             if(sessions.FirstOrDefault(x=>x.Username == username) != null)
             {
-                writer.Write((int)ServerResponseType.REQ_ERROR);
-                writer.Write(session_id);
-                return;
+                return (byte)ServerResponseType.REQ_ERROR;
             }
             var acct = new ServerAccount();
             acct.Username = username;
@@ -169,9 +158,8 @@ namespace Plex.Server
             sessions.Add(acct);
             setSessions(sessions);
             Console.WriteLine("<sessions> Account data updated.");
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
             writer.Write(acct.SessionID);
+            return 0x00;
         }
 
         [ServerCommand("connect", "Attempt to connect to a specific port on the current system.")]
@@ -308,7 +296,7 @@ namespace Plex.Server
 
 
         [ServerMessageHandler( ServerMessageType.USR_LOGIN)]
-        public static void AccountGetKey(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte AccountGetKey(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string username = reader.ReadString();
             string password = reader.ReadString();
@@ -317,16 +305,12 @@ namespace Plex.Server
                 var user = getAccts().FirstOrDefault(x => x.Username == username);
                 if (user == null)
                 {
-                    writer.Write((int)ServerResponseType.REQ_ERROR);
-                    writer.Write(session_id);
-                    return;
+                    return (byte)ServerResponseType.REQ_ERROR;
                 }
                 var hashedpass = PasswordHasher.Hash(password, user.PasswordSalt);
                 if (hashedpass != user.PasswordHash)
                 {
-                    writer.Write((int)ServerResponseType.REQ_ERROR);
-                    writer.Write(session_id);
-                    return;
+                    return (byte)ServerResponseType.REQ_ERROR;
 
                 }
                 var now = DateTime.Now;
@@ -366,9 +350,8 @@ namespace Plex.Server
                     }
                 }
 
-                writer.Write((int)ServerResponseType.REQ_SUCCESS);
-                writer.Write(session_id);
-                writer.Write(user.SessionID);
+               writer.Write(user.SessionID);
+                return 0x00;
             }
             else
             {
@@ -398,16 +381,15 @@ namespace Plex.Server
                     Program.SaveWorld();
                 }
 
-                writer.Write((int)ServerResponseType.REQ_SUCCESS);
-                writer.Write(session_id);
                 writer.Write(getAccts()[0].SessionID);
+                return 0x00;
             }
 
         }
 
         [ServerMessageHandler( ServerMessageType.SP_COMPLETESTORY)]
         [SessionRequired]
-        public static void CompleteStory(string session_id, BinaryReader reader, BinaryWriter writer)
+        public static byte CompleteStory(string session_id, BinaryReader reader, BinaryWriter writer)
         {
             string content = reader.ReadString();
             var session = GrabAccount(session_id);
@@ -423,8 +405,7 @@ namespace Plex.Server
                     Program.SaveWorld();
                 }
             }
-            writer.Write((int)ServerResponseType.REQ_SUCCESS);
-            writer.Write(session_id);
+            return 0x00;
         }
     }
 }
