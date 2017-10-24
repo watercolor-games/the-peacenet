@@ -152,6 +152,16 @@ namespace Plex.Frontend
 
         }
 
+        private string _threadid = "";
+
+        public string ThreadID
+        {
+            get
+            {
+                return _threadid;
+            }
+        }
+
         private double lowestfps = 0;
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -260,6 +270,7 @@ namespace Plex.Frontend
         /// </summary>
         protected override void LoadContent()
         {
+            _threadid = Thread.CurrentThread.ManagedThreadId.ToString(); ;
             GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, graphicsDevice.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
 
             // Create a new SpriteBatch, which can be used to draw textures.

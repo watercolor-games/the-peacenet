@@ -135,6 +135,7 @@ namespace Plex.Engine
 
         public static PlexServerHeader SendMessage(ServerMessageType message, byte[] dgram)
         {
+            bool runGame = Thread.CurrentThread.ManagedThreadId.ToString() == UIManager.Game.ThreadID;
             PlexServerHeader header = null;
             _actionQueue.Enqueue(() =>
             {
@@ -145,6 +146,8 @@ namespace Plex.Engine
             while (header == null)
             {
                 Thread.Sleep(1);
+                if (runGame)
+                    UIManager.Game.RunOneFrame();
             }
             if(header.Message == (byte)ServerResponseType.REQ_LOGINREQUIRED)
             {
