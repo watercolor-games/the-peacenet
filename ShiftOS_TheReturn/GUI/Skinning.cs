@@ -12,6 +12,7 @@ using Plex.Objects.ShiftFS;
 using System.Reflection;
 using Plex.Engine.Scripting;
 using Plex.Objects;
+using Plex.Frontend.GraphicsSubsystem;
 
 namespace Plex.Engine
 {
@@ -292,11 +293,24 @@ namespace Plex.Engine
         public string ID { get; private set; }
     }
 
+    public enum ArrowDirection
+    {
+        Top,
+        Left,
+        Bottom,
+        Right
+    }
+
     /// <summary>
     /// The data stored in any .skn file.
     /// </summary>
     public abstract class Skin
     {
+        #region Draw calls
+        public abstract void DrawArrow(ArrowDirection dir, int x, int y, int w, int h, GraphicsContext gfx, Color c);
+
+        #endregion
+
         //Todo: When making Shifter GUI we need to label all these with proper Shifter attributes to get 'em displaying in the right places.
 
         public override string ToString()

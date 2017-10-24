@@ -270,13 +270,7 @@ namespace Plex.Frontend.GUI
                         int ddh = _textheight;
                         int ddw = 16;
                         int ddx = Width - ddw;
-                        int arr_tl_x = ddx + (ddw / 4);
-                        int arr_tl_y = ddy + (ddh / 6);
-                        int arr_c_x = ddx + (ddw - (ddw / 4));
-                        int arr_c_y = ddy + (ddh / 2);
-                        int arr_bl_x = arr_tl_x;
-                        int arr_bl_y = ddy + (ddh - (ddh / 6));
-                        gfx.DrawPolygon(ddColor, arr_tl_x, arr_tl_y, arr_c_x, arr_c_y, arr_bl_x, arr_bl_y);
+                        SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Right, ddx, ddy, ddw, ddh, gfx, ddColor.ToGdiColor());
                     }
                 }
             }

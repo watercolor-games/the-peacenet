@@ -178,22 +178,9 @@ namespace Plex.Frontend.GUI
             gfx.DrawRectangle(_scrollBarX, Height - _arrowSize, _arrowSize, _arrowSize, bArrowBG);
 
             //Now for the arrow glyphs themselves.
-            int _topArrowPointY = _arrowSize / 4;
-            int _topArrowLeft = _arrowSize / 4;
-            int _topArrowRight = _arrowSize - (_arrowSize / 4);
-            int _topArrowBottom = _arrowSize - (_arrowSize / 4);
 
-            //draw from left to top
-            gfx.DrawLine(_scrollBarX + _topArrowLeft, _topArrowBottom, _scrollBarX + (_arrowSize / 2), _topArrowPointY, 1, tArrowFG);
-            //from top to right
-            gfx.DrawLine(_scrollBarX + (_arrowSize / 2), _topArrowPointY, _scrollBarX + _topArrowRight, _topArrowBottom, 1, tArrowFG);
-
-            //now we do the same for the bottom arrow.
-
-            //draw from left to bottom
-            gfx.DrawLine(_scrollBarX + _topArrowLeft, (_arrowSize + nubAreaHeight) + _topArrowPointY, _scrollBarX + (_arrowSize / 2), (_arrowSize + nubAreaHeight) + _topArrowBottom, 1, bArrowFG);
-            //from bottom to right
-            gfx.DrawLine(_scrollBarX + (_arrowSize / 2), (_arrowSize + nubAreaHeight) + _topArrowBottom, _scrollBarX + _topArrowRight, (_arrowSize + nubAreaHeight) + _topArrowPointY, 1, bArrowFG);
+            SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Top, _scrollBarX, 0, _arrowSize, _arrowSize, gfx, tArrowFG.ToGdiColor());
+            SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Bottom, _scrollBarX, Height - _arrowSize, _arrowSize, _arrowSize, gfx, bArrowFG.ToGdiColor());
 
         }
 
@@ -319,6 +306,14 @@ namespace Plex.Frontend.GUI
                 return base.ProcessMouseState(state, lastLeftClickMS, Width, _realHeight);
             }
             return false;
+        }
+    }
+
+    public static class stuff
+    {
+        public static System.Drawing.Color ToGdiColor(this Microsoft.Xna.Framework.Color c)
+        {
+            return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
         }
     }
 }

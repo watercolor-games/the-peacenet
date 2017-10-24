@@ -5,13 +5,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
+using Plex.Frontend.GraphicsSubsystem;
 using Plex.Objects;
 
 namespace Plex.Frontend
 {
     public class PlexSkin : Skin
     {
+
+        private Texture2D ArrowUp = null;
+        private Texture2D ArrowDown = null;
+        private Texture2D ArrowLeft = null;
+        private Texture2D ArrowRight = null;
+
+        public PlexSkin () : base()
+        {
+            ArrowUp = FontAwesome.chevron_up.ToTexture2D(UIManager.GraphicsDevice);
+            ArrowDown = FontAwesome.chevron_down.ToTexture2D(UIManager.GraphicsDevice);
+            ArrowLeft = FontAwesome.chevron_left.ToTexture2D(UIManager.GraphicsDevice);
+            ArrowRight = FontAwesome.chevron_right.ToTexture2D(UIManager.GraphicsDevice);
+
+        }
+
+
+        public override void DrawArrow(Engine.ArrowDirection dir, int x, int y, int w, int h, GraphicsContext gfx, Color c)
+        {
+            var tex = ArrowUp;
+            switch (dir)
+            {
+                case Engine.ArrowDirection.Bottom:
+                    tex = ArrowDown;
+                    break;
+                case Engine.ArrowDirection.Left:
+                    tex = ArrowLeft;
+                    break;
+                case Engine.ArrowDirection.Right:
+                    tex = ArrowRight;
+                    break;
+            }
+            gfx.DrawRectangle(x, y, w, h, tex, c.ToMonoColor(), ImageLayout.Zoom, false);
+        }
 
         [ShifterMeta("System")]
         [ShifterCategory("Progress Bar")]
