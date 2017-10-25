@@ -30,12 +30,7 @@ namespace Plex.Frontend.Apps
 
         private static CashTransaction[] tdata = null;
 
-        [ClientMessageHandler("moneymate_transactions"), AsyncExecution]
-        public static void CashTransactionReceive(string content, string ip)
-        {
-            tdata = JsonConvert.DeserializeObject<CashTransaction[]>(content);
-        }
-
+        
         public static CashTransaction[] GetCashTransactions()
         {
             //            tdata = null;

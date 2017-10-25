@@ -752,6 +752,15 @@ Now generating defenses...
             }
         }
 
+        public static List<Connection> connections = new List<Connection>();
+
+        public class Connection
+        {
+            public BinaryWriter Writer { get; set; }
+            public BinaryReader Reader { get; set; }
+            public TcpClient Client { get; set; }
+        }
+
         public static void TcpLoop()
         {
             _tcpListener = new TcpListener(IPAddress.Any, _port);
@@ -770,10 +779,16 @@ Now generating defenses...
                         var stream = client.GetStream();
                         var reader = new BinaryReader(stream, Encoding.UTF8, true);
                         var writer = new DebugBinaryWriter(stream, Encoding.UTF8, true);
-                        
+                        var connection = new Connection
+                        {
+                            Client = client,
+                            Writer = writer,
+                            Reader = reader
+                        };
+                        connections.Add(connection);
                         while (client.Connected)
                         {
-                            
+                            var muid = reader.ReadString();
                             var _messagetype = reader.ReadInt32();
                             
                             string session_id = reader.ReadString();
@@ -795,6 +810,8 @@ Now generating defenses...
                                     }, bwriter);
 
                                 }
+                                writer.Write(muid);
+                                writer.Flush();
                                 writer.Write((int)r);
                                 writer.Flush();
                                 writer.Write(session_id);
@@ -809,6 +826,7 @@ Now generating defenses...
                         }
                         if (IsMultiplayerServer)
                             Console.WriteLine($"{client.Client.LocalEndPoint} has disconnected from TCP.");
+                        connections.Remove(connection);
                     }
                     catch { }
                 });
@@ -854,7 +872,31 @@ Now generating defenses...
         {
             Thread.Sleep((int)span.TotalMilliseconds);
         }
-        
+
+        [ServerCommand("broadcast_test", "Broadcasts a test announcement")]
+        public static void BroadcastTest()
+        {
+            using(var bstr = new BroadcastStream(BroadcastType.SRV_ANNOUNCEMENT))
+            {
+                bstr.Write("Test announcement");
+                bstr.Write("This is a test announcement.");
+                bstr.Send();
+            }
+            Console.WriteLine("Broadcast sent.");
+        }
+
+        public static void Broadcast(BroadcastType type, byte[] content)
+        {
+            foreach (var client in connections)
+            {
+                client.Writer.Write("broadcast");
+                client.Writer.Write((int)type);
+                client.Writer.Write(content.Length);
+                if (content.Length > 0)
+                    client.Writer.Write(content);
+            }
+        }
+
     }
 
 
@@ -932,6 +974,21 @@ Now generating defenses...
         }
 
 
+    }
+
+    public class BroadcastStream : BinaryWriter
+    {
+        public BroadcastType Type { get; private set; }
+
+        public BroadcastStream(BroadcastType type) : base(new MemoryStream())
+        {
+            Type = type;
+        }
+
+        public void Send()
+        {
+            Program.Broadcast(Type, (BaseStream as MemoryStream).ToArray());
+        }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]

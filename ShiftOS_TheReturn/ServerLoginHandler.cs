@@ -36,17 +36,6 @@ namespace Plex.Engine
             }
         }
 
-        [ClientMessageHandler("malformed_data")]
-        public static void MalformedDataHandler(string content, string ip)
-        {
-            foreach (var screen in AppearanceManager.OpenForms.Where(x => x.ParentWindow is LoginScreen).ToArray())
-            {
-                AppearanceManager.Close(screen.ParentWindow);
-            }
-            _loginScreen = null;
-            ServerManager.Disconnect(DisconnectType.Error, "The client has sent an incorrect or malformed request to the server and has been kicked out for security purposes.");
-        }
-
         public static void LoginRequired()
         {
             triesLeft = 4;

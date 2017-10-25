@@ -11,6 +11,7 @@ namespace Plex.Objects
         public byte Message { get; set; }
         public string SessionID { get; set; }
         public byte[] Content { get; set; }
+        public string TransactionKey { get; set; }
     }
 
     public class ServerAccount

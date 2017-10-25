@@ -368,42 +368,6 @@ namespace Plex.Engine
             return RunClient(text, args, isRemote);
         }
 
-        [ClientMessageHandler("trm_write")]
-        public static void TRMWrite(string content, string ip)
-        {
-            if (AppearanceManager.ConsoleOut != null)
-                AppearanceManager.ConsoleOut.Write(content);
-        }
-
-        [ClientMessageHandler("trm_writeline")]
-        public static void TRMWriteLine(string content, string ip)
-        {
-            if (AppearanceManager.ConsoleOut != null)
-                AppearanceManager.ConsoleOut.WriteLine(content);
-        }
-
-
-        [ClientMessageHandler("trm_done")]
-        public static void TerminalDone(string content, string ip)
-        {
-            InStory = false;
-            PrefixEnabled = true;
-            PrintPrompt();
-            CommandFinished?.Invoke(_ranCMD, _ranArgs);
-        }
-
-        [ClientMessageHandler("trm_esyschange")]
-        public static void ExitSyschange(string content, string ip)
-        {
-            _terminal_forward_session_id = null;
-        }
-
-        [ClientMessageHandler("trm_syschange")]
-        public static void SysChange(string content, string ip)
-        {
-            _terminal_forward_session_id = content;
-        }
-
         private static string _ranCMD = "";
         private static Dictionary<string, object> _ranArgs = null;
 
@@ -457,8 +421,6 @@ namespace Plex.Engine
             {
                 if (isRemote == false)
                 {
-                    InStory = true;
-                    PrefixEnabled = false;
                     _ranCMD = text;
                     _ranArgs = args;
                     using (ServerStream sstr = new ServerStream(ServerMessageType.TRM_INVOKE))

@@ -222,12 +222,6 @@ namespace Plex.Engine
 
         private static ShiftoriumUpgrade[] serverUpgrades = null;
 
-        [ClientMessageHandler("upgrades_db"), AsyncExecution]
-        public static void GetDB(string content, string ip)
-        {
-            serverUpgrades = JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(content);
-        }
-
         public static void CreateUpgradeDatabase()
         {
             upgDb = new List<ShiftoriumUpgrade>();
@@ -385,12 +379,6 @@ namespace Plex.Engine
 
         private static int? upgrade_installed_count = null;
 
-        [ClientMessageHandler("upgrades_count"), AsyncExecution]
-        public static void UpgradeCountHandler(string content, string ip)
-        {
-            upgrade_installed_count = Convert.ToInt32(content);
-        }
-
         public static int CountUpgrades()
         {
             using(var sstr = new ServerStream(ServerMessageType.UPG_GETCOUNT))
@@ -444,30 +432,7 @@ namespace Plex.Engine
 
         private static bool? upgrade_Installed_state = null;
         private static bool? upgrade_loaded_state = null;
-
-        /// <summary>
-        /// Handles server replies for the "upgrade_getinstalled" request.
-        /// </summary>
-        /// <param name="content"></param>
-        /// <param name="ip"></param>
-        [ClientMessageHandler("upgrades_installed"), AsyncExecution]
-        public static void Upgrade_InstalledHandler(string content, string ip)
-        {
-            upgrade_Installed_state = (content == "1") ? true : false;
-        }
-
-        /// <summary>
-        /// Handles server replies for the "upgrade_getloaded" request.
-        /// </summary>
-        /// <param name="content"></param>
-        /// <param name="ip"></param>
-        [ClientMessageHandler("upgrades_loaded"), AsyncExecution]
-        public static void Upgrade_LoadedHandler(string content, string ip)
-        {
-            upgrade_loaded_state = (content == "1") ? true : false;
-        }
-
-
+        
         /// <summary>
         /// Determines if an upgrade is installed.
         /// </summary>

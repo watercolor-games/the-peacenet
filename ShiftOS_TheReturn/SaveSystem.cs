@@ -100,12 +100,6 @@ namespace Plex.Engine
             thread.Start();
         }
 
-        [ClientMessageHandler("acct_username"), AsyncExecution]
-        public static void UsernameResult(string content, string ip)
-        {
-            username_result = content;
-        }
-
         private static string username_result = null;
 
         public static string GetUsername()
@@ -124,22 +118,10 @@ namespace Plex.Engine
             return null;
         }
 
-        [ClientMessageHandler("moneymate_cash"), AsyncExecution]
-        public static void CashResult(string content, string ip)
-        {
-            cash_result = Convert.ToInt64(content);
-        }
-
         private static long? cash_result = null;
 
         private static ulong? xp_result = null;
         
-        [ClientMessageHandler("acct_xp"), AsyncExecution]
-        public static void XPResult(string content, string ip)
-        {
-            xp_result = Convert.ToUInt64(content);
-        }
-
         public static ulong GetExperience()
         {
             using (var sstr = new ServerStream(ServerMessageType.USR_GETXP))
@@ -188,12 +170,6 @@ namespace Plex.Engine
                 sstr.Write(value);
                 sstr.Send();
             }
-        }
-
-        [ClientMessageHandler("acct_sysname"), AsyncExecution]
-        public static void SysnameResult(string content, string ip)
-        {
-            sysname_result = content;
         }
 
         public static void SetStoryPickup(string id)

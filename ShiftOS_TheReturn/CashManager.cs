@@ -12,15 +12,6 @@ namespace Plex.Engine
 {
     public static class CashManager
     {
-        private static bool? cash_deduct_state = null;
-
-        [ClientMessageHandler("cash_deductresult"), AsyncExecution]
-        public static void DeductResult(string content, string ip)
-        {
-            cash_deduct_state = (content == "1") ? true : false; //boy I love redundancy
-            //fuck my life
-        }
-
         public static bool Deduct(long amount, string to)
         {
             if (amount == 0)

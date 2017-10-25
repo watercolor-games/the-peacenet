@@ -81,6 +81,21 @@ namespace Plex.Objects
 
     }
 
+    public enum BroadcastType : byte
+    {
+        SRV_SHUTDOWN = 0xFF,
+
+        SRV_WORLDSAVE = 0x00,
+        SRV_ANNOUNCEMENT = 0x01,
+
+        CHAT_USERJOINED = 0x10,
+        CHAT_USERLEFT = 0x11,
+        CHAT_MESSAGESENT = 0x12,
+        CHAT_ACTIONSENT = 0x13,
+
+
+    }
+
     public enum UpgradeResult : byte
     {
         UNCAUGHT_ERROR = 0xFF,

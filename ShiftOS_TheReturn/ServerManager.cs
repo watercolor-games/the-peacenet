@@ -45,6 +45,8 @@ namespace Plex.Engine
         private static Stream _tcpStream = null;
         private static Queue<Action> _actionQueue = new Queue<Action>();
         private static Thread _thread = null;
+        private static Thread _bthread = null;
+        private static PlexServerHeader _private = null;
 
         public static void ConnectToServer(string hostname, int port)
         {
@@ -62,28 +64,80 @@ namespace Plex.Engine
                 }
             });
             _thread.Start();
+            _bthread = new Thread(() =>
+            {
+                while (true)
+                {
+                    lock (_tcpReader)
+                    {
+                        bool readSessionKey = true;
+                        string sessionKey = "";
+                        string bstr = _tcpReader.ReadString();
+                        if (bstr == "broadcast")
+                            readSessionKey = false;
+                        int _btype = _tcpReader.ReadInt32();
+                        if (readSessionKey)
+                            sessionKey = _tcpReader.ReadString();
+                        int clength = _tcpReader.ReadInt32();
+                        byte[] c = new byte[] { };
+                        if (clength > 0)
+                            c = _tcpReader.ReadBytes(clength);
+                        var header = new PlexServerHeader
+                        {
+                            Content = c,
+                            SessionID = sessionKey,
+                            Message = (byte)_btype,
+                            TransactionKey = bstr
+                        };
+                        if (readSessionKey)
+                        {
+                            _private = header;
+                        }
+                        else
+                        {
+                            _private = null;
+                            HandleBroadcast(header);
+                        }
+                    }
+                }
+            });
+            _bthread.Start();
         }
 
-        [ClientMessageHandler("server_error")]
-        public static void ErrorHandler(string content, string ip)
+        [BroadcastHandler(BroadcastType.SRV_ANNOUNCEMENT)]
+        public static void HandleAnnouncement(PlexServerHeader header)
         {
-            Disconnect(DisconnectType.Error, "The server has experienced an unexpected error with that request. You have been disconnected to prevent further errors.");
+            using(var reader = new BinaryReader(GetResponseStream(header)))
+            {
+                Infobox.Show(reader.ReadString(), reader.ReadString());
+            }
         }
 
-
-        [ClientMessageHandler("server_banned")]
-        public static void BannedHandler(string content, string ip)
+        internal static void HandleBroadcast(PlexServerHeader header)
         {
-            Disconnect(DisconnectType.Error, "You have been banned from this server and can't connect to it.");
+            BroadcastType btype = (BroadcastType)header.Message;
+            if (_bdb.ContainsKey(btype))
+                _bdb[btype].Invoke(null, new[] { header });
         }
 
-        [ClientMessageHandler("server_shutdown")]
-        public static void MaintenanceHandler(string content, string ip)
+        private static Dictionary<BroadcastType, MethodInfo> _bdb = new Dictionary<BroadcastType, MethodInfo>();
+
+        internal static void BuildBroadcastHandlerDB()
         {
-            Disconnect(DisconnectType.Error, "This server has been shut down by its administrator for maintenance.");
+            foreach(var type in ReflectMan.Types)
+            {
+                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    var attr = mth.GetCustomAttributes(false).FirstOrDefault(x => x is BroadcastHandler) as BroadcastHandler;
+                    if(attr != null)
+                    {
+                        var btype = attr.Type;
+                        if (!_bdb.ContainsKey(btype))
+                            _bdb.Add(btype, mth);
+                    }
+                }
+            }
         }
-
-
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
@@ -98,39 +152,36 @@ namespace Plex.Engine
                 }
             }
         }
-
+        static uint msgtoken = 0;
         private static async Task<PlexServerHeader> _sendMessageInternal(ServerMessageType message, byte[] dgram)
         {
+            _private = null;
+            msgtoken++;
             string sessionKey = "";
             if (SessionInfo != null)
                 sessionKey = SessionInfo.SessionID;
             if (sessionKey == null)
                 sessionKey = "";
-            _tcpWriter.Write((int)message);
-            _tcpWriter.Write(sessionKey);
             await Task.Run(() =>
             {
-                if (dgram == null)
-                    dgram = new byte[] { };
-                _tcpWriter.Write(dgram.Length);
-                if (dgram.Length > 0)
-                    _tcpWriter.Write(dgram);
+                lock (_tcpWriter)
+                {
+                    _tcpWriter.Write(msgtoken.ToString());
+                    _tcpWriter.Write((int)message);
+                    _tcpWriter.Write(sessionKey);
+                    if (dgram == null)
+                        dgram = new byte[] { };
+                    _tcpWriter.Write(dgram.Length);
+                    if (dgram.Length > 0)
+                        _tcpWriter.Write(dgram);
+                }
             });
-            
-            byte returncode = (byte)_tcpReader.ReadInt32();
-            
-            string _returnsessionid = _tcpReader.ReadString();
-            byte[] retdgram = new byte[] { };
-            int len = _tcpReader.ReadInt32(); //This hangs.
-            if (len > 0)
-                retdgram = _tcpReader.ReadBytes(len);
-            return new PlexServerHeader
-            {
-                Message = returncode,
-                SessionID = _returnsessionid,
-                Content = retdgram
-            };
 
+            while (_private == null)
+                Thread.Sleep(1);
+            while (_private.TransactionKey != msgtoken.ToString())
+                Thread.Sleep(1);
+            return _private;
         }
 
         public static PlexServerHeader SendMessage(ServerMessageType message, byte[] dgram)
@@ -146,8 +197,6 @@ namespace Plex.Engine
             while (header == null)
             {
                 Thread.Sleep(1);
-                if (runGame)
-                    UIManager.Game.RunOneFrame();
             }
             if(header.Message == (byte)ServerResponseType.REQ_LOGINREQUIRED)
             {
@@ -234,17 +283,6 @@ namespace Plex.Engine
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class ClientMessageHandlerAttribute : Attribute
-    {
-        public ClientMessageHandlerAttribute(string id)
-        {
-            ID = id;
-        }
-
-        public string ID { get; private set; }
-    }
-
     public class ServerStream : BinaryWriter
     {
         private ServerMessageType _type;
@@ -258,5 +296,16 @@ namespace Plex.Engine
         {
             return ServerManager.SendMessage(_type, (BaseStream as MemoryStream).ToArray());
         }
+    }
+    
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class BroadcastHandler : Attribute
+    {
+        public BroadcastHandler(BroadcastType type)
+        {
+            Type = type;
+        }
+
+        public BroadcastType Type { get; private set; }
     }
 }

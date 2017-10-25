@@ -202,6 +202,8 @@ namespace Plex.Frontend
         /// </summary>
         protected override void Initialize()
         {
+            ServerManager.BuildBroadcastHandlerDB();
+
             Story.ObjectiveStarted += () =>
             {
                 objectiveState = 1;
