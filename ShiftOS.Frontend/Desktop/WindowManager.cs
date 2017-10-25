@@ -132,6 +132,8 @@ namespace Plex.Frontend.Desktop
 
         public override void SetupWindow(IPlexWindow win)
         {
+            bool isSingleInstance = win.GetType().GetCustomAttributes(false).FirstOrDefault(x => x is SingleInstanceAttribute) != null;
+
             if (UIManagerTools.InTextMode)
             {
                 Console.WriteLine("You can't run this program in textmode.");
@@ -148,6 +150,19 @@ namespace Plex.Frontend.Desktop
             {
                 Console.WriteLine("Application not found on system.");
                 return;
+            }
+            if (isSingleInstance)
+            {
+                var alreadyOpen = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow.GetType() == win.GetType());
+                if(alreadyOpen != null)
+                {
+                    var aoWB = ((WindowBorder)alreadyOpen);
+                    if (!aoWB.Visible)
+                        aoWB.ToggleMinimized();
+                    aoWB.BringToFront();
+                    UIManager.FocusedControl = aoWB;
+                    return;
+                }
             }
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);

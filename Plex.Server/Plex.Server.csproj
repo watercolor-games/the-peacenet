@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AuthenticationManager.cs" />
     <Compile Include="CashManager.cs" />
+    <Compile Include="Chat.cs" />
     <Compile Include="DriveSpecs\PlexFATDriveMount.cs" />
     <Compile Include="DriveSpecs\ShiftFSDriveMount.cs" />
     <Compile Include="FS.cs" />

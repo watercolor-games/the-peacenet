@@ -18,12 +18,6 @@ namespace Plex.Engine
     // Provides functionality for managing windows within Plex.
     public static class AppearanceManager
     {
-        [Obsolete("Please use Localization.GetAllLanguages().")]
-        public static string[] GetLanguages()
-        {
-            return Localization.GetAllLanguages();
-        }
-
         // Sets the title text of the specified window.
         public static void SetWindowTitle(IPlexWindow window, string title)
         {
@@ -219,5 +213,11 @@ namespace Plex.Engine
         {
             //FUCK
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class SingleInstanceAttribute : Attribute
+    {
+
     }
 }

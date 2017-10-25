@@ -13,12 +13,14 @@ using static Plex.Engine.SkinEngine;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace Plex.Frontend.Apps
 {
     [WinOpen("irc")]
     [DefaultTitle("IRC Client")]
     [Launcher("IRC Client", false, null, "Networking")]
+    [SingleInstance]
     public class ChatClient : TextControl, IPlexWindow
     {
         private TextControl _sendprompt = null;
@@ -28,6 +30,64 @@ namespace Plex.Frontend.Apps
         const int usersListWidth = 100;
         const int topicBarHeight = 24;
         public IRCNetwork NetInfo = null;
+
+        [BroadcastHandler(BroadcastType.CHAT_USERLEFT)]
+        public static void HandleChatUserLeft(PlexServerHeader header)
+        {
+            var chatclient = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is ChatClient);
+            if (chatclient != null)
+            {
+                var real = (ChatClient)chatclient.ParentWindow;
+                using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
+                {
+                    real.SendClientMessage("*", $"{reader.ReadString()} has left the chat.");
+                }
+            }
+        }
+
+
+        [BroadcastHandler(BroadcastType.CHAT_USERJOINED)]
+        public static void HandleChatUserJoined(PlexServerHeader header)
+        {
+            var chatclient = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is ChatClient);
+            if (chatclient != null)
+            {
+                var real = (ChatClient)chatclient.ParentWindow;
+                using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
+                {
+                    real.SendClientMessage("*", $"{reader.ReadString()} has joined the chat!");
+                }
+            }
+        }
+
+
+        [BroadcastHandler(BroadcastType.CHAT_MESSAGESENT)]
+        public static void HandleChatMessageSent(PlexServerHeader header)
+        {
+            var chatclient = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is ChatClient);
+            if(chatclient != null)
+            {
+                var real = (ChatClient)chatclient.ParentWindow;
+                using(var reader=  new BinaryReader(ServerManager.GetResponseStream(header)))
+                {
+                    real.SendClientMessage(reader.ReadString(), reader.ReadString());
+                }
+            }
+        }
+
+        [BroadcastHandler(BroadcastType.CHAT_ACTIONSENT)]
+        public static void HandleChatActionSent(PlexServerHeader header)
+        {
+            var chatclient = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is ChatClient);
+            if (chatclient != null)
+            {
+                var real = (ChatClient)chatclient.ParentWindow;
+                using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
+                {
+                    real.SendClientMessage("*", reader.ReadString() + reader.ReadString());
+                }
+            }
+        }
 
         protected override void RenderText(GraphicsContext gfx)
         {
@@ -178,6 +238,8 @@ namespace Plex.Frontend.Apps
 
         protected override void OnLayout(GameTime gameTime)
         {
+            FontStyle = TextControlFontStyle.Custom;
+            TextColor = Color.White;
             _send.X = Width - _send.Width - 10;
             _send.Y = Height - _send.Height - 10;
             _sendprompt.X = 10;
@@ -203,9 +265,38 @@ namespace Plex.Frontend.Apps
 
         public void SendMessage()
         {
-            SendClientMessage(SaveSystem.GetUsername(), _input.Text);
-            _input.Text = "";
+            if (NetworkConnected)
+            {
+                SendClientMessage(SaveSystem.GetUsername(), _input.Text);
+                _input.Text = "";
+            }
+            else
+            {
+                string txt = _input.Text;
+                bool isaction = txt.StartsWith("/me ");
+                if (isaction)
+                    txt = txt.Remove(0, 4);
+                if (string.IsNullOrWhiteSpace(txt))
+                    return;
+                ServerMessageType t = ServerMessageType.CHAT_SENDTEXT;
+                if (isaction)
+                    t = ServerMessageType.CHAT_SENDACTION;
+                using(var sstr = new ServerStream(t))
+                {
+                    sstr.Write(txt);
+                    var result = sstr.Send();
+                    if(result.Message != 0x00)
+                    {
+                        using(var reader=  new BinaryReader(ServerManager.GetResponseStream(result)))
+                        {
+                            SendClientMessage("peacenet", reader.ReadString());
+                        }
+                    }
+                }
+                _input.Text = "";
+            }
 
+#if AI
             //Let's try the AI stuff... :P
             var rmsg = _messages[rnd.Next(_messages.Count)].Message;
             if (!messagecache.Contains(_messages.Last().Message))
@@ -237,6 +328,7 @@ namespace Plex.Frontend.Apps
             split.Add(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
             string combinedResult = string.Join(" ", split);
             SendClientMessage("debugbot", combinedResult);
+#endif
         }
 
         readonly string[] outcomes = new string[] { "ok", "sure", "yeah", "yes", "no", "nope", "alright" };
@@ -347,8 +439,21 @@ namespace Plex.Frontend.Apps
         
         public void OnLoad()
         {
-			if (System.IO.File.Exists("aicache.dat"))
+#if AI
+            if (System.IO.File.Exists("aicache.dat"))
 				messagecache = System.IO.File.ReadAllLines("aicache.dat").ToList();
+#endif
+            using(var sstr = new ServerStream(ServerMessageType.CHAT_JOIN))
+            {
+                var result = sstr.Send();
+                if(result.Message != 0x00)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        SendClientMessage("peacenet", reader.ReadString());
+                    }
+                }
+            }
         }
 
         public void OnSkinLoad()
@@ -357,8 +462,18 @@ namespace Plex.Frontend.Apps
         
         public bool OnUnload()
         {
-			// this doesn't get called... dammit
-			SaveCache();
+            using (var sstr = new ServerStream(ServerMessageType.CHAT_LEAVE))
+            {
+                var result = sstr.Send();
+                if (result.Message != 0x00)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        SendClientMessage("peacenet", reader.ReadString());
+                    }
+                }
+            }
+
             return true;
         }
 
