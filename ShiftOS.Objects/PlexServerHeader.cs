@@ -24,6 +24,12 @@ namespace Plex.Objects
         public string PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public bool IsNPC = false;
+
+        public bool IsBanned = false;
+        public DateTime BanLiftDate { get; set; }
+
+        public ACLPermission Permission = ACLPermission.User;
+
     }
 
     public class SessionInfo

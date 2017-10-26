@@ -96,6 +96,19 @@ namespace Plex.Objects
 
     }
 
+    public class ServerConfiguration
+    {
+        public string ServerName { get; set; }
+        public string DiscordPayloadURL { get; set; }
+    }
+
+    public enum ACLPermission : byte
+    {
+        User = 0,
+        Moderator = 1,
+        Admin = 2
+    }
+
     public enum UpgradeResult : byte
     {
         UNCAUGHT_ERROR = 0xFF,

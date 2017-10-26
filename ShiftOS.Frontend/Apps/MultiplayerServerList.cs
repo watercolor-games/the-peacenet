@@ -120,6 +120,8 @@ namespace Plex.Frontend.Apps
             };
         }
 
+        
+
         public void ConnectToServer()
         {
             var server = _servers[_list.SelectedIndex];

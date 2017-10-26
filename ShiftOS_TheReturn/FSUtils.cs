@@ -43,7 +43,7 @@ namespace Plex.Engine
             {
                 w.Write(JsonConvert.SerializeObject(_createPathData(path)));
                 var result = w.Send();
-                if (result.Message != 0x00)
+                if (result.Message == (byte)ServerResponseType.REQ_ERROR)
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
@@ -84,7 +84,7 @@ namespace Plex.Engine
                     label = "System",
                 }));
                 var result = sstr.Send();
-                if(result.Message != 0x00)
+                if(result.Message == (byte)ServerResponseType.REQ_ERROR)
                 {
                     using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
@@ -162,9 +162,9 @@ namespace Plex.Engine
             {
                 w.Write(JsonConvert.SerializeObject(_createPathData(path)));
                 var result = w.Send();
-                using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                if (result.Message != 0x00)
                 {
-                    if (result.Message != 0x00)
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
                         throw new IOException(reader.ReadString());
                     }
@@ -198,9 +198,9 @@ namespace Plex.Engine
                 w.Write(contents.Length);
                 w.Write(contents);
                 var result = w.Send();
-                using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                if (result.Message == (byte)ServerResponseType.REQ_ERROR)
                 {
-                    if (result.Message != 0x00)
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
                         throw new IOException(reader.ReadString());
                     }

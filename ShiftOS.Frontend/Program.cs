@@ -85,6 +85,7 @@ namespace Plex.Frontend
                 AppearanceManager.SetupWindow(new Apps.Terminal());
             };
             
+            
 
             Story.MissionComplete += (mission) =>
             {

@@ -39,7 +39,10 @@ namespace Plex.Frontend
 
         public void FireInitialized()
         {
-            Initializing?.Invoke();
+            Desktop.InvokeOnWorkerThread(() =>
+            {
+                Initializing?.Invoke();
+            });
         }
 
 #if DEBUG

@@ -84,6 +84,9 @@ namespace Plex.Server
                 {
                     return (byte)ServerResponseType.REQ_LOGINREQUIRED;
                 }
+                writer.Write(session_id); //we do this twice, once because lol, again because lol
+                return 0x00;
+
             }
             else
             {
@@ -115,8 +118,6 @@ namespace Plex.Server
                 writer.Write(accts[0].SessionID);
                 return 0x00;
             }
-            writer.Write(session_id); //we do this twice, once because lol, again because lol
-            return 0x00;
         }
 
         [ServerMessageHandler( ServerMessageType.USR_REGISTER)]

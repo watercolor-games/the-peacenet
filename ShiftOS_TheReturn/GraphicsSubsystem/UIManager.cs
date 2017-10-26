@@ -438,7 +438,8 @@ namespace Plex.Frontend.GraphicsSubsystem
                             data[i + 2] = r;
                         }
                         tex2.SetData<byte>(data);
-                        SkinTextures.Add(imgAttrib.Name, tex2);
+                        if(!SkinTextures.ContainsKey(imgAttrib.Name))
+                            SkinTextures.Add(imgAttrib.Name, tex2);
                     }
                 }
             }

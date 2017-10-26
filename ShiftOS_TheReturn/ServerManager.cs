@@ -91,6 +91,15 @@ namespace Plex.Engine
                         };
                         if (readSessionKey)
                         {
+                            if(header.Message == (byte)ServerResponseType.REQ_BANNED)
+                            {
+                                //Handle bans right now and here.
+                                using(var reader = new BinaryReader(GetResponseStream(header)))
+                                {
+                                    DateTime banlift = DateTime.Parse(reader.ReadString());
+                                    Disconnect(DisconnectType.Error, "You have been banned from this server until " + banlift.ToString() + ".");
+                                }
+                            }
                             _private = header;
                         }
                         else
@@ -141,6 +150,18 @@ namespace Plex.Engine
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
+            _bthread.Abort();
+            _tcpClient.Close();
+            _tcpWriter.Close();
+            _tcpReader.Close();
+            _tcpClient = null;
+            _tcpWriter = null;
+            _tcpReader = null;
+            _bthread = null;
+            _actionQueue.Clear();
+            SessionInfo = null;
+            _thread.Abort();
+            _thread = null;
             UIManager.ClearTopLevels();
             UIManager.Game.IPAddress = null;
             if (type == DisconnectType.UserRequested || type == DisconnectType.Error)
@@ -201,7 +222,6 @@ namespace Plex.Engine
             if(header.Message == (byte)ServerResponseType.REQ_LOGINREQUIRED)
             {
                 ServerLoginHandler.LoginRequired();
-                header.Message = 0x00;
             }
             
             return header;
@@ -230,7 +250,7 @@ namespace Plex.Engine
             else
             {
                 session.SessionID = "";
-            }
+             }
             SessionInfo = session;
             using (var sstr = new ServerStream(ServerMessageType.USR_VALIDATEKEY))
             {

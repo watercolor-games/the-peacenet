@@ -553,6 +553,33 @@ Now generating defenses...
                 Console.WriteLine("PROJECT: PLEX SERVER SOFTWARE - Copyright (c) 2017 Watercolor Games - Licensed under MIT");
                 Console.WriteLine("===============================");
                 Console.WriteLine();
+
+                Console.WriteLine("Loading configuration....");
+
+                if (System.IO.File.Exists("serverconfig.json"))
+                {
+                    _conf = JsonConvert.DeserializeObject<ServerConfiguration>(File.ReadAllText("serverconfig.json"));
+                    Console.WriteLine("Configuration loaded.");
+                }
+                else
+                {
+                    Console.WriteLine("No config found.");
+                    Console.WriteLine("Name your server: ");
+                    string name = Console.ReadLine();
+                    Console.WriteLine("Discord payload URL (leave blank if you don't want chat to go through discord)");
+                    string chaturl = Console.ReadLine();
+                    Console.WriteLine("Saving config to serverconfig.json.");
+                    _conf = new ServerConfiguration
+                    {
+                        DiscordPayloadURL = chaturl,
+                        ServerName = name
+                    };
+                    File.WriteAllText("serverconfig.json", JsonConvert.SerializeObject(_conf, Formatting.Indented));
+                    Console.WriteLine("At any time you may edit this file to alter the server behaviour.");
+
+                }
+
+
                 LoadWorld();
 
                 Console.WriteLine("<plexsrv> Starting server...");
@@ -749,6 +776,16 @@ Now generating defenses...
 
                 //Sleep for two hours.
                 Sleep(new TimeSpan(2, 0, 0));
+            }
+        }
+
+        private static ServerConfiguration _conf = null;
+
+        public static ServerConfiguration ServerConfig
+        {
+            get
+            {
+                return _conf ?? new ServerConfiguration();
             }
         }
 
@@ -951,6 +988,16 @@ Now generating defenses...
                     if (nosession)
                     {
                         return (byte)ServerResponseType.REQ_LOGINREQUIRED;
+                    }
+                    else
+                    {
+                        var acct = SessionManager.GrabAccount(header.SessionID);
+                        if (acct.IsBanned)
+                        {
+                            tcpStreamWriter.Write(acct.BanLiftDate.ToString());
+
+                            return (byte)ServerResponseType.REQ_BANNED;
+                        }
                     }
                 }
                 using (var mstr = new MemoryStream(header.Content))
