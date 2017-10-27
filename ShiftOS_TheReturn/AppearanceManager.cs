@@ -29,7 +29,7 @@ namespace Plex.Engine
         //HEY LETS FIND THE WINDOWS
         public static IEnumerable<Type> GetAllWindowTypes()
         {
-            return Array.FindAll(ReflectMan.Types, t => t.GetInterfaces().Contains(typeof(IPlexWindow)));
+            return ReflectMan.Types.Where(t => t.GetInterfaces().Contains(typeof(IPlexWindow)));
         }
 
         // hey you know that window we just made appear? well give it its title
