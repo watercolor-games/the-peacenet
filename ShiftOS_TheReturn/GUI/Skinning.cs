@@ -220,7 +220,7 @@ namespace Plex.Engine
         {
             if (_iconProber != null)
             {
-                foreach (var type in Array.FindAll(ReflectMan.Types, t => t.Name == id))
+                foreach (var type in ReflectMan.Types.Where(t => t.Name == id))
                 {
                     var attr = Array.Find(type.GetCustomAttributes(true), a => a is DefaultIconAttribute);
                     if (attr != null)

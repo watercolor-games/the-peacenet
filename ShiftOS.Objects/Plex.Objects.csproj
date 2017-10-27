@@ -53,6 +53,8 @@
     <Compile Include="CommandParser.cs" />
     <Compile Include="DebugBinaryStreams.cs" />
     <Compile Include="EngineShiftnetSubscription.cs" />
+    <Compile Include="FFI\DotNet.cs" />
+    <Compile Include="FFI\IFFI.cs" />
     <Compile Include="Hacking\Loot.cs" />
     <Compile Include="Hacking\Port.cs" />
     <Compile Include="Hacking\Payload.cs" />
