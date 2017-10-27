@@ -100,6 +100,7 @@ namespace Plex.Objects
     {
         public string ServerName { get; set; }
         public string DiscordPayloadURL { get; set; }
+        public int MaxPlayers = 25;
     }
 
     public enum ACLPermission : byte

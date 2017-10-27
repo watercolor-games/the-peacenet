@@ -816,6 +816,14 @@ Now generating defenses...
             while (true)
             {
                 var client = _tcpListener.AcceptTcpClient();
+                if(IsMultiplayerServer)
+                {
+                    if(connections.Count + 1 > ServerConfig.MaxPlayers)
+                    {
+                        client.Close();
+                        continue;
+                    }
+                }
                 var connectThread = new ServerThread();
                 if(IsMultiplayerServer)
                     Console.WriteLine($"{client.Client.LocalEndPoint} has connected through TCP.");
@@ -1306,6 +1314,28 @@ Now generating defenses...
                 string first = split[0];
                 switch (first.ToLower())
                 {
+                    case "servericon":
+                        if (System.IO.File.Exists("servericon.bmp"))
+                        {
+                            p.writePngImage(File.ReadAllBytes("servericon.bmp"));
+                            return;
+                        }
+                        using(var memstr = new MemoryStream())
+                        {
+                            Properties.Resources.server.Save(memstr, System.Drawing.Imaging.ImageFormat.Bmp);
+                            p.writePngImage(memstr.ToArray());
+                        }
+                        return;
+                    case "serverinfo":
+                        string json = JsonConvert.SerializeObject(new
+                        {
+                            server_name = Program.ServerConfig?.ServerName,
+                            online_players = Program.connections.Count,
+                            max_players = Program.ServerConfig?.MaxPlayers
+                        });
+                        p.writeSuccess("application/json");
+                        p.outputStream.Write(json);
+                        return;
                     case "avatar":
                         try
                         {

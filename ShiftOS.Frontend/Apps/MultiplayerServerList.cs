@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Frontend.GUI;
@@ -161,9 +165,39 @@ namespace Plex.Frontend.Apps
                 _list.AddItem(new GUI.ListViewItem
                 {
                     Text = server.FriendlyName,
-                     Tag = _servers.IndexOf(server).ToString()
+                     Tag = _servers.IndexOf(server).ToString(),
+                     ImageKey = _servers.IndexOf(server).ToString()
                 });
             }
+
+            _list.ClearImages();
+            new Thread(() =>
+            {
+                WebClient wc = new WebClient();
+
+                foreach (var server in _servers)
+                {
+                    string key = _servers.IndexOf(server).ToString();
+                    try
+                    {
+                        string serverInfoJson = wc.DownloadString("http://" + server.Hostname + ":3253/serverinfo");
+                        byte[] serverIcon = wc.DownloadData("http://" + server.Hostname + ":3253/servericon");
+
+                        using(var memstr = new MemoryStream(serverIcon))
+                        {
+                            var texture = System.Drawing.Image.FromStream(memstr).ToTexture2D(UIManager.GraphicsDevice);
+                            _list.SetImage(key, texture);
+                        }
+
+                        var serverinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(serverInfoJson);
+                        string nameFormat = $"{serverinfo["server_name"]} ({serverinfo["online_players"]}/{serverinfo["max_players"]})";
+                    }
+                    catch
+                    {
+                        _list.SetImage(key, FontAwesome.times_circle.ToTexture2D(UIManager.GraphicsDevice));
+                    }
+                }
+            }).Start();
         }
 
         protected override void OnLayout(GameTime gameTime)
