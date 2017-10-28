@@ -35,6 +35,9 @@ namespace Plex.Frontend
 
     public class InfoboxMessage : GUI.Control, IPlexWindow
     {
+        private Action _okAction = null;
+        private Action<bool> _yesNoAction = null;
+
         public InfoboxMessage(string title, string message)
         {
             InitializeComponent();
@@ -56,9 +59,9 @@ namespace Plex.Frontend
             flyesno.Visible = false;
             txtinput.Visible = false;
             btnok.Visible = true;
+            _okAction = callback;
             btnok.Click += () =>
             {
-                callback?.Invoke();
                 AppearanceManager.Close(this);
             };
         }
@@ -69,17 +72,20 @@ namespace Plex.Frontend
             flyesno.Visible = true;
             txtinput.Visible = false;
             btnok.Visible = false;
+            _yesNoAction = callback;
             btnyes.Click += () =>
             {
-                callback?.Invoke(true);
+                _yesNoResult = true;
                 AppearanceManager.Close(this);
             };
             btnno.Click += () =>
             {
-                callback?.Invoke(false);
                 AppearanceManager.Close(this);
             };
+            _yesNoResult = false;
         }
+
+        private bool _yesNoResult = false;
 
         public void ShowText(Action<string> callback)
         {
@@ -101,6 +107,8 @@ namespace Plex.Frontend
 
         public bool OnUnload()
         {
+            _okAction?.Invoke();
+            _yesNoAction?.Invoke(_yesNoResult);
             return true;
         }
 
@@ -137,6 +145,9 @@ namespace Plex.Frontend
            this.lbmessage.Width = 213;
             this.lbmessage.Height = 94;
             this.lbmessage.Text = "label1";
+            lbmessage.AutoSize = true;
+            lbmessage.MaxWidth = UIManager.Viewport.Width / 3;
+
             this.lbmessage.Alignment = Engine.GUI.TextAlignment.Left;
             // 
             // flyesno
@@ -182,28 +193,54 @@ namespace Plex.Frontend
             this.AddControl(btnok);
             this.AddControl(flyesno);
             this.AddControl(lbmessage);
+
+            OnLayout(new GameTime());
         }
 
         protected override void OnLayout(GameTime gameTime)
         {
             try
             {
-                btnok.Y = this.Height - btnok.Height - 10;
-                flyesno.Y = this.Height - flyesno.Height - 10;
-                txtinput.Width = lbmessage.Width;
-                txtinput.X = lbmessage.X;
-                txtinput.Y = btnok.Y - txtinput.Height - 2;
+                int contentHeight = Math.Max(pbicon.Height, lbmessage.Height);
+
+                pbicon.X = 15;
+                pbicon.Y = 15;
+
+                lbmessage.Y = pbicon.Y;
+                lbmessage.X = pbicon.X + pbicon.Width + 15;
+
+                int width = lbmessage.X + lbmessage.Width + 15;
+
+                Width = width;
                 if (txtinput.Visible)
                 {
-                    lbmessage.Height = (txtinput.Y - lbmessage.Y) - 2;
+                    txtinput.Y = lbmessage.Y + lbmessage.Height + 10;
+                    txtinput.Width = lbmessage.Width;
+                    txtinput.X = lbmessage.X;
+                    contentHeight = Math.Max(pbicon.Height, lbmessage.Height + 15 + txtinput.Height);
+                    UIManager.FocusedControl = txtinput;
                 }
-                
+                else
+                {
+                    UIManager.FocusedControl = this;
+                }
+
+                Height = 15 + contentHeight + 15 + btnok.Height + 15;
+
+                btnok.Y = this.Height - btnok.Height - 10;
+                btnok.X = (Width - btnok.Width) / 2;
+
+                flyesno.Y = this.Height - flyesno.Height - 10;
+                flyesno.X = (Width - flyesno.Width) / 2;
+
+                this.Parent.X = (UIManager.Viewport.Width - Width) / 2;
+                this.Parent.Y = (UIManager.Viewport.Height - Height) / 2;
+
             }
             catch { }
         }
 
 
-        private Control panel1;
         private TextControl lbmessage;
         private ItemGroup flyesno;
         private Button btnyes;
@@ -211,6 +248,8 @@ namespace Plex.Frontend
         private Button btnok;
         private PictureBox pbicon;
         private TextInput txtinput;
+
+        
 
     }
 }

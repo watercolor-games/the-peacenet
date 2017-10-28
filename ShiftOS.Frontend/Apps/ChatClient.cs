@@ -17,19 +17,166 @@ using System.IO;
 
 namespace Plex.Frontend.Apps
 {
-    [WinOpen("irc")]
-    [DefaultTitle("IRC Client")]
-    [Launcher("IRC Client", false, null, "Networking")]
+    [WinOpen("chat")]
+    [DefaultTitle("Chat")]
+    [Launcher("Chat", false, null, "Networking")]
     [SingleInstance]
-    public class ChatClient : TextControl, IPlexWindow
+    public class ChatClient : Control, IPlexWindow
     {
-        private TextControl _sendprompt = null;
-        private TextInput _input = null;
-        private Button _send = null;
-        private List<ChatMessage> _messages = new List<ChatMessage>();
-        const int usersListWidth = 100;
-        const int topicBarHeight = 24;
-        public IRCNetwork NetInfo = null;
+        private ScrollView _messageList = new ScrollView();
+        private List<ClientChatMessage> _realMessages = new List<ClientChatMessage>();
+        private Button _sendMessage = new Button();
+        private TextInput _msgText = new TextInput();
+
+        public ChatClient()
+        {
+            Width = 720;
+            Height = 600;
+            _msgText.KeyEvent += (key) =>
+            {
+                if (key.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                    SendToServer();
+            };
+            _sendMessage.Click += SendToServer;
+        }
+
+
+        /// <summary>
+        /// Adds a new message to the user interface. Will edit an existing message if you provide an already-existing ID.
+        /// </summary>
+        /// <param name="id">The ID of the message for tracking purposes.</param>
+        /// <param name="author">The author of the message.</param>
+        /// <param name="text">The text of the message.</param>
+        /// <param name="dt">The timestamp of the message, used for sorting.</param>
+        public void AddClientMessage(string id, string author, string text, DateTime dt)
+        {
+            var existing = _realMessages.FirstOrDefault(x => x.MessageID == id);
+            if(existing == null)
+            {
+                existing = new ClientChatMessage
+                {
+                    MessageID = id,
+                    AuthorText = new TextControl
+                    {
+                        FontStyle = TextControlFontStyle.Header3,
+                        Text = author,
+                        AutoSize = true
+                    },
+                    MessageText = new TextControl
+                    {
+                        FontStyle = TextControlFontStyle.System,
+                        AutoSize = true,
+                        Text = text
+                    },
+                    Timestamp = new TextControl
+                    {
+                        FontStyle = TextControlFontStyle.System,
+                        AutoSize = true,
+                        Text = dt.ToString()
+                    },
+                    Avatar = new PictureBox { }
+                };
+                Engine.Desktop.InvokeOnWorkerThread(() =>
+                {
+                    existing.Avatar.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);
+                    if (!existing.MessageID.StartsWith("client_"))
+                    {
+                        DownloadAvatar(author, existing.Avatar);
+                    }
+                    _realMessages.Add(existing);
+                    AddToView(existing);
+                });
+            }
+            else
+            {
+                existing.MessageText.Text = text; //We don't want to change EVERYTHING about the message. That's just stupid.
+            }
+        }
+
+        private Dictionary<string, Texture2D> avatarcache = new Dictionary<string, Texture2D>();
+
+        public void DownloadAvatar(string author, PictureBox destination)
+        {
+            if (avatarcache.ContainsKey(author))
+                destination.Image = avatarcache[author];
+            else
+            {
+                string uname = author;
+                if(uname.Contains("@"))
+                {
+                    uname = uname.Substring(0, uname.IndexOf("@"));
+                }
+                new Thread(() =>
+                {
+                    var wc = new System.Net.WebClient();
+                    try
+                    {
+                        var bytes = wc.DownloadData("http://" + ServerManager.SessionInfo.ServerIP + ":3253/avatar/" + uname);
+                        using(var memstr = new MemoryStream(bytes))
+                        {
+                            var img = System.Drawing.Image.FromStream(memstr);
+                            Engine.Desktop.InvokeOnWorkerThread(() =>
+                            {
+                                var tex2 = img.ToTexture2D(UIManager.GraphicsDevice);
+                                avatarcache.Add(author, tex2);
+                                destination.Image = tex2;
+                            });
+                        }
+                    }
+                    catch { }
+                }).Start();
+            }
+        }
+
+        public void AddToView(ClientChatMessage msg)
+        {
+            bool doScroll = _messageList.Value == _messageList.Maximum;
+
+            _messageList.AddControl(msg.Avatar);
+            _messageList.AddControl(msg.Timestamp);
+            _messageList.AddControl(msg.AuthorText);
+            _messageList.AddControl(msg.MessageText);
+            if (doScroll)
+            {
+                OnLayout(new GameTime());
+                _messageList.RecalculateScrollHeight();
+                _messageList.Value = _messageList.Maximum;
+            }
+        }
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            _sendMessage.Text = "Send";
+            _sendMessage.Y = (Height - _sendMessage.Height) - 10;
+            _sendMessage.X = (Width - _sendMessage.Width) - 10;
+
+            _msgText.X = 10;
+            
+            _msgText.AutoSize = false;
+            _msgText.MinWidth = (Width - 25) - _sendMessage.Width;
+            
+            _msgText.MinHeight = _sendMessage.Height;
+
+            _msgText.MaxWidth = _msgText.MinWidth;
+            _msgText.Width = _msgText.MaxWidth;
+
+            _msgText.Y = _sendMessage.Y + ((_sendMessage.Height - _msgText.Height) / 2);
+            _msgText.Layout(gameTime);
+
+            _messageList.X = 0;
+            _messageList.Y = 0;
+            _messageList.MinWidth = Width;
+            _messageList.MaxWidth = Width;
+            _messageList.Width = Width;
+            _messageList.AutoSize = true;
+            _messageList.MinHeight = _sendMessage.Y - 10;
+            _messageList.MaxHeight = _sendMessage.Y - 10;
+            int msgCurrentY = 0;
+            foreach(var msg in _realMessages)
+            {
+                msg.Layout(ref msgCurrentY, _messageList.MaxWidth);
+            }
+        }
 
         [BroadcastHandler(BroadcastType.CHAT_USERLEFT)]
         public static void HandleChatUserLeft(PlexServerHeader header)
@@ -40,7 +187,7 @@ namespace Plex.Frontend.Apps
                 var real = (ChatClient)chatclient.ParentWindow;
                 using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
                 {
-                    real.SendClientMessage("*", $"{reader.ReadString()} has left the chat.");
+                    real.AddClientMessage("client_" + Guid.NewGuid().ToString(), "peacenet", $"{reader.ReadString()} has left the chat.", DateTime.Now);
                 }
             }
         }
@@ -55,9 +202,38 @@ namespace Plex.Frontend.Apps
                 var real = (ChatClient)chatclient.ParentWindow;
                 using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
                 {
-                    real.SendClientMessage("*", $"{reader.ReadString()} has joined the chat!");
+                    real.AddClientMessage("client_" + Guid.NewGuid().ToString(), "peacenet", $"{reader.ReadString()} has joined the chat!", DateTime.Now);
                 }
             }
+        }
+
+
+        public void SendToServer()
+        {
+            if (string.IsNullOrWhiteSpace(_msgText.Text))
+                return;
+            string txt = _msgText.Text;
+            var req = ServerMessageType.CHAT_SENDTEXT;
+            if(txt.StartsWith("/me "))
+            {
+                req = ServerMessageType.CHAT_SENDACTION;
+                txt = txt.Remove(0, 4);
+            }
+            _msgText.Text = "";
+            using(var netstr = new ServerStream(req))
+            {
+                netstr.Write(txt);
+                var result = netstr.Send();
+                if(result.Message == (byte)ServerResponseType.REQ_ERROR)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        AddClientMessage("client_" + Guid.NewGuid().ToString(), "peacenet", reader.ReadString(), DateTime.Now);
+                    }
+                }
+            }
+
+            
         }
 
 
@@ -65,12 +241,12 @@ namespace Plex.Frontend.Apps
         public static void HandleChatMessageSent(PlexServerHeader header)
         {
             var chatclient = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow is ChatClient);
-            if(chatclient != null)
+            if (chatclient != null)
             {
                 var real = (ChatClient)chatclient.ParentWindow;
-                using(var reader=  new BinaryReader(ServerManager.GetResponseStream(header)))
+                using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
                 {
-                    real.SendClientMessage(reader.ReadString(), reader.ReadString());
+                    real.AddClientMessage(reader.ReadString(), reader.ReadString(), reader.ReadString(), DateTime.Now);
                 }
             }
         }
@@ -84,373 +260,25 @@ namespace Plex.Frontend.Apps
                 var real = (ChatClient)chatclient.ParentWindow;
                 using (var reader = new BinaryReader(ServerManager.GetResponseStream(header)))
                 {
-                    real.SendClientMessage("*", reader.ReadString() + reader.ReadString());
+                    real.AddClientMessage(reader.ReadString(), reader.ReadString(), "[" + reader.ReadString() + "]", DateTime.Now);
+
                 }
             }
         }
 
-        protected override void RenderText(GraphicsContext gfx)
-        {
-            int messagesTop = NetworkConnected ? topicBarHeight : 0;
-            int messagesFromRight = ChannelConnected ? usersListWidth : 0;
-
-            int _bottomseparator = _send.Y - 10;
-            gfx.DrawRectangle(0, _bottomseparator, Width, 1, UIManager.SkinTextures["ControlTextColor"]);
-            int nnGap = 25;
-            int messagebottom = _bottomseparator - 5;
-            try
-            {
-                foreach (var msg in _messages.OrderByDescending(x => x.Timestamp))
-                {
-                    if (Height - messagebottom <= messagesTop)
-                        break;
-                    var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
-                    var nnProper = $"<{msg.Author}>";
-                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    int old = vertSeparatorLeft;
-                    vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
-                    if (old != vertSeparatorLeft)
-                        requiresRepaint = true;
-                    var msgMeasure = GraphicsContext.MeasureString(msg.Message, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft, (Width - vertSeparatorLeft - 4) - messagesFromRight);
-                    messagebottom -= (int)msgMeasure.Y;
-                    gfx.DrawString(tsProper, 0, messagebottom, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    var nnColor = Color.LightGreen;
-
-                    if (msg.Author == SaveSystem.GetUsername())
-                        nnColor = Color.Red;
-                    else
-                    {
-                        if (NetInfo != null)
-                        {
-                            if (NetInfo.Channel != null)
-                            {
-                                if (NetInfo.Channel.OnlineUsers != null)
-                                {
-                                    var user = NetInfo.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == msg.Author);
-                                    if (user != null)
-                                    {
-                                        switch (user.Permission)
-                                        {
-                                            case IRCPermission.ChanOp:
-                                                nnColor = Color.Orange;
-                                                break;
-                                            case IRCPermission.NetOp:
-                                                nnColor = Color.Yellow;
-                                                break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    gfx.DrawString(nnProper, (int)tsMeasure.X + nnGap, messagebottom, nnColor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    var mcolor = LoadedSkin.ControlTextColor.ToMonoColor();
-                    if (msg.Message.Contains(SaveSystem.GetUsername()))
-                        mcolor = Color.Orange;
-                    gfx.DrawString(msg.Message, vertSeparatorLeft + 4, messagebottom, mcolor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft, (Width - vertSeparatorLeft - 4) - messagesFromRight);
-                }
-            }
-            catch { }
-
-            string topic = "";
-            if (NetworkConnected)
-            {
-                topic = $"{NetInfo.FriendlyName}: {NetInfo.MOTD}";
-                if (ChannelConnected)
-                {
-                    topic = $"#{NetInfo.Channel.Tag} | {NetInfo.Channel.Topic}";
-                    int usersStartY = messagesTop;
-                    foreach (var user in NetInfo.Channel.OnlineUsers.OrderBy(x => x.Nickname))
-                    {
-                        var measure = GraphicsContext.MeasureString(user.Nickname, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-
-                        var nnColor = Color.LightGreen;
-                        if (user.Nickname == SaveSystem.GetUsername())
-                            nnColor = Color.Red;
-                        else
-                        {
-                            switch (user.Permission)
-                            {
-                                case IRCPermission.ChanOp:
-                                    nnColor = Color.Orange;
-                                    break;
-                                case IRCPermission.NetOp:
-                                    nnColor = Color.Yellow;
-                                    break;
-                            }
-                        }
-
-                        gfx.DrawString(user.Nickname, Width - messagesFromRight + 2, usersStartY, nnColor, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-
-                        usersStartY += (int)measure.Y;
-                    }
-                }
-                gfx.DrawString(topic, 0, 0, LoadedSkin.ControlTextColor.ToMonoColor(), LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-            }
-
-
-        }
-
-        public void AddUser(string nick, IRCPermission perm)
-        {
-            this.NetInfo.Channel.OnlineUsers.Add(new IRCUser
-            {
-                Nickname = nick,
-                Permission = perm
-            });
-            RequireTextRerender();
-            Invalidate();
-        }
-
-        public ChatClient()
-        {
-            Width = 800;
-            Height = 600;
-            _send = new GUI.Button();
-            _input = new GUI.TextInput();
-            _sendprompt = new GUI.TextControl();
-            _sendprompt.Text = "Send message:";
-            _sendprompt.AutoSize = true;
-            _send.Text = "Send";
-            _send.AutoSize = true;
-            AddControl(_send);
-            AddControl(_sendprompt);
-            AddControl(_input);
-
-            _input.KeyEvent += (key) =>
-            {
-                if(key.Key == Microsoft.Xna.Framework.Input.Keys.Enter && !string.IsNullOrWhiteSpace(_input.Text))
-                {
-                    SendMessage();
-                }
-            };
-            _send.Click += () =>
-            {
-                if (!string.IsNullOrWhiteSpace(_input.Text))
-                {
-                    SendMessage();
-                }
-
-            };
-        }
-
-        protected override void OnLayout(GameTime gameTime)
-        {
-            FontStyle = TextControlFontStyle.Custom;
-            TextColor = Color.White;
-            _send.X = Width - _send.Width - 10;
-            _send.Y = Height - _send.Height - 10;
-            _sendprompt.X = 10;
-            _sendprompt.Y = _send.Y + ((_send.Height - _sendprompt.Height) / 2);
-            _input.Height = 24;
-            _input.Y = _send.Y + ((_send.Height - _input.Height) / 2);
-            _input.X = _sendprompt.X + _sendprompt.Width + 10;
-            int inRight = (Width - _send.Width - 20);
-            _input.AutoSize = false;
-            _input.Width = inRight - _input.X;
-
-        }
-
-        public bool ChannelConnected
-        {
-            get; private set;
-        }
-
-        public bool NetworkConnected
-        {
-            get; private set;
-        }
-
-        public void SendMessage()
-        {
-            if (NetworkConnected)
-            {
-                SendClientMessage(SaveSystem.GetUsername(), _input.Text);
-                _input.Text = "";
-            }
-            else
-            {
-                string txt = _input.Text;
-                bool isaction = txt.StartsWith("/me ");
-                if (isaction)
-                    txt = txt.Remove(0, 4);
-                if (string.IsNullOrWhiteSpace(txt))
-                    return;
-                ServerMessageType t = ServerMessageType.CHAT_SENDTEXT;
-                if (isaction)
-                    t = ServerMessageType.CHAT_SENDACTION;
-                using(var sstr = new ServerStream(t))
-                {
-                    sstr.Write(txt);
-                    var result = sstr.Send();
-                    if(result.Message != 0x00)
-                    {
-                        using(var reader=  new BinaryReader(ServerManager.GetResponseStream(result)))
-                        {
-                            SendClientMessage("peacenet", reader.ReadString());
-                        }
-                    }
-                }
-                _input.Text = "";
-            }
-
-#if AI
-            //Let's try the AI stuff... :P
-            var rmsg = _messages[rnd.Next(_messages.Count)].Message;
-            if (!messagecache.Contains(_messages.Last().Message))
-            {
-                messagecache.Add(_messages.Last().Message);
-#if RIP_USERS_SSD
-                SaveCache();
-#endif
-			}
-            var split = new List<string>(rmsg.Split(' '));
-            List<string> nmsg = new List<string>();
-            if (split.Count > 2)
-            {
-                int amount = rnd.Next(2, 50);
-                for (int i = 0; i < amount; i++)
-                {
-                    nmsg.Add(split[rnd.Next(split.Count)]);
-                }
-            }
-            else if (split.Count < 6)
-            {
-                for (int i = 0; i < rnd.Next(2); i++)
-                {
-                    split.RemoveAt(i);
-                }
-                split.AddRange(Regex.Split(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase), " "));
-            }
-            split.RemoveAt(rnd.Next(split.Count));
-            split.Add(Regex.Replace(messagecache[rnd.Next(messagecache.Count)], "debugbot", outcomes[rnd.Next(outcomes.Length)], RegexOptions.IgnoreCase));
-            string combinedResult = string.Join(" ", split);
-            SendClientMessage("debugbot", combinedResult);
-#endif
-        }
-
-        readonly string[] outcomes = new string[] { "ok", "sure", "yeah", "yes", "no", "nope", "alright" };
-        Random rnd = new Random();
-        private List<string> messagecache = new List<string>();
-
-        public void SendClientMessage(string nick, string message)
-        {
-            _messages.Add(new Apps.ChatMessage
-            {
-                Timestamp = DateTime.Now,
-                Author = nick,
-                Message = message
-            });
-            RequireTextRerender();
-            Invalidate();
-        }
-
-        int vertSeparatorLeft = 20;
-        bool requiresRepaint = false;
-
-        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
-        {
-            int messagesTop = NetworkConnected ? topicBarHeight : 0;
-            int messagesFromRight = ChannelConnected ? usersListWidth : 0;
-
-            int _bottomseparator = _send.Y - 10;
-            gfx.DrawRectangle(0, _bottomseparator, Width, 1, UIManager.SkinTextures["ControlTextColor"]);
-            int nnGap = 25;
-            int messagebottom = _bottomseparator - 5;
-            try
-            {
-                foreach (var msg in _messages.OrderByDescending(x => x.Timestamp))
-                {
-                    if (Height - messagebottom <= messagesTop)
-                        break;
-                    var tsProper = $"[{msg.Timestamp.Hour.ToString("##")}:{msg.Timestamp.Minute.ToString("##")}]";
-                    var nnProper = $"<{msg.Author}>";
-                    var tsMeasure = GraphicsContext.MeasureString(tsProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    var nnMeasure = GraphicsContext.MeasureString(nnProper, LoadedSkin.TerminalFont, Engine.GUI.TextAlignment.TopLeft);
-                    int old = vertSeparatorLeft;
-                    vertSeparatorLeft = (int)Math.Round(Math.Max(vertSeparatorLeft, tsMeasure.X + nnGap + nnMeasure.X + 2));
-                    if (old != vertSeparatorLeft)
-                        RequireTextRerender();
-                }
-            }
-            catch { }
-
-            if (NetworkConnected)
-            {
-                if (ChannelConnected)
-                {
-                    gfx.DrawRectangle(Width - messagesFromRight, messagesTop, 1, _bottomseparator - messagesTop, LoadedSkin.ControlTextColor.ToMonoColor());
-                }
-                gfx.DrawRectangle(0, messagesTop, Width, 1, LoadedSkin.ControlTextColor.ToMonoColor());
-            }
-
-            gfx.DrawRectangle(vertSeparatorLeft, messagesTop, 1, _bottomseparator - messagesTop, UIManager.SkinTextures["ControlTextColor"]);
-            base.OnPaint(gfx, target);
-        }
-		
-        public void FakeConnection(IRCNetwork net)
-        {
-            NetInfo = net;
-            var cs = net.Channel.OnlineUsers.FirstOrDefault(x => x.Nickname == "ChanServ");
-            if (cs == null)
-                net.Channel.OnlineUsers.Add(new IRCUser
-                {
-                    Nickname = "ChanServ",
-                    Permission = IRCPermission.ChanOp
-                });
-            var t = new Thread(() =>
-            {
-                SendClientMessage("Plex", $"Looking up {net.SystemName}");
-                Thread.Sleep(250);
-                SendClientMessage("*", $"Connecting to {net.SystemName} ({net.SystemName}:6667)");
-                Thread.Sleep(1500);
-                SendClientMessage("*", "Connected. Now logging in.");
-                Thread.Sleep(25);
-                SendClientMessage("*", "*** Looking up your hostname... ");
-                Thread.Sleep(2000);
-                SendClientMessage("*", "***Checking Ident");
-                Thread.Sleep(10);
-                SendClientMessage("*", "*** Couldn't look up your hostname");
-                Thread.Sleep(10);
-                SendClientMessage("*", "***No Ident response");
-                Thread.Sleep(750);
-                SendClientMessage("*", "Capabilities supported: account-notify extended-join identify-msg multi-prefix sasl");
-                Thread.Sleep(250);
-                SendClientMessage("*", "Capabilities requested: account-notify extended-join identify-msg multi-prefix");
-                Thread.Sleep(250);
-                SendClientMessage("*", "Capabilities acknowledged: account-notify extended-join identify-msg multi-prefix");
-                Thread.Sleep(500);
-                SendClientMessage("*", $"Welcome to the {net.FriendlyName} {SaveSystem.GetUsername()}");
-                NetworkConnected = true;
-                Thread.Sleep(250);
-                SendClientMessage("*", $"{SaveSystem.GetUsername()} sets mode +i on {SaveSystem.GetUsername()}");
-                Thread.Sleep(300);
-                SendClientMessage("Plex", "Joining #" + net.Channel.Tag);
-                Thread.Sleep(100);
-                ChannelConnected = true;
-                SendClientMessage("Plex", $"{net.Channel.Topic}: {net.Channel.OnlineUsers.Count} users online");
-                Thread.Sleep(10);
-                SendClientMessage("ChanServ", "ChanServ sets mode -v on " + SaveSystem.GetUsername());
-            });
-            t.Start();
-        }
-        
         public void OnLoad()
         {
-#if AI
-            if (System.IO.File.Exists("aicache.dat"))
-				messagecache = System.IO.File.ReadAllLines("aicache.dat").ToList();
-#endif
-            using(var sstr = new ServerStream(ServerMessageType.CHAT_JOIN))
+            AddControl(_messageList);
+            AddControl(_sendMessage);
+            AddControl(_msgText);
+            using(var netstr = new ServerStream(ServerMessageType.CHAT_JOIN))
             {
-                var result = sstr.Send();
-                if(result.Message != 0x00)
+                var result = netstr.Send();
+                if(result.Message == (byte)ServerResponseType.REQ_ERROR)
                 {
                     using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        SendClientMessage("peacenet", reader.ReadString());
+                        AddClientMessage("client_" + Guid.NewGuid().ToString(), "peacenet", reader.ReadString(), DateTime.Now);
                     }
                 }
             }
@@ -459,39 +287,76 @@ namespace Plex.Frontend.Apps
         public void OnSkinLoad()
         {
         }
-        
+
         public bool OnUnload()
         {
-            using (var sstr = new ServerStream(ServerMessageType.CHAT_LEAVE))
+            using (var netstr = new ServerStream(ServerMessageType.CHAT_LEAVE))
             {
-                var result = sstr.Send();
-                if (result.Message != 0x00)
+                var result = netstr.Send();
+                if (result.Message == (byte)ServerResponseType.REQ_ERROR)
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        SendClientMessage("peacenet", reader.ReadString());
+                        AddClientMessage("client_" + Guid.NewGuid().ToString(), "peacenet", reader.ReadString(), DateTime.Now);
                     }
                 }
             }
-
             return true;
         }
-
-		private void SaveCache()
-		{
-			// It's watching you...
-			System.IO.File.WriteAllLines("aicache.dat", messagecache);
-		}
 
         public void OnUpgrade()
         {
         }
     }
-    
-    public class ChatMessage
+
+    public class ClientChatMessage
     {
-        public DateTime Timestamp { get; set; }
-        public string Author { get; set; }
-        public string Message { get; set; }
+        public TextControl AuthorText { get; set; }
+        public TextControl MessageText { get; set; }
+        public TextControl Timestamp { get; set; }
+        public string MessageID { get; set; }
+        public PictureBox Avatar { get; set; }
+
+        private int lastWidth = 0;
+
+        public void Layout(ref int layout_y, int layout_max_width)
+        {
+            Avatar.Width = 64;
+            Avatar.Height = 64;
+
+            int real_width = (layout_max_width - 40) - Avatar.Width;
+            if (real_width != lastWidth)
+            {
+                AuthorText.RequireTextRerender();
+                MessageText.RequireTextRerender();
+                lastWidth = real_width;
+            }
+            AuthorText.AutoSize = true;
+            AuthorText.MaxWidth = real_width;
+            AuthorText.Layout(new GameTime());
+            MessageText.AutoSize = true;
+            MessageText.MaxWidth = real_width;
+            MessageText.Layout(new GameTime());
+            Timestamp.Layout(new GameTime());
+
+            layout_y += 15;
+            Avatar.Y = layout_y;
+            Avatar.X = 15;
+
+
+            AuthorText.X = Avatar.X + Avatar.Width + 10;
+            AuthorText.MaxWidth = real_width;
+            AuthorText.Y = layout_y;
+
+            Timestamp.X = AuthorText.X + AuthorText.Width + 5;
+            Timestamp.Y = AuthorText.Y + ((AuthorText.Height - Timestamp.Height) / 2);
+
+            layout_y += AuthorText.Height + 5;
+            MessageText.X = AuthorText.X;
+            MessageText.MaxWidth = real_width;
+            MessageText.AutoSize = true;
+            MessageText.Y = layout_y;
+            layout_y += MessageText.Height + 5;
+        }
     }
 }

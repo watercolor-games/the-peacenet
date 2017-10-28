@@ -19,6 +19,8 @@ namespace Plex.Frontend
         private PictureBox _watercolorgames = new PictureBox();
         private PictureBox _peacenet_welcome = new PictureBox();
         private PictureBox _peacenet_text = new PictureBox();
+        private TextControl _pressStart = new TextControl();
+        private TextControl _legalBullshit = new TextControl();
         private float _wgFade = 0.0f;
         private int _wgState = 0;
         private double _wgRide = 0.0;
@@ -46,13 +48,15 @@ namespace Plex.Frontend
         private PictureBox _faGroup = new PictureBox();
         private PictureBox _faSettings = new PictureBox();
 
+        private float _psFade = 0;
+
 
         public MainMenu()
         {
             AddControl(_watercolorgames);
             AddControl(_peacenet_text);
             AddControl(_peacenet_welcome);
-
+            AddControl(_legalBullshit);
             AddControl(_btnSinglePlayer);
             AddControl(_btnMultiplayer);
             AddControl(_btnOptions);
@@ -63,6 +67,7 @@ namespace Plex.Frontend
             AddControl(_faUser);
             AddControl(_faGroup);
             AddControl(_faSettings);
+            AddControl(_pressStart);
             
             _watercolorgames.Image = Properties.Resources.Watercolor_Full.ToTexture2D(UIManager.GraphicsDevice);
             _watercolorgames.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
@@ -127,7 +132,7 @@ namespace Plex.Frontend
             _peacenet_text.X = (int)_pnSlideVector.X;
             _peacenet_text.Y = (int)_pnSlideVector.Y;
 
-            if (_wgState >= 7)
+            if (_wgState >= 8)
                 _tcMain.Opacity = (float)_wgRide;
             else
                 _tcMain.Opacity = 0;
@@ -139,6 +144,22 @@ namespace Plex.Frontend
             _tcMain.Y = 15;
             _tcMain.Text = "Main menu (UNDER CONSTRUCTION)";
 
+
+            _pressStart.Text = "Press ENTER to continue";
+            _pressStart.FontStyle = TextControlFontStyle.Header2;
+            _pressStart.AutoSize = true;
+            _pressStart.X = (Width - _pressStart.Width) / 2;
+            _pressStart.Y = _peacenet_text.Y + _peacenet_text.Image.Height + 75;
+
+            _pressStart.Opacity = _psFade;
+            _legalBullshit.Opacity = _psFade;
+
+            _legalBullshit.MaxWidth = Width / 3;
+            _legalBullshit.AutoSize = true;
+            _legalBullshit.Text = @"The Peacenet is copyright (c) 2017 Watercolor Games. Licensed under the MIT license. Online interactions not rated by any rating board. Seriously, does anyone even fucking read this shit? Why the fuck am I writing this? Just play the damn game! Legal shit can be found in the credits.";
+            _legalBullshit.X = (Width - _legalBullshit.Width) / 2;
+            _legalBullshit.Y = (Height - _legalBullshit.Height) - 20;
+            _legalBullshit.Alignment = Engine.GUI.TextAlignment.Middle;
 
             switch (_wgState)
             {
@@ -196,14 +217,22 @@ namespace Plex.Frontend
                     {
                         //move to next state
                         _wgState++;
-                        _wtSlideTo = _wtSlideFrom;
                         _wtSlide = 1.0;
                         _pnSlide = 1.0;
                         _pnSlideFrom = new Vector2(Width - (_peacenet_text.Image.Width) - 15, 15);
+                        _pressStart.RequireTextRerender();
                     }
 
                     break;
                 case 6:
+                    _psFade = MathHelper.Clamp(_psFade + ((float)gameTime.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+                    if (_psFade >= 1)
+                        _wgState++;
+                    break;
+                case 7:
+                    UIManager.FocusedControl = this;
+                    break;
+                case 8:
                     _wtSlide -= gameTime.ElapsedGameTime.TotalSeconds * 2;
                     _pnSlide -= gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if(_pnSlide <= 0.0)
@@ -212,7 +241,7 @@ namespace Plex.Frontend
                         _wgRide = 0.0;
                     }
                     break;
-                case 7:
+                case 9:
                     _wgRide += (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if (_wgRide >= 1.0)
                         _wgState++;
@@ -274,11 +303,30 @@ namespace Plex.Frontend
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             gfx.Clear(Color.Black);
-            if(_wgState >= 7)
+            if(_wgState >= 8)
             {
                 int _w = (int)MathHelper.Lerp(0, Width, (float)_wgRide);
                 gfx.DrawRectangle(0, _peacenet_text.Y + _peacenet_text.Image.Height + 10, _w, 2, new Color(64, 128, 255));
             }
+        }
+
+        private bool _enterPressed = false;
+
+        protected override void OnKeyEvent(KeyEvent e)
+        {
+            if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                if (_wgState == 7)
+                {
+                    if (_enterPressed == false)
+                    {
+                        _enterPressed = true;
+                        Engine.Infobox.Show("Information", "This game uses cloud save features. Do not switch off your system while the cloud icon is displayed.", () =>
+                        {
+                            _wgState++;
+                        });
+                    }
+                }
+            base.OnKeyEvent(e);
         }
     }
 }

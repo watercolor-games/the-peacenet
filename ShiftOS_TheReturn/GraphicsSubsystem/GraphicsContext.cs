@@ -228,8 +228,6 @@ namespace Plex.Frontend.GraphicsSubsystem
         {
             if (string.IsNullOrEmpty(text))
                 return;
-            x += X;
-            y += Y;
             Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment, wrapMode);
         }
 

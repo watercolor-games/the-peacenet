@@ -77,12 +77,12 @@ namespace Plex.Frontend.GUI
             base.OnDisposing();
         }
 
-        protected void RequireTextRerender()
+        public void RequireTextRerender()
         {
             requiresTextRerender = true;
         }
 
-        protected void DontRequireTextRerender()
+        public void DontRequireTextRerender()
         {
             requiresTextRerender = false;
         }

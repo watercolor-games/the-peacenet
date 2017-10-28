@@ -20,6 +20,31 @@ namespace Plex.Frontend.GUI
         private int _downState = 0;
         private int _nubState = 0;
 
+        public int Maximum
+        {
+            get
+            {
+                return _realHeight - Height;
+            }
+        }
+
+        public int Value
+        {
+            get
+            {
+                return _scrollY;
+            }
+            set
+            {
+                value = MathHelper.Clamp(value, 0, Maximum);
+                if (_scrollY == value)
+                    return;
+                _scrollY = value;
+                Invalidate();
+            }
+        }
+
+
         public ScrollView()
         {
             Click += () =>
@@ -54,10 +79,10 @@ namespace Plex.Frontend.GUI
             };
         }
 
-        public void RecalculateRenderTargetHeight(GraphicsContext gfx)
+        public void RecalculateScrollHeight()
         {
             int h = 0;
-            foreach(var ctrl in Children)
+            foreach (var ctrl in Children)
             {
                 h = Math.Max(h, ctrl.Y + ctrl.Height);
             }
@@ -65,6 +90,11 @@ namespace Plex.Frontend.GUI
                 h += 15;
             _realHeight = Math.Max(Height, h);
             _scrollY = MathHelper.Clamp(_scrollY, 0, _realHeight - Height);
+        }
+
+        public void RecalculateRenderTargetHeight(GraphicsContext gfx)
+        {
+            RecalculateScrollHeight();
             AllocRenderTarget(gfx);
         }
 

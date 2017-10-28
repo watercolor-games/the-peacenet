@@ -295,6 +295,10 @@ namespace Plex.Frontend.GraphicsSubsystem
                 DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
         }
 
+        public static void Modal(string title, string text, Action onEnter = null)
+        {
+            _game.Modal(title, text, onEnter);
+        }
 
         public static void AddTopLevel(GUI.Control ctrl)
         {

@@ -15,6 +15,7 @@ namespace Plex.Server
     public static class Chat
     {
         private static List<string> ChatSessions = new List<string>();
+        private static List<ChatMessage> _messages = new List<ChatMessage>();
 
         private static async Task TalkToDiscord(string messagebody)
         {
@@ -144,12 +145,13 @@ namespace Plex.Server
             {
                 TalkToDiscord($"[**{acct.Username}**@**{acct.SaveID}**] {chattext}");
 
-                using (var broadcast = new BroadcastStream(Objects.BroadcastType.CHAT_MESSAGESENT))
+                BroadcastMessage(new ChatMessage
                 {
-                    broadcast.Write(acct.Username + "@" + acct.SaveID);
-                    broadcast.Write(chattext);
-                    broadcast.Send();
-                }
+                    Author = acct.Username + "@" + acct.SaveID,
+                    ID = Guid.NewGuid().ToString(),
+                    Text = chattext
+                });
+
                 return 0x00;
             }
             writer.Write("You are not currently in a chat! You can't send messages.");
@@ -166,12 +168,14 @@ namespace Plex.Server
             {
                 var acct = SessionManager.GrabAccount(session);
                 TalkToDiscord($"_[**{acct.Username}**@**{acct.SaveID}** {chattext}]_");
-                using (var broadcast = new BroadcastStream(Objects.BroadcastType.CHAT_ACTIONSENT))
+
+                BroadcastAction(new ChatMessage
                 {
-                    broadcast.Write(acct.Username + "@" + acct.SaveID);
-                    broadcast.Write(chattext);
-                    broadcast.Send();
-                }
+                    Author = acct.Username + "@" + acct.SaveID,
+                    ID = Guid.NewGuid().ToString(),
+                    Text = chattext
+                });
+
                 return 0x00;
             }
             writer.Write("You are not currently in a chat! You can't send messages.");
@@ -255,16 +259,43 @@ namespace Plex.Server
 
                 TalkToDiscord($"**{acct.Username}**@**{acct.SaveID}** has been kicked.");
 
-                using (var broadcast = new BroadcastStream(Objects.BroadcastType.CHAT_MESSAGESENT))
+                var chmsg = new ChatMessage
                 {
-                    broadcast.Write("peacenet");
-                    broadcast.Write($"{acct.Username}@{acct.SaveID} has been kicked.");
-                    broadcast.Send();
-                }
+                    Author = "peacenet",
+                    ID = Guid.NewGuid().ToString(),
+                    Text = $"{acct.Username}@{acct.SaveID} has been kicked."
+                };
+
+                BroadcastMessage(chmsg);
 
             }
             return "User not provided.";
 
+        }
+
+        public static void BroadcastAction(ChatMessage chmsg)
+        {
+            _messages.Add(chmsg);
+            using (var broadcast = new BroadcastStream(Objects.BroadcastType.CHAT_ACTIONSENT))
+            {
+                broadcast.Write(chmsg.ID);
+                broadcast.Write(chmsg.Author);
+                broadcast.Write(chmsg.Text);
+                broadcast.Send();
+            }
+        }
+
+
+        public static void BroadcastMessage(ChatMessage chmsg)
+        {
+            _messages.Add(chmsg);
+            using (var broadcast = new BroadcastStream(Objects.BroadcastType.CHAT_MESSAGESENT))
+            {
+                broadcast.Write(chmsg.ID);
+                broadcast.Write(chmsg.Author);
+                broadcast.Write(chmsg.Text);
+                broadcast.Send();
+            }
         }
 
         [ChatCommand("help", "Shows a list of available chat commands.")]
@@ -336,5 +367,10 @@ namespace Plex.Server
         public MethodInfo Method { get; internal set; }
     }
 
-    
+    public class ChatMessage
+    {
+        public string ID { get; set; }
+        public string Author { get; set; }
+        public string Text { get; set; }
+    }
 }

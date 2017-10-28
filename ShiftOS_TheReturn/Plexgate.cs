@@ -22,6 +22,56 @@ namespace Plex.Frontend
     /// </summary>
     public class Plexgate : Game
     {
+        private bool modal_active = false;
+        private string modal_title = "";
+        private string modal_content = "";
+        private int modal_state = 0;
+        private float modal_size_anim_x = 0.0f;
+        private float modal_size_anim_y = 0.0f;
+        private float modal_text_opacity_anim = 0.0f;
+        private Action modal_action = null;
+        private int modal_size_max_x = 0;
+        private int modal_size_max_y = 0;
+        private System.Drawing.Font modal_head_font = null;
+        private System.Drawing.Font modal_body_font = null;
+        private Color modal_head_color = Color.White;
+        private Color modal_body_color = Color.White;
+        private Color modal_bg_color = Color.DarkGray;
+        private Vector2 modal_body_measure = Vector2.Zero;
+        private Vector2 modal_head_measure = Vector2.Zero;
+
+
+        public void Modal(string title, string message, Action onEnter)
+        {
+            modal_action = onEnter;
+            modal_content = message;
+            modal_title = title;
+
+            modal_bg_color = SkinEngine.LoadedSkin.ControlColor.ToMonoColor();
+            modal_body_color = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
+            modal_head_color = SkinEngine.LoadedSkin.SecondLevelHeaderColor.ToMonoColor();
+            modal_head_font = SkinEngine.LoadedSkin.Header2Font;
+            modal_body_font = SkinEngine.LoadedSkin.MainFont;
+
+            int max_width = UIManager.Viewport.Width / 2;
+
+            modal_body_measure = TextRenderer.MeasureText(message, modal_body_font, max_width, Engine.GUI.TextAlignment.Middle, Engine.TextRenderers.WrapMode.Words);
+
+            modal_size_max_x = (int)modal_body_measure.X + 30;
+
+            modal_head_measure = TextRenderer.MeasureText(title, modal_head_font, modal_size_max_x - 30, Engine.GUI.TextAlignment.Top, Engine.TextRenderers.WrapMode.Words);
+            modal_size_max_y = 15 + (int)modal_head_measure.Y + 125 + (int)modal_body_measure.Y + 140;
+
+            modal_size_anim_x = 0;
+            modal_size_anim_y = 0;
+            modal_text_opacity_anim = 0.0f;
+            modal_state = 0;
+            modal_active = true;
+        }
+
+
+
+
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
@@ -169,7 +219,15 @@ namespace Plex.Frontend
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
-
+            if(e.Key == Keys.Enter)
+            {
+                //Modal confirm event
+                if (modal_active)
+                {
+                    if (modal_state == 4)
+                        modal_state++;
+                }
+            }
             if (e.Key == Keys.F11)
             {
                 UIManager.Fullscreen = !UIManager.Fullscreen;
@@ -317,6 +375,67 @@ namespace Plex.Frontend
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            keyboardListener.Update(gameTime);
+            if (modal_active)
+            {
+                switch (modal_state)
+                {
+                    case 0:
+                        //Reset all anims
+                        modal_size_anim_x = 0.0f;
+                        modal_size_anim_y = 0.0f;
+                        modal_text_opacity_anim = 0.0f;
+                        modal_state++;
+                        break;
+                    case 1:
+                        //Animate the X size of the modal.
+                        modal_size_anim_x = MathHelper.Clamp(modal_size_anim_x + ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                        if (modal_size_anim_x >= 1.0f)
+                            modal_state++;
+                        break;
+                    case 2:
+                        //Animate the Y size now
+                        modal_size_anim_y = MathHelper.Clamp(modal_size_anim_y + ((float)gameTime.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+                        if (modal_size_anim_y >= 1.0f)
+                            modal_state++;
+                        break;
+                    case 3:
+                        //And now the text.
+                        modal_text_opacity_anim = MathHelper.Clamp(modal_text_opacity_anim + ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                        if (modal_text_opacity_anim >= 1.0f)
+                            modal_state++;
+                        break;
+                    case 5:
+                        //Leave state 4 out, we're not doing any animation.
+                        modal_text_opacity_anim = MathHelper.Clamp(modal_text_opacity_anim - ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                        if (modal_text_opacity_anim <= 0.0f)
+                            modal_state++;
+                        break;
+                    case 6:
+                        //Animate the Y size now
+                        modal_size_anim_y = MathHelper.Clamp(modal_size_anim_y - ((float)gameTime.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+                        if (modal_size_anim_y <= 0.0f)
+                            modal_state++;
+                        break;
+                    case 7:
+                        //Animate the X size of the modal.
+                        modal_size_anim_x = MathHelper.Clamp(modal_size_anim_x - ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                        if (modal_size_anim_x <= 0.0f)
+                            modal_state++;
+
+                        break;
+                    case 8:
+                        //Disable modal
+                        modal_active = false;
+                        //Run action if any
+                        modal_action?.Invoke();
+                        break;
+                }
+                base.Update(gameTime);
+                return;
+            }
+
+
             if(objectiveState == 0)
             {
                 _objectiveTitle.Visible = false;
@@ -462,8 +581,7 @@ namespace Plex.Frontend
 
                 //Let's see how keyboard input works.
 
-                keyboardListener.Update(gameTime);
-
+                
 
                 //Cause layout update on all elements
                 UIManager.LayoutUpdate(gameTime);
@@ -557,9 +675,12 @@ To begin this process, strike the [T] key while holding <CTRL>.";
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch);
-            UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
+            if (!modal_active)
+            {
 
+                UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch);
+                UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
+            }
 
             graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
@@ -573,53 +694,58 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             spriteBatch.End();
 
 
-            //The desktop is drawn, now we can draw the UI.
-            UIManager.DrawTArgets(spriteBatch);
+            if (!modal_active)
+            {
+                //The desktop is drawn, now we can draw the UI.
+                UIManager.DrawTArgets(spriteBatch);
+            }
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
 
-            //draw tutorial overlay
-            if (IsInTutorial)
+            if (!modal_active)
             {
-                gfx.DrawRectangle(0, 0, MouseEventBounds.X, 720, Color.Black * 0.5F);
-                gfx.DrawRectangle(MouseEventBounds.X, 0, 1280 - MouseEventBounds.X, MouseEventBounds.Y, Color.Black * 0.5F);
-                gfx.DrawRectangle(MouseEventBounds.Right, MouseEventBounds.Y, 1280 - MouseEventBounds.Right, MouseEventBounds.Height, Color.Black * 0.5F);
-                gfx.DrawRectangle(MouseEventBounds.X, MouseEventBounds.Bottom, 1280 - MouseEventBounds.X, 720 - MouseEventBounds.Bottom, Color.Black * 0.5F);
+                //draw tutorial overlay
+                if (IsInTutorial)
+                {
+                    gfx.DrawRectangle(0, 0, MouseEventBounds.X, 720, Color.Black * 0.5F);
+                    gfx.DrawRectangle(MouseEventBounds.X, 0, 1280 - MouseEventBounds.X, MouseEventBounds.Y, Color.Black * 0.5F);
+                    gfx.DrawRectangle(MouseEventBounds.Right, MouseEventBounds.Y, 1280 - MouseEventBounds.Right, MouseEventBounds.Height, Color.Black * 0.5F);
+                    gfx.DrawRectangle(MouseEventBounds.X, MouseEventBounds.Bottom, 1280 - MouseEventBounds.X, 720 - MouseEventBounds.Bottom, Color.Black * 0.5F);
 
-                var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, 1280 / 3);
-                int textX = ((MouseEventBounds.X) >= (1280 / 2)) ? MouseEventBounds.X - (int)tutmeasure.X - 15 : MouseEventBounds.Right + 15;
-                int textY = ((MouseEventBounds.Y) >= (720 / 2)) ? MouseEventBounds.Y - (int)tutmeasure.Y - 15 : MouseEventBounds.Bottom + 15;
-                if (textX < 15)
-                    textX = 15;
-                if (textX > 1265)
-                    textX = 1265 - (int)tutmeasure.X;
-                if (textY < 0)
-                    textY = 15;
-                if (textY > 705)
-                    textY = 705 - (int)tutmeasure.Y;
-                gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, (int)tutmeasure.X);
+                    var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, 1280 / 3);
+                    int textX = ((MouseEventBounds.X) >= (1280 / 2)) ? MouseEventBounds.X - (int)tutmeasure.X - 15 : MouseEventBounds.Right + 15;
+                    int textY = ((MouseEventBounds.Y) >= (720 / 2)) ? MouseEventBounds.Y - (int)tutmeasure.Y - 15 : MouseEventBounds.Bottom + 15;
+                    if (textX < 15)
+                        textX = 15;
+                    if (textX > 1265)
+                        textX = 1265 - (int)tutmeasure.X;
+                    if (textY < 0)
+                        textY = 15;
+                    if (textY > 705)
+                        textY = 705 - (int)tutmeasure.Y;
+                    gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, (int)tutmeasure.X);
 
+                }
+
+
+                spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
+
+                if (isFailing && failFadeInMS >= failFadeMaxMS)
+                {
+                    string objectiveFailed = "- OBJECTIVE FAILURE -";
+                    string prompt = "[press any key to dismiss this message and return to your sentience]";
+                    int textMaxWidth = UIManager.Viewport.Width / 3;
+                    var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
+                    var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+                    var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+
+                    gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
+                    gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+                    gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
+                }
             }
-
-
-            spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
-
-            if (isFailing && failFadeInMS >= failFadeMaxMS)
-            {
-                string objectiveFailed = "- OBJECTIVE FAILURE -";
-                string prompt = "[press any key to dismiss this message and return to your sentience]";
-                int textMaxWidth = UIManager.Viewport.Width / 3;
-                var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
-                var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-                var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-
-                gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
-                gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-                gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-            }
-
 #if DEBUG
             if (DisplayDebugInfo)
             {
@@ -629,23 +755,67 @@ To begin this process, strike the [T] key while holding <CTRL>.";
 
 #endif
             spriteBatch.End();
+            if (!modal_active)
+            {
 
-            //Since we've drawn all the shrouds and stuff...
-            //we can draw the HUD.
-            UIManager.DrawHUD(spriteBatch);
+                //Since we've drawn all the shrouds and stuff...
+                //we can draw the HUD.
+                UIManager.DrawHUD(spriteBatch);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
 
-            //Draw a mouse cursor
-            var mousepos = LastMouseState;
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                SamplerState.LinearWrap, DepthStencilState.Default,
+                                RasterizerState.CullNone);
 
-            spriteBatch.End();
+                //Draw a mouse cursor
+                var mousepos = LastMouseState;
+                spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
+                spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+
+                spriteBatch.End();
+            }
+
+            if (modal_active)
+            {
+                //Calculate the width of the modal.
+                int width = (int)MathHelper.Lerp(0, modal_size_max_x, modal_size_anim_x);
+                //Now the height.
+                int height = (int)MathHelper.Lerp(2, modal_size_max_y, modal_size_anim_y);
+
+                //Calculate X and Y coordinates...
+                int modal_x = (UIManager.Viewport.Width - width) / 2;
+                int modal_y = (UIManager.Viewport.Height - height) / 2;
+
+                //Begin draw.
+                //We can use this graphics context to draw the modal with proper clipping.
+                gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, modal_x, modal_y, width, height);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                    SamplerState.LinearWrap, gfx.Device.DepthStencilState,
+                    gfx.RasterizerState);
+                
+                
+                //Draw the background
+                gfx.Clear(modal_bg_color);
+
+                //Now let us draw the modal's title...
+
+                
+
+                gfx.DrawString(modal_title, (width - (int)modal_head_measure.X) / 2, 15, modal_head_color * modal_text_opacity_anim, modal_head_font, Engine.GUI.TextAlignment.Top, width, Engine.TextRenderers.WrapMode.Words);
+
+                //And now the text...
+
+                gfx.DrawString(modal_content, (width - (int)modal_body_measure.X) / 2, (height - (int)modal_body_measure.Y) / 2, modal_body_color * modal_text_opacity_anim, modal_body_font, Engine.GUI.TextAlignment.Middle, width, Engine.TextRenderers.WrapMode.Words);
+
+
+                //End draw.
+                spriteBatch.End();
+
+            }
+
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight), Color.White);
