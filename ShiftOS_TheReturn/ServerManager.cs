@@ -47,10 +47,38 @@ namespace Plex.Engine
         private static Thread _thread = null;
         private static Thread _bthread = null;
         private static PlexServerHeader _private = null;
+        private static bool _connected = false;
 
-        public static void ConnectToServer(string hostname, int port)
+        public static bool ConnectToServer(string hostname, int port)
         {
-            _tcpClient = new TcpClient(hostname, port);
+            if (_connected)
+                return false;
+            _connected = true;
+            _tcpClient = new TcpClient();
+            UIManager.ShowCloudUpload();
+            UIManager.ShowCloudDownload();
+            var task = _tcpClient.ConnectAsync(hostname, port);
+            Stopwatch _sw = new Stopwatch();
+            double _secondsWastedWaitingForShittyConnections = 0;
+            while (!task.IsCompleted)
+            {
+                _sw.Start();
+                UIManager.Game.RunOneFrame();
+                _sw.Stop();
+                _secondsWastedWaitingForShittyConnections += (double)_sw.Elapsed.TotalSeconds;
+                _sw.Reset();
+                if(_secondsWastedWaitingForShittyConnections>=4.0)
+                {
+                    _tcpClient = null;
+                    _connected = false;
+                    throw new Exception($"The connection to {hostname} on port {port} has timed out (Are you sure this is a Peacenet server?)");
+                }
+            }
+            UIManager.HideCloudUpload();
+            UIManager.HideCloudDownload();
+
+
+
             _tcpStream = _tcpClient.GetStream();
             _tcpReader = new BinaryReader(_tcpStream, Encoding.UTF8, true);
             _tcpWriter = new DebugBinaryWriter(_tcpStream, Encoding.UTF8, true);
@@ -111,6 +139,7 @@ namespace Plex.Engine
                 }
             });
             _bthread.Start();
+            return true;
         }
 
         [BroadcastHandler(BroadcastType.SRV_ANNOUNCEMENT)]
@@ -150,6 +179,7 @@ namespace Plex.Engine
 
         public static void Disconnect(DisconnectType type, string userMessage = "You have been disconnected from the server.")
         {
+            _connected = false;
             _bthread.Abort();
             _tcpClient.Close();
             _tcpWriter.Close();

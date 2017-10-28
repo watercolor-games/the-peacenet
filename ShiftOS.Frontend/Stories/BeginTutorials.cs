@@ -201,7 +201,7 @@ namespace Plex.Frontend.Stories
                 });
         }
 
-        [ShiftoriumUpgrade("Peacegate Desktop Enabler", 0, "A single command - enable_desktop - that installs necessary system files and enables the Peacegate Desktop.", "", "System", true)]
+        [ShiftoriumUpgrade("Peacegate Desktop Enabler", 0, "A single command - enable_desktop - that installs necessary system files and enables the Peacegate Desktop.", "", "System", true, "This upgrade is a temporary upgrade used for installing the Peacegate Desktop on your system and performing system-level tasks to get it to run at startup. Once the 'enable_desktop' command has been run, you may unload this upgrade.")]
         [Command("enable_desktop")]
         public static void PeacegateDesktopEnabler()
         {

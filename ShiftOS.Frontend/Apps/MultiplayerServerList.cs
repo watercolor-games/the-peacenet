@@ -180,6 +180,7 @@ namespace Plex.Frontend.Apps
                     string key = _servers.IndexOf(server).ToString();
                     try
                     {
+                        UIManager.ShowCloudDownload();
                         string serverInfoJson = wc.DownloadString("http://" + server.Hostname + ":3253/serverinfo");
                         byte[] serverIcon = wc.DownloadData("http://" + server.Hostname + ":3253/servericon");
 
@@ -195,6 +196,10 @@ namespace Plex.Frontend.Apps
                     catch
                     {
                         _list.SetImage(key, FontAwesome.times_circle.ToTexture2D(UIManager.GraphicsDevice));
+                    }
+                    finally
+                    {
+                        UIManager.HideCloudDownload();
                     }
                 }
             }).Start();

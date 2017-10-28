@@ -51,8 +51,7 @@ namespace Plex.Frontend.Apps
                 buy.X = Width - buy.Width - 15;
                 buy.Y = Height - buy.Height - 15;
                 buy.Visible = (selectedUpgrade != null);
-                _upgradeTitle.Font = SkinEngine.LoadedSkin.Header2Font;
-                _upgradeDescription.Font = SkinEngine.LoadedSkin.MainFont;
+                _upgradeTitle.FontStyle = GUI.TextControlFontStyle.Header2;
                 _upgradeTitle.AutoSize = true;
                 int wrapwidth = (Width - (upgradelist.X + upgradelist.Width)) - 45;
                 _upgradeTitle.MaxWidth = wrapwidth;
@@ -65,7 +64,7 @@ namespace Plex.Frontend.Apps
                 _upgradeDescription.Height = (Height - _upgradeDescription.Y - 50);
 
                 _mainTitle.Y = upgradelist.Y - _mainTitle.Height - 5;
-                _mainTitle.Font = SkinEngine.LoadedSkin.Header2Font;
+                _mainTitle.FontStyle = GUI.TextControlFontStyle.Header1;
                 _mainTitle.MaxWidth = upgradelist.Width;
                 _mainTitle.X = upgradelist.X + ((upgradelist.Width - _mainTitle.Width) / 2);
             }
@@ -123,9 +122,16 @@ namespace Plex.Frontend.Apps
             {
                 if (upgradelist.SelectedItem != null)
                 {
-                    var upg = Upgrades.GetDefaults()[upgradelist.SelectedIndex];
-                    if (upg != null)
+                    if(upgradelist.SelectedItem != null)
+                    {
+                        string upgstr = upgradelist.SelectedItem.ToString();
+                        string category = upgstr.Substring(0, upgstr.IndexOf(":"));
+                        string upgname = upgstr.Substring(0, upgstr.LastIndexOf("(") - 1).Remove(0, upgstr.IndexOf(":") + 2);
+                        var upg = Upgrades.GetDefaults().FirstOrDefault(x => x.Category == category && x.Name == upgname);
                         SelectUpgrade(upg);
+                        return;
+                    }
+                    SelectUpgrade(null);
                 }
             };
             PopulateList();

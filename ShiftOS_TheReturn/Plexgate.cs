@@ -40,6 +40,12 @@ namespace Plex.Frontend
         private Vector2 modal_body_measure = Vector2.Zero;
         private Vector2 modal_head_measure = Vector2.Zero;
 
+        public bool uploading = false;
+        public bool downloading = false;
+
+        public GUI.PictureBox _uploadImg = new GUI.PictureBox();
+        public GUI.PictureBox _downloadImg = new GUI.PictureBox();
+
 
         public void Modal(string title, string message, Action onEnter)
         {
@@ -203,6 +209,9 @@ namespace Plex.Frontend
             graphicsDevice.SynchronizeWithVerticalRetrace = true;
             graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
 
+            UIManager.AddHUD(_uploadImg);
+            UIManager.AddHUD(_downloadImg);
+
         }
 
         private string _threadid = "";
@@ -352,6 +361,9 @@ namespace Plex.Frontend
             MouseTexture.SetData<byte>(rgb);
             rgb = null;
         }
+
+
+
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -661,6 +673,20 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             Watermark.X = (1280 - Watermark.Width) / 2;
             Watermark.Y = (720 - Watermark.Height) / 2;
 #endif
+
+            _uploadImg.Visible = uploading;
+            _uploadImg.Width = 64;
+            _uploadImg.Height = 64;
+            _uploadImg.X = (UIManager.Viewport.Width - _uploadImg.Width) - 15;
+            _uploadImg.Y = (UIManager.Viewport.Height - _uploadImg.Height) - 15;
+
+            _downloadImg.Visible = downloading;
+            _downloadImg.Width = 64;
+            _downloadImg.Height = 64;
+            _downloadImg.Y = _uploadImg.Y;
+            _downloadImg.X = _uploadImg.X - _downloadImg.Width - 15; 
+
+
 
             base.Update(gameTime);
         }

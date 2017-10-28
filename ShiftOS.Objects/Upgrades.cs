@@ -52,7 +52,7 @@ namespace Plex.Objects
 
     public class ShiftoriumUpgradeAttribute : RequiresUpgradeAttribute
     {
-        public ShiftoriumUpgradeAttribute(string name, ulong cost, string desc, string dependencies, string category, bool purchasable) : base(name.ToLower().Replace(" ", "_"))
+        public ShiftoriumUpgradeAttribute(string name, ulong cost, string desc, string dependencies, string category, bool purchasable, string tutorial = null) : base(name.ToLower().Replace(" ", "_"))
         {
             Name = name;
             Description = desc;
@@ -60,6 +60,7 @@ namespace Plex.Objects
             Cost = cost;
             Category = category;
             Purchasable = purchasable;
+            Tutorial = tutorial;
         }
 
         public bool Purchasable { get; private set; }
@@ -68,6 +69,7 @@ namespace Plex.Objects
         public ulong Cost { get; private set; }
         public string Dependencies { get; private set; }
         public string Category { get; private set; }
+        public string Tutorial { get; private set; }
     }
 
     public class MemoryTextWriter : System.IO.TextWriter

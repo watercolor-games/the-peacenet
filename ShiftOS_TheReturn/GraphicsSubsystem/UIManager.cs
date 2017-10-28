@@ -300,6 +300,28 @@ namespace Plex.Frontend.GraphicsSubsystem
             _game.Modal(title, text, onEnter);
         }
 
+        public static void ShowCloudUpload()
+        {
+            _game.uploading = true;
+        }
+
+        public static void HideCloudUpload()
+        {
+            _game.uploading = false;
+        }
+
+        public static void ShowCloudDownload()
+        {
+            _game.downloading = true;
+        }
+
+        public static void HideCloudDownload()
+        {
+            _game.downloading = false;
+        }
+
+
+
         public static void AddTopLevel(GUI.Control ctrl)
         {
             Desktop.InvokeOnWorkerThread(() =>
@@ -522,7 +544,8 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void ConnectToServer(string host, int port)
         {
-            ServerManager.ConnectToServer(host, port);
+            if (!ServerManager.ConnectToServer(host, port))
+                return;
             bool isMP = true;
             
             using(var sstr = new ServerStream(ServerMessageType.U_CONF))

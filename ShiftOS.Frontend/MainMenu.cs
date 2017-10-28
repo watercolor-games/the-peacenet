@@ -95,6 +95,11 @@ namespace Plex.Frontend
             _faGroup.AutoSize = true;
             _faSettings.AutoSize = true;
 
+
+            UIManager.Game._uploadImg.Image = FontAwesome.cloud_upload.ToTexture2D(UIManager.GraphicsDevice);
+            UIManager.Game._downloadImg.Image = FontAwesome.cloud_download.ToTexture2D(UIManager.GraphicsDevice);
+
+
         }
 
         protected override void OnLayout(GameTime gameTime)
@@ -213,7 +218,7 @@ namespace Plex.Frontend
                     break;
                 case 5:
                     _wgRide += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (_wgRide >= 3.5F)
+                    if (_wgRide >= 0.5F)
                     {
                         //move to next state
                         _wgState++;
@@ -320,9 +325,11 @@ namespace Plex.Frontend
                     if (_enterPressed == false)
                     {
                         _enterPressed = true;
+                        UIManager.ShowCloudUpload();
                         Engine.Infobox.Show("Information", "This game uses cloud save features. Do not switch off your system while the cloud icon is displayed.", () =>
                         {
                             _wgState++;
+                            UIManager.HideCloudUpload();
                         });
                     }
                 }

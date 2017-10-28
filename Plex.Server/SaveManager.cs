@@ -33,7 +33,8 @@ namespace Plex.Server
                         Description = attrib.Description,
                         Dependencies = attrib.Dependencies,
                         Category = attrib.Category,
-                        Purchasable = attrib.Purchasable
+                        Purchasable = attrib.Purchasable,
+                        Tutorial = attrib.Tutorial
                     });
                 }
 
@@ -51,7 +52,8 @@ namespace Plex.Server
                             Description = attrib.Description,
                             Dependencies = attrib.Dependencies,
                             Category = attrib.Category,
-                            Purchasable = attrib.Purchasable
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial
                         });
 
                     }
@@ -71,7 +73,8 @@ namespace Plex.Server
                             Description = attrib.Description,
                             Dependencies = attrib.Dependencies,
                             Category = attrib.Category,
-                            Purchasable = attrib.Purchasable
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial
                         });
 
                     }
@@ -91,7 +94,8 @@ namespace Plex.Server
                             Description = attrib.Description,
                             Dependencies = attrib.Dependencies,
                             Category = attrib.Category,
-                            Purchasable = attrib.Purchasable
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial
                         });
 
                     }
