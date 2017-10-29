@@ -30,7 +30,21 @@ namespace Plex.Server
         {
             private Thread _thread = null;
             private Queue<Action> _messageQueue = new Queue<Action>();
-            private ServerThreadState _state = ServerThreadState.Stopped;
+            private EventWaitHandle _messageQueueHasMessages = new AutoResetEvent(false);
+            private ServerThreadState __state = ServerThreadState.Stopped;
+            private EventWaitHandle _stateChanged = new AutoResetEvent(false);
+            private ServerThreadState _state
+            {
+                get
+                {
+                    return __state;
+                }
+                set
+                {
+                    __state = value;
+                    _stateChanged.Set();
+                }
+            }
 
             public ServerThread()
             {
@@ -38,13 +52,16 @@ namespace Plex.Server
                 {
                     while(true)
                     {
-                        while (_messageQueue.Count == 0)
+                        _state = ServerThreadState.Waiting;
+                        _messageQueueHasMessages.WaitOne();
+                        lock (_messageQueue)
                         {
-                            Thread.Sleep(2);
-                            _state = ServerThreadState.Waiting;
+                            if (_messageQueue.Count > 0)
+                            {
+                                _state = ServerThreadState.Active;
+                                _messageQueue.Dequeue().Invoke();
+                            }
                         }
-                        _state = ServerThreadState.Active;
-                        _messageQueue.Dequeue().Invoke();
                     }
                 });
             }
@@ -68,7 +85,11 @@ namespace Plex.Server
             public void Queue(Action action)
             {
                 if (action != null)
-                    _messageQueue.Enqueue(action);
+                {
+                    lock (_messageQueue)
+                        _messageQueue.Enqueue(action);
+                    _messageQueueHasMessages.Set();
+                }
             }
 
             public void Start()
@@ -88,7 +109,7 @@ namespace Plex.Server
                 if (_state == ServerThreadState.Stopped)
                     throw new Exception("The thread is not running.");
                 while (_state == ServerThreadState.Active)
-                    Thread.Sleep(10);
+                    _stateChanged.WaitOne();
                 _thread.Abort();
                 _state = ServerThreadState.Stopped;
             }

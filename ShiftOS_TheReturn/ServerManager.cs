@@ -44,9 +44,11 @@ namespace Plex.Engine
         private static BinaryReader _tcpReader = null;
         private static Stream _tcpStream = null;
         private static Queue<Action> _actionQueue = new Queue<Action>();
+        private static EventWaitHandle _actionQueueHasActions = new AutoResetEvent(false);
         private static Thread _thread = null;
         private static Thread _bthread = null;
         private static PlexServerHeader _private = null;
+        private static EventWaitHandle _privateSet = new AutoResetEvent(false);
         private static bool _connected = false;
 
         public static bool ConnectToServer(string hostname, int port)
@@ -86,9 +88,12 @@ namespace Plex.Engine
             {
                 while (true)
                 {
-                    while (_actionQueue.Count > 0)
-                        _actionQueue.Dequeue()?.Invoke();
-                    Thread.Sleep(1);
+                    _actionQueueHasActions.WaitOne();
+                    lock (_actionQueue)
+                    {
+                        while (_actionQueue.Count > 0)
+                            _actionQueue.Dequeue()?.Invoke();
+                    }
                 }
             });
             _thread.Start();
@@ -129,6 +134,7 @@ namespace Plex.Engine
                                 }
                             }
                             _private = header;
+                            _privateSet.Set();
                         }
                         else
                         {
@@ -188,7 +194,9 @@ namespace Plex.Engine
             _tcpWriter = null;
             _tcpReader = null;
             _bthread = null;
-            _actionQueue.Clear();
+            lock (_actionQueue)
+                _actionQueue.Clear();
+            _actionQueueHasActions.Reset();
             SessionInfo = null;
             _thread.Abort();
             _thread = null;
@@ -228,10 +236,11 @@ namespace Plex.Engine
                 }
             });
 
-            while (_private == null)
-                Thread.Sleep(1);
-            while (_private.TransactionKey != msgtoken.ToString())
-                Thread.Sleep(1);
+            do
+            {
+                _privateSet.WaitOne();
+            }
+            while (_private.TransactionKey != msgtoken.ToString());
             return _private;
         }
 
@@ -239,16 +248,19 @@ namespace Plex.Engine
         {
             bool runGame = Thread.CurrentThread.ManagedThreadId.ToString() == UIManager.Game.ThreadID;
             PlexServerHeader header = null;
-            _actionQueue.Enqueue(() =>
+            var headerSet = new AutoResetEvent(false);
+            lock (_actionQueue)
             {
-                var task = _sendMessageInternal(message, dgram);
-                task.Wait();
-                header = task.Result;
-            });
-            while (header == null)
-            {
-                Thread.Sleep(1);
+                _actionQueue.Enqueue(() =>
+                {
+                    var task = _sendMessageInternal(message, dgram);
+                    task.Wait();
+                    header = task.Result;
+                    headerSet.Set();
+                });
             }
+            _actionQueueHasActions.Set();
+            headerSet.WaitOne();
             if(header.Message == (byte)ServerResponseType.REQ_LOGINREQUIRED)
             {
                 ServerLoginHandler.LoginRequired();

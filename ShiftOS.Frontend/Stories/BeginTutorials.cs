@@ -21,31 +21,15 @@ namespace Plex.Frontend.Stories
                 AppearanceManager.Close(frm.ParentWindow);
             }
             int position = 0;
+            EventWaitHandle positionChanged = new AutoResetEvent(false);
+            string[] advance = { "help", "status", "upgrades", "echo" };
             Action<string, Dictionary<string, object>> commandListener = (text, args) =>
             {
-                Thread.Sleep(25);
-                switch (position)
+                if (position < advance.Length && advance[position] == text)
                 {
-                    case 0:
-                        if (text == "help")
-                        {
-                            position++;
-
-                        }
-                        break;
-                    case 1:
-                        if (text == "status")
-                            position++;
-                        break;
-                    case 2:
-                        if (text == "upgrades")
-                            position++;
-                        break;
-                    case 3:
-                        if (text == "echo")
-                            position++;
-                        break;
-                }
+					position++;
+					positionChanged.Set();
+				}
             };
             TerminalBackend.CommandFinished += commandListener;
 
@@ -69,8 +53,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
-            while (position == 0)
-                Thread.Sleep(10);
+            positionChanged.WaitOne();
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
             Console.WriteLine("The Plexgate recognizes your will to obey orders.");
@@ -89,9 +72,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
-            while (position == 1)
-                Thread.Sleep(10);
-            
+            positionChanged.WaitOne();
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
             Console.WriteLine("Good job. You seem to be quite literate compared to the others.");
@@ -108,9 +89,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
-            while (position == 2)
-                Thread.Sleep(10);
-
+            positionChanged.WaitOne();
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
 
@@ -138,8 +117,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = false;
             TerminalBackend.PrefixEnabled = true;
             TerminalBackend.PrintPrompt();
-            while (position == 3)
-                Thread.Sleep(10);
+            positionChanged.WaitOne();
             Thread.Sleep(1000);
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;

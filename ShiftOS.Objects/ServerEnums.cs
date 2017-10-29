@@ -69,6 +69,8 @@ namespace Plex.Objects
 
         SP_COMPLETESTORY = 0x80,
         SP_SETPICKUP = 0x81,
+
+        STREAM_OP = 0x90,
     }
 
     public enum ServerResponseType : byte

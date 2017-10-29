@@ -576,7 +576,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             var heart = Encoding.UTF8.GetBytes("heart");
             NetworkClient.Send(heart, heart.Length);
             var beat = Encoding.UTF8.GetBytes("beat");
-            bool done = false;
+            var done = new AutoResetEvent(false);
             var t = new Thread(() =>
             {
                 try
@@ -587,27 +587,21 @@ namespace Plex.Frontend.GraphicsSubsystem
                     {
                         receive = NetworkClient.Receive(ref ep);
                     }
-                    done = true;
+                    done.Set();
                 }
                 catch(Exception ex)
                 {
                     error = ex;
-                    done = true;
+                    done.Set();
                 }
             });
             t.Start();
-            int ms = 0;
-            while(ms < 4000 && done == false)
-            {
-                ms++;
-                Thread.Sleep(1);
-            }
-            if(done == false)
+            if (!done.WaitOne(4000))
             {
                 t.Abort();
                 throw new NetworkTimeoutException(ip,port);
             }
-            if (done == true && error != null)
+            if (error != null)
                 throw error;
         }
 
