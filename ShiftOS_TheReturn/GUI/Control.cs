@@ -666,20 +666,21 @@ namespace Plex.Frontend.GUI
             _mouseHandled = false;
             //Firstly, we get the mouse coordinates in the local space
             var coords = PointToLocal(state.Position.X, state.Position.Y);
+            bool doMove = false;
+            if (_mouseX != coords.X || _mouseY != coords.Y)
+                doMove = true;
+
             _mouseX = coords.X;
             _mouseY = coords.Y;
             //Now we check if the mouse is within the bounds of the control
-            if(coords.X >= 0 && coords.Y >= 0 && coords.X <= _bw && coords.Y <= _bh)
+            //We're in the local space. Let's fire the MouseMove event.
+
+            if (coords.X >= 0 && coords.Y >= 0 && coords.X <= _bw && coords.Y <= _bh)
             {
-                //We're in the local space. Let's fire the MouseMove event.
-                if (IsFocusedControl)
-                {
+                if (doMove)
                     MouseMove?.Invoke(coords);
-                    if (_mouseHandled)
-                        return true;
-                }
                 //Also, if the mouse hasn't been in the local space last time it moved, fire MouseEnter.
-                if(_wasMouseInControl == false)
+                if (_wasMouseInControl == false)
                 {
                     _wasMouseInControl = true;
                     MouseEnter?.Invoke();
@@ -690,10 +691,10 @@ namespace Plex.Frontend.GUI
                 //Things are going to get a bit complicated.
                 //Firstly, we need to find out if we have any children.
                 bool _requiresMoreWork = true;
-                if(_children.Count > 0)
+                if (_children.Count > 0)
                 {
                     //We do. We're going to iterate through them all and process the mouse state.
-                    foreach(var control in _children.OrderByDescending(x=>_children.IndexOf(x)))
+                    foreach (var control in _children.OrderByDescending(x => _children.IndexOf(x)))
                     {
                         //If the process method returns true, then we do not need to do anything else on our end.
 
@@ -709,7 +710,7 @@ namespace Plex.Frontend.GUI
                 }
 
                 //If we need to do more work...
-                if(_requiresMoreWork == true)
+                if (_requiresMoreWork == true)
                 {
                     bool fire = false; //so we know to fire a MouseStateChanged method
                     //Let's get the state values of each button
@@ -760,34 +761,31 @@ namespace Plex.Frontend.GUI
             }
             else
             {
-                
+
                 _leftState = false;
                 _rightState = false;
                 _middleState = false;
                 MouseStateChanged();
                 //If the mouse was in local space before, fire MouseLeave
-                if (_wasMouseInControl == true)
-                {
-                    if (CaptureMouse == true)
-                    {
-                        _wasMouseInControl = true;
-                        int newX = MathHelper.Clamp(state.X, X, X + Width);
-                        int newY = MathHelper.Clamp(state.Y, Y, Y + Height);
-                        Mouse.SetPosition(newX, newY);
+                PropagateMouseLeave();
 
-                    }
-                    else
-                    {
-                        _wasMouseInControl = false;
-                        MouseLeave?.Invoke();
-                        Invalidate();
-                    }
-                }
             }
-            
+
 
             //Mouse is not in the local space, don't do anything.
             return false;
+        }
+
+        private void PropagateMouseLeave()
+        {
+            if (_wasMouseInControl == true)
+            {
+                MouseLeave?.Invoke();
+                Invalidate();
+                foreach (var ctrl in _children)
+                    ctrl.PropagateMouseLeave();
+            }
+            _wasMouseInControl = false;
         }
 
         protected virtual void OnMouseScroll(int value)

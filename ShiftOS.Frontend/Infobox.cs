@@ -162,11 +162,13 @@ namespace Plex.Frontend
             // 
             this.btnyes.AutoSize = true;
             this.btnyes.Text = Localization.Parse("{GEN_YES}");
+            this.btnyes.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // btnno
             // 
             this.btnno.AutoSize = true;
             this.btnno.Text = Localization.Parse("{GEN_NO}");
+            this.btnno.Image = FontAwesome.times.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // btnok
             // 
@@ -174,6 +176,7 @@ namespace Plex.Frontend
             this.btnok.X = 140;
             this.btnok.Y = 140;
             this.btnok.Text = Localization.Parse("{GEN_OK}");
+            this.btnok.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // pbicon
             // 

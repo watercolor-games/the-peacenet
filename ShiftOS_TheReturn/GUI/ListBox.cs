@@ -54,6 +54,8 @@ namespace Plex.Frontend.GUI
         {
             MouseMove += (loc) =>
             {
+                if (fontheight <= 0)
+                    return;
                 int screeni = (loc.Y / fontheight);
                 int i = screeni + itemOffset;
                 if (_itemOver == i)

@@ -17,6 +17,9 @@ namespace Plex.Frontend.Desktop
     public class Desktop : GUI.TextControl, IDesktop
     {
         private ItemGroup _panelButtonGroup = new ItemGroup();
+        private Button _userMenu = new Button();
+        private TextControl _panelClock = new TextControl();
+
 
         public PlexSkin LoadedSkin
         {
@@ -78,6 +81,10 @@ namespace Plex.Frontend.Desktop
                     HideAppLauncher();
                 }
             };
+
+            AddControl(_userMenu);
+            AddControl(_panelClock);
+
         }
 
         public string DesktopName
@@ -136,17 +143,7 @@ namespace Plex.Frontend.Desktop
             int dp_height = LoadedSkin.DesktopPanelHeight;
             int dp_position = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : Height - dp_height;
             int dp_width = Width;
-            //Panel clock.
 
-            var panelClockRight = LoadedSkin.DesktopPanelClockFromRight;
-            var panelClockTextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
-
-
-            var pcMeasure = GraphicsContext.MeasureString(dateTimeString, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
-            int panelclockleft = Width - (int)pcMeasure.X;
-            int panelclockwidth = Width - panelclockleft;
-            
-            gfx.DrawString(dateTimeString, panelclockleft, dp_position + LoadedSkin.DesktopPanelClockFromRight.Y, LoadedSkin.DesktopPanelClockColor.ToMonoColor(), LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopRight);
             if (UIManagerTools.InProtectedGUI)
             {
                 var appMeasure = GraphicsContext.MeasureString(_pguiAppName, LoadedSkin.DesktopPanelClockFont, Engine.GUI.TextAlignment.TopLeft);
@@ -271,6 +268,8 @@ namespace Plex.Frontend.Desktop
 
         public void SetupDesktop()
         {
+            _userMenu.Text = SaveSystem.GetUsername();
+            _userMenu.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);
             Invalidate();
         }
 
@@ -309,20 +308,35 @@ namespace Plex.Frontend.Desktop
             Height = LoadedSkin.DesktopPanelHeight;
             Y = (LoadedSkin.DesktopPanelPosition == 0) ? 0 : GetSize().Height - Height;
             var now = DateTime.Now.TimeOfDay;
-            var newDateTimeString = $"{now.Hours}:{now.Minutes}:{now.Seconds} - ";
-           
+            string ampm = "AM";
+            if (now.Hours > 12)
+                ampm = "PM";
+            var newDateTimeString = string.Format("{0}:{1}:{2} {3}", (now.Hours > 12) ? now.Hours - 12 : now.Hours, (now.Minutes < 10) ? "0" + now.Minutes.ToString() : now.Minutes.ToString(), (now.Seconds < 10) ? "0" + now.Seconds.ToString() : now.Seconds.ToString(), ampm);
+
+
+            _panelClock.FontStyle = TextControlFontStyle.Custom;
+            _panelClock.TextColor = LoadedSkin.DesktopPanelClockColor.ToMonoColor();
+            _panelClock.Font = LoadedSkin.DesktopPanelClockFont;
+            _panelClock.AutoSize = true;
+
             if (newDateTimeString != dateTimeString)
             {
                 dateTimeString = newDateTimeString;
-                RequireTextRerender();
-                Invalidate();
+                _panelClock.Text = dateTimeString;
+                _panelClock.Layout(gameTime);
             }
+
+            _userMenu.Y = (Height - _userMenu.Height) / 2;
+            _userMenu.X = (Width - _userMenu.Width) - 5;
+
+            _panelClock.Y = (Height - _panelClock.Height) / 2;
+            _panelClock.X = (_userMenu.X - _panelClock.Width) - 5;
 
             _panelButtonGroup.Visible = !_inpgui;
             _panelButtonGroup.X = LoadedSkin.PanelButtonHolderFromLeft;
             _panelButtonGroup.Y = 0;
             _panelButtonGroup.Height = Height;
-            _panelButtonGroup.Width = Width - _panelButtonGroup.X;
+            _panelButtonGroup.Width = _panelClock.X - _panelButtonGroup.X;
 
         }
 
