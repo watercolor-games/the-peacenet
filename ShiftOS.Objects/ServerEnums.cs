@@ -27,6 +27,8 @@ namespace Plex.Objects
 
         TRM_INVOKE = 0x20,
         TRM_GETCMDS = 0x21,
+        TRM_MANPAGE = 0x22,
+
 
         UPG_GETUPGRADES = 0x30,
         UPG_ISINSTALLED = 0x31,

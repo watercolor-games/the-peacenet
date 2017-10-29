@@ -11,9 +11,23 @@ using System.Windows.Forms;
 
 namespace Plex.Objects
 {
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public class UsageStringAttribute : Attribute
+    {
+        public UsageStringAttribute(string usage)
+        {
+            Usage = usage;
+        }
+
+        public string Usage { get; private set; }
+    }
+
+
+
     /// <summary>
     /// Provides functionality for parsing a Terminal command string
     /// </summary>
+    [Obsolete("NO.")]
     public sealed class CommandParser
     {
         public IList<CommandFormat> parts = new List<CommandFormat>();

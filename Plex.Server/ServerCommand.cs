@@ -18,6 +18,7 @@ namespace Plex.Server
         public bool ServerOnly { get; private set; }
     }
 
+    [Obsolete("Commands just...don't work this way anymore.")]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class RequiresArgument : Attribute
     {

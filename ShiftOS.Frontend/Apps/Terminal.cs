@@ -257,16 +257,9 @@ namespace Plex.Frontend.Apps
                         if (TerminalBackend.InStory == false)
                         {
                             {
-                                var result = SkinEngine.LoadedSkin.CurrentParser.ParseCommand(text3);
 
-                                if (result.Equals(default(KeyValuePair<string, Dictionary<string, string>>)))
-                                {
-                                    Console.WriteLine("{ERR_SYNTAXERROR}");
-                                }
-                                else
-                                {
-                                    TerminalBackend.InvokeCommand(result.Key, result.Value);
-                                }
+                                TerminalBackend.InvokeCommand(text3, false);
+
 
                             }
                         }

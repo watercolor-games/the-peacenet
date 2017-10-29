@@ -47,8 +47,41 @@
 using System;using System.Collections.Generic;using System.IO;
 using System.Linq;using System.Text;using System.Threading.Tasks;using Plex.Objects;
 
-namespace Plex.Engine{    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    public class RequiresArgument : Attribute    {        /// <summary>        /// The argument name        /// </summary>        public string argument;        /// <summary>        /// Creates a new instance of the <see cref="RequiresArgument"/> attribute         /// </summary>        /// <param name="argument">The argument name associated with this attribute</param>        public RequiresArgument(string argument)        {            this.argument = argument;        }        public override object TypeId        {            get            {                return this;            }        }    }    /// <summary>    /// Prevents a command from being run in a remote session.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]    public class RemoteLockAttribute : Attribute    {    }    public static class EngineCommands
+namespace Plex.Engine{    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    [Obsolete("Commands just...don't work this way anymore.")]
+    public class RequiresArgument : Attribute    {        /// <summary>        /// The argument name        /// </summary>        public string argument;        /// <summary>        /// Creates a new instance of the <see cref="RequiresArgument"/> attribute         /// </summary>        /// <param name="argument">The argument name associated with this attribute</param>        public RequiresArgument(string argument)        {            this.argument = argument;        }        public override object TypeId        {            get            {                return this;            }        }    }    /// <summary>    /// Prevents a command from being run in a remote session.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]    public class RemoteLockAttribute : Attribute    {    }    public static class EngineCommands
     {
+        [MetaCommand()]
+        [Command("man", description = "Shows detailed usage information about a given command.")]
+        [UsageString("<command>")]
+        public static void Man(Dictionary<string, object> args)
+        {
+            string cmd = args["<command>"].ToString();
+            var tc = TerminalBackend.Commands.FirstOrDefault(x => x.CommandInfo.name == cmd && Upgrades.IsLoaded(x.Dependencies));
+
+
+            if (tc != null)
+                Console.WriteLine(tc.GetManPage());
+            else
+            {
+                using(var netstr = new ServerStream(ServerMessageType.TRM_MANPAGE))
+                {
+                    netstr.Write(cmd);
+                    var result = netstr.Send();
+                    if(result.Message == (byte)ServerResponseType.REQ_SUCCESS)
+                    {
+                        using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                        {
+                            Console.WriteLine(reader.ReadString());
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Command not found.");
+                    }
+                }
+            }
+        }
+
         [MetaCommand]
         [Command("help", "", "{DESC_COMMANDS}")]
         public static bool Commands()

@@ -23,78 +23,6 @@ using static Plex.Engine.TerminalBackend;
 
 namespace Plex.Frontend
 {
-    public static class MissionsCommands
-    {
-        [Command("startmission")]
-        [RequiresArgument("id")]
-        [RequiresUpgrade("tutorial1")]
-        [AllowInMultiplayer(false)]
-        public static void StartMission(Dictionary<string, object> args)
-        {
-            string id = args["id"].ToString();
-            try
-            {
-                if (!Upgrades.UpgradeInstalled(id))
-                {
-                    Story.Start(id);
-                    return;
-                }
-                Console.WriteLine("That mission has already been complete. You can't replay it.");
-            }
-            catch
-            {
-                Console.WriteLine("That mission could not be found. Try running missions for a list of available missions.");
-            }
-        }
-
-        [Command("missions")]
-        [RequiresUpgrade("tutorial1")]
-        [AllowInMultiplayer (false)]
-        public static void Missions()
-        {
-            Console.WriteLine("Available missions");
-            Console.WriteLine("===================");
-            Console.WriteLine();
-            bool found = false;
-            foreach (var type in ReflectMan.Types)
-            {
-                foreach(var mth in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                {
-                    var missionattrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is MissionAttribute) as MissionAttribute;
-                    if(missionattrib != null)
-                    {
-                        if (!Upgrades.UpgradeInstalled(missionattrib.StoryID) && Upgrades.UpgradeAttributesUnlocked(mth))
-                        {
-                            found = true;
-                            Console.WriteLine();
-                            Console.WriteLine($@"{missionattrib.Name} (id {missionattrib.StoryID})
-------------------------------------
-
-assigner: {missionattrib.Assigner}
-cp reward: {missionattrib.CodepointAward}
-
-{missionattrib.Description}");
-                        }
-                    }
-                }
-            }
-            if(found == false)
-            {
-                Console.WriteLine();
-                Console.WriteLine(@"No missions found.
-------------------------------------
-
-assigner: undefined
-cp reward: [object Object]
-
-There are no missions available for you to complete. Please check back later for more!");
-
-            }
-        }
-    }
-
-
-
     public static class TerminalCommands
     {
 
@@ -142,24 +70,27 @@ There are no missions available for you to complete. Please check back later for
     public static class ShiftoriumCommands
     {
         [Command("buy", description = "{DESC_BUY}")]
-        [RequiresArgument("id")]
-        public static bool BuyUpgrade(Dictionary<string, object> userArgs)
+        [UsageString("<id>")]
+        public static void BuyUpgrade(Dictionary<string, object> args)
         {
+            string upgrade = args["<id>"].ToString();
+            if(string.IsNullOrWhiteSpace(upgrade))
+            {
+                Console.WriteLine("No upgrade provided.");
+                return;
+            }
             try
             {
-                string upgrade = "";
-
-                upgrade = (string)userArgs["id"];
-
+            
                 var upg = Upgrades.GetAvailable().FirstOrDefault(x => x.ID == upgrade);
                 if(upg != null)
                 {
                     if (!Upgrades.Buy(upg.ID, upg.Cost) == true)
-                        Console.WriteLine("{ERR_NOTENOUGHExperience}");
+                        Console.WriteLine("You don't have enough cash to buy this upgrade.");
                 }
                 else
                 {
-                    Console.WriteLine("{ERR_NOUPGRADE}");
+                    Console.WriteLine("Upgrade ID \"{0}\" not found.", upgrade);
                 }
 
             }
@@ -167,18 +98,17 @@ There are no missions available for you to complete. Please check back later for
             {
                 Console.WriteLine("{ERR_GENERAL}");
             }
-            return true;
         }
 
         [Command("upgradeinfo", description ="{DESC_UPGRADEINFO}")]
-        [RequiresArgument("id")]
+        [UsageString("<id>")]
         public static bool ViewInfo(Dictionary<string, object> userArgs)
         {
             try
             {
                 string upgrade = "";
 
-                upgrade = (string)userArgs["id"];
+                upgrade = (string)userArgs["<id>"];
 
                 foreach (var upg in Upgrades.GetDefaults())
                 {
@@ -220,19 +150,15 @@ There are no missions available for you to complete. Please check back later for
         }
 
         [Command("upgrades", description ="{DESC_UPGRADES}")]
+        [UsageString("[-c <categoryid>]")]
         public static bool ListAll(Dictionary<string, object> args)
         {
             try
             {
-                bool showOnlyInCategory = false;
+                bool showOnlyInCategory = (bool)args["-c"];
 
-                string cat = "Other";
 
-                if (args.ContainsKey("cat"))
-                {
-                    showOnlyInCategory = true;
-                    cat = args["cat"].ToString();
-                }
+                string cat = (args["<categoryid>"] == null) ? "" : args["<categoryid>"].ToString();
 
                 Dictionary<string, ulong> upgrades = new Dictionary<string, ulong>();
                 int maxLength = 5;
@@ -334,12 +260,17 @@ There are no missions available for you to complete. Please check back later for
 
         [RemoteLock]
         [Command("close", description ="{DESC_CLOSE}")]
-        [RequiresArgument("id")]
-        public static bool CloseWindow(Dictionary<string, object> args)
+        [UsageString("<pid>")]
+        public static void CloseWindow(Dictionary<string, object> args)
         {
             int winNum = -1;
-            if (args.ContainsKey("id"))
-                winNum = Convert.ToInt32(args["id"].ToString());
+
+            if(!int.TryParse(args["<pid>"].ToString(), out winNum))
+            {
+                Console.WriteLine("Fatal error: process id must be a 32-bit integer");
+                return;
+            }
+
             string err = null;
 
             if (winNum < 0 || winNum >= AppearanceManager.OpenForms.Count)
@@ -357,8 +288,6 @@ There are no missions available for you to complete. Please check back later for
             {
                 Console.WriteLine(err);
             }
-
-            return true;
         }
 
     }

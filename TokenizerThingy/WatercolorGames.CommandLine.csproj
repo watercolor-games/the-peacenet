@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A069089A-8962-4607-B2B2-4CF4A371066E}</ProjectGuid>
+    <ProjectGuid>{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plex.Objects</RootNamespace>
-    <AssemblyName>Plex.Objects</AssemblyName>
+    <RootNamespace>WatercolorGames.CommandLine</RootNamespace>
+    <AssemblyName>WatercolorGames.CommandLine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,62 +31,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DocoptNet">
-      <HintPath>..\Libraries\DocoptNet.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Whoa, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Whoa.1.4.0\lib\net45\Whoa.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandParser.cs" />
-    <Compile Include="DebugBinaryStreams.cs" />
-    <Compile Include="EngineShiftnetSubscription.cs" />
-    <Compile Include="FFI\DotNet.cs" />
-    <Compile Include="FFI\IFFI.cs" />
-    <Compile Include="Hacking\Loot.cs" />
-    <Compile Include="Hacking\Port.cs" />
-    <Compile Include="Hacking\Payload.cs" />
-    <Compile Include="Hacking\Exploit.cs" />
-    <Compile Include="Hacking\Hackable.cs" />
-    <Compile Include="Hacking\Puzzle.cs" />
-    <Compile Include="IRCNetwork.cs" />
-    <Compile Include="MudAttributes.cs" />
-    <Compile Include="Objects.cs" />
-    <Compile Include="PlexFS\EntryType.cs" />
-    <Compile Include="PlexFS\OpenMode.cs" />
-    <Compile Include="PlexFS\PlexFAT.cs" />
-    <Compile Include="Plexnet.cs" />
-    <Compile Include="PlexServerHeader.cs" />
+    <Compile Include="Tokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rank.cs" />
-    <Compile Include="RankManager.cs" />
-    <Compile Include="ReflectMan.cs" />
-    <Compile Include="REST_Announcement.cs" />
-    <Compile Include="Save.cs" />
-    <Compile Include="ServerDetails.cs" />
-    <Compile Include="ServerEnums.cs" />
-    <Compile Include="ShiftFS.cs" />
-    <Compile Include="ShiftoriumUpgrade.cs" />
-    <Compile Include="TerminalCommand.cs" />
-    <Compile Include="Upgrades.cs" />
-    <Compile Include="UserConfig.cs" />
-    <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

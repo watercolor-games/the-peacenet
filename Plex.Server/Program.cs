@@ -12,6 +12,7 @@ using System.IO;
 using System.Drawing;
 using System.Threading;
 using System.Collections;
+using WatercolorGames.CommandLine;
 
 namespace Plex.Server
 {
@@ -638,13 +639,29 @@ Now generating defenses...
                     }
                     else
                     {
-                        var parsed = parser.ParseCommand(cmd);
-                        Dictionary<string, object> cargs = new Dictionary<string, object>();
-                        foreach (var arg in parsed.Value)
-                            cargs.Add(arg.Key, arg.Value);
-                        if (!Terminal.RunClient(parsed.Key, cargs, "server", true))
+                        try
                         {
-                            Console.WriteLine("Command not found.");
+                            
+                            string[] argv = Tokenizer.TokenizeString(cmd);
+                            if (argv.Length > 0)
+                            {
+                                string cmdname = argv[0];
+                                string[] argsarr = new string[0];
+                                if(argv.Length > 1)
+                                {
+                                    var alist = argv.ToList();
+                                    alist.RemoveAt(0);
+                                    argsarr = alist.ToArray();
+                                }
+                                if (!Terminal.RunClient(cmdname, argsarr, "", true))
+                                {
+                                    Console.WriteLine("Command not found.");
+                                }
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Parse error: " + ex.Message);
                         }
                     }
                 }

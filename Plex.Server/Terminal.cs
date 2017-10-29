@@ -48,11 +48,18 @@ namespace Plex.Server
                         tc.CommandInfo = cmd;
                         tc.RequiresElevation = false;
                         tc.RequiredArguments = new List<string>();
-                        foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
+                        //foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
+                        //{
+                        //    var rarg = arg as RequiresArgument;
+                        //    tc.RequiredArguments.Add(rarg.Name);
+                        //} Obsolete.
+
+                        foreach (var attr in mth.GetCustomAttributes(false).Where(x => x is UsageStringAttribute))
                         {
-                            var rarg = arg as RequiresArgument;
-                            tc.RequiredArguments.Add(rarg.Name);
+                            tc.UsageStrings.Add(attr as UsageStringAttribute);
                         }
+
+
                         var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
                         if (rupg != null)
                             tc.Dependencies = rupg.Upgrade;
@@ -74,8 +81,17 @@ namespace Plex.Server
             Console.WriteLine("[termdb] " + Commands.Count + " commands found.");
         }
 
+        [ServerMessageHandler(ServerMessageType.TRM_MANPAGE)]
+        [SessionRequired]
+        public static void GetManPage(string session_id, BinaryReader reader, BinaryWriter writer)
+        {
+            string cmdname = reader.ReadString();
 
-        public static bool RunClient(string text, Dictionary<string, object> args, string session_id, bool isServerAdmin = false)
+            var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == cmdname && UpgradeManager.IsUpgradeLoaded(x.Dependencies, session_id));
+        }
+
+
+        public static bool RunClient(string text, string[] args, string session_id, bool isServerAdmin = false)
         {
             SessionID = session_id;
             var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
@@ -88,17 +104,6 @@ namespace Plex.Server
             }
             if (!UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                 return false;
-            bool res = false;
-            foreach (var arg in cmd.RequiredArguments)
-            {
-                if (!args.ContainsKey(arg))
-                {
-                    res = true;
-                    Console.WriteLine("You are missing an argument with the key \"" + arg + "\".");
-                }
-            }
-            if (res == true)
-                return true;
             try
             {
                 cmd.Invoke(args, _shelloverride);
@@ -155,7 +160,7 @@ namespace Plex.Server
             Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
             string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
-            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
+            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
             SetShellOverride("");
             Console.SetOut(outstream);
             writer.Write("\u0013\u0014");

@@ -23,7 +23,7 @@ namespace Plex.Frontend.Stories
             int position = 0;
             EventWaitHandle positionChanged = new AutoResetEvent(false);
             string[] advance = { "help", "status", "upgrades", "echo" };
-            Action<string, Dictionary<string, object>> commandListener = (text, args) =>
+            Action<string, string[]> commandListener = (text, args) =>
             {
                 if (position < advance.Length && advance[position] == text)
                 {

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Plex.Objects;
+using WatercolorGames.CommandLine;
 using static Plex.Engine.SaveSystem;
 
 namespace Plex.Engine
@@ -75,35 +76,6 @@ namespace Plex.Engine
         public static bool Elevated { get; set; }
 
         /// <summary>
-        /// Parses command-line arguments using the Plex syntax and stores them in a <see cref="Dictionary{string, string}"/>, removing the parsed text from the original string.
-        /// </summary>
-        /// <param name="text">The text to parse.</param>
-        /// <returns><see cref="Dictionary{string, string}"/> containing the parsed arguments.</returns>
-        public static Dictionary<string, string> GetArgs(ref string text)
-        {
-            bool shouldParse = false;
-            int argStart = 0;
-            if (text.Contains("{"))
-            {
-                shouldParse = true;
-                argStart = text.IndexOf('{');
-            }
-
-            if (shouldParse == false)
-            {
-                string replacement = Regex.Replace(text, @"\t|\n|\r", "");
-                text = replacement + "{}";
-                shouldParse = true;
-                argStart = text.IndexOf('{');
-            }
-
-            string args = text.Substring(argStart, text.Length - argStart);
-
-            text = text.Remove(argStart, text.Length - argStart).Replace(" ", "");
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(args);
-        }
-
-        /// <summary>
         /// String representing the last command entered by the user.
         /// </summary>
         public static string LastCommand = "";
@@ -119,7 +91,7 @@ namespace Plex.Engine
         /// <param name="command">The command name.</param>
         /// <param name="arguments">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
-        public static void InvokeCommand(string command, Dictionary<string, string> arguments, bool isRemote = false)
+        public static void InvokeCommand(string command, string[] arguments, bool isRemote = false)
         {
             try
             {
@@ -131,7 +103,7 @@ namespace Plex.Engine
                 }
 
                 CommandProcessed?.Invoke(command, JsonConvert.SerializeObject(arguments));
-                CommandFinished?.Invoke(command, JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(arguments)));
+                CommandFinished?.Invoke(command, arguments);
             }
             catch (Exception ex)
             {
@@ -179,7 +151,7 @@ namespace Plex.Engine
             }
 
 
-            public override void Invoke(Dictionary<string, object> args, string shell)
+            public override void Invoke(string[] args, string shell)
             {
                 AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(PlexWindow, null));
             }
@@ -187,7 +159,7 @@ namespace Plex.Engine
 
         }
 
-        public static event Action<string, Dictionary<string, object>> CommandFinished;
+        public static event Action<string, string[]> CommandFinished;
 
 
         public static List<TerminalCommand> Commands { get; private set; }
@@ -245,10 +217,15 @@ namespace Plex.Engine
                         tc.CommandInfo = cmd as Command;
                         tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
                         tc.RequiredArguments = new List<string>();
-                        foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
+                        //foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
+                        //{
+                        //    var rarg = arg as RequiresArgument;
+                        //    tc.RequiredArguments.Add(rarg.argument);
+                        //} Onsolete.
+
+                        foreach(var attr in mth.GetCustomAttributes(false).Where(x=>x is UsageStringAttribute))
                         {
-                            var rarg = arg as RequiresArgument;
-                            tc.RequiredArguments.Add(rarg.argument);
+                            tc.UsageStrings.Add(attr as UsageStringAttribute);
                         }
                         var rupg = mth.GetCustomAttributes(false).FirstOrDefault(x => x is RequiresUpgradeAttribute) as RequiresUpgradeAttribute;
                         if (rupg != null)
@@ -280,18 +257,25 @@ namespace Plex.Engine
         {
             if (string.IsNullOrWhiteSpace(text))
                 return;
-            var args = GetArgs(ref text);
-            var oargs = JsonConvert.DeserializeObject<Dictionary<string, object>>(GetSentArgs(args));
             try
             {
+                var args = Tokenizer.TokenizeString(text);
+                var argv = new string[0];
+                string cmd = args[0];
+                if(args.Length > 1)
+                {
+                    var alist = args.ToList();
+                    alist.RemoveAt(0);
+                    argv = alist.ToArray();
+                }
 
-                bool commandWasClient = RunClient(text, args, isRemote);
+                bool commandWasClient = RunClient(cmd, argv, isRemote);
                 if (!commandWasClient)
                 {
                     Console.WriteLine("Error: Command not found.");
                     
                 }
-                CommandProcessed?.Invoke(text, GetSentArgs(args));
+                CommandProcessed?.Invoke(cmd, JsonConvert.SerializeObject(argv)); //WTF DOES THIS DO
             }
             catch (Exception ex)
             {
@@ -351,25 +335,8 @@ namespace Plex.Engine
 
         private static string _terminal_forward_session_id = "";
 
-        /// <summary>
-        /// Runs a command on the client.
-        /// </summary>
-        /// <param name="text">The command text.</param>
-        /// <param name="argss">The command arguments.</param>
-        /// <param name="isRemote">Whether the command should be ran through RTS.</param>
-        /// <returns>Whether the command ran successfully.</returns>
-        public static bool RunClient(string text, Dictionary<string, string> argss, bool isRemote = false)
-        {
-            Dictionary<string, object> args = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, string> arg in argss)
-            {
-                args[arg.Key] = arg.Value;
-            }
-            return RunClient(text, args, isRemote);
-        }
-
         private static string _ranCMD = "";
-        private static Dictionary<string, object> _ranArgs = null;
+        private static string[] _ranArgs = null;
 
         /// <summary>
         /// Runs a command on the client.
@@ -378,7 +345,7 @@ namespace Plex.Engine
         /// <param name="args">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be run in RTS.</param>
         /// <returns>Whether the command ran successfully.</returns>
-        public static bool RunClient(string text, Dictionary<string, object> args, bool isRemote = false)
+        public static bool RunClient(string text, string[] args, bool isRemote = false)
         {
             latestCommmand = text;
 
@@ -394,17 +361,6 @@ namespace Plex.Engine
                 value = false;
             if (value == true)
             {
-                bool res = false;
-                foreach (var arg in cmd.RequiredArguments)
-                {
-                    if (!args.ContainsKey(arg))
-                    {
-                        res = true;
-                        Console.WriteLine("You are missing an argument with the key \"" + arg + "\".");
-                    }
-                }
-                if (res == true)
-                    return true;
                 try
                 {
                     cmd.Invoke(args, _shellOverrideString);
