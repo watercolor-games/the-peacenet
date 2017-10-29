@@ -161,7 +161,7 @@ namespace Plex.Frontend
 
             _legalBullshit.MaxWidth = Width / 3;
             _legalBullshit.AutoSize = true;
-            _legalBullshit.Text = @"The Peacenet is copyright (c) 2017 Watercolor Games. Licensed under the MIT license. Online interactions not rated by any rating board. Seriously, does anyone even fucking read this shit? Why the fuck am I writing this? Just play the damn game! Legal shit can be found in the credits.";
+            _legalBullshit.Text = "Copyright 2017 Watercolor Games ";
             _legalBullshit.X = (Width - _legalBullshit.Width) / 2;
             _legalBullshit.Y = (Height - _legalBullshit.Height) - 20;
             _legalBullshit.Alignment = Engine.GUI.TextAlignment.Middle;
