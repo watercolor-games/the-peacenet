@@ -1,11 +1,32 @@
-﻿using System;
+﻿// Define to make dummy symbols so that Mono can build the solution.
+// If you don't define, the real symbols will be used so you can take advantage of them on VS.
+#define FUCK_THIS_SHITTY_LANGUAGE
+
+using System;
+#if !FUCK_THIS_SHITTY_LANGUAGE
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 using WatercolorGames.CommandLine;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace tercolorGames.CommandLine.Testing
 {
+#if FUCK_THIS_SHITTY_LANGUAGE
+    // irrelevant lyrics
+    public class TestClassAttribute: Attribute { }
+    public class TestMethodAttribute: Attribute { }
+    public static class Assert
+    {
+        public static void AreEqual(string a, string b, string c)
+        {
+        }
+        
+        public static void Fail(string a)
+        {
+        }
+    }
+#endif
     [TestClass]
     public class TokenizerTests
     {
