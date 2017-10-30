@@ -74,6 +74,22 @@ namespace Plex.Objects
 
         STREAM_OP = 0x90,
     }
+    
+    public enum StreamOp : byte
+    {
+        get_CanRead,
+        get_CanSeek,
+        get_CanWrite,
+        get_Length,
+        get_Position,
+        set_Position,
+        Flush,
+        Read,
+        Seek,
+        SetLength,
+        Write,
+        Dispose,
+    }
 
     public enum ServerResponseType : byte
     {
