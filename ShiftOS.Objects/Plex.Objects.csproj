@@ -82,6 +82,9 @@
     <Compile Include="ServerEnums.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftoriumUpgrade.cs" />
+    <Compile Include="Streams\ListStream.cs" />
+    <Compile Include="Streams\ReadOnlyStream.cs" />
+    <Compile Include="Streams\WriteOnlyStream.cs" />
     <Compile Include="TerminalCommand.cs" />
     <Compile Include="Upgrades.cs" />
     <Compile Include="UserConfig.cs" />
