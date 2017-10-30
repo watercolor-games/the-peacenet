@@ -18,8 +18,6 @@ namespace Plex.Frontend
     /// </summary>
     public static class Program
     {
-        public static event Action WorldLoadCompleted;
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

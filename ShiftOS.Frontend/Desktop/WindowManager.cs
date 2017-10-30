@@ -252,7 +252,6 @@ namespace Plex.Frontend.Desktop
         }
 
 
-        private string _text = "Plex window";
         private GUI.Control _hostedwindow = null;
 
         public void ResizeWindow(int width, int height)

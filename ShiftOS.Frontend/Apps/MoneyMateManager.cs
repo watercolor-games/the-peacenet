@@ -28,9 +28,6 @@ namespace Plex.Frontend.Apps
         public ListBox _transactions = new ListBox();
         public Button _transactionsButton = new Button();
 
-        private static CashTransaction[] tdata = null;
-
-        
         public static CashTransaction[] GetCashTransactions()
         {
             //            tdata = null;

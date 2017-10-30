@@ -63,8 +63,6 @@ namespace Plex.Frontend.GUI
             Select(-1, 0, 0, 0, 0);
         }
 
-        private MenuItem[] disabled = null;
-
         protected override void OnLayout(GameTime gameTime)
         {
             FontStyle = TextControlFontStyle.Custom;

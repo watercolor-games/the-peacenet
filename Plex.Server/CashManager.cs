@@ -12,12 +12,11 @@ namespace Plex.Server
     public static class CashManager
     {
         [ServerCommand("sendcash", "Send a specified amount of cash to another user.")]
-        [RequiresArgument("id")]
-        [RequiresArgument("cash")]
+        [UsageString("-c <cash> -s <targetsystem>")]
         public static void SendCash(Dictionary<string, object> args)
         {
-            string sys = args["id"].ToString();
-            long cash = Convert.ToInt64(args["cash"].ToString());
+            string sys = args["<targetsystem>"].ToString();
+            long cash = Convert.ToInt64(args["<cash>"].ToString());
             var you = SessionManager.GrabAccount(Terminal.SessionID);
             if(you == null)
             {

@@ -350,10 +350,7 @@ namespace Plex.Frontend
         #endregion
 
 
-        [ShifterHidden]
-        public CommandParser CurrentParser = CommandParser.GenerateSample();
-
-
+        
         [ShifterMeta("Desktop")]
         [ShifterCategory("Desktop Panel")]
         [ShifterName("Panel Background")]

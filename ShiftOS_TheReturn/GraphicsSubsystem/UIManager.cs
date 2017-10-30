@@ -422,8 +422,6 @@ namespace Plex.Frontend.GraphicsSubsystem
             FocusedControl?.ProcessKeyEvent(e);
         }
 
-        private static Texture2D DesktopBackground = null;
-
         public static Dictionary<string, Texture2D> SkinTextures = new Dictionary<string, Texture2D>();
 
         public static void ResetSkinTextures(GraphicsDevice graphics)

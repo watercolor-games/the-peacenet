@@ -95,8 +95,6 @@ namespace Plex.Frontend.Desktop
             }
         }
 
-        private int alSelectedItem = -1;
-
         public void Close()
         {
             UIManager.StopHandling(this);
@@ -285,8 +283,7 @@ namespace Plex.Frontend.Desktop
         }
 
         private string dateTimeString = "";
-        private WindowBorder _pguiborder = null;
-
+        
         protected override void OnLayout(GameTime gameTime)
         {
             FontStyle = TextControlFontStyle.Custom;

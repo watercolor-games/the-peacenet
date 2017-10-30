@@ -17,6 +17,39 @@ namespace Plex.Server
         private static List<string> ChatSessions = new List<string>();
         private static List<ChatMessage> _messages = new List<ChatMessage>();
 
+        [ServerCommand("setpermission", "Set the permission of a user.", true)]
+        [UsageString("-u <acct> -p <user|mod|admin>")]
+        public static void SetUserPermission(Dictionary<string, object> args)
+        {
+            string acct = args["<acct>"].ToString();
+            
+            ACLPermission perm = ACLPermission.User;
+            switch(args["<user | mod | admin>"].ToString())
+            {
+                case "mod":
+                    perm = ACLPermission.Moderator;
+                    break;
+                case "admin":
+                    perm = ACLPermission.Admin;
+                    break;
+            }
+
+            var session = SessionManager.GetSessions().FirstOrDefault(x => x.Username + "@" + x.SaveID == acct);
+            if(session == null)
+            {
+                Console.WriteLine("No user found.");
+                return;
+            }
+
+            session.Permission = perm;
+
+            Console.WriteLine("Permissions updated.");
+
+            SessionManager.SetSessionInfo(session.SessionID, session);
+        }
+
+
+
         private static async Task TalkToDiscord(string messagebody)
         {
             if (string.IsNullOrWhiteSpace(messagebody))
@@ -180,54 +213,6 @@ namespace Plex.Server
             }
             writer.Write("You are not currently in a chat! You can't send messages.");
             return (byte)ServerResponseType.REQ_ERROR;
-        }
-
-        [ServerCommand("grantuser", "Set a user to User permission mode.", true)]
-        [RequiresArgument("id")]
-        public static void SetUser(Dictionary<string, object> args)
-        {
-            string user = args["id"].ToString();
-            var session = SessionManager.GetSessions().FirstOrDefault(x => x.Username == user);
-            if (session == null)
-            {
-                Console.WriteLine("User not found.");
-                return;
-            }
-            session.Permission = ACLPermission.User;
-            SessionManager.SetSessionInfo(session.SessionID, session);
-            Console.WriteLine("User updated successfully.");
-        }
-
-        [ServerCommand("grantadmin", "Set a user to Admin permission mode.", true)]
-        [RequiresArgument("id")]
-        public static void SetAdmin(Dictionary<string, object> args)
-        {
-            string user = args["id"].ToString();
-            var session = SessionManager.GetSessions().FirstOrDefault(x => x.Username == user);
-            if (session == null)
-            {
-                Console.WriteLine("User not found.");
-                return;
-            }
-            session.Permission = ACLPermission.Admin;
-            SessionManager.SetSessionInfo(session.SessionID, session);
-            Console.WriteLine("User updated successfully.");
-        }
-
-        [ServerCommand("grantmod", "Set a user to Moderator permission mode.", true)]
-        [RequiresArgument("id")]
-        public static void SetMod(Dictionary<string, object> args)
-        {
-            string user = args["id"].ToString();
-            var session = SessionManager.GetSessions().FirstOrDefault(x => x.Username == user);
-            if(session == null)
-            {
-                Console.WriteLine("User not found.");
-                return;
-            }
-            session.Permission = ACLPermission.Moderator;
-            SessionManager.SetSessionInfo(session.SessionID, session);
-            Console.WriteLine("User updated successfully.");
         }
 
         [ChatCommand("kick", "Kick a user from the current chat.", ACLPermission.Moderator)]

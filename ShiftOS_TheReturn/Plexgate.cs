@@ -331,9 +331,6 @@ namespace Plex.Frontend
 
         private double msSinceLastReply = 0.0;
 
-        private Thread ClientThread = null;
-
-        
         private Texture2D MouseTexture = null;
 
          /// <summary>

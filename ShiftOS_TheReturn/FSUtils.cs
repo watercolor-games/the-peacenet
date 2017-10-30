@@ -14,14 +14,6 @@ namespace Plex.Engine
 {
     public static class FSUtils
     { 
-        private static MountInformation[] _mountinfo = null;
-        private static byte[] _readbytes_data = null;
-        private static string _fs_result = null;
-        private static bool? _fs_exists_result = null;
-        private static string[] _filelist_result = null;
-        private static FileRecord _fr_result = null;
-        private static string _wstrguid = null;
-
         private static PathData _createPathData(string path)
         {
             int drivenum = -1;

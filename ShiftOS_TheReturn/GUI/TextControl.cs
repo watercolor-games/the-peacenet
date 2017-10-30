@@ -167,8 +167,6 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        private bool _requirerestyle = true;
-
         protected override void OnLayout(GameTime gameTime)
         {
             ResetStyle();

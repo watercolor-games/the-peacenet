@@ -105,7 +105,7 @@ namespace Plex.Engine
                 CommandProcessed?.Invoke(command, JsonConvert.SerializeObject(arguments));
                 CommandFinished?.Invoke(command, arguments);
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("{ERR_SYNTAXERROR}");
                 PrefixEnabled = true;
@@ -410,15 +410,6 @@ namespace Plex.Engine
             }
             return value;
         }
-
-#if DEBUG
-        [Command("setshell", hide = true)]
-        [RequiresArgument("id")]
-        public static void Debug_SetShellOverrideCMD(Dictionary<string, object> args)
-        {
-            SetShellOverride(args["id"].ToString());
-        }
-#endif
 
         /// <summary>
         /// Prints the user prompt to the terminal.

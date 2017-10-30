@@ -120,7 +120,6 @@ namespace Plex.Server
 
         private static readonly string[] NATOCodeNames = { "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu" };
         private const int _MyPort = 3251;
-        private static UdpClient _server = null;
         internal static bool IsMultiplayerServer = true;
         public static List<string> BannedIPs = new List<string>();
 
@@ -626,7 +625,6 @@ Now generating defenses...
                 Console.WriteLine("{0} IP addresses have been banned.", BannedIPs.Count);
                 Console.WriteLine("Starting server shell. Type 'help' for a list of commands.");
                 Terminal.Populate();
-                var parser = CommandParser.GenerateSample();
                 while (true)
                 {
                     Console.Write("> ");
@@ -670,10 +668,10 @@ Now generating defenses...
         }
 
         [ServerCommand("banip", "Ban an IP address from this server.", true)]
-        [RequiresArgument("id")]
+        [UsageString("<ipaddr>")]
         public static void BanIP(Dictionary<string, object> args)
         {
-            string ip = args["id"].ToString();
+            string ip = args["<ipaddr>"].ToString();
             if (BannedIPs.Contains(ip))
             {
                 Console.WriteLine("This IP address is already banned.");
@@ -1320,7 +1318,7 @@ Now generating defenses...
 
         public void listen()
         {
-            listener = new TcpListener(port);
+            listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
             while (is_active)
             {

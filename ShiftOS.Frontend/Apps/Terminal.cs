@@ -198,12 +198,9 @@ namespace Plex.Frontend.Apps
 
         private PointF CaretPosition = new PointF(2, 2);
         private Size CaretSize = new Size(2, 15);
-        private bool doEnter = true;
 
         protected override void OnKeyEvent(KeyEvent a)
         {
-            if (a.Key != Keys.Enter)
-                doEnter = true;
             if (a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
             {
                 _zoomFactor *= 2;

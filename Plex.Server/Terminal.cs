@@ -117,10 +117,10 @@ namespace Plex.Server
         }
 
         [ServerCommand("echo", "Prints the desired text on-screen.")]
-        [RequiresArgument("id")]
+        [UsageString("<text>")]
         public static void Echo(Dictionary<string, object> args)
         {
-            Console.WriteLine(args["id"].ToString());
+            Console.WriteLine(args["<text>"].ToString());
         }
 
         public static RequestInfo SessionInfo { get; private set; }

@@ -329,10 +329,8 @@ namespace Plex.Engine
         [ShifterHidden]
         public Dictionary<string, ImageLayout> SkinImageLayouts = new Dictionary<string, ImageLayout>();
 
-        [ShifterHidden]
-        public CommandParser CurrentParser = CommandParser.GenerateSample();
-
-        [ShifterHidden]
+        
+       [ShifterHidden]
         public Dictionary<string, string> AppNames = new Dictionary<string, string>();
 
         [ShifterHidden]

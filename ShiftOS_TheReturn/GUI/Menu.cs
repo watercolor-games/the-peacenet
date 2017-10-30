@@ -277,8 +277,6 @@ namespace Plex.Frontend.GUI
             base.OnPaint(gfx, target);
         }
 
-        private MenuItem[] disabled = null;
-
         public int SelectedX
         {
             get

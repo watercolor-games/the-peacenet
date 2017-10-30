@@ -96,10 +96,10 @@ namespace Plex.Server
         }
 
         [ServerCommand("upgload", "Load the specified upgrade.")]
-        [RequiresArgument("id")]
+        [UsageString("<id>")]
         public static void LoadUpgradeCMD(Dictionary<string, object> args)
         {
-            string content = args["id"].ToString();
+            string content = args["<id>"].ToString();
             string session_id = Terminal.SessionID;
             string result = "Upgrade loaded.";
 

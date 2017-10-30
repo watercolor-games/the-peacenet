@@ -381,8 +381,6 @@ namespace Plex.Engine
             return available.ToArray();
         }
 
-        private static int? upgrade_installed_count = null;
-
         public static int CountUpgrades()
         {
             using(var sstr = new ServerStream(ServerMessageType.UPG_GETCOUNT))
@@ -434,9 +432,6 @@ namespace Plex.Engine
         /// </summary>
         public static event EmptyEventHandler Installed;
 
-        private static bool? upgrade_Installed_state = null;
-        private static bool? upgrade_loaded_state = null;
-        
         /// <summary>
         /// Determines if an upgrade is installed.
         /// </summary>

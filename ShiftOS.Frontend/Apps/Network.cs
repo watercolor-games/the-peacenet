@@ -22,8 +22,6 @@ namespace Plex.Frontend.Apps
     {
         public static Objects.Plexnet plexnet = null;
 
-        public static event Action WorldUpdated;
-
         public TextControl _title = new TextControl();
         public List<Node> _nodes = new List<Node>();
 
@@ -53,7 +51,6 @@ namespace Plex.Frontend.Apps
             Width = 720;
             Height = 480;
             AddControl(_title);
-            WorldUpdated += Network_WorldUpdated;
             using (var sstr = new ServerStream(ServerMessageType.WORLD))
             {
                 using (var reader = new BinaryReader(ServerManager.GetResponseStream(sstr.Send())))

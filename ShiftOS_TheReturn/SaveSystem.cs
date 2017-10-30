@@ -100,8 +100,6 @@ namespace Plex.Engine
             thread.Start();
         }
 
-        private static string username_result = null;
-
         public static string GetUsername()
         {
             using(var sstr = new ServerStream(ServerMessageType.USR_GETUSERNAME))
@@ -117,10 +115,6 @@ namespace Plex.Engine
             }
             return null;
         }
-
-        private static long? cash_result = null;
-
-        private static ulong? xp_result = null;
         
         public static ulong GetExperience()
         {
@@ -180,8 +174,6 @@ namespace Plex.Engine
                 sstr.Send();
             }
         }
-
-        private static string sysname_result = null;
 
         public static string GetSystemName()
         {
