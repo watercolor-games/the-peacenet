@@ -213,6 +213,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RemoteStream.cs" />
     <Compile Include="SaveSystem.cs" />
     <Compile Include="Scripting.cs" />
     <Compile Include="Server.cs" />
