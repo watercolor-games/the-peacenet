@@ -56,6 +56,7 @@ namespace Plex.Frontend.Apps
             {
                 stdout.Write(TerminalBackend.ShellOverride);
                 string cmd = stdin.ReadLine();
+                Task.Delay(10);
                 TerminalBackend.InvokeCommand(cmd, stdout, stdin, false);
             }
         }
@@ -148,6 +149,9 @@ namespace Plex.Frontend.Apps
             var options = new TerminalOptions();
 
             options.LFlag = PtyConstants.ICANON | PtyConstants.ECHO;
+            options.C_cc[PtyConstants.VERASE] = (byte)'\b';
+            options.C_cc[PtyConstants.VEOL] = (byte)'\r';
+            options.C_cc[PtyConstants.VEOL2] = (byte)'\n';
 
             PseudoTerminal.CreatePair(out _master, out _slave, options);
 
@@ -295,6 +299,10 @@ namespace Plex.Frontend.Apps
                     {
                         _isEscaping = false;
                         InterpretEscapeString();
+                        if (_escapeBuffer == "c")
+                        {
+                            gfx.Clear(_bgColor);
+                        }
                         continue;
                     }
                     else
@@ -364,6 +372,26 @@ namespace Plex.Frontend.Apps
                     }
                 }
             }
+            if (_showDebug)
+            {
+                string text = $@"Cursor X: {this._charX}
+Cursor Y: {_charY}
+Cursor Width: {_charWidth}
+CursorHeight: {_charHeight}
+
+Line width (in chars): {_linewidth}
+Lines: {_columnHeight}
+
+BG: {_bgColor}
+FG: {_fgColor}
+Bold: {_bold}
+Italic: {_italic}
+
+Buffer position: {_tbufferpos}
+Buffer requires complete redraw: {_resized}";
+
+                gfx.DrawString(text, 0, 0, Microsoft.Xna.Framework.Color.White, new System.Drawing.Font("Monda", 9F), Engine.GUI.TextAlignment.TopLeft, Width, Engine.TextRenderers.WrapMode.Words);
+            }
             gfx.Batch.End();
             gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                     SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
@@ -371,8 +399,17 @@ namespace Plex.Frontend.Apps
 
         }
 
+        private bool _showDebug = false;
+
+
         protected override void OnKeyEvent(KeyEvent e)
         {
+            if(e.Key == Keys.I && e.ControlDown)
+            {
+                _showDebug = !_showDebug;
+                Invalidate();
+            }
+
             if (e.Key == Keys.Enter)
             {
                 _slave.WriteByte((byte)'\r');
@@ -408,13 +445,12 @@ namespace Plex.Frontend.Apps
             _columnHeight = Math.Max(_columnHeight, _charY+1);
             Height = _columnHeight * _charHeight;
 
-            if(Width != w || Height != h)
+            if (Width != w || Height != h)
             {
                 _resized = true;
-            }
-            else
-            {
-                _resized = false;
+                RequireTextRerender();
+                Invalidate();
+
             }
 
             var measure = f_regular.MeasureString("#");
@@ -422,6 +458,12 @@ namespace Plex.Frontend.Apps
             _charHeight = (int)measure.Y;
 
             _linewidth = (Width / _charWidth);
+
+            if (_showDebug == true)
+            {
+                RequireTextRerender();
+                Invalidate();
+            }
         }
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
@@ -429,6 +471,7 @@ namespace Plex.Frontend.Apps
             gfx.Clear(Microsoft.Xna.Framework.Color.Black);
 
             base.OnPaint(gfx, target);
+
         }
 
         protected override void AfterPaint(GraphicsContext gfx, RenderTarget2D target)
@@ -452,6 +495,7 @@ namespace Plex.Frontend.Apps
         public void Clear()
         {
             _tbuffer = "";
+            _tbufferpos = 0;
             _resized = true;
             RequireTextRerender();
             Invalidate();

@@ -40,6 +40,10 @@ namespace Plex.Frontend
         private Vector2 modal_body_measure = Vector2.Zero;
         private Vector2 modal_head_measure = Vector2.Zero;
 
+        private bool _is_debug_paused = false;
+        private bool _framestep = false;
+
+
         public bool uploading = false;
         public bool downloading = false;
 
@@ -228,6 +232,19 @@ namespace Plex.Frontend
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
+            if(e.Key == Keys.P && e.Modifiers.HasFlag(KeyboardModifiers.Control))
+            {
+                _is_debug_paused = !_is_debug_paused;
+            }
+
+            if (_is_debug_paused)
+            {
+                if(e.Key == Keys.Space)
+                {
+                    _framestep = true;
+                }
+            }
+
             if(e.Key == Keys.Enter)
             {
                 //Modal confirm event
@@ -257,6 +274,11 @@ namespace Plex.Frontend
             }
             else
             {
+                if (_is_debug_paused)
+                {
+                    if (_framestep == false)
+                        return;
+                }
                 // Notice: I would personally recommend just using KeyboardEventArgs instead of KeyEvent
                 // from now on, but what ever. -phath0m
                 UIManager.ProcessKeyEvent(new KeyEvent(e));
@@ -388,6 +410,9 @@ namespace Plex.Frontend
         protected override void Update(GameTime gameTime)
         {
             keyboardListener.Update(gameTime);
+            if (_is_debug_paused)
+                if (_framestep == false)
+                    return;
             if (modal_active)
             {
                 switch (modal_state)
@@ -701,6 +726,10 @@ To begin this process, strike the [T] key while holding <CTRL>.";
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (_is_debug_paused)
+                if (_framestep == false)
+                    return;
+
             if (!modal_active)
             {
 
@@ -874,6 +903,9 @@ Current time: {DateTime.Now}
 Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
 ";
 #endif
+            if (_is_debug_paused)
+                if (_framestep == true)
+                    _framestep = false;
         }
         public double TotalFPS = 0;
         public int framesdrawn = 0;
