@@ -38,7 +38,7 @@ namespace Plex.Frontend.Stories
             TerminalBackend.InStory = true;
             UIManagerTools.EnterTextMode();
             Thread.Sleep(1000);
-            var ctl = UIManager.TopLevels.FirstOrDefault(x => x is Apps.TerminalControl) as Apps.TerminalControl;
+            var ctl = UIManager.TopLevels.FirstOrDefault(x => x is Apps.TerminalEmulator) as Apps.TerminalEmulator;
             ctl.Clear();
             Console.WriteLine("Welcome to the Plexnet.");
             Thread.Sleep(4000);

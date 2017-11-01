@@ -39,7 +39,7 @@ namespace Plex.Frontend
                 AppearanceManager.OpenForms.RemoveAt(0);
             }
             UIManager.ClearTopLevels();
-            var term = new TerminalControl();
+            var term = new TerminalEmulator();
             AppearanceManager.ConsoleOut = term;
             AppearanceManager.StartConsoleOut();
             term.X = 0;

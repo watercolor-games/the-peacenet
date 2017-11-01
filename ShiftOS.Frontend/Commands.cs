@@ -28,25 +28,16 @@ namespace Plex.Frontend
 
         [MetaCommand]
         [Command("clear", description = "{DESC_CLEAR}")]
-        public static bool Clear()
+        public static bool Clear(ConsoleContext console)
         {
-            Engine.Desktop.InvokeOnWorkerThread(() =>
-            {
-                AppearanceManager.ConsoleOut.Clear();
-            });
+            console.Clear();
+
             return true;
         }
     }
 
     public static class PlexCommands
     {
-        [Command("textmode")]
-        public static void TextMode()
-        {
-            UIManagerTools.EnterTextMode();
-            Console.WriteLine("Text mode initiated.");
-        }
-
         [RemoteLock]
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
         public static bool Shutdown()
@@ -71,12 +62,12 @@ namespace Plex.Frontend
     {
         [Command("buy", description = "{DESC_BUY}")]
         [UsageString("<id>")]
-        public static void BuyUpgrade(Dictionary<string, object> args)
+        public static void BuyUpgrade(Dictionary<string, object> args, ConsoleContext console)
         {
             string upgrade = args["<id>"].ToString();
             if(string.IsNullOrWhiteSpace(upgrade))
             {
-                Console.WriteLine("No upgrade provided.");
+                console.WriteLine("No upgrade provided.");
                 return;
             }
             try
@@ -86,23 +77,23 @@ namespace Plex.Frontend
                 if(upg != null)
                 {
                     if (!Upgrades.Buy(upg.ID, upg.Cost) == true)
-                        Console.WriteLine("You don't have enough cash to buy this upgrade.");
+                        console.WriteLine("You don't have enough cash to buy this upgrade.");
                 }
                 else
                 {
-                    Console.WriteLine("Upgrade ID \"{0}\" not found.", upgrade);
+                    console.WriteLine("Upgrade ID \"{0}\" not found.", upgrade);
                 }
 
             }
             catch
             {
-                Console.WriteLine("{ERR_GENERAL}");
+                console.WriteLine("{ERR_GENERAL}");
             }
         }
 
         [Command("upgradeinfo", description ="{DESC_UPGRADEINFO}")]
         [UsageString("<id>")]
-        public static bool ViewInfo(Dictionary<string, object> userArgs)
+        public static bool ViewInfo(Dictionary<string, object> userArgs, ConsoleContext console)
         {
             try
             {
@@ -114,7 +105,7 @@ namespace Plex.Frontend
                 {
                     if (upg.ID == upgrade)
                     {
-                        Console.WriteLine(Localization.Parse("{COM_UPGRADEINFO}", new Dictionary<string, string>
+                        console.WriteLine(Localization.Parse("{COM_UPGRADEINFO}", new Dictionary<string, string>
                         {
                             ["%id"] = upg.ID,
                             ["%category"] = upg.Category,
@@ -136,11 +127,11 @@ namespace Plex.Frontend
         }
 
         [Command("upgradecategories", description = "{DESC_UPGRADECATEGORIES}")]
-        public static bool ListCategories()
+        public static bool ListCategories(ConsoleContext console)
         {
             foreach(var cat in Upgrades.GetCategories())
             {
-                Console.WriteLine(Localization.Parse("{SHFM_CATEGORY}", new Dictionary<string, string>
+                console.WriteLine(Localization.Parse("{SHFM_CATEGORY}", new Dictionary<string, string>
                 {
                     ["%name"] = cat,
                     ["%available"] = Upgrades.GetAvailable().Where(x=>x.Category==cat).Count().ToString()
@@ -151,7 +142,7 @@ namespace Plex.Frontend
 
         [Command("upgrades", description ="{DESC_UPGRADES}")]
         [UsageString("[-c <categoryid>]")]
-        public static bool ListAll(Dictionary<string, object> args)
+        public static bool ListAll(Dictionary<string, object> args, ConsoleContext console)
         {
             try
             {
@@ -168,13 +159,11 @@ namespace Plex.Frontend
                 {
                     if (Upgrades.IsCategoryEmptied(cat))
                     {
-                        ConsoleEx.Bold = true;
-                        ConsoleEx.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("{SHFM_QUERYERROR}");
-                        Console.WriteLine();
-                        ConsoleEx.Bold = false;
-                        ConsoleEx.ForegroundColor = ConsoleColor.Gray;
-                        Console.WriteLine("{ERR_EMPTYCATEGORY}");
+                        console.SetBold(true);
+                        console.WriteLine("{SHFM_QUERYERROR}");
+                        console.WriteLine("");
+                        console.SetBold(false);
+                        console.WriteLine("{ERR_EMPTYCATEGORY}");
                         return true;
                     }
                     upglist = Upgrades.GetAvailable().Where(x => x.Category == cat);
@@ -183,12 +172,10 @@ namespace Plex.Frontend
 
                 if(upglist.Count() == 0)
                 {
-                    ConsoleEx.Bold = true;
-                    ConsoleEx.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("{SHFM_NOUPGRADES}");
-                    Console.WriteLine();
-                    ConsoleEx.Bold = false;
-                    ConsoleEx.ForegroundColor = ConsoleColor.Gray;
+                    console.SetBold(true);
+                    console.WriteLine("{SHFM_NOUPGRADES}");
+                    console.WriteLine("");
+                    console.SetBold(false);
                     Console.WriteLine("{ERR_NOMOREUPGRADES}");
                     return true;
 
@@ -205,7 +192,7 @@ namespace Plex.Frontend
 
                 foreach (var upg in upgrades)
                 {
-                    Console.WriteLine(Localization.Parse("{SHFM_UPGRADE}", new Dictionary<string, string>
+                    console.WriteLine(Localization.Parse("{SHFM_UPGRADE}", new Dictionary<string, string>
                     {
                         ["%id"] = upg.Key,
                         ["%cost"] = upg.Value.ToString()
@@ -290,5 +277,12 @@ namespace Plex.Frontend
             }
         }
 
+        [Command("command")]
+        [UsageString("get <key>")]
+        [UsageString("set <key> <value>")]
+        public static void Command(Dictionary<string, object> args)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(args, Formatting.Indented));
+        }
     }
 }

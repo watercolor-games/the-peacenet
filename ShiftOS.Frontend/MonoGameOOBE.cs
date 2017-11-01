@@ -33,7 +33,7 @@ namespace Plex.Frontend
             }
         }
 
-        private Apps.TerminalControl Console = null;
+        private Apps.TerminalEmulator Console = null;
         private GUI.ProgressBar progress = null;
         private GUI.TextControl status = null;
 
@@ -42,7 +42,7 @@ namespace Plex.Frontend
             TerminalBackend.InStory = true;
             TerminalBackend.PrefixEnabled = false;
 
-            var term = new Apps.TerminalControl();
+            var term = new Apps.TerminalEmulator();
             GraphicsSubsystem.UIManager.AddTopLevel(term);
             term.Width = GraphicsSubsystem.UIManager.Viewport.Width;
             term.Height = GraphicsSubsystem.UIManager.Viewport.Height;
@@ -164,31 +164,6 @@ you with your mission.");
                 term.Height = 200;
                 term.X = (GraphicsSubsystem.UIManager.Viewport.Width - term.Width) / 2;
                 term.Y = progress.Y + progress.Height + 15;
-                var nt = new Thread(() =>
-                {
-                    while(status != null)
-                    {
-                        try
-                        {
-                            if (term.Lines.Length > 0)
-                            {
-                                string txt = term.Lines[term.Lines.Length - 1];
-                                if (status.Text != txt + $" [{progress.Value}%]")
-                                {
-                                    status.Text = txt + $" [{progress.Value}%]";
-                                    status.Layout(new Microsoft.Xna.Framework.GameTime());
-                                    status.X = (GraphicsSubsystem.UIManager.Viewport.Width - status.Width) / 2;
-                                }
-                            }
-                            else
-                            {
-                                Thread.Sleep(10);
-                            }
-                        }
-                        catch { }
-                    }
-                });
-                nt.Start();
                 SlowWriteLine("Formatting storage device A with ShiftFS version 4.7...");
 
                 progress.Maximum = 100;

@@ -357,6 +357,9 @@ namespace Plex.Frontend
             MouseTexture = new Texture2D(GraphicsDevice, bmp.Width, bmp.Height);
             MouseTexture.SetData<byte>(rgb);
             rgb = null;
+
+
+            
         }
 
 
@@ -898,50 +901,6 @@ Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
             var tex2 = new Texture2D(device, bmp.Width, bmp.Height);
             tex2.SetData<byte>(data);
             return tex2;
-        }
-    }
-
-
-    public static class ConsoleColorExtensions
-    {
-        public static System.Drawing.Color ToColor(this ConsoleColor cc)
-        {
-            switch (cc)
-            {
-                case ConsoleColor.Black:
-                    return System.Drawing.Color.Black;
-                case ConsoleColor.Blue:
-                    return System.Drawing.Color.Blue;
-                case ConsoleColor.Cyan:
-                    return System.Drawing.Color.Cyan;
-                case ConsoleColor.DarkBlue:
-                    return System.Drawing.Color.DarkBlue;
-                case ConsoleColor.DarkCyan:
-                    return System.Drawing.Color.DarkCyan;
-                case ConsoleColor.DarkGray:
-                    return System.Drawing.Color.DarkGray;
-                case ConsoleColor.DarkGreen:
-                    return System.Drawing.Color.DarkGreen;
-                case ConsoleColor.DarkMagenta:
-                    return System.Drawing.Color.DarkMagenta;
-                case ConsoleColor.DarkRed:
-                    return System.Drawing.Color.DarkRed;
-                case ConsoleColor.DarkYellow:
-                    return System.Drawing.Color.Orange;
-                case ConsoleColor.Gray:
-                    return System.Drawing.Color.Gray;
-                case ConsoleColor.Green:
-                    return System.Drawing.Color.Green;
-                case ConsoleColor.Magenta:
-                    return System.Drawing.Color.Magenta;
-                case ConsoleColor.Red:
-                    return System.Drawing.Color.Red;
-                case ConsoleColor.White:
-                    return System.Drawing.Color.White;
-                case ConsoleColor.Yellow:
-                    return System.Drawing.Color.Yellow;
-            }
-            return System.Drawing.Color.Empty;
         }
     }
 

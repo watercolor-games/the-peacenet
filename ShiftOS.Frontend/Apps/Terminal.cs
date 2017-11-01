@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
+using Plex.Objects.Pty;
 using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.Apps
@@ -20,11 +22,12 @@ namespace Plex.Frontend.Apps
     [WinOpen("{WO_TERMINAL}")]
     [DefaultTitle("{TITLE_TERMINAL}")]
     [DefaultIcon("iconTerminal")]
-    public class Terminal : GUI.Control, IPlexWindow
+    public class Terminal : GUI.ScrollView, IPlexWindow
     {
-        private TerminalControl _terminal = null;
+        private bool _isOpen = true;
+        private TerminalEmulator _terminal = null;
         
-        public TerminalControl TerminalControl
+        public TerminalEmulator TerminalControl
         {
             get
             {
@@ -34,29 +37,37 @@ namespace Plex.Frontend.Apps
 
         public Terminal()
         {
-            Width = 493;
-            Height = 295;
+            var measurement = TerminalEmulator.GetCharMeasurement();
+            Width = (int)measurement.X * 80;
+            Height = (int)measurement.Y * 25;
         }
 
         public void OnLoad()
         {
-            _terminal = new Apps.TerminalControl();
-            _terminal.Dock = GUI.DockStyle.Fill;
+            _terminal = new Apps.TerminalEmulator();
             AddControl(_terminal);
-            AppearanceManager.ConsoleOut = _terminal;
-            AppearanceManager.StartConsoleOut();
-            TerminalBackend.PrintPrompt();
-            SaveSystem.GameReady += () =>
+
+            _terminal.StartShell(Shell);
+        }
+
+        public void Shell(StreamWriter stdout, StreamReader stdin)
+        {
+            while (_isOpen)
             {
-                Console.WriteLine("[sessionmgr] Starting system UI...");
-                TerminalBackend.PrintPrompt();
-            };
+                stdout.Write(TerminalBackend.ShellOverride);
+                string cmd = stdin.ReadLine();
+                TerminalBackend.InvokeCommand(cmd, stdout, stdin, false);
+            }
         }
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if (ContainsFocusedControl || IsFocusedControl)
-                AppearanceManager.ConsoleOut = _terminal;
+            _terminal.X = 0;
+            _terminal.Y = 0;
+            if (this.IsFocusedControl)
+            {
+                UIManager.FocusedControl = _terminal;
+            }
         }
 
         public void OnSkinLoad()
@@ -66,333 +77,393 @@ namespace Plex.Frontend.Apps
 
         public bool OnUnload()
         {
+            _isOpen = false;
             return true;
         }
 
         public void OnUpgrade()
         {
         }
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+            gfx.Clear(Microsoft.Xna.Framework.Color.Black);
+        }
     }
 
-    public class TerminalControl : GUI.TextInput, ITerminalWidget
+    public class TerminalEmulator : GUI.TextControl, ITerminalWidget
     {
-        private int _zoomFactor = 1;
+        private static SpriteFont f_regular = null;
+        private static SpriteFont f_italic = null;
+        private static SpriteFont f_bold = null;
+        private static SpriteFont f_bolditalic= null;
 
-        public TerminalControl()
+        internal static Vector2 GetCharMeasurement()
         {
+            return f_regular.MeasureString("#");
         }
-        
-        private static readonly string[] delimiters = { Environment.NewLine };
 
-        public string[] Lines
+
+        /// <summary>
+        /// Called by MainMenu - loads all our spritefonts.
+        /// </summary>
+        internal static void LoadFonts()
         {
-            get
+            f_regular = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-R");
+            f_bold = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-B");
+            f_italic = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-RI");
+            f_bolditalic = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-BI");
+
+        }
+
+
+        private PseudoTerminal _master = null;
+        private PseudoTerminal _slave = null;
+        private StreamWriter _stdout = null;
+        private StreamReader _stdin = null;
+
+        //Text buffer.
+        private string _tbuffer = "";
+        private int _tbufferpos = 0;
+
+        //Information for tracking char position.
+        private int _charX = 0;
+        private int _charY = 0;
+        private int _columnHeight = 0;
+        private bool _resized = false;
+        private int _linewidth = 0;
+
+        //Info for tracking char style.
+        private bool _bold = false;
+        private bool _italic = false;
+        private Microsoft.Xna.Framework.Color _bgColor = Microsoft.Xna.Framework.Color.Black;
+        private Microsoft.Xna.Framework.Color _fgColor = Microsoft.Xna.Framework.Color.White;
+
+        //Character size.
+        private int _charWidth = 0;
+        private int _charHeight = 0;
+
+        public TerminalEmulator()
+        {
+            var options = new TerminalOptions();
+
+            options.LFlag = PtyConstants.ICANON | PtyConstants.ECHO;
+
+            PseudoTerminal.CreatePair(out _master, out _slave, options);
+
+            _stdout = new StreamWriter(_master);
+            _stdin = new StreamReader(_master);
+            _stdout.AutoFlush = true;
+
+            Task.Run(() =>
             {
-				return Text.Split(delimiters, StringSplitOptions.None);
+                SlaveThread(_slave);
+            });
+        }
+
+        public void StartShell(Action<StreamWriter, StreamReader> shell)
+        {
+            Task.Run(() =>
+            {
+                shell?.Invoke(_stdout, _stdin);
+            });
+        }
+
+
+        private void SlaveThread(PseudoTerminal slave)
+        {
+
+            for(;;)
+            {
+                if (!this.Visible)
+                    continue;
+                var ch = slave.ReadByte();
+
+                if (ch != -1)
+                {
+                    _tbuffer += (char)ch;
+                    RequireTextRerender();
+                    Invalidate();
+                }
             }
+        }
+
+        private SpriteFont GetFont()
+        {
+            if (_bold && _italic)
+                return f_bolditalic;
+            if (_bold)
+                return f_bold;
+            if (_italic)
+                return f_italic;
+            return f_regular;
+        }
+
+        private bool _isEscaping = false;
+        private string _escapeBuffer = "";
+        
+        private void InterpretEscapeString()
+        {
+            switch (_escapeBuffer)
+            {
+                case "c":
+                    Clear();
+                    break;
+                case "b":
+                    _bold = true;
+                    break;
+                case "!b":
+                    _bold = false;
+                    break;
+                case "i":
+                    _italic = true;
+                    break;
+                case "!i":
+                    _italic = false;
+                    break;
+                default:
+                    if(_escapeBuffer.Length == 2)
+                    {
+                        int bg = 0;
+                        int fg = 0;
+
+                        if (int.TryParse(_escapeBuffer[0].ToString(), out bg) == false || int.TryParse(_escapeBuffer[1].ToString(), out fg) == false)
+                            return;
+                        _bgColor = GetColor(bg);
+                        _fgColor = GetColor(fg);
+                    }
+                    break;
+            }
+        }
+
+        private Microsoft.Xna.Framework.Color GetColor(int colorCode)
+        {
+            switch (colorCode)
+            {
+                default:
+                case 0:
+                    return Microsoft.Xna.Framework.Color.Black;
+                case 1:
+                    return Microsoft.Xna.Framework.Color.White;
+                case 2:
+                    return Microsoft.Xna.Framework.Color.Gray;
+                case 3:
+                    return Microsoft.Xna.Framework.Color.Red;
+                case 4:
+                    return Microsoft.Xna.Framework.Color.Green;
+                case 5:
+                    return Microsoft.Xna.Framework.Color.Blue;
+                case 6:
+                    return Microsoft.Xna.Framework.Color.Yellow;
+                case 7:
+                    return Microsoft.Xna.Framework.Color.Orange;
+                case 8:
+                    return Microsoft.Xna.Framework.Color.Purple;
+                case 9:
+                    return Microsoft.Xna.Framework.Color.Pink;
+
+            }
+        }
+
+
+        protected override void RenderText(GraphicsContext gfx)
+        {
+            gfx.Batch.End();
+            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                    SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
+                    RasterizerState);
+
+            if (_resized == true)
+            {
+                _charX = 0;
+                _charY = 0;
+                _bold = false;
+                _italic = false;
+                _bgColor = Microsoft.Xna.Framework.Color.Black;
+                _fgColor = Microsoft.Xna.Framework.Color.White;
+                _tbufferpos = 0;
+                _resized = false;
+            }
+            while (_tbufferpos != _tbuffer.Length)
+            {
+                char c = _tbuffer[_tbufferpos];
+                byte b = (byte)c;
+                _tbufferpos++;
+                if (b == 0x1B)
+                {
+                    if (_isEscaping == true)
+                    {
+                        _isEscaping = false;
+                        InterpretEscapeString();
+                        continue;
+                    }
+                    else
+                    {
+                        _isEscaping = true;
+                        _escapeBuffer = "";
+                    }
+                    continue;
+                }
+                if (_isEscaping)
+                {
+                    _escapeBuffer += c.ToString();
+                }
+                else
+                {
+                    switch (c)
+                    {
+                        case '\b':
+                            if (_charX > 0)
+                            {
+                                _charX--;
+                            }
+                            else
+                            {
+                                if (_charY > 0)
+                                {
+                                    _charY--;
+                                    _charX = _linewidth;
+                                }
+                            }
+                            gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _bgColor);
+                            break;
+                        case '\r':
+                            _charX = 0;
+                            break;
+                        case '\n':
+                            _charY++;
+                            break;
+                        case '\t':
+                            for (int i = 0; i < 4; i++)
+                            {
+                                if (_charX + 1 >= _linewidth)
+                                {
+                                    _charY++;
+                                    _charX = 0;
+
+                                }
+                                else
+                                    _charX++;
+                            }
+                            break;
+                        case '\v':
+                            continue;
+                        default:
+                            gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _bgColor);
+                            gfx.Batch.DrawString(GetFont(), c.ToString(), new Vector2(_charX * _charWidth, _charY * _charHeight), _fgColor);
+                            if (_charX + 1 > _linewidth)
+                            {
+                                _charY++;
+                                _charX = 0;
+                            }
+                            else
+                            {
+                                _charX++;
+                            }
+                            break;
+                    }
+                }
+            }
+            gfx.Batch.End();
+            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
+                    RasterizerState);
+
+        }
+
+        protected override void OnKeyEvent(KeyEvent e)
+        {
+            if (e.Key == Keys.Enter)
+            {
+                _slave.WriteByte((byte)'\r');
+                _slave.WriteByte((byte)'\n');
+                return;
+
+            }
+
+            if (e.KeyChar != '\0')
+            {
+                _slave.WriteByte((byte)e.KeyChar);
+            }
+            else
+            {
+                switch (e.Key)
+                {
+                }
+            }
+        }
+
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            int w = Width;
+            int h = Height;
+
+            base.OnLayout(gameTime);
+
+            ClearTextBufferEveryRerender = false;
+            
+
+            Width = (Parent == null) ? 1280 : Parent.Width;
+            _columnHeight = Math.Max(_columnHeight, _charY+1);
+            Height = _columnHeight * _charHeight;
+
+            if(Width != w || Height != h)
+            {
+                _resized = true;
+            }
+            else
+            {
+                _resized = false;
+            }
+
+            var measure = f_regular.MeasureString("#");
+            _charWidth = (int)measure.X;
+            _charHeight = (int)measure.Y;
+
+            _linewidth = (Width / _charWidth);
+        }
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+            gfx.Clear(Microsoft.Xna.Framework.Color.Black);
+
+            base.OnPaint(gfx, target);
+        }
+
+        protected override void AfterPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+            //Draw the caret.
+            int x = (_charX * _charWidth);
+            int y = (_charY * _charHeight);
+            gfx.DrawRectangle(x, y, _charWidth, _charHeight, _fgColor);
+        }
+
+        public void Write(string text)
+        {
+            _stdout.Write(text);
+        }
+
+        public void WriteLine(string text)
+        {
+            _stdout.WriteLine(text);
         }
 
         public void Clear()
         {
-            Text = "";
-            Index = 0;
-            _vertOffset = 0;
+            _tbuffer = "";
+            _resized = true;
+            RequireTextRerender();
             Invalidate();
         }
 
         public void SelectBottom()
         {
-           Index = Text.Length;
-            RecalculateLayout();
-            InvalidateTopLevel();
-        }
-
-        
-
-        public void Write(string text)
-        {
-            Engine.Desktop.InvokeOnWorkerThread(() =>
-            {
-                Text += Localization.Parse(text);
-                SelectBottom();
-                InvalidateTopLevel();
-            });
-        }
-
-        public void WriteLine(string text)
-        {
-            Write(text + Environment.NewLine);
-        }
-
-        
-        private static readonly Regex regexNl = new Regex(Regex.Escape(Environment.NewLine));
-        
-        public int GetCurrentLine()
-        {
-            return regexNl.Matches(Text.Substring(0, Index)).Count;
-        }
-
-        float _vertOffset = 0.0f;
-        System.Drawing.Point cloc = System.Drawing.Point.Empty;
-        Vector2 csize = Vector2.Zero;
-
-        protected void RecalculateLayout()
-        {
-            cloc = GetPointAtIndex();
-            csize = GraphicsContext.MeasureString("#", new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style), Engine.GUI.TextAlignment.TopLeft);
-            if (cloc.Y - _vertOffset < 0)
-            {
-                _vertOffset += cloc.Y - _vertOffset;
-            }
-            while ((cloc.Y + csize.Y) - _vertOffset > Height)
-            {
-                _vertOffset += csize.Y;
-            }
-        }
-
-        private bool blinkStatus = false;
-        private double blinkTime = 0.0;
-
-        protected override void OnLayout(GameTime gameTime)
-        {
-            OverrideDefaultStyle = true;
-            FontStyle = GUI.TextControlFontStyle.Custom;
-            Font = SkinEngine.LoadedSkin.TerminalFont;
-            TextColor = LoadedSkin.TerminalForeColor.ToMonoColor();
-            blinkTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (blinkTime > 500.0)
-                blinkTime = 0;
-            bool prev = blinkStatus;
-            blinkStatus = blinkTime > 250.0;
-            if (prev != blinkStatus)
-                Invalidate();
-        }
-
-        public bool ReadOnly = false;
-
-        /// <summary>
-        /// Gets the X and Y coordinates (in pixels) of the caret.
-        /// </summary>
-        /// <param name="gfx">A <see cref="System.Drawing.Graphics"/> object used for font measurements</param>
-        /// <returns>the correct position of the d*ng caret. yw</returns>
-        public System.Drawing.Point GetPointAtIndex()
-        {
-			if (string.IsNullOrEmpty(Text))
-                return new System.Drawing.Point(2, 2);
-            var font = new Font(LoadedSkin.TerminalFont.Name, LoadedSkin.TerminalFont.Size * _zoomFactor, LoadedSkin.TerminalFont.Style);
-            int currline = GetCurrentLine();
-            string substring = String.Join(Environment.NewLine, Lines.Take(currline + 1));
-			int h = (int)Math.Round(GraphicsContext.MeasureString(substring, font, Engine.GUI.TextAlignment.TopLeft, Width, Engine.TextRenderers.WrapMode.Letters).Y - font.Height);
-
-            int linestart = String.Join(Environment.NewLine, Lines.Take(GetCurrentLine())).Length;
-
-            var lineMeasure = GraphicsContext.MeasureString(Text.Substring(linestart, Index - linestart), font, Engine.GUI.TextAlignment.TopLeft);
-            int w = (int)Math.Floor(lineMeasure.X);
-            while (w > Width)
-            {
-                w -= Width;
-                h += (int)lineMeasure.Y;
-            }
-            return new System.Drawing.Point(w, h);
-        }
-
-        private PointF CaretPosition = new PointF(2, 2);
-        private Size CaretSize = new Size(2, 15);
-
-        protected override void OnKeyEvent(KeyEvent a)
-        {
-            if (a.ControlDown && (a.Key == Keys.OemPlus || a.Key == Keys.Add))
-            {
-                _zoomFactor *= 2;
-                RecalculateLayout();
-                Invalidate();
-                return;
-            }
-
-            if (a.ControlDown && (a.Key == Keys.OemMinus || a.Key == Keys.Subtract))
-            {
-                _zoomFactor = Math.Max(1, _zoomFactor / 2);
-                RecalculateLayout();
-                Invalidate();
-                return;
-            }
-
-
-            if (a.Key == Keys.Enter && !ReadOnly)
-            {
-                if (!PerformTerminalBehaviours)
-                {
-                    Text = Text.Insert(Index, Environment.NewLine);
-                    Index += 2;
-                    RecalculateLayout();
-                    Invalidate();
-                    return;
-                }
-
-                try
-                {
-                    if (!TerminalBackend.PrefixEnabled)
-                    {
-                        string textraw = Lines[Lines.Length - 1];
-                        TerminalBackend.SendText(textraw);
-                        return;
-                    }
-                    var text = Lines;
-                    var text2 = text[text.Length - 1];
-                    var text3 = "";
-                    var text4 = Regex.Replace(text2, @"\t|\n|\r", "");
-                    WriteLine("");
-
-                    if (TerminalBackend.PrefixEnabled)
-                    {
-                        text3 = text4.Remove(0, TerminalBackend.ShellOverride.Length);
-                    }
-                    if (!string.IsNullOrWhiteSpace(text3))
-                    {
-                        TerminalBackend.LastCommand = text3;
-                        TerminalBackend.SendText(text4);
-                        if (TerminalBackend.InStory == false)
-                        {
-                            {
-
-                                TerminalBackend.InvokeCommand(text3, false);
-
-
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    if (TerminalBackend.PrefixEnabled)
-                    {
-                        TerminalBackend.PrintPrompt();
-                    }
-                    AppearanceManager.CurrentPosition = 0;
-
-                }
-            }
-
-            else if (a.Key == Keys.Back && !ReadOnly)
-            {
-                try
-                {
-                    if (PerformTerminalBehaviours)
-                    {
-                        var tostring3 = Lines[Lines.Length - 1];
-                        var tostringlen = tostring3.Length + 1;
-                        var workaround = TerminalBackend.ShellOverride;
-                        var derp = workaround.Length + 1;
-                        if (tostringlen != derp)
-                        {
-                            AppearanceManager.CurrentPosition--;
-                            base.OnKeyEvent(a);
-                            cloc = GetPointAtIndex();
-                            InvalidateTopLevel();
-                        }
-                    }
-                }
-                catch
-                {
-                    Debug.WriteLine("Drunky alert in terminal.");
-                }
-            }
-            else if (a.Key == Keys.Right)
-            {
-                if (Index < Text.Length)
-                {
-                    Index++;
-                    AppearanceManager.CurrentPosition++;
-                    RecalculateLayout();
-                    InvalidateTopLevel();
-                }
-            }
-            else if (a.Key == Keys.Left)
-            {
-                var getstring = Lines[Lines.Length - 1];
-                var stringlen = getstring.Length + 1;
-                var header = TerminalBackend.ShellOverride;
-                var headerlen = header.Length + 1;
-                var selstart = Index;
-                var remstrlen = Text.Length - stringlen;
-                var finalnum = selstart - remstrlen;
-                if (!PerformTerminalBehaviours)
-                    headerlen = 0;
-                if (finalnum > headerlen)
-                {
-                    AppearanceManager.CurrentPosition--;
-                    base.OnKeyEvent(a);
-                }
-
-            }
-            else if (a.Key == Keys.Up && PerformTerminalBehaviours)
-            {
-                var tostring3 = Lines[Lines.Length - 1];
-                if (tostring3 == TerminalBackend.ShellOverride)
-                    Console.Write(TerminalBackend.LastCommand);
-                ConsoleEx.OnFlush?.Invoke();
-                return;
-
-            }
-            else
-            {
-                if ((PerformTerminalBehaviours && TerminalBackend.InStory) || ReadOnly)
-                {
-                    return;
-                }
-                if (a.KeyChar != '\0')
-                {
-                    Text = Text.Insert(Index, a.KeyChar.ToString());
-                    Index++;
-                    AppearanceManager.CurrentPosition++;
-                    cloc = GetPointAtIndex();
-                    Invalidate();
-                }
-            }
-            blinkStatus = true;
-            blinkTime = 250;
-        }
-
-        public bool PerformTerminalBehaviours = true;
-
-        protected override void RenderText(GraphicsContext gfx)
-        {
-            int textloc = 0 - (int)_vertOffset;
-            var font = LoadedSkin.TerminalFont;
-            foreach (var line in Lines)
-            {
-                if (!(textloc < 0 || textloc - font.Height >= Height))
-                    gfx.DrawString(line, 0, textloc, Microsoft.Xna.Framework.Color.White, font, Engine.GUI.TextAlignment.TopLeft, Width - 4, Engine.TextRenderers.WrapMode.Letters);
-                if (string.IsNullOrEmpty(line))
-                    textloc += font.Height;
-                else
-                    textloc += (int)GraphicsContext.MeasureString(line, font, Engine.GUI.TextAlignment.TopLeft, Width).Y;
-            }
-
-        }
-
-        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
-        {
-            PaintBackground = false;
-            gfx.Clear(LoadedSkin.TerminalBackColor.ToMonoColor());
-
-            //Draw the text
-            base.OnPaint(gfx, target);
-
-        }
-
-        protected override void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
-        {
-            //Draw the caret.
-            if (blinkStatus == true)
-            {
-                gfx.DrawRectangle((int)cloc.X, (int)(cloc.Y - _vertOffset), (int)csize.X, (int)csize.Y, LoadedSkin.TerminalForeColor.ToMonoColor());
-            }
+            throw new NotImplementedException();
         }
     }
+
+
 
 
     public static class GraphicsExtensions

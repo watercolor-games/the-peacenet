@@ -175,6 +175,7 @@ namespace Plex.Frontend
                     {
                         //move to next state.
                         _wgState++;
+                        Plex.Frontend.Apps.TerminalEmulator.LoadFonts();
                     }
                     break;
                 case 1:

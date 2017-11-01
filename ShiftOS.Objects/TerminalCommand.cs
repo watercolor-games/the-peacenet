@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -86,7 +87,7 @@ namespace Plex.Objects
             return _usageBuilder.ToString();
         }
 
-        public virtual void Invoke(string[] args, string shell)
+        public virtual void Invoke(string[] args, string shell, StreamWriter stdout, StreamReader stdin)
         {
             List<string> errors = new List<string>();
             if (ShellMatch != "metacmd")
@@ -135,23 +136,116 @@ namespace Plex.Objects
             {
                 foreach (var error in errors)
                 {
-                    Console.WriteLine(error);
+                    stdout.WriteLine(error);
                 }
                 return;
             }
             try
             {
-                CommandHandler.Invoke(null, new[] { argss });
+                CommandHandler.Invoke(null, new object[] { argss, new ConsoleContext(stdout, stdin) });
 
             }
             catch (System.Reflection.TargetParameterCountException)
             {
-                CommandHandler.Invoke(null, null);
+                CommandHandler.Invoke(null, new object[] { new ConsoleContext(stdout, stdin) });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                stdout.WriteLine(ex.Message);
             }
         }
+    }
+
+    public class ConsoleContext
+    {
+        private StreamReader _stdin = null;
+        private StreamWriter _stdout = null;
+
+        public ConsoleContext(StreamWriter stdout, StreamReader stdin)
+        {
+            if (stdout == null || stdin == null)
+                throw new ArgumentNullException();
+            _stdout = stdout;
+            _stdin = stdin;
+        }
+
+        public void WriteLine(string format, params object[] data)
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                format = format.Replace($"{{{i}}}", data[i].ToString());
+            }
+            WriteLine(format);
+        }
+
+        public void SetColors(ConsoleColor background, ConsoleColor foreground)
+        {
+            _stdout.Write((char)0x1B);
+            int b = (int)background;
+            int f = (int)foreground;
+            _stdout.Write($"{b}{f}");
+            _stdout.Write((char)0x1B);
+        }
+
+        public void SetItalic(bool value)
+        {
+            _stdout.Write((char)0x1B);
+            if (value == true)
+                _stdout.Write("i");
+            else
+                _stdout.Write("!i");
+            _stdout.Write((char)0x1B);
+        }
+
+        public void SetBold(bool value)
+        {
+            _stdout.Write((char)0x1B);
+            if (value == true)
+                _stdout.Write("b");
+            else
+                _stdout.Write("!b");
+            _stdout.Write((char)0x1B);
+        }
+
+        public void Write(string text)
+        {
+            _stdout.Write(text);
+        }
+
+        public void WriteLine(string text)
+        {
+            _stdout.WriteLine(text);
+        }
+
+        public string ReadLine()
+        {
+            return _stdin.ReadLine();
+        }
+
+        public char Read()
+        {
+            return (char)_stdin.Read();
+        }
+
+        public void Clear()
+        {
+            _stdout.Write((char)0x1B);
+            _stdout.Write("c");
+            _stdout.Write((char)0x1B);
+        }
+    }
+
+    public enum ConsoleColor
+    {
+        Black,
+        White,
+        Gray,
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Orange,
+        Purple,
+        Pink
     }
 }

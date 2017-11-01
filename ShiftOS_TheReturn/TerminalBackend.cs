@@ -91,11 +91,11 @@ namespace Plex.Engine
         /// <param name="command">The command name.</param>
         /// <param name="arguments">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
-        public static void InvokeCommand(string command, string[] arguments, bool isRemote = false)
+        public static void InvokeCommand(string command, string[] arguments, StreamWriter stdout, StreamReader stdin, bool isRemote = false)
         {
             try
             {
-                bool commandWasClient = RunClient(command, arguments, isRemote);
+                bool commandWasClient = RunClient(command, arguments, stdout, stdin, isRemote);
 
                 if (!commandWasClient)
                 {
@@ -151,7 +151,7 @@ namespace Plex.Engine
             }
 
 
-            public override void Invoke(string[] args, string shell)
+            public override void Invoke(string[] args, string shell, StreamWriter stdout, StreamReader stdin)
             {
                 AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(PlexWindow, null));
             }
@@ -253,7 +253,7 @@ namespace Plex.Engine
         /// </summary>
         /// <param name="text">The full command text in regular Plex syntax</param>
         /// <param name="isRemote">Whether the command should be sent through Remote Terminal Session (RTS).</param>
-        public static void InvokeCommand(string text, bool isRemote = false)
+        public static void InvokeCommand(string text, StreamWriter stdout, StreamReader stdin, bool isRemote = false)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return;
@@ -269,17 +269,17 @@ namespace Plex.Engine
                     argv = alist.ToArray();
                 }
 
-                bool commandWasClient = RunClient(cmd, argv, isRemote);
+                bool commandWasClient = RunClient(cmd, argv, stdout, stdin, isRemote);
                 if (!commandWasClient)
                 {
-                    Console.WriteLine("Error: Command not found.");
+                    stdout.WriteLine("Error: Command not found.");
                     
                 }
                 CommandProcessed?.Invoke(cmd, JsonConvert.SerializeObject(argv)); //WTF DOES THIS DO
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Command parse error: {ex.Message}");
+                stdout.WriteLine($"Command parse error: {ex.Message}");
                 PrefixEnabled = true;
 
             }
@@ -345,7 +345,7 @@ namespace Plex.Engine
         /// <param name="args">The command arguments.</param>
         /// <param name="isRemote">Whether the command should be run in RTS.</param>
         /// <returns>Whether the command ran successfully.</returns>
-        public static bool RunClient(string text, string[] args, bool isRemote = false)
+        public static bool RunClient(string text, string[] args, StreamWriter stdout, StreamReader stdin, bool isRemote = false)
         {
             latestCommmand = text;
 
@@ -363,12 +363,12 @@ namespace Plex.Engine
             {
                 try
                 {
-                    cmd.Invoke(args, _shellOverrideString);
+                    cmd.Invoke(args, _shellOverrideString, stdout, stdin);
                     CommandFinished?.Invoke(text, args);
                 }
                 catch (TargetInvocationException ex)
                 {
-                    Console.WriteLine("Command error: " + ex.InnerException.Message);
+                    stdout.WriteLine("Command error: " + ex.InnerException.Message);
                 }
 
                 return true;
@@ -400,7 +400,7 @@ namespace Plex.Engine
                                     string ln = reader.ReadString();
                                     if (ln == "\u0013\u0014")
                                         break;
-                                    Console.Write(ln);
+                                    stdout.Write(ln);
                                 }
                             }
                         }

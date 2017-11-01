@@ -73,6 +73,10 @@
     <Compile Include="Plexnet.cs" />
     <Compile Include="PlexServerHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pty\PseudoTerminal.cs" />
+    <Compile Include="Pty\TerminalConstants.cs" />
+    <Compile Include="Pty\TerminalOptions.cs" />
+    <Compile Include="Pty\ThreadSafeDoohicky.cs" />
     <Compile Include="Rank.cs" />
     <Compile Include="RankManager.cs" />
     <Compile Include="ReflectMan.cs" />
@@ -93,6 +97,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

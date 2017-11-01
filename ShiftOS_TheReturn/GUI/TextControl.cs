@@ -138,6 +138,25 @@ namespace Plex.Frontend.GUI
             }
         }
 
+        private bool _cleareveryredraw = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the text renderer should clear the text framebuffer before rerendering any text. Default value is true.
+        /// </summary>
+        public bool ClearTextBufferEveryRerender
+        {
+            get
+            {
+                return _cleareveryredraw;
+            }
+            set
+            {
+                if (_cleareveryredraw == value)
+                    return;
+                _cleareveryredraw = value;
+            }
+        }
+
         public void ResetStyle()
         {
             switch (_fs)
@@ -251,7 +270,8 @@ namespace Plex.Frontend.GUI
                 gfx.Width = Width;
                 gfx.Height = Height;
                 gfx.Device.SetRenderTarget(_textBuffer);
-                gfx.Device.Clear(Microsoft.Xna.Framework.Color.Transparent);
+                if(_cleareveryredraw)
+                    gfx.Device.Clear(Microsoft.Xna.Framework.Color.Transparent);
                 gfx.Device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                 gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                                     SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
@@ -269,7 +289,7 @@ namespace Plex.Frontend.GUI
                                     RasterizerState);
 
             }
-            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity);
+            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity, System.Windows.Forms.ImageLayout.None, false);
         }
     }
 

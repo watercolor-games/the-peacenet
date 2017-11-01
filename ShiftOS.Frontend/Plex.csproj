@@ -64,7 +64,6 @@
     <Compile Include="Apps\PlexTheme.cs" />
     <Compile Include="Apps\Themes.cs" />
     <Compile Include="Apps\Terminal.cs" />
-    <Compile Include="Apps\TextPad.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
     <Compile Include="Desktop\WindowManager.cs" />
@@ -200,7 +199,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include="Content\UbuntuMono-B.spritefont" />
+    <None Include="Content\UbuntuMono-B.ttf" />
+    <None Include="Content\UbuntuMono-BI.spritefont" />
+    <None Include="Content\UbuntuMono-BI.ttf" />
+    <None Include="Content\UbuntuMono-R.spritefont" />
+    <None Include="Content\UbuntuMono-R.ttf" />
+    <None Include="Content\UbuntuMono-RI.spritefont" />
+    <None Include="Content\UbuntuMono-RI.ttf" />
     <None Include="packages.config" />
     <None Include="Resources\arnix.skn" />
     <None Include="Resources\cursor_9x_pointer.png" />

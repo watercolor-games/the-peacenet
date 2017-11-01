@@ -91,7 +91,7 @@ namespace Plex.Server
         }
 
 
-        public static bool RunClient(string text, string[] args, string session_id, bool isServerAdmin = false)
+        public static bool RunClient(string text, string[] args, string session_id, StreamWriter stdout, StreamReader stdin, bool isServerAdmin = false)
         {
             SessionID = session_id;
             var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
@@ -99,18 +99,18 @@ namespace Plex.Server
                 return false;
             if(((ServerCommand)cmd.CommandInfo).ServerOnly == true && isServerAdmin == false)
             {
-                Console.WriteLine("You can't run this command as you are not a server admin.");
+                stdout.WriteLine("You can't run this command as you are not a server admin.");
                 return true;
             }
             if (!UpgradeManager.IsUpgradeLoaded(cmd.Dependencies, session_id))
                 return false;
             try
             {
-                cmd.Invoke(args, _shelloverride);
+                cmd.Invoke(args, _shelloverride, stdout, stdin);
             }
             catch (TargetInvocationException ex)
             {
-                Console.WriteLine("Command error: " + ex.InnerException.Message);
+                stdout.WriteLine("Command error: " + ex.InnerException.Message);
             }
 
             return true;
@@ -149,6 +149,14 @@ namespace Plex.Server
         [SessionRequired]
         public static byte InvokeCMD(string session_id, BinaryReader reader, BinaryWriter writer)
         {
+            //TODO: Persistent connection to client so that stdin reads from client and stdout sends to client.
+            //This will allow server-side commands to ask the in-game user for input while the command is running.
+            //For now, we'll pipe stdout and stdin to a MemoryStream.
+            MemoryStream std = new MemoryStream();
+            var stdout = new StreamWriter(std);
+            stdout.AutoFlush = true;
+            var stdin = new StreamReader(std);
+
             string datajson = reader.ReadString();
             SessionInfo = new RequestInfo
             {
@@ -156,13 +164,14 @@ namespace Plex.Server
             };
             var outstream = Console.Out;
             var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(datajson);
-            var memwriter = new RemoteTextWriter(writer, session_id); //We use this to forward all console writes to the client that ran this command.
-            Console.SetOut(memwriter);
             SetShellOverride(data["shell"].ToString());
             string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session_id : data["sessionfwd"].ToString();
-            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data["args"])), sessionfwd);
+            bool result = RunClient(data["cmd"].ToString(), JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data["args"])), sessionfwd, stdout, stdin);
             SetShellOverride("");
-            Console.SetOut(outstream);
+            writer.Write(Encoding.UTF8.GetString(std.ToArray()));
+            stdout.Close();
+            stdin.Close();
+            std.Close();
             writer.Write("\u0013\u0014");
             return 0x00;
         }

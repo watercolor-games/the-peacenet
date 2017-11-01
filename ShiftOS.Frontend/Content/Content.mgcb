@@ -13,9 +13,43 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Effects/Ambient.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/Ambient.fx
+#begin UbuntuMono-B.ttf
+/copy:UbuntuMono-B.ttf
+
+#begin UbuntuMono-BI.ttf
+/copy:UbuntuMono-BI.ttf
+
+#begin UbuntuMono-R.ttf
+/copy:UbuntuMono-R.ttf
+
+#begin UbuntuMono-RI.ttf
+/copy:UbuntuMono-RI.ttf
+
+#begin UbuntuMono-R.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UbuntuMono-R.spritefont
+
+#begin UbuntuMono-B.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UbuntuMono-B.spritefont
+
+#begin UbuntuMono-BI.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UbuntuMono-BI.spritefont
+
+#begin UbuntuMono-RI.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:UbuntuMono-RI.spritefont
 

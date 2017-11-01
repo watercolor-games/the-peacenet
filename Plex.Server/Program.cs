@@ -651,7 +651,7 @@ Now generating defenses...
                                     alist.RemoveAt(0);
                                     argsarr = alist.ToArray();
                                 }
-                                if (!Terminal.RunClient(cmdname, argsarr, "", true))
+                                if (!Terminal.RunClient(cmdname, argsarr, "", (StreamWriter)Console.Out, (StreamReader)Console.In, true))
                                 {
                                     Console.WriteLine("Command not found.");
                                 }

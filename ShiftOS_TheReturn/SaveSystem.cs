@@ -221,15 +221,6 @@ namespace Plex.Engine
         /// Occurs when the engine is loaded and the game can take over.
         /// </summary>
         public static event EmptyEventHandler GameReady;
-
-        /// <summary>
-        /// Restarts the game.
-        /// </summary>
-        public static void Restart()
-        {
-            TerminalBackend.InvokeCommand("sos.shutdown");
-            System.Windows.Forms.Application.Restart();
-        }
     }
 
     /// <summary>
