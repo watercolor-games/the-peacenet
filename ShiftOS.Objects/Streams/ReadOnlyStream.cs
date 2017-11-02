@@ -42,9 +42,9 @@ namespace Plex.Objects.Streams
             throw new NotSupportedException("The stream does not support writing.");
         }
         
-        public void Dispose()
+        public override void Close()
         {
-            baseStream.Dispose();
+            baseStream.Close();
         }
         
         public ReadOnlyStream(Stream baseStream)

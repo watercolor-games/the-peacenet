@@ -33,16 +33,18 @@ namespace Plex.Objects.Streams
         public override int Read(byte[] buffer, int offset, int count)
         {
             int curcount, read = 0;
-            while (!closed && read < count)
+            while (!closed)
             {
-                haveWritten.WaitOne();
                 lock (myBuffer)
                 {
-                    curcount = Math.Min(myBuffer.Count, count);
-                    Array.Copy(myBuffer.Take(count).ToArray(), 0, buffer, offset, count);
-                    myBuffer.RemoveRange(0, count);
+                    curcount = Math.Min(myBuffer.Count, count - read);
+                    Array.Copy(myBuffer.Take(curcount).ToArray(), 0, buffer, offset + read, curcount);
+                    myBuffer.RemoveRange(0, curcount);
                 }
                 read += curcount;
+                if (read == count)
+                    return count;
+                haveWritten.WaitOne();
             }
             return read;
         }
@@ -71,7 +73,7 @@ namespace Plex.Objects.Streams
         /// <summary>
         /// Disables writing to the stream and makes reading non-blocking.
         /// </summary>
-        public void Dispose()
+        public override void Close()
         {
             lock (myBuffer)
             {

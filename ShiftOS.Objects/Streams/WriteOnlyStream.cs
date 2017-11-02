@@ -42,9 +42,9 @@ namespace Plex.Objects.Streams
             baseStream.Write(buffer, offset, count);
         }
         
-        public void Dispose()
+        public override void Close()
         {
-            baseStream.Dispose();
+            baseStream.Close();
         }
         
         public WriteOnlyStream(Stream baseStream)
