@@ -88,7 +88,7 @@ namespace Plex.Objects
         Seek,
         SetLength,
         Write,
-        Dispose,
+        Close,
     }
 
     public enum ServerResponseType : byte

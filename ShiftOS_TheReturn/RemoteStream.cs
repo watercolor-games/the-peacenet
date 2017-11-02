@@ -121,9 +121,9 @@ namespace Plex.Engine
             }
         }
         
-        public void Dispose()
+        public override void Close()
         {
-            action(StreamOp.Dispose);
+            action(StreamOp.Close);
         }
         
         public RemoteStream(int streamid)

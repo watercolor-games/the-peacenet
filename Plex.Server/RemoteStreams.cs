@@ -10,25 +10,16 @@ namespace Plex.Server
         private class RemoteStreamInfo
         {
             public Stream stream;
-            public List<string> auth;
-            
-            public bool IsAuthorised(string session)
-            {
-                if (this.auth == null)
-                {
-                    return false;
-                }
-                return this.auth.Contains(session);
-            }
+            public string session;
         }
         
         private static List<RemoteStreamInfo> streams = new List<RemoteStreamInfo>();
         
-        public static int Open(Stream local, List<string> auth = null)
+        public static int Open(Stream stream, string session)
         {
             RemoteStreamInfo info = new RemoteStreamInfo();
-            info.stream = local;
-            info.auth = auth;
+            info.stream = stream;
+            info.session = session;
             int ret = streams.IndexOf(null);
             if (ret == -1)
             {
@@ -48,7 +39,7 @@ namespace Plex.Server
         {
             int streamid = read.ReadInt32();
             RemoteStreamInfo streaminfo = streams[streamid];
-            if (!streaminfo.IsAuthorised(session))
+            if (streaminfo.session != session)
             {
                 return (byte)ServerResponseType.REQ_ERROR;
             }
@@ -113,9 +104,9 @@ namespace Plex.Server
                     stream.Write(buf, 0, buf.Length);
                     return (byte)ServerResponseType.REQ_SUCCESS;
                 }
-                case StreamOp.Dispose:
+                case StreamOp.Close:
                 {
-                    stream.Dispose();
+                    stream.Close();
                     streams[streamid] = null;
                     return (byte)ServerResponseType.REQ_SUCCESS;
                 }
