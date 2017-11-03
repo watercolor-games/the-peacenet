@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # Download nuget packages on linux
 
 mkdir -p packages
