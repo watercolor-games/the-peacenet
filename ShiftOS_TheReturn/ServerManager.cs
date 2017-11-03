@@ -302,7 +302,6 @@ namespace Plex.Engine
                 {
                     using (var reader = new BinaryReader(GetResponseStream(result)))
                     {
-                        UIManager.ClearTopLevels();
                         ServerManager.SessionInfo.SessionID = reader.ReadString();
                         SaveSystem.Begin();
                     }
@@ -331,7 +330,6 @@ namespace Plex.Engine
                 {
                     using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                     {
-                        UIManager.ClearTopLevels();
                         ServerManager.SessionInfo.SessionID = reader.ReadString();
                         SaveSystem.Begin();
                     }

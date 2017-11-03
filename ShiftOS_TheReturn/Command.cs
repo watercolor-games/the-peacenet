@@ -1,82 +1,46 @@
-/* * Project: Plex *  * Copyright (c) 2017 Watercolor Games. All rights reserved. For internal use only. *  *  * The above copyright notice and this permission notice shall be included in all * copies or substantial portions of the Software. *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE * SOFTWARE. */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using System;using System.Collections.Generic;using System.IO;
 using System.Linq;using System.Text;using System.Threading.Tasks;using Plex.Objects;
 
-namespace Plex.Engine{    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    [Obsolete("Commands just...don't work this way anymore.")]
+namespace Plex.Engine{
+    /// <summary>    /// Denotes that the following terminal command or namespace must only be used in an elevated environment.    /// </summary>    [Obsolete("No need for this. At all.")]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]    public class KernelModeAttribute : Attribute    {    }    /// <summary>    /// Denotes that this command requires a specified argument to be in its argument dictionary.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]    [Obsolete("Commands just...don't work this way anymore.")]
     public class RequiresArgument : Attribute    {        /// <summary>        /// The argument name        /// </summary>        public string argument;        /// <summary>        /// Creates a new instance of the <see cref="RequiresArgument"/> attribute         /// </summary>        /// <param name="argument">The argument name associated with this attribute</param>        public RequiresArgument(string argument)        {            this.argument = argument;        }        public override object TypeId        {            get            {                return this;            }        }    }    /// <summary>    /// Prevents a command from being run in a remote session.    /// </summary>    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]    public class RemoteLockAttribute : Attribute    {    }    public static class EngineCommands
     {
         [MetaCommand()]
         [Command("man", description = "Shows detailed usage information about a given command.")]
         [UsageString("<command>")]
-        public static void Man(Dictionary<string, object> args)
+        public static void Man(Dictionary<string, object> args, ConsoleContext console)
         {
             string cmd = args["<command>"].ToString();
             var tc = TerminalBackend.Commands.FirstOrDefault(x => x.CommandInfo.name == cmd && Upgrades.IsLoaded(x.Dependencies));
 
 
+            console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.Yellow);
+            console.SetBold(true);
             if (tc != null)
-                Console.WriteLine(tc.GetManPage());
+            {
+                console.WriteLine(tc.GetManPage());
+            }
             else
             {
-                using(var netstr = new ServerStream(ServerMessageType.TRM_MANPAGE))
+                using (var netstr = new ServerStream(ServerMessageType.TRM_MANPAGE))
                 {
                     netstr.Write(cmd);
                     var result = netstr.Send();
-                    if(result.Message == (byte)ServerResponseType.REQ_SUCCESS)
+                    if (result.Message == (byte)ServerResponseType.REQ_SUCCESS)
                     {
-                        using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                        using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
                         {
-                            Console.WriteLine(reader.ReadString());
+                            console.WriteLine(reader.ReadString());
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Error: Command not found.");
+                        console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.Red);
+                        console.SetBold(true);
+                        console.Write("Error: ");
+                        console.SetBold(false);
+                        console.WriteLine("Command not found.");
                     }
                 }
             }
@@ -84,7 +48,7 @@ namespace Plex.Engine{    /// <summary>    /// Denotes that the following ter
 
         [MetaCommand]
         [Command("help", "", "{DESC_COMMANDS}")]
-        public static bool Commands()
+        public static bool Commands(ConsoleContext console)
         {
             Dictionary<string, string> cmds = new Dictionary<string, string>();
             using (var w = new ServerStream(ServerMessageType.TRM_GETCMDS))
@@ -121,7 +85,7 @@ namespace Plex.Engine{    /// <summary>    /// Denotes that the following ter
                 sb.AppendLine();
             }
 
-            Console.WriteLine(sb.ToString());
+            console.WriteLine(sb.ToString());
 
             return true;
         }

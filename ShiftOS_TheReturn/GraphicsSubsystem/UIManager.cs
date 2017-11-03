@@ -282,7 +282,6 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void StartSPServer()
         {
-            ClearTopLevels();
             SinglePlayerStarted?.Invoke();
         }
 

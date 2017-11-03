@@ -55,49 +55,19 @@ namespace Plex.Engine
             Paths.Init();
             SkinEngine.Init();
             Localization.SetupTHETRUEDefaultLocals();
-            Random rnd = new Random();
-            int loadingJoke1 = rnd.Next(10);
-            int loadingJoke2 = rnd.Next(11);
+            TerminalBackend.PopulateTerminalCommands();
+            Ready.Reset();
 
-            TerminalBackend.OpenTerminal();
-
-            TerminalBackend.InStory = true;
-            var thread = new Thread(new ThreadStart(() =>
+            if (PreDigitalSocietyConnection != null)
             {
-                //Do not uncomment until I sort out the copyright stuff... - Michael
-                //AudioManager.Init();
+                PreDigitalSocietyConnection?.Invoke();
+                Ready.WaitOne();
+            }
 
-                Thread.Sleep(350);
-                Console.WriteLine("{MISC_KERNELVERSION}");
-                Thread.Sleep(50);
-                Console.WriteLine("{MISC_KERNELBOOTED}");
-                Console.WriteLine("{MISC_SHIFTFSDRV}");
-                Thread.Sleep(350);
-                Console.WriteLine("{MISC_SHIFTFSBLOCKSREAD}");
-                Console.WriteLine("{LOADINGMSG1_" + loadingJoke1 + "}");
-                Thread.Sleep(500);
-                Console.WriteLine("{MISC_LOADINGCONFIG}");
-                Thread.Sleep(30);
-                Console.WriteLine("{MISC_BUILDINGCMDS}");
-                TerminalBackend.PopulateTerminalCommands();
+            FinishBootstrap();
 
-                    Console.WriteLine("{MISC_CONNECTINGTONETWORK}");
+            //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
 
-                    Ready.Reset();
-
-                    if (PreDigitalSocietyConnection != null)
-                    {
-                        PreDigitalSocietyConnection?.Invoke();
-                        Ready.WaitOne();
-                    }
-
-                    FinishBootstrap();
-
-                    //Nothing happens past this point - but the client IS connected! It shouldn't be stuck in that while loop above.
-                
-            }));
-            thread.IsBackground = true;
-            thread.Start();
         }
 
         public static string GetUsername()
@@ -198,16 +168,6 @@ namespace Plex.Engine
         private static void FinishBootstrap()
         {
             Upgrades.Init();
-            Thread.Sleep(75);
-
-            Thread.Sleep(50);
-            Console.WriteLine("{MISC_ACCEPTINGLOGINS}");
-
-            TerminalBackend.InStory = false;
-            TerminalBackend.PrefixEnabled = true;
-            Upgrades.LogOrphanedUpgrades = true;
-        
-
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
         }

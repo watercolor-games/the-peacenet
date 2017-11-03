@@ -54,7 +54,21 @@ namespace Plex.Frontend.Apps
         {
             while (_isOpen)
             {
+                stdout.Write((char)0x1B);
+                stdout.Write("!b");
+                stdout.Write((char)0x1B);
+                stdout.Write((char)0x1B);
+                stdout.Write("!i");
+                stdout.Write((char)0x1B);
+                stdout.Write((char)0x1B);
+                stdout.Write(((int)Plex.Objects.ConsoleColor.Black));
+                stdout.Write(((int)Plex.Objects.ConsoleColor.Green));
+                stdout.Write((char)0x1B);
                 stdout.Write(TerminalBackend.ShellOverride);
+                stdout.Write((char)0x1B);
+                stdout.Write(((int)Plex.Objects.ConsoleColor.Black));
+                stdout.Write(((int)Plex.Objects.ConsoleColor.White));
+                stdout.Write((char)0x1B);
                 string cmd = stdin.ReadLine();
                 Task.Delay(10);
                 TerminalBackend.InvokeCommand(cmd, stdout, stdin, false);
@@ -98,6 +112,13 @@ namespace Plex.Frontend.Apps
         private static SpriteFont f_italic = null;
         private static SpriteFont f_bold = null;
         private static SpriteFont f_bolditalic= null;
+
+        //Hacky stuff to prevent backspacing stdout
+        private int charsWrittenSinceLastKeyPress = 0; // total characters that have been written to stdout since something
+                                                      // was last read from stdout
+        private int totalCharsReadSinceLastEcho = 0; // total characters that have been read from stdin since something 
+
+
 
         internal static Vector2 GetCharMeasurement()
         {
@@ -185,7 +206,21 @@ namespace Plex.Frontend.Apps
 
                 if (ch != -1)
                 {
+                    if (ch == '\b' && totalCharsReadSinceLastEcho <= -1)
+                    {
+                        continue;
+                    }
+
+
                     _tbuffer += (char)ch;
+
+                    if (charsWrittenSinceLastKeyPress > 1)
+                    {
+                        totalCharsReadSinceLastEcho = 1;
+                    }
+
+                    charsWrittenSinceLastKeyPress++;
+
                     RequireTextRerender();
                     Invalidate();
                 }
@@ -252,11 +287,11 @@ namespace Plex.Frontend.Apps
                 case 2:
                     return Microsoft.Xna.Framework.Color.Gray;
                 case 3:
-                    return Microsoft.Xna.Framework.Color.Red;
+                    return Microsoft.Xna.Framework.Color.OrangeRed;
                 case 4:
-                    return Microsoft.Xna.Framework.Color.Green;
+                    return Microsoft.Xna.Framework.Color.LightGreen;
                 case 5:
-                    return Microsoft.Xna.Framework.Color.Blue;
+                    return Microsoft.Xna.Framework.Color.LightBlue;
                 case 6:
                     return Microsoft.Xna.Framework.Color.Yellow;
                 case 7:
@@ -264,7 +299,7 @@ namespace Plex.Frontend.Apps
                 case 8:
                     return Microsoft.Xna.Framework.Color.Purple;
                 case 9:
-                    return Microsoft.Xna.Framework.Color.Pink;
+                    return Microsoft.Xna.Framework.Color.LightPink;
 
             }
         }
@@ -404,7 +439,10 @@ Buffer requires complete redraw: {_resized}";
 
         protected override void OnKeyEvent(KeyEvent e)
         {
-            if(e.Key == Keys.I && e.ControlDown)
+            charsWrittenSinceLastKeyPress = 0;
+
+
+            if (e.Key == Keys.I && e.ControlDown)
             {
                 _showDebug = !_showDebug;
                 Invalidate();
@@ -420,7 +458,16 @@ Buffer requires complete redraw: {_resized}";
 
             if (e.KeyChar != '\0')
             {
+                if (e.KeyChar != '\b')
+                {
+                    totalCharsReadSinceLastEcho++;
+                }
+                else if (totalCharsReadSinceLastEcho >= 0)
+                {
+                    totalCharsReadSinceLastEcho--;
+                }
                 _slave.WriteByte((byte)e.KeyChar);
+
             }
             else
             {

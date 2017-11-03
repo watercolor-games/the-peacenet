@@ -11,18 +11,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Objects;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using Plex.Frontend.Apps;
+using System.Threading;
 
 namespace Plex.Frontend
 {
     public class MainMenu : GUI.Control
     {
+        private TerminalEmulator _terminal = new TerminalEmulator();
         private PictureBox _watercolorgames = new PictureBox();
         private PictureBox _peacenet_welcome = new PictureBox();
         private PictureBox _peacenet_text = new PictureBox();
         private TextControl _pressStart = new TextControl();
         private TextControl _legalBullshit = new TextControl();
         private float _wgFade = 0.0f;
-        private int _wgState = 0;
+        private int _wgState = -1;
         private double _wgRide = 0.0;
 
         //Variables for "Welcome to" slide animation.
@@ -50,9 +53,107 @@ namespace Plex.Frontend
 
         private float _psFade = 0;
 
+        private ConsoleContext _console = null;
+
+        private static Action<ConsoleContext> _gameStarted = null;
+
+        private void SlowWrite(string text)
+        {
+            for(int i = 0; i < text.Length; i++)
+            {
+                _console.Write(text[i].ToString());
+                Thread.Sleep(75);
+            }
+        }
+
+        private static readonly string[] kernelbootmsgs = new string[]
+        {
+            "Finding hardware devices...",
+            "done",
+            "Primary input devices: standard computer keyboard, mouse",
+            "Checking for updates even though there aren't any",
+            "Dumping useless pointers to disk...",
+            "Error 0x000000EF at 0xFFFFFFFF",
+            "Does anybody actually read these?",
+            "Making no progress...",
+            "VESA video driver loaded into memory.",
+            "Initializing splash screen...",
+        };
 
         public MainMenu()
         {
+            Plex.Frontend.Apps.TerminalEmulator.LoadFonts();
+            AddControl(_terminal);
+            _terminal.StartShell((stdout, stdin) =>
+            {
+                _console = new ConsoleContext(stdout, stdin);
+                Thread.Sleep(500);
+                _console.SetBold(true);
+                _console.SetColors(Objects.ConsoleColor.White, Objects.ConsoleColor.Black);
+                _console.WriteLine("Peacegate v9.4.7");
+                _console.SetBold(false);
+                _console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.White);
+                _console.WriteLine("");
+                SlowWrite("RAM: 256M OK\r\n");
+                SlowWrite("Starting kernel bootstrap...");
+                Thread.Sleep(250);
+                _console.WriteLine("");
+                Thread.Sleep(250);
+                _console.WriteLine("");
+                foreach(var line in kernelbootmsgs)
+                {
+                    _console.WriteLine(line);
+                    Thread.Sleep(150);
+                }
+                _wgState = 0; //start splashscreen
+                if(_gameStarted == null)
+                {
+                    _gameStarted = (ctx) =>
+                    {
+                        if(SaveSystem.IsSandbox == false)
+                        {
+                            //only display these in single player
+                            ctx.WriteLine("Please authenticate with relay to gain a system context.");
+                            Thread.Sleep(250);
+                            ctx.SetBold(true);
+                            ctx.Write("username: ");
+                            Thread.Sleep(125);
+                            ctx.SetBold(false);
+                            ctx.WriteLine("user");
+                            Thread.Sleep(250);
+                            ctx.SetBold(true);
+                            ctx.Write("password: ");
+                            ctx.SetBold(false);
+                            Thread.Sleep(125);
+                            ctx.WriteLine("*********"); //What, you'd think I'd put an actual pwd on Campaign?
+                            Thread.Sleep(500);
+                            ctx.SetBold(true);
+                            ctx.WriteLine("Access Granted: ");
+                            ctx.SetBold(false);
+                            ctx.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.Red);
+                            ctx.WriteLine($"{SaveSystem.GetUsername()}@{SaveSystem.GetSystemName()}");
+                            ctx.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.White);
+                            Thread.Sleep(2000);
+                        }
+                        ctx.WriteLine("SYSTEM CONTEXT RECEIVED.");
+                        ctx.WriteLine("");
+                        ctx.WriteLine("");
+                        Thread.Sleep(2000);
+                        ctx.WriteLine("Starting Peacegate Desktop.");
+                        Thread.Sleep(1000);
+                        Engine.Desktop.InvokeOnWorkerThread(() =>
+                        {
+                            UIManager.ClearTopLevels();
+                            Engine.Desktop.CurrentDesktop.Show();
+                            Engine.Desktop.CurrentDesktop.SetupDesktop();
+                        });
+                    };
+                    SaveSystem.GameReady += () =>
+                    {
+                        _gameStarted?.Invoke(_console);
+                    };
+                }
+            });
             AddControl(_watercolorgames);
             AddControl(_peacenet_text);
             AddControl(_peacenet_welcome);
@@ -62,7 +163,7 @@ namespace Plex.Frontend
             AddControl(_btnOptions);
             AddControl(_animate);
 
-            AddControl(_tcMain);
+            //AddControl(_tcMain);
 
             AddControl(_faUser);
             AddControl(_faGroup);
@@ -78,7 +179,13 @@ namespace Plex.Frontend
             _peacenet_welcome.Image = Properties.Resources.peacenet_welcome.ToTexture2D(UIManager.GraphicsDevice);
             _peacenet_welcome.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
-            _btnSinglePlayer.Click += UIManager.StartSPServer;
+            _btnSinglePlayer.Click += ()=>
+            {
+                _console.WriteLine("127.0.0.1:3252");
+                _console.WriteLine("Connecting to relay...");
+                _wgState++;
+                UIManager.StartSPServer();
+            };
             _btnMultiplayer.Click += () =>
             {
                 AppearanceManager.SetupDialog(new Apps.MultiplayerServerList());
@@ -104,6 +211,8 @@ namespace Plex.Frontend
 
         protected override void OnLayout(GameTime gameTime)
         {
+            _terminal.X = 0;
+            _terminal.Y = 0;
             Width = UIManager.Viewport.Width;
             Height = UIManager.Viewport.Height;
 
@@ -173,9 +282,14 @@ namespace Plex.Frontend
                     _wgFade += (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if(_wgFade >= 1.0F)
                     {
+                        _console.WriteLine("Kernel boot succeeded.");
+                        _console.Write("Peacegate is copyright (c) 2017 ");
+                        _console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.Blue);
+                        _console.Write("watercolor");
+                        _console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.White);
+                        _console.WriteLine("games.");
                         //move to next state.
                         _wgState++;
-                        Plex.Frontend.Apps.TerminalEmulator.LoadFonts();
                     }
                     break;
                 case 1:
@@ -191,6 +305,7 @@ namespace Plex.Frontend
                     _wgFade -= (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if (_wgFade <= 0F)
                     {
+                        _console.WriteLine("Connecting to the Peacenet...");
                         //move to next state.
                         _wgState++;
                         //set the slide positions for the next slide
@@ -207,12 +322,22 @@ namespace Plex.Frontend
                 case 3:
                     _wtSlide += gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if (_wtSlide >= 1.0)
+                    {
+                        _console.WriteLine("Server says...");
+                        _console.Write("Welcome to");
                         _wgState++;
+                    }
                     break;
                 case 4:
                     _pnSlide += gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if (_pnSlide >= 1.0)
                     {
+                        _console.Write(" The ");
+                        _console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.Green);
+                        _console.SetBold(true);
+                        _console.WriteLine("Peacenet.");
+                        _console.SetColors(Objects.ConsoleColor.Black, Objects.ConsoleColor.White);
+                        _console.SetBold(false);
                         _wgState++;
                         _wgRide = 0.0;
                     }
@@ -221,6 +346,7 @@ namespace Plex.Frontend
                     _wgRide += (float)gameTime.ElapsedGameTime.TotalSeconds;
                     if (_wgRide >= 0.5F)
                     {
+                        _console.WriteLine("Continuing initialization... Press ENTER to continue.");
                         //move to next state
                         _wgState++;
                         _wtSlide = 1.0;
@@ -243,6 +369,8 @@ namespace Plex.Frontend
                     _pnSlide -= gameTime.ElapsedGameTime.TotalSeconds * 2;
                     if(_pnSlide <= 0.0)
                     {
+                        _console.WriteLine("Please input a Peacegate relay server to connect to.");
+                        _console.Write("> ");
                         _wgState++;
                         _wgRide = 0.0;
                     }
@@ -255,7 +383,7 @@ namespace Plex.Frontend
                     break;
             }
 
-            bool buttonsVisible = (_wgState >= 8);
+            bool buttonsVisible = (_wgState == 10);
             _btnSinglePlayer.Visible = buttonsVisible;
             _btnMultiplayer.Visible = buttonsVisible;
             _btnOptions.Visible = buttonsVisible;
@@ -326,6 +454,7 @@ namespace Plex.Frontend
                     if (_enterPressed == false)
                     {
                         _enterPressed = true;
+                        _console.WriteLine("This operating system uses cloud save features. Do not switch off your system while the cloud icon is displayed.");
                         UIManager.ShowCloudUpload();
                         Engine.Infobox.Show("Information", "This game uses cloud save features. Do not switch off your system while the cloud icon is displayed.", () =>
                         {

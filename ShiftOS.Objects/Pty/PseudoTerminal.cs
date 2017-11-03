@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using Plex.Objects.Streams;
 
 namespace Plex.Objects.Pty
 {

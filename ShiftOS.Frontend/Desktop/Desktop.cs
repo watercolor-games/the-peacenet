@@ -47,16 +47,11 @@ namespace Plex.Frontend.Desktop
                 }
                 OpenAppLauncher(new System.Drawing.Point(x, y));
             };
-            SaveSystem.GameReady += () =>
+            /*SaveSystem.GameReady += () =>
             {
-                AudioPlayerSubsystem.Startup();
                 Show();
                 SetupDesktop();
-                if (!Upgrades.UpgradeInstalled("tutorial1"))
-                {
-                    Story.Start("tutorial1");
-                }
-            };
+            };*/
             Click += () =>
             {
                 if (UIManagerTools.InProtectedGUI == true)

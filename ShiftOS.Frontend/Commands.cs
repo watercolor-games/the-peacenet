@@ -277,12 +277,6 @@ namespace Plex.Frontend
             }
         }
 
-        [Command("command")]
-        [UsageString("get <key>")]
-        [UsageString("set <key> <value>")]
-        public static void Command(Dictionary<string, object> args)
-        {
-            Console.WriteLine(JsonConvert.SerializeObject(args, Formatting.Indented));
-        }
+        
     }
 }

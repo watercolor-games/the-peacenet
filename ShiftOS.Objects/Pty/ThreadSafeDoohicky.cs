@@ -72,6 +72,7 @@ namespace Plex.Objects.Pty
 
                     if (queueBuffer.Count == 0)
                     {
+                        System.Threading.Thread.Sleep(10);
                         break;
                     }
 
