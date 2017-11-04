@@ -24,12 +24,10 @@ namespace Plex.Frontend
         [STAThread]
         static void Main()
         {
-            SkinEngine.SetSkinProvider(new PlexSkinProvider());
             AudioPlayerSubsystem.Init(new AudioPlayer());
             //Let's get localization going.
             Localization.RegisterProvider(new MonoGameLanguageProvider());
             FileSkimmerBackend.Init(new MGFSLayer());
-            OutOfBoxExperience.Init(new MonoGameOOBE());
             //Now we can initiate the Infobox subsystem
             Engine.Infobox.Init(new Infobox());
             //First things first, let's initiate the window manager.
@@ -136,42 +134,6 @@ namespace Plex.Frontend
             _player.Stream = Properties.Resources.startup;
             _player.Load();
             _player.Play();
-        }
-    }
-
-    public class PlexSkinProvider : ISkinProvider
-    {
-        public Skin GetEasterEggSkin()
-        {
-            return new PlexSkin();
-        }
-
-        public Skin GetDefaultSkin()
-        {
-            //todo: material design skin
-            return JsonConvert.DeserializeObject<PlexSkin>(Encoding.UTF8.GetString(Properties.Resources.arnix));
-        }
-
-        public Skin ReadSkin(string pfsPath)
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<PlexSkin>(ReadAllText(pfsPath));
-            }
-            catch
-            {
-                Engine.Infobox.Show("Peacegate Initializer", "An error occurred trying to load the system UI skin. The skin has been reset.");
-                return GetDefaultSkin();
-            }
-        }
-    }
-
-    [ShiftoriumProvider]
-    public class MonoGameShiftoriumProvider : IShiftoriumProvider
-    {
-        public List<ShiftoriumUpgrade> GetDefaults()
-        {
-            return JsonConvert.DeserializeObject<List<ShiftoriumUpgrade>>(Properties.Resources.Shiftorium);
         }
     }
 

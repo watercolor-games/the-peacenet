@@ -231,19 +231,19 @@ namespace Plex.Frontend.GUI
             int text_y = (_border / 2);
             if(_childMenus.Count == 0)
             {
-                gfx.DrawString(_emptyText, text_x, text_y, SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor(), SkinEngine.LoadedSkin.DropdownFont, Engine.GUI.TextAlignment.TopLeft);
+                gfx.DrawString(_emptyText, text_x, text_y, Color.White, Font, Engine.GUI.TextAlignment.TopLeft);
             }
             else
             {
                 for(int i = 0; i < _childMenus.Count; i++)
                 {
                     bool selected = i == _selectedIndex;
-                    Color _text = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
+                    Color _text = Color.LightGray;
                     if (selected)
-                        _text = SkinEngine.LoadedSkin.DropdownItemSelectedTextColor.ToMonoColor();
+                        _text = Color.White;
                     if (_childMenus[i].Enabled == false)
-                        _text = SkinEngine.LoadedSkin.DropdownItemDisabledText.ToMonoColor();
-                    gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, SkinEngine.LoadedSkin.DropdownFont, Engine.GUI.TextAlignment.TopLeft);
+                        _text = Color.Gray;
+                    gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, Font, Engine.GUI.TextAlignment.TopLeft);
                     text_y += _textheight;
                 }
             }
@@ -253,24 +253,23 @@ namespace Plex.Frontend.GUI
         {
             if (PaintBG)
             {
-                gfx.Clear(SkinEngine.LoadedSkin.DropdownBackground.ToMonoColor());
-                gfx.DrawRectangle(0, 0, _border + _imageMargin, Height, SkinEngine.LoadedSkin.DropdownMarginColor.ToMonoColor());
-                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, SkinEngine.LoadedSkin.DropdownItemSelected.ToMonoColor());
+                gfx.Clear(Color.DarkGray);
+                gfx.DrawRectangle(0, 0, _border + _imageMargin, Height, Color.Gray);
+                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, Color.LightBlue);
                 for (int i = 0; i < _childMenus.Count; i++)
                 {
                     var dd = _childMenus[i];
                     if (dd.HasDropdown && dd.Enabled == true)
                     {
-                        var ddColor = SkinEngine.LoadedSkin.DropdownItemTextColor.ToMonoColor();
+                        var ddColor = Color.LightGray;
                         if (i == _selectedIndex)
-                            ddColor = SkinEngine.LoadedSkin.DropdownItemSelectedTextColor.ToMonoColor();
+                            ddColor = Color.White;
 
 
                         int ddy = (_border / 2) + (_textheight * i);
                         int ddh = _textheight;
                         int ddw = 16;
                         int ddx = Width - ddw;
-                        SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Right, ddx, ddy, ddw, ddh, gfx, ddColor.ToGdiColor());
                     }
                 }
             }
@@ -337,8 +336,7 @@ namespace Plex.Frontend.GUI
         {
             FontStyle = TextControlFontStyle.Custom;
             TextColor = Color.White;
-            Font = SkinEngine.LoadedSkin.DropdownFont;
-
+            
             //Ignore min/max width
             MaxWidth = int.MaxValue;
             MaxHeight = int.MaxValue;
@@ -348,7 +346,7 @@ namespace Plex.Frontend.GUI
             if (this.TextRerenderRequired)
             {
                 string longest = (_childMenus.Count == 0) ? _emptyText : GetLongestString();
-                var measure = TextRenderer.MeasureText(longest, SkinEngine.LoadedSkin.DropdownFont, int.MaxValue, Engine.GUI.TextAlignment.TopLeft, Engine.TextRenderers.WrapMode.None);
+                var measure = TextRenderer.MeasureText(longest, Font, int.MaxValue, Engine.GUI.TextAlignment.TopLeft, Engine.TextRenderers.WrapMode.None);
                 _textwidth = (int)measure.X;
                 _textheight = (int)measure.Y;
             }

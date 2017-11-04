@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
@@ -33,17 +32,17 @@ namespace Plex.Frontend.GUI
                 {
                     if (i == _itemOver)
                     {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxHoverTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
+                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.White, Font, Alignment);
 
                     }
                     else if (i == selectedIndex)
                     {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxSelectedItemTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
+                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.White, Font, Alignment);
 
                     }
                     else
                     {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, LoadedSkin.ListBoxTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Alignment);
+                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.LightGray, Font, Alignment);
                     }
                 }
             }
@@ -212,7 +211,6 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(LoadedSkin.InsetBackgroundColor.ToMonoColor());
             for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
             {
                 int x = 1;
@@ -222,11 +220,11 @@ namespace Plex.Frontend.GUI
                 if (i == selectedIndex)
                 {
                     //draw the string as selected
-                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ListBoxSelectedItemColor.ToMonoColor());
+                    gfx.DrawRectangle(x, y + 2, width, height, Color.LightBlue);
                 }
                 else if (i == _itemOver)
                 {
-                    gfx.DrawRectangle(x, y + 2, width, height, LoadedSkin.ListBoxHoverItemColor.ToMonoColor());
+                    gfx.DrawRectangle(x, y + 2, width, height, Color.Blue);
                 }
             }
             base.OnPaint(gfx, target);
@@ -234,13 +232,11 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            FontStyle = TextControlFontStyle.Custom;
-            Font = SkinEngine.LoadedSkin.ListBoxFont;
             TextColor = Color.White;
 
-            if(fontheight != LoadedSkin.ListBoxFont.Height)
+            if(fontheight != Font.Height)
             {
-                fontheight = LoadedSkin.ListBoxFont.Height;
+                fontheight = Font.Height;
                 Invalidate();
             }
             base.OnLayout(gameTime);

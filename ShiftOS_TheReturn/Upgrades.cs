@@ -180,144 +180,7 @@ namespace Plex.Engine
 
             return true;
         }
-
-        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
-        private static List<ShiftoriumUpgrade> upgDb = null;
-
-        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
-        private static ShiftoriumUpgrade[] serverUpgrades = null;
-
-        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
-        public static void CreateUpgradeDatabase()
-        {
-            upgDb = new List<ShiftoriumUpgrade>();
-            serverUpgrades = null;
-            using(var sstr = new ServerStream(ServerMessageType.UPG_GETUPGRADES))
-            {
-                var result = sstr.Send();
-                using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
-                {
-                    serverUpgrades = JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(reader.ReadString());
-                }
-            }
-            upgDb.AddRange(serverUpgrades);
-            //Now we probe for ShiftoriumUpgradeAttributes for mods.
-            foreach (var type in ReflectMan.Types)
-            {
-                if (type.GetInterfaces().Contains(typeof(IShiftoriumProvider)))
-                    if (type.GetCustomAttributes().Any(x => x is ShiftoriumProviderAttribute))
-                        upgDb.AddRange((Activator.CreateInstance(type, null) as IShiftoriumProvider).GetDefaults());
-
-
-                ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                if (attrib != null)
-                {
-                    upgDb.Add(new ShiftoriumUpgrade
-                    {
-                        Name = attrib.Name,
-                        Cost = attrib.Cost,
-                        Description = attrib.Description,
-                        Dependencies = attrib.Dependencies,
-                        Category = attrib.Category,
-                        Purchasable = attrib.Purchasable,
-                        Tutorial = attrib.Tutorial
-                    });
-                }
-
-                foreach (var mth in type.GetMethods())
-                {
-                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                    if (attrib != null)
-                    {
-                        upgDb.Add(new ShiftoriumUpgrade
-                        {
-                            Name = attrib.Name,
-                            Cost = attrib.Cost,
-                            Description = attrib.Description,
-                            Dependencies = attrib.Dependencies,
-                            Category = attrib.Category,
-                            Purchasable = attrib.Purchasable,
-                            Tutorial = attrib.Tutorial
-                        });
-
-                    }
-                }
-
-                foreach (var mth in type.GetFields())
-                {
-                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                    if (attrib != null)
-                    {
-                        upgDb.Add(new ShiftoriumUpgrade
-                        {
-                            Name = attrib.Name,
-                            Cost = attrib.Cost,
-                            Description = attrib.Description,
-                            Dependencies = attrib.Dependencies,
-                            Category = attrib.Category,
-                            Purchasable = attrib.Purchasable,
-                            Tutorial = attrib.Tutorial
-                        });
-
-                    }
-                }
-
-                foreach (var mth in type.GetProperties())
-                {
-                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
-                    if (attrib != null)
-                    {
-                        upgDb.Add(new ShiftoriumUpgrade
-                        {
-                            Name = attrib.Name,
-                            Cost = attrib.Cost,
-                            Description = attrib.Description,
-                            Dependencies = attrib.Dependencies,
-                            Category = attrib.Category,
-                            Purchasable = attrib.Purchasable,
-                            Tutorial = attrib.Tutorial
-                        });
-
-                    }
-                }
-
-            }
-
-            foreach(var duplicate in upgDb.Where(x=>serverUpgrades.FirstOrDefault(y=>y.ID == x.ID) != null && !serverUpgrades.Contains(x)).ToArray())
-            {
-                Debug.Print($"[WARN] Client-side upgrade {duplicate.ID} overlaps server-side upgrade with the same ID.");
-                upgDb.Remove(duplicate);
-            }
-
-            foreach (var item in upgDb)
-            {
-                if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
-                    throw new ShiftoriumConflictException(item.ID);
-            }
-        }
-
-
-        /// <summary>
-        /// Gets or sets whether the Shiftorium has been initiated.
-        /// </summary>
-        public static bool IsInitiated { get; private set; }
-
-
-        /// <summary>
-        /// Initiates the Shiftorium.
-        /// </summary>
-        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
-        public static void Init()
-        {
-            if (IsInitiated == false)
-            {
-                IsInitiated = true;
-                //Let the crash handler deal with this one...
-                CreateUpgradeDatabase();
-            }
-
-        }
-
+        
         public static ShiftoriumUpgrade GetUpgradeInfo(string id)
         {
             using(var str = new ServerStream(ServerMessageType.UPG_GETINFO))
@@ -544,15 +407,6 @@ namespace Plex.Engine
         public string ErrorMessage { get; private set; }
     }
 
-    public interface IShiftoriumProvider
-    {
-        /// <summary>
-        /// Retrieves all frontend upgrades.
-        /// </summary>
-        /// <returns></returns>
-        List<ShiftoriumUpgrade> GetDefaults();
-    }
-
     public class ShiftoriumUpgradeLookupException : Exception
     {
         public ShiftoriumUpgradeLookupException(string id) : base("A shiftorium upgrade of ID \"" + id + "\" was not found in the system.")
@@ -564,14 +418,5 @@ namespace Plex.Engine
         }
 
         public string ID { get; private set; }
-    }
-
-    
-
-
-
-    public class ShiftoriumProviderAttribute : Attribute
-    {
-
     }
 }

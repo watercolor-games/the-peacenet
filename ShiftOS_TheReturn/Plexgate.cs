@@ -22,28 +22,6 @@ namespace Plex.Frontend
     /// </summary>
     public class Plexgate : Game
     {
-        private bool modal_active = false;
-        private string modal_title = "";
-        private string modal_content = "";
-        private int modal_state = 0;
-        private float modal_size_anim_x = 0.0f;
-        private float modal_size_anim_y = 0.0f;
-        private float modal_text_opacity_anim = 0.0f;
-        private Action modal_action = null;
-        private int modal_size_max_x = 0;
-        private int modal_size_max_y = 0;
-        private System.Drawing.Font modal_head_font = null;
-        private System.Drawing.Font modal_body_font = null;
-        private Color modal_head_color = Color.White;
-        private Color modal_body_color = Color.White;
-        private Color modal_bg_color = Color.DarkGray;
-        private Vector2 modal_body_measure = Vector2.Zero;
-        private Vector2 modal_head_measure = Vector2.Zero;
-
-        private bool _is_debug_paused = false;
-        private bool _framestep = false;
-
-
         public bool uploading = false;
         public bool downloading = false;
 
@@ -51,32 +29,10 @@ namespace Plex.Frontend
         public GUI.PictureBox _downloadImg = new GUI.PictureBox();
 
 
+        [Obsolete("Just use a damn infobox :L")]
         public void Modal(string title, string message, Action onEnter)
         {
-            modal_action = onEnter;
-            modal_content = message;
-            modal_title = title;
 
-            modal_bg_color = SkinEngine.LoadedSkin.ControlColor.ToMonoColor();
-            modal_body_color = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
-            modal_head_color = SkinEngine.LoadedSkin.SecondLevelHeaderColor.ToMonoColor();
-            modal_head_font = SkinEngine.LoadedSkin.Header2Font;
-            modal_body_font = SkinEngine.LoadedSkin.MainFont;
-
-            int max_width = UIManager.Viewport.Width / 2;
-
-            modal_body_measure = TextRenderer.MeasureText(message, modal_body_font, max_width, Engine.GUI.TextAlignment.Middle, Engine.TextRenderers.WrapMode.Words);
-
-            modal_size_max_x = (int)modal_body_measure.X + 30;
-
-            modal_head_measure = TextRenderer.MeasureText(title, modal_head_font, modal_size_max_x - 30, Engine.GUI.TextAlignment.Top, Engine.TextRenderers.WrapMode.Words);
-            modal_size_max_y = 15 + (int)modal_head_measure.Y + 125 + (int)modal_body_measure.Y + 140;
-
-            modal_size_anim_x = 0;
-            modal_size_anim_y = 0;
-            modal_text_opacity_anim = 0.0f;
-            modal_state = 0;
-            modal_active = true;
         }
 
 
@@ -85,7 +41,6 @@ namespace Plex.Frontend
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
-        internal UdpClient _mpClient = null;
         internal IPAddress IPAddress = null;
         internal int Port = 0;
         internal Thread ServerThread = null;
@@ -166,11 +121,6 @@ namespace Plex.Frontend
             var uconf = Objects.UserConfig.Get();
             graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
             graphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
-            SkinEngine.SkinLoaded += () =>
-            {
-                UIManager.ResetSkinTextures(GraphicsDevice);
-                UIManager.InvalidateAll();
-            };
             UIManager.Viewport = new System.Drawing.Size(
                     uconf.ScreenWidth,
                     uconf.ScreenHeight
@@ -232,35 +182,9 @@ namespace Plex.Frontend
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
-            if(e.Key == Keys.P && e.Modifiers.HasFlag(KeyboardModifiers.Control))
-            {
-                _is_debug_paused = !_is_debug_paused;
-            }
-
-            if (_is_debug_paused)
-            {
-                if(e.Key == Keys.Space)
-                {
-                    _framestep = true;
-                }
-            }
-
-            if(e.Key == Keys.Enter)
-            {
-                //Modal confirm event
-                if (modal_active)
-                {
-                    if (modal_state == 4)
-                        modal_state++;
-                }
-            }
             if (e.Key == Keys.F11)
             {
                 UIManager.Fullscreen = !UIManager.Fullscreen;
-            }
-            else if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Modifiers.HasFlag(KeyboardModifiers.Shift) && e.Key == Keys.S)
-            {
-                SkinEngine.LoadEngineDefault();
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
@@ -274,11 +198,6 @@ namespace Plex.Frontend
             }
             else
             {
-                if (_is_debug_paused)
-                {
-                    if (_framestep == false)
-                        return;
-                }
                 // Notice: I would personally recommend just using KeyboardEventArgs instead of KeyEvent
                 // from now on, but what ever. -phath0m
                 UIManager.ProcessKeyEvent(new KeyEvent(e));
@@ -295,21 +214,6 @@ namespace Plex.Frontend
         protected override void Initialize()
         {
             ServerManager.BuildBroadcastHandlerDB();
-
-            Story.ObjectiveStarted += () =>
-            {
-                objectiveState = 1;
-                _objectiveStateValue = 0.0;
-                _objectiveTitle.Text = Story.CurrentObjectives.First().Name;
-                _objectiveDesc.Text = Story.CurrentObjectives.First().Description;
-
-            };
-
-            Story.ObjectiveComplete += () =>
-            {
-                objectiveState = 2;
-                _objectiveStateValue = 0.0;
-            };
 
             ATextRenderer strategy = null;
             try
@@ -338,12 +242,7 @@ namespace Plex.Frontend
 
 
             
-            //While we're having a damn initiation fuckfest, let's get the hacking engine running.
-            Hacking.Initiate();
-
             UIManager.Init(this);
-
-            _mpClient = new UdpClient();
 
             Initializing?.Invoke();
 
@@ -410,281 +309,62 @@ namespace Plex.Frontend
         protected override void Update(GameTime gameTime)
         {
             keyboardListener.Update(gameTime);
-            if (_is_debug_paused)
-                if (_framestep == false)
-                    return;
-            if (modal_active)
+            if (UIManager.CrossThreadOperations.Count > 0)
             {
-                switch (modal_state)
+                var action = UIManager.CrossThreadOperations.Dequeue();
+                action?.Invoke();
+            }
+            if (IsActive)
+            {
+                //Let's get the mouse state
+                var mouseState = Mouse.GetState(this.Window);
+                bool prc = true;
+                int x = mouseState.X;
+                int y = mouseState.Y;
+                bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
+                LastMouseState = new MouseState(mouseState.X, mouseState.Y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
+                if (IsInTutorial)
                 {
-                    case 0:
-                        //Reset all anims
-                        modal_size_anim_x = 0.0f;
-                        modal_size_anim_y = 0.0f;
-                        modal_text_opacity_anim = 0.0f;
-                        modal_state++;
-                        break;
-                    case 1:
-                        //Animate the X size of the modal.
-                        modal_size_anim_x = MathHelper.Clamp(modal_size_anim_x + ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
-                        if (modal_size_anim_x >= 1.0f)
-                            modal_state++;
-                        break;
-                    case 2:
-                        //Animate the Y size now
-                        modal_size_anim_y = MathHelper.Clamp(modal_size_anim_y + ((float)gameTime.ElapsedGameTime.TotalSeconds * 2), 0, 1);
-                        if (modal_size_anim_y >= 1.0f)
-                            modal_state++;
-                        break;
-                    case 3:
-                        //And now the text.
-                        modal_text_opacity_anim = MathHelper.Clamp(modal_text_opacity_anim + ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
-                        if (modal_text_opacity_anim >= 1.0f)
-                            modal_state++;
-                        break;
-                    case 5:
-                        //Leave state 4 out, we're not doing any animation.
-                        modal_text_opacity_anim = MathHelper.Clamp(modal_text_opacity_anim - ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
-                        if (modal_text_opacity_anim <= 0.0f)
-                            modal_state++;
-                        break;
-                    case 6:
-                        //Animate the Y size now
-                        modal_size_anim_y = MathHelper.Clamp(modal_size_anim_y - ((float)gameTime.ElapsedGameTime.TotalSeconds * 2), 0, 1);
-                        if (modal_size_anim_y <= 0.0f)
-                            modal_state++;
-                        break;
-                    case 7:
-                        //Animate the X size of the modal.
-                        modal_size_anim_x = MathHelper.Clamp(modal_size_anim_x - ((float)gameTime.ElapsedGameTime.TotalSeconds * 3), 0, 1);
-                        if (modal_size_anim_x <= 0.0f)
-                            modal_state++;
-
-                        break;
-                    case 8:
-                        //Disable modal
-                        modal_active = false;
-                        //Run action if any
-                        modal_action?.Invoke();
-                        break;
+                    if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
+                        prc = false;
                 }
-                base.Update(gameTime);
-                return;
-            }
-
-
-            if(objectiveState == 0)
-            {
-                _objectiveTitle.Visible = false;
-                _objectiveDesc.Visible = false;
-            }
-            else
-            {
-                _objectiveTitle.Visible = true;
-                _objectiveDesc.Visible = true;
-                _objectiveTitle.AutoSize = true;
-                _objectiveTitle.Font = SkinEngine.LoadedSkin.Header3Font;
-                _objectiveDesc.AutoSize = true;
-                _objectiveDesc.Font = SkinEngine.LoadedSkin.MainFont;
-                _objectiveTitle.MaxWidth = 300;
-                _objectiveDesc.MaxWidth = 300;
-                _objectiveStateValue = MathHelper.Clamp((float)_objectiveStateValue + ((float)gameTime.ElapsedGameTime.TotalSeconds * 1.5F), 0, 1);
-                switch (objectiveState)
+                if (prc == true)
                 {
-                    case 1:
-                        _objectiveTitle.Opacity = 1.0;
-                        _objectiveDesc.Opacity = 1.0;
-                        _objectiveTitle.X = (int)MathHelper.Lerp(0 - _objectiveTitle.Width, 15, (float)_objectiveStateValue);
-                        _objectiveDesc.X = _objectiveTitle.X;
-                        break;
-                    case 2:
-                        _objectiveTitle.Opacity = 1.0 - (float)_objectiveStateValue;
-                        _objectiveDesc.Opacity = _objectiveTitle.Opacity;
-                        if (_objectiveStateValue == 1.0)
-                            objectiveState = 0;
-                        break;
-                }
 
-                _objectiveDesc.Y = (UIManager.Viewport.Height - _objectiveDesc.Height) - 15;
-                _objectiveTitle.Y = _objectiveDesc.Y - _objectiveTitle.Height - 15;
-            }
-            try
-            {
-                if (IPAddress != null)
-                {
-                    msSinceLastReply += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if ((int)msSinceLastReply >= 2000)
+                    UIManager.ProcessMouseState(LastMouseState, mouseMS);
+                    if (mouseState.LeftButton == ButtonState.Pressed)
                     {
-                        var bytes = Encoding.UTF8.GetBytes("heart");
-                        _mpClient.Send(bytes, bytes.Length);
-                        System.Diagnostics.Debug.Print("Ping.");
-                    }
-                    if (msSinceLastReply >= 10000)
-                    {
-                        ServerManager.Disconnect(DisconnectType.Error, "The server took too long to respond.");
-                    }
-                }
-            }
-            catch { }
-            if (isFailing)
-            {
-                if (failFadeInMS < failFadeMaxMS)
-                    failFadeInMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (failEnded == false)
-                {
-                    shroudOpacity = (float)GUI.ProgressBar.linear(failFadeInMS, 0, failFadeMaxMS, 0, 1);
-                    if (shroudOpacity >= 1)
-                    {
-                        if (failMessage == failRealMessage + "|")
+                        mouseMS = 0;
+                        if (IsInTutorial && lastclicked == false)
                         {
-                            var keydata = Keyboard.GetState();
-
-                            if (keydata.GetPressedKeys().FirstOrDefault(x => x != Keys.None) != Keys.None)
-                            {
-                                failEnded = true;
-                            }
-                        }
-                        else
-                        {
-                            failCharAddMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-                            if (failCharAddMS >= 75)
-                            {
-                                failMessage = failRealMessage.Substring(0, failMessage.Length) + "|";
-                                failCharAddMS = 0;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (failFadeOutMS < failFadeMaxMS)
-                    {
-                        failFadeOutMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    }
-
-                    shroudOpacity = 1 - (float)GUI.ProgressBar.linear(failFadeOutMS, 0, failFadeMaxMS, 0, 1);
-
-                    if (shroudOpacity <= 0)
-                    {
-                        isFailing = false;
-                    }
-                }
-            }
-            else
-            {
-                if (UIManager.CrossThreadOperations.Count > 0)
-                {
-                    var action = UIManager.CrossThreadOperations.Dequeue();
-                    action?.Invoke();
-                }
-                if (IsActive)
-                {
-                    //Let's get the mouse state
-                    var mouseState = Mouse.GetState(this.Window);
-                    bool prc = true;
-                    int x = mouseState.X;
-                    int y = mouseState.Y;
-                    bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
-                    LastMouseState = new MouseState(mouseState.X, mouseState.Y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
-                    if (IsInTutorial)
-                    {
-                        if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
-                            prc = false;
-                    }
-                    if (prc == true)
-                    {
-
-                        UIManager.ProcessMouseState(LastMouseState, mouseMS);
-                        if (mouseState.LeftButton == ButtonState.Pressed)
-                        {
-                            mouseMS = 0;
-                            if (IsInTutorial && lastclicked == false)
-                            {
-                                IsInTutorial = false;
-                                TutorialOverlayCompleted?.Invoke();
-
-                            }
-                        }
-                        else
-                        {
-                            mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
+                            IsInTutorial = false;
+                            TutorialOverlayCompleted?.Invoke();
 
                         }
                     }
-                }
-                //So we have mouse input, and the UI layout system working...
+                    else
+                    {
+                        mouseMS += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                //But an OS isn't useful without the keyboard!
-
-                //Let's see how keyboard input works.
-
-                
-
-                //Cause layout update on all elements
-                UIManager.LayoutUpdate(gameTime);
-
-                //Some hackables have a connection timeout applied to them.
-                //We must update timeout values here, and disconnect if the timeout
-                //hits zero.
-
-            }
-
-            if (IsCrashed)
-            {
-                CrashAnimMS += gameTime.ElapsedGameTime.TotalMilliseconds;
-                if((CrashAnimMS > 500 && CrashAnimMS < 600) || CrashAnimMS > 800)
-                {
-                    ShroudColor = Color.Black;
-                    shroudOpacity = 1;
-                }
-                else
-                {
-                    shroudOpacity = 0;
-                }
-
-                if (CrashAnimMS > 1800)
-                {
-                    ShroudColor = Color.Blue;
-                }
-
-                if (CrashAnimMS > 2400)
-                {
-                    string e_systemerror = "System error";
-                    string e_errtext = @"Plexgate has experienced a fatal error and the Plex kernel has shut your user experience down.
-
-In order for you to regain your graphical user experience, you will need to start a text shell, connect to your system, diagnose and correct the error. Reboot the system when you are done.
-
-To begin this process, strike the [T] key while holding <CTRL>.";
-                    int cwidth = 1280 - 400;
-                    var titlemeasure = GraphicsContext.MeasureString(e_systemerror, new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold), Engine.GUI.TextAlignment.TopLeft);
-                    SystemError.X = 200;
-                    SystemError.Y = 200;
-                    SystemError.AutoSize = false;
-                    SystemError.Width = (int)titlemeasure.X;
-                    SystemError.Height = (int)titlemeasure.Y;
-                    SystemError.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 20f, System.Drawing.FontStyle.Bold);
-                    SystemError.Text = e_systemerror;
-
-                    SystemErrorText.Text = e_errtext;
-                    SystemErrorText.AutoSize = false;
-                    SystemErrorText.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 12f);
-                    var e_measure = GraphicsContext.MeasureString(e_errtext, SystemErrorText.Font, Engine.GUI.TextAlignment.TopLeft, cwidth);
-                    SystemErrorText.Width = (int)e_measure.X;
-                    SystemErrorText.Height = (int)e_measure.Y;
-                    SystemErrorText.X = 200;
-                    SystemErrorText.Y = SystemError.Y + SystemError.Height + 20;
-
-                    SystemError.Visible = true;
-                    SystemErrorText.Visible = true;
+                    }
                 }
             }
-            else
-            {
-                SystemError.Visible = false;
-                SystemErrorText.Visible = false;
+            //So we have mouse input, and the UI layout system working...
 
-            }
+            //But an OS isn't useful without the keyboard!
 
+            //Let's see how keyboard input works.
+
+
+
+            //Cause layout update on all elements
+            UIManager.LayoutUpdate(gameTime);
+
+            //Some hackables have a connection timeout applied to them.
+            //We must update timeout values here, and disconnect if the timeout
+            //hits zero.
+
+        
 #if DEBUG
             DebugText.Visible = DisplayDebugInfo;
             if (DebugText.Visible)
@@ -726,16 +406,8 @@ To begin this process, strike the [T] key while holding <CTRL>.";
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (_is_debug_paused)
-                if (_framestep == false)
-                    return;
-
-            if (!modal_active)
-            {
-
-                UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch);
-                UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
-            }
+            UIManager.DrawControlsToTargets(GraphicsDevice, spriteBatch);
+            UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
 
             graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
@@ -749,126 +421,25 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             spriteBatch.End();
 
 
-            if (!modal_active)
-            {
-                //The desktop is drawn, now we can draw the UI.
-                UIManager.DrawTArgets(spriteBatch);
-            }
+            //The desktop is drawn, now we can draw the UI.
+            UIManager.DrawTArgets(spriteBatch);
+
+            //Since we've drawn all the shrouds and stuff...
+            //we can draw the HUD.
+            UIManager.DrawHUD(spriteBatch);
+
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
 
-            if (!modal_active)
-            {
-                //draw tutorial overlay
-                if (IsInTutorial)
-                {
-                    gfx.DrawRectangle(0, 0, MouseEventBounds.X, 720, Color.Black * 0.5F);
-                    gfx.DrawRectangle(MouseEventBounds.X, 0, 1280 - MouseEventBounds.X, MouseEventBounds.Y, Color.Black * 0.5F);
-                    gfx.DrawRectangle(MouseEventBounds.Right, MouseEventBounds.Y, 1280 - MouseEventBounds.Right, MouseEventBounds.Height, Color.Black * 0.5F);
-                    gfx.DrawRectangle(MouseEventBounds.X, MouseEventBounds.Bottom, 1280 - MouseEventBounds.X, 720 - MouseEventBounds.Bottom, Color.Black * 0.5F);
+            //Draw a mouse cursor
+            var mousepos = LastMouseState;
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
+            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
-                    var tutmeasure = GraphicsContext.MeasureString(TutorialOverlayText, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, 1280 / 3);
-                    int textX = ((MouseEventBounds.X) >= (1280 / 2)) ? MouseEventBounds.X - (int)tutmeasure.X - 15 : MouseEventBounds.Right + 15;
-                    int textY = ((MouseEventBounds.Y) >= (720 / 2)) ? MouseEventBounds.Y - (int)tutmeasure.Y - 15 : MouseEventBounds.Bottom + 15;
-                    if (textX < 15)
-                        textX = 15;
-                    if (textX > 1265)
-                        textX = 1265 - (int)tutmeasure.X;
-                    if (textY < 0)
-                        textY = 15;
-                    if (textY > 705)
-                        textY = 705 - (int)tutmeasure.Y;
-                    gfx.DrawString(TutorialOverlayText, textX, textY, Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.TopLeft, (int)tutmeasure.X);
-
-                }
-
-
-                spriteBatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(0, 0, UIManager.Viewport.Width, UIManager.Viewport.Height), ShroudColor * shroudOpacity);
-
-                if (isFailing && failFadeInMS >= failFadeMaxMS)
-                {
-                    string objectiveFailed = "- OBJECTIVE FAILURE -";
-                    string prompt = "[press any key to dismiss this message and return to your sentience]";
-                    int textMaxWidth = UIManager.Viewport.Width / 3;
-                    var topMeasure = GraphicsContext.MeasureString(objectiveFailed, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
-                    var msgMeasure = GraphicsContext.MeasureString(failMessage, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-                    var pMeasure = GraphicsContext.MeasureString(prompt, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-
-                    gfx.DrawString(objectiveFailed, (UIManager.Viewport.Width - (int)topMeasure.X) / 2, UIManager.Viewport.Height / 3, Color.White, SkinEngine.LoadedSkin.HeaderFont, Engine.GUI.TextAlignment.TopLeft, textMaxWidth);
-                    gfx.DrawString(failMessage, (UIManager.Viewport.Width - (int)msgMeasure.X) / 2, (UIManager.Viewport.Height - (int)msgMeasure.Y) / 2, Color.White, SkinEngine.LoadedSkin.Header3Font, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-                    gfx.DrawString(prompt, (UIManager.Viewport.Width - (int)pMeasure.X) / 2, UIManager.Viewport.Height - (UIManager.Viewport.Height / 3), Color.White, SkinEngine.LoadedSkin.MainFont, Engine.GUI.TextAlignment.Middle, textMaxWidth);
-                }
-            }
-#if DEBUG
-            if (DisplayDebugInfo)
-            {
-                //So we need to draw the shroud for the debug text because I don't have foreground/background colors implemented into the UI framework yet.
-                gfx.DrawRectangle(0, 0, (int)DebugText.Width + 10, (int)DebugText.Height + 10, SkinEngine.LoadedSkin.ControlColor.ToMonoColor() * 0.75F);
-            }
-
-#endif
             spriteBatch.End();
-            if (!modal_active)
-            {
-
-                //Since we've drawn all the shrouds and stuff...
-                //we can draw the HUD.
-                UIManager.DrawHUD(spriteBatch);
-
-
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                SamplerState.LinearWrap, DepthStencilState.Default,
-                                RasterizerState.CullNone);
-
-                //Draw a mouse cursor
-                var mousepos = LastMouseState;
-                spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
-                spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
-
-                spriteBatch.End();
-            }
-
-            if (modal_active)
-            {
-                //Calculate the width of the modal.
-                int width = (int)MathHelper.Lerp(0, modal_size_max_x, modal_size_anim_x);
-                //Now the height.
-                int height = (int)MathHelper.Lerp(2, modal_size_max_y, modal_size_anim_y);
-
-                //Calculate X and Y coordinates...
-                int modal_x = (UIManager.Viewport.Width - width) / 2;
-                int modal_y = (UIManager.Viewport.Height - height) / 2;
-
-                //Begin draw.
-                //We can use this graphics context to draw the modal with proper clipping.
-                gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, modal_x, modal_y, width, height);
-
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                    SamplerState.LinearWrap, gfx.Device.DepthStencilState,
-                    gfx.RasterizerState);
-                
-                
-                //Draw the background
-                gfx.Clear(modal_bg_color);
-
-                //Now let us draw the modal's title...
-
-                
-
-                gfx.DrawString(modal_title, (width - (int)modal_head_measure.X) / 2, 15, modal_head_color * modal_text_opacity_anim, modal_head_font, Engine.GUI.TextAlignment.Top, width, Engine.TextRenderers.WrapMode.Words);
-
-                //And now the text...
-
-                gfx.DrawString(modal_content, (width - (int)modal_body_measure.X) / 2, (height - (int)modal_body_measure.Y) / 2, modal_body_color * modal_text_opacity_anim, modal_body_font, Engine.GUI.TextAlignment.Middle, width, Engine.TextRenderers.WrapMode.Words);
-
-
-                //End draw.
-                spriteBatch.End();
-
-            }
-
+        
             graphicsDevice.GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque,
                             SamplerState.LinearWrap, DepthStencilState.Default,
@@ -884,7 +455,6 @@ To begin this process, strike the [T] key while holding <CTRL>.";
             if (fps <= 20)
                 color = Color.Red;
             highestfps = Math.Max(highestfps, fps);
-            lowestfps = Math.Min(lowestfps, fps);
             TotalFPS += fps;
             DebugText.Text = $@"Plex
 =======================
@@ -903,9 +473,6 @@ Current time: {DateTime.Now}
 Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
 ";
 #endif
-            if (_is_debug_paused)
-                if (_framestep == true)
-                    _framestep = false;
         }
         public double TotalFPS = 0;
         public int framesdrawn = 0;

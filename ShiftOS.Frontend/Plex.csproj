@@ -50,19 +50,14 @@
     <Compile Include="Apps\CodeShop.cs" />
     <Compile Include="Apps\ColorDialog.cs" />
     <Compile Include="Apps\Community.cs" />
-    <Compile Include="Apps\Disclaimer.cs" />
     <Compile Include="Apps\FileSkimmer.cs" />
     <Compile Include="Apps\FontDialog.cs" />
     <Compile Include="Apps\GraphicPicker.cs" />
     <Compile Include="Apps\GraphicViewer.cs" />
     <Compile Include="Apps\Installer.cs" />
     <Compile Include="Apps\MissionComplete.cs" />
-    <Compile Include="Apps\MoneyMateManager.cs" />
     <Compile Include="Apps\MultiplayerServerList.cs" />
-    <Compile Include="Apps\Network.cs" />
     <Compile Include="Apps\Plexnet.cs" />
-    <Compile Include="Apps\PlexTheme.cs" />
-    <Compile Include="Apps\Themes.cs" />
     <Compile Include="Apps\Terminal.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Desktop\Desktop.cs" />
@@ -72,11 +67,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FontAwesome.resx</DependentUpon>
     </Compile>
-    <Compile Include="Hacking\HackableProvider.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="MonoGameLanguageProvider.cs" />
-    <Compile Include="MonoGameOOBE.cs" />
     <Compile Include="PlexSkin.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -159,31 +159,6 @@ namespace Plex.Frontend.GUI
 
         public void ResetStyle()
         {
-            switch (_fs)
-            {
-                case TextControlFontStyle.Header1:
-                    Font = SkinEngine.LoadedSkin.HeaderFont;
-                    TextColor = SkinEngine.LoadedSkin.FirstLevelHeaderColor.ToMonoColor();
-                    break;
-                case TextControlFontStyle.Header2:
-                    Font = SkinEngine.LoadedSkin.Header2Font;
-                    TextColor = SkinEngine.LoadedSkin.SecondLevelHeaderColor.ToMonoColor();
-                    break;
-                case TextControlFontStyle.Header3:
-                    Font = SkinEngine.LoadedSkin.Header3Font;
-                    TextColor = SkinEngine.LoadedSkin.ThirdLevelHeaderColor.ToMonoColor();
-                    break;
-                case TextControlFontStyle.System:
-                    Font = SkinEngine.LoadedSkin.MainFont;
-                    TextColor = SkinEngine.LoadedSkin.ControlTextColor.ToMonoColor();
-                    break;
-                case TextControlFontStyle.Mono:
-                    Font = SkinEngine.LoadedSkin.TerminalFont;
-                    TextColor = SkinEngine.LoadedSkin.TerminalForeColor.ToMonoColor();
-                    break;
-
-
-            }
         }
 
         protected override void OnLayout(GameTime gameTime)

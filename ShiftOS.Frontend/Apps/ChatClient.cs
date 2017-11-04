@@ -9,7 +9,6 @@ using Plex.Objects.ShiftFS;
 using Plex.Objects;
 using Plex.Frontend.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
-using static Plex.Engine.SkinEngine;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,7 +17,6 @@ using System.IO;
 namespace Plex.Frontend.Apps
 {
     [WinOpen("chat")]
-    [DefaultTitle("Chat")]
     [Launcher("Chat", false, null, "Networking")]
     [SingleInstance]
     public class ChatClient : Control, IPlexWindow

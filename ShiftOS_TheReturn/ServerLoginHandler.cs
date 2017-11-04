@@ -86,7 +86,7 @@ namespace Plex.Engine
         private Button _ok = null;
         private Button _cancel = null;
         private Button _createacct = null;
-        private BBCodeLabel _description = new BBCodeLabel();
+        private TextControl _description = new TextControl();
 
         public bool DisconnectOnClose = true;
 
@@ -175,7 +175,6 @@ After logging in once, you will not have to log in again unless you have been in
         {
             _title.X = 5;
             _title.Y = 5;
-            _title.Font = SkinEngine.LoadedSkin.Header3Font;
             _uname.X = 5;
             _uname.Y = _title.Y + _title.Height + 10;
 
@@ -217,7 +216,6 @@ After logging in once, you will not have to log in again unless you have been in
         }
     }
 
-    [DefaultTitle("Create account")]
     public class RegisterScreen : Control, IPlexWindow
     {
         private TextControl _title = null;
@@ -339,7 +337,6 @@ After logging in once, you will not have to log in again unless you have been in
         {
             _title.X = 5;
             _title.Y = 5;
-            _title.Font = SkinEngine.LoadedSkin.Header3Font;
             _uname.X = 5;
             _uname.Y = _title.Y + _title.Height + 10;
 

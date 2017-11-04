@@ -414,6 +414,7 @@ namespace Plex.Engine
         /// <summary>
         /// Prints the user prompt to the terminal.
         /// </summary>
+        [Obsolete("Shells should be handled in the terminal ui.")]
         public static void PrintPrompt()
         {
             if (PrefixEnabled)

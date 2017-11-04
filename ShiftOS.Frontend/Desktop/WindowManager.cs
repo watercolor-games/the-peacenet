@@ -27,19 +27,11 @@ namespace Plex.Frontend.Desktop
 
     public class WindowManager : Engine.WindowManager
     {
-        public PlexSkin LoadedSkin
-        {
-            get
-            {
-                return (PlexSkin)SkinEngine.LoadedSkin;
-            }
-        }
-
         public int DesktopStart
         {
             get
             {
-                return (LoadedSkin.DesktopPanelPosition == 1) ? 0 : LoadedSkin.DesktopPanelHeight;
+                return 0;
             }
         }
 
@@ -111,11 +103,6 @@ namespace Plex.Frontend.Desktop
 
         public override void SetupDialog(IPlexWindow win)
         {
-            if (UIManagerTools.InTextMode)
-            {
-                Console.WriteLine("You can't run this program in textmode.");
-                return;
-            }
             if (DisplayObsolescenceIfAny(win))
                 return;
             var wb = new WindowBorder();
@@ -125,8 +112,8 @@ namespace Plex.Frontend.Desktop
                 ctl.Width = 30;
             if (ctl.Height < 30)
                 ctl.Height = 30;
-            wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
-            wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
+            wb.Width = (win as GUI.Control).Width + 4;
+            wb.Height = (win as GUI.Control).Height + 32;
             wb.ParentWindow = win;
             wb.IsDialog = true;
             UIManager.AddTopLevel(wb);
@@ -135,7 +122,6 @@ namespace Plex.Frontend.Desktop
             wb.Y = (UIManager.Viewport.Height - wb.Height) / 2;
             win.OnLoad();
             win.OnUpgrade();
-            win.OnSkinLoad();
         }
 
         private int MaxCount
@@ -150,18 +136,6 @@ namespace Plex.Frontend.Desktop
         {
             bool isSingleInstance = win.GetType().GetCustomAttributes(false).FirstOrDefault(x => x is SingleInstanceAttribute) != null;
 
-            if (UIManagerTools.InTextMode)
-            {
-                Console.WriteLine("You can't run this program in textmode.");
-                return;
-            }
-
-
-            if (UIManagerTools.InProtectedGUI)
-            {
-                Engine.Infobox.Show("Protected GUI", "You can't open this program right now - you are in protected GUI mode.");
-                return;
-            }
             if (!Upgrades.UpgradeAttributesUnlocked(win.GetType()))
             {
                 Console.WriteLine("Application not found on system.");
@@ -172,7 +146,7 @@ namespace Plex.Frontend.Desktop
             if (isSingleInstance)
             {
                 var alreadyOpen = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow.GetType() == win.GetType());
-                if(alreadyOpen != null)
+                if (alreadyOpen != null)
                 {
                     var aoWB = ((WindowBorder)alreadyOpen);
                     if (!aoWB.Visible)
@@ -184,8 +158,8 @@ namespace Plex.Frontend.Desktop
             }
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
-            wb.Width = (win as GUI.Control).Width + LoadedSkin.LeftBorderWidth + LoadedSkin.RightBorderWidth;
-            wb.Height = (win as GUI.Control).Height + LoadedSkin.TitlebarHeight + LoadedSkin.BottomBorderWidth;
+            wb.Width = (win as GUI.Control).Width + 4;
+            wb.Height = (win as GUI.Control).Height + 32;
             wb.ParentWindow = win;
             wb.IsDialog = false;
             wb.X = (UIManager.Viewport.Width - wb.Width) / 2;
@@ -196,7 +170,6 @@ namespace Plex.Frontend.Desktop
             RunningBorders.Add(wb);
             win.OnLoad();
             win.OnUpgrade();
-            win.OnSkinLoad();
         }
 
     }
@@ -220,9 +193,9 @@ namespace Plex.Frontend.Desktop
                 MaxWidth = int.MaxValue;
                 MaxHeight = int.MaxValue;
                 X = 0;
-                Y = (LoadedSkin.DesktopPanelPosition == 0) ? LoadedSkin.DesktopPanelHeight : 0;
+                Y = 24;
                 Width = UIManager.Viewport.Width;
-                Height = UIManager.Viewport.Height - LoadedSkin.DesktopPanelHeight;
+                Height = UIManager.Viewport.Height - 24;
                 _maximized = true;
             }
             else
@@ -247,10 +220,10 @@ namespace Plex.Frontend.Desktop
 
         public void ResetChildWindowSize()
         {
-            int titlebar = LoadedSkin.TitlebarHeight;
-            int bleft = LoadedSkin.LeftBorderWidth;
-            int bright = LoadedSkin.RightBorderWidth;
-            int bbottom = LoadedSkin.BottomBorderWidth;
+            int titlebar = 30;
+            int bleft = 2;
+            int bright = 2;
+            int bbottom = 2;
 
             _hostedwindow.X = bleft;
             _hostedwindow.Y = titlebar;
@@ -261,23 +234,14 @@ namespace Plex.Frontend.Desktop
 
         }
 
-        public PlexSkin LoadedSkin
-        {
-            get
-            {
-                return (PlexSkin)SkinEngine.LoadedSkin;
-            }
-        }
-
-
         private GUI.Control _hostedwindow = null;
 
         public void ResizeWindow(int width, int height)
         {
-            int titleheight = LoadedSkin.TitlebarHeight;
-            int leftwidth = LoadedSkin.LeftBorderWidth;
-            int bottomheight = LoadedSkin.BottomBorderWidth;
-            int rightwidth = LoadedSkin.RightBorderWidth;
+            int titleheight = 30;
+            int leftwidth = 2;
+            int bottomheight = 2;
+            int rightwidth = 2;
             _hostedwindow.Width = width - leftwidth - rightwidth;
             _hostedwindow.Height = height - bottomheight - titleheight;
             Width = width;
@@ -300,7 +264,7 @@ namespace Plex.Frontend.Desktop
             this.MouseDown += () =>
             {
                 var mstate = Mouse.GetState();
-                moving = (mstate.LeftButton == ButtonState.Pressed && mstate.Y >= Y && mstate.Y <= Y + LoadedSkin.TitlebarHeight && mstate.X >= X && mstate.X <= X + Width);
+                moving = (mstate.LeftButton == ButtonState.Pressed && mstate.Y >= Y && mstate.Y <= Y + 30 && mstate.X >= X && mstate.X <= X + Width);
                 CaptureMouse = true;
                 dist_x = Mouse.GetState().X - X;
                 dist_y = Mouse.GetState().Y - Y;
@@ -309,47 +273,6 @@ namespace Plex.Frontend.Desktop
             {
                 moving = false;
                 CaptureMouse = false;
-            };
-            Click += () =>
-            {
-                var cbtnloc = LoadedSkin.CloseButtonFromSide;
-                var cbtnsize = LoadedSkin.CloseButtonSize;
-                var realcloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? cbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - cbtnloc.X - cbtnsize.Width,
-                        cbtnloc.Y
-                    );
-                if(MouseX >= realcloc.X && MouseY >= realcloc.Y && MouseX <= realcloc.X + cbtnsize.Width && MouseY <= realcloc.Y + cbtnsize.Height)
-                {
-                    AppearanceManager.Close(ParentWindow);
-                    return;
-                }
-                if (IsDialog)
-                    return;
-                var mxbtnloc = LoadedSkin.MaximizeButtonFromSide;
-                var mxbtnsize = LoadedSkin.MaximizeButtonSize;
-                var realmxloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? mxbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - mxbtnloc.X - mxbtnsize.Width,
-                        mxbtnloc.Y
-                    );
-                if (MouseX >= realmxloc.X && MouseY >= realmxloc.Y && MouseX <= realmxloc.X + mxbtnsize.Width && MouseY <= realmxloc.Y + mxbtnsize.Height)
-                {
-                    ToggleMaximized();
-                    return;
-                }
-
-                var mnbtnloc = LoadedSkin.MinimizeButtonFromSide;
-                var mnbtnsize = LoadedSkin.MinimizeButtonSize;
-                var realmnloc = new Vector2(
-                        (LoadedSkin.TitleButtonPosition == 1) ? mnbtnloc.X : (Width - LoadedSkin.TitleRightCornerWidth) - mnbtnloc.X - mnbtnsize.Width,
-                        mnbtnloc.Y
-                    );
-                if (MouseX >= realmnloc.X && MouseY >= realmnloc.Y && MouseX <= realmnloc.X + mnbtnsize.Width && MouseY <= realmnloc.Y + mnbtnsize.Height)
-                {
-                    ToggleMinimized();
-                    return;
-                }
-
-
             };
             X = 720;
             Y = 480;
@@ -369,8 +292,8 @@ namespace Plex.Frontend.Desktop
                 _hostedwindow = (GUI.Control)value;
                 ClearControls();
                 AddControl(_hostedwindow);
-                Width = LoadedSkin.LeftBorderWidth + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
-                Height = LoadedSkin.BottomBorderWidth + _hostedwindow.Height + LoadedSkin.TitlebarHeight;
+                Width = 2 + _hostedwindow.Width + 2;
+                Height = 2 + _hostedwindow.Height + 30;
 
             }
         }
@@ -379,24 +302,6 @@ namespace Plex.Frontend.Desktop
 
         protected override void RenderText(GraphicsContext gfx)
         {
-            var titlefont = LoadedSkin.TitleFont;
-            var titletextcolor = LoadedSkin.TitleTextColor;
-            var titletextleft = LoadedSkin.TitleTextLeft;
-            bool titletextcentered = LoadedSkin.TitleTextCentered;
-            int titlebarleft = 0;
-            int titlebarwidth = Width;
-
-            //Now we draw the title text.
-            var textMeasure = GraphicsContext.MeasureString(Text, titlefont, Engine.GUI.TextAlignment.TopLeft);
-            PointF textloc;
-            if (titletextcentered)
-                textloc = new PointF((titlebarwidth - textMeasure.X) / 2,
-                    titletextleft.Y);
-            else
-                textloc = new PointF(titlebarleft + titletextleft.X, titletextleft.Y);
-
-            gfx.DrawString(Text, (int)textloc.X, (int)textloc.Y, titletextcolor.ToMonoColor(), titlefont, Engine.GUI.TextAlignment.TopLeft);
-
         }
 
         public bool Close()
@@ -440,217 +345,22 @@ namespace Plex.Frontend.Desktop
                     Y = mstate.Y - dist_y;
                 }
 
-                int titlebarheight = LoadedSkin.TitlebarHeight;
-                int borderleft = LoadedSkin.LeftBorderWidth;
-                int borderright = LoadedSkin.RightBorderWidth;
-                int borderbottom = LoadedSkin.BottomBorderWidth;
-                int maxwidth = (MaxWidth - LoadedSkin.LeftBorderWidth) - LoadedSkin.RightBorderWidth;
-                int maxheight = (MaxHeight - LoadedSkin.TitlebarHeight) - LoadedSkin.BottomBorderWidth;
+                int titlebarheight = 30;
+                int borderleft = 2;
+                int borderright = 2;
+                int borderbottom = 2;
+                int maxwidth = (MaxWidth - borderleft) - borderright;
+                int maxheight = (MaxHeight - titlebarheight) - borderbottom;
                 _hostedwindow.MaxWidth = maxwidth;
                 _hostedwindow.MaxHeight = maxheight;
                 _hostedwindow.X = borderleft;
                 _hostedwindow.Y = titlebarheight;
-                Width = borderleft + _hostedwindow.Width + LoadedSkin.RightBorderWidth;
-                Height = titlebarheight + _hostedwindow.Height + LoadedSkin.BottomBorderWidth;
+                Width = borderleft + _hostedwindow.Width + borderright;
+                Height = titlebarheight + _hostedwindow.Height + borderbottom;
 
             }
         }
 
-
-        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
-        {
-            try
-            {
-                int titleheight = LoadedSkin.TitlebarHeight;
-                int leftborderwidth = LoadedSkin.LeftBorderWidth;
-                int rightborderwidth = LoadedSkin.RightBorderWidth;
-                int bottomborderwidth = LoadedSkin.BottomBorderWidth;
-
-                var titlebarcolor = UIManager.SkinTextures["TitleBackgroundColor"];
-                var titlefont = LoadedSkin.TitleFont;
-                var titletextcolor = LoadedSkin.TitleTextColor;
-                var titletextleft = LoadedSkin.TitleTextLeft;
-                bool titletextcentered = LoadedSkin.TitleTextCentered;
-
-                var drawcorners = LoadedSkin.ShowTitleCorners;
-                int titlebarleft = 0;
-                int titlebarwidth = Width;
-                if (drawcorners)
-                {
-                    //set titleleft to the first corner width
-                    titlebarleft = LoadedSkin.TitleLeftCornerWidth;
-                    titlebarwidth -= titlebarleft;
-                    titlebarwidth -= LoadedSkin.TitleRightCornerWidth;
-
-
-                    //Let's get the left and right images.
-                    //and the colors
-                    var leftcolor = UIManager.SkinTextures["TitleLeftCornerBackground"];
-                    var rightcolor = UIManager.SkinTextures["TitleRightCornerBackground"];
-                    //and the widths
-                    var leftwidth = LoadedSkin.TitleLeftCornerWidth;
-                    var rightwidth = LoadedSkin.TitleRightCornerWidth;
-
-                    //draw left corner
-                    if (UIManager.SkinTextures.ContainsKey("titleleft"))
-                    {
-                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, UIManager.SkinTextures["titleleft"], SkinEngine.GetImageLayout("titleleft"));
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(0, 0, leftwidth, titleheight, leftcolor);
-                    }
-
-                    //draw right corner
-                    if (UIManager.SkinTextures.ContainsKey("titleright"))
-                    {
-                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, UIManager.SkinTextures["titleright"], SkinEngine.GetImageLayout("titleright"));
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(titlebarleft + titlebarwidth, 0, rightwidth, titleheight, rightcolor);
-                    }
-                }
-
-                if (!UIManager.SkinTextures.ContainsKey("titlebar"))
-                {
-                    //draw the title bg
-                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, titlebarcolor);
-
-                }
-                else
-                {
-                    gfx.DrawRectangle(titlebarleft, 0, titlebarwidth, titleheight, UIManager.SkinTextures["titlebar"], SkinEngine.GetImageLayout("titlebar"));
-                }
-
-                var tbuttonpos = LoadedSkin.TitleButtonPosition;
-
-                //Draw close button
-                var closebuttonsize = LoadedSkin.CloseButtonSize;
-                var closebuttonright = LoadedSkin.CloseButtonFromSide;
-                if (LoadedSkin.TitleButtonPosition == 0)
-                    closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                if (!UIManager.SkinTextures.ContainsKey("closebutton"))
-                {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["CloseButtonColor"]);
-                }
-                else
-                {
-                    gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["closebutton"], SkinEngine.GetImageLayout("closebutton"));
-                }
-                if (!IsDialog)
-                {
-                    //Draw maximize button
-                    closebuttonsize = LoadedSkin.MaximizeButtonSize;
-                    closebuttonright = LoadedSkin.MaximizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-
-                    if (!UIManager.SkinTextures.ContainsKey("maximizebutton"))
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MaximizeButtonColor"]);
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["maximizebutton"], SkinEngine.GetImageLayout("maximizebutton"));
-                    }
-
-                    //Draw minimize button
-                    closebuttonsize = LoadedSkin.MinimizeButtonSize;
-                    closebuttonright = LoadedSkin.MinimizeButtonFromSide;
-                    if (LoadedSkin.TitleButtonPosition == 0)
-                        closebuttonright = new System.Drawing.Point(Width - closebuttonsize.Width - closebuttonright.X, closebuttonright.Y);
-                    if (!UIManager.SkinTextures.ContainsKey("minimizebutton"))
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["MinimizeButtonColor"]);
-                    }
-                    else
-                    {
-                        gfx.DrawRectangle(closebuttonright.X, closebuttonright.Y, closebuttonsize.Width, closebuttonsize.Height, UIManager.SkinTextures["minimizebutton"], SkinEngine.GetImageLayout("minimizebutton"));
-                    }
-                }
-
-
-                //Some variables we'll need...
-                int bottomlocy = Height - LoadedSkin.BottomBorderWidth;
-                int bottomlocx = leftborderwidth;
-                int bottomwidth = Width - bottomlocx - rightborderwidth;
-                int brightlocx = Width - rightborderwidth;
-
-                var borderleftcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderLeftBackground"] : UIManager.SkinTextures["BorderInactiveLeftBackground"];
-                var borderrightcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderRightBackground"] : UIManager.SkinTextures["BorderInactiveRightBackground"];
-                var borderbottomcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomBackground"] : UIManager.SkinTextures["BorderInactiveBottomBackground"];
-                var borderbleftcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomLeftBackground"] : UIManager.SkinTextures["BorderInactiveBottomLeftBackground"];
-                var borderbrightcolor = (ContainsFocusedControl || IsFocusedControl) ? UIManager.SkinTextures["BorderBottomRightBackground"] : UIManager.SkinTextures["BorderInactiveBottomRightBackground"];
-
-
-                //draw border corners
-                //BOTTOM LEFT
-                if (!UIManager.SkinTextures.ContainsKey("bottomlborder"))
-                {
-                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, borderbleftcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(0, bottomlocy, leftborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomlborder"], SkinEngine.GetImageLayout("bottomlborder"));
-                }
-
-                //BOTTOM RIGHT
-                if (!UIManager.SkinTextures.ContainsKey("bottomrborder"))
-                {
-                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, borderbrightcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(brightlocx, bottomlocy, rightborderwidth, bottomborderwidth, UIManager.SkinTextures["bottomrborder"], SkinEngine.GetImageLayout("bottomrborder"));
-                }
-
-                //BOTTOM
-                if (!UIManager.SkinTextures.ContainsKey("bottomborder"))
-                {
-                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, borderbottomcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(leftborderwidth, bottomlocy, bottomwidth, bottomborderwidth, UIManager.SkinTextures["bottomborder"], SkinEngine.GetImageLayout("bottomborder"));
-                }
-
-                //LEFT
-                if (!UIManager.SkinTextures.ContainsKey("leftborder"))
-                {
-                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, borderleftcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(0, titleheight, leftborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["leftborder"], SkinEngine.GetImageLayout("leftborder"));
-                }
-
-                //RIGHT
-                if (!UIManager.SkinTextures.ContainsKey("rightborder"))
-                {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, borderrightcolor);
-                }
-                else
-                {
-                    gfx.DrawRectangle(brightlocx, titleheight, rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["rightborder"], SkinEngine.GetImageLayout("rightborder"));
-                }
-
-
-
-                gfx.DrawRectangle(leftborderwidth, titleheight, Width - leftborderwidth - rightborderwidth, Height - titleheight - bottomborderwidth, UIManager.SkinTextures["ControlColor"]);
-                //So here's what we're gonna do now.
-                //Now that we have a titlebar and window borders...
-                //We're going to composite the hosted window
-                //and draw it to the remaining area.
-            }
-            catch (KeyNotFoundException)
-            {
-                UIManager.ResetSkinTextures(gfx.Device);
-                OnPaint(gfx, target);
-            }
-            //Painting of the canvas is done by the Paint() method.
-            base.OnPaint(gfx, target);
-        }
 
         int dist_x = 0;
         int dist_y = 0;

@@ -50,20 +50,20 @@ namespace Plex.Frontend.GUI
             Click += () =>
             {
                 //We're in the scroll bar.
-                bool inUpArrow = MouseY - _scrollY <= SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                bool inDownArrow = MouseY - _scrollY >= Height - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                int _scrollBarX = Width - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                int _arrowSize = SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
+                bool inUpArrow = MouseY - _scrollY <= 24;
+                bool inDownArrow = MouseY - _scrollY >= Height - 24;
+                int _scrollBarX = Width - 24;
+                int _arrowSize = 24;
                 int nubAreaHeight = Height - (_arrowSize * 2);
 
-                int nubmargin = ((SkinEngine.LoadedSkin.ScrollViewScrollbarWidth - SkinEngine.LoadedSkin.ScrollViewScrollNubWidth) / 2);
+                int nubmargin = ((24 - 20) / 2);
                 int lerp = (int)ProgressBar.linear(_scrollY, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //...to get the location of the nub.
                 //Now we do it again to get the HEIGHT of the nub.
                 int nubheight = (int)ProgressBar.linear(Height, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //And as for the X and width, these values are calculated using the skin.
                 int nubX = _scrollBarX + nubmargin;
-                int nubW = SkinEngine.LoadedSkin.ScrollViewScrollNubWidth;
+                int nubW = 20;
                 bool inNub = (MouseX >= nubX && MouseX <= nubX + nubW && MouseY - _scrollY >= lerp && MouseY - _scrollY <= lerp + nubheight);
                 if (inUpArrow)
                 {
@@ -142,7 +142,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(SkinEngine.LoadedSkin.InsetBackgroundColor.ToMonoColor());
+            gfx.Clear(Color.DarkGray);
         }
 
         protected override void AfterPaint(GraphicsContext gfx, RenderTarget2D target)
@@ -170,25 +170,25 @@ namespace Plex.Frontend.GUI
             //we offset the draw location by X and Y because if we don't the UI is drawn in an incorrect location. This is a quirk with how the UI draws elements.
 
             //Now, let's draw the scroll bar itself.
-            int _scrollBarX = Width - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
+            int _scrollBarX = Width - 24;
             int _scrollBarY = 0;
-            int _arrowSize = SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
+            int _arrowSize = 24;
 
             //Draw the scrollbar background.
-            gfx.DrawRectangle(_scrollBarX, _scrollBarY, SkinEngine.LoadedSkin.ScrollViewScrollbarWidth, Height, SkinEngine.LoadedSkin.ScrollViewScrollbarBackground.ToMonoColor());
+            gfx.DrawRectangle(_scrollBarX, _scrollBarY, _arrowSize, Height, Color.Black);
 
             //Get the height of the nub area
             int nubAreaHeight = Height - (_arrowSize * 2);
             //In this area we can draw the nub - the button the user drags to scroll.
             //We'll use this value, the scroll Y, and the height of the scrollable rendertarget in a lerp...
-            int nubmargin = ((SkinEngine.LoadedSkin.ScrollViewScrollbarWidth - SkinEngine.LoadedSkin.ScrollViewScrollNubWidth) / 2);
+            int nubmargin = ((24 - 20) / 2);
             int lerp = (int)ProgressBar.linear(_scrollY, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
             //...to get the location of the nub.
             //Now we do it again to get the HEIGHT of the nub.
             int nubheight = (int)ProgressBar.linear(Height, 0, _realHeight, _arrowSize+nubmargin, nubAreaHeight-(nubmargin*2));
             //And as for the X and width, these values are calculated using the skin.
             int nubX = _scrollBarX + nubmargin;
-            int nubW = SkinEngine.LoadedSkin.ScrollViewScrollNubWidth;
+            int nubW = 20;
             //Let's draw the nub.
             gfx.DrawRectangle(nubX, lerp, nubW, nubheight, GetNubColor());
 
@@ -206,12 +206,6 @@ namespace Plex.Frontend.GUI
             gfx.DrawRectangle(_scrollBarX, 0, _arrowSize, _arrowSize, tArrowBG);
             //Bottom
             gfx.DrawRectangle(_scrollBarX, Height - _arrowSize, _arrowSize, _arrowSize, bArrowBG);
-
-            //Now for the arrow glyphs themselves.
-
-            SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Top, _scrollBarX, 0, _arrowSize, _arrowSize, gfx, tArrowFG.ToGdiColor());
-            SkinEngine.LoadedSkin.DrawArrow(ArrowDirection.Bottom, _scrollBarX, Height - _arrowSize, _arrowSize, _arrowSize, gfx, bArrowFG.ToGdiColor());
-
         }
 
         private void SetBarState(int up, int down, int nub)
@@ -230,11 +224,11 @@ namespace Plex.Frontend.GUI
             switch (_nubState)
             {
                 case 1:
-                    return SkinEngine.LoadedSkin.ScrollViewScrollNubColorHover.ToMonoColor();
+                    return Color.LightBlue;
                 case 2:
-                    return SkinEngine.LoadedSkin.ScrollViewScrollNubColorPressed.ToMonoColor();
+                    return Color.DarkBlue;
                 default:
-                    return SkinEngine.LoadedSkin.ScrollViewScrollNubColorIdle.ToMonoColor();
+                    return Color.DarkGray;
 
             }
         }
@@ -244,11 +238,11 @@ namespace Plex.Frontend.GUI
             switch (state)
             {
                 case 1:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowColorHover.ToMonoColor();
+                    return Color.White;
                 case 2:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowColorPressed.ToMonoColor();
+                    return Color.White;
                 default:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowColorIdle.ToMonoColor();
+                    return Color.LightGray;
 
             }
         }
@@ -258,11 +252,11 @@ namespace Plex.Frontend.GUI
             switch (state)
             {
                 case 1:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowBackgroundHover.ToMonoColor();
+                    return Color.LightBlue;
                 case 2:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowBackgroundPressed.ToMonoColor();
+                    return Color.DarkBlue;
                 default:
-                    return SkinEngine.LoadedSkin.ScrollViewArrowBackgroundIdle.ToMonoColor();
+                    return Color.DarkGray;
 
             }
         }
@@ -270,23 +264,23 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if(MouseX >= Width - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth)
+            if(MouseX >= Width - 24)
             {
                 //We're in the scroll bar.
-                bool inUpArrow = MouseY-_scrollY <= SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                bool inDownArrow = MouseY-_scrollY >= Height - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                int _scrollBarX = Width - SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
-                int _arrowSize = SkinEngine.LoadedSkin.ScrollViewScrollbarWidth;
+                bool inUpArrow = MouseY-_scrollY <= 24;
+                bool inDownArrow = MouseY-_scrollY >= Height - 24;
+                int _scrollBarX = Width - 24;
+                int _arrowSize = 24;
                 int nubAreaHeight = Height - (_arrowSize * 2);
 
-                int nubmargin = ((SkinEngine.LoadedSkin.ScrollViewScrollbarWidth - SkinEngine.LoadedSkin.ScrollViewScrollNubWidth) / 2);
+                int nubmargin = ((24 - 20) / 2);
                 int lerp = (int)ProgressBar.linear(_scrollY, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //...to get the location of the nub.
                 //Now we do it again to get the HEIGHT of the nub.
                 int nubheight = (int)ProgressBar.linear(Height, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //And as for the X and width, these values are calculated using the skin.
                 int nubX = _scrollBarX + nubmargin;
-                int nubW = SkinEngine.LoadedSkin.ScrollViewScrollNubWidth;
+                int nubW = 20;
                 bool inNub = (MouseX >= nubX && MouseX <= nubX + nubW && MouseY-_scrollY >= lerp && MouseY-_scrollY <= lerp + nubheight);
                 if (inUpArrow)
                 {

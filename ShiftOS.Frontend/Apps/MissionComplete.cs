@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine;
 using Plex.Frontend.GUI;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.Apps
 {
@@ -64,11 +63,6 @@ You may now continue to free roam and further explore the Plexgate.";
 
         public void OnSkinLoad()
         {
-            _cptnobvious.Font = LoadedSkin.HeaderFont;
-            _mtitle.Font = LoadedSkin.Header2Font;
-            _description.Font = LoadedSkin.MainFont;
-            _xpEarned.Font = LoadedSkin.Header3Font;
-            _continue.Font = LoadedSkin.MainFont;
         }
 
         protected override void OnLayout(GameTime gameTime)

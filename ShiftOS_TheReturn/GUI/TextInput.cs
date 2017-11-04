@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
@@ -223,7 +222,7 @@ namespace Plex.Frontend.GUI
             if (_index > text.Length)
                 _index = text.Length;
             string toCaret = text.Substring(0, _index);
-            var measure = GraphicsContext.MeasureString(toCaret, SkinEngine.LoadedSkin.TextBoxFont, Engine.GUI.TextAlignment.TopLeft);
+            var measure = GraphicsContext.MeasureString(toCaret, Font, Engine.GUI.TextAlignment.TopLeft);
             caretPos = 2 + measure.X;
             if (caretPos - TextDrawOffset < 0)
             {
@@ -245,18 +244,10 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            int borderWidth = SkinEngine.LoadedSkin.TextBoxBorderWidth;
-            bool useClassicBorders = SkinEngine.LoadedSkin.TextBoxBorderStyle == TextBoxBorderStyle.Classic;
-            var borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorIdle.ToMonoColor();
-            var bgColor = SkinEngine.LoadedSkin.TextBoxBackColor.ToMonoColor();
-            if (ContainsMouse)
-            {
-                borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorHover.ToMonoColor();
-            }
-            if (IsFocusedControl)
-            {
-                borderColor = SkinEngine.LoadedSkin.TextBoxBorderColorFocused.ToMonoColor();
-            }
+            int borderWidth = 1;
+            bool useClassicBorders = true;
+            var borderColor = Color.White;
+            var bgColor = Color.DarkGray;
             if (PaintBackground == true)
             {
                 if (useClassicBorders == true)
@@ -299,15 +290,15 @@ namespace Plex.Frontend.GUI
 
         protected virtual void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
         {
-            int textY = (Height - SkinEngine.LoadedSkin.TextBoxFont.Height) / 2;
-            int caretHeight = LoadedSkin.TextBoxFont.Height;
+            int textY = (Height - Font.Height) / 2;
+            int caretHeight = Font.Height;
 
             if (IsFocusedControl)
             {
                 if (caretMS <= 250)
                 {
                     //draw caret
-                    gfx.DrawRectangle((int)(caretPos - TextDrawOffset), textY, 2, caretHeight, LoadedSkin.TextBoxTextColor.ToMonoColor());
+                    gfx.DrawRectangle((int)(caretPos - TextDrawOffset), textY, 2, caretHeight, Color.White);
                 }
             }
 
@@ -334,12 +325,6 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            if (_overrideDefaultStyle == false)
-            {
-                FontStyle = TextControlFontStyle.Custom;
-                Font = SkinEngine.LoadedSkin.TextBoxFont;
-                TextColor = LoadedSkin.TextBoxTextColor.ToMonoColor();
-            }
             caretMS += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (caretMS >= 500)
                 caretMS = 0;
@@ -355,5 +340,16 @@ namespace Plex.Frontend.GUI
         Alphanumeric,
         Integer,
         Decimal
+    }
+
+    public static class StringExtensions
+    {
+        public static string Repeat(this string str, int len)
+        {
+            string n = "";
+            for (int i = 0; i < len; i++)
+                n += str;
+            return n;
+        }
     }
 }

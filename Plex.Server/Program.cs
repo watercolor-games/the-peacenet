@@ -869,7 +869,7 @@ Now generating defenses...
                     {
                         var stream = client.GetStream();
                         var reader = new BinaryReader(stream, Encoding.UTF8, true);
-                        var writer = new DebugBinaryWriter(stream, Encoding.UTF8, true);
+                        var writer = new BinaryWriter(stream, Encoding.UTF8, true);
                         var connection = new Connection
                         {
                             Client = client,

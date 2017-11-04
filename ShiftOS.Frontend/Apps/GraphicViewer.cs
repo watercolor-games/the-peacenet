@@ -58,10 +58,18 @@ namespace Plex.Frontend.Apps
             base.OnLayout(gameTime);
         }
 
+        public System.Drawing.Image ImageFromBinary(byte[] data)
+        {
+            using(var memstr = new System.IO.MemoryStream(data))
+            {
+                return System.Drawing.Image.FromStream(memstr);
+            }
+        }
+
         public void OpenFile(string file)
         {
             byte[] data = FSUtils.ReadAllBytes(file);
-            using(var img = SkinEngine.ImageFromBinary(data))
+            using(var img = ImageFromBinary(data))
             {
                 _imgTexture = img.ToTexture2D(UIManager.GraphicsDevice);
             }

@@ -88,7 +88,6 @@ namespace Plex.Frontend.Apps
         {
             _header.X = 10;
             _header.Y = 10;
-            _header.Font = SkinEngine.LoadedSkin.Header3Font;
             _header.AutoSize = true;
 
             _body.X = 10;

@@ -173,10 +173,8 @@
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\QA.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
-    <Compile Include="GUI\BBCodeLabel.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\CheckBox.cs" />
-    <Compile Include="GUI\ComboBox.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\FileSkimmerBackend.cs" />
     <Compile Include="GUI\ItemGroup.cs" />
@@ -186,12 +184,10 @@
     <Compile Include="GUI\MenuBar.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />
-    <Compile Include="GUI\ScrollBar.cs" />
     <Compile Include="GUI\ScrollView.cs" />
     <Compile Include="GUI\TextAlignment.cs" />
     <Compile Include="GUI\TextControl.cs" />
     <Compile Include="GUI\TextInput.cs" />
-    <Compile Include="Hacking.cs" />
     <Compile Include="IFileHandler.cs" />
     <Compile Include="Infobox.cs" />
     <Compile Include="GUI\IShiftOSWindow.cs" />
@@ -203,7 +199,6 @@
     <Compile Include="MissionAttribute.cs" />
     <Compile Include="NetworkTimeoutException.cs" />
     <Compile Include="NotificationDaemon.cs" />
-    <Compile Include="GUI\OutOfBoxExperience.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Plexgate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

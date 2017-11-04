@@ -34,12 +34,6 @@ namespace Plex.Frontend.Apps
         {
         }
 
-        public void OnSkinLoad()
-        {
-            Dummy.Font = SkinEngine.LoadedSkin.Header3Font;
-            Developer.Font = SkinEngine.LoadedSkin.MainFont;
-        }
-
         public bool OnUnload()
         {
             return true;

@@ -430,76 +430,9 @@ namespace Plex.Frontend.GraphicsSubsystem
             FocusedControl?.ProcessKeyEvent(e);
         }
 
-        public static Dictionary<string, Texture2D> SkinTextures = new Dictionary<string, Texture2D>();
-
+        [Obsolete("ShiftOS-style skinning will no longer be directly supported by the engine.")]
         public static void ResetSkinTextures(GraphicsDevice graphics)
         {
-            bool rgb101 = true;
-            while(SkinTextures.Count != 0)
-            {
-                SkinTextures.First().Value.Dispose();
-                SkinTextures.Remove(SkinTextures.First().Key);
-            }
-            foreach(var byteArray in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(byte[])))
-            {
-                var imgAttrib = byteArray.GetCustomAttributes(false).FirstOrDefault(x => x is ImageAttribute) as ImageAttribute;
-                if(imgAttrib != null)
-                {
-                    var img = SkinEngine.GetImage(imgAttrib.Name);
-                    if(img != null)
-                    {
-                        var bmp = (System.Drawing.Bitmap)img;
-                        var lck = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                        var data = new byte[Math.Abs(lck.Stride) * lck.Height];
-                        Marshal.Copy(lck.Scan0, data, 0, data.Length);
-                        bmp.UnlockBits(lck);
-                        var tex2 = new Texture2D(graphics, bmp.Width, bmp.Height);
-                        for(int i = 0; i < data.Length; i += 4)
-                        {
-                            byte r = data[i];
-                            byte g = data[i + 1];
-                            byte b = data[i + 2];
-                            if (rgb101)
-                            {
-                                if (r == 1 && b == 1 && g == 0)
-                                {
-                                    data[i + 3] = 0;
-                                }
-                            }
-                            data[i] = b;
-                            data[i + 2] = r;
-                        }
-                        tex2.SetData<byte>(data);
-                        if(!SkinTextures.ContainsKey(imgAttrib.Name))
-                            SkinTextures.Add(imgAttrib.Name, tex2);
-                    }
-                }
-            }
-
-            foreach(var colorfield in SkinEngine.LoadedSkin.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(x=>x.FieldType == typeof(System.Drawing.Color)))
-            {
-                if (SkinTextures.ContainsKey(colorfield.Name))
-                    continue;
-
-                var color = (System.Drawing.Color)colorfield.GetValue(SkinEngine.LoadedSkin);
-                var tex2 = new Texture2D(graphics, 1, 1);
-                if(rgb101)
-                {
-                    if (color.R == 1 && color.G == 0 && color.B == 1)
-                    {
-                        color = System.Drawing.Color.FromArgb(0, 0, 0, 0);
-                    }
-                }
-
-                tex2.SetData<byte>(new[] { color.R, color.G, color.B, color.A });
-                SkinTextures.Add(colorfield.Name, tex2);
-            }
-
-            var pureWhite = new Texture2D(graphics, 1, 1);
-            pureWhite.SetData<byte>(new byte[] { 255, 255, 255, 255 });
-            if(!SkinTextures.ContainsKey("PureWhite"))
-                SkinTextures.Add("PureWhite", pureWhite);
-
         }
 
         public static void SetUITint(Color color)
@@ -515,17 +448,6 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
-            try
-            {
-                batch.Draw(SkinTextures["DesktopColor"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
-
-                graphics.Clear(SkinEngine.LoadedSkin.DesktopColor.ToMonoColor());
-                if (SkinTextures.ContainsKey("desktopbackground"))
-                {
-                    batch.Draw(SkinTextures["desktopbackground"], new Rectangle(0, 0, Viewport.Width, Viewport.Height), _game.UITint);
-                }
-            }
-            catch { }
         }
 
         public static Color ToMonoColor(this System.Drawing.Color color)
@@ -573,49 +495,6 @@ namespace Plex.Frontend.GraphicsSubsystem
             else
             {
                 ServerManager.StartSinglePlayer(host, port);
-            }
-        }
-
-        private static void PingServer(IPAddress ip, int port)
-        {
-            Exception error = null;
-            var heart = Encoding.UTF8.GetBytes("heart");
-            NetworkClient.Send(heart, heart.Length);
-            var beat = Encoding.UTF8.GetBytes("beat");
-            var done = new AutoResetEvent(false);
-            var t = new Thread(() =>
-            {
-                try
-                {
-                    var ep = new System.Net.IPEndPoint(ip, port);
-                    byte[] receive = new byte[4];
-                    while (Encoding.UTF8.GetString(receive) != "beat")
-                    {
-                        receive = NetworkClient.Receive(ref ep);
-                    }
-                    done.Set();
-                }
-                catch(Exception ex)
-                {
-                    error = ex;
-                    done.Set();
-                }
-            });
-            t.Start();
-            if (!done.WaitOne(4000))
-            {
-                t.Abort();
-                throw new NetworkTimeoutException(ip,port);
-            }
-            if (error != null)
-                throw error;
-        }
-
-        public static System.Net.Sockets.UdpClient NetworkClient
-        {
-            get
-            {
-                return _game._mpClient;
             }
         }
 

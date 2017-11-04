@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,21 +73,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnLayout(GameTime gameTime)
         {
-            FontStyle = TextControlFontStyle.Custom;
-            Font = SkinEngine.LoadedSkin.ButtonFont;
-            var fgCol = SkinEngine.LoadedSkin.ButtonIdleTextColor.ToMonoColor();
-            if (ContainsMouse)
-            {
-                fgCol = SkinEngine.LoadedSkin.ButtonHoverTextColor.ToMonoColor();
-
-            }
-            if (MouseLeftDown)
-            {
-                fgCol = SkinEngine.LoadedSkin.ButtonPressedTextColor.ToMonoColor();
-            }
-            TextColor = fgCol;
             AutoSize = true;
-            Font = SkinEngine.LoadedSkin.ButtonFont;
             if (AutoSize == true)
             {
                 base.OnLayout(gameTime);
@@ -101,8 +86,8 @@ namespace Plex.Frontend.GUI
                         Height = Math.Max(Height, _imageHeight);
                         Width += _imageWidth + 3;
                     }
-                    Width += (SkinEngine.LoadedSkin.ButtonMargins.Width*2);
-                    Height += (SkinEngine.LoadedSkin.ButtonMargins.Height * 2);
+                    Width += (4*2);
+                    Height += (3 * 2);
                 }
 
             }
@@ -126,23 +111,12 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            var bgCol = SkinEngine.LoadedSkin.ButtonIdleColor.ToMonoColor();
-            var fgCol = SkinEngine.LoadedSkin.ButtonIdleTextColor.ToMonoColor();
-            if (ContainsMouse)
-            {
-                bgCol = SkinEngine.LoadedSkin.ButtonHoverColor.ToMonoColor();
-                fgCol = SkinEngine.LoadedSkin.ButtonHoverTextColor.ToMonoColor();
-
-            }
-            if (MouseLeftDown)
-            {
-                bgCol = SkinEngine.LoadedSkin.ButtonPressedColor.ToMonoColor();
-                fgCol = SkinEngine.LoadedSkin.ButtonPressedTextColor.ToMonoColor();
-            }
+            var bgCol = Color.Gray;
+            var fgCol = Color.White;
             gfx.DrawRectangle(0, 0, Width, Height, bgCol);
 
             if(_image != null)
-                gfx.DrawRectangle(SkinEngine.LoadedSkin.ButtonMargins.Width, (Height - _imageHeight) / 2, _imageWidth, _imageHeight, _image, fgCol, System.Windows.Forms.ImageLayout.Stretch);
+                gfx.DrawRectangle(4, (Height - _imageHeight) / 2, _imageWidth, _imageHeight, _image, fgCol, System.Windows.Forms.ImageLayout.Stretch);
 
             base.OnPaint(gfx, target);
         }

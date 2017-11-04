@@ -12,24 +12,8 @@ namespace Plex.Frontend.GUI
 {
     public class ItemGroup : Control
     {
-        private ItemGroupLayout _igLayout = ItemGroupLayout.SkinDefined;
         private int _igInitialGap = 10;
         private int _igGap = 5;
-
-        public ItemGroupLayout ItemGroupLayout
-        {
-            get
-            {
-                return _igLayout;
-            }
-            set
-            {
-                if (_igLayout == value)
-                    return;
-                _igLayout = value;
-                Invalidate();
-            }
-        }
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
@@ -40,18 +24,10 @@ namespace Plex.Frontend.GUI
         {
             get
             {
-                switch (_igLayout)
-                {
-                    case ItemGroupLayout.SkinDefined:
-                        return SkinEngine.LoadedSkin.ItemGroupInitialGap;
-                    default:
-                        return _igInitialGap;
-                }
+                return _igInitialGap;
             }
             set
             {
-                if (_igLayout == ItemGroupLayout.SkinDefined)
-                    return;
                 if (_igInitialGap == value)
                     return;
                 _igInitialGap = value;
@@ -63,18 +39,10 @@ namespace Plex.Frontend.GUI
         {
             get
             {
-                switch (_igLayout)
-                {
-                    case ItemGroupLayout.SkinDefined:
-                        return SkinEngine.LoadedSkin.ItemGroupGap;
-                    default:
-                        return _igGap;
-                }
+                return _igGap;
             }
             set
             {
-                if (_igLayout == ItemGroupLayout.SkinDefined)
-                    return;
                 if (_igGap == value)
                     return;
                 _igGap = value;

@@ -205,7 +205,6 @@ namespace Plex.Engine
     }
 
     // Provides a way of setting default title text for classes. 
-    [Obsolete("ShiftOS-style skinning will soon no longer be directly supported by the engine.")]
     public class DefaultTitleAttribute : Attribute
     {
         // oy if you cant find a title this is the one you should use

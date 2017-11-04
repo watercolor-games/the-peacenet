@@ -13,15 +13,12 @@ using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Objects.Pty;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.Apps
 {
     [FileHandler("Shell script", ".trm", "fileicontrm")]
     [Launcher("{TITLE_TERMINAL}", false, null, "{AL_UTILITIES}")]
     [WinOpen("{WO_TERMINAL}")]
-    [DefaultTitle("{TITLE_TERMINAL}")]
-    [DefaultIcon("iconTerminal")]
     public class Terminal : GUI.ScrollView, IPlexWindow
     {
         private bool _isOpen = true;

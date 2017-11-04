@@ -12,7 +12,6 @@ using Plex.Objects;
 namespace Plex.Frontend.Apps
 {
     [Launcher("Upgrades", false, null, "Utilities")]
-    [DefaultTitle("Upgrades")]
     [WinOpen("upgrademgr")]
     public class CodeShop : GUI.Control, IPlexWindow
     {
@@ -80,7 +79,6 @@ namespace Plex.Frontend.Apps
             buy = new GUI.Button();
             buy.Text = "Buy upgrade";
             buy.AutoSize = true;
-            buy.Font = SkinEngine.LoadedSkin.MainFont;
             buy.Click += () =>
             {
                 if (Upgrades.UpgradeInstalled(selectedUpgrade.ID))

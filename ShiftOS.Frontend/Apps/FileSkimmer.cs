@@ -16,7 +16,6 @@ namespace Plex.Frontend.Apps
 {
     [WinOpen("fileskimmer")]
     [Launcher("File Skimmer", false, null, "System")]
-    [DefaultTitle("File Skimmer")]
     public class FileSkimmer : GUI.Control, IPlexWindow
     {
         private string _currentdirectory = "0:";
@@ -313,7 +312,7 @@ namespace Plex.Frontend.Apps
             if(path == "__up")
             {
                 if (_currentdirectory == SD_SYSTEM)
-                    throw new NaughtyDeveloperException("Someone tried to make it so you can go \"up one directory\" in the mounts list.");
+                    throw new Exception("Someone tried to make it so you can go \"up one directory\" in the mounts list.");
                 if (_currentdirectory.EndsWith(":"))
                 {
                     _currentdirectory = SD_SYSTEM;
@@ -373,19 +372,6 @@ namespace Plex.Frontend.Apps
                 bmp.UnlockBits(lck);
                 return tex2;
             }
-        }
-
-        public void OnSkinLoad()
-        {
-            foreach(var name in Enum.GetNames(typeof(FileType)))
-            {
-                FileType ftype = (FileType)Enum.Parse(typeof(FileType), name);
-                var img = ToTexture2D(GetImage(ftype));
-                _fList.SetImage(name, img);
-            }
-
-
-            _currentdirtext.Font = SkinEngine.LoadedSkin.Header3Font;
         }
 
         public System.Drawing.Image GetImage(FileType type)
@@ -540,7 +526,6 @@ namespace Plex.Frontend.Apps
 
                 _filePrompt.AutoSize = true;
                 _filePrompt.Text = $"{DialogMode} file: ";
-                _filePrompt.Font = SkinEngine.LoadedSkin.MainFont;
                 _filePrompt.Layout(gameTime);
 
                 _filePrompt.X = 10;
@@ -550,7 +535,6 @@ namespace Plex.Frontend.Apps
                 _fileFilter.AutoSize = true;
                 _fileFilter.Visible = true;
                 _fileFilter.Text = FileFilters[SelectedFilter];
-                _fileFilter.Font = SkinEngine.LoadedSkin.MainFont;
                 _fileFilter.Layout(gameTime);
                 _fileFilter.X = _openFile.X - _fileFilter.Width - 10;
                 _fileFilter.Y = _fileselectstart + ((_fileselectboxheight - _fileFilter.Height) / 2);

@@ -31,10 +31,6 @@ namespace Plex.Engine
             _summary = summary;
             InitializeComponent();
 
-            this.BackColor = SkinEngine.LoadedSkin.ControlColor;
-            this.ForeColor = SkinEngine.LoadedSkin.ControlTextColor;
-            this.Font = SkinEngine.LoadedSkin.MainFont;
-
             this.Controls.Add(_title);
             this.Controls.Add(_description);
             this.Controls.Add(_crashdata);
@@ -47,7 +43,6 @@ namespace Plex.Engine
             _title.Left = 15;
             _title.Top = 15;
             _title.AutoSize = true;
-            _title.Font = SkinEngine.LoadedSkin.HeaderFont;
             _title.Text = _exception.GetType().Namespace + "." + _exception.GetType().Name;
 
             _description.Left = 15;
@@ -69,9 +64,6 @@ namespace Plex.Engine
             _continue.Top = _quit.Top;
 
             _crashdata.Text = _summary;
-            _crashdata.BackColor = SkinEngine.LoadedSkin.TerminalBackColor;
-            _crashdata.ForeColor = SkinEngine.LoadedSkin.TerminalForeColor;
-            _crashdata.Font = SkinEngine.LoadedSkin.TerminalFont;
             _crashdata.Left = 15;
             _crashdata.Top = _description.Top + _description.Height + 15;
             _crashdata.Width = ClientSize.Width - 30;

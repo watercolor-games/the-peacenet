@@ -83,7 +83,7 @@ namespace Plex.Engine
 
             _tcpStream = _tcpClient.GetStream();
             _tcpReader = new BinaryReader(_tcpStream, Encoding.UTF8, true);
-            _tcpWriter = new DebugBinaryWriter(_tcpStream, Encoding.UTF8, true);
+            _tcpWriter = new BinaryWriter(_tcpStream, Encoding.UTF8, true);
             _thread = new Thread(() =>
             {
                 while (true)
