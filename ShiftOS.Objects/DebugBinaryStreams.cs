@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace Plex.Objects
 {
+    [Obsolete("We do not need this.")]
     public sealed class DebugBinaryWriter : BinaryWriter
     {
         public DebugBinaryWriter(Stream str, Encoding enc, bool keepopen) : base(str,enc,keepopen)
