@@ -16,6 +16,7 @@ using Plex.Frontend.GraphicsSubsystem;
 
 namespace Plex.Engine
 {
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public interface ISkinProvider
     {
         Skin GetDefaultSkin();
@@ -26,6 +27,7 @@ namespace Plex.Engine
     /// <summary>
     /// Skin engine management class.
     /// </summary>
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public static class SkinEngine
     {
         private static ISkinProvider SkinProvider = null;
@@ -269,6 +271,7 @@ namespace Plex.Engine
     /// <summary>
     /// Interface for probing app icons.
     /// </summary>
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public interface IIconProber
     {
         /// <summary>
@@ -282,6 +285,7 @@ namespace Plex.Engine
     /// <summary>
     /// Sets the default icon ID for a <see cref="IPlexWindow"/>. 
     /// </summary>
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
     public class DefaultIconAttribute : Attribute
     {
@@ -293,6 +297,7 @@ namespace Plex.Engine
         public string ID { get; private set; }
     }
 
+    //this'll be used even after skinning is redone. I may move it however. -Alkaline
     public enum ArrowDirection
     {
         Top,
@@ -304,6 +309,7 @@ namespace Plex.Engine
     /// <summary>
     /// The data stored in any .skn file.
     /// </summary>
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public abstract class Skin
     {
         #region Draw calls
@@ -753,18 +759,21 @@ namespace Plex.Engine
         #endregion
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public enum ItemGroupLayout
     {
         SkinDefined,
         Custom
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public enum TextBoxBorderStyle
     {
         Classic, //like ShiftOS
         MaterialDesign //android-style text borders
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public enum ButtonRenderStyle
     {
         Colored,
@@ -774,11 +783,13 @@ namespace Plex.Engine
     /// <summary>
     /// Marks a skin spec field as hidden from the Shifter.
     /// </summary>
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterHiddenAttribute : Attribute
     {
 
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterFlagAttribute : Attribute
     {
         public ShifterFlagAttribute(string flag, bool expected)
@@ -805,6 +816,7 @@ namespace Plex.Engine
         }
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ImageAttribute : Attribute
     {
         /// <summary>
@@ -820,6 +832,7 @@ namespace Plex.Engine
     }
 
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterEnumMaskAttribute : Attribute
     {
         public ShifterEnumMaskAttribute(string[] items)
@@ -832,6 +845,7 @@ namespace Plex.Engine
 
 
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterNameAttribute : Attribute
     {
         public ShifterNameAttribute(string name)
@@ -842,6 +856,7 @@ namespace Plex.Engine
         public string Name { get; set; }
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterDescriptionAttribute : Attribute
     {
         public ShifterDescriptionAttribute(string description)
@@ -852,6 +867,7 @@ namespace Plex.Engine
         public string Description { get; set; }
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterCategoryAttribute : Attribute
     {
 
@@ -863,6 +879,7 @@ namespace Plex.Engine
         public string Category { get; set; }
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public interface ISkinPostProcessor
     {
         /// <summary>
@@ -873,6 +890,7 @@ namespace Plex.Engine
         byte[] ProcessImage(byte[] original);
     }
 
+    [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
     public class ShifterMetaAttribute : Attribute
     {
 

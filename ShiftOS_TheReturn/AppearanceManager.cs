@@ -32,7 +32,10 @@ namespace Plex.Engine
             return ReflectMan.Types.Where(t => t.GetInterfaces().Contains(typeof(IPlexWindow)));
         }
 
-        // hey you know that window we just made appear? well give it its title
+        // hey you know that window we just made appear? well give it its title -Rylan (authortext added by alkaline for great memery)
+        //...
+        //Note to self: Never let Rylan Arbour document your code. - Alkaline
+        [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
         public static string GetDefaultTitle(Type winType)
         {
             if (winType == null)
@@ -48,13 +51,16 @@ namespace Plex.Engine
         }
 
         // Current cursor position of the console
+        [Obsolete("Terminal I/O should be handled inside the terminal emulator.")]
         public static int CurrentPosition { get; set; }
 
         // We don't know what this does. It may be gone if it does nothing.
+        [Obsolete("Terminal I/O should be handled inside the terminal emulator.")]
         public static int LastLength { get; set; }
 
 
         // Minimize a window.
+        [Obsolete("This should be handled by the window itself.")]
         public static void Minimize(IWindowBorder form)
         {
             if (form == null)
@@ -67,6 +73,7 @@ namespace Plex.Engine
         }
 
         // Maximizes a window! :D
+        [Obsolete("This should be handled by the window itself.")]
         public static void Maximize(IWindowBorder form)
         {
             if (form == null)
@@ -149,15 +156,18 @@ namespace Plex.Engine
         }
 
         // The current terminal body control.
+        [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
         public static ITerminalWidget ConsoleOut { get; set; }
 
         // Redirects the .NET to a new TerminalTextWriter instance.  
+        [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
         public static void StartConsoleOut()
         {
             Console.SetOut(new TerminalTextWriter()); //"plz start writing text .NET kthx"
         }
 
         // Invokes an action on the window management thread.
+        [Obsolete("Use Desktop.InvokeOnWorkerThread(). This is redundant.")]
         public static void Invoke(Action act)
         {
             winmgr.InvokeAction(act);
@@ -165,6 +175,7 @@ namespace Plex.Engine
     }
 
     // Provides the base functionality for a Plex terminal.
+    [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
     public interface ITerminalWidget
     {
         void Write(string text); // Actually write text to this Terminal! :D:D:D:D
@@ -194,6 +205,7 @@ namespace Plex.Engine
     }
 
     // Provides a way of setting default title text for classes. 
+    [Obsolete("ShiftOS-style skinning will soon no longer be directly supported by the engine.")]
     public class DefaultTitleAttribute : Attribute
     {
         // oy if you cant find a title this is the one you should use

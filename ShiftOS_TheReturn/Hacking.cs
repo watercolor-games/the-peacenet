@@ -136,6 +136,7 @@ namespace Plex.Engine
     /// <summary>
     /// An exception which is thrown when a developer deliberately tries to cause a bug.
     /// </summary>
+    [Obsolete("Hacking is mostly a server-side feature.")]
     public class NaughtyDeveloperException : Exception
     {
         /// <summary>
@@ -148,6 +149,7 @@ namespace Plex.Engine
         }
     }
 
+    [Obsolete("Hacking is mostly a server-side feature.")]
     public class DataConflictException : Exception
     {
         public DataConflictException(string message) : base(message)
@@ -156,6 +158,7 @@ namespace Plex.Engine
         }
     }
 
+    [Obsolete("Hacking is mostly a server-side feature.")]
     public interface IHackableProvider
     {
         Objects.Hackable[] GetHackables();
