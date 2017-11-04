@@ -11,6 +11,7 @@ using System.Dynamic;
 
 namespace Plex.Frontend.Apps
 {
+    [Obsolete("This feature will be removed in Milestone 3.")]
     [WinOpen("plextheme")]
     [DefaultTitle("PlexTheme")]
     [Launcher("PlexTheme", false, null, "Customization")]

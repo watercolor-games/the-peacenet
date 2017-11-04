@@ -7,6 +7,7 @@ using Plex.Objects;
 
 namespace Plex.Engine
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public static class LoginManager
     {
         private static ILoginFrontend _login = null;

@@ -35,6 +35,7 @@ namespace Plex.Engine
     /// <summary>
     /// Backend class for forwarding <see cref="System.Console"/> to the Plex terminal. 
     /// </summary>
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class TerminalTextWriter : TextWriter
     {
         

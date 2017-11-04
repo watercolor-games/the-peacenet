@@ -7,6 +7,7 @@ using Plex.Objects;
 
 namespace Plex.Engine
 {
+    [Obsolete("Hacking is mostly a server-side feature.")]
     public static class Hacking
     {
         private static List<HackableSystem> _activeConnections = new List<HackableSystem>();

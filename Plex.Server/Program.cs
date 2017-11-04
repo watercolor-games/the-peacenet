@@ -146,7 +146,7 @@ namespace Plex.Server
             Ranks = JsonConvert.DeserializeObject<List<Rank>>(Properties.Resources.ranks);
         }
 
-        public static void Main(string[] args, bool isMP)
+        public static void StartFromClient(string[] args, bool isMP)
         {
             LoadRanks();
             IsMultiplayerServer = isMP;

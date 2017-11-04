@@ -57,7 +57,6 @@ namespace Plex.Server
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var save = Program.GetSaveFromPrl(sessiondata.SaveID);
-            ServerResponseType result = ServerResponseType.REQ_ERROR;
             if (save != null)
             {
                 if (save.SystemDescriptor != null)

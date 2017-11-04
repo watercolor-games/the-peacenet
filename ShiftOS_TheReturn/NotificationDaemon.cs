@@ -78,6 +78,7 @@ using Plex.Objects.ShiftFS;
 
 namespace Plex.Engine
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public static class NotificationDaemon
     {
         /// <summary>

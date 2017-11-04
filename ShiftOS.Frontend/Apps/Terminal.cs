@@ -479,12 +479,6 @@ Buffer requires complete redraw: {_resized}";
                 _slave.WriteByte((byte)e.KeyChar);
 
             }
-            else
-            {
-                switch (e.Key)
-                {
-                }
-            }
         }
 
 

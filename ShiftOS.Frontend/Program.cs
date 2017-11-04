@@ -61,7 +61,7 @@ namespace Plex.Frontend
                     Server.Program.LoadRanks();
                     Server.Program.LoadWorld();
                     Server.Terminal.Populate();
-                    Plex.Server.Program.Main(null, false);
+                    Plex.Server.Program.StartFromClient(null, false);
                 });
                 ServerThread.IsBackground = true;
                 ServerThread.Start();

@@ -10,6 +10,7 @@ using Plex.Objects;
 
 namespace Plex.Engine
 {
+    [Obsolete("Cash management should be done on the server.")]
     public static class CashManager
     {
         public static bool Deduct(long amount, string to)
