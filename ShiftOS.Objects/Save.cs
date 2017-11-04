@@ -120,6 +120,9 @@ namespace Plex.Objects
 
         [Order]
         public string Password { get; set; }
+
+        [Order]
+        public Dictionary<string, long> NetworkTasks { get; set; }
     }
 
     public class UsedCredential

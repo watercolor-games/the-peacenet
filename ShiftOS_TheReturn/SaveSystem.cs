@@ -167,7 +167,6 @@ namespace Plex.Engine
         /// </summary>
         private static void FinishBootstrap()
         {
-            Upgrades.Init();
             Desktop.InvokeOnWorkerThread(new Action(() => Desktop.PopulateAppLauncher()));
             GameReady?.Invoke();
         }

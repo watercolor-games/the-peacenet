@@ -23,6 +23,7 @@ namespace Plex.Frontend.Apps
         private GUI.Button buy = null;
         private GUI.TextControl _upgradeTitle = new GUI.TextControl();
         private GUI.TextControl _upgradeDescription = new GUI.TextControl();
+        private Dictionary<string, ShiftoriumUpgrade> _upgradedatabase = new Dictionary<string, ShiftoriumUpgrade>();
 
         public CodeShop()
         {
@@ -125,16 +126,14 @@ namespace Plex.Frontend.Apps
                     if(upgradelist.SelectedItem != null)
                     {
                         string upgstr = upgradelist.SelectedItem.ToString();
-                        string category = upgstr.Substring(0, upgstr.IndexOf(":"));
-                        string upgname = upgstr.Substring(0, upgstr.LastIndexOf("(") - 1).Remove(0, upgstr.IndexOf(":") + 2);
-                        var upg = Upgrades.GetDefaults().FirstOrDefault(x => x.Category == category && x.Name == upgname);
-                        SelectUpgrade(upg);
+                        SelectUpgrade(_upgradedatabase[upgstr]);
                         return;
                     }
                     SelectUpgrade(null);
                 }
             };
             PopulateList();
+            SelectUpgrade(null);
         }
 
         public void SelectUpgrade(ShiftoriumUpgrade upgrade)
@@ -178,23 +177,37 @@ As you continue through your job, going further up the ranks, you will unlock ad
 
         }
 
+        private void PopulateListInternal()
+        {
+            _upgradedatabase.Clear();
+            foreach(var upgrade in Upgrades.GetAvailableIDs())
+            {
+                var data = Upgrades.GetUpgradeInfo(upgrade);
+                string type = "unknown";
+                if (data.Purchasable)
+                    type = $"${((double)data.Cost) / 100}";
+                if (Upgrades.UpgradeInstalled(upgrade))
+                {
+                    type = (Upgrades.IsLoaded(upgrade)) ? "loaded" : "unloaded";
+                }
+                _upgradedatabase.Add($"{data.Category}: {data.Name} ({type})", data);
+                Engine.Desktop.InvokeOnWorkerThread(() =>
+                {
+                    upgradelist.AddItem($"{data.Category}: {data.Name} ({type})");
+                    Invalidate();
+                });
+            }
+
+            upgradeprogress.Maximum = _upgradedatabase.Count;
+            upgradeprogress.Value = Upgrades.GetAvailableIDs().Where(x => Upgrades.UpgradeInstalled(x)).Count();
+
+        }
+
         public void PopulateList()
         {
             upgradelist.ClearItems();
-            foreach(var upgrade in Upgrades.GetDefaults())
-            {
-                string type = "unknown";
-                if (upgrade.Purchasable)
-                    type = $"${((double)upgrade.Cost) / 100}";
-                if (Upgrades.UpgradeInstalled(upgrade.ID))
-                {
-                    type = (Upgrades.IsLoaded(upgrade.ID)) ? "loaded" : "unloaded";
-                }
-                if (type == "unknown")
-                    continue; //Skip upgrades that aren't purchasable.
-                upgradelist.AddItem($"{upgrade.Category}: {upgrade.Name} ({type})");
-                Invalidate();
-            }
+            Task.Run(() => PopulateListInternal());
+
         }
 
         public void OnSkinLoad()
@@ -208,8 +221,6 @@ As you continue through your job, going further up the ranks, you will unlock ad
 
         public void OnUpgrade()
         {
-            upgradeprogress.Maximum = Upgrades.GetAllPurchasable().Length;
-            upgradeprogress.Value = Upgrades.CountUpgrades();
             PopulateList();
         }
 

@@ -33,5 +33,49 @@ namespace Plex.Objects
 
         [Order]
         public List<HackableSystem> NPCs { get; set; }
+
+        public HackableSystem Bank
+        {
+            get
+            {
+                return NPCs.FirstOrDefault(x => x.SystemType.HasFlag(SystemType.Bank));
+            }
+        }
+
+
+        public HackableSystem UpgradeRepo
+        {
+            get
+            {
+                return NPCs.FirstOrDefault(x => x.SystemType.HasFlag(SystemType.UpgradeDB));
+            }
+        }
+        
+        [Order]
+        public List<string> AvailableUpgrades { get; set; }
+
+        [Order]
+        public List<NetworkTask> Tasks { get; set; }
+    }
+
+    public class NetworkTask
+    {
+        [Order]
+        public string TaskID { get; set; }
+
+        [Order]
+        public TaskType Type { get; set; }
+
+        [Order]
+        public long CompletionValue { get; set; }
+    }
+
+    
+
+    public enum TaskType
+    {
+        GetXUpgrades,
+        GetXExperience,
+        HackXSystems,
     }
 }

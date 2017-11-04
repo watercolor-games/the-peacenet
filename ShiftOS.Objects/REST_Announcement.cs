@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Plex.Objects
 {
+    [Obsolete("Brutally outdated.")]
     public class Announcement
     {
         /// <summary>

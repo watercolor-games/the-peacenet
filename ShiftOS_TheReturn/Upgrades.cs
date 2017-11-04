@@ -48,27 +48,6 @@ namespace Plex.Engine
         public static bool Silent = false;
 
         /// <summary>
-        /// Gets all Shiftorium categories.
-        /// </summary>
-        /// <param name="onlyAvailable">Should we look in the "available" upgrade list (i.e, what the user can buy right now), or the full upgrade list?</param>
-        /// <returns>All Shiftorium categories from the list, in a <see cref="System.String[]"/>. </returns>
-        public static string[] GetCategories(bool onlyAvailable = true)
-        {
-            List<string> cats = new List<string>();
-            IEnumerable<ShiftoriumUpgrade> upgrades = GetDefaults();
-            if (onlyAvailable)
-                upgrades = new List<ShiftoriumUpgrade>(GetAvailable());
-
-            foreach (var upg in upgrades)
-            {
-                if (!cats.Contains(upg.Category))
-                    cats.Add(upg.Category);
-            }
-
-            return cats.ToArray();
-        }
-
-        /// <summary>
         /// Causes the engine to alert the frontend of a new Shiftorium upgrade install.
         /// </summary>
         public static void InvokeUpgradeInstalled()
@@ -77,44 +56,12 @@ namespace Plex.Engine
         }
 
         /// <summary>
-        /// Gets the category of an upgrade.
-        /// </summary>
-        /// <param name="id">The upgrade ID to check</param>
-        /// <returns>"Other" if the upgrade is not found, else, the upgrade category.</returns>
-        public static string GetCategory(string id)
-        {
-            var upg = GetDefaults().FirstOrDefault(x => x.ID == id);
-            if (upg == null)
-                return "Other";
-            return (upg.Category == null) ? "Other" : upg.Category;
-        }
-
-        /// <summary>
-        /// Gets all upgrades in a given category.
-        /// </summary>
-        /// <param name="cat">The category name to search</param>
-        /// <returns>The upgrades in the category.</returns>
-        public static IEnumerable<ShiftoriumUpgrade> GetAllInCategory(string cat)
-        {
-            return GetDefaults().Where(x => x.Category == cat);
-        }
-
-        /// <summary>
-        /// Gets whether or not the user has installed all upgrades in a category.
-        /// </summary>
-        /// <param name="cat">The category to search.</param>
-        /// <returns>Boolean value representing whether the user has installed all upgrades in the category.</returns>
-        public static bool IsCategoryEmptied(string cat)
-        {
-            return GetDefaults().Where(x => x.Category == cat).FirstOrDefault(x => !UpgradeInstalled(x.ID)) == null;
-        }
-
-        /// <summary>
         /// Buy an upgrade, deducting the specified amount of Experience.
         /// </summary>
         /// <param name="id">The upgrade ID to buy</param>
         /// <param name="cost">The amount of Experience to deduct</param>
         /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Experience or the upgrade wasn' found.</returns>
+        [Obsolete("Please use Buy(id).")]
         public static bool Buy(string id, ulong cost)
         {
             if(CashManager.Deduct((long)cost, "upgrademgr") == true)
@@ -134,12 +81,28 @@ namespace Plex.Engine
             return false;
         }
 
-        public static List<ShiftoriumUpgrade> AllUpgrades
+        public static bool Buy(string id, out string error)
         {
-            get
+            using(var str = new ServerStream(ServerMessageType.UPG_BUY))
             {
-                return upgDb;
+                str.Write(id);
+                var res = str.Send();
+                if(res.Message == (byte)ServerResponseType.REQ_SUCCESS)
+                {
+                    error = "";
+                    return true;
+                }
+                else if(res.Message == (byte)ServerResponseType.REQ_ERROR)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(res)))
+                    {
+                        error = reader.ReadString();
+                    }
+                    return false;
+                }
             }
+            error = "The upgrade could not be purchased for an unknown reason.";
+            return false;
         }
 
         /// <summary>
@@ -218,10 +181,13 @@ namespace Plex.Engine
             return true;
         }
 
+        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
         private static List<ShiftoriumUpgrade> upgDb = null;
 
+        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
         private static ShiftoriumUpgrade[] serverUpgrades = null;
 
+        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
         public static void CreateUpgradeDatabase()
         {
             upgDb = new List<ShiftoriumUpgrade>();
@@ -340,6 +306,7 @@ namespace Plex.Engine
         /// <summary>
         /// Initiates the Shiftorium.
         /// </summary>
+        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
         public static void Init()
         {
             if (IsInitiated == false)
@@ -351,35 +318,53 @@ namespace Plex.Engine
 
         }
 
-        /// <summary>
-        /// Get the codepoint value for an upgrade.
-        /// </summary>
-        /// <param name="id">The upgrade ID to search</param>
-        /// <returns>The codepoint value.</returns>
-        public static ulong GetCPValue(string id)
+        public static ShiftoriumUpgrade GetUpgradeInfo(string id)
         {
-            foreach (var upg in GetDefaults())
+            using(var str = new ServerStream(ServerMessageType.UPG_GETINFO))
             {
-                if (upg.ID == id)
-                    return upg.Cost;
+                str.Write(id);
+                var result = str.Send();
+                if(result.Message == (byte)ServerResponseType.REQ_SUCCESS)
+                {
+                    using(var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        return JsonConvert.DeserializeObject<ShiftoriumUpgrade>(reader.ReadString());
+                    }
+                }
+                else if(result.Message == (byte)ServerResponseType.REQ_ERROR)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        throw new UpgradeException(id, reader.ReadString());
+                    }
+
+                }
             }
-            return 0;
+            throw new UpgradeException(id, "A generic error has occurred.");
+
         }
 
-        /// <summary>
-        /// Gets all available upgrades.
-        /// </summary>
-        /// <returns></returns>
-        public static ShiftoriumUpgrade[] GetAvailable()
+        public static string[] GetAvailableIDs()
         {
-            List<ShiftoriumUpgrade> available = new List<ShiftoriumUpgrade>();
-            foreach (var defaultupg in GetDefaults().Where(x=>x.Purchasable==true))
+            List<string> upgs = new List<string>();
+            using(var str = new ServerStream(ServerMessageType.UPG_GETUPGRADES))
             {
-                if (!UpgradeInstalled(defaultupg.ID) && DependenciesInstalled(defaultupg))
-                    available.Add(defaultupg);
+                var result = str.Send();
+                if(result.Message == (byte)ServerResponseType.REQ_SUCCESS)
+                {
+                    using (var reader = new BinaryReader(ServerManager.GetResponseStream(result)))
+                    {
+                        int len = reader.ReadInt32();
+                        for(int i = 0; i < len; i++)
+                        {
+                            upgs.Add(reader.ReadString());
+                        }
+                    }
+                }
             }
-            return available.ToArray();
+            return upgs.ToArray();
         }
+
 
         public static int CountUpgrades()
         {
@@ -393,11 +378,6 @@ namespace Plex.Engine
                 }
             }
             return 0;
-        }
-
-        public static ShiftoriumUpgrade[] GetAllPurchasable()
-        {
-            return upgDb.Where(x => x.Purchasable == true).ToArray();
         }
 
         /// <summary>
@@ -550,15 +530,6 @@ namespace Plex.Engine
 
         //LEAVE THIS AS FALSE. The game will set it when the save is loaded.
         public static bool LogOrphanedUpgrades = false;
-
-        /// <summary>
-        /// Gets every upgrade inside the frontend and all mods.
-        /// </summary>
-        /// <returns>Every single found Shiftorium upgrade.</returns>
-        public static List<ShiftoriumUpgrade> GetDefaults()
-        {
-            return upgDb;
-        }
     }
 
     public class UpgradeException : Exception

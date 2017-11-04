@@ -29,14 +29,16 @@ namespace Plex.Objects
         TRM_GETCMDS = 0x21,
         TRM_MANPAGE = 0x22,
 
-
         UPG_GETUPGRADES = 0x30,
         UPG_ISINSTALLED = 0x31,
         UPG_ISLOADED = 0x32,
+        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
         UPG_SETINSTALLED = 0x33,
         UPG_LOAD = 0x34,
         UPG_UNLOAD = 0x35,
         UPG_GETCOUNT = 0x36,
+        UPG_BUY = 0x37,
+        UPG_GETINFO = 0x38,
 
         USR_VALIDATEKEY = 0x40,
         USR_LOGIN = 0x41,

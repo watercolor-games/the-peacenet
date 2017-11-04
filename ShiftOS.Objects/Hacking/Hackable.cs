@@ -27,5 +27,7 @@ namespace Plex.Objects{    public class Hackable    {        [Order]
         MailServer = 8,
         NAS = 16,
         Database = 32,
-        Router = 64
+        Router = 64,
+        UpgradeDB = 128,
+        Bank = 256
     }    }

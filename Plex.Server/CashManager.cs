@@ -53,28 +53,22 @@ namespace Plex.Server
             Console.WriteLine("${0}: {1} -> {2}", ((double)transaction.Amount) / 100, transaction.From, transaction.To);
         }
 
-
-        [ServerMessageHandler( ServerMessageType.CASH_DEDUCT )]
-        [SessionRequired]
-        public static byte CashDeduct(string session, byte[] content, BinaryReader reader, BinaryWriter writer)
+        internal static bool CashDeductInternal(string session, string to, long amount)
         {
             var sessiondata = SessionManager.GrabAccount(session);
             var save = Program.GetSaveFromPrl(sessiondata.SaveID);
             ServerResponseType result = ServerResponseType.REQ_ERROR;
             if (save != null)
             {
-                long amount = reader.ReadInt64();
-                string to = reader.ReadString();
-                if(save.SystemDescriptor != null)
+                if (save.SystemDescriptor != null)
                 {
-                    if(save.SystemDescriptor.Cash >= amount)
+                    if (save.SystemDescriptor.Cash >= amount)
                     {
-                        result =  ServerResponseType.REQ_SUCCESS; //We can deduct.
                         save.SystemDescriptor.Cash -= amount;
                         //Bye bye, cash.
                         //Now we determine the system to send it to.
                         var system = Program.GetSaveFromPrl(to);
-                        if(system == null)
+                        if (system == null)
                         {
                             //we're sending it to rogue.
                             var rogue = Program.GameWorld.Rogue.NPCs[0];
@@ -101,9 +95,24 @@ namespace Plex.Server
                             To = to
                         });
                         Program.SaveWorld();
+                        return true;
                     }
                 }
             }
+            return false;
+        }
+
+
+        [ServerMessageHandler( ServerMessageType.CASH_DEDUCT )]
+        [SessionRequired]
+        public static byte CashDeduct(string session, byte[] content, BinaryReader reader, BinaryWriter writer)
+        {
+            ServerResponseType result = ServerResponseType.REQ_ERROR;
+            long amount = reader.ReadInt64();
+            string to = reader.ReadString();
+            if (CashDeductInternal(session, to, amount) == true)
+                result = ServerResponseType.REQ_SUCCESS;
+
             return (byte)result;
         }
     }

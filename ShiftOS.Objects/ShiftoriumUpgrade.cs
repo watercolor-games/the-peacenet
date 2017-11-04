@@ -124,5 +124,6 @@ namespace Plex.Objects
         public bool Purchasable { get; set; }
         public string Tutorial { get; set; }
         public string Dependencies { get; set; }
+        public int Rank { get; set; }
     }
 }

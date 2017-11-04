@@ -11,6 +11,124 @@ namespace Plex.Server
 {
     public static class UpgradeManager
     {
+        public static List<ShiftoriumUpgrade> Upgrades { get; private set; }
+
+        internal static void Initiate()
+        {
+            var upgDb = new List<ShiftoriumUpgrade>();
+            upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(Properties.Resources.upgrades));
+            foreach (var type in ReflectMan.Types)
+            {
+
+
+                ShiftoriumUpgradeAttribute attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                if (attrib != null)
+                {
+                    if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                        throw new ShiftoriumConflictException(attrib.Upgrade);
+                    upgDb.Add(new ShiftoriumUpgrade
+                    {
+                        Name = attrib.Name,
+                        Cost = attrib.Cost,
+                        Description = attrib.Description,
+                        Dependencies = attrib.Dependencies,
+                        Category = attrib.Category,
+                        Purchasable = attrib.Purchasable,
+                        Tutorial = attrib.Tutorial,
+                        Rank = attrib.Rank
+                    });
+                }
+
+                foreach (var mth in type.GetMethods())
+                {
+                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                    if (attrib != null)
+                    {
+                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                            throw new ShiftoriumConflictException(attrib.Upgrade);
+                        upgDb.Add(new ShiftoriumUpgrade
+                        {
+                            Name = attrib.Name,
+                            Cost = attrib.Cost,
+                            Description = attrib.Description,
+                            Dependencies = attrib.Dependencies,
+                            Category = attrib.Category,
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial,
+                            Rank = attrib.Rank
+                        });
+
+                    }
+                }
+
+                foreach (var mth in type.GetFields())
+                {
+                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                    if (attrib != null)
+                    {
+                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                            throw new ShiftoriumConflictException(attrib.Upgrade);
+                        upgDb.Add(new ShiftoriumUpgrade
+                        {
+                            Name = attrib.Name,
+                            Cost = attrib.Cost,
+                            Description = attrib.Description,
+                            Dependencies = attrib.Dependencies,
+                            Category = attrib.Category,
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial,
+                            Rank = attrib.Rank
+                        });
+
+                    }
+                }
+
+                foreach (var mth in type.GetProperties())
+                {
+                    attrib = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShiftoriumUpgradeAttribute) as ShiftoriumUpgradeAttribute;
+                    if (attrib != null)
+                    {
+                        if (upgDb.FirstOrDefault(x => x.ID == attrib.Upgrade) != null)
+                            throw new ShiftoriumConflictException(attrib.Upgrade);
+                        upgDb.Add(new ShiftoriumUpgrade
+                        {
+                            Name = attrib.Name,
+                            Cost = attrib.Cost,
+                            Description = attrib.Description,
+                            Dependencies = attrib.Dependencies,
+                            Category = attrib.Category,
+                            Purchasable = attrib.Purchasable,
+                            Tutorial = attrib.Tutorial,
+                            Rank = attrib.Rank
+                        });
+
+                    }
+                }
+
+            }
+
+            foreach (var item in upgDb)
+            {
+                if (upgDb.Where(x => x.ID == item.ID).Count() > 1)
+                    throw new ShiftoriumConflictException(item.ID);
+            }
+            Upgrades = upgDb;
+        }
+
+        [ServerMessageHandler(ServerMessageType.UPG_GETINFO)]
+        public static byte GetUpgradeInfo(string session_id, BinaryReader reader, BinaryWriter writer)
+        {
+            string upgid = reader.ReadString();
+            var upgdata = Upgrades.FirstOrDefault(x => x.ID == upgid);
+            if (upgdata == null)
+            {
+                writer.Write("The upgrade could not be found.");
+                return (byte)ServerResponseType.REQ_ERROR;
+            }
+            writer.Write(JsonConvert.SerializeObject(upgdata));
+            return 0x00;
+        }
+
         [SessionRequired]
         [ServerMessageHandler( Objects.ServerMessageType.UPG_ISINSTALLED)]
         public static byte GetInstalled(string session_id, BinaryReader reader, BinaryWriter writer)
@@ -137,26 +255,71 @@ namespace Plex.Server
             Console.WriteLine(result);
         }
 
-
         [SessionRequired]
-        [ServerMessageHandler( ServerMessageType.UPG_SETINSTALLED)]
-        public static byte SetUpgradeValue(string session_id, BinaryReader reader, BinaryWriter writer)
+        [ServerMessageHandler(ServerMessageType.UPG_BUY)]
+        public static byte BuyUpgrade(string session, BinaryReader reader, BinaryWriter writer)
         {
-            string content = reader.ReadString();
-            var args = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-            bool value = (bool)args["value"];
-            string id = args["id"].ToString();
-            bool isinstalled = IsUpgradeInstalled(id, session_id);
-            if(isinstalled != value)
+            string upgradeid = reader.ReadString();
+            var upgdata = Upgrades.FirstOrDefault(x => x.ID == upgradeid);
+            if (upgdata == null)
             {
-                var session = SessionManager.GrabAccount(session_id);
-                var save = Program.GetSaveFromPrl(session.SaveID);
-                save.SystemDescriptor.Upgrades[id] = value;
-                Program.SaveWorld();
+                writer.Write("The upgrade could not be found.");
+                return (byte)ServerResponseType.REQ_ERROR;
             }
+
+            var sessiondata = SessionManager.GrabAccount(session);
+            if (sessiondata == null)
+            {
+                writer.Write("Generic sessionkeeper error.");
+                return (byte)ServerResponseType.REQ_ERROR;
+            }
+            string net = sessiondata.SaveID.Substring(0, sessiondata.SaveID.IndexOf("."));
+            var netdata = Program.GameWorld.Networks.FirstOrDefault(x => x.Name == net);
+            if(netdata == null)
+            {
+                writer.Write("Cannot find network upgrade repository.");
+                return (byte)ServerResponseType.REQ_ERROR;
+            }
+            if (netdata.UpgradeRepo == null)
+            {
+                writer.Write("Cannot find network upgrade repository.");
+                return (byte)ServerResponseType.REQ_ERROR;
+            }
+
+            if (netdata.AvailableUpgrades == null)
+                netdata.AvailableUpgrades = new List<string>();
+            if (!netdata.AvailableUpgrades.Contains(upgradeid))
+            {
+                writer.Write("The upgrade was not found.");
+                return (byte)ServerResponseType.REQ_ERROR;
+
+            }
+            string systemtosend = net + "." + netdata.UpgradeRepo.SystemDescriptor.SystemName;
+            long amount = (long)upgdata.Cost;
+            if(CashManager.CashDeductInternal(session, systemtosend, amount) == false)
+            {
+                writer.Write("You can't afford this upgrade!");
+                return (byte)ServerResponseType.REQ_ERROR;
+            }
+
+            netdata.AvailableUpgrades.Remove(upgradeid);
+
+            var save = Program.GetSaveFromPrl(sessiondata.SaveID);
+
+            if (save.SystemDescriptor.Upgrades.ContainsKey(upgradeid))
+            {
+                save.SystemDescriptor.Upgrades[upgradeid] = true;
+            }
+            else
+            {
+                save.SystemDescriptor.Upgrades.Add(upgradeid, true);
+            }
+
+            Program.SaveWorld();
+
+
             return 0x00;
         }
-
 
         [SessionRequired]
         [ServerMessageHandler(ServerMessageType.UPG_GETCOUNT)]

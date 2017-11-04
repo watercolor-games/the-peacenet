@@ -927,6 +927,10 @@ Now generating defenses...
 
         public static void ServerLoop()
         {
+            Console.WriteLine("Loading upgrade data...");
+            UpgradeManager.Initiate();
+            Console.WriteLine("Done.");
+
             ServerManager.LocateHandlers();
             Console.WriteLine("Validating npc/player filesystems...");
             bool requireSave = false;
