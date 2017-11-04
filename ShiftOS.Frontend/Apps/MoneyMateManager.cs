@@ -14,6 +14,7 @@ using System.Threading;
 
 namespace Plex.Frontend.Apps
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     [Launcher("MoneyMate Manager", false, null, "MoneyMate")]
     [WinOpen("moneymatemgr")]
     [DefaultTitle("MoneyMate Manager")]

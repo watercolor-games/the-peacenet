@@ -8,6 +8,7 @@ using Plex.Objects;
 
 namespace Plex.Extras
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class InstallerAttribute : ShiftoriumUpgradeAttribute
     {
         public InstallerAttribute(string name, string description, long bytescount, string dependencies = "") : base(name, 0, description, dependencies, "Installer files", false)

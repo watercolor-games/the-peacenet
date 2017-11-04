@@ -7,6 +7,7 @@ using Plex.Frontend.GUI;
 
 namespace Plex.Extras
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class PlexnetAttribute : Attribute
     {
@@ -20,6 +21,7 @@ namespace Plex.Extras
         public string Filename { get; private set; }
     }
 
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public abstract class PlexnetSite : Control
     {
         public event Action BackRequested;

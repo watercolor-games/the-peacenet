@@ -106,11 +106,16 @@ namespace Plex.Frontend.Apps
                 }
                 else
                 {
-                    if (Upgrades.Buy(selectedUpgrade.ID, selectedUpgrade.Cost) == true)
+                    string error = "";
+                    if (Upgrades.Buy(selectedUpgrade.ID, out error) == true)
                     {
                         Engine.Infobox.Show("Upgrade installed!", "You have successfully bought and installed the " + selectedUpgrade.Name + " upgrade for " + selectedUpgrade.Cost + " Experience.");
                         SelectUpgrade(null);
                         PopulateList();
+                    }
+                    else
+                    {
+                        Engine.Infobox.Show("Cannot buy upgrade.", error);
                     }
                 }
             };

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace Plex.Frontend.Apps
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     [DefaultTitle("Disclaimer")]
     public class Disclaimer : Control, IPlexWindow
     {

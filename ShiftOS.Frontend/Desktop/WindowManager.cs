@@ -94,6 +94,19 @@ namespace Plex.Frontend.Desktop
             return "Plex Window";
         }
 
+        public void DisplayObsolescenceIfAny(IPlexWindow win)
+        {
+            if (!(win is InfoboxMessage))
+            {
+                var attrib = win.GetType().GetCustomAttributes(true).FirstOrDefault(x => x is ObsoleteAttribute) as ObsoleteAttribute;
+
+                if(attrib != null)
+                {
+                    Engine.Infobox.Show($"{win.GetType().Name} is obsolete.", attrib.Message);
+                }
+            }
+        }
+
         public override void SetupDialog(IPlexWindow win)
         {
             if (UIManagerTools.InTextMode)
@@ -101,7 +114,7 @@ namespace Plex.Frontend.Desktop
                 Console.WriteLine("You can't run this program in textmode.");
                 return;
             }
-
+            DisplayObsolescenceIfAny(win);
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
             var ctl = win as GUI.Control;
@@ -151,6 +164,7 @@ namespace Plex.Frontend.Desktop
                 Console.WriteLine("Application not found on system.");
                 return;
             }
+            DisplayObsolescenceIfAny(win);
             if (isSingleInstance)
             {
                 var alreadyOpen = AppearanceManager.OpenForms.FirstOrDefault(x => x.ParentWindow.GetType() == win.GetType());

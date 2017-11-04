@@ -9,6 +9,7 @@ using Plex.Frontend.GUI;
 
 namespace Plex.Frontend.Apps
 {
+    [Obsolete("This feature will be removed in Milestone 2.")]
     [DefaultTitle("Community")]
     public class Community : Control, IPlexWindow
     {

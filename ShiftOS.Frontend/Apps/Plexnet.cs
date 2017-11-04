@@ -14,6 +14,7 @@ namespace Plex.Frontend.Apps
     [WinOpen("plexnet")]
     [DefaultTitle("Plexnet Browser")]
     [Launcher("Plexnet Browser", false, null, "Networking")]
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class Plexnet : Control, IPlexWindow
     {
         private PlexnetSite _site = null;

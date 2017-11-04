@@ -18,6 +18,7 @@ namespace Plex.Frontend.Apps
     [WinOpen("network")]
     [Launcher("Network", false, null, "Networking")]
     [DefaultTitle("Network")]
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class Network : Control, IPlexWindow
     {
         public static Objects.Plexnet plexnet = null;

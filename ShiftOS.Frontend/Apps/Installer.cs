@@ -14,6 +14,7 @@ namespace Plex.Frontend.Apps
 {
     [DefaultTitle("Installer")]
     [FileHandler("Setup file", ".pst", "")]
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class Installer : Control, IPlexWindow, IFileHandler
     {
         private SetupFile _setup = null;
@@ -144,6 +145,7 @@ namespace Plex.Frontend.Apps
         }
     }
 
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public class SetupFile
     {
         public string Name { get; set; }
@@ -152,6 +154,7 @@ namespace Plex.Frontend.Apps
         public string Source { get; set; }
     }
 
+    [Obsolete("This feature will be removed in Milestone 2.")]
     public enum SetupSource
     {
         ShiftoriumUpgrade,
