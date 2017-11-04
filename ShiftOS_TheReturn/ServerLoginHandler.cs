@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using Plex.Objects;
 
 namespace Plex.Engine
@@ -101,13 +101,13 @@ namespace Plex.Engine
             Height = 300;
 
             _title = new TextControl();
-            _usernameField = new Frontend.GUI.TextInput();
+            _usernameField = new Engine.GUI.TextInput();
             _passwordField = new TextInput();
-            _uname = new Frontend.GUI.TextControl();
-            _password = new Frontend.GUI.TextControl();
-            _ok = new Frontend.GUI.Button();
-            _cancel = new Frontend.GUI.Button();
-            _createacct = new Frontend.GUI.Button();
+            _uname = new Engine.GUI.TextControl();
+            _password = new Engine.GUI.TextControl();
+            _ok = new Engine.GUI.Button();
+            _cancel = new Engine.GUI.Button();
+            _createacct = new Engine.GUI.Button();
 
             _title.Text = "Login";
             _uname.Text = "Username:";
@@ -234,14 +234,14 @@ After logging in once, you will not have to log in again unless you have been in
             Height = 400;
 
             _title = new TextControl();
-            _usernameField = new Frontend.GUI.TextInput();
+            _usernameField = new Engine.GUI.TextInput();
             _passwordField = new TextInput();
-            _passwordConfirmField = new Frontend.GUI.TextInput();
-            _uname = new Frontend.GUI.TextControl();
-            _password = new Frontend.GUI.TextControl();
-            _passwordConfirm = new Frontend.GUI.TextControl();
-            _ok = new Frontend.GUI.Button();
-            _cancel = new Frontend.GUI.Button();
+            _passwordConfirmField = new Engine.GUI.TextInput();
+            _uname = new Engine.GUI.TextControl();
+            _password = new Engine.GUI.TextControl();
+            _passwordConfirm = new Engine.GUI.TextControl();
+            _ok = new Engine.GUI.Button();
+            _cancel = new Engine.GUI.Button();
 
             _title.Text = "Login";
             _uname.Text = "Username:";

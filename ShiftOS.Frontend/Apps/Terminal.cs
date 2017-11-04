@@ -11,7 +11,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using Plex.Objects.Pty;
 
 namespace Plex.Frontend.Apps
@@ -19,7 +20,7 @@ namespace Plex.Frontend.Apps
     [FileHandler("Shell script", ".trm", "fileicontrm")]
     [Launcher("{TITLE_TERMINAL}", false, null, "{AL_UTILITIES}")]
     [WinOpen("{WO_TERMINAL}")]
-    public class Terminal : GUI.ScrollView, IPlexWindow
+    public class Terminal : ScrollView, IPlexWindow
     {
         private bool _isOpen = true;
         private TerminalEmulator _terminal = null;
@@ -103,7 +104,7 @@ namespace Plex.Frontend.Apps
         }
     }
 
-    public class TerminalEmulator : GUI.TextControl
+    public class TerminalEmulator : TextControl
     {
         private static SpriteFont f_regular = null;
         private static SpriteFont f_italic = null;
@@ -432,7 +433,7 @@ Italic: {_italic}
 Buffer position: {_tbufferpos}
 Buffer requires complete redraw: {_resized}";
 
-                gfx.DrawString(text, 0, 0, Microsoft.Xna.Framework.Color.White, new System.Drawing.Font("Monda", 9F), Engine.GUI.TextAlignment.TopLeft, Width, Engine.TextRenderers.WrapMode.Words);
+                gfx.DrawString(text, 0, 0, Microsoft.Xna.Framework.Color.White, new System.Drawing.Font("Monda", 9F), TextAlignment.TopLeft, Width, Engine.TextRenderers.WrapMode.Words);
             }
             gfx.Batch.End();
             gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,

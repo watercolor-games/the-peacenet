@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using Plex.Objects;
 using static Plex.Engine.FSUtils;
 
@@ -16,16 +16,16 @@ namespace Plex.Frontend.Apps
 {
     [WinOpen("fileskimmer")]
     [Launcher("File Skimmer", false, null, "System")]
-    public class FileSkimmer : GUI.Control, IPlexWindow
+    public class FileSkimmer : Control, IPlexWindow
     {
         private string _currentdirectory = "0:";
         private const string SD_SYSTEM = "__system";
-        private GUI.ListView _fList = null;
-        private GUI.TextControl _currentdirtext = null;
-        private GUI.Button _openFile = null;
-        private GUI.TextControl _fileFilter = null;
-        private GUI.TextControl _filePrompt = null;
-        private GUI.TextInput _fileBox = null;
+        private ListView _fList = null;
+        private TextControl _currentdirtext = null;
+        private Button _openFile = null;
+        private TextControl _fileFilter = null;
+        private TextControl _filePrompt = null;
+        private TextInput _fileBox = null;
         private ScrollView _scrollView = null;
         private MenuItem _newFolder = null;
         private MenuItem _delete = null;
@@ -42,7 +42,7 @@ namespace Plex.Frontend.Apps
 
         public FileSkimmer()
         {
-            _fileBox = new GUI.TextInput();
+            _fileBox = new TextInput();
             _filePrompt = new TextControl();
             _fileFilter = new TextControl();
             _openFile = new Button();
@@ -61,7 +61,7 @@ namespace Plex.Frontend.Apps
 
             Width = 720;
             Height = 480;
-            _fList = new GUI.ListView();
+            _fList = new ListView();
             _fList.DoubleClick += () =>
             {
                 try
@@ -72,7 +72,7 @@ namespace Plex.Frontend.Apps
             };
             AddControl(_scrollView);
             _scrollView.AddControl(_fList);
-            _currentdirtext = new GUI.TextControl();
+            _currentdirtext = new TextControl();
             _currentdirtext.AutoSize = true;
             AddControl(_currentdirtext);
 
@@ -416,7 +416,7 @@ namespace Plex.Frontend.Apps
 
             _fList.ClearItems();
             if (_currentdirectory != SD_SYSTEM)
-                _fList.AddItem(new GUI.ListViewItem
+                _fList.AddItem(new ListViewItem
                 {
                     Text = "Up one...",
                     Tag = "__up",

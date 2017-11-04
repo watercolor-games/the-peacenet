@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Microsoft.Xna.Framework;
 using System.Runtime.InteropServices;
 
-namespace Plex.Frontend.GUI
+namespace Plex.Engine.GUI
 {
     public abstract class Control : IDisposable
     {

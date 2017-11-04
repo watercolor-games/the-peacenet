@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using Plex.Objects;
 using static Plex.Engine.FSUtils;
 

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Plex.Frontend.GUI;
+using Plex.Engine.GUI;
 using Plex.Engine;
 using Microsoft.Xna.Framework;
 using static Plex.Engine.FSUtils;
-
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Frontend.Apps
 {
@@ -164,7 +164,7 @@ namespace Plex.Frontend.Apps
             _preview.ImageLayout = _layout;
             if (_image == null)
                 return;
-            _preview.Image = _image.ToTexture2D(GraphicsSubsystem.UIManager.GraphicsDevice);
+            _preview.Image = _image.ToTexture2D(UIManager.GraphicsDevice);
             Invalidate();
         }
 

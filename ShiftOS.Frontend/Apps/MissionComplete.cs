@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine;
-using Plex.Frontend.GUI;
+using Plex.Engine.GUI;
 
 namespace Plex.Frontend.Apps
 {
@@ -30,11 +30,11 @@ namespace Plex.Frontend.Apps
             _cptnobvious.Text = " - Mission complete - ";
             AddControl(_cptnobvious);
 
-            _mtitle = new GUI.TextControl();
+            _mtitle = new TextControl();
             _mtitle.AutoSize = true;
             AddControl(_mtitle);
 
-            _description = new GUI.TextControl();
+            _description = new TextControl();
             _description.AutoSize = true;
             AddControl(_description);
 

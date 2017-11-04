@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
+using Plex.Engine.GUI;
 
 namespace Plex.Frontend.Apps
 {
     [Launcher("Upgrades", false, null, "Utilities")]
     [WinOpen("upgrademgr")]
-    public class CodeShop : GUI.Control, IPlexWindow
+    public class CodeShop : Control, IPlexWindow
     {
-        private GUI.TextControl _mainTitle = new GUI.TextControl();
-        private GUI.ListBox upgradelist = null;
+        private TextControl _mainTitle = new TextControl();
+        private ListBox upgradelist = null;
         private ShiftoriumUpgrade selectedUpgrade = null;
-        private GUI.ProgressBar upgradeprogress = null;
-        private GUI.Button buy = null;
-        private GUI.TextControl _upgradeTitle = new GUI.TextControl();
-        private GUI.TextControl _upgradeDescription = new GUI.TextControl();
+        private ProgressBar upgradeprogress = null;
+        private Button buy = null;
+        private TextControl _upgradeTitle = new TextControl();
+        private TextControl _upgradeDescription = new TextControl();
         private Dictionary<string, ShiftoriumUpgrade> _upgradedatabase = new Dictionary<string, ShiftoriumUpgrade>();
 
         public CodeShop()
@@ -51,7 +52,7 @@ namespace Plex.Frontend.Apps
                 buy.X = Width - buy.Width - 15;
                 buy.Y = Height - buy.Height - 15;
                 buy.Visible = (selectedUpgrade != null);
-                _upgradeTitle.FontStyle = GUI.TextControlFontStyle.Header2;
+                _upgradeTitle.FontStyle = TextControlFontStyle.Header2;
                 _upgradeTitle.AutoSize = true;
                 int wrapwidth = (Width - (upgradelist.X + upgradelist.Width)) - 45;
                 _upgradeTitle.MaxWidth = wrapwidth;
@@ -64,7 +65,7 @@ namespace Plex.Frontend.Apps
                 _upgradeDescription.Height = (Height - _upgradeDescription.Y - 50);
 
                 _mainTitle.Y = upgradelist.Y - _mainTitle.Height - 5;
-                _mainTitle.FontStyle = GUI.TextControlFontStyle.Header1;
+                _mainTitle.FontStyle = TextControlFontStyle.Header1;
                 _mainTitle.MaxWidth = upgradelist.Width;
                 _mainTitle.X = upgradelist.X + ((upgradelist.Width - _mainTitle.Width) / 2);
             }
@@ -76,7 +77,7 @@ namespace Plex.Frontend.Apps
 
         public void OnLoad()
         {
-            buy = new GUI.Button();
+            buy = new Button();
             buy.Text = "Buy upgrade";
             buy.AutoSize = true;
             buy.Click += () =>
@@ -118,8 +119,8 @@ namespace Plex.Frontend.Apps
                 }
             };
             AddControl(buy);
-            upgradelist = new GUI.ListBox();
-            upgradeprogress = new GUI.ProgressBar();
+            upgradelist = new ListBox();
+            upgradeprogress = new ProgressBar();
             AddControl(upgradeprogress);
             AddControl(upgradelist);
             upgradelist.SelectedIndexChanged += () =>

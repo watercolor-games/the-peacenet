@@ -12,7 +12,7 @@ using Plex.Objects.ShiftFS;
 using System.Reflection;
 using Plex.Engine.Scripting;
 using Plex.Objects;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine
 {

@@ -15,7 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Net.NetworkInformation;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using System.Net;
 
 namespace Plex.Engine

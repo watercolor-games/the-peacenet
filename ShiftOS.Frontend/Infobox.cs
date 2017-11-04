@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine;
 using Plex.Frontend.Desktop;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 
 namespace Plex.Frontend
 {
@@ -33,7 +33,7 @@ namespace Plex.Frontend
         }
     }
 
-    public class InfoboxMessage : GUI.Control, IPlexWindow
+    public class InfoboxMessage : Control, IPlexWindow
     {
         private Action _okAction = null;
         private Action<bool> _yesNoAction = null;

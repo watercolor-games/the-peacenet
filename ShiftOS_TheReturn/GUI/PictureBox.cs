@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Plex.Engine;
 using System.Drawing.Imaging;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Plex.Frontend.GUI
+namespace Plex.Engine.GUI
 {
     public class PictureBox : Control
     {

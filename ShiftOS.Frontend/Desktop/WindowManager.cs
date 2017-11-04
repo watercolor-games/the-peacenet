@@ -10,7 +10,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 
 
 namespace Plex.Frontend.Desktop
@@ -107,13 +108,13 @@ namespace Plex.Frontend.Desktop
                 return;
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
-            var ctl = win as GUI.Control;
+            var ctl = win as Control;
             if (ctl.Width < 30)
                 ctl.Width = 30;
             if (ctl.Height < 30)
                 ctl.Height = 30;
-            wb.Width = (win as GUI.Control).Width + 4;
-            wb.Height = (win as GUI.Control).Height + 32;
+            wb.Width = (win as Control).Width + 4;
+            wb.Height = (win as Control).Height + 32;
             wb.ParentWindow = win;
             wb.IsDialog = true;
             UIManager.AddTopLevel(wb);
@@ -158,8 +159,8 @@ namespace Plex.Frontend.Desktop
             }
             var wb = new WindowBorder();
             wb.Text = GetTitle(win);
-            wb.Width = (win as GUI.Control).Width + 4;
-            wb.Height = (win as GUI.Control).Height + 32;
+            wb.Width = (win as Control).Width + 4;
+            wb.Height = (win as Control).Height + 32;
             wb.ParentWindow = win;
             wb.IsDialog = false;
             wb.X = (UIManager.Viewport.Width - wb.Width) / 2;
@@ -174,7 +175,7 @@ namespace Plex.Frontend.Desktop
 
     }
 
-    public class WindowBorder : GUI.TextControl, IWindowBorder
+    public class WindowBorder : TextControl, IWindowBorder
     {
         private bool _maximized = false;
         private int _normalx = 0;
@@ -234,7 +235,7 @@ namespace Plex.Frontend.Desktop
 
         }
 
-        private GUI.Control _hostedwindow = null;
+        private Control _hostedwindow = null;
 
         public void ResizeWindow(int width, int height)
         {
@@ -289,7 +290,7 @@ namespace Plex.Frontend.Desktop
 
             set
             {
-                _hostedwindow = (GUI.Control)value;
+                _hostedwindow = (Control)value;
                 ClearControls();
                 AddControl(_hostedwindow);
                 Width = 2 + _hostedwindow.Width + 2;
@@ -317,7 +318,7 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
-            FontStyle = GUI.TextControlFontStyle.Custom;
+            FontStyle = TextControlFontStyle.Custom;
             TextColor = Microsoft.Xna.Framework.Color.White;
             if (_minimized == true)
             {

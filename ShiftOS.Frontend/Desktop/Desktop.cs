@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.Apps;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 
 
 namespace Plex.Frontend.Desktop
 {
-    public class Desktop : GUI.TextControl, IDesktop
+    public class Desktop : TextControl, IDesktop
     {
         private ItemGroup _panelButtonGroup = new ItemGroup();
         private Button _userMenu = new Button();

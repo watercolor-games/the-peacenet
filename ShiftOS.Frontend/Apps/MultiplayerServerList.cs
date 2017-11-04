@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
-using Plex.Frontend.GUI;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using Plex.Objects;
 
 namespace Plex.Frontend.Apps
@@ -162,7 +162,7 @@ namespace Plex.Frontend.Apps
             _list.ClearItems();
             foreach(var server in _servers)
             {
-                _list.AddItem(new GUI.ListViewItem
+                _list.AddItem(new ListViewItem
                 {
                     Text = server.FriendlyName,
                      Tag = _servers.IndexOf(server).ToString(),

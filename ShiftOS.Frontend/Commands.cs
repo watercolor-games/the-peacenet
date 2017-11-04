@@ -18,7 +18,7 @@ using Plex.Engine.Scripting;
 using Plex.Objects.ShiftFS;
 using Plex.Engine;
 using Microsoft.Xna.Framework;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using static Plex.Engine.TerminalBackend;
 
 namespace Plex.Frontend

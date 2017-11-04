@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GUI;
 using Plex.Engine.TextRenderers;
 
-namespace Plex.Frontend.GraphicsSubsystem
+namespace Plex.Engine.GraphicsSubsystem
 {
     public class GraphicsContext
     {

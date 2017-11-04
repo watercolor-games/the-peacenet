@@ -12,10 +12,10 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
 using Plex.Engine;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
 
-namespace Plex.Frontend
+namespace Plex.Engine
 {
     /// <summary>
     /// This is the main type for your game.

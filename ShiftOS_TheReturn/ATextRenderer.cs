@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine.GUI;
 using Plex.Engine.TextRenderers;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine
 {

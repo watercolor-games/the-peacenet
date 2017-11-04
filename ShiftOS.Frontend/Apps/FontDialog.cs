@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Plex.Engine;
-using Plex.Frontend.GUI;
+using Plex.Engine.GUI;
 using System.Drawing.Text;
 using System.Drawing;
 

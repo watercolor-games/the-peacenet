@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plex.Engine;
-using Plex.Frontend.GUI;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GUI;
+using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Objects;
@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Plex.Frontend
 {
-    public class MainMenu : GUI.Control
+    public class MainMenu : Control
     {
         private TerminalEmulator _terminal = new TerminalEmulator();
         private PictureBox _watercolorgames = new PictureBox();

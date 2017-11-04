@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Plex.Frontend.GUI
+namespace Plex.Engine.GUI
 {
     public class CheckBox : GUI.Control
     {

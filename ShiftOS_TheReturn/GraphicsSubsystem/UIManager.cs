@@ -15,10 +15,10 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine;
 using Plex.Engine.TextRenderers;
-using Plex.Frontend.GUI;
+using Plex.Engine.GUI;
 using Plex.Objects;
 
-namespace Plex.Frontend.GraphicsSubsystem
+namespace Plex.Engine.GraphicsSubsystem
 {
     public static class UIManager
     {
