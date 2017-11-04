@@ -371,10 +371,20 @@ namespace Plex.Frontend.Apps
                             gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _bgColor);
                             break;
                         case '\r':
+                            int _rx = (_charX * _charWidth);
+                            int _ry = (_charY * _charHeight);
+                            int _rwidth = (Width - _rx);
+                            int _rheight = (_charHeight);
+                            gfx.DrawRectangle(_rx, _ry, _rwidth, _rheight, _bgColor);
                             _charX = 0;
                             break;
                         case '\n':
                             _charY++;
+                            int _nx = (_charX * _charWidth);
+                            int _ny = (_charY * _charHeight);
+                            int _nwidth = (Width - _nx);
+                            int _nheight = (_charHeight);
+                            gfx.DrawRectangle(_nx, _ny, _nwidth, _nheight, _bgColor);
                             break;
                         case '\t':
                             for (int i = 0; i < 4; i++)
