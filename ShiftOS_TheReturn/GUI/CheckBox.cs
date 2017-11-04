@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Plex.Frontend.GraphicsSubsystem;
 using Plex.Engine;
-using static Plex.Engine.SkinEngine;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Frontend.GUI
@@ -42,15 +41,6 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlTextColor"]);
-            gfx.DrawRectangle(1, 1, Width - 2, Height - 2, UIManager.SkinTextures["ControlColor"]);
-            if (_checked)
-            {
-                gfx.DrawLine(4, 4, Width-4, Height-4, 1, UIManager.SkinTextures["ControlTextColor"]);
-                gfx.DrawLine(Width-4, 4, 4, Height - 4, 1, UIManager.SkinTextures["ControlTextColor"]);
-
-            }
-
         }
 
         public event Action CheckedChanged;

@@ -58,7 +58,7 @@ namespace Plex.Frontend.Apps
             };
             _apply.Click += () =>
             {
-                byte[] bytes = (_image == null) ? null : (SkinEngine.ImageToBinary(_image));
+                byte[] bytes = (_image == null) ? null : (ImageToBinary(_image));
                 _callback.Invoke(_image, bytes, _layout);
                 AppearanceManager.Close(this);
             };
@@ -74,7 +74,7 @@ namespace Plex.Frontend.Apps
                  {
                      try
                      {
-                         _image = SkinEngine.ImageFromBinary(ReadAllBytes(file));
+                         _image = ImageFromBinary(ReadAllBytes(file));
                          LoadPreview();
                      }
                      catch
@@ -104,6 +104,23 @@ namespace Plex.Frontend.Apps
                 LoadPreview();
             };
 
+        }
+
+        public byte[] ImageToBinary(System.Drawing.Image image)
+        {
+            using(var memstr = new System.IO.MemoryStream())
+            {
+                image.Save(memstr, System.Drawing.Imaging.ImageFormat.Png);
+                return memstr.ToArray();
+            }
+        }
+        
+        public System.Drawing.Image ImageFromBinary(byte[] data)
+        {
+            using(var memstr = new System.IO.MemoryStream(data))
+            {
+                return System.Drawing.Image.FromStream(memstr);
+            }
         }
 
         public void OnLoad()
@@ -154,7 +171,6 @@ namespace Plex.Frontend.Apps
         protected override void OnLayout(GameTime gameTime)
         {
             _title.AutoSize = true;
-            _title.Font = SkinEngine.LoadedSkin.HeaderFont;
             _title.MaxWidth = Width - 30;
             _title.Y = 15;
             _title.X = (Width - _title.Width) / 2;

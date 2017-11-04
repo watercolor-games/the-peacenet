@@ -12,7 +12,6 @@ using System.IO;
 using Newtonsoft.Json;
 using Plex.Objects;
 using Plex.Objects.ShiftFS;
-using oobe = Plex.Engine.OutOfBoxExperience;
 using static System.Net.Mime.MediaTypeNames;
 using static Whoa.Whoa;
 
@@ -53,7 +52,6 @@ namespace Plex.Engine
             FSUtils.CreateMountIfNotExists();
 
             Paths.Init();
-            SkinEngine.Init();
             Localization.SetupTHETRUEDefaultLocals();
             TerminalBackend.PopulateTerminalCommands();
             Ready.Reset();

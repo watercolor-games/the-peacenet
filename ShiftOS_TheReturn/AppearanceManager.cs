@@ -32,61 +32,6 @@ namespace Plex.Engine
             return ReflectMan.Types.Where(t => t.GetInterfaces().Contains(typeof(IPlexWindow)));
         }
 
-        // hey you know that window we just made appear? well give it its title -Rylan (authortext added by alkaline for great memery)
-        //...
-        //Note to self: Never let Rylan Arbour document your code. - Alkaline
-        [Obsolete("ShiftOS-style skinning will soon not be directly supported by the engine.")]
-        public static string GetDefaultTitle(Type winType)
-        {
-            if (winType == null)
-                throw new ArgumentNullException("winType");
-            foreach(var attrib in winType.GetCustomAttributes(false))
-            {
-                if(attrib is DefaultTitleAttribute)
-                {
-                    return (attrib as DefaultTitleAttribute).Title;
-                }
-            }
-            return winType.Name;
-        }
-
-        // Current cursor position of the console
-        [Obsolete("Terminal I/O should be handled inside the terminal emulator.")]
-        public static int CurrentPosition { get; set; }
-
-        // We don't know what this does. It may be gone if it does nothing.
-        [Obsolete("Terminal I/O should be handled inside the terminal emulator.")]
-        public static int LastLength { get; set; }
-
-
-        // Minimize a window.
-        [Obsolete("This should be handled by the window itself.")]
-        public static void Minimize(IWindowBorder form)
-        {
-            if (form == null)
-                //FUCK WHY THE FUCK IS THIS NULL
-                throw new ArgumentNullException("form");
-            if (winmgr == null)
-                //FUCK THIS PART OF THE ENGINE WASNT TURNED ON YET
-                throw new EngineModuleDisabledException();
-            winmgr.Minimize(form);
-        }
-
-        // Maximizes a window! :D
-        [Obsolete("This should be handled by the window itself.")]
-        public static void Maximize(IWindowBorder form)
-        {
-            if (form == null)
-                //AHHHH SHOULDNT BE NULLLLLL
-                throw new ArgumentNullException("form");
-            if (winmgr == null)
-                //WHY ARE YOU DOING THIS PART OF THE ENGINE IT WASNT ENABLED FUCK
-                throw new EngineModuleDisabledException();
-            winmgr.Maximize(form);
-        }
-
-
-
         // Provides a list of all open Plex windows.
         public static List<IWindowBorder> OpenForms = new List<IWindowBorder>();
 
@@ -154,34 +99,6 @@ namespace Plex.Engine
                 Process.GetCurrentProcess().Kill(); //bye bye
             });
         }
-
-        // The current terminal body control.
-        [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
-        public static ITerminalWidget ConsoleOut { get; set; }
-
-        // Redirects the .NET to a new TerminalTextWriter instance.  
-        [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
-        public static void StartConsoleOut()
-        {
-            Console.SetOut(new TerminalTextWriter()); //"plz start writing text .NET kthx"
-        }
-
-        // Invokes an action on the window management thread.
-        [Obsolete("Use Desktop.InvokeOnWorkerThread(). This is redundant.")]
-        public static void Invoke(Action act)
-        {
-            winmgr.InvokeAction(act);
-        }
-    }
-
-    // Provides the base functionality for a Plex terminal.
-    [Obsolete("Terminal I/O should be handled by the terminal emulator.")]
-    public interface ITerminalWidget
-    {
-        void Write(string text); // Actually write text to this Terminal! :D:D:D:D
-        void WriteLine(string text); // Write text to this Terminal, followed by a newline.
-        void Clear(); // Clear the contents of this Terminal, i bet you wouldve never guessed that
-        void SelectBottom(); // Move the cursor to the last character in the Terminal.
     }
 
     // makes the window manager actually do its job

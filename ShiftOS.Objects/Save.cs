@@ -35,20 +35,6 @@ namespace Plex.Objects
     //Better to store this stuff server-side so we can do some neat stuff with hacking...
     public class Save
     {
-		[Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public List<ViralInfection> ViralInfections { get; set; }
-        
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public bool MusicEnabled = true;
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public bool SoundEnabled = true;
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public int MusicVolume = 100;
-        
         [Order]
         public string Username = "user";
         
@@ -61,19 +47,7 @@ namespace Plex.Objects
         [Order]
         public Dictionary<string, bool> Upgrades { get; set; }
         [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public int StoryPosition { get; set; }
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public string Language { get; set; }
-        [Order]
         public string SystemName { get; set; }
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public int ShiftnetSubscription { get; set; }
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public Guid ID { get; set; }
         [Order]
         public List<string> StoriesExperienced { get; set; }
 
@@ -108,33 +82,6 @@ namespace Plex.Objects
 
         [Order]
         public List<CashTransaction> Transactions { get; set; }
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public List<HackableSystem> CompletedHacks { get; set; }
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public byte AccentR = 32;
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public byte AccentG = 32;
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public byte AccentB = 32;
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public bool UseRGB101Compatibility = true;
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public List<UsedCredential> UsedCredentials { get; set; }
-
-        [Order]
-        [Obsolete("This feature will be removed in Milestone 2.")]
-        public string Password { get; set; }
 
         [Order]
         public Dictionary<string, long> NetworkTasks { get; set; }
@@ -247,15 +194,6 @@ namespace Plex.Objects
 
             return true;
         }
-    }
-
-    [Obsolete("This feature will be removed in Milestone 2.")]
-    public class ViralInfection
-    {
-		[Order]
-        public string ID { get; set; }
-        [Order]
-        public int ThreatLevel { get; set; }
     }
 
     public class MountInformation

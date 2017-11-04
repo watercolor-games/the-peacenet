@@ -154,10 +154,7 @@
     <Compile Include="ATextRenderer.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="AudioPlayerSubsystem.cs" />
-    <Compile Include="BFInterpreter.cs" />
-    <Compile Include="CashManager.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="ConsoleEx.cs" />
     <Compile Include="CrashHandler.cs" />
     <Compile Include="CrashHandler.Designer.cs">
       <DependentUpon>CrashHandler.cs</DependentUpon>
@@ -192,13 +189,10 @@
     <Compile Include="Infobox.cs" />
     <Compile Include="GUI\IShiftOSWindow.cs" />
     <Compile Include="GUI\IStatusIcon.cs" />
-    <Compile Include="IVirus.cs" />
     <Compile Include="Localization.cs" />
-    <Compile Include="LoginManager.cs" />
     <Compile Include="Lunix.cs" />
     <Compile Include="MissionAttribute.cs" />
     <Compile Include="NetworkTimeoutException.cs" />
-    <Compile Include="NotificationDaemon.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Plexgate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -212,7 +206,6 @@
     <Compile Include="Scripting.cs" />
     <Compile Include="ServerLoginHandler.cs" />
     <Compile Include="ServerManager.cs" />
-    <Compile Include="ShiftnetSite.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
     <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
@@ -220,7 +213,6 @@
     <Compile Include="GUI\Skinning.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
-    <Compile Include="TerminalTextWriter.cs" />
     <Compile Include="GUI\WinOpenAttribute.cs" />
     <EmbeddedResource Include="CrashHandlerUI.resx">
       <DependentUpon>CrashHandlerUI.cs</DependentUpon>

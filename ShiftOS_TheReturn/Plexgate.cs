@@ -29,15 +29,6 @@ namespace Plex.Frontend
         public GUI.PictureBox _downloadImg = new GUI.PictureBox();
 
 
-        [Obsolete("Just use a damn infobox :L")]
-        public void Modal(string title, string message, Action onEnter)
-        {
-
-        }
-
-
-
-
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
 
@@ -47,9 +38,7 @@ namespace Plex.Frontend
 
         private GUI.TextControl _objectiveTitle = new GUI.TextControl();
         private GUI.TextControl _objectiveDesc = new GUI.TextControl();
-        private int objectiveState = 0;
-        private double _objectiveStateValue = 0.0;
-
+        
         public event Action Initializing;
 
         public void FireInitialized()
@@ -89,14 +78,7 @@ namespace Plex.Frontend
         }
 
 
-        private bool isFailing = false;
-        private double failFadeInMS = 0;
         private const double failFadeMaxMS = 500;
-        private string failMessage = "";
-        private string failRealMessage = "";
-        private double failFadeOutMS = 0;
-        private bool failEnded = false;
-        private double failCharAddMS = 0;
 
         public RenderTarget2D GameRenderTarget = null;
 
@@ -108,15 +90,6 @@ namespace Plex.Frontend
 
         public Plexgate()
         {
-            Story.FailureRequested += (message) =>
-            {
-                failMessage = "";
-                failRealMessage = message;
-                isFailing = true;
-                failFadeInMS = 0;
-                failFadeOutMS = 0;
-                failEnded = false;
-            };
             graphicsDevice = new GraphicsDeviceManager(this);
             var uconf = Objects.UserConfig.Get();
             graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
@@ -178,8 +151,6 @@ namespace Plex.Frontend
             }
         }
 
-        private double lowestfps = 0;
-
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
             if (e.Key == Keys.F11)
@@ -188,7 +159,6 @@ namespace Plex.Frontend
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
-                lowestfps = double.MaxValue;
                 highestfps = 0;
                 DisplayDebugInfo = !DisplayDebugInfo;
             }
@@ -250,7 +220,6 @@ namespace Plex.Frontend
 
         }
 
-        private double msSinceLastReply = 0.0;
 
         private Texture2D MouseTexture = null;
 
@@ -265,9 +234,6 @@ namespace Plex.Frontend
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
-
-            UIManager.ResetSkinTextures(GraphicsDevice);
-
 
             // TODO: use this.Content to load your game content here
             var bmp = Engine.Properties.Resources.cursor_9x_pointer;
@@ -395,8 +361,6 @@ namespace Plex.Frontend
 
             base.Update(gameTime);
         }
-
-        float shroudOpacity = 0.0f;
 
         private GUI.TextControl framerate = new GUI.TextControl();
 

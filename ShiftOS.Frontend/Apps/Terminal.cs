@@ -103,7 +103,7 @@ namespace Plex.Frontend.Apps
         }
     }
 
-    public class TerminalEmulator : GUI.TextControl, ITerminalWidget
+    public class TerminalEmulator : GUI.TextControl
     {
         private static SpriteFont f_regular = null;
         private static SpriteFont f_italic = null;
@@ -548,31 +548,5 @@ Buffer requires complete redraw: {_resized}";
             RequireTextRerender();
             Invalidate();
         }
-
-        public void SelectBottom()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
-
-
-    public static class GraphicsExtensions
-    {
-
-        [Obsolete("Use GraphicsContext.MeasureString instead")]
-        public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font, int width)
-        {
-            var measure = System.Windows.Forms.TextRenderer.MeasureText(s, font, new Size(width, int.MaxValue));
-            return measure;
-        }
-
-        [Obsolete("Use GraphicsContext.MeasureString instead")]
-        public static SizeF SmartMeasureString(this Graphics gfx, string s, Font font)
-        {
-            return SmartMeasureString(gfx, s, font, int.MaxValue);
-        }
-
     }
 }

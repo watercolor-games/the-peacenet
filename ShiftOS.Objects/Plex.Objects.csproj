@@ -54,8 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandParser.cs" />
-    <Compile Include="DebugBinaryStreams.cs" />
-    <Compile Include="EngineShiftnetSubscription.cs" />
     <Compile Include="FFI\DotNet.cs" />
     <Compile Include="FFI\IFFI.cs" />
     <Compile Include="Hacking\Loot.cs" />
@@ -65,8 +63,6 @@
     <Compile Include="Hacking\Hackable.cs" />
     <Compile Include="Hacking\Puzzle.cs" />
     <Compile Include="IRCNetwork.cs" />
-    <Compile Include="MudAttributes.cs" />
-    <Compile Include="Objects.cs" />
     <Compile Include="PlexFS\EntryType.cs" />
     <Compile Include="PlexFS\OpenMode.cs" />
     <Compile Include="PlexFS\PlexFAT.cs" />
@@ -80,7 +76,6 @@
     <Compile Include="Rank.cs" />
     <Compile Include="RankManager.cs" />
     <Compile Include="ReflectMan.cs" />
-    <Compile Include="REST_Announcement.cs" />
     <Compile Include="Save.cs" />
     <Compile Include="ServerDetails.cs" />
     <Compile Include="ServerEnums.cs" />

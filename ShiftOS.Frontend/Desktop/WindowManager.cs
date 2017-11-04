@@ -325,15 +325,8 @@ namespace Plex.Frontend.Desktop
             }
             else
             {
-                if (UIManagerTools.InProtectedGUI && !IsDialog)
-                {
-                    Visible = false;
-                    return;
-                }
-                else
-                {
-                    Visible = true;
-                }
+                Visible = true;
+            
                 if (IsFocusedControl || ContainsFocusedControl)
                 {
                     UIManager.BringToFront(this);

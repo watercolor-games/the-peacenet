@@ -295,11 +295,6 @@ namespace Plex.Frontend.GraphicsSubsystem
                 DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
         }
 
-        public static void Modal(string title, string text, Action onEnter = null)
-        {
-            _game.Modal(title, text, onEnter);
-        }
-
         public static void ShowCloudUpload()
         {
             _game.uploading = true;
@@ -430,11 +425,6 @@ namespace Plex.Frontend.GraphicsSubsystem
             FocusedControl?.ProcessKeyEvent(e);
         }
 
-        [Obsolete("ShiftOS-style skinning will no longer be directly supported by the engine.")]
-        public static void ResetSkinTextures(GraphicsDevice graphics)
-        {
-        }
-
         public static void SetUITint(Color color)
         {
             _game.UITint = color;
@@ -448,6 +438,7 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {
+            graphics.Clear(Color.Black);
         }
 
         public static Color ToMonoColor(this System.Drawing.Color color)

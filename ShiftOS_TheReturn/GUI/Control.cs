@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Drawing;
 using Plex.Frontend.GraphicsSubsystem;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
@@ -32,7 +31,6 @@ namespace Plex.Frontend.GUI
         private bool _autoSize = false;
         private double _opacity = 1.0;
         private bool _invalidated = true;
-        private Bitmap _texCache = null;
         private Anchor _anchor = null;
         private int _mouseX = 0;
         private int _mouseY = 0;
@@ -160,33 +158,6 @@ namespace Plex.Frontend.GUI
             }
         }
 
-        public Image TextureCache
-        {
-            get
-            {
-                return _texCache;
-            }
-        }
-
-        public byte[] PaintCache
-        {
-            get
-            {
-                var data = _texCache.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                var rgb = new byte[Math.Abs(data.Stride) * data.Height];
-                Marshal.Copy(data.Scan0, rgb, 0, rgb.Length);
-                for(int i = 0; i < rgb.Length; i += 4)
-                {
-                    byte r = rgb[i];
-                    byte b = rgb[i + 2];
-                    rgb[i] = b;
-                    rgb[i + 2] = r;
-                }
-                _texCache.UnlockBits(data);
-                return rgb;
-            }
-        }
-
         public bool CaptureMouse
         {
             get
@@ -264,32 +235,6 @@ namespace Plex.Frontend.GUI
             {
                 _autoSize = value;
             }
-        }
-
-        //Thank you, StackOverflow.
-        public static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new System.Drawing.Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
         }
 
         public DockStyle Dock
@@ -488,7 +433,7 @@ namespace Plex.Frontend.GUI
 
         protected virtual void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, UIManager.SkinTextures["ControlColor"]);
+            gfx.DrawRectangle(0, 0, Width, Height, Color.DarkSlateGray);
         }
 
         public void SendToBack()
@@ -836,36 +781,6 @@ namespace Plex.Frontend.GUI
         Left,
         Right,
         Fill
-    }
-
-    //Thanks, StackOverflow.
-    public static class BitmapExtensions
-    {
-        public static Image SetOpacity(this Image image, float opacity)
-        {
-            var colorMatrix = new ColorMatrix();
-            colorMatrix.Matrix33 = opacity;
-            var imageAttributes = new ImageAttributes();
-            imageAttributes.SetColorMatrix(
-                colorMatrix,
-                ColorMatrixFlag.Default,
-                ColorAdjustType.Bitmap);
-            var output = new Bitmap(image.Width, image.Height);
-            using (var gfx = Graphics.FromImage(output))
-            {
-                gfx.SmoothingMode = SmoothingMode.AntiAlias;
-                gfx.DrawImage(
-                    image,
-                    new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
-                    0,
-                    0,
-                    image.Width,
-                    image.Height,
-                    GraphicsUnit.Pixel,
-                    imageAttributes);
-            }
-            return output;
-        }
     }
 
     [Flags]

@@ -143,7 +143,6 @@ namespace Plex.Engine
                                     {
                                         var mission = story as MissionAttribute;
                                         SaveSystem.AddExperience(mission.CodepointAward);
-                                        TerminalBackend.PrintPrompt();
                                         TerminalBackend.PrefixEnabled = true;
                                         TerminalBackend.InStory = false;
                                         MissionComplete?.Invoke(mission);

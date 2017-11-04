@@ -55,32 +55,6 @@ namespace Plex.Engine
             Installed?.Invoke();
         }
 
-        /// <summary>
-        /// Buy an upgrade, deducting the specified amount of Experience.
-        /// </summary>
-        /// <param name="id">The upgrade ID to buy</param>
-        /// <param name="cost">The amount of Experience to deduct</param>
-        /// <returns>True if the upgrade was installed successfully, false if the user didn't have enough Experience or the upgrade wasn' found.</returns>
-        [Obsolete("Please use Buy(id).")]
-        public static bool Buy(string id, ulong cost)
-        {
-            if(CashManager.Deduct((long)cost, "upgrademgr") == true)
-            {
-                using (var w = new ServerStream(ServerMessageType.UPG_SETINSTALLED))
-                {
-                    w.Write(JsonConvert.SerializeObject(new
-                    {
-                        id = id,
-                        value = true
-                    }));
-                    w.Send();
-                }
-                Installed?.Invoke();
-                return true;
-            }
-            return false;
-        }
-
         public static bool Buy(string id, out string error)
         {
             using(var str = new ServerStream(ServerMessageType.UPG_BUY))

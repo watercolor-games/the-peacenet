@@ -14,6 +14,9 @@ namespace Plex.Frontend.GraphicsSubsystem
 {
     public class GraphicsContext
     {
+        private static Texture2D white = null;
+
+
         public SpriteBatch Batch
         {
             get
@@ -103,8 +106,16 @@ namespace Plex.Frontend.GraphicsSubsystem
 
         public GraphicsContext(GraphicsDevice device, SpriteBatch batch, int x, int y, int width, int height)
         {
+            if (device == null || batch == null)
+                throw new ArgumentNullException();
+            
             _graphicsDevice = device;
             _spritebatch = batch;
+            if(white == null)
+            {
+                white = new Texture2D(_graphicsDevice, 1, 1);
+                white.SetData<byte>(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF });
+            }
             Width = width;
             Height = height;
             X = x;
@@ -140,14 +151,14 @@ namespace Plex.Frontend.GraphicsSubsystem
             y1 += Y;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
-            _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
+            _spritebatch.Draw(white, new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
             x += X;
             y += Y;
-            _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], new Rectangle(x, y, width, height), color);
+            _spritebatch.Draw(white, new Rectangle(x, y, width, height), color);
         }
 
         public void DrawCircle(int x, int y, int radius, Color color)
@@ -155,7 +166,7 @@ namespace Plex.Frontend.GraphicsSubsystem
             float step = (float) Math.PI / (radius * 4);
             var rect = new Rectangle(x, y, radius, 1);
             for (float theta = 0; theta < 2 * Math.PI; theta += step)
-                _spritebatch.Draw(UIManager.SkinTextures["PureWhite"], rect, null, color, theta, Vector2.Zero, SpriteEffects.None, 0);
+                _spritebatch.Draw(white, rect, null, color, theta, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, ImageLayout layout = ImageLayout.Stretch)

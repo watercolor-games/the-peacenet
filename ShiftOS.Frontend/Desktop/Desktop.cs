@@ -122,7 +122,7 @@ namespace Plex.Frontend.Desktop
             {
                 Text = "Shut down",
             };
-            shutdown.ItemActivated += () => { PlexCommands.Shutdown(); };
+            shutdown.ItemActivated += () => { PlexCommands.Shutdown(null); };
             _appLauncher.AddItem(shutdown);
         }
 

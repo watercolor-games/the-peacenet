@@ -204,7 +204,7 @@ namespace Plex.Engine
                         else
                             tc.AllowInMP = true;
 
-                        tc.RequiresElevation = !(type.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                        tc.RequiresElevation = false;
 
                         var shellConstraint = mth.GetCustomAttributes(false).FirstOrDefault(x => x is ShellConstraintAttribute) as ShellConstraintAttribute;
                         tc.ShellMatch = (shellConstraint == null) ? "" : shellConstraint.Shell;
@@ -215,7 +215,7 @@ namespace Plex.Engine
                         }
 
                         tc.CommandInfo = cmd as Command;
-                        tc.RequiresElevation = tc.RequiresElevation || !(mth.GetCustomAttributes(false).FirstOrDefault(x => x is KernelModeAttribute) == null);
+                        tc.RequiresElevation = false;
                         tc.RequiredArguments = new List<string>();
                         //foreach (var arg in mth.GetCustomAttributes(false).Where(x => x is RequiresArgument))
                         //{
@@ -313,26 +313,6 @@ namespace Plex.Engine
             TerminalRequested?.Invoke();
         }
 
-        /// <summary>
-        /// Determines if the specified command method can be ran in RTS
-        /// </summary>
-        /// <param name="mth">The method to scan</param>
-        /// <param name="isRemote">Is the user in an RTS session?</param>
-        /// <returns>Whether the command can be run.</returns>
-        public static bool CanRunRemotely(MethodInfo mth, bool isRemote)
-        {
-            if (!isRemote)
-                return true;
-
-            foreach (var attr in mth.GetCustomAttributes(false))
-            {
-                if (attr is RemoteLockAttribute)
-                    return false;
-            }
-
-            return true;
-        }
-
         private static string _terminal_forward_session_id = "";
 
         private static string _ranCMD = "";
@@ -409,19 +389,6 @@ namespace Plex.Engine
                 }
             }
             return value;
-        }
-
-        /// <summary>
-        /// Prints the user prompt to the terminal.
-        /// </summary>
-        [Obsolete("Shells should be handled in the terminal ui.")]
-        public static void PrintPrompt()
-        {
-            if (PrefixEnabled)
-            {
-                Console.Write(ShellOverride);
-                ConsoleEx.Flush();
-            }
         }
 
         /// <summary>

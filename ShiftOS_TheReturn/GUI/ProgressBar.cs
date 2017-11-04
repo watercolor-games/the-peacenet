@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Frontend.GraphicsSubsystem;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
@@ -41,9 +40,9 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(LoadedSkin.ProgressBarBackgroundColor.ToMonoColor());
+            gfx.Clear(Color.Black);
             int w = (int)linear(_value, 0, _maximum, 0, Width);
-            gfx.DrawRectangle(0, 0, w, Height, LoadedSkin.ProgressColor.ToMonoColor());
+            gfx.DrawRectangle(0, 0, w, Height, Color.LightBlue);
         }
 
         static public double linear(double x, double x0, double x1, double y0, double y1)

@@ -32,8 +32,6 @@ namespace Plex.Objects
         UPG_GETUPGRADES = 0x30,
         UPG_ISINSTALLED = 0x31,
         UPG_ISLOADED = 0x32,
-        [Obsolete("Client-side upgrades have been deprecated in Peacenet Milestone 2 and thus will no longer be supported by the engine.")]
-        UPG_SETINSTALLED = 0x33,
         UPG_LOAD = 0x34,
         UPG_UNLOAD = 0x35,
         UPG_GETCOUNT = 0x36,

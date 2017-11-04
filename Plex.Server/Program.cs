@@ -519,15 +519,12 @@ Now generating defenses...
                 save.Experience = current.Experience;
                 save.MaxLoadedUpgrades = current.UpgradeMax;
             }
-            save.CompletedHacks = new List<HackableSystem>();
-            save.Language = "english";
             save.PickupPoint = "";
             save.StoriesExperienced = new List<string>();
             save.Transactions = new List<CashTransaction>();
-            save.ViralInfections = new List<ViralInfection>();
             save.Upgrades = new Dictionary<string, bool>();
             save.LoadedUpgrades = new List<string>();
-            save.ID = Guid.NewGuid();
+            save.NetworkTasks = new Dictionary<string, long>();
             hackable.SystemDescriptor = save;
             hackable.IsPwn3d = false;
             hackable.SystemType = type;
@@ -770,38 +767,6 @@ Now generating defenses...
 
 
 
-                }
-
-                Console.WriteLine("Updating system descriptors with no passwords...");
-
-                foreach(var net in GameWorld.Networks)
-                {
-                    foreach(var npc in net.NPCs)
-                    {
-                        if (string.IsNullOrWhiteSpace(npc.SystemDescriptor.Password))
-                        {
-                            Console.WriteLine("On {0}.{1}: ", net.Name, npc.SystemDescriptor.SystemName);
-                            bool hasPassword = rnd.Next(0, 100) > 50;
-                            if (hasPassword)
-                            {
-                                int passwordLength = 4 * (npc.SystemDescriptor.Rank * 2);
-                                string alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$%^&*()_+";
-                                string password = "";
-                                CharGen:
-                                char c = alphabet[rnd.Next(0, alphabet.Length)];
-                                password += c;
-                                if (password.Length < passwordLength)
-                                    goto CharGen;
-                                npc.SystemDescriptor.Password = password;
-                                Console.WriteLine("New password set.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("[evil maniac laughter] You get to have NO PASSWORD :D");
-                                npc.SystemDescriptor.Password = "";
-                            }
-                        }
-                    }
                 }
 
                 Console.WriteLine("Repositioning systems that need repositioning...");

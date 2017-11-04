@@ -38,29 +38,16 @@ namespace Plex.Frontend
 
     public static class PlexCommands
     {
-        [RemoteLock]
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
-        public static bool Shutdown()
+        public static void Shutdown(ConsoleContext console)
         {
             AudioPlayerSubsystem.Shutdown();
-            UIManagerTools.EnterTextMode();
-            TerminalBackend.InStory = true;
-            TerminalBackend.PrefixEnabled = false;
-            new System.Threading.Thread(() =>
-            {
-                Console.WriteLine("Plexgate is shutting down...");
-                Thread.Sleep(5000);
-                Console.WriteLine("If you can read this you're not human. Goodbye.");
-                UIManagerTools.LeaveTextMode();
-                ServerManager.Disconnect(DisconnectType.UserRequested);
-            }).Start();
-            return true;
+            ServerManager.Disconnect(DisconnectType.UserRequested);
         }
     }
 
     public static class WindowCommands
     {
-        [RemoteLock]
         [Command("processes", description = "{DESC_PROCESSES}")]
         public static bool List()
         {
@@ -95,7 +82,6 @@ namespace Plex.Frontend
             return true;
         }
 
-        [RemoteLock]
         [Command("close", description ="{DESC_CLOSE}")]
         [UsageString("<pid>")]
         public static void CloseWindow(Dictionary<string, object> args)

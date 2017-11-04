@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Frontend.GraphicsSubsystem;
-using static Plex.Engine.SkinEngine;
 
 namespace Plex.Frontend.GUI
 {
@@ -40,18 +39,18 @@ namespace Plex.Frontend.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 int texty = _itemy + texheight;
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                 if (_items.IndexOf(item) == _selected)
                 {
-                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxSelectedItemTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
+                    gfx.DrawString(item.Text, textx, texty, Color.White, Font, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
                 }
                 else
                 {
-                    gfx.DrawString(item.Text, textx, texty, LoadedSkin.ListBoxTextColor.ToMonoColor(), LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
+                    gfx.DrawString(item.Text, textx, texty, Color.LightGray, Font, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
                 }
                 _itemx += textwidth + _itemgap;
                 if (_itemx >= (Width - (_initialmargin * 2)))
@@ -85,7 +84,7 @@ namespace Plex.Frontend.GUI
                         }
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
-                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.MainFont, Engine.GUI.TextAlignment.Top, textwidth);
+                    var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                     int texty = _itemy + texheight;
@@ -197,7 +196,7 @@ namespace Plex.Frontend.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(LoadedSkin.InsetBackgroundColor.ToMonoColor());
+            gfx.Clear(Color.DarkGray);
             int _itemx = _initialmargin;
             int _itemy = _initialmargin - scroll;
             int yhelper = 0;
@@ -214,7 +213,7 @@ namespace Plex.Frontend.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
+                var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 if(image != null)
@@ -222,7 +221,7 @@ namespace Plex.Frontend.GUI
                     int imageDrawX = _itemx + ((textwidth - texwidth) / 2);
                     Color tint = Color.White;
                     if (_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
-                        tint = LoadedSkin.ListBoxSelectedItemColor.ToMonoColor();
+                        tint = Color.LightBlue;
                     gfx.DrawRectangle(imageDrawX, _itemy, texwidth, texheight, image, tint);
                 }
 
@@ -230,7 +229,7 @@ namespace Plex.Frontend.GUI
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                 if(_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
                 {
-                    gfx.DrawRectangle(textx, texty, (int)textmeasure.X, (int)textmeasure.Y, LoadedSkin.ListBoxSelectedItemColor.ToMonoColor());
+                    gfx.DrawRectangle(textx, texty, (int)textmeasure.X, (int)textmeasure.Y, Color.LightBlue);
                 }
                 _itemx += textwidth + _itemgap;
                 if(_itemx >= (Width - (_initialmargin * 2)))
@@ -263,7 +262,7 @@ namespace Plex.Frontend.GUI
                         image = _images[item.ImageKey];
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
-                    var textmeasure = GraphicsContext.MeasureString(item.Text, LoadedSkin.ListBoxFont, Engine.GUI.TextAlignment.Top, textwidth);
+                    var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                     int texty = _itemy + texheight;

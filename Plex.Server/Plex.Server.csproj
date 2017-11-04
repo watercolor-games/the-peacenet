@@ -53,7 +53,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationManager.cs" />
     <Compile Include="CashManager.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="DriveSpecs\PlexFATDriveMount.cs" />
