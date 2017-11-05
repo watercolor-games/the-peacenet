@@ -577,7 +577,29 @@ namespace Plex.Server
 
         public static void WorldManager()
         {
+            while(GameWorld != null)
+            {
+                Console.WriteLine("Refilling upgrade repositories...");
+                foreach(var net in GameWorld.Networks)
+                {
+                    if (net.AvailableUpgrades == null)
+                        net.AvailableUpgrades = new List<string>();
 
+                    var upgrades = UpgradeManager.Upgrades.Where(x => x.Rank <= net.UpgradeRepo.SystemDescriptor.Rank).ToArray();
+                    int len = (upgrades.Length < 2) ? upgrades.Length : upgrades.Length / 2;
+                    int delta = len - net.AvailableUpgrades.Count;
+                    for (int i = 0; i < delta; i++)
+                    {
+                        GetID:
+                        string upgid = upgrades[rnd.Next(upgrades.Length)].ID;
+                        if (net.AvailableUpgrades.Contains(upgid))
+                            goto GetID;
+                        net.AvailableUpgrades.Add(upgid);
+                        Console.WriteLine("<{0}.{1}> Added upgrade {2}", net.Name, net.UpgradeRepo.SystemDescriptor.SystemName, upgid);
+                    }
+                }
+                Sleep(TimeSpan.FromHours(1));
+            }
         }
 
         private static ServerConfiguration _conf = null;
