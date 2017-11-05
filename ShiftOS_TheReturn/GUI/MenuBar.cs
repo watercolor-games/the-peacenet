@@ -16,7 +16,7 @@ namespace Plex.Engine.GUI
 
         public MenuBar() : base()
         {
-
+            _fontHeight = (int)Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, "I am the bread of the sweetness.").Y + 6;
         }
 
         protected override void OnClick()
@@ -50,7 +50,7 @@ namespace Plex.Engine.GUI
             {
                 if (MenuItems[i].Enabled == false)
                     continue;
-                var loc = GraphicsContext.MeasureString(MenuItems[i].Text, Font, Engine.GUI.TextAlignment.TopLeft);
+                var loc = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, MenuItems[i].Text);
                 int w = (int)loc.X+6;
                 int h = _fontHeight;
                 if(x >= rx && x <= rx+w && y >= ry && y <= ry + h)
@@ -67,7 +67,6 @@ namespace Plex.Engine.GUI
         {
             FontStyle = TextControlFontStyle.Custom;
             TextColor = Color.White;
-            _fontHeight = Font.Height + 6;
             this.Width = Parent.Width;
             this.Height = _fontHeight + 6;
             this.X = 0;
@@ -84,15 +83,15 @@ namespace Plex.Engine.GUI
                 {
                     if (MenuItems[i].Enabled == false)
                         continue;
-                    var measure = GraphicsContext.MeasureString(MenuItems[i].Text, Font, Engine.GUI.TextAlignment.TopLeft);
+                    var measure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, MenuItems[i].Text);
                     bool selected = i == SelectedIndex;
-                    Color _text = Color.LightGray;
+                    var _text = Theming.ButtonState.Idle;
                     if (selected)
-                        _text = Color.White;
+                        _text = Theming.ButtonState.MouseHover;
 
                     int t_y = text_y + ((_fontHeight - (int)measure.Y) / 2);
                     int t_x = text_x + 3;
-                    gfx.DrawString(MenuItems[i].Text, t_x, t_y, _text, Font, Engine.GUI.TextAlignment.TopLeft);
+                    Theming.ThemeManager.Theme.DrawStatedString(gfx, MenuItems[i].Text, t_x, t_y, (int)measure.X, (int)measure.Y, TextControlFontStyle.System, _text);
                     text_x += (int)measure.X + 16;
                 }
             }
@@ -100,8 +99,9 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(Color.DarkGray);
-            gfx.DrawRectangle(SelectedX, SelectedY, SelectedW, SelectedH, Color.LightBlue);
+            Theming.ThemeManager.Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
+            var accent = Theming.ThemeManager.Theme.GetAccentColor();
+            gfx.DrawRectangle(SelectedX, SelectedY, SelectedW, SelectedH, accent);
             
             base.PaintBG = false;
             base.OnPaint(gfx, target);

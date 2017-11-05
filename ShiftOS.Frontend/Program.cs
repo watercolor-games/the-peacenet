@@ -56,7 +56,6 @@ namespace Plex.Frontend
                     _status.Width = UIManager.Viewport.Width;
                     _status.Height = UIManager.Viewport.Height;
                     UIManager.AddTopLevel(_status);
-                    Server.Program.LoadRanks();
                     Server.Program.LoadWorld();
                     Server.Terminal.Populate();
                     Plex.Server.Program.StartFromClient(null, false);

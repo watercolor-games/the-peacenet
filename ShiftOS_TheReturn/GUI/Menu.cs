@@ -231,19 +231,24 @@ namespace Plex.Engine.GUI
             int text_y = (_border / 2);
             if(_childMenus.Count == 0)
             {
-                gfx.DrawString(_emptyText, text_x, text_y, Color.White, Font, Engine.GUI.TextAlignment.TopLeft);
+                Theming.ThemeManager.Theme.DrawString(gfx, _emptyText, text_x, text_y, int.MaxValue, int.MaxValue, TextControlFontStyle.System);
             }
             else
             {
                 for(int i = 0; i < _childMenus.Count; i++)
                 {
                     bool selected = i == _selectedIndex;
-                    Color _text = Color.LightGray;
+                    var state = Theming.ButtonState.Idle;
                     if (selected)
-                        _text = Color.White;
+                        state = Theming.ButtonState.MouseHover;
                     if (_childMenus[i].Enabled == false)
-                        _text = Color.Gray;
-                    gfx.DrawString(_childMenus[i].Text, text_x, text_y, _text, Font, Engine.GUI.TextAlignment.TopLeft);
+                    {
+                        Theming.ThemeManager.Theme.DrawDisabledString(gfx, _childMenus[i].Text, text_x, text_y, int.MaxValue, int.MaxValue, TextControlFontStyle.System);
+                    }
+                    else
+                    {
+                        Theming.ThemeManager.Theme.DrawStatedString(gfx, _childMenus[i].Text, text_x, text_y, int.MaxValue, int.MaxValue, TextControlFontStyle.System, state);
+                    }
                     text_y += _textheight;
                 }
             }
@@ -253,23 +258,21 @@ namespace Plex.Engine.GUI
         {
             if (PaintBG)
             {
-                gfx.Clear(Color.DarkGray);
-                gfx.DrawRectangle(0, 0, _border + _imageMargin, Height, Color.Gray);
-                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, Color.LightBlue);
+                Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+                Theming.ThemeManager.Theme.DrawControlBG(gfx, 0, 0, _border + _imageMargin, Height);
+                var accent = Theming.ThemeManager.Theme.GetAccentColor();
+                gfx.DrawRectangle(_selectedX, _selectedY, _selectedW, _selectedH, accent);
                 for (int i = 0; i < _childMenus.Count; i++)
                 {
                     var dd = _childMenus[i];
                     if (dd.HasDropdown && dd.Enabled == true)
                     {
-                        var ddColor = Color.LightGray;
-                        if (i == _selectedIndex)
-                            ddColor = Color.White;
-
-
                         int ddy = (_border / 2) + (_textheight * i);
                         int ddh = _textheight;
                         int ddw = 16;
                         int ddx = Width - ddw;
+
+                        Theming.ThemeManager.Theme.DrawArrow(gfx, ddx, ddy, ddw, ddh, (i == _selectedIndex) ? Theming.ButtonState.MouseHover : Theming.ButtonState.MouseDown, Theming.ArrowDirection.Right);
                     }
                 }
             }
@@ -346,7 +349,7 @@ namespace Plex.Engine.GUI
             if (this.TextRerenderRequired)
             {
                 string longest = (_childMenus.Count == 0) ? _emptyText : GetLongestString();
-                var measure = TextRenderer.MeasureText(longest, Font, int.MaxValue, Engine.GUI.TextAlignment.TopLeft, Engine.TextRenderers.WrapMode.None);
+                var measure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, longest);
                 _textwidth = (int)measure.X;
                 _textheight = (int)measure.Y;
             }

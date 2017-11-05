@@ -108,6 +108,7 @@ namespace Plex.Objects
         public SystemType SystemType { get; set; }
 
         [Order]
+        [Obsolete("Hacking rework incoming.")]
         public bool IsPwn3d { get; set; }
 
         [Order]
@@ -123,9 +124,11 @@ namespace Plex.Objects
         public string NetName { get; set; }
 
         [Order]
+        [Obsolete("Hacking rework incoming.")]
         public List<Puzzle> Puzzles = new List<Puzzle>();
 
         [Order]
+        [Obsolete("Hacking rework incoming.")]
         public bool HasFirewall { get; set; }
 
         [Order]

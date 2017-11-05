@@ -142,7 +142,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(Color.DarkGray);
+            Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
         }
 
         protected override void AfterPaint(GraphicsContext gfx, RenderTarget2D target)

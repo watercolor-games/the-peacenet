@@ -130,8 +130,6 @@ namespace Plex.Server
             return 0x00;
         }
 
-        public static List<Rank> Ranks { get; set; }
-
         public static World GameWorld = null;
 
         private static int _port = 3251;
@@ -141,14 +139,8 @@ namespace Plex.Server
             _port = port;
         }
 
-        public static void LoadRanks()
-        {
-            Ranks = JsonConvert.DeserializeObject<List<Rank>>(Properties.Resources.ranks);
-        }
-
         public static void StartFromClient(string[] args, bool isMP)
         {
-            LoadRanks();
             IsMultiplayerServer = isMP;
             Main(args);
         }
@@ -157,159 +149,91 @@ namespace Plex.Server
 
         public static void LoadWorld()
         {
-            if (Ranks == null)
-                LoadRanks();
             if (!File.Exists("world.whoa"))
             {
-                Console.WriteLine("<worldgen> No world detected on filesystem. Generating world...");
-
                 var world = new World();
-                Console.WriteLine("<worldgen> Creating subnet list...");
+                if (UpgradeManager.Upgrades == null)
+                    UpgradeManager.Initiate();
+                world.MaxRank = UpgradeManager.Upgrades.OrderBy(x => x.Rank).Last().Rank;
+
+                var rogue = new Subnet();
+                rogue.Name = "main";
+                rogue.FriendlyName = "Peacenet Central Hub";
+                rogue.AvailableUpgrades = new List<string>();
+                rogue.FriendlyDescription = "The central hub for the Peacenet which manages economy, society and government.";
+                rogue.WorldX = 0;
+                rogue.WorldY = 0;
+                rogue.NPCs = new List<HackableSystem>();
+                var bank = GenerateSystem(world.MaxRank, SystemType.Bank, "centralbank");
+                var repo = GenerateSystem(world.MaxRank, SystemType.Bank, "centralupgraderepo");
+                var worker = GenerateSystem(world.MaxRank, SystemType.Computer, "centralwork");
+                worker.X = 0;
+                worker.Y = 0;
+                bank.X = -100f;
+                bank.Y = 0;
+                repo.X = 100;
+                repo.Y = 0;
+                rogue.NPCs.Add(worker);
+                rogue.NPCs.Add(bank);
+                rogue.NPCs.Add(repo);
+                world.Rogue = rogue;
+
+                int maxnetcount = (world.MaxRank + 1)*5;
                 world.Networks = new List<Subnet>();
-
-
-                Console.WriteLine("<worldgen> Creating MAIN subnet...");
-
-                var main = CreateSubnet("main", "Main subnet", "This is the maintenance subnet of the Plexnet. The health of this network is vital for proper operation of the Plexnet.");
-
-                Console.WriteLine("<rogue> Generating rogue system...");
-
-                var rogue = GenerateSystem(1000, SystemType.Computer, "rogue");
-
-                Console.WriteLine("<rogue> Joining main subnet");
-                main.NPCs.Add(rogue);
-
-                Console.WriteLine("<main> Joining world network...");
-
-                world.Rogue = main;
-
-                int subnets = NATOCodeNames.Length;
-                Console.WriteLine("<worldgen> This world will have {0} sub-networks.", subnets);
-
-                for (int i = 0; i < subnets; i++)
+                for(int i = 0; i <= world.MaxRank; i++)
                 {
-                    Console.WriteLine("<worldgen> Generating sub-network {0}...", i);
-                    string name;
-                    do
+                    int netcount = (maxnetcount / (i + 1));
+                    for (int j = 0; j < netcount; j++)
                     {
-                        name = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
-                    }
-                    while (world.Networks.FirstOrDefault(x => x.Name == name) != null);
-                    Console.WriteLine("<{0}> Subnet generated.", name);
-
-                    var subnet = CreateSubnet(name, $"{name} subnet", "");
-
-                    Console.WriteLine("<{0}> I need a router.", name);
-
-                    var router = GenerateSystem(rnd.Next(1, Ranks.Count), SystemType.Router, GenerateSystemName(subnet));
-
-                    Console.WriteLine("<{0}.{1}> Joining {0}...", name, router.SystemDescriptor.SystemName);
-
-                    subnet.NPCs.Add(router);
-
-                    for (int j = 1; j <= router.SystemDescriptor.Rank; j++)
-                    {
-                        int max_systems = 40 / j;
-                        int generatedsystems = rnd.Next(1, max_systems);
-
-                        Console.WriteLine("<{0}> Generating {1} rank {2} systems...", subnet.Name, generatedsystems, j);
-
-                        string stype = null;
-                        string[] names = Enum.GetNames(typeof(SystemType));
-                        while (stype == null || stype == "Router")
-                            stype = names[rnd.Next(names.Length)];
-                        SystemType systemtype = (SystemType)Enum.Parse(typeof(SystemType), stype);
-                        var system = GenerateSystem(j, systemtype, GenerateSystemName(subnet));
-                        Console.WriteLine("<{0}.{1}> Joining {0}...", subnet.Name, system.SystemDescriptor.SystemName);
-                        subnet.NPCs.Add(system);
-                    }
-
-
-                    Console.WriteLine("<{0}> Joining world...", subnet.Name);
-
-                    world.Networks.Add(subnet);
-                }
-
-                Console.WriteLine("<worldgen> SUBNETS CREATED. Now let's position them.");
-                PointF _mainPos = new PointF(0, 0);
-                foreach (var net in world.Networks)
-                {
-                    int averagerank = AverageRank(net.NPCs);
-                    float radius = 125 * averagerank;
-                    int degrees = rnd.Next(360);
-                    var point = GetPositionFromRadius(_mainPos, radius, degrees);
-                    Console.WriteLine("<{0}> Average rank: {1} - Radius from main net: {2} - Absolute World Position: {3}, {4}", net.Name, averagerank, radius, point.X, point.Y);
-                    net.WorldX = point.X;
-                    net.WorldY = point.Y;
-                    Console.WriteLine("<{0}> Grabbing router...", net.Name);
-                    var router = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router);
-                    Console.WriteLine("<{0}> Router is {0}.{1}", net.Name, router.SystemDescriptor.SystemName);
-                    foreach (var npc in net.NPCs.Where(x => x.SystemType != SystemType.Router))
-                    {
-                        int nradius = 50 * npc.SystemDescriptor.Rank;
-                        int ndegrees = rnd.Next(360);
-                        var npoint = GetPositionFromRadius(new PointF(router.X, router.Y), nradius, ndegrees);
-                        npc.X = npoint.X;
-                        npc.Y = npoint.Y;
-                        Console.WriteLine("<{0}.{1}> New location: {2}, {3}", net.Name, npc.SystemDescriptor.SystemName, npoint.X, npoint.Y);
-
-                    }
-                }
-                Console.WriteLine("---------------------------");
-                Console.WriteLine("World generation complete.");
-                Console.WriteLine("Generating world economy...");
-                Console.WriteLine("---------------------------");
-
-                DistributeEconomy(world, 100000000);
-
-                Console.WriteLine(@"============
-Done generating economy.
-Now generating defenses...
-============");
-                Console.WriteLine("<worldgen> Scanning for firewall puzzles...");
-                List<PuzzleAttribute> puzzles = new List<PuzzleAttribute>();
-                foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IPuzzle))))
-                {
-                    var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is PuzzleAttribute) as PuzzleAttribute;
-                    if (attr != null)
-                    {
-                        Console.WriteLine("<worldgen> Puzzle found: {0} - Rank {1}", type.Name, attr.Rank);
-                        puzzles.Add(attr);
-                    }
-                }
-                Console.WriteLine("<worldgen> {0} puzzles found", puzzles.Count);
-                foreach (var net in world.Networks)
-                {
-                    foreach (var sys in net.NPCs)
-                    {
-                        int chance = sys.SystemDescriptor.Rank * (100 / Ranks.Count);
-                        bool hasFirewall = rnd.Next(0, 100) <= chance;
-                        var availablePuzzles = puzzles.Where(x => x.Rank <= sys.SystemDescriptor.Rank).ToArray();
-                        if (availablePuzzles.Length == 0)
-                            hasFirewall = false;
-                        if (hasFirewall)
+                        var net = new Subnet();
+                        net.NPCs = new List<HackableSystem>();
+                        NameGen:
+                        string name = "";
+                        for (int k = 0; k < 3; k++)
                         {
-                            int puzzleCount = rnd.Next(1, availablePuzzles.Length);
-                            while (sys.Puzzles.Count < puzzleCount)
+                            string nato = NATOCodeNames[rnd.Next(0, NATOCodeNames.Length)];
+                            name += nato + "_";
+                        }
+                        if (name.EndsWith("_"))
+                            name = name.Remove(name.Length - 1, 1);
+                        if (world.Networks.FirstOrDefault(x => x.Name == name) != null)
+                            goto NameGen;
+                        net.Name = name;
+                        net.FriendlyName = name + " subnet";
+
+                        var nbank = GenerateSystem(i, SystemType.Bank, "netbank");
+                        var nrepo = GenerateSystem(i, SystemType.UpgradeDB, "netupgrades");
+
+                        var posForRepo = GetPositionFromRadius(new PointF(0, 0), (250 * (i + 2)), rnd.Next(360));
+                        var posForBank = GetPositionFromRadius(new PointF(0, 0), (250 * (i + 2)), rnd.Next(360));
+
+                        nbank.X = posForBank.X;
+                        nbank.Y = posForBank.Y;
+                        nrepo.X = posForRepo.X;
+                        nrepo.Y = posForRepo.Y;
+
+                        net.NPCs.Add(nrepo);
+                        net.NPCs.Add(nbank);
+
+                        var availableenums = Enum.GetNames(typeof(SystemType)).Where(x => x != "Bank" && x != "UpgradeDB").ToArray();
+                        for (int k = 0; k <= i; k++)
+                        {
+                            int npccount = rnd.Next(((i + 1) * 5) / (k + 1));
+                            for (int l = 0; l < npccount; l++)
                             {
-                                PuzzleAttribute atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
-                                while (sys.Puzzles.FirstOrDefault(x => x.ID == atr.ID && x.Rank == atr.Rank) != null)
-                                {
-                                    atr = availablePuzzles[rnd.Next(0, availablePuzzles.Length)];
-                                }
-                                sys.Puzzles.Add(new Objects.Hacking.Puzzle
-                                {
-                                    ID = atr.ID,
-                                    Rank = atr.Rank,
-                                    Completed = false
-                                });
-                                Console.WriteLine("<worldgen> {0} - new puzzle: {1} {2}", sys.SystemDescriptor.SystemName, atr.ID, atr.Rank);
+                                string type = availableenums[rnd.Next(availableenums.Length)];
+                                SystemType real = (SystemType)Enum.Parse(typeof(SystemType), type);
+                                var npc = GenerateSystem(k, real, GenerateSystemName(net));
+                                var loc = GetPositionFromRadius(new PointF(0, 0), (250) * (k + 1), rnd.Next(360));
+                                npc.X = loc.X;
+                                npc.Y = loc.Y;
+                                net.NPCs.Add(npc);
                             }
                         }
-                        sys.HasFirewall = hasFirewall;
+                        world.Networks.Add(net);
                     }
                 }
-                Program.GameWorld = world;
+                GameWorld = world;
                 SaveWorld();
             }
             else
@@ -371,34 +295,6 @@ Now generating defenses...
                     File.Delete("world.whoa");
                     LoadWorld();
                 }
-            }
-        }
-
-        public static void DistributeEconomy(World world, long cash)
-        {
-            foreach (var net in world.Networks)
-            {
-                var computers = net.NPCs.Where(x => x.SystemType != SystemType.Router);
-                var routerRank = net.NPCs.FirstOrDefault(x => x.SystemType == SystemType.Router).SystemDescriptor.Rank;
-                for (int i = 1; i < routerRank; i++)
-                {
-                    var rank = Ranks[i];
-                    var systemsWithRank = computers.Where(x => x.SystemDescriptor.Rank == i&& x.IsPwn3d == false && x.IsNPC == true);
-                    if (systemsWithRank.Count() == 0)
-                        continue;
-                    long cashPerSystem = (cash / (long)rank.MaximumCash) / systemsWithRank.Count();
-                    foreach (var system in systemsWithRank)
-                    {
-                        Console.WriteLine("<{0}.{1}> Adding cash: ${2}", net.Name, system.SystemDescriptor.SystemName, ((double)cashPerSystem / 100));
-                        system.SystemDescriptor.Cash += (long)cashPerSystem;
-                        cash -= cashPerSystem;
-                    }
-                }
-            }
-            if(cash > 0)
-            {
-                Console.WriteLine("Cash left over for future use: ${0}", ((double)cash / 100));
-                world.Rogue.NPCs[0].SystemDescriptor.Cash += cash;
             }
         }
 
@@ -511,13 +407,6 @@ Now generating defenses...
                 save.Cash = 0;
                 save.Experience = long.MaxValue;
                 save.MaxLoadedUpgrades = int.MaxValue;
-            }
-            else
-            {
-                var current = Ranks[rank];
-                save.Cash = 0;
-                save.Experience = current.Experience;
-                save.MaxLoadedUpgrades = current.UpgradeMax;
             }
             save.PickupPoint = "";
             save.StoriesExperienced = new List<string>();
@@ -688,106 +577,7 @@ Now generating defenses...
 
         public static void WorldManager()
         {
-            while(GameWorld != null)
-            {
-                Console.WriteLine("Finding breached hackables...");
 
-                List<HackableSystem> breached = new List<HackableSystem>();
-                foreach(var net in GameWorld.Networks)
-                {
-                    breached.AddRange(net.NPCs.Where(x => x.IsPwn3d == true).ToList());
-                }
-                Console.WriteLine("Breached systems: {0}", breached.Count);
-                if(breached.Count == 0)
-                {
-                    Console.WriteLine("Nothing to do...");
-                }
-                else
-                {
-                    Console.WriteLine("Extracting available cash from NPCs...");
-                    long cash = 0;
-                    foreach(var npc in breached)
-                    {
-                        if (npc.IsNPC)
-                        {
-                            if(npc.SystemDescriptor.Cash >= 0)
-                            {
-                                cash += npc.SystemDescriptor.Cash;
-                                npc.SystemDescriptor.Cash = 0;
-                            }
-                        }
-                    }
-                    Console.WriteLine("Cash found: ${0}", ((double)cash / 100));
-                    if(cash == 0)
-                    {
-                        Console.WriteLine("Skipping cash distribution.");
-                    }
-                    else
-                    {
-                        DistributeEconomy(GameWorld, cash);
-                    }
-
-                    Console.WriteLine("Destroying breached NPCs...");
-
-                    foreach(var net in GameWorld.Networks)
-                    {
-                        while(net.NPCs.FirstOrDefault(x=>x.IsNPC == true && x.IsPwn3d == true) != null)
-                        {
-                            var npc = net.NPCs.FirstOrDefault(x => x.IsNPC == true && x.IsPwn3d == true);
-                            if(npc != null)
-                            {
-                                Console.WriteLine("Destroying: {0}.{1}", net.Name, npc.SystemDescriptor.SystemName);
-                                net.NPCs.Remove(npc);
-                            }
-                        }
-                    }
-
-                    Console.WriteLine("Resetting player breach statuses...");
-
-                    foreach (var net in GameWorld.Networks)
-                    {
-                        while (net.NPCs.FirstOrDefault(x => x.IsNPC == false && x.IsPwn3d == true) != null)
-                        {
-                            var npc = net.NPCs.FirstOrDefault(x => x.IsNPC == false && x.IsPwn3d == true);
-                            if (npc != null)
-                            {
-                                Console.WriteLine("Resetting: {0}.{1}", net.Name, npc.SystemDescriptor.SystemName);
-                                npc.IsPwn3d = false;
-                                foreach(var puzzle in npc.Puzzles)
-                                {
-                                    if(puzzle.Completed == true)
-                                    {
-                                        Console.WriteLine("Uncompleting {0} on {1}.{2}...", puzzle.ID, net.Name, npc.SystemDescriptor.SystemName);
-                                        puzzle.Completed = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-
-                }
-
-                Console.WriteLine("Repositioning systems that need repositioning...");
-                foreach(var net in GameWorld.Networks)
-                {
-                    foreach (var npc in net.NPCs.Where(x => x.SystemType != SystemType.Router && x.X == 0 && x.Y == 0))
-                    {
-                        int nradius = 50 * Math.Max(1, npc.SystemDescriptor.Rank);
-                        int ndegrees = rnd.Next(360);
-                        var npoint = GetPositionFromRadius(new PointF(0,0), nradius, ndegrees);
-                        npc.X = npoint.X;
-                        npc.Y = npoint.Y;
-                        Console.WriteLine("<{0}.{1}> New location: {2}, {3}", net.Name, npc.SystemDescriptor.SystemName, npoint.X, npoint.Y);
-
-                    }
-
-                }
-
-                //Sleep for two hours.
-                Sleep(new TimeSpan(2, 0, 0));
-            }
         }
 
         private static ServerConfiguration _conf = null;

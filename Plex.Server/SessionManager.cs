@@ -268,24 +268,31 @@ namespace Plex.Server
                 var accts = getAccts();
                 if(accts.Count == 0)
                 {
+                    var subnets = Program.GameWorld.Networks.Where(x => x.UpgradeRepo.SystemDescriptor.Rank == 0).ToArray();
+                    var subnet = subnets[new Random().Next(subnets.Length)];
+                    string sysname = Program.GenerateSystemName(subnet);
+
                     accts.Add(new ServerAccount
                     {
                         Expiry = DateTime.MaxValue,
                         LastLogin = DateTime.Now,
                         PasswordHash = "",
                         PasswordSalt = null,
-                        SaveID = "alfa.system",
+                        SaveID = $"{subnet.Name}.{sysname}",
                         SessionID = "singleplayers",
                         Username = "user"
                     });
                     setSessions(accts);
                     
                 }
-                var save = Program.GetSaveFromPrl("alfa.system");
+                var acct = accts[0];
+                var save = Program.GetSaveFromPrl(acct.SaveID);
                 if (save == null)
                 {
-                    var subnet = Program.GameWorld.Networks.First(x => x.Name == "alfa");
-                    var sys = Program.GenerateSystem(0, SystemType.Computer, "system");
+                    string snname = acct.SaveID.Substring(0, acct.SaveID.IndexOf("."));
+                    string asysname = acct.SaveID.Substring(acct.SaveID.IndexOf(".")+1);
+                    var subnet = Program.GameWorld.Networks.First(x => x.Name == snname);
+                    var sys = Program.GenerateSystem(0, SystemType.Computer, asysname);
                     sys.IsNPC = false;
                     subnet.NPCs.Add(sys);
                     Program.SaveWorld();

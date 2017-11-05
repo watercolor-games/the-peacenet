@@ -26,6 +26,12 @@ namespace Plex.Frontend
         private Texture2D _minimize = null;
         private Texture2D _restore = null;
 
+        private Texture2D _arrow_left = null;
+        private Texture2D _arrow_top = null;
+        private Texture2D _arrow_right = null;
+        private Texture2D _arrow_bottom = null;
+
+
         private int _titleheight = 30;
         private int _borderleft = 2;
         private int _borderright = 2;
@@ -43,6 +49,8 @@ namespace Plex.Frontend
 
 
         private Color _controlBG = Color.Black;
+        private Color _controlBGDark = Color.Black;
+        private Color _controlBGLight = Color.Black;
 
         private Color _borderBG = Color.Black;
         private Color _borderBGInactive = Color.Black;
@@ -50,7 +58,20 @@ namespace Plex.Frontend
 
         public override void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state, ArrowDirection direction)
         {
-            throw new NotImplementedException();
+            var arrow = _arrow_left;
+            switch(direction)
+            {
+                case ArrowDirection.Top:
+                    arrow = _arrow_top;
+                    break;
+                case ArrowDirection.Right:
+                    arrow = _arrow_right;
+                    break;
+                case ArrowDirection.Bottom:
+                    arrow = _arrow_bottom;
+                    break;
+            }
+            gfx.DrawRectangle(x, y, width, height, arrow, Color.White, System.Windows.Forms.ImageLayout.Zoom);
         }
 
         public override void DrawButtonBackground(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state)
@@ -70,20 +91,25 @@ namespace Plex.Frontend
 
         public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _controlBGDark);
         }
 
         public override void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _controlBGLight);
         }
 
         public override void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style)
         {
+            drawStringWithColor(graphics, text, x, y, width, height, style, Color.White);
+        }
+
+        private void drawStringWithColor(GraphicsContext gfx, string text, int x, int y, int width, int height, TextControlFontStyle style, Color color)
+        {
             var _f = _systemsans;
             if (style == TextControlFontStyle.Mono || style == TextControlFontStyle.Custom)
             {
-                RenderTextInternal(graphics, text, x, y, width, height, _mono, Color.White);
+                RenderTextInternal(gfx, text, x, y, width, height, _mono, color);
                 return;
             }
             switch (style)
@@ -101,12 +127,13 @@ namespace Plex.Frontend
                     _f = _head3;
                     break;
             }
-            graphics.DrawString(text, x, y, Color.White, _f, TextAlignment.TopLeft, width, Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, x, y, color, _f, TextAlignment.TopLeft, width, Engine.TextRenderers.WrapMode.Words);
+
         }
 
         public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _buttonTextIdle);
         }
 
         public override void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, ButtonState close, ButtonState maximize, ButtonState minimize, bool dialog)
@@ -162,9 +189,17 @@ namespace Plex.Frontend
             _maximize = TexFromImg(FontAwesome.arrow_circle_up, device);
             _restore = TexFromImg(FontAwesome.arrow_circle_down, device);
 
+            _arrow_left = TexFromImg(FontAwesome.chevron_left, device);
+            _arrow_top = TexFromImg(FontAwesome.chevron_up, device);
+            _arrow_right = TexFromImg(FontAwesome.chevron_right, device);
+            _arrow_bottom = TexFromImg(FontAwesome.chevron_down, device);
+
+            _borderBG = new Color(64, 128, 255, 255);
+            _borderBGInactive = _borderBG * 0.75F;
+
             _buttonIdle = new Color(90, 90, 90, 255);
             _buttonDown = Color.Black;
-            _buttonHover = new Color(64, 128, 255, 255);
+            _buttonHover = _borderBG;
 
             _buttonTextIdle = new Color(191, 191, 191);
             _buttonTextHover = Color.White;
@@ -172,9 +207,9 @@ namespace Plex.Frontend
 
 
             _controlBG = new Color(64, 64, 64);
+            _controlBGDark = new Color(32, 32, 32);
+            _controlBGLight = new Color(111, 111, 111);
 
-            _borderBG = new Color(64, 128, 255, 255);
-            _borderBGInactive = _borderBG * 0.75F;
         }
 
         
@@ -292,6 +327,26 @@ namespace Plex.Frontend
                 case TitleButton.Maximize:
                     return new Rectangle(_maxx, _tby, _titlebuttonsize, _titlebuttonsize);
             }
+        }
+
+        public override Color GetAccentColor()
+        {
+            return this._borderBG;
+        }
+
+        public override void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style, ButtonState state)
+        {
+            var c = _buttonTextIdle;
+            if (state == ButtonState.MouseHover)
+                c = _buttonTextHover;
+            if (state == ButtonState.MouseDown)
+                c = _buttonTextDown;
+            drawStringWithColor(graphics, text, x, y, width, height, style, c);
+        }
+
+        public override void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style)
+        {
+            drawStringWithColor(graphics, text, x, y, width, height, style, Color.Gray);
         }
     }
 }
