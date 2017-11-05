@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
-
+using Plex.Engine.Theming;
 
 namespace Plex.Frontend.Desktop
 {
@@ -177,6 +177,11 @@ namespace Plex.Frontend.Desktop
 
     public class WindowBorder : TextControl, IWindowBorder
     {
+        private Engine.Theming.ButtonState _closeState = Engine.Theming.ButtonState.Idle;
+        private Engine.Theming.ButtonState _minState = Engine.Theming.ButtonState.Idle;
+        private Engine.Theming.ButtonState _maxState = Engine.Theming.ButtonState.Idle;
+
+
         private bool _maximized = false;
         private int _normalx = 0;
         private int _normaly = 0;
@@ -265,7 +270,7 @@ namespace Plex.Frontend.Desktop
             this.MouseDown += () =>
             {
                 var mstate = Mouse.GetState();
-                moving = (mstate.LeftButton == ButtonState.Pressed && mstate.Y >= Y && mstate.Y <= Y + 30 && mstate.X >= X && mstate.X <= X + Width);
+                moving = (mstate.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && mstate.Y >= Y && mstate.Y <= Y + 30 && mstate.X >= X && mstate.X <= X + Width);
                 CaptureMouse = true;
                 dist_x = Mouse.GetState().X - X;
                 dist_y = Mouse.GetState().Y - Y;
@@ -275,6 +280,41 @@ namespace Plex.Frontend.Desktop
                 moving = false;
                 CaptureMouse = false;
             };
+
+            Click += () =>
+            {
+                var _crect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Close, Width, Height);
+                if (MouseX >= _crect.X && MouseX <= _crect.X + _crect.Width && MouseY >= _crect.Y && MouseY <= _crect.Y + _crect.Height)
+                {
+                    if (MouseLeftDown)
+                    {
+                        Close();
+                    }
+                }
+                if (!IsDialog)
+                {
+                    var _mxrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Maximize, Width, Height);
+                    if (MouseX >= _mxrect.X && MouseX <= _mxrect.X + _mxrect.Width && MouseY >= _mxrect.Y && MouseY <= _mxrect.Y + _mxrect.Height)
+                    {
+                        if (MouseLeftDown)
+                        {
+                            ToggleMaximized();
+                            return;
+                        }
+                    }
+                    var _mnrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Minimize, Width, Height);
+                    if (MouseX >= _mnrect.X && MouseX <= _mnrect.X + _mnrect.Width && MouseY >= _mnrect.Y && MouseY <= _mnrect.Y + _mxrect.Height)
+                    {
+                        if (MouseLeftDown)
+                        {
+                            ToggleMinimized();
+                        }
+                    }
+
+                }
+
+            };
+
             X = 720;
             Y = 480;
         }
@@ -318,6 +358,45 @@ namespace Plex.Frontend.Desktop
 
         protected override void OnLayout(GameTime gameTime)
         {
+            var _cstate = Engine.Theming.ButtonState.Idle;
+            var _mxstate = Engine.Theming.ButtonState.Idle;
+            var _mnstate = Engine.Theming.ButtonState.Idle;
+
+            var _crect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Close, Width, Height);
+            if(MouseX >= _crect.X && MouseX <= _crect.X + _crect.Width && MouseY >= _crect.Y && MouseY <= _crect.Y + _crect.Height)
+            {
+                _cstate = Engine.Theming.ButtonState.MouseHover;
+                if (MouseLeftDown)
+                    _cstate = Engine.Theming.ButtonState.MouseDown;
+            }
+            if (!IsDialog)
+            {
+                var _mxrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Maximize, Width, Height);
+                if (MouseX >= _mxrect.X && MouseX <= _mxrect.X + _mxrect.Width && MouseY >= _mxrect.Y && MouseY <= _mxrect.Y + _mxrect.Height)
+                {
+                    _mxstate = Engine.Theming.ButtonState.MouseHover;
+                    if (MouseLeftDown)
+                        _mxstate = Engine.Theming.ButtonState.MouseDown;
+                }
+                var _mnrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Minimize, Width, Height);
+                if (MouseX >= _mnrect.X && MouseX <= _mnrect.X + _mnrect.Width && MouseY >= _mnrect.Y && MouseY <= _mnrect.Y + _mxrect.Height)
+                {
+                    _mnstate = Engine.Theming.ButtonState.MouseHover;
+                    if (MouseLeftDown)
+                        _mnstate = Engine.Theming.ButtonState.MouseDown;
+                }
+
+            }
+
+            if(_closeState != _cstate || _minState != _mnstate || _maxState != _mxstate)
+            {
+                Invalidate();
+            }
+
+            _closeState = _cstate;
+            _minState = _mnstate;
+            _maxState = _mxstate;
+
             FontStyle = TextControlFontStyle.Custom;
             TextColor = Microsoft.Xna.Framework.Color.White;
             if (_minimized == true)
@@ -353,6 +432,11 @@ namespace Plex.Frontend.Desktop
                 Height = titlebarheight + _hostedwindow.Height + borderbottom;
 
             }
+        }
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+            ThemeManager.Theme.DrawWindowBorder(gfx, 0,0,Width, Height, ContainsFocusedControl||IsFocusedControl, _maximized, _closeState, _maxState, _minState, IsDialog);
         }
 
 

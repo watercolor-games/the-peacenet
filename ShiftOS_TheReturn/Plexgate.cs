@@ -28,6 +28,7 @@ namespace Plex.Engine
         public GUI.PictureBox _uploadImg = new GUI.PictureBox();
         public GUI.PictureBox _downloadImg = new GUI.PictureBox();
 
+        public event Action LoadingContent;
 
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
@@ -246,7 +247,7 @@ namespace Plex.Engine
             rgb = null;
 
 
-            
+            LoadingContent?.Invoke();
         }
 
 
@@ -431,7 +432,7 @@ CTRL+D: toggle debug menu
 CTRL+E: toggle experimental effects (experimental effects enabled: {UIManager.ExperimentalEffects})
 Use the ""debug"" Terminal Command for engine debug commands.
 
-FPS: {fps} - Highest: {highestfps}, Lowest: {lowestfps} (note: opening or closing this debug text resets these counters)
+FPS: {fps}
 Average FPS: {TotalFPS / framesdrawn}
 Current time: {DateTime.Now}
 Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB

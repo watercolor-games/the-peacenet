@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Microsoft.Xna.Framework;
 using System.Runtime.InteropServices;
+using Plex.Engine.Theming;
 
 namespace Plex.Engine.GUI
 {
@@ -433,7 +434,7 @@ namespace Plex.Engine.GUI
 
         protected virtual void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, Color.DarkSlateGray);
+            ThemeManager.Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
 
         public void SendToBack()
@@ -659,9 +660,9 @@ namespace Plex.Engine.GUI
                 {
                     bool fire = false; //so we know to fire a MouseStateChanged method
                     //Let's get the state values of each button
-                    bool ld = state.LeftButton == ButtonState.Pressed;
-                    bool md = state.MiddleButton == ButtonState.Pressed;
-                    bool rd = state.RightButton == ButtonState.Pressed;
+                    bool ld = state.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed;
+                    bool md = state.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed;
+                    bool rd = state.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed;
                     if (ld != _leftState || md != _middleState || rd != _rightState)
                     {
                         fire = true;

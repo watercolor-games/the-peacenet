@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace Plex.Engine.GUI
     public class TextControl : Control
     {
         private string _text = "";
-        private Font _font = new Font("Tahoma", 9f);
+        private System.Drawing.Font _font = new System.Drawing.Font("Tahoma", 9f);
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
         private TextAlignment alignment = TextAlignment.TopLeft;
@@ -90,7 +89,7 @@ namespace Plex.Engine.GUI
         protected virtual void RenderText(GraphicsContext gfx)
         {
             var sMeasure = GraphicsContext.MeasureString(_text, _font, Alignment, Width);
-            PointF loc = new PointF(2, 2);
+            Vector2 loc = new Vector2(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;
             switch (this.alignment)
@@ -204,7 +203,7 @@ namespace Plex.Engine.GUI
             TextChanged?.Invoke();
         }
 
-        public Font Font
+        public System.Drawing.Font Font
         {
             get
             {
@@ -264,7 +263,7 @@ namespace Plex.Engine.GUI
                                     RasterizerState);
 
             }
-            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity, System.Windows.Forms.ImageLayout.None, false);
+            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, Color.White * (float)Opacity, System.Windows.Forms.ImageLayout.None, false);
         }
     }
 

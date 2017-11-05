@@ -9,7 +9,7 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using Plex.Objects;
 using static Plex.Engine.FSUtils;
-
+using Plex.Engine.Theming;
 
 namespace Plex.Frontend
 {
@@ -95,6 +95,10 @@ namespace Plex.Frontend
                     //Create a main menu
                     var mm = new MainMenu();
                     UIManager.AddTopLevel(mm);
+                };
+                game.LoadingContent += () =>
+                {
+                    ThemeManager.LoadTheme(new PeacenetTheme());
                 };
                 game.Run();
             }
