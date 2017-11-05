@@ -178,6 +178,9 @@ namespace Plex.Frontend
             string fontName = "Tahoma";
             if (isMondaInstalled)
                 fontName = "Monda";
+            if (DateTime.Now.Day == 6 && DateTime.Now.Month == 7)
+                if (IsComicSansInstalled())
+                    fontName = "Comic Sans MS";
             _systemsans = new System.Drawing.Font(fontName, 10F);
             _head1 = new System.Drawing.Font(fontName, 25F);
             _head2 = new System.Drawing.Font(fontName, 20F);
@@ -291,6 +294,13 @@ namespace Plex.Frontend
             var fCollection = new System.Drawing.Text.InstalledFontCollection();
             return fCollection.Families.FirstOrDefault(x => x.Name == "Monda") != null;
         }
+
+        private bool IsComicSansInstalled()
+        {
+            var fCollection = new System.Drawing.Text.InstalledFontCollection();
+            return fCollection.Families.FirstOrDefault(x => x.Name == "Comic Sans MS") != null;
+        }
+
 
         public override void DrawButtonText(GraphicsContext gfx, string text, int x, int y, int width, int height, ButtonState state)
         {

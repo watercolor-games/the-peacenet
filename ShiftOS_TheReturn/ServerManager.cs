@@ -51,6 +51,14 @@ namespace Plex.Engine
         private static EventWaitHandle _privateSet = new AutoResetEvent(false);
         private static bool _connected = false;
 
+        public static bool Connected
+        {
+            get
+            {
+                return _connected;
+            }
+        }
+
         public static bool ConnectToServer(string hostname, int port)
         {
             if (_connected)
