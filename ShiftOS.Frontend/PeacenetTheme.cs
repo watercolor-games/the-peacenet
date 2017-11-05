@@ -80,7 +80,28 @@ namespace Plex.Frontend
 
         public override void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style)
         {
-            throw new NotImplementedException();
+            var _f = _systemsans;
+            if (style == TextControlFontStyle.Mono || style == TextControlFontStyle.Custom)
+            {
+                RenderTextInternal(graphics, text, x, y, width, height, _mono, Color.White);
+                return;
+            }
+            switch (style)
+            {
+                case TextControlFontStyle.System:
+                    _f = _systemsans;
+                    break;
+                case TextControlFontStyle.Header1:
+                    _f = _head1;
+                    break;
+                case TextControlFontStyle.Header2:
+                    _f = _head2;
+                    break;
+                case TextControlFontStyle.Header3:
+                    _f = _head3;
+                    break;
+            }
+            graphics.DrawString(text, x, y, Color.White, _f, TextAlignment.TopLeft, width, Engine.TextRenderers.WrapMode.Words);
         }
 
         public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)

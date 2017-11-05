@@ -49,6 +49,7 @@ namespace Plex.Engine.GUI
                     return;
                 _foreground = value;
                 Invalidate();
+                RequireTextRerender();
             }
         }
 
@@ -60,9 +61,11 @@ namespace Plex.Engine.GUI
             }
             set
             {
+                if (_fs == value)
+                    return;
                 _fs = value;
-                ResetStyle();
                 Invalidate();
+                RequireTextRerender();
             }
         }
 
@@ -86,9 +89,21 @@ namespace Plex.Engine.GUI
             requiresTextRerender = false;
         }
 
+        private Vector2 measure(int maxwidth = int.MaxValue)
+        {
+            if(_fs == TextControlFontStyle.Custom)
+            {
+                return TextRenderer.MeasureText(Text, Font, maxwidth, Alignment, TextRenderers.WrapMode.Words);
+            }
+            else
+            {
+                return Theming.ThemeManager.Theme.MeasureString(_fs, Text, Alignment, maxwidth);
+            }
+        }
+
         protected virtual void RenderText(GraphicsContext gfx)
         {
-            var sMeasure = GraphicsContext.MeasureString(_text, _font, Alignment, Width);
+            var sMeasure = measure(Width);
             Vector2 loc = new Vector2(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;
@@ -125,7 +140,19 @@ namespace Plex.Engine.GUI
 
             }
 
-            gfx.DrawString(_text, 0, 0, Microsoft.Xna.Framework.Color.White, _font, Alignment, this.Width);
+            draw(gfx, (int)loc.X, (int)loc.Y, Width);
+        }
+
+        private void draw(GraphicsContext gfx, int x, int y, int maxwidth = int.MaxValue)
+        {
+            if (_fs == TextControlFontStyle.Custom)
+            {
+                gfx.DrawString(Text, x, y, TextColor, Font, Alignment, MaxWidth, TextRenderers.WrapMode.Words);
+            }
+            else
+            {
+                Theming.ThemeManager.Theme.DrawString(gfx, Text, x, y, maxwidth, Height, _fs);
+            }
 
         }
 
@@ -156,18 +183,13 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public void ResetStyle()
-        {
-        }
-
         protected override void OnLayout(GameTime gameTime)
         {
-            ResetStyle();
             if (AutoSize)
             {
                 if (requiresTextRerender)
                 {
-                    var measure = GraphicsContext.MeasureString(_text, _font, Alignment, MaxWidth);
+                    var measure = this.measure(MaxWidth);
                     Width = (int)measure.X;
                     Height = (int)measure.Y;
                 }
