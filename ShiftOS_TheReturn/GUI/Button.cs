@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.Theming;
 
 namespace Plex.Engine.GUI
 {
@@ -76,18 +77,29 @@ namespace Plex.Engine.GUI
             AutoSize = true;
             if (AutoSize == true)
             {
-                base.OnLayout(gameTime);
+                int w = 0;
+                int h = 0;
+                var measure = ThemeManager.Theme.MeasureString(TextControlFontStyle.System, Text);
+                w = (int)measure.X;
+                h = (int)measure.Y;
                 if (TextRerenderRequired == true)
                 {
                     if (_image != null)
                     {
-                        ImageHeight = Height;
+                        ImageHeight = h;
                         ImageWidth = ImageHeight;
-                        Height = Math.Max(Height, _imageHeight);
-                        Width += _imageWidth + 3;
+                        h = Math.Max((int)measure.Y, _imageHeight);
+                        w += _imageWidth + 3;
                     }
-                    Width += (4*2);
-                    Height += (3 * 2);
+                    w += (4*2);
+                    h += (3 * 2);
+                    MinWidth = w;
+                    MinHeight = h;
+                    MaxWidth = w;
+                    MaxHeight = h;
+                    Width = w;
+                    Height = h;
+
                 }
 
             }
@@ -96,7 +108,7 @@ namespace Plex.Engine.GUI
         protected override void RenderText(GraphicsContext gfx)
         {
             int w = (_image == null) ? Width : Width - _imageWidth;
-            var measure = GraphicsContext.MeasureString(Text, Font, Engine.GUI.TextAlignment.Middle);
+            var measure = ThemeManager.Theme.MeasureString(TextControlFontStyle.System, Text);
 
             var loc = new Vector2((w - measure.X) / 2, (Height - measure.Y) / 2);
 
@@ -105,19 +117,28 @@ namespace Plex.Engine.GUI
                 loc.X += _imageWidth + 3;
             }
 
-            gfx.DrawString(Text, (int)loc.X, (int)loc.Y, Microsoft.Xna.Framework.Color.White, Font, Engine.GUI.TextAlignment.Middle);
-
+            var state = ButtonState.Idle;
+            if (ContainsMouse)
+                state = ButtonState.MouseHover;
+            if (MouseLeftDown)
+                state = ButtonState.MouseDown;
+            ThemeManager.Theme.DrawButtonText(gfx, Text, (int)loc.X, (int)loc.Y, (int)measure.X, (int)measure.Y, state);
         }
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            var bgCol = Color.Gray;
-            var fgCol = Color.White;
-            gfx.DrawRectangle(0, 0, Width, Height, bgCol);
-
+            var state = ButtonState.Idle;
+            if (ContainsMouse)
+                state = ButtonState.MouseHover;
+            if (MouseLeftDown)
+                state = ButtonState.MouseDown;
+            ThemeManager.Theme.DrawButtonBackground(gfx, 0, 0, Width, Height, state);
             if(_image != null)
-                gfx.DrawRectangle(4, (Height - _imageHeight) / 2, _imageWidth, _imageHeight, _image, fgCol, System.Windows.Forms.ImageLayout.Stretch);
-
+            {
+                int _ix = 4;
+                int _iy = (Height - ImageHeight) / 2;
+                ThemeManager.Theme.DrawButtonImage(gfx, _ix, _iy, ImageWidth, ImageHeight, state, _image);
+            }
             base.OnPaint(gfx, target);
         }
     }

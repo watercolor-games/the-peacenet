@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace Plex.Engine.GUI
     public class TextControl : Control
     {
         private string _text = "";
-        private Font _font = new Font("Tahoma", 9f);
+        private System.Drawing.Font _font = new System.Drawing.Font("Tahoma", 9f);
         private RenderTarget2D _textBuffer = null;
         bool requiresTextRerender = true;
         private TextAlignment alignment = TextAlignment.TopLeft;
@@ -50,6 +49,7 @@ namespace Plex.Engine.GUI
                     return;
                 _foreground = value;
                 Invalidate();
+                RequireTextRerender();
             }
         }
 
@@ -61,9 +61,11 @@ namespace Plex.Engine.GUI
             }
             set
             {
+                if (_fs == value)
+                    return;
                 _fs = value;
-                ResetStyle();
                 Invalidate();
+                RequireTextRerender();
             }
         }
 
@@ -87,10 +89,22 @@ namespace Plex.Engine.GUI
             requiresTextRerender = false;
         }
 
+        private Vector2 measure(int maxwidth = int.MaxValue)
+        {
+            if(_fs == TextControlFontStyle.Custom)
+            {
+                return TextRenderer.MeasureText(Text, Font, maxwidth, Alignment, TextRenderers.WrapMode.Words);
+            }
+            else
+            {
+                return Theming.ThemeManager.Theme.MeasureString(_fs, Text, Alignment, maxwidth);
+            }
+        }
+
         protected virtual void RenderText(GraphicsContext gfx)
         {
-            var sMeasure = GraphicsContext.MeasureString(_text, _font, Alignment, Width);
-            PointF loc = new PointF(2, 2);
+            var sMeasure = measure(Width);
+            Vector2 loc = new Vector2(2, 2);
             float centerH = (Width - sMeasure.X) / 2;
             float centerV = (Height - sMeasure.Y) / 2;
             switch (this.alignment)
@@ -126,7 +140,19 @@ namespace Plex.Engine.GUI
 
             }
 
-            gfx.DrawString(_text, 0, 0, Microsoft.Xna.Framework.Color.White, _font, Alignment, this.Width);
+            draw(gfx, (int)loc.X, (int)loc.Y, Width);
+        }
+
+        private void draw(GraphicsContext gfx, int x, int y, int maxwidth = int.MaxValue)
+        {
+            if (_fs == TextControlFontStyle.Custom)
+            {
+                gfx.DrawString(Text, x, y, TextColor, Font, Alignment, MaxWidth, TextRenderers.WrapMode.Words);
+            }
+            else
+            {
+                Theming.ThemeManager.Theme.DrawString(gfx, Text, x, y, maxwidth, Height, _fs);
+            }
 
         }
 
@@ -157,18 +183,13 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public void ResetStyle()
-        {
-        }
-
         protected override void OnLayout(GameTime gameTime)
         {
-            ResetStyle();
             if (AutoSize)
             {
                 if (requiresTextRerender)
                 {
-                    var measure = GraphicsContext.MeasureString(_text, _font, Alignment, MaxWidth);
+                    var measure = this.measure(MaxWidth);
                     Width = (int)measure.X;
                     Height = (int)measure.Y;
                 }
@@ -204,7 +225,7 @@ namespace Plex.Engine.GUI
             TextChanged?.Invoke();
         }
 
-        public Font Font
+        public System.Drawing.Font Font
         {
             get
             {
@@ -264,7 +285,7 @@ namespace Plex.Engine.GUI
                                     RasterizerState);
 
             }
-            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, _foreground * (float)Opacity, System.Windows.Forms.ImageLayout.None, false);
+            gfx.DrawRectangle(0, 0, Width, Height, _textBuffer, Color.White * (float)Opacity, System.Windows.Forms.ImageLayout.None, false);
         }
     }
 

@@ -67,6 +67,7 @@
     <Compile Include="Infobox.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="MonoGameLanguageProvider.cs" />
+    <Compile Include="PeacenetTheme.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -74,7 +75,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -182,6 +182,10 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include="Content\MondaH1.spritefont" />
+    <None Include="Content\MondaH2.spritefont" />
+    <None Include="Content\MondaH3.spritefont" />
+    <None Include="Content\MondaSystem.spritefont" />
     <None Include="Content\UbuntuMono-B.spritefont" />
     <None Include="Content\UbuntuMono-B.ttf" />
     <None Include="Content\UbuntuMono-BI.spritefont" />

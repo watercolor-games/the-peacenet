@@ -209,8 +209,9 @@
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
     <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
+    <Compile Include="Theming\Theme.cs" />
+    <Compile Include="Theming\ThemeManager.cs" />
     <Compile Include="Upgrades.cs" />
-    <Compile Include="GUI\Skinning.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="TerminalBackend.cs" />
     <Compile Include="GUI\WinOpenAttribute.cs" />
@@ -1959,6 +1960,7 @@
     <None Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\pywintemplate.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
