@@ -1,13 +1,22 @@
-﻿<Properties StartupItem="ShiftOS.WinForms/ShiftOS.WinForms.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS.Server/Program.cs">
+﻿<Properties StartupConfiguration="{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}|Default">
+  <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS.Frontend/Apps/Terminal.cs">
     <Files>
-      <File FileName="../../../../usr/lib/mono/4.5/Microsoft.Common.targets" Line="1" Column="1" />
-      <File FileName="ShiftOS.Server/Program.cs" Line="135" Column="6" />
+      <File FileName="../../../../../app/lib/mono/msbuild/15.0/bin/Microsoft.Common.CurrentVersion.targets" Line="2646" Column="1" />
+      <File FileName="ShiftOS_TheReturn/ATextRenderer.cs" Line="6" Column="17" />
+      <File FileName="packages/MonoGame.Framework.DesktopGL.3.5.1.1679/readme.txt" Line="1" Column="1" />
+      <File FileName="ShiftOS_TheReturn/Properties/Resources.resx" Line="1" Column="1" />
+      <File FileName="Plex.Server/Program.cs" Line="119" Column="9" />
+      <File FileName="Plex.Server/UpgradeManager.cs" Line="20" Column="60" />
+      <File FileName="ShiftOS.Objects/Pty/PseudoTerminal.cs" Line="1" Column="1" />
+      <File FileName="ShiftOS.Frontend/Apps/Terminal.cs" Line="378" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Plex.Server PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>

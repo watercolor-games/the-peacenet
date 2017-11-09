@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -13,10 +14,27 @@ namespace Plex.Server
     {
         public static List<ShiftoriumUpgrade> Upgrades { get; private set; }
 
+        private static string GetUpgradeJSON()
+        {
+			var assembly = Assembly.GetExecutingAssembly();
+			var resourceName = "Plex.Server.Resources.upgradedb.json";
+
+			using (var stream = assembly.GetManifestResourceStream(resourceName))
+			{
+
+				var ret = new byte[stream.Length];
+
+				stream.Read(ret, 0, (int)stream.Length);
+
+				return Encoding.UTF8.GetString((ret));
+			}
+
+        }
+
         internal static void Initiate()
         {
             var upgDb = new List<ShiftoriumUpgrade>();
-            upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(Properties.Resources.upgrades));
+            upgDb.AddRange(JsonConvert.DeserializeObject<ShiftoriumUpgrade[]>(GetUpgradeJSON()));
             foreach (var type in ReflectMan.Types)
             {
 
