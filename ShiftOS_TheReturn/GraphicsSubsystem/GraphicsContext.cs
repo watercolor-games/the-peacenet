@@ -246,7 +246,6 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             float adj = x - x2;
             float opp = y - y2;
-            float tan = opp / adj;
             return (float) Math.Atan2(opp, adj) - (float) Math.PI;
         }
     }

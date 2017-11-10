@@ -64,7 +64,6 @@ namespace Plex.Engine.GUI
         protected override void RenderText(GraphicsContext gfx)
         {
             int textY = (Height - _heighttext) / 2;
-            int caretHeight = _heighttext;
 
             string text = Text;
             if (PasswordChar)

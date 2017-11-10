@@ -16,7 +16,6 @@ namespace Plex.Frontend
     public class PeacenetTheme : Theme
     {
         private System.Drawing.Font _systemsans = null;
-        private System.Drawing.Font _titlebar = null;
         private System.Drawing.Font _head1 = null;
         private System.Drawing.Font _head2 = null;
         private System.Drawing.Font _head3 = null;
@@ -33,9 +32,7 @@ namespace Plex.Frontend
 
 
         private int _titleheight = 30;
-        private int _borderleft = 2;
         private int _borderright = 2;
-        private int _borderbottom = 2;
 
         private int _titlebuttonsize = 24;
 

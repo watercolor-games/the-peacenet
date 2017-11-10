@@ -59,8 +59,6 @@ namespace Plex.Engine
 
 
 
-        private Color ShroudColor = Color.Black;
-
         public bool IsInTutorial = false;
         public Rectangle MouseEventBounds;
         public string TutorialOverlayText = "";
@@ -363,8 +361,6 @@ namespace Plex.Engine
             base.Update(gameTime);
         }
 
-        private GUI.TextControl framerate = new GUI.TextControl();
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -379,7 +375,6 @@ namespace Plex.Engine
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
             //Create a graphics context so we can draw shit
-            var gfx = new GraphicsContext(graphicsDevice.GraphicsDevice, spriteBatch, 0, 0, 1280, 720);
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
 

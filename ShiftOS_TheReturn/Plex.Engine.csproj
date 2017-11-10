@@ -193,7 +193,6 @@
     <Compile Include="Infobox.cs" />
     <Compile Include="GUI\IShiftOSWindow.cs" />
     <Compile Include="GUI\IStatusIcon.cs" />
-    <Compile Include="Localization.cs" />
     <Compile Include="Lunix.cs" />
     <Compile Include="MissionAttribute.cs" />
     <Compile Include="NetworkTimeoutException.cs" />

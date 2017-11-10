@@ -83,7 +83,7 @@ namespace Plex.Frontend.Desktop
             var type = win.GetType();
             var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultTitleAttribute) as DefaultTitleAttribute;
             if (attr != null)
-                return Localization.Parse(attr.Title);
+                return (attr.Title);
             return "Plex Window";
         }
 

@@ -254,7 +254,6 @@ namespace Plex.Engine
 
         public static PlexServerHeader SendMessage(ServerMessageType message, byte[] dgram)
         {
-            bool runGame = Thread.CurrentThread.ManagedThreadId.ToString() == UIManager.Game.ThreadID;
             PlexServerHeader header = null;
             var headerSet = new AutoResetEvent(false);
             lock (_actionQueue)

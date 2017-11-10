@@ -81,8 +81,6 @@ namespace Plex.Engine.GUI
                     var textmeasure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, item.Text, TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
-                    int texty = _itemy + texheight;
-                    int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
 
                     if (MouseX >= _itemx && MouseX <= _itemx + textwidth)
                     {
@@ -259,8 +257,6 @@ namespace Plex.Engine.GUI
                     var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
-                    int texty = _itemy + texheight;
-                    int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                     _itemx += textwidth + _itemgap;
                     if (_itemx >= (MaxWidth - (_initialmargin * 2)))
                     {

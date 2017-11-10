@@ -169,14 +169,14 @@ namespace Plex.Frontend
             AddControl(_faGroup);
             AddControl(_faSettings);
             AddControl(_pressStart);
-            
-            _watercolorgames.Image = Properties.Resources.Watercolor_Full.ToTexture2D(UIManager.GraphicsDevice);
+
+            _watercolorgames.Image = UIManager.ContentLoader.Load<Texture2D>("Artwork/Watercolor_Full");
             _watercolorgames.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
-            _peacenet_text.Image = Properties.Resources.thepeacenet_text.ToTexture2D(UIManager.GraphicsDevice);
+            _peacenet_text.Image = UIManager.ContentLoader.Load<Texture2D>("Artwork/thepeacenet_text");
             _peacenet_text.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
-            _peacenet_welcome.Image = Properties.Resources.peacenet_welcome.ToTexture2D(UIManager.GraphicsDevice);
+            _peacenet_welcome.Image = UIManager.ContentLoader.Load<Texture2D>("Artwork/peacenet_welcome");
             _peacenet_welcome.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
             _btnSinglePlayer.Click += ()=>

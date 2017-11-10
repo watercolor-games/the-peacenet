@@ -8,6 +8,7 @@ using Plex.Engine;
 using Plex.Frontend.Desktop;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Plex.Frontend
 {
@@ -35,13 +36,20 @@ namespace Plex.Frontend
 
     public class InfoboxMessage : Control, IPlexWindow
     {
+        private static SoundEffect _infoboxOpen = null;
+
+
         private Action _okAction = null;
         private Action<bool> _yesNoAction = null;
 
         public InfoboxMessage(string title, string message)
         {
+            if (_infoboxOpen == null)
+            {
+                _infoboxOpen = UIManager.ContentLoader.Load<SoundEffect>("SFX/maximize");
+            }
             InitializeComponent();
-            lbmessage.Text = Localization.Parse(message);
+            lbmessage.Text = message;
             Title = title;
         }
 
@@ -49,7 +57,7 @@ namespace Plex.Frontend
 
         public void OnLoad()
         {
-            AudioPlayerSubsystem.Infobox();
+            _infoboxOpen.Play();
             AppearanceManager.SetWindowTitle(this, Title);
         }
 
@@ -161,13 +169,13 @@ namespace Plex.Frontend
             // btnyes
             // 
             this.btnyes.AutoSize = true;
-            this.btnyes.Text = Localization.Parse("{GEN_YES}");
+            this.btnyes.Text = "Yes";
             this.btnyes.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // btnno
             // 
             this.btnno.AutoSize = true;
-            this.btnno.Text = Localization.Parse("{GEN_NO}");
+            this.btnno.Text = "No";
             this.btnno.Image = FontAwesome.times.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // btnok
@@ -175,7 +183,7 @@ namespace Plex.Frontend
             this.btnok.AutoSize = true;
             this.btnok.X = 140;
             this.btnok.Y = 140;
-            this.btnok.Text = Localization.Parse("{GEN_OK}");
+            this.btnok.Text = "OK";
             this.btnok.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
             // 
             // pbicon

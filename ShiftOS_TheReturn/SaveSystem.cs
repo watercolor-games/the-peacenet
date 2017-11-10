@@ -52,7 +52,6 @@ namespace Plex.Engine
             FSUtils.CreateMountIfNotExists();
 
             Paths.Init();
-            Localization.SetupTHETRUEDefaultLocals();
             TerminalBackend.PopulateTerminalCommands();
             Ready.Reset();
 

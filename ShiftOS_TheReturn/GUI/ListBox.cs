@@ -26,9 +26,7 @@ namespace Plex.Engine.GUI
             {
                 int x = 1;
                 int y = fontheight * (i - itemOffset);
-                int width = Width - 2;
-                int height = fontheight;
-                if(i >= 0 && i < items.Count)
+                if (i >= 0 && i < items.Count)
                 {
                     var state = Theming.ButtonState.Idle;
                     if (i == _itemOver)
@@ -40,10 +38,7 @@ namespace Plex.Engine.GUI
                     {
                         state = Theming.ButtonState.MouseDown;
                     }
-                    else
-                    {
-                        Theming.ThemeManager.Theme.DrawStatedString(gfx, items[i].ToString(), x, y + 2, int.MaxValue, int.MaxValue, TextControlFontStyle.System, state);
-                    }
+                    Theming.ThemeManager.Theme.DrawStatedString(gfx, items[i].ToString(), x, y + 2, int.MaxValue, int.MaxValue, TextControlFontStyle.System, state);
                 }
             }
 
