@@ -50,7 +50,7 @@ namespace Plex.Engine.TextRenderers
                 bmp.UnlockBits(lck);
                 var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height);
                 tex2.SetData<byte>(bytes);
-                gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, System.Windows.Forms.ImageLayout.Stretch);
+                gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, System.Windows.Forms.ImageLayout.Stretch, true);
             }
         }
 
