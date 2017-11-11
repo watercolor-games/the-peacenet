@@ -319,7 +319,8 @@ namespace Plex.Frontend.Apps
                 _bgColor = Microsoft.Xna.Framework.Color.Black;
                 _fgColor = Microsoft.Xna.Framework.Color.White;
                 _tbufferpos = 0;
-                _resized = false;
+				gfx.Clear(_bgColor);
+				_resized = false;
             }
             while (_tbufferpos != _tbuffer.Length)
             {

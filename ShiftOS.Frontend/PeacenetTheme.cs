@@ -184,15 +184,15 @@ namespace Plex.Frontend
             _head3 = new System.Drawing.Font(fontName, 15F);
             _mono = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-B");
 
-            _close = TexFromImg(FontAwesome.times_circle, device);
-            _minimize = TexFromImg(FontAwesome.minus_circle, device);
-            _maximize = TexFromImg(FontAwesome.arrow_circle_up, device);
-            _restore = TexFromImg(FontAwesome.arrow_circle_down, device);
+            _close = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Close");
+            _minimize = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Minimize");
+            _maximize = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Maximize");
+            _restore = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Restore");
 
-            _arrow_left = TexFromImg(FontAwesome.chevron_left, device);
-            _arrow_top = TexFromImg(FontAwesome.chevron_up, device);
-            _arrow_right = TexFromImg(FontAwesome.chevron_right, device);
-            _arrow_bottom = TexFromImg(FontAwesome.chevron_down, device);
+            _arrow_left = UIManager.ContentLoader.Load<Texture2D>("Arrows/Left");
+            _arrow_top = UIManager.ContentLoader.Load<Texture2D>("Arrows/Up");
+            _arrow_right = UIManager.ContentLoader.Load<Texture2D>("Arrows/Right");
+            _arrow_bottom = UIManager.ContentLoader.Load<Texture2D>("Arrows/Down");
 
             _borderBG = new Color(64, 128, 255, 255);
             _borderBGInactive = _borderBG * 0.75F;
@@ -213,7 +213,7 @@ namespace Plex.Frontend
         }
 
         
-
+        [Obsolete("Can we seriously stop fucking using GDI?")]
         private Texture2D TexFromImg(System.Drawing.Image img, GraphicsDevice device)
         {
             var bmp = (System.Drawing.Bitmap)img;

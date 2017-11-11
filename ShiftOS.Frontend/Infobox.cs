@@ -9,6 +9,7 @@ using Plex.Frontend.Desktop;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Frontend
 {
@@ -38,8 +39,12 @@ namespace Plex.Frontend
     {
         private static SoundEffect _infoboxOpen = null;
 
+        private static Texture2D _ok = null;
+		private static Texture2D _no = null;
+		private static Texture2D _warning = null;
 
-        private Action _okAction = null;
+
+		private Action _okAction = null;
         private Action<bool> _yesNoAction = null;
 
         public InfoboxMessage(string title, string message)
@@ -48,7 +53,19 @@ namespace Plex.Frontend
             {
                 _infoboxOpen = UIManager.ContentLoader.Load<SoundEffect>("SFX/maximize");
             }
-            InitializeComponent();
+            if(_ok == null)
+            {
+                _ok = UIManager.ContentLoader.Load<Texture2D>("Infobox/OK");
+            }
+			if (_no == null)
+			{
+				_no = UIManager.ContentLoader.Load<Texture2D>("Infobox/No");
+			}
+			if (_warning == null)
+			{
+				_warning = UIManager.ContentLoader.Load<Texture2D>("Infobox/Warning");
+			}
+			InitializeComponent();
             lbmessage.Text = message;
             Title = title;
         }
@@ -170,13 +187,13 @@ namespace Plex.Frontend
             // 
             this.btnyes.AutoSize = true;
             this.btnyes.Text = "Yes";
-            this.btnyes.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnyes.Image = _ok;
             // 
             // btnno
             // 
             this.btnno.AutoSize = true;
             this.btnno.Text = "No";
-            this.btnno.Image = FontAwesome.times.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnno.Image = _no;
             // 
             // btnok
             // 
@@ -184,7 +201,7 @@ namespace Plex.Frontend
             this.btnok.X = 140;
             this.btnok.Y = 140;
             this.btnok.Text = "OK";
-            this.btnok.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnok.Image = _ok;
             // 
             // pbicon
             // 
@@ -192,8 +209,8 @@ namespace Plex.Frontend
             this.pbicon.Y = 19;
             this.pbicon.Width = 64;
             this.pbicon.Height = 64;
-            this.pbicon.Image = FontAwesome.warning.ToTexture2D(UIManager.GraphicsDevice);
-            this.pbicon.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pbicon.Image = _warning;
+            this.pbicon.ImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             // 
             // Dialog
             // 

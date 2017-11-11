@@ -440,7 +440,7 @@ Memory usage: {(GC.GetTotalMemory(false) / 1024) / 1024} MB
     }
 
     
-
+    [Obsolete("Use Content Pipeline.")]
     public static class ImageExtensioons
     {
         public static Texture2D ToTexture2D(this System.Drawing.Image image, GraphicsDevice device)

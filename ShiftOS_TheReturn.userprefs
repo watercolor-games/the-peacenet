@@ -1,6 +1,6 @@
 ﻿<Properties StartupConfiguration="{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}|Default">
   <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS_TheReturn/TextRenderers/GdiPlusTextRenderer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS.Frontend/Apps/Terminal.cs">
     <Files>
       <File FileName="../../../../../app/lib/mono/msbuild/15.0/bin/Microsoft.Common.CurrentVersion.targets" Line="2646" Column="1" />
       <File FileName="ShiftOS_TheReturn/ATextRenderer.cs" Line="6" Column="17" />
@@ -9,7 +9,7 @@
       <File FileName="Plex.Server/Program.cs" Line="119" Column="9" />
       <File FileName="Plex.Server/UpgradeManager.cs" Line="20" Column="60" />
       <File FileName="ShiftOS.Objects/Pty/PseudoTerminal.cs" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/Apps/Terminal.cs" Line="310" Column="76" />
+      <File FileName="ShiftOS.Frontend/Apps/Terminal.cs" Line="5" Column="17" />
       <File FileName="ShiftOS.Frontend/Properties/Resources.resx" Line="1" Column="1" />
       <File FileName="ShiftOS.Frontend/Apps/ChatClient.cs" Line="11" Column="12" />
       <File FileName="packages/MonoGame.Framework.DesktopGL.3.6.0.1625/readme.txt" Line="8" Column="1" />
@@ -42,30 +42,6 @@
       <File FileName="ShiftOS_TheReturn/GUI/TextControl.cs" Line="289" Column="10" />
       <File FileName="ShiftOS_TheReturn/TextRenderers/GdiPlusTextRenderer.cs" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="ShiftOS_TheReturn" expanded="True">
-            <Node name="Plex" expanded="True">
-              <Node name="Apps" expanded="True" />
-              <Node name="Content" expanded="True" />
-              <Node name="Desktop" expanded="True" />
-              <Node name="Properties" expanded="True">
-                <Node name="Resources.resx" expanded="True" />
-              </Node>
-            </Node>
-            <Node name="Plex.Engine" expanded="True">
-              <Node name="GraphicsSubsystem" expanded="True" />
-              <Node name="GUI" expanded="True" />
-              <Node name="TextRenderers" expanded="True">
-                <Node name="GdiPlusTextRenderer.cs" selected="True" />
-              </Node>
-              <Node name="CrashHandler.cs" expanded="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
