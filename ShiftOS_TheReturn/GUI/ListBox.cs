@@ -26,24 +26,19 @@ namespace Plex.Engine.GUI
             {
                 int x = 1;
                 int y = fontheight * (i - itemOffset);
-                int width = Width - 2;
-                int height = fontheight;
-                if(i >= 0 && i < items.Count)
+                if (i >= 0 && i < items.Count)
                 {
+                    var state = Theming.ButtonState.Idle;
                     if (i == _itemOver)
                     {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.White, Font, Alignment);
+                        state = Theming.ButtonState.MouseHover;
 
                     }
                     else if (i == selectedIndex)
                     {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.White, Font, Alignment);
-
+                        state = Theming.ButtonState.MouseDown;
                     }
-                    else
-                    {
-                        gfx.DrawString(items[i].ToString(), x, y + 2, Color.LightGray, Font, Alignment);
-                    }
+                    Theming.ThemeManager.Theme.DrawStatedString(gfx, items[i].ToString(), x, y + 2, int.MaxValue, int.MaxValue, TextControlFontStyle.System, state);
                 }
             }
 
@@ -51,6 +46,7 @@ namespace Plex.Engine.GUI
 
         public ListBox()
         {
+            fontheight = (int)Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, "Measure test.").Y;
             MouseMove += (loc) =>
             {
                 if (fontheight <= 0)
@@ -211,20 +207,23 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
+            Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+            var accent = Theming.ThemeManager.Theme.GetAccentColor();
             for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
             {
                 int x = 1;
                 int y = fontheight * (i - itemOffset);
                 int width = Width - 2;
                 int height = fontheight;
+                
                 if (i == selectedIndex)
                 {
                     //draw the string as selected
-                    gfx.DrawRectangle(x, y + 2, width, height, Color.LightBlue);
+                    gfx.DrawRectangle(x, y + 2, width, height, accent);
                 }
                 else if (i == _itemOver)
                 {
-                    gfx.DrawRectangle(x, y + 2, width, height, Color.Blue);
+                    gfx.DrawRectangle(x, y + 2, width, height, accent*0.75F);
                 }
             }
             base.OnPaint(gfx, target);
@@ -234,11 +233,7 @@ namespace Plex.Engine.GUI
         {
             TextColor = Color.White;
 
-            if(fontheight != Font.Height)
-            {
-                fontheight = Font.Height;
-                Invalidate();
-            }
+            
             base.OnLayout(gameTime);
         }
 

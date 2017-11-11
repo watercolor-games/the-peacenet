@@ -15,6 +15,9 @@ namespace Plex.Objects
 
         [Order]
         public List<Subnet> Networks { get; set; }
+
+        [Order]
+        public int MaxRank { get; set; }
     }
 
     public class Subnet

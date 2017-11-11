@@ -16,6 +16,12 @@ namespace Plex.Engine.GUI
         private string _label = "Type here!";
         private int _index = 0;
         private bool passwordChar = false;
+        private int _heighttext = 0;
+
+        public TextInput()
+        {
+            _heighttext = (int)Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, "This a text measure test.").Y;
+        }
 
         public bool PasswordChar
         {
@@ -57,21 +63,20 @@ namespace Plex.Engine.GUI
 
         protected override void RenderText(GraphicsContext gfx)
         {
-            int textY = (Height - Font.Height) / 2;
-            int caretHeight = Font.Height;
+            int textY = (Height - _heighttext) / 2;
 
             string text = Text;
             if (PasswordChar)
                 text = "*".Repeat(Text.Length);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                gfx.DrawString(text, (int)(2 - TextDrawOffset), textY, Microsoft.Xna.Framework.Color.White, Font, Engine.GUI.TextAlignment.TopLeft);
+                Theming.ThemeManager.Theme.DrawString(gfx, Text, (int)(2 - TextDrawOffset), textY, int.MaxValue, int.MaxValue, TextControlFontStyle.System);
             }
             if(!IsFocusedControl)
             {
                 if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(_label))
                 {
-                    gfx.DrawString(_label, 2, textY, Color.Gray, Font, Engine.GUI.TextAlignment.TopLeft);
+                    Theming.ThemeManager.Theme.DrawDisabledString(gfx, Text, 2, textY, int.MaxValue, int.MaxValue, TextControlFontStyle.System);
                 }
             }
 
@@ -108,13 +113,18 @@ namespace Plex.Engine.GUI
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Left)
             {
                 if (_index > 0)
+                {
                     _index--;
-                
+                    CalculateVisibleText();
+                    Invalidate();
+                }
             }
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Tab)
             {
                 Text = Text.Insert(Index, "    ");
                 Index += 4;
+                CalculateVisibleText();
+                Invalidate();
             }
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Back)
             {
@@ -125,18 +135,26 @@ namespace Plex.Engine.GUI
                         if(string.IsNullOrWhiteSpace(Text.Remove(_index - 1, 1)))
                         {
                             Text = "0";
+                            _index = Text.Length;
+                            CalculateVisibleText();
+                            Invalidate();
                             return;
                         }
-                        if(Text.Remove(_index - 1, 1).StartsWith("."))
+                        if (Text.Remove(_index - 1, 1).StartsWith("."))
                         {
                             Text = "0" + Text.Remove(_index - 1, 1);
+                            _index = Text.Length;
+                            CalculateVisibleText();
+                            Invalidate();
                             return;
                         }
                     }
 
                     _index--;
                     Text = Text.Remove(_index, 1);
-                    
+                    CalculateVisibleText();
+                    Invalidate();
+
                 }
 
             }
@@ -145,11 +163,17 @@ namespace Plex.Engine.GUI
                 if(_index < Text.Length - 1)
                 {
                     Text = Text.Remove(_index, 1);
+                    CalculateVisibleText();
+                    Invalidate();
                 }
             }
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Right)
                 if (_index < Text.Length)
+                {
                     _index++;
+                    CalculateVisibleText();
+                    Invalidate();
+                }
             if (e.KeyChar != '\0') {
                 switch (TextFilter)
                 {
@@ -178,7 +202,9 @@ namespace Plex.Engine.GUI
                         if (Text == "0" && e.KeyChar != '.')
                         {
                             Text = e.KeyChar.ToString();
-                            return;
+                            _index = Text.Length;
+                            CalculateVisibleText();
+                            Invalidate();
                         }
                     }
                     Text = Text.Insert(_index, e.KeyChar.ToString());
@@ -222,7 +248,7 @@ namespace Plex.Engine.GUI
             if (_index > text.Length)
                 _index = text.Length;
             string toCaret = text.Substring(0, _index);
-            var measure = GraphicsContext.MeasureString(toCaret, Font, Engine.GUI.TextAlignment.TopLeft);
+            var measure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, toCaret);
             caretPos = 2 + measure.X;
             if (caretPos - TextDrawOffset < 0)
             {
@@ -252,8 +278,8 @@ namespace Plex.Engine.GUI
             {
                 if (useClassicBorders == true)
                 {
-                    gfx.DrawRectangle(0, 0, Width, Height, borderColor);
-                    gfx.DrawRectangle(borderWidth, borderWidth, Width - (borderWidth * 2), Height - (borderWidth * 2), bgColor);
+                    Theming.ThemeManager.Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
+                    Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, borderWidth, borderWidth, Width - (borderWidth * 2), Height - (borderWidth * 2));
                 }
                 else
                 {
@@ -290,15 +316,15 @@ namespace Plex.Engine.GUI
 
         protected virtual void OnPaintCaret(GraphicsContext gfx, RenderTarget2D target)
         {
-            int textY = (Height - Font.Height) / 2;
-            int caretHeight = Font.Height;
+            int textY = (Height - _heighttext) / 2;
+            int caretHeight = _heighttext;
 
             if (IsFocusedControl)
             {
                 if (caretMS <= 250)
                 {
                     //draw caret
-                    gfx.DrawRectangle((int)(caretPos - TextDrawOffset), textY, 2, caretHeight, Color.White);
+                    Theming.ThemeManager.Theme.DrawTextCaret(gfx, (int)(caretPos - TextDrawOffset), textY, 2, caretHeight);
                 }
             }
 
@@ -328,6 +354,12 @@ namespace Plex.Engine.GUI
             caretMS += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (caretMS >= 500)
                 caretMS = 0;
+            int height = _heighttext + 6;
+            this.MinHeight = height;
+            this.MaxHeight = height;
+            this.Height = height;
+
+
             Invalidate();
             base.OnLayout(gameTime);
         }

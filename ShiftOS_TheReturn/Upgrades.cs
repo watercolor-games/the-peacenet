@@ -256,6 +256,8 @@ namespace Plex.Engine
         /// <returns>Whether the upgrade is installed.</returns>
         public static bool UpgradeInstalled(string id)
         {
+            if (ServerManager.Connected == false)
+                return false;
             if (string.IsNullOrWhiteSpace(id))
                 return true;
             if (id.Contains(":"))
@@ -282,6 +284,8 @@ namespace Plex.Engine
 
         public static bool IsLoaded(string id)
         {
+            if (ServerManager.Connected == false)
+                return false;
             if (string.IsNullOrWhiteSpace(id))
                 return true;
             if (id.Contains(":"))

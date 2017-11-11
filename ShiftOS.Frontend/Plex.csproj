@@ -18,6 +18,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <UseMSBuildEngine>false</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -66,7 +67,6 @@
     </Compile>
     <Compile Include="Infobox.cs" />
     <Compile Include="MainMenu.cs" />
-    <Compile Include="MonoGameLanguageProvider.cs" />
     <Compile Include="PeacenetTheme.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -82,16 +82,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MonoGame.Extended, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Extended.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
+    <Reference Include="MonoGame.Extended, Version=0.6.602.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.0.6.602\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MonoGame.Extended.Input, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Extended.Input.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.Input.dll</HintPath>
+    <Reference Include="MonoGame.Extended.Input, Version=0.6.602.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.Input.0.6.602\lib\portable-net45+win8+wpa81\MonoGame.Extended.Input.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -105,6 +102,10 @@
       <HintPath>..\packages\TrueTypeSharp.1.0.5\lib\net20\TrueTypeSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FontAwesome.resx">
@@ -113,10 +114,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
@@ -165,6 +162,11 @@
     </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <None Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="MonoGame.Framework.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plex.Server\Plex.Server.csproj">
@@ -182,10 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
-    <None Include="Content\MondaH1.spritefont" />
-    <None Include="Content\MondaH2.spritefont" />
-    <None Include="Content\MondaH3.spritefont" />
-    <None Include="Content\MondaSystem.spritefont" />
     <None Include="Content\UbuntuMono-B.spritefont" />
     <None Include="Content\UbuntuMono-B.ttf" />
     <None Include="Content\UbuntuMono-BI.spritefont" />

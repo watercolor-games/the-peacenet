@@ -52,19 +52,10 @@ namespace Plex.Engine.GUI
                 //We're in the scroll bar.
                 bool inUpArrow = MouseY - _scrollY <= 24;
                 bool inDownArrow = MouseY - _scrollY >= Height - 24;
-                int _scrollBarX = Width - 24;
-                int _arrowSize = 24;
-                int nubAreaHeight = Height - (_arrowSize * 2);
 
-                int nubmargin = ((24 - 20) / 2);
-                int lerp = (int)ProgressBar.linear(_scrollY, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //...to get the location of the nub.
                 //Now we do it again to get the HEIGHT of the nub.
-                int nubheight = (int)ProgressBar.linear(Height, 0, _realHeight, _arrowSize + nubmargin, nubAreaHeight - (nubmargin * 2));
                 //And as for the X and width, these values are calculated using the skin.
-                int nubX = _scrollBarX + nubmargin;
-                int nubW = 20;
-                bool inNub = (MouseX >= nubX && MouseX <= nubX + nubW && MouseY - _scrollY >= lerp && MouseY - _scrollY <= lerp + nubheight);
                 if (inUpArrow)
                 {
                     ScrollBy(-16);
@@ -142,7 +133,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(Color.DarkGray);
+            Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
         }
 
         protected override void AfterPaint(GraphicsContext gfx, RenderTarget2D target)
@@ -197,9 +188,7 @@ namespace Plex.Engine.GUI
             //First the backgrounds.
 
             var tArrowBG = GetArrowBGColor(_upState);
-            var tArrowFG = GetArrowFGColor(_upState);
             var bArrowBG = GetArrowBGColor(_downState);
-            var bArrowFG = GetArrowFGColor(_downState);
 
 
             //Top:

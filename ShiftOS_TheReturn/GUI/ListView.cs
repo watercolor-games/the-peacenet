@@ -39,19 +39,13 @@ namespace Plex.Engine.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
+                var textmeasure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, item.Text, TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 int texty = _itemy + texheight;
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
-                if (_items.IndexOf(item) == _selected)
-                {
-                    gfx.DrawString(item.Text, textx, texty, Color.White, Font, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
-                }
-                else
-                {
-                    gfx.DrawString(item.Text, textx, texty, Color.LightGray, Font, Engine.GUI.TextAlignment.Top, (int)textmeasure.X);
-                }
+
+                Theming.ThemeManager.Theme.DrawString(gfx, item.Text, textx, texty, (int)textmeasure.X, (int)textmeasure.Y, TextControlFontStyle.System);
                 _itemx += textwidth + _itemgap;
                 if (_itemx >= (Width - (_initialmargin * 2)))
                 {
@@ -84,11 +78,9 @@ namespace Plex.Engine.GUI
                         }
                     }
                     int textwidth = texwidth + (_itemimagemargin * 2);
-                    var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
+                    var textmeasure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, item.Text, TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
-                    int texty = _itemy + texheight;
-                    int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
 
                     if (MouseX >= _itemx && MouseX <= _itemx + textwidth)
                     {
@@ -196,7 +188,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
-            gfx.Clear(Color.DarkGray);
+            Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
             int _itemx = _initialmargin;
             int _itemy = _initialmargin - scroll;
             int yhelper = 0;
@@ -213,7 +205,7 @@ namespace Plex.Engine.GUI
                     }
                 }
                 int textwidth = texwidth + (_itemimagemargin * 2);
-                var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
+                var textmeasure = Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, item.Text, TextAlignment.Top, textwidth);
                 yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
                 if(image != null)
@@ -221,7 +213,7 @@ namespace Plex.Engine.GUI
                     int imageDrawX = _itemx + ((textwidth - texwidth) / 2);
                     Color tint = Color.White;
                     if (_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
-                        tint = Color.LightBlue;
+                        tint = Theming.ThemeManager.Theme.GetAccentColor();
                     gfx.DrawRectangle(imageDrawX, _itemy, texwidth, texheight, image, tint);
                 }
 
@@ -229,7 +221,7 @@ namespace Plex.Engine.GUI
                 int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                 if(_items.IndexOf(item) == _selected && (IsFocusedControl || ContainsFocusedControl))
                 {
-                    gfx.DrawRectangle(textx, texty, (int)textmeasure.X, (int)textmeasure.Y, Color.LightBlue);
+                    gfx.DrawRectangle(textx, texty, (int)textmeasure.X, (int)textmeasure.Y, Theming.ThemeManager.Theme.GetAccentColor());
                 }
                 _itemx += textwidth + _itemgap;
                 if(_itemx >= (Width - (_initialmargin * 2)))
@@ -265,8 +257,6 @@ namespace Plex.Engine.GUI
                     var textmeasure = GraphicsContext.MeasureString(item.Text, Font, Engine.GUI.TextAlignment.Top, textwidth);
                     yhelper = Math.Max(yhelper, _itemy + texheight + (int)textmeasure.Y);
 
-                    int texty = _itemy + texheight;
-                    int textx = _itemx + ((textwidth - (int)textmeasure.X) / 2);
                     _itemx += textwidth + _itemgap;
                     if (_itemx >= (MaxWidth - (_initialmargin * 2)))
                     {

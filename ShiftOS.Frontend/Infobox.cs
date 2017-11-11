@@ -8,6 +8,8 @@ using Plex.Engine;
 using Plex.Frontend.Desktop;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Frontend
 {
@@ -35,13 +37,36 @@ namespace Plex.Frontend
 
     public class InfoboxMessage : Control, IPlexWindow
     {
-        private Action _okAction = null;
+        private static SoundEffect _infoboxOpen = null;
+
+        private static Texture2D _ok = null;
+		private static Texture2D _no = null;
+		private static Texture2D _warning = null;
+
+
+		private Action _okAction = null;
         private Action<bool> _yesNoAction = null;
 
         public InfoboxMessage(string title, string message)
         {
-            InitializeComponent();
-            lbmessage.Text = Localization.Parse(message);
+            if (_infoboxOpen == null)
+            {
+                _infoboxOpen = UIManager.ContentLoader.Load<SoundEffect>("SFX/maximize");
+            }
+            if(_ok == null)
+            {
+                _ok = UIManager.ContentLoader.Load<Texture2D>("Infobox/OK");
+            }
+			if (_no == null)
+			{
+				_no = UIManager.ContentLoader.Load<Texture2D>("Infobox/No");
+			}
+			if (_warning == null)
+			{
+				_warning = UIManager.ContentLoader.Load<Texture2D>("Infobox/Warning");
+			}
+			InitializeComponent();
+            lbmessage.Text = message;
             Title = title;
         }
 
@@ -49,7 +74,7 @@ namespace Plex.Frontend
 
         public void OnLoad()
         {
-            AudioPlayerSubsystem.Infobox();
+            _infoboxOpen.Play();
             AppearanceManager.SetWindowTitle(this, Title);
         }
 
@@ -161,22 +186,22 @@ namespace Plex.Frontend
             // btnyes
             // 
             this.btnyes.AutoSize = true;
-            this.btnyes.Text = Localization.Parse("{GEN_YES}");
-            this.btnyes.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnyes.Text = "Yes";
+            this.btnyes.Image = _ok;
             // 
             // btnno
             // 
             this.btnno.AutoSize = true;
-            this.btnno.Text = Localization.Parse("{GEN_NO}");
-            this.btnno.Image = FontAwesome.times.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnno.Text = "No";
+            this.btnno.Image = _no;
             // 
             // btnok
             // 
             this.btnok.AutoSize = true;
             this.btnok.X = 140;
             this.btnok.Y = 140;
-            this.btnok.Text = Localization.Parse("{GEN_OK}");
-            this.btnok.Image = FontAwesome.check.ToTexture2D(UIManager.GraphicsDevice);
+            this.btnok.Text = "OK";
+            this.btnok.Image = _ok;
             // 
             // pbicon
             // 
@@ -184,8 +209,8 @@ namespace Plex.Frontend
             this.pbicon.Y = 19;
             this.pbicon.Width = 64;
             this.pbicon.Height = 64;
-            this.pbicon.Image = FontAwesome.warning.ToTexture2D(UIManager.GraphicsDevice);
-            this.pbicon.ImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pbicon.Image = _warning;
+            this.pbicon.ImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             // 
             // Dialog
             // 

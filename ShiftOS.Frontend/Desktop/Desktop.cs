@@ -93,20 +93,20 @@ namespace Plex.Frontend.Desktop
         {
             _appLauncher.ClearItems();
             List<string> cats = new List<string>();
-            foreach(var item in items.OrderBy(x => Localization.Parse(x.DisplayData.Category)))
+            foreach(var item in items.OrderBy(x => x.DisplayData.Category))
             {
-                if (!cats.Contains(Localization.Parse(item.DisplayData.Category)))
-                    cats.Add(Localization.Parse(item.DisplayData.Category));
+                if (!cats.Contains((item.DisplayData.Category)))
+                    cats.Add((item.DisplayData.Category));
             }
             foreach(var cat in cats)
             {
                 var catitem = new MenuItem();
                 catitem.Text = cat;
 
-                foreach(var item in items.Where(x => Localization.Parse(x.DisplayData.Category) == cat).OrderBy(x=>Localization.Parse(x.DisplayData.Name)))
+                foreach(var item in items.Where(x => (x.DisplayData.Category) == cat).OrderBy(x=>(x.DisplayData.Name)))
                 {
                     var alitem = new MenuItem();
-                    alitem.Text = Localization.Parse(item.DisplayData.Name);
+                    alitem.Text = (item.DisplayData.Name);
                     alitem.ItemActivated += () =>
                     {
                         AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.LaunchType, null));
@@ -162,7 +162,6 @@ namespace Plex.Frontend.Desktop
                     {
                         wb.ToggleMinimized();
                     }
-                    this.MouseHandled ();
                 };
                 text.Click += _click;
                 image.Click += _click;
@@ -235,8 +234,6 @@ namespace Plex.Frontend.Desktop
 
         }
 
-        private List<PanelButtonData> PanelButtons = new List<PanelButtonData>();
-        
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
             base.OnPaint(gfx, target);

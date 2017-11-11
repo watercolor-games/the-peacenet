@@ -14,7 +14,7 @@ namespace Plex.Engine.Theming
     {
         public abstract void LoadThemeData(GraphicsDevice device);
 
-
+        public abstract Color GetAccentColor();
         
         //Rendering
         public abstract void DrawButtonBackground(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state);
@@ -26,6 +26,8 @@ namespace Plex.Engine.Theming
         public abstract void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height);
         public abstract void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height);
         public abstract void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style);
+        public abstract void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style, ButtonState state);
+        public abstract void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style);
         public abstract void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, ButtonState close, ButtonState maximize, ButtonState minimize, bool dialog);
         public abstract Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight);
 

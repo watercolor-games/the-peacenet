@@ -47,8 +47,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Whoa, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Whoa.1.4.0\lib\net45\Whoa.dll</HintPath>
+    <Reference Include="Whoa, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Whoa.1.5.0\lib\net45\Whoa.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

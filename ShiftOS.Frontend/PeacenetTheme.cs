@@ -16,7 +16,6 @@ namespace Plex.Frontend
     public class PeacenetTheme : Theme
     {
         private System.Drawing.Font _systemsans = null;
-        private System.Drawing.Font _titlebar = null;
         private System.Drawing.Font _head1 = null;
         private System.Drawing.Font _head2 = null;
         private System.Drawing.Font _head3 = null;
@@ -26,10 +25,14 @@ namespace Plex.Frontend
         private Texture2D _minimize = null;
         private Texture2D _restore = null;
 
+        private Texture2D _arrow_left = null;
+        private Texture2D _arrow_top = null;
+        private Texture2D _arrow_right = null;
+        private Texture2D _arrow_bottom = null;
+
+
         private int _titleheight = 30;
-        private int _borderleft = 2;
         private int _borderright = 2;
-        private int _borderbottom = 2;
 
         private int _titlebuttonsize = 24;
 
@@ -43,6 +46,8 @@ namespace Plex.Frontend
 
 
         private Color _controlBG = Color.Black;
+        private Color _controlBGDark = Color.Black;
+        private Color _controlBGLight = Color.Black;
 
         private Color _borderBG = Color.Black;
         private Color _borderBGInactive = Color.Black;
@@ -50,7 +55,20 @@ namespace Plex.Frontend
 
         public override void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state, ArrowDirection direction)
         {
-            throw new NotImplementedException();
+            var arrow = _arrow_left;
+            switch(direction)
+            {
+                case ArrowDirection.Top:
+                    arrow = _arrow_top;
+                    break;
+                case ArrowDirection.Right:
+                    arrow = _arrow_right;
+                    break;
+                case ArrowDirection.Bottom:
+                    arrow = _arrow_bottom;
+                    break;
+            }
+            gfx.DrawRectangle(x, y, width, height, arrow, Color.White, System.Windows.Forms.ImageLayout.Zoom);
         }
 
         public override void DrawButtonBackground(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state)
@@ -70,20 +88,25 @@ namespace Plex.Frontend
 
         public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _controlBGDark);
         }
 
         public override void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _controlBGLight);
         }
 
         public override void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style)
         {
+            drawStringWithColor(graphics, text, x, y, width, height, style, Color.White);
+        }
+
+        private void drawStringWithColor(GraphicsContext gfx, string text, int x, int y, int width, int height, TextControlFontStyle style, Color color)
+        {
             var _f = _systemsans;
             if (style == TextControlFontStyle.Mono || style == TextControlFontStyle.Custom)
             {
-                RenderTextInternal(graphics, text, x, y, width, height, _mono, Color.White);
+                RenderTextInternal(gfx, text, x, y, width, height, _mono, color);
                 return;
             }
             switch (style)
@@ -101,12 +124,13 @@ namespace Plex.Frontend
                     _f = _head3;
                     break;
             }
-            graphics.DrawString(text, x, y, Color.White, _f, TextAlignment.TopLeft, width, Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, x, y, color, _f, TextAlignment.TopLeft, width, Engine.TextRenderers.WrapMode.Words);
+
         }
 
         public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            graphics.DrawRectangle(x, y, width, height, _buttonTextIdle);
         }
 
         public override void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, ButtonState close, ButtonState maximize, ButtonState minimize, bool dialog)
@@ -151,20 +175,31 @@ namespace Plex.Frontend
             string fontName = "Tahoma";
             if (isMondaInstalled)
                 fontName = "Monda";
+            if (DateTime.Now.Day == 6 && DateTime.Now.Month == 7)
+                if (IsComicSansInstalled())
+                    fontName = "Comic Sans MS";
             _systemsans = new System.Drawing.Font(fontName, 10F);
             _head1 = new System.Drawing.Font(fontName, 25F);
             _head2 = new System.Drawing.Font(fontName, 20F);
             _head3 = new System.Drawing.Font(fontName, 15F);
             _mono = UIManager.ContentLoader.Load<SpriteFont>("UbuntuMono-B");
 
-            _close = TexFromImg(FontAwesome.times_circle, device);
-            _minimize = TexFromImg(FontAwesome.minus_circle, device);
-            _maximize = TexFromImg(FontAwesome.arrow_circle_up, device);
-            _restore = TexFromImg(FontAwesome.arrow_circle_down, device);
+            _close = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Close");
+            _minimize = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Minimize");
+            _maximize = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Maximize");
+            _restore = UIManager.ContentLoader.Load<Texture2D>("Window/Artwork/Restore");
+
+            _arrow_left = UIManager.ContentLoader.Load<Texture2D>("Arrows/Left");
+            _arrow_top = UIManager.ContentLoader.Load<Texture2D>("Arrows/Up");
+            _arrow_right = UIManager.ContentLoader.Load<Texture2D>("Arrows/Right");
+            _arrow_bottom = UIManager.ContentLoader.Load<Texture2D>("Arrows/Down");
+
+            _borderBG = new Color(64, 128, 255, 255);
+            _borderBGInactive = _borderBG * 0.75F;
 
             _buttonIdle = new Color(90, 90, 90, 255);
             _buttonDown = Color.Black;
-            _buttonHover = new Color(64, 128, 255, 255);
+            _buttonHover = _borderBG;
 
             _buttonTextIdle = new Color(191, 191, 191);
             _buttonTextHover = Color.White;
@@ -172,13 +207,13 @@ namespace Plex.Frontend
 
 
             _controlBG = new Color(64, 64, 64);
+            _controlBGDark = new Color(32, 32, 32);
+            _controlBGLight = new Color(111, 111, 111);
 
-            _borderBG = new Color(64, 128, 255, 255);
-            _borderBGInactive = _borderBG * 0.75F;
         }
 
         
-
+        [Obsolete("Can we seriously stop fucking using GDI?")]
         private Texture2D TexFromImg(System.Drawing.Image img, GraphicsDevice device)
         {
             var bmp = (System.Drawing.Bitmap)img;
@@ -257,6 +292,13 @@ namespace Plex.Frontend
             return fCollection.Families.FirstOrDefault(x => x.Name == "Monda") != null;
         }
 
+        private bool IsComicSansInstalled()
+        {
+            var fCollection = new System.Drawing.Text.InstalledFontCollection();
+            return fCollection.Families.FirstOrDefault(x => x.Name == "Comic Sans MS") != null;
+        }
+
+
         public override void DrawButtonText(GraphicsContext gfx, string text, int x, int y, int width, int height, ButtonState state)
         {
             var c = _buttonTextIdle;
@@ -292,6 +334,26 @@ namespace Plex.Frontend
                 case TitleButton.Maximize:
                     return new Rectangle(_maxx, _tby, _titlebuttonsize, _titlebuttonsize);
             }
+        }
+
+        public override Color GetAccentColor()
+        {
+            return this._borderBG;
+        }
+
+        public override void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style, ButtonState state)
+        {
+            var c = _buttonTextIdle;
+            if (state == ButtonState.MouseHover)
+                c = _buttonTextHover;
+            if (state == ButtonState.MouseDown)
+                c = _buttonTextDown;
+            drawStringWithColor(graphics, text, x, y, width, height, style, c);
+        }
+
+        public override void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style)
+        {
+            drawStringWithColor(graphics, text, x, y, width, height, style, Color.Gray);
         }
     }
 }

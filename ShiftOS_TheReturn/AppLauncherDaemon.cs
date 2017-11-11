@@ -117,8 +117,8 @@ namespace Plex.Engine
                             if (launch.UpgradeInstalled)
                             {
                                 var data = new LauncherItem { DisplayData = launch, LaunchType = type };
-                                data.DisplayData.Category = Localization.Parse(data.DisplayData.Category);
-                                data.DisplayData.Name = Localization.Parse(data.DisplayData.Name);
+                                data.DisplayData.Category = (data.DisplayData.Category);
+                                data.DisplayData.Name = (data.DisplayData.Name);
                                 win.Add(data);
                             }
                         }

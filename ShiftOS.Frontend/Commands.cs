@@ -41,7 +41,6 @@ namespace Plex.Frontend
         [Command("shutdown", description = "{DESC_SHUTDOWN}")]
         public static void Shutdown(ConsoleContext console)
         {
-            AudioPlayerSubsystem.Shutdown();
             ServerManager.Disconnect(DisconnectType.UserRequested);
         }
     }
@@ -97,14 +96,11 @@ namespace Plex.Frontend
             string err = null;
 
             if (winNum < 0 || winNum >= AppearanceManager.OpenForms.Count)
-                err = Localization.Parse("{ERR_BADWINID}", new Dictionary<string, string>
-                {
-                    ["%max"] = (AppearanceManager.OpenForms.Count - 1).ToString()
-                });
+                err = "Error: The window couldn't be found.";
 
             if (string.IsNullOrEmpty(err))
             {
-                Console.WriteLine("{RES_WINDOWCLOSED}");
+                Console.WriteLine("Window closed.");
                 AppearanceManager.Close(AppearanceManager.OpenForms[winNum].ParentWindow);
             }
             else

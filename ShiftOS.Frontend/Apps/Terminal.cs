@@ -319,7 +319,8 @@ namespace Plex.Frontend.Apps
                 _bgColor = Microsoft.Xna.Framework.Color.Black;
                 _fgColor = Microsoft.Xna.Framework.Color.White;
                 _tbufferpos = 0;
-                _resized = false;
+				gfx.Clear(_bgColor);
+				_resized = false;
             }
             while (_tbufferpos != _tbuffer.Length)
             {
@@ -368,15 +369,13 @@ namespace Plex.Frontend.Apps
                             }
                             gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _bgColor);
                             break;
-                        case '\r':
+                        case '\n':
                             int _rx = (_charX * _charWidth);
                             int _ry = (_charY * _charHeight);
                             int _rwidth = (Width - _rx);
                             int _rheight = (_charHeight);
                             gfx.DrawRectangle(_rx, _ry, _rwidth, _rheight, _bgColor);
                             _charX = 0;
-                            break;
-                        case '\n':
                             _charY++;
                             int _nx = (_charX * _charWidth);
                             int _ny = (_charY * _charHeight);

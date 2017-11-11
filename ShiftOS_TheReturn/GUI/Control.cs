@@ -28,7 +28,6 @@ namespace Plex.Engine.GUI
         private bool _middleState = false;
         private bool _visible = true;
         private DockStyle _dock = DockStyle.None;
-        private bool _focused = false;
         private bool _autoSize = false;
         private double _opacity = 1.0;
         private bool _invalidated = true;
@@ -386,12 +385,6 @@ namespace Plex.Engine.GUI
             }
         }
 
-        private bool _mouseHandled = false;
-        public void MouseHandled()
-        {
-            _mouseHandled = true;
-        }
-
         public Point PointToParent(int x, int y)
         {
             return new Point(x + _x, y + _y);
@@ -609,7 +602,6 @@ namespace Plex.Engine.GUI
                 return false;
             int _bw = (width == 0) ? this._w : width;
             int _bh = (height == 0) ? this._h : height;
-            _mouseHandled = false;
             //Firstly, we get the mouse coordinates in the local space
             var coords = PointToLocal(state.Position.X, state.Position.Y);
             bool doMove = false;

@@ -315,9 +315,6 @@ namespace Plex.Engine
 
         private static string _terminal_forward_session_id = "";
 
-        private static string _ranCMD = "";
-        private static string[] _ranArgs = null;
-
         /// <summary>
         /// Runs a command on the client.
         /// </summary>
@@ -332,7 +329,7 @@ namespace Plex.Engine
             //Console.WriteLine(text + " " + "{" + string.Join(",", args.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}" + " " + isRemote);
             bool value = true;
 
-            var cmd = Commands.FirstOrDefault(x => Localization.Parse(x.CommandInfo.name) == text);
+            var cmd = Commands.FirstOrDefault(x => x.CommandInfo.name == text);
             if (cmd == null)
                 value = false;
             else if (!Upgrades.UpgradeInstalled(cmd.Dependencies))
@@ -357,8 +354,6 @@ namespace Plex.Engine
             {
                 if (isRemote == false)
                 {
-                    _ranCMD = text;
-                    _ranArgs = args;
                     using (ServerStream sstr = new ServerStream(ServerMessageType.TRM_INVOKE))
                     {
                         sstr.Write(JsonConvert.SerializeObject(new

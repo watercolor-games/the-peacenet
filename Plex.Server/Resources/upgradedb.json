@@ -1,0 +1,12 @@
+[
+	{
+		Category: "Cosmetic",
+		Name: "Maximizable Windows",
+		Description: "Sometimes you just have to focus on something and block everything in the background out.\r\n\r\nThis upgrade lets you do just that by adding a button to all windows that, when clicked, toggles whether the window takes up the entire workspace.",
+		Tutorial: "You can now maximize windows by clicking the 'maximize' button at the top. Simply click it when it is pointing up to maximize, and click it when it is pointing down to minimize.\r\nNote: You may not maximize dialog windows!",
+		Rank: 0,
+		Cost: 500,
+		Dependencies: "",
+		Purchasable: true
+	}
+]

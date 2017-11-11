@@ -83,7 +83,7 @@ namespace Plex.Frontend.Desktop
             var type = win.GetType();
             var attr = type.GetCustomAttributes(false).FirstOrDefault(x => x is DefaultTitleAttribute) as DefaultTitleAttribute;
             if (attr != null)
-                return Localization.Parse(attr.Title);
+                return (attr.Title);
             return "Plex Window";
         }
 
@@ -181,6 +181,7 @@ namespace Plex.Frontend.Desktop
         private Engine.Theming.ButtonState _minState = Engine.Theming.ButtonState.Idle;
         private Engine.Theming.ButtonState _maxState = Engine.Theming.ButtonState.Idle;
 
+        private bool showMaximize = false;
 
         private bool _maximized = false;
         private int _normalx = 0;
@@ -256,12 +257,19 @@ namespace Plex.Frontend.Desktop
 
         private void Upgrades_Installed()
         {
-            ParentWindow.OnUpgrade();
+            bool max = Upgrades.IsLoaded("maximizable_windows");
+            if(max != showMaximize)
+            {
+                showMaximize = max;
+                Invalidate();
+            }
+            ParentWindow?.OnUpgrade();
         }
 
         public WindowBorder()
         {
             Upgrades.Installed += Upgrades_Installed;
+            Upgrades_Installed();
             //Enforce the 800x600 window rule.
             MaxWidth = 800;
             MaxHeight = 600;
@@ -296,7 +304,7 @@ namespace Plex.Frontend.Desktop
                     var _mxrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Maximize, Width, Height);
                     if (MouseX >= _mxrect.X && MouseX <= _mxrect.X + _mxrect.Width && MouseY >= _mxrect.Y && MouseY <= _mxrect.Y + _mxrect.Height)
                     {
-                        if (MouseLeftDown)
+                        if (MouseLeftDown && showMaximize)
                         {
                             ToggleMaximized();
                             return;
@@ -314,7 +322,6 @@ namespace Plex.Frontend.Desktop
                 }
 
             };
-
             X = 720;
             Y = 480;
         }
@@ -372,7 +379,7 @@ namespace Plex.Frontend.Desktop
             if (!IsDialog)
             {
                 var _mxrect = ThemeManager.Theme.GetTitleButtonRectangle(TitleButton.Maximize, Width, Height);
-                if (MouseX >= _mxrect.X && MouseX <= _mxrect.X + _mxrect.Width && MouseY >= _mxrect.Y && MouseY <= _mxrect.Y + _mxrect.Height)
+                if (MouseX >= _mxrect.X && MouseX <= _mxrect.X + _mxrect.Width && MouseY >= _mxrect.Y && MouseY <= _mxrect.Y + _mxrect.Height && showMaximize)
                 {
                     _mxstate = Engine.Theming.ButtonState.MouseHover;
                     if (MouseLeftDown)

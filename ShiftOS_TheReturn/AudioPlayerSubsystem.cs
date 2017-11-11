@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Plex.Engine
 {
+    [Obsolete("You do know MonoGame has support for audio, right Michael?")]
     public class AudioPlayerSubsystem
     {
         private static IAudioPlayer _player = null;

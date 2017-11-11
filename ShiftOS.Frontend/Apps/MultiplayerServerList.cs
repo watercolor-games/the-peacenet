@@ -181,7 +181,6 @@ namespace Plex.Frontend.Apps
                     try
                     {
                         UIManager.ShowCloudDownload();
-                        string serverInfoJson = wc.DownloadString("http://" + server.Hostname + ":3253/serverinfo");
                         byte[] serverIcon = wc.DownloadData("http://" + server.Hostname + ":3253/servericon");
 
                         using(var memstr = new MemoryStream(serverIcon))
@@ -190,8 +189,6 @@ namespace Plex.Frontend.Apps
                             _list.SetImage(key, texture);
                         }
 
-                        var serverinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(serverInfoJson);
-                        string nameFormat = $"{serverinfo["server_name"]} ({serverinfo["online_players"]}/{serverinfo["max_players"]})";
                     }
                     catch
                     {
