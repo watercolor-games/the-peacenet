@@ -1,6 +1,6 @@
 ﻿<Properties StartupConfiguration="{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}|Default">
   <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS_TheReturn/GUI/Control.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS_TheReturn/Discord/RPC.cs">
     <Files>
       <File FileName="ShiftOS.Frontend/Apps/GameSettings.cs" Line="46" Column="15" />
       <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="196" Column="15" />
@@ -11,6 +11,13 @@
       <File FileName="ShiftOS.Objects/FFI/DotNet.cs" Line="30" Column="18" />
       <File FileName="ShiftOS_TheReturn/GraphicsSubsystem/UIManager.cs" Line="54" Column="28" />
       <File FileName="ShiftOS_TheReturn/GUI/Control.cs" Line="18" Column="6" />
+      <File FileName="../discord-rpc/examples/button-clicker/Assets/DiscordRpc.cs" Line="59" Column="6" />
+      <File FileName="ShiftOS_TheReturn/Discord/CallbackDelegates.cs" Line="3" Column="1" />
+      <File FileName="ShiftOS_TheReturn/Discord/RPCEvents.cs" Line="3" Column="30" />
+      <File FileName="ShiftOS_TheReturn/Discord/RichPresence.cs" Line="5" Column="6" />
+      <File FileName="ShiftOS_TheReturn/Discord/Reply.cs" Line="6" Column="16" />
+      <File FileName="ShiftOS_TheReturn/Discord/JoinRequest.cs" Line="11" Column="1" />
+      <File FileName="ShiftOS_TheReturn/Discord/RPC.cs" Line="2" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

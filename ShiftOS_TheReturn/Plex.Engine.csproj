@@ -243,6 +243,12 @@
     <None Include="MonoGame.Framework.dll.config" />
     <Compile Include="Config\ConfigFile.cs" />
     <Compile Include="Config\ConfigurationManager.cs" />
+    <Compile Include="Discord\CallbackDelegates.cs" />
+    <Compile Include="Discord\RPCEvents.cs" />
+    <Compile Include="Discord\RichPresence.cs" />
+    <Compile Include="Discord\JoinRequest.cs" />
+    <Compile Include="Discord\Reply.cs" />
+    <Compile Include="Discord\RPC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -1961,6 +1967,7 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Config\" />
+    <Folder Include="Discord\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
