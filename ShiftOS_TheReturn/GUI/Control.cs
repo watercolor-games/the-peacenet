@@ -544,13 +544,6 @@ namespace Plex.Engine.GUI
                         break;
                 }
             }
-            if (CaptureMouse)
-            {
-                var mstate = Mouse.GetState();
-                var coords = PointToScreen(0, 0); //get the screen coordinates of this control.
-                if (coords.X >= mstate.X || coords.Y >= mstate.Y || coords.X + Width < mstate.X || coords.Y + Height < mstate.Y)
-                    Mouse.SetPosition(MathHelper.Clamp(mstate.X, coords.X+1, coords.X + Width-2), MathHelper.Clamp(mstate.Y+1, coords.Y, coords.Y + Height-2));
-            }
             OnLayout(gameTime);
             foreach (var child in _children)
                 if(child.Visible)

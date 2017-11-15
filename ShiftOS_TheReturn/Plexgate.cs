@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
+using Plex.Engine.Config;
 
 namespace Plex.Engine
 {
@@ -90,14 +91,6 @@ namespace Plex.Engine
         public Plexgate()
         {
             graphicsDevice = new GraphicsDeviceManager(this);
-            var uconf = Objects.UserConfig.Get();
-            graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
-            graphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
-            UIManager.Viewport = new System.Drawing.Size(
-                    uconf.ScreenWidth,
-                    uconf.ScreenHeight
-                );
-
             Content.RootDirectory = "Content";
             graphicsDevice.PreferMultiSampling = false;
 
@@ -107,16 +100,24 @@ namespace Plex.Engine
             //Set the title
             Window.Title = "Plex";
 
+            var res = ConfigurationManager.GetSystemResolution();
+            graphicsDevice.PreferredBackBufferWidth = res.Width;
+            graphicsDevice.PreferredBackBufferHeight = res.Height;
 
 
             //Fullscreen
-            graphicsDevice.IsFullScreen = uconf.Fullscreen;
+            graphicsDevice.IsFullScreen = true;
 
             // keyboard events
             keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
 
+            //Load the configuration manager...
+            ConfigurationManager.LoadConfig();
 
-            
+
+            //Apply config
+            ApplyConfig(false);
+
             
 #if DEBUG
             DebugText.Visible = true;
@@ -173,6 +174,18 @@ namespace Plex.Engine
             }
         }
 
+        public void ApplyConfig(bool resetGfxDevice = true)
+        {
+            var resolution = ConfigurationManager.GetResolution();
+
+            UIManager.Viewport = new System.Drawing.Size(resolution.Width, resolution.Height);
+
+            if (resetGfxDevice)
+            {
+                GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            }
+        }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -182,6 +195,8 @@ namespace Plex.Engine
         /// </summary>
         protected override void Initialize()
         {
+
+
             ServerManager.BuildBroadcastHandlerDB();
 
             ATextRenderer strategy = null;
@@ -203,15 +218,10 @@ namespace Plex.Engine
 			
 			TextRenderer.Init(strategy);
 			Console.WriteLine(strategy.GetType().ToString());
-
-
-            //Before we do ANYTHING, we've got to initiate the Plex engine.
-            UIManager.GraphicsDevice = GraphicsDevice;
-
-
-
-            
+                        
             UIManager.Init(this);
+
+
 
             Initializing?.Invoke();
 
@@ -228,8 +238,9 @@ namespace Plex.Engine
         /// </summary>
         protected override void LoadContent()
         {
+            //Setup the game's rendertarget so it matches the desired resolution.
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
             _threadid = Thread.CurrentThread.ManagedThreadId.ToString(); ;
-            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, graphicsDevice.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
@@ -284,10 +295,10 @@ namespace Plex.Engine
                 //Let's get the mouse state
                 var mouseState = Mouse.GetState(this.Window);
                 bool prc = true;
-                int x = mouseState.X;
-                int y = mouseState.Y;
+                int x = (int)GUI.ProgressBar.linear(mouseState.X, 0, graphicsDevice.PreferredBackBufferWidth, 0, GameRenderTarget.Width);
+                int y = (int)GUI.ProgressBar.linear(mouseState.Y, 0, graphicsDevice.PreferredBackBufferHeight, 0, GameRenderTarget.Height);
                 bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
-                LastMouseState = new MouseState(mouseState.X, mouseState.Y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
+                LastMouseState = new MouseState(x, y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
                 if (IsInTutorial)
                 {
                     if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
@@ -394,9 +405,7 @@ namespace Plex.Engine
                             RasterizerState.CullNone);
 
             //Draw a mouse cursor
-            var mousepos = LastMouseState;
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+            spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.End();
         

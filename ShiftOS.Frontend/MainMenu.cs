@@ -192,7 +192,7 @@ namespace Plex.Frontend
             };
             _btnOptions.Click += () =>
             {
-                Engine.Infobox.Show("Not yet implemented", "Sorry about that... [pats back] It'll come soon.");
+                AppearanceManager.SetupDialog(new Apps.GameSettings());
             };
 
             _faUser.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);

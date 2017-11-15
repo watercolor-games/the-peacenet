@@ -434,7 +434,14 @@ namespace Plex.Engine.GraphicsSubsystem
         public static bool ExperimentalEffects = true;
 
         public static Queue<Action> CrossThreadOperations = new Queue<Action>();
-        public static GraphicsDevice GraphicsDevice;
+        public static GraphicsDevice GraphicsDevice
+        {
+            get
+            {
+                return _game.graphicsDevice.GraphicsDevice;
+            }
+        }
+
 
         public static void DrawBackgroundLayer(GraphicsDevice graphics, SpriteBatch batch, int width, int height)
         {

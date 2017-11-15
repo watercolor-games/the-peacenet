@@ -1,46 +1,16 @@
 ﻿<Properties StartupConfiguration="{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}|Default">
   <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS.Frontend/Apps/Terminal.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS_TheReturn/GUI/Control.cs">
     <Files>
-      <File FileName="../../../../../app/lib/mono/msbuild/15.0/bin/Microsoft.Common.CurrentVersion.targets" Line="2646" Column="1" />
-      <File FileName="ShiftOS_TheReturn/ATextRenderer.cs" Line="6" Column="17" />
-      <File FileName="packages/MonoGame.Framework.DesktopGL.3.5.1.1679/readme.txt" Line="1" Column="1" />
-      <File FileName="ShiftOS_TheReturn/Properties/Resources.resx" Line="1" Column="1" />
-      <File FileName="Plex.Server/Program.cs" Line="119" Column="9" />
-      <File FileName="Plex.Server/UpgradeManager.cs" Line="20" Column="60" />
-      <File FileName="ShiftOS.Objects/Pty/PseudoTerminal.cs" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/Apps/Terminal.cs" Line="5" Column="17" />
-      <File FileName="ShiftOS.Frontend/Properties/Resources.resx" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/Apps/ChatClient.cs" Line="11" Column="12" />
-      <File FileName="packages/MonoGame.Framework.DesktopGL.3.6.0.1625/readme.txt" Line="8" Column="1" />
-      <File FileName="ShiftOS.Frontend/Properties/Resources.Designer.cs" Line="722" Column="44" />
-      <File FileName="ShiftOS.Frontend/Content/Content.mgcb" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/Content/UbuntuMono-BI.spritefont" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="180" Column="86" />
-      <File FileName="ShiftOS.Frontend/Resources/maximize.wav" Line="1" Column="1" />
-      <File FileName="ShiftOS.Frontend/Infobox.cs" Line="187" Column="35" />
-      <File FileName="ShiftOS_TheReturn/AudioPlayerSubsystem.cs" Line="10" Column="38" />
-      <File FileName="ShiftOS_TheReturn/AppLauncherDaemon.cs" Line="120" Column="74" />
-      <File FileName="ShiftOS_TheReturn/CrashHandler.Designer.cs" Line="55" Column="1" />
-      <File FileName="ShiftOS_TheReturn/GraphicsSubsystem/GraphicsContext.cs" Line="249" Column="1" />
-      <File FileName="ShiftOS_TheReturn/GUI/ListBox.cs" Line="42" Column="18" />
-      <File FileName="ShiftOS_TheReturn/GUI/ListView.cs" Line="84" Column="1" />
-      <File FileName="ShiftOS_TheReturn/GUI/ScrollView.cs" Line="55" Column="17" />
-      <File FileName="ShiftOS_TheReturn/GUI/TextInput.cs" Line="67" Column="13" />
-      <File FileName="ShiftOS_TheReturn/Infobox.cs" Line="65" Column="1" />
-      <File FileName="ShiftOS_TheReturn/Plexgate.cs" Line="364" Column="1" />
-      <File FileName="ShiftOS_TheReturn/SaveSystem.cs" Line="55" Column="1" />
-      <File FileName="ShiftOS_TheReturn/ServerManager.cs" Line="257" Column="1" />
-      <File FileName="ShiftOS_TheReturn/TerminalBackend.cs" Line="357" Column="1" />
-      <File FileName="ShiftOS_TheReturn/GUI/Control.cs" Line="605" Column="13" />
-      <File FileName="ShiftOS.Frontend/Desktop/Desktop.cs" Line="237" Column="1" />
-      <File FileName="ShiftOS.Frontend/Program.cs" Line="107" Column="1" />
-      <File FileName="ShiftOS.Frontend/Apps/MultiplayerServerList.cs" Line="184" Column="1" />
-      <File FileName="ShiftOS.Frontend/Commands.cs" Line="104" Column="51" />
-      <File FileName="ShiftOS.Frontend/Desktop/WindowManager.cs" Line="87" Column="25" />
-      <File FileName="ShiftOS.Frontend/PeacenetTheme.cs" Line="36" Column="9" />
-      <File FileName="ShiftOS_TheReturn/GUI/TextControl.cs" Line="289" Column="10" />
-      <File FileName="ShiftOS_TheReturn/TextRenderers/GdiPlusTextRenderer.cs" Line="1" Column="1" />
+      <File FileName="ShiftOS.Frontend/Apps/GameSettings.cs" Line="46" Column="15" />
+      <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="196" Column="15" />
+      <File FileName="ShiftOS_TheReturn/Config/ConfigFile.cs" Line="9" Column="9" />
+      <File FileName="ShiftOS_TheReturn/Config/ConfigurationManager.cs" Line="25" Column="45" />
+      <File FileName="ShiftOS_TheReturn/Plexgate.cs" Line="409" Column="13" />
+      <File FileName="ShiftOS_TheReturn/ServerManager.cs" Line="179" Column="1" />
+      <File FileName="ShiftOS.Objects/FFI/DotNet.cs" Line="30" Column="18" />
+      <File FileName="ShiftOS_TheReturn/GraphicsSubsystem/UIManager.cs" Line="54" Column="28" />
+      <File FileName="ShiftOS_TheReturn/GUI/Control.cs" Line="18" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
