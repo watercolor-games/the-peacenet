@@ -84,7 +84,7 @@ namespace Plex.Frontend
                 var mc = new Apps.MissionComplete(mission);
                 AppearanceManager.SetupDialog(mc);
             };
-            using (var game = new Plexgate())
+            using (var game = new Plexgate("378307289502973963")) //This is the peacenet discord app ID. It's used for RPC.
             {
                 game.Initializing += () =>
                 {
