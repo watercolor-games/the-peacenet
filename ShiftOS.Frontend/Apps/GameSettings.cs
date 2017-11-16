@@ -16,6 +16,14 @@ namespace Plex.Frontend.Apps
         private Button _apply = null;
         private Button _cancel = null;
 
+        private TextControl _mainHeader = null;
+        private TextControl _mainDescription = null;
+
+        private ScrollView _optionsView = null;
+
+        private TextControl _ohGraphics = null;
+
+
         private int _resInitial = 0;
         private int _resUserSet = 0;
 
@@ -29,6 +37,10 @@ namespace Plex.Frontend.Apps
             _resChoices = new ListBox();
             _apply = new Button();
             _cancel = new Button();
+            _mainHeader = new TextControl();
+            _mainDescription = new TextControl();
+            _optionsView = new ScrollView();
+            _ohGraphics = new TextControl();
 
             AddControl(_resHeader);
             AddControl(_resScroller);
@@ -36,6 +48,12 @@ namespace Plex.Frontend.Apps
 
             AddControl(_apply);
             AddControl(_cancel);
+
+            AddControl(_mainHeader);
+            AddControl(_mainDescription);
+            AddControl(_optionsView);
+
+            _optionsView.AddControl(_ohGraphics);
 
             _apply.Click += () =>
             {
@@ -74,7 +92,6 @@ namespace Plex.Frontend.Apps
             //Set our selected index value.
             _resChoices.SelectedIndex = resIndex;
 
-            _resChoices.RecalculateItemsPerPage();
             _resChoices.RequireTextRerender();
             _resChoices.Invalidate();
 
@@ -83,7 +100,6 @@ namespace Plex.Frontend.Apps
                 if (_resChoices.SelectedIndex == -1)
                 {
                     _resChoices.SelectedIndex = _resInitial;
-                    _resChoices.RecalculateItemsPerPage();
                     _resChoices.RequireTextRerender();
                     _resChoices.Invalidate();
                 }
@@ -109,6 +125,7 @@ namespace Plex.Frontend.Apps
         {
             _resHeader.X = 15;
             _resHeader.Y = 15;
+            _resHeader.FontStyle = TextControlFontStyle.Header2;
             _resHeader.AutoSize = true;
             _resHeader.MaxWidth = (this.Width - 30) / 4;
             _resHeader.Text = "Screen resolution";
@@ -132,7 +149,32 @@ namespace Plex.Frontend.Apps
             _apply.Text = "Apply changes";
             _apply.Y = _cancel.Y;
             _apply.X = (_cancel.X - _apply.Width) - 15;
-        
+
+            _mainHeader.Y = 15;
+            _mainHeader.X = _resHeader.X + _resScroller.Width + 20;
+            _mainHeader.FontStyle = TextControlFontStyle.Header1;
+            _mainHeader.AutoSize = true;
+            _mainHeader.MaxWidth = (Width - _mainHeader.X) - 15;
+            _mainHeader.Text = "Options";
+
+            _mainDescription.AutoSize = true;
+            _mainDescription.X = _mainHeader.X;
+            _mainDescription.Y = _mainHeader.Y + _mainHeader.Height + 10;
+            _mainDescription.MaxWidth = _mainHeader.MaxWidth;
+            _mainDescription.Text = "Set various settings to adjust your playing experience in The Peacenet. You can set the screen resolution at the side of this window. Close the window or click Cancel to discard your changes.";
+
+            _optionsView.X = _mainDescription.X;
+            _optionsView.Y = _mainDescription.Y + _mainDescription.Height + 10;
+            _optionsView.Width = _mainDescription.MaxWidth;
+            _optionsView.Height = (Height - _optionsView.Y) - (_apply.Height + 30);
+
+            _ohGraphics.Text = "Graphics";
+            _ohGraphics.X = 15;
+            _ohGraphics.Y = 15;
+            _ohGraphics.AutoSize = true;
+            _ohGraphics.FontStyle = TextControlFontStyle.Header2;
+            _ohGraphics.MaxWidth = _optionsView.Width - 30;
+
         }
     }
 }

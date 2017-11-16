@@ -1,9 +1,9 @@
 ﻿<Properties StartupConfiguration="{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}|Default">
   <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS.Frontend/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ShiftOS_TheReturn/GraphicsSubsystem/CheckLabel.cs">
     <Files>
-      <File FileName="ShiftOS.Frontend/Apps/GameSettings.cs" Line="46" Column="15" />
-      <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="196" Column="15" />
+      <File FileName="ShiftOS.Frontend/Apps/GameSettings.cs" Line="176" Column="60" />
+      <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="86" Column="59" />
       <File FileName="ShiftOS_TheReturn/Config/ConfigFile.cs" Line="9" Column="9" />
       <File FileName="ShiftOS_TheReturn/Config/ConfigurationManager.cs" Line="25" Column="45" />
       <File FileName="ShiftOS_TheReturn/ServerManager.cs" Line="179" Column="1" />
@@ -12,13 +12,16 @@
       <File FileName="ShiftOS_TheReturn/GUI/Control.cs" Line="18" Column="6" />
       <File FileName="../discord-rpc/examples/button-clicker/Assets/DiscordRpc.cs" Line="82" Column="1" />
       <File FileName="ShiftOS_TheReturn/Discord/CallbackDelegates.cs" Line="3" Column="1" />
-      <File FileName="ShiftOS_TheReturn/Plexgate.cs" Line="202" Column="30" />
+      <File FileName="ShiftOS_TheReturn/Plexgate.cs" Line="356" Column="1" />
       <File FileName="ShiftOS_TheReturn/Discord/RPCEvents.cs" Line="3" Column="30" />
-      <File FileName="ShiftOS_TheReturn/Discord/RichPresence.cs" Line="5" Column="6" />
+      <File FileName="ShiftOS_TheReturn/Discord/RichPresence.cs" Line="5" Column="19" />
       <File FileName="ShiftOS_TheReturn/Discord/Reply.cs" Line="6" Column="16" />
       <File FileName="ShiftOS_TheReturn/Discord/JoinRequest.cs" Line="11" Column="1" />
-      <File FileName="ShiftOS_TheReturn/Discord/RPC.cs" Line="13" Column="9" />
+      <File FileName="ShiftOS_TheReturn/Discord/RPC.cs" Line="40" Column="13" />
       <File FileName="ShiftOS.Frontend/Program.cs" Line="1" Column="1" />
+      <File FileName="ShiftOS_TheReturn/GUI/ScrollView.cs" Line="80" Column="1" />
+      <File FileName="ShiftOS_TheReturn/GUI/ListBox.cs" Line="159" Column="14" />
+      <File FileName="ShiftOS_TheReturn/GraphicsSubsystem/CheckLabel.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

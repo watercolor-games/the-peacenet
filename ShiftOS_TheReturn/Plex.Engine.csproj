@@ -249,6 +249,7 @@
     <Compile Include="Discord\JoinRequest.cs" />
     <Compile Include="Discord\Reply.cs" />
     <Compile Include="Discord\RPC.cs" />
+    <Compile Include="GraphicsSubsystem\CheckLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
