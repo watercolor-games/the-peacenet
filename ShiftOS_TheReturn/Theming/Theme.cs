@@ -30,6 +30,7 @@ namespace Plex.Engine.Theming
         public abstract void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextControlFontStyle style);
         public abstract void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, ButtonState close, ButtonState maximize, ButtonState minimize, bool dialog);
         public abstract Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight);
+        public abstract void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver);
 
         //Measurement
         public abstract Vector2 MeasureString(TextControlFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue);

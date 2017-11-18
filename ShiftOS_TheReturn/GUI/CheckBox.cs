@@ -41,6 +41,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
         {
+            Theming.ThemeManager.Theme.DrawCheckbox(gfx, 0, 0, Width, Height, Checked, ContainsMouse);
         }
 
         public event Action CheckedChanged;

@@ -160,7 +160,9 @@ namespace Plex.Engine
         {
             if (e.Key == Keys.F11)
             {
-                UIManager.Fullscreen = !UIManager.Fullscreen;
+                bool fs = ConfigurationManager.GetFullscreen();
+                ConfigurationManager.SetFullscreen(!fs);
+                ConfigurationManager.ApplyConfig();
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
@@ -185,9 +187,71 @@ namespace Plex.Engine
 
             UIManager.Viewport = new System.Drawing.Size(resolution.Width, resolution.Height);
 
-            if (resetGfxDevice)
+            bool regenTarget = false;
+            if (GameRenderTarget == null)
+                regenTarget = true;
+            else if (UIManager.Viewport.Width != GameRenderTarget.Width || UIManager.Viewport.Height != GameRenderTarget.Height)
             {
-                GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                regenTarget = true;
+            }
+            if (regenTarget)
+            {
+                if(graphicsDevice.GraphicsDevice != null)
+                    GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+
+            }
+
+            bool isFullscreen = ConfigurationManager.GetFullscreen();
+            if (graphicsDevice.IsFullScreen != isFullscreen)
+            {
+                graphicsDevice.IsFullScreen = isFullscreen;
+                if (isFullscreen == false)
+                {
+                    graphicsDevice.PreferredBackBufferWidth = resolution.Width;
+                    graphicsDevice.PreferredBackBufferHeight = resolution.Height;
+
+                }
+                else
+                {
+                    var sysres = ConfigurationManager.GetSystemResolution();
+                    graphicsDevice.PreferredBackBufferWidth = sysres.Width;
+                    graphicsDevice.PreferredBackBufferHeight = sysres.Height;
+
+                }
+                graphicsDevice.ApplyChanges();
+            }
+
+            bool shouldDoRPC = ConfigurationManager.GetRPCEnable();
+            if (!string.IsNullOrWhiteSpace(_appIdForRpc) && shouldDoRPC)
+            {
+                try
+                {
+                    if (!_isRpcOn)
+                    {
+                        var handlers = new Discord.EventHandlers();
+                        handlers.readyCallback = this.DiscordReady;
+                        handlers.disconnectedCallback = (c, m) => this.DiscordDisconnected(c, m);
+                        handlers.errorCallback = this.DiscordError;
+                        handlers.joinCallback = this.DiscordJoin;
+                        handlers.requestCallback = this.DiscordRequest;
+                        handlers.spectateCallback = this.DiscordSpectate;
+                        Discord.RPC.Initialize(_appIdForRpc, ref handlers, true, null);
+                        _isRpcOn = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DiscordDisconnected(int.MinValue, ex.ToString());
+                    _isRpcOn = false;
+                }
+            }
+            else
+            {
+                if (_isRpcOn == true)
+                {
+                    Discord.RPC.Shutdown();
+                    _isRpcOn = false;
+                }
             }
         }
 
@@ -225,25 +289,6 @@ namespace Plex.Engine
         /// </summary>
         protected override void Initialize()
         {
-            if (!string.IsNullOrWhiteSpace(_appIdForRpc))
-            {
-                try
-                {
-                    var handlers = new Discord.EventHandlers();
-                    handlers.readyCallback = this.DiscordReady;
-                    handlers.disconnectedCallback = (c, m) => this.DiscordDisconnected(c,m);
-                    handlers.errorCallback = this.DiscordError;
-                    handlers.joinCallback = this.DiscordJoin;
-                    handlers.requestCallback = this.DiscordRequest;
-                    handlers.spectateCallback = this.DiscordSpectate;
-                    Discord.RPC.Initialize(_appIdForRpc, ref handlers, true, null);
-                    _isRpcOn = true;
-                }
-                catch (Exception ex)
-                {
-                    DiscordDisconnected(int.MinValue, ex.ToString());
-                }
-            }
 
             ServerManager.BuildBroadcastHandlerDB();
 
@@ -339,21 +384,25 @@ namespace Plex.Engine
         {
             if (_isRpcOn)
             {
-                Discord.RPC.RunCallbacks();
-                if (ServerManager.Connected)
-                    secondssincelastrpcupdate += gameTime.ElapsedGameTime.TotalSeconds;
-                if (secondssincelastrpcupdate > 15)
+                try
                 {
+                    Discord.RPC.RunCallbacks();
                     if (ServerManager.Connected)
+                        secondssincelastrpcupdate += gameTime.ElapsedGameTime.TotalSeconds;
+                    if (secondssincelastrpcupdate > 15)
                     {
-                        Discord.RPCHelpers.UpdateRegular();
+                        if (ServerManager.Connected)
+                        {
+                            Discord.RPCHelpers.UpdateRegular();
+                        }
+                        else
+                        {
+                            Discord.RPCHelpers.Initialize();
+                        }
+                        secondssincelastrpcupdate = 0;
                     }
-                    else
-                    {
-                        Discord.RPCHelpers.Initialize();
-                    }
-                    secondssincelastrpcupdate = 0;
                 }
+                catch { }
             }
 
             keyboardListener.Update(gameTime);

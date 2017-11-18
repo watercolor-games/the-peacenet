@@ -23,6 +23,13 @@ namespace Plex.Frontend.Apps
 
         private TextControl _ohGraphics = null;
 
+        private CheckLabel _gfxFullscreen = null;
+
+        private TextControl _ohDiscord = null;
+        private TextControl _ohDiscordDesc = null;
+
+        private CheckLabel _rpcEnable = null;
+
 
         private int _resInitial = 0;
         private int _resUserSet = 0;
@@ -41,6 +48,10 @@ namespace Plex.Frontend.Apps
             _mainDescription = new TextControl();
             _optionsView = new ScrollView();
             _ohGraphics = new TextControl();
+            _gfxFullscreen = new CheckLabel();
+            _ohDiscord = new TextControl();
+            _ohDiscordDesc = new TextControl();
+            _rpcEnable = new CheckLabel();
 
             AddControl(_resHeader);
             AddControl(_resScroller);
@@ -54,11 +65,17 @@ namespace Plex.Frontend.Apps
             AddControl(_optionsView);
 
             _optionsView.AddControl(_ohGraphics);
+            _optionsView.AddControl(_gfxFullscreen);
+            _optionsView.AddControl(_ohDiscord);
+            _optionsView.AddControl(_ohDiscordDesc);
+            _optionsView.AddControl(_rpcEnable);
+
 
             _apply.Click += () =>
             {
                 ConfigurationManager.SetResolution(_resUserSet);
-
+                ConfigurationManager.SetFullscreen(_gfxFullscreen.Value);
+                ConfigurationManager.SetRPCEnable(_rpcEnable.Value);
 
                 ConfigurationManager.ApplyConfig();
             };
@@ -108,6 +125,9 @@ namespace Plex.Frontend.Apps
                     _resUserSet = _resChoices.SelectedIndex;
                 }
             };
+
+            _gfxFullscreen.Value = ConfigurationManager.GetFullscreen();
+            _rpcEnable.Value = ConfigurationManager.GetRPCEnable();
         }
 
 
@@ -175,6 +195,28 @@ namespace Plex.Frontend.Apps
             _ohGraphics.FontStyle = TextControlFontStyle.Header2;
             _ohGraphics.MaxWidth = _optionsView.Width - 30;
 
+            _gfxFullscreen.AutoSize = true;
+            _gfxFullscreen.Text = "Enable fullscreen";
+            _gfxFullscreen.X = 15;
+            _gfxFullscreen.Y = _ohGraphics.Y + _ohGraphics.Height + 10;
+
+            _ohDiscord.X = 15;
+            _ohDiscord.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 30;
+            _ohDiscord.AutoSize = true;
+            _ohDiscord.MaxWidth = _ohGraphics.MaxWidth;
+            _ohDiscord.FontStyle = TextControlFontStyle.Header2;
+            _ohDiscord.Text = "Discord Rich Presence";
+
+            _ohDiscordDesc.X = 15;
+            _ohDiscordDesc.Y = _ohDiscord.Y + _ohDiscord.Height + 10;
+            _ohDiscordDesc.AutoSize = true;
+            _ohDiscordDesc.MaxWidth = _ohDiscord.MaxWidth;
+            _ohDiscordDesc.Text = "Are you on the Watercolor Games Discord and/or want to brag about what you're doing in The Peacenet to your Discord buddies?\r\n\r\nThese settings will allow you to choose whether or not we'll display gameplay info on your Discord profile, and what info is shown. Note that in order for Rich Presence to work, you must have the Discord desktop client installed and running. You must also make sure Discord is detecting that you are playing The Peacenet.";
+
+            _rpcEnable.X = 15;
+            _rpcEnable.Y = _ohDiscordDesc.Y + _ohDiscordDesc.Height + 5;
+            _rpcEnable.AutoSize = true;
+            _rpcEnable.Text = "Enable Rich Presence";
         }
     }
 }

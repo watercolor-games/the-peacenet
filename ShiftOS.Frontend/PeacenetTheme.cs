@@ -43,7 +43,7 @@ namespace Plex.Frontend
         private Color _buttonTextIdle = Color.Black;
         private Color _buttonTextHover = Color.Black;
         private Color _buttonTextDown = Color.Black;
-
+        private Texture2D _check = null;
 
         private Color _controlBG = Color.Black;
         private Color _controlBGDark = Color.Black;
@@ -52,6 +52,19 @@ namespace Plex.Frontend
         private Color _borderBG = Color.Black;
         private Color _borderBGInactive = Color.Black;
 
+        public override void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver)
+        {
+            Color _checkFG = (isMouseOver) ? _buttonTextHover : _buttonTextIdle;
+            Color _checkBG = (isMouseOver) ? _controlBGLight : _controlBGDark;
+
+            gfx.DrawRectangle(x, y, width, height, _checkFG);
+            gfx.DrawRectangle(x + 2, y + 2, width - 4, height - 4, _checkBG);
+
+            if (isChecked)
+            {
+                gfx.DrawRectangle(x + 2, y + 2, width - 4, height - 4, _check, _checkFG);
+            }
+        }
 
         public override void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, ButtonState state, ArrowDirection direction)
         {
@@ -210,6 +223,7 @@ namespace Plex.Frontend
             _controlBGDark = new Color(32, 32, 32);
             _controlBGLight = new Color(111, 111, 111);
 
+            _check = UIManager.ContentLoader.Load<Texture2D>("Infobox/OK");
         }
 
         

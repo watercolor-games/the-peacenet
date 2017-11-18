@@ -547,8 +547,7 @@ namespace Plex.Engine.GUI
             OnLayout(gameTime);
             foreach (var child in _children)
                 if(child.Visible)
-                    if(child.X >= 0 && child.Y >= 0 && child.X < Width && child.Y < Height)
-                        child.Layout(gameTime);
+                    child.Layout(gameTime);
         }
 
         protected virtual void OnLayout(GameTime gameTime)

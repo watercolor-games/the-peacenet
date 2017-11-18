@@ -20,6 +20,16 @@ namespace Plex.Engine.Config
 
         }
 
+        public static void SetFullscreen(bool value)
+        {
+            _config.Fullscreen = value;
+        }
+
+        public static bool GetFullscreen()
+        {
+            return _config.Fullscreen;
+        }
+
         public static void SetResolution(int index)
         {
             _config.ResolutionIndex = index;
@@ -32,12 +42,24 @@ namespace Plex.Engine.Config
             {
                 int w = mode.Width;
                 int h = mode.Height;
+                if (w < 800 && h < 600)
+                    continue;
                 if(resolutions.FirstOrDefault(x=>x.Width == w && x.Height == h) == null)
                 {
                     resolutions.Add(new Resolution(w, h));
                 }
             }
             return resolutions.OrderByDescending(x=>x.Width * x.Height).ToArray();
+        }
+
+        public static void SetRPCEnable(bool value)
+        {
+            _config.EnableDiscordRichPresence = value;
+        }
+
+        public static bool GetRPCEnable()
+        {
+            return _config.EnableDiscordRichPresence;
         }
 
         public static Resolution GetResolution()
