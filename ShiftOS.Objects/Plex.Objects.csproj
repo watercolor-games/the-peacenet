@@ -86,7 +86,6 @@
     <Compile Include="Streams\WriteOnlyStream.cs" />
     <Compile Include="TerminalCommand.cs" />
     <Compile Include="Upgrades.cs" />
-    <Compile Include="UserConfig.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

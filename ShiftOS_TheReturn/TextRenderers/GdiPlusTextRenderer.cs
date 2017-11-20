@@ -16,6 +16,7 @@ namespace Plex.Engine.TextRenderers
     /// <summary>
     /// Provides GDI+ software text rendering for the UI subsystem. (Slow)
     /// </summary>
+    [FallbackRenderer]
     public class GdiPlusTextRenderer : ATextRenderer
     {
         public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)

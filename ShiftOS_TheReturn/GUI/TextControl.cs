@@ -244,7 +244,7 @@ namespace Plex.Engine.GUI
         {
             if(_textBuffer != null)
             {
-                if(_textBuffer.Width != Width || _textBuffer.Height != Height)
+                if(_textBuffer.Width != Math.Max(1, Width) || _textBuffer.Height != Math.Max(1, Height))
                 {
                     _textBuffer.Dispose();
                     _textBuffer = null;
@@ -254,8 +254,10 @@ namespace Plex.Engine.GUI
             if (requiresTextRerender)
             {
                 requiresTextRerender = false;
-                if(_textBuffer == null)
-                    _textBuffer = new RenderTarget2D(gfx.Device, Math.Max(1,Width), Math.Max(1,Height), false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                if(_textBuffer == null) { 
+                    _textBuffer = new RenderTarget2D(gfx.Device, Math.Max(1, Width), Math.Max(1, Height), false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+
+                }
                 gfx.Batch.End();
                 int x = gfx.X;
                 int y = gfx.Y;
@@ -268,10 +270,10 @@ namespace Plex.Engine.GUI
                 gfx.Device.SetRenderTarget(_textBuffer);
                 if(_cleareveryredraw)
                     gfx.Device.Clear(Microsoft.Xna.Framework.Color.Transparent);
-                gfx.Device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                 gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                                     SamplerState.LinearClamp, UIManager.GraphicsDevice.DepthStencilState,
                                     RasterizerState);
+                
                 RenderText(gfx);
                 gfx.Batch.End();
                 gfx.Device.SetRenderTarget(target);

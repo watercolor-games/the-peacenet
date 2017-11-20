@@ -17,22 +17,26 @@ using Plex.Engine;
 using Plex.Engine.TextRenderers;
 using Plex.Engine.GUI;
 using Plex.Objects;
+using Plex.Engine.Config;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
     public static class UIManager
     {
-        private static List<GUI.Control> topLevels = new List<GUI.Control>();
+        private static List<RenderInfo> topLevels = new List<RenderInfo>();
 
         public static void ClearTopLevels()
         {
             while(topLevels.Count > 0)
             {
-                StopHandling(topLevels[0]);
+                var tl = topLevels[0];
+                tl.Control?.Dispose();
+                tl.Target?.Dispose();
+                topLevels.RemoveAt(0);
             }
         }
 
-        private static List<GUI.Control> hudctrls = new List<GUI.Control>();
+        private static List<RenderInfo> hudctrls = new List<RenderInfo>();
         public static System.Drawing.Size Viewport { get; set; }
         public static GUI.Control FocusedControl = null;
         private static Plexgate _game = null;
@@ -60,158 +64,124 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             get
             {
-                return _game.graphicsDevice.IsFullScreen;
+                return ConfigurationManager.GetFullscreen();
             }
             set
             {
-                var uconf = Objects.UserConfig.Get();
-                uconf.Fullscreen = value;
-                System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
-                _game.graphicsDevice.IsFullScreen = value;
-                _game.graphicsDevice.ApplyChanges();
-            }
-        }
-
-        public static System.Drawing.Size ScreenSize
-        {
-            get
-            {
-                try
-                {
-                    return new System.Drawing.Size(_game.graphicsDevice.PreferredBackBufferWidth, _game.graphicsDevice.PreferredBackBufferHeight);
-                }
-                catch
-                {
-                    var conf = UserConfig.Get();
-                    return new System.Drawing.Size(conf.ScreenWidth, conf.ScreenHeight);
-                }
+                ConfigurationManager.SetFullscreen(value);
+                ConfigurationManager.ApplyConfig();
             }
         }
 
         public static void BringToFront(GUI.Control ctrl)
         {
-            topLevels.Remove(ctrl);
-            topLevels.Add(ctrl);
+            var tl = topLevels.FirstOrDefault(x => x.Control == ctrl);
+            if (tl == null)
+                return;
+            topLevels.Remove(tl);
+            topLevels.Add(tl);
         }
 
         public static void LayoutUpdate(GameTime gameTime)
         {
             foreach (var toplevel in topLevels.ToArray())
-                toplevel.Layout(gameTime);
+                toplevel.Control.Layout(gameTime);
             foreach (var toplevel in hudctrls.ToArray())
-                toplevel.Layout(gameTime);
+                toplevel.Control.Layout(gameTime);
         }
-
-        public static Dictionary<int, RenderTarget2D> TextureCaches = new Dictionary<int, RenderTarget2D>();
-        public static Dictionary<int, RenderTarget2D> HUDCaches = new Dictionary<int, RenderTarget2D>();
-
 
         public static void DrawTArgets(SpriteBatch batch)
         {
-            DrawTargetsInternal(batch, ref topLevels, ref TextureCaches);
+            DrawTargetsInternal(batch, ref topLevels);
         }
 
 
         public static void DrawHUD(SpriteBatch batch)
         {
-            DrawTargetsInternal(batch, ref hudctrls, ref HUDCaches);
+            DrawTargetsInternal(batch, ref hudctrls);
         }
 
-        private static void DrawTargetsInternal(SpriteBatch batch, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
+        private static void DrawTargetsInternal(SpriteBatch batch, ref List<RenderInfo> controls)
         {
             foreach (var ctrl in controls.ToArray())
             {
-                if (ctrl.Visible == true)
+                if (ctrl.Control.Visible == true)
                 {
-                    int hc = ctrl.GetHashCode();
-                    if (!targets.ContainsKey(hc))
+                    var _target = ctrl.Target;
+                    if (_target == null)
                     {
-                        ctrl.Invalidate();
+                        ctrl.Control.Invalidate();
                         continue;
                     }
-                    var _target = targets[hc];
-                    if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+                    if (_target.Width != ctrl.Control.Width || _target.Height != ctrl.Control.Height)
                     {
-                        ctrl.Invalidate();
-                        DrawControlsToTargets(batch.GraphicsDevice, batch);
+                        ctrl.Control.Invalidate();
+                        continue;
                     }
-                    batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
-
-                    batch.Draw(_target, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), _game.UITint);
-                    batch.End();
+                    batch.Draw(_target, new Rectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height), _game.UITint);
                 }
             }
         }
 
 
         public static void SendToBack(Control ctrl)
-       { 
-            topLevels.Remove(ctrl);
-            topLevels.Insert(0, ctrl);
+       {
+            var tl = topLevels.FirstOrDefault(x => x.Control == ctrl);
+            if (tl == null)
+                return;
+            topLevels.Remove(tl);
+            topLevels.Insert(0, tl);
         }
 
-        public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<Control> controls, ref Dictionary<int, RenderTarget2D> targets)
+        public static void DrawControlsToTargetsInternal(GraphicsDevice graphics, SpriteBatch batch, int width, int height, ref List<RenderInfo> controls)
         {
-            foreach (var ctrl in controls.ToArray().Where(x => x.Visible == true))
+            foreach (var ctrl in controls.ToArray().Where(x => x.Control.Visible == true))
             {
-                RenderTarget2D _target;
-                int hc = ctrl.GetHashCode();
-                if (!targets.ContainsKey(hc))
+                RenderTarget2D _target = ctrl.Target;
+                if (_target == null)
                 {
                     _target = new RenderTarget2D(
                                     graphics,
-                                    Math.Max(1, ctrl.Width),
-                                    Math.Max(1, ctrl.Height),
+                                    Math.Max(1, ctrl.Control.Width),
+                                    Math.Max(1, ctrl.Control.Height),
                                     false,
                                     graphics.PresentationParameters.BackBufferFormat,
                                     DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                    targets.Add(hc, _target);
-                    ctrl.Invalidate();
+                    ctrl.Target = _target;
+                    ctrl.Control.Invalidate();
                 }
                 else
                 {
-                    _target = targets[hc];
-                    if (_target.Width != ctrl.Width || _target.Height != ctrl.Height)
+                    if (_target.Width != ctrl.Control.Width || _target.Height != ctrl.Control.Height)
                     {
                         _target.Dispose();
                         _target = new RenderTarget2D(
                 graphics,
-                Math.Max(1, ctrl.Width),
-                Math.Max(1, ctrl.Height),
+                Math.Max(1, ctrl.Control.Width),
+                Math.Max(1, ctrl.Control.Height),
                 false,
                 graphics.PresentationParameters.BackBufferFormat,
                 DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                        targets[hc] = _target;
-                        //ENSURE the target gets repainted
-                        ctrl.Invalidate();
+                        ctrl.Target = _target;
+                        ctrl.Control.Invalidate();
                     }
                 }
-                if (ctrl.RequiresPaint)
+                if (ctrl.Control.RequiresPaint)
                 {
                     try
                     {
-                        QA.Assert(_target == null, false, "Null render target in UI subsystem");
-                        QA.Assert(_target.IsDisposed, false, "Attempting to paint disposed render target");
                         graphics.SetRenderTarget(_target);
                         batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                                         SamplerState.LinearWrap, GraphicsDevice.DepthStencilState,
-                                        RasterizerState.CullNone);
+                                        ctrl.Control.RasterizerState);
                         graphics.Clear(Color.Transparent);
-                        var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Width, ctrl.Height);
-                        ctrl.Paint(gfxContext, _target);
-                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
+                        var gfxContext = new GraphicsContext(graphics, batch, 0, 0, ctrl.Control.Width, ctrl.Control.Height);
+                        ctrl.Control.Paint(gfxContext, _target);
 
 
                         batch.End();
-                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
                         graphics.SetRenderTarget(_game.GameRenderTarget);
-                        QA.Assert(_target.IsContentLost, false, "A render target has lost its contents.");
-                        QA.Assert(_target.RenderTargetUsage == RenderTargetUsage.PreserveContents, true, "A render target whose usage is not set to RenderTargetUsage.PreserveContents is being rendered to. This is not allowed.");
-                        targets[hc] = _target;
+                        ctrl.Target = _target;
                     }
                     catch (AccessViolationException)
                     {
@@ -287,12 +257,12 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public static void DrawControlsToTargets(GraphicsDevice device, SpriteBatch batch)
         {
-            DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref topLevels, ref TextureCaches);
+            DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref topLevels);
         }
 
         public static void DrawHUDToTargets(GraphicsDevice device, SpriteBatch batch)
         {
-                DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls, ref HUDCaches);
+                DrawControlsToTargetsInternal(device, batch, Viewport.Width, Viewport.Height, ref hudctrls);
         }
 
         public static void ShowCloudUpload()
@@ -321,8 +291,10 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             Desktop.InvokeOnWorkerThread(() =>
             {
-                if (!topLevels.Contains(ctrl))
-                    topLevels.Add(ctrl);
+                var tl = topLevels.FirstOrDefault(x => x.Control == ctrl);
+                if (tl != null)
+                    return;
+                topLevels.Add(new RenderInfo { Control = ctrl });
                 FocusedControl = ctrl;
                 ctrl.Invalidate();
             });
@@ -332,8 +304,10 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             Desktop.InvokeOnWorkerThread(() =>
             {
-                if (!hudctrls.Contains(ctrl))
-                    hudctrls.Add(ctrl);
+                var tl = hudctrls.FirstOrDefault(x => x.Control == ctrl);
+                if (tl != null)
+                    return;
+                hudctrls.Add(new RenderInfo { Control = ctrl });
                 ctrl.Invalidate();
             });
         }
@@ -345,11 +319,11 @@ namespace Plex.Engine.GraphicsSubsystem
             {
                 foreach (var ctrl in topLevels)
                 {
-                    ctrl.Invalidate();
+                    ctrl.Control.Invalidate();
                 }
                 foreach (var ctrl in hudctrls)
                 {
-                    ctrl.Invalidate();
+                    ctrl.Control.Invalidate();
                 }
             });
         }
@@ -358,7 +332,12 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             get
             {
-                return topLevels.ToArray();
+                List<Control> ctrls = new List<Control>();
+                foreach (var ctrl in topLevels)
+                {
+                    ctrls.Add(ctrl.Control);
+                }
+                return ctrls.ToArray();
             }
         }
 
@@ -366,11 +345,11 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             bool rclick = true;
             bool hidemenus = true;
-            foreach (var ctrl in topLevels.ToArray().Where(x=>x != null).Where(x=>x.Visible == true).OrderByDescending(x=>topLevels.IndexOf(x)))
+            foreach (var ctrl in topLevels.ToArray().Where(x=>x != null).Where(x=>x.Control.Visible == true).OrderByDescending(x=>topLevels.IndexOf(x)))
             {
-                if (ctrl.ProcessMouseState(state, lastLeftClickMS))
+                if (ctrl.Control.ProcessMouseState(state, lastLeftClickMS))
                 {
-                    if(ctrl is Menu||ctrl is MenuItem)
+                    if(ctrl.Control is Menu||ctrl.Control is MenuItem)
                     {
                         hidemenus = false;
                     }
@@ -382,9 +361,9 @@ namespace Plex.Engine.GraphicsSubsystem
             {
                 if (!(state.LeftButton == ButtonState.Released && state.MiddleButton == ButtonState.Released && state.RightButton == ButtonState.Released))
                 {
-                    var menus = topLevels.Where(x => x is Menu || x is MenuItem);
+                    var menus = topLevels.Where(x => x.Control is Menu || x.Control is MenuItem);
                     foreach (var menu in menus.ToArray())
-                        (menu as Menu).Hide();
+                        (menu.Control as Menu).Hide();
                 }
             }
             if (rclick == true)
@@ -453,19 +432,17 @@ namespace Plex.Engine.GraphicsSubsystem
             return new Color(color.R, color.G, color.B, color.A);
         }
 
-        public static void StopHandling(GUI.Control ctrl)
+        public static void StopHandling(GUI.Control ctrl, bool dispose = true)
         {
-            if (topLevels.Contains(ctrl))
-                topLevels.Remove(ctrl);
-
-            int hc = ctrl.GetHashCode();
-            if (TextureCaches.ContainsKey(hc))
+            var tl = topLevels.FirstOrDefault(x => x.Control == ctrl);
+            if (tl == null)
+                return;
+            tl.Target.Dispose(); //dispose this regardless of the dispose value. rendertargets are expensive.
+            if (dispose)
             {
-                TextureCaches[hc].Dispose();
-                TextureCaches.Remove(hc);
+                tl.Control.Dispose();
             }
-            ctrl.Dispose();
-            ctrl = null;
+            topLevels.Remove(tl);
         }
 
         public static void ConnectToServer(string host, int port)
@@ -504,20 +481,17 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
-        internal static void StopHandlingHUD(GUI.Control ctrl)
+        internal static void StopHandlingHUD(GUI.Control ctrl, bool dispose = true)
         {
-            if (hudctrls.Contains(ctrl))
-                hudctrls.Remove(ctrl);
-
-            int hc = ctrl.GetHashCode();
-            if (HUDCaches.ContainsKey(hc))
+            var tl = hudctrls.FirstOrDefault(x => x.Control == ctrl);
+            if (tl == null)
+                return;
+            tl.Target.Dispose(); //dispose this regardless of the dispose value. rendertargets are expensive.
+            if (dispose)
             {
-                HUDCaches[hc].Dispose();
-                HUDCaches.Remove(hc);
+                tl.Control.Dispose();
             }
-            ctrl.Dispose();
-
-            ctrl = null;
+            hudctrls.Remove(tl);
         }
 
     }
@@ -542,5 +516,11 @@ namespace Plex.Engine.GraphicsSubsystem
         public Keys Key { get; private set; }
 
         public char KeyChar { get; private set; }
+    }
+
+    public class RenderInfo
+    {
+        public Control Control { get; set; }
+        public RenderTarget2D Target { get; set; }
     }
 }

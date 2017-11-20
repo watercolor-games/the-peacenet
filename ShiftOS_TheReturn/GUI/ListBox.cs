@@ -41,6 +41,14 @@ namespace Plex.Engine.GUI
 
         }
 
+        public int ItemHeight
+        {
+            get
+            {
+                return fontheight;
+            }
+        }
+
         public ListBox()
         {
             fontheight = (int)Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, "Measure test.").Y;

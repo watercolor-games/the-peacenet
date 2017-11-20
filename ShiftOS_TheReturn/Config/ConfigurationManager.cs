@@ -52,6 +52,35 @@ namespace Plex.Engine.Config
             return resolutions.OrderByDescending(x=>x.Width * x.Height).ToArray();
         }
 
+        public static void SetTextRenderer(string renderername)
+        {
+            var renderers = TextRenderer.GetAvailableRenderers;
+            var renderer = renderers.FirstOrDefault(x => x.GetType().Name == renderername);
+            //validity check
+            if (renderer == null)
+                return;
+            _config.TextRendererClass = renderername;
+        }
+
+        public static ATextRenderer GetTextRenderer()
+        {
+            var renderers = TextRenderer.GetAvailableRenderers;
+
+            string renderername = _config.TextRendererClass;
+            var renderer = renderers.FirstOrDefault(x => x.GetType().Name == renderername);
+            if (renderer == null)
+            {
+                Console.WriteLine("[WARNING] [Client] <config> Text renderer {0} from config file not found. Finding new renderer...", renderername);
+                renderername = ConfigFile.getDefaultRendererName();
+                Console.WriteLine("[INFO] [Client] <config> Found new renderer: {0} - saving config to disk", renderername);
+                _config.TextRendererClass = renderername;
+                SaveConfig();
+
+                renderer = renderers.FirstOrDefault(x => x.GetType().Name == renderername);
+            }
+            return renderer;
+        }
+
         public static void SetRPCEnable(bool value)
         {
             _config.EnableDiscordRichPresence = value;

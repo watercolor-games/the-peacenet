@@ -83,7 +83,17 @@
     <Compile Include="SessionManager.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="UpgradeManager.cs" />
-    <Compile Include="WorldManager.cs" />
+    <Compile Include="Networking\Interfaces\IInterface.cs" />
+    <Compile Include="Networking\Interfaces\IGateway.cs" />
+    <Compile Include="Networking\Interfaces\INetworkDevice.cs" />
+    <Compile Include="Networking\IP\IpAddress.cs" />
+    <Compile Include="Networking\IP\IpNetwork.cs" />
+    <Compile Include="Networking\IP\Packet.cs" />
+    <Compile Include="Networking\Routing\RouterInterface.cs" />
+    <Compile Include="Networking\Routing\Router.cs" />
+    <Compile Include="Networking\Routing\RoutingRule.cs" />
+    <Compile Include="Networking\Routing\Switch.cs" />
+    <Compile Include="WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -101,6 +111,10 @@
     <ProjectReference Include="..\TokenizerThingy\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>
       <Name>WatercolorGames.CommandLine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Peacenet.Backend\Peacenet.Backend.csproj">
+      <Project>{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}</Project>
+      <Name>Peacenet.Backend</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\upgradedb.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Networking\" />
+    <Folder Include="Networking\Interfaces\" />
+    <Folder Include="Networking\IP\" />
+    <Folder Include="Networking\Routing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

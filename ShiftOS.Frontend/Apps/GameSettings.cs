@@ -24,11 +24,14 @@ namespace Plex.Frontend.Apps
         private TextControl _ohGraphics = null;
 
         private CheckLabel _gfxFullscreen = null;
+        private TextControl _gfxTextRendererLabel = null;
+        private ComboBox _gfxTextRenderer = null;
 
         private TextControl _ohDiscord = null;
         private TextControl _ohDiscordDesc = null;
 
         private CheckLabel _rpcEnable = null;
+
 
 
         private int _resInitial = 0;
@@ -49,6 +52,8 @@ namespace Plex.Frontend.Apps
             _optionsView = new ScrollView();
             _ohGraphics = new TextControl();
             _gfxFullscreen = new CheckLabel();
+            _gfxTextRendererLabel = new TextControl();
+            _gfxTextRenderer = new ComboBox();
             _ohDiscord = new TextControl();
             _ohDiscordDesc = new TextControl();
             _rpcEnable = new CheckLabel();
@@ -65,6 +70,8 @@ namespace Plex.Frontend.Apps
             AddControl(_optionsView);
 
             _optionsView.AddControl(_ohGraphics);
+            _optionsView.AddControl(_gfxTextRendererLabel);
+            _optionsView.AddControl(_gfxTextRenderer);
             _optionsView.AddControl(_gfxFullscreen);
             _optionsView.AddControl(_ohDiscord);
             _optionsView.AddControl(_ohDiscordDesc);
@@ -76,6 +83,7 @@ namespace Plex.Frontend.Apps
                 ConfigurationManager.SetResolution(_resUserSet);
                 ConfigurationManager.SetFullscreen(_gfxFullscreen.Value);
                 ConfigurationManager.SetRPCEnable(_rpcEnable.Value);
+                ConfigurationManager.SetTextRenderer(_gfxTextRenderer.SelectedItem.ToString());
 
                 ConfigurationManager.ApplyConfig();
             };
@@ -128,6 +136,13 @@ namespace Plex.Frontend.Apps
 
             _gfxFullscreen.Value = ConfigurationManager.GetFullscreen();
             _rpcEnable.Value = ConfigurationManager.GetRPCEnable();
+        
+            var availableRenderers = TextRenderer.GetAvailableRenderers;
+            foreach (var renderer in availableRenderers)
+            {
+                _gfxTextRenderer.AddItem(renderer.GetType().Name);
+            }
+            _gfxTextRenderer.SelectedIndex = Array.IndexOf(availableRenderers, ConfigurationManager.GetTextRenderer());
         }
 
 
@@ -195,10 +210,20 @@ namespace Plex.Frontend.Apps
             _ohGraphics.FontStyle = TextControlFontStyle.Header2;
             _ohGraphics.MaxWidth = _optionsView.Width - 30;
 
+            _gfxTextRendererLabel.AutoSize = true;
+            _gfxTextRendererLabel.Text = "Text renderer backend:";
+            _gfxTextRendererLabel.X = 15;
+            _gfxTextRendererLabel.Y = _ohGraphics.Y + _ohGraphics.Height + 10;
+
+            _gfxTextRenderer.AutoSize = true;
+            _gfxTextRenderer.X = 15;
+            _gfxTextRenderer.MaxWidth = (_optionsView.Width - 30);
+            _gfxTextRenderer.Y = _gfxTextRendererLabel.Y + _gfxTextRendererLabel.Height + 5;
+
             _gfxFullscreen.AutoSize = true;
             _gfxFullscreen.Text = "Enable fullscreen";
             _gfxFullscreen.X = 15;
-            _gfxFullscreen.Y = _ohGraphics.Y + _ohGraphics.Height + 10;
+            _gfxFullscreen.Y = _gfxTextRenderer.Y + _gfxTextRenderer.Height + 10;
 
             _ohDiscord.X = 15;
             _ohDiscord.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 30;

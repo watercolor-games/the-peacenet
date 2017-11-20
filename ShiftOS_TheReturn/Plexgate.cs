@@ -253,6 +253,8 @@ namespace Plex.Engine
                     _isRpcOn = false;
                 }
             }
+
+            TextRenderer.Init(ConfigurationManager.GetTextRenderer());
         }
 
         public void DiscordReady()
@@ -292,26 +294,6 @@ namespace Plex.Engine
 
             ServerManager.BuildBroadcastHandlerDB();
 
-            ATextRenderer strategy = null;
-            try
-            {
-                strategy = new Engine.TextRenderers.NativeTextRenderer();
-            }
-            catch
-            {
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
-                }
-                else
-                {
-                    strategy = new Engine.TextRenderers.GdiPlusTextRenderer();
-                }
-			}
-			
-			TextRenderer.Init(strategy);
-			Console.WriteLine(strategy.GetType().ToString());
-                        
             UIManager.Init(this);
 
 
@@ -503,15 +485,12 @@ namespace Plex.Engine
             UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
 
             graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
             //Create a graphics context so we can draw shit
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
-
-            spriteBatch.End();
-
 
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawTArgets(spriteBatch);
@@ -520,10 +499,6 @@ namespace Plex.Engine
             //we can draw the HUD.
             UIManager.DrawHUD(spriteBatch);
 
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
 
             //Draw a mouse cursor
             spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);

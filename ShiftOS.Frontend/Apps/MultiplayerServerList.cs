@@ -115,10 +115,6 @@ namespace Plex.Frontend.Apps
                         server.Port = port;
                         _servers.Add(server);
                         RefreshList();
-                        var uconf = UserConfig.Get();
-                        uconf.Servers = _servers;
-                        System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
-
                     });
                 });
             };
@@ -146,13 +142,9 @@ namespace Plex.Frontend.Apps
 
         public void OnLoad()
         {
-            _servers = UserConfig.Get().Servers;
             if (_servers == null)
             {
                 _servers = new List<ServerDetails>();
-                var uconf = UserConfig.Get();
-                uconf.Servers = _servers;
-                System.IO.File.WriteAllText("config.json", Newtonsoft.Json.JsonConvert.SerializeObject(uconf, Newtonsoft.Json.Formatting.Indented));
             }
             RefreshList();
         }

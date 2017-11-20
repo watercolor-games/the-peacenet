@@ -24,6 +24,7 @@ namespace Plex.Engine.TextRenderers
     /// <summary>
     /// Provides text rendering for the UI subsystem from PlexNative.
     /// </summary>
+    [DefaultRenderer]
     public class NativeTextRenderer : ATextRenderer
 	{
 		private static class Implementation

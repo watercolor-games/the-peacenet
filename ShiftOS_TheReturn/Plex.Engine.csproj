@@ -168,7 +168,6 @@
     <Compile Include="Desktop.cs" />
     <Compile Include="FSUtils.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
-    <Compile Include="GraphicsSubsystem\QA.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\CheckBox.cs" />
@@ -250,6 +249,8 @@
     <Compile Include="Discord\Reply.cs" />
     <Compile Include="Discord\RPC.cs" />
     <Compile Include="GraphicsSubsystem\CheckLabel.cs" />
+    <Compile Include="GUI\ComboBox.cs" />
+    <Compile Include="GUI\IListControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
