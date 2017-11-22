@@ -21,6 +21,15 @@ namespace Peacenet.Backend.Filesystem
             return _mounts.FirstOrDefault(x => x.SessionID == username && x.DriveNumber == pdata.DriveNumber);
         }
 
+        public Dictionary<int, string> GetDrivesForUser(string username)
+        {
+            var mounts = _mounts.Where(x => x.SessionID == username);
+            var dict = new Dictionary<int, string>();
+            foreach (var mount in mounts)
+                dict.Add(mount.DriveNumber, mount.VolumeLabel);
+            return dict;
+        }
+
         public bool CreateFS(string username, int drivenumber, string label)
         {
             var existing = _mounts.FirstOrDefault(x => x.SessionID == username && x.DriveNumber == drivenumber);

@@ -10,4 +10,8 @@ namespace Peacenet.Backend
 
         ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter);
     }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class RequiresSessionAttribute : Attribute { }
 }
+

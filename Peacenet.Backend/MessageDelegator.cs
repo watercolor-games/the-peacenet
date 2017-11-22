@@ -4,6 +4,7 @@ using Plex.Objects;
 using System.Reflection;
 using System.Linq;
 using System.IO;
+using Peacenet.Backend.Sessions;
 
 namespace Peacenet.Backend
 {
@@ -45,6 +46,17 @@ namespace Peacenet.Backend
             }
             else
             {
+                bool sessionRequired = handler.GetType().GetCustomAttributes(false).FirstOrDefault(x => x is RequiresSessionAttribute) != null;
+                if (sessionRequired)
+                {
+                    var sessionmgr = backend.GetBackendComponent<SessionManager>();
+                    if (sessionmgr.GetUserFromSession(session_id) == null)
+                    {
+                        Logger.Log("Authentication required but no session token provided. Sending auth error.");
+                        returndgram = new byte[] { };
+                        return ServerResponseType.REQ_LOGINREQUIRED;
+                    }
+                }
                 using (var memstr = new MemoryStream(dgram))
                 {
                     using (var rms = new MemoryStream())

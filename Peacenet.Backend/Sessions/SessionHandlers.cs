@@ -46,6 +46,7 @@ namespace Peacenet.Backend.Sessions
         }
     }
 
+    [RequiresSession]
     public class UsernameRetriever : IMessageHandler
     {
         public ServerMessageType HandledMessageType
@@ -64,6 +65,7 @@ namespace Peacenet.Backend.Sessions
         }
     }
 
+    [RequiresSession]
     public class SysnameRetriever : IMessageHandler
     {
         public ServerMessageType HandledMessageType

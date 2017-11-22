@@ -34,6 +34,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="DocoptNet">
+      <HintPath>..\packages\docopt.net.0.6.1.9\lib\net40\DocoptNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -48,6 +51,7 @@
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\ADriveMount.cs" />
     <Compile Include="Filesystem\FSHandlers.cs" />
+    <Compile Include="Terminal\TerminalManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
@@ -63,9 +67,11 @@
     <Folder Include="Saves\" />
     <Folder Include="Sessions\" />
     <Folder Include="Filesystem\" />
+    <Folder Include="Terminal\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Main.usage.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
