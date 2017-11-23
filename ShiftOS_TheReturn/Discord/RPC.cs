@@ -26,12 +26,25 @@ namespace Plex.Engine.Discord
     public static class RPCHelpers
     {
         private static RichPresence presence = new RichPresence();
+        private static bool active = true;
+
+        static RPCHelpers()
+        {
+            try
+            {
+                System.Runtime.InteropServices.Marshal.PrelinkAll(typeof(RPC));
+            }
+            catch
+            {
+                active = false;
+            }
+        }
 
         internal static void Initialize()
         {
             presence.state = "Booting up...";
             presence.details = "Please wait while Peacegate is initiated.";
-            RPC.UpdatePresence(ref presence);
+            if (active) RPC.UpdatePresence(ref presence);
         }
 
         public static void UpdateRegular()
@@ -43,7 +56,7 @@ namespace Plex.Engine.Discord
             sb.Append($"{SaveSystem.GetExperience()} XP\r\n");
             sb.Append($"${(double)SaveSystem.GetCash() / 100}\r\n");
             presence.details = sb.ToString();
-            RPC.UpdatePresence(ref presence);
+            if (active) RPC.UpdatePresence(ref presence);
         }
 
         public static void SetArbitraryStatus(string detail)
@@ -55,7 +68,7 @@ namespace Plex.Engine.Discord
             }
             presence.state = "Idle";
             presence.details = fixedlen;
-            RPC.UpdatePresence(ref presence);
+            if (active) RPC.UpdatePresence(ref presence);
         }
     }
 }

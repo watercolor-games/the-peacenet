@@ -10,17 +10,32 @@ using System.IO;
 
 namespace Peacenet.Backend
 {
-    public class Backend
+    public class Backend : IDisposable
     {
         private List<IBackendComponent> _components = null;
         private int _port = 0;
         private Thread _utilityThread = null;
         private Queue<Action> _utilityActions = new Queue<Action>();
-        private bool _isRunning = false;
+        private volatile bool _isRunning = false;
         private const int _waittimems = 1800000;
         private TcpListener _listener = null;
         private Thread _tcpthread = null;
         private bool _isMultiplayer = false;
+
+        // Fired on any of these events:
+        // 1) A new utility action has been enqueued
+        // 2) The timer has expired - it's time to call SafetyCheck()
+        // 3) It's time to shut down
+        private EventWaitHandle _workForUtility = new ManualResetEvent(false);
+
+        private Timer _safetyWatch = null;
+
+        // Set to true before the timer fires.
+        private volatile bool _safety = false;
+
+        // Fired by the utility thread to let the main thread know that
+        // it's done shutting down.
+        private EventWaitHandle _shutdownComplete = new AutoResetEvent(false);
 
         public bool IsMultiplayer
         {
@@ -28,6 +43,15 @@ namespace Peacenet.Backend
             {
                 return _isMultiplayer;
             }
+        }
+
+        private void EnqueueUtilityAction(Action action)
+        {
+            lock (_utilityActions)
+            {
+                _utilityActions.Enqueue(action);
+            }
+            _workForUtility.Set();
         }
 
         public Backend(int port, bool isMultiplayer = true)
@@ -39,20 +63,27 @@ namespace Peacenet.Backend
             Logger.Log("Initiating Peacenet backend...");
             _components = new List<IBackendComponent>();
             Logger.Log("Probing for backend components...");
-            foreach (var type in ReflectMan.Types)
-            {
-                if (type.GetInterfaces().Contains(typeof(IBackendComponent)))
-                {
+             foreach (var type in ReflectMan.Types)
+             {
+                 if (type.GetInterfaces().Contains(typeof(IBackendComponent)))
+                 {
+                    if (type.GetConstructor(Type.EmptyTypes) == null)
+                    {
+                        Logger.Log($"Found {type.Name}, but it doesn't have a parameterless constructor, so it's ignored.  Probably a mistake.");
+                        continue;
+                    }
                     Logger.Log($"Found {type.Name}.");
                     var component = (IBackendComponent)Activator.CreateInstance(type, null);
                     _components.Add(component);
-                }
-            }
+                 }
+             }
             Logger.Log("Initiating all backend components...");
             foreach (var component in _components)
             {
+                Inject(component);
                 component.Initiate();
             }
+
             Logger.Log("Utility thread creating!");
             _utilityThread = new Thread(this.UtilityThread);
             _utilityThread.IsBackground = true;
@@ -110,40 +141,75 @@ namespace Peacenet.Backend
             }
         }
 
-        public T GetBackendComponent<T>()
+        public T GetBackendComponent<T>() where T : IBackendComponent, new()
         {
-            var component = _components.FirstOrDefault(x => x is T);
-            if (component == null)
-                throw new ArgumentException($"No backend component of type {nameof(T)} could be found. Are you sure it implements ${nameof(IBackendComponent)}?");
-            return (T)component;            
+            return (T)_components.First(x => x is T);
+        }
+
+        public IBackendComponent GetBackendComponent(Type t)
+        {
+            if (!typeof(IBackendComponent).IsAssignableFrom(t) || t.GetConstructor(Type.EmptyTypes) == null)
+                throw new ArgumentException($"{t.Name} is not an IBackendComponent, or does not provide a parameterless constructor.");
+            return _components.First(x => t.IsAssignableFrom(x.GetType()));
+        }
+
+        private object Inject(object client)
+        {
+            foreach (var field in client.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.GetCustomAttributes(false).Any(t => t is DependencyAttribute)))
+            {
+                if (field.FieldType == typeof(Backend))
+                    field.SetValue(client, this);
+                else
+                    field.SetValue(client, GetBackendComponent(field.FieldType));
+            }
+            return client;
+        }
+
+        public T New<T>() where T : new()
+        {
+            return (T)Inject(new T());
+        }
+
+        public object New(Type t)
+        {
+            if (t.GetConstructor(Type.EmptyTypes) == null)
+                throw new ArgumentException($"{t.Name} does not provide a parameterless constructor.");
+            return Inject(Activator.CreateInstance(t, null));
+        }
+
+        private void InvokeSafetyCheck(object o)
+        {
+            _safety = true;
+            _workForUtility.Set();
         }
 
         private void UtilityThread()
         {
             Logger.Log("Utility thread started!");
-            int _waittime = _waittimems;
+            if (_safetyWatch == null)
+                _safetyWatch = new Timer(InvokeSafetyCheck, null, _waittimems, _waittimems);
             while (_isRunning)
             {
-                while (_utilityActions.Count > 0)
+                _workForUtility.WaitOne();
+                lock (_utilityActions)
                 {
-                    Logger.Log("Invoking utility action..");
-                    _utilityActions.Dequeue()?.Invoke();
+                    while (_utilityActions.Count > 0)
+                    {
+                        Logger.Log("Invoking utility action..");
+                        _utilityActions.Dequeue()?.Invoke();
+                    }
                 }
-                if (_waittime > 0)
+                if (_safety)
                 {
-                    _waittime--;
-                    Thread.Sleep(1);
-                }
-                else
-                {
-                    _waittime = _waittimems;
                     Logger.Log("Performing safety check...");
                     foreach (var component in _components)
                     {
                         component.SafetyCheck();
                     }
                     Logger.Log("Done.");
+                    _safety = false;
                 }
+                _workForUtility.Reset();
             }
             Logger.Log("Utility thread is shutting down...");
             Logger.Log("ONE LAST SAFETY CHECK.");
@@ -152,6 +218,8 @@ namespace Peacenet.Backend
                 component.SafetyCheck();
                 component.Unload();
             }
+            Logger.Log("Goodnight Australia.");
+            _shutdownComplete.Set();
         }
 
         public void Shutdown()
@@ -164,20 +232,30 @@ namespace Peacenet.Backend
             Logger.Log("Done.");
             Logger.Log("Stopping everything else...");
             _isRunning = false;
+            _workForUtility.Set();
             Logger.Log("Waiting for utility thread shutdown...");
-            while (_utilityThread.ThreadState != ThreadState.Stopped)
-            {
-                Thread.Sleep(1);
-            }
+            _shutdownComplete.WaitOne();
             Logger.Log("Everything's shut down. Cleaning up...");
             _utilityThread = null;
             _components = null;
             _utilityActions = null;
+
+            _shutdownComplete.Dispose();
+            _shutdownComplete = null;
+            _workForUtility.Dispose();
+            _workForUtility = null;
+            _safetyWatch.Dispose();
+            _safetyWatch = null;
+        }
+
+        public void Dispose()
+        {
+            Shutdown();
         }
 
         public void Listen()
         {
-            if (_isRunning == true)
+            if (_isRunning)
             {
                 throw new InvalidOperationException("The listener is already running.");
             }
