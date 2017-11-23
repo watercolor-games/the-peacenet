@@ -77,8 +77,6 @@ namespace Plex.Engine.GUI
             {
                 h = Math.Max(h, ctrl.Y + ctrl.Height);
             }
-            if (h > 0)
-                h += 15;
             _realHeight = Math.Max(Height, h);
             _scrollY = MathHelper.Clamp(_scrollY, 0, _realHeight - Height);
         }

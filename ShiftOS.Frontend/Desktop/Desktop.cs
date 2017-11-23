@@ -10,49 +10,187 @@ using Plex.Engine;
 using Plex.Frontend.Apps;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
-
+using Plex.Engine.Theming;
 
 namespace Plex.Frontend.Desktop
 {
-    public class Desktop : TextControl, IDesktop
+    public class Desktop : Control, IDesktop
     {
-        private ItemGroup _panelButtonGroup = new ItemGroup();
-        private Button _userMenu = new Button();
-        private TextControl _panelClock = new TextControl();
-        public Menu _appLauncher = new Menu();
+        internal class Panel : Control
+        {
+            protected override void OnLayout(GameTime gameTime)
+            {
+                if (Parent == null)
+                    Width = UIManager.Viewport.Width;
+                else
+                    Width = Parent.Width;
+                Height = 24;
+                X = 0;
+            }
+
+            protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+            {
+                gfx.Clear(ThemeManager.Theme.GetAccentColor());
+            }
+        }
+
+        private Panel _topPanel = null;
+        private Panel _bottomPanel = null;
+
+        private int _animState = -1;
+        private float _animSlide = 0.0f;
+
+        //Top panel items
+        private TextControl _time = null;
+        private Button _appLauncherOpen = null;
+        private Button _systemOpen = null;
+
+        //Menus
+        private Menu _systemMenu = null;
+        private MenuItem _sysSettings = null;
+
+        private Menu _appLauncherMenu = null;
+
+        //Bottom bar
+        private ItemGroup _panelButtons = null;
+
+        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
+        {
+        }
 
         public Desktop()
         {
-            AddControl(_panelButtonGroup);
-            UIManager.ScreenRightclicked += (x, y) =>
-            {
-                _appLauncher.Layout(new GameTime());
-                if(x+_appLauncher.Width >= UIManager.Viewport.Width)
-                {
-                    x -= (x + _appLauncher.Width) - UIManager.Viewport.Width;
-                }
-                if (y + _appLauncher.Height >= UIManager.Viewport.Height)
-                {
-                    y -= (y + _appLauncher.Height) - UIManager.Viewport.Height;
-                }
-                OpenAppLauncher(new System.Drawing.Point(x, y));
-            };
-            AddControl(_userMenu);
-            AddControl(_panelClock);
+            _topPanel = new Panel();
+            _bottomPanel = new Panel();
 
+            AddControl(_topPanel);
+            AddControl(_bottomPanel);
+            _time = new TextControl();
+            _appLauncherOpen = new Button();
+            _systemOpen = new Button();
+            _topPanel.AddControl(_time);
+            _topPanel.AddControl(_appLauncherOpen);
+            _topPanel.AddControl(_systemOpen);
+
+            _systemMenu = new Menu();
+            _sysSettings = new MenuItem();
+            _sysSettings.Text = "System settings";
+            _systemMenu.AddItem(_sysSettings);
+
+            _sysSettings.ItemActivated += () =>
+            {
+                AppearanceManager.SetupDialog(new Apps.GameSettings());
+            };
+
+            _systemOpen.Click += () =>
+            {
+                if (_systemMenu.Visible)
+                {
+                    _systemMenu.Hide();
+                }
+                else
+                {
+                    _systemMenu.Y = _topPanel.Y + _topPanel.Height;
+                    _systemMenu.X = _systemOpen.X;
+                    _systemMenu.Show();
+                }
+            };
+
+            _appLauncherMenu = new Menu();
+
+            _appLauncherOpen.Click += () =>
+            {
+                int _alX = 0;
+                int _alY = _topPanel.Y + _topPanel.Height;
+
+                if (_appLauncherMenu.Visible && (_appLauncherMenu.X == _alX && _appLauncherMenu.Y == _alY))
+                {
+                    _appLauncherMenu.Hide();
+                }
+                else
+                {
+                    OpenAppLauncher(new System.Drawing.Point(0, _topPanel.Y + _topPanel.Height));
+                }
+            };
+
+            _panelButtons = new ItemGroup();
+            _bottomPanel.AddControl(_panelButtons);
+
+        }
+
+
+        protected override void OnLayout(GameTime gameTime)
+        {
+            Width = GetSize().Width;
+            Height = GetSize().Height;
+            X = 0;
+            Y = 0;
+
+            _animSlide = MathHelper.Clamp(_animSlide, 0, 1);
+
+            int _topPos = (int)ProgressBar.linear(_animSlide, 0, 1, 0 - _topPanel.Height, 0);
+            int _bottomPos = (int)ProgressBar.linear(_animSlide, 0, 1, Height, Height - _bottomPanel.Height);
+
+            _topPanel.Y = _topPos;
+            _bottomPanel.Y = _bottomPos;
+
+            switch (_animState)
+            {
+                case 0:
+                    _animSlide = 0;
+                    _animState++;
+                    break;
+                case 1:
+                    _animSlide += (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
+                    if (_animSlide >= 1F)
+                        _animState++;
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    _animSlide -= (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
+                    if (_animSlide <= 0F)
+                        _animState++;
+
+                    break;
+            }
+
+            TimeSpan now = DateTime.Now.TimeOfDay;
+            int hour = (now.Hours > 12) ? now.Hours - 12 : now.Hours;
+            string ampm = now.Hours > 12 ? "PM" : "AM";
+            string minute = now.Minutes > 9 ? now.Minutes.ToString() : "0" + now.Minutes.ToString();
+            string second = now.Seconds > 9 ? now.Seconds.ToString() : "0" + now.Seconds.ToString();
+
+            _time.Text = $"{hour}:{minute}:{second} {ampm}";
+            _time.AutoSize = true;
+
+            _time.X = (_topPanel.Width - _time.Width) - 10;
+            _time.Y = (_topPanel.Height - _time.Height) / 2;
+
+            _appLauncherOpen.Text = "Peacegate";
+            _appLauncherOpen.X = 2;
+            _appLauncherOpen.Y = (_topPanel.Height - _appLauncherOpen.Height) / 2;
+
+            _systemOpen.Text = "System";
+            _systemOpen.X = _appLauncherOpen.X + _appLauncherOpen.Width + 3;
+            _systemOpen.Y = _appLauncherOpen.Y;
+
+            _panelButtons.AutoSize = true;
+            _panelButtons.X = 0;
+            _panelButtons.Y = (_bottomPanel.Height - _panelButtons.Height) / 2;
         }
 
         public string DesktopName
         {
             get
             {
-                return "Plexgate";
+                return "Peacegate";
             }
         }
 
         public void Close()
         {
-            UIManager.StopHandling(this);
+            _animState = 3;
         }
 
         public Size GetSize()
@@ -62,11 +200,13 @@ namespace Plex.Frontend.Desktop
 
         public void HideAppLauncher()
         {
-            _appLauncher.Hide();
+            _appLauncherMenu.Hide();
         }
 
         public void InvokeOnWorkerThread(Action act)
         {
+            if (act == null)
+                return;
             UIManager.CrossThreadOperations.Enqueue(act);
         }
 
@@ -84,88 +224,83 @@ namespace Plex.Frontend.Desktop
 
         public void OpenAppLauncher(System.Drawing.Point loc)
         {
-            _appLauncher.X = loc.X;
-            _appLauncher.Y = loc.Y;
-            _appLauncher.Show();
+            if (_appLauncherMenu.Visible && (_appLauncherMenu.X == loc.X && _appLauncherMenu.Y == loc.Y))
+            {
+                _appLauncherMenu.Hide();
+                return;
+            }
+
+            _appLauncherMenu.X = loc.X;
+            _appLauncherMenu.Y = loc.Y;
+
+            if (_appLauncherMenu.Visible == false)
+            {
+                _appLauncherMenu.Show();
+            }
         }
 
         public void PopulateAppLauncher(LauncherItem[] items)
         {
-            _appLauncher.ClearItems();
-            List<string> cats = new List<string>();
-            foreach(var item in items.OrderBy(x => x.DisplayData.Category))
-            {
-                if (!cats.Contains((item.DisplayData.Category)))
-                    cats.Add((item.DisplayData.Category));
-            }
-            foreach(var cat in cats)
-            {
-                var catitem = new MenuItem();
-                catitem.Text = cat;
+            //Somewhere to store all categories.
+            List<string> categories = new List<string>();
 
-                foreach(var item in items.Where(x => (x.DisplayData.Category) == cat).OrderBy(x=>(x.DisplayData.Name)))
+            //Clear all existing AL items.
+            _appLauncherMenu.ClearItems();
+
+            //first we get all unique categories.
+            foreach (var item in items)
+            {
+                if (categories.Contains(item.DisplayData.Category))
+                    continue;
+                categories.Add(item.DisplayData.Category);
+            }
+
+            //Now, for each category we create a menu item...
+            foreach (var cat in categories)
+            {
+                var mitem = new MenuItem();
+                //Set its text to the category text...
+                mitem.Text = cat;
+                //And add it to the app launcher.
+                _appLauncherMenu.AddItem(mitem);
+                //Now, we want to get all app launcher entries in the category...
+                foreach (var entry in items.Where(x => x.DisplayData.Category == cat))
                 {
-                    var alitem = new MenuItem();
-                    alitem.Text = (item.DisplayData.Name);
-                    alitem.ItemActivated += () =>
+                    //and create a menu item for it...
+                    var entryItem = new MenuItem();
+                    //assign its text...
+                    entryItem.Text = entry.DisplayData.Name;
+                    //We'll assume this isn't a lua item because those are de-de-de-de-DEPRECATED.
+                    entryItem.ItemActivated += () =>
                     {
-                        AppearanceManager.SetupWindow((IPlexWindow)Activator.CreateInstance(item.LaunchType, null));
+                        //In here we create an instance of the entry's window object...
+                        var window = (IPlexWindow)Activator.CreateInstance(entry.LaunchType, null);
+                        //...and display it.
+                        AppearanceManager.SetupWindow(window); //Bam.
+                        //Just to be safe...
                         HideAppLauncher();
                     };
-                    catitem.AddItem(alitem);
+                    //Don't forget to add it to the right place!!
+                    mitem.AddItem(entryItem);
                 }
-
-                _appLauncher.AddItem(catitem);
             }
 
-            var shutdown = new MenuItem
-            {
-                Text = "Shut down",
-            };
-            shutdown.ItemActivated += () => { PlexCommands.Shutdown(null); };
-            _appLauncher.AddItem(shutdown);
         }
-
-        private Control _currentwin = null;
 
         public void PopulatePanelButtons()
         {
-            _panelButtonGroup.ClearControls();
-            _panelButtonGroup.Gap = 2;
+            //Clear panel buttons
+            _panelButtons.ClearControls();
 
-            foreach(var pbtn in AppearanceManager.OpenForms)
+            //Iterate through all windows that are open
+            foreach (var window in AppearanceManager.OpenForms)
             {
-                var image = new PictureBox();
-                //Draw panel button background...
-                image.Width = 100;
-                image.Height = Height - 4;
-                var text = new TextControl();
-                text.FontStyle = TextControlFontStyle.Custom;
-                text.Text = pbtn.Text;
-                text.AutoSize = true;
-                text.Layout(new GameTime());
-                text.X = 4;
-                text.Y = (image.Height - text.Height) / 2;
-                image.AddControl(text);
-                _panelButtonGroup.AddControl(image);
-
-                Action _click = () =>
-                {
-                    var wb = pbtn as WindowBorder;
-                    if(wb != _currentwin)
-                    {
-                        _currentwin = wb;
-                        UIManager.FocusedControl = wb;
-                        UIManager.BringToFront(wb);
-                    }
-                    else
-                    {
-                        wb.ToggleMinimized();
-                    }
-                };
-                text.Click += _click;
-                image.Click += _click;
-
+                //Create a button
+                var button = new Button();
+                //Button text should be the window title.
+                button.Text = window.Text;
+                //Add button to the panel button list.
+                _panelButtons.AddControl(button);
             }
         }
 
@@ -179,88 +314,18 @@ namespace Plex.Frontend.Desktop
 
         public void SetupDesktop()
         {
-            _userMenu.Text = SaveSystem.GetUsername();
-            _userMenu.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);
-            Invalidate();
         }
 
         public void Show()
         {
-            UIManager.AddTopLevel(this);
+            _animState = 0;
+            _animSlide = 0;
             Visible = true;
-            Invalidate();
+            UIManager.AddTopLevel(this);
         }
 
         public void ShowWindow(IWindowBorder border)
         {
         }
-
-        private string dateTimeString = "";
-        
-        protected override void OnLayout(GameTime gameTime)
-        {
-            FontStyle = TextControlFontStyle.Custom;
-            TextColor = Microsoft.Xna.Framework.Color.White;
-            SendToBack();
-            X = 0;
-            Width = GetSize().Width;
-            Height = 24;
-            Y = 0;
-            var now = DateTime.Now.TimeOfDay;
-            string ampm = "AM";
-            if (now.Hours > 12)
-                ampm = "PM";
-            var newDateTimeString = string.Format("{0}:{1}:{2} {3}", (now.Hours > 12) ? now.Hours - 12 : now.Hours, (now.Minutes < 10) ? "0" + now.Minutes.ToString() : now.Minutes.ToString(), (now.Seconds < 10) ? "0" + now.Seconds.ToString() : now.Seconds.ToString(), ampm);
-
-
-            _panelClock.AutoSize = true;
-
-            if (newDateTimeString != dateTimeString)
-            {
-                dateTimeString = newDateTimeString;
-                _panelClock.Text = dateTimeString;
-                _panelClock.Layout(gameTime);
-            }
-
-            _userMenu.Y = (Height - _userMenu.Height) / 2;
-            _userMenu.X = (Width - _userMenu.Width) - 5;
-
-            _panelClock.Y = (Height - _panelClock.Height) / 2;
-            _panelClock.X = (_userMenu.X - _panelClock.Width) - 5;
-
-            _panelButtonGroup.Y = 0;
-            _panelButtonGroup.Height = Height;
-            _panelButtonGroup.Width = _panelClock.X - _panelButtonGroup.X;
-
-        }
-
-        protected override void OnPaint(GraphicsContext gfx, RenderTarget2D target)
-        {
-            base.OnPaint(gfx, target);
-        }
-    }
-
-    public class PanelButtonData
-    {
-        public string Title { get; set; }
-        public WindowBorder Window { get; set; }
-
-        public bool IsActive
-        {
-            get
-            {
-                return Window.IsFocusedControl || Window.ContainsFocusedControl;
-            }
-        }
-    }
-    
-
-    public class AppLauncherItem
-    {
-        public Engine.LauncherItem Data { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
     }
 }

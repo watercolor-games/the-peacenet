@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
+using Plex.Engine.Config;
 
 namespace Plex.Engine
 {
@@ -87,17 +88,14 @@ namespace Plex.Engine
 
         private KeyboardListener keyboardListener = new KeyboardListener ();
 
-        public Plexgate()
-        {
-            graphicsDevice = new GraphicsDeviceManager(this);
-            var uconf = Objects.UserConfig.Get();
-            graphicsDevice.PreferredBackBufferHeight = uconf.ScreenHeight;
-            graphicsDevice.PreferredBackBufferWidth = uconf.ScreenWidth;
-            UIManager.Viewport = new System.Drawing.Size(
-                    uconf.ScreenWidth,
-                    uconf.ScreenHeight
-                );
+        private string _appIdForRpc = "";
+        private bool _isRpcOn = false;
 
+        public Plexgate(string discordAppID = "")
+        {
+            _appIdForRpc = discordAppID;
+
+            graphicsDevice = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             graphicsDevice.PreferMultiSampling = false;
 
@@ -107,16 +105,24 @@ namespace Plex.Engine
             //Set the title
             Window.Title = "Plex";
 
+            var res = ConfigurationManager.GetSystemResolution();
+            graphicsDevice.PreferredBackBufferWidth = res.Width;
+            graphicsDevice.PreferredBackBufferHeight = res.Height;
 
 
             //Fullscreen
-            graphicsDevice.IsFullScreen = uconf.Fullscreen;
+            graphicsDevice.IsFullScreen = true;
 
             // keyboard events
             keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
 
+            //Load the configuration manager...
+            ConfigurationManager.LoadConfig();
 
-            
+
+            //Apply config
+            ApplyConfig(false);
+
             
 #if DEBUG
             DebugText.Visible = true;
@@ -154,7 +160,9 @@ namespace Plex.Engine
         {
             if (e.Key == Keys.F11)
             {
-                UIManager.Fullscreen = !UIManager.Fullscreen;
+                bool fs = ConfigurationManager.GetFullscreen();
+                ConfigurationManager.SetFullscreen(!fs);
+                ConfigurationManager.ApplyConfig();
             }
             else if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.D)
             {
@@ -173,6 +181,107 @@ namespace Plex.Engine
             }
         }
 
+        public void ApplyConfig(bool resetGfxDevice = true)
+        {
+            var resolution = ConfigurationManager.GetResolution();
+
+            UIManager.Viewport = new System.Drawing.Size(resolution.Width, resolution.Height);
+
+            bool regenTarget = false;
+            if (GameRenderTarget == null)
+                regenTarget = true;
+            else if (UIManager.Viewport.Width != GameRenderTarget.Width || UIManager.Viewport.Height != GameRenderTarget.Height)
+            {
+                regenTarget = true;
+            }
+            if (regenTarget)
+            {
+                if(graphicsDevice.GraphicsDevice != null)
+                    GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+
+            }
+
+            bool isFullscreen = ConfigurationManager.GetFullscreen();
+            if (graphicsDevice.IsFullScreen != isFullscreen)
+            {
+                graphicsDevice.IsFullScreen = isFullscreen;
+                if (isFullscreen == false)
+                {
+                    graphicsDevice.PreferredBackBufferWidth = resolution.Width;
+                    graphicsDevice.PreferredBackBufferHeight = resolution.Height;
+
+                }
+                else
+                {
+                    var sysres = ConfigurationManager.GetSystemResolution();
+                    graphicsDevice.PreferredBackBufferWidth = sysres.Width;
+                    graphicsDevice.PreferredBackBufferHeight = sysres.Height;
+
+                }
+                graphicsDevice.ApplyChanges();
+            }
+
+            bool shouldDoRPC = ConfigurationManager.GetRPCEnable();
+            if (!string.IsNullOrWhiteSpace(_appIdForRpc) && shouldDoRPC)
+            {
+                try
+                {
+                    if (!_isRpcOn)
+                    {
+                        var handlers = new Discord.EventHandlers();
+                        handlers.readyCallback = this.DiscordReady;
+                        handlers.disconnectedCallback = (c, m) => this.DiscordDisconnected(c, m);
+                        handlers.errorCallback = this.DiscordError;
+                        handlers.joinCallback = this.DiscordJoin;
+                        handlers.requestCallback = this.DiscordRequest;
+                        handlers.spectateCallback = this.DiscordSpectate;
+                        Discord.RPC.Initialize(_appIdForRpc, ref handlers, true, null);
+                        _isRpcOn = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DiscordDisconnected(int.MinValue, ex.ToString());
+                    _isRpcOn = false;
+                }
+            }
+            else
+            {
+                if (_isRpcOn == true)
+                {
+                    Discord.RPC.Shutdown();
+                    _isRpcOn = false;
+                }
+            }
+
+            TextRenderer.Init(ConfigurationManager.GetTextRenderer());
+        }
+
+        public void DiscordReady()
+        {
+            Discord.RPCHelpers.Initialize();
+        }
+
+        public void DiscordDisconnected(int errorCode, string message)
+        {
+            Infobox.Show("Disconnected from Discord RPC.", $"{message}\r\n\r\nDisconnection code: {errorCode}");
+            _isRpcOn = false;
+        }
+
+        public void DiscordError(int errorCode, string message)
+        {
+            Infobox.Show("Discord RPC error", $"{message}\r\n\r\nDisconnection code: {errorCode}"); 
+        }
+
+        public void DiscordJoin(string secret) { }
+
+        public void DiscordSpectate(string secret) { }
+
+        public void DiscordRequest(Discord.JoinRequest request)
+        {
+            
+        }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -182,36 +291,12 @@ namespace Plex.Engine
         /// </summary>
         protected override void Initialize()
         {
+
             ServerManager.BuildBroadcastHandlerDB();
 
-            ATextRenderer strategy = null;
-            try
-            {
-                strategy = new Engine.TextRenderers.NativeTextRenderer();
-            }
-            catch
-            {
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    strategy = new Engine.TextRenderers.WindowsFormsTextRenderer();
-                }
-                else
-                {
-                    strategy = new Engine.TextRenderers.GdiPlusTextRenderer();
-                }
-			}
-			
-			TextRenderer.Init(strategy);
-			Console.WriteLine(strategy.GetType().ToString());
-
-
-            //Before we do ANYTHING, we've got to initiate the Plex engine.
-            UIManager.GraphicsDevice = GraphicsDevice;
-
-
-
-            
             UIManager.Init(this);
+
+
 
             Initializing?.Invoke();
 
@@ -228,8 +313,9 @@ namespace Plex.Engine
         /// </summary>
         protected override void LoadContent()
         {
+            //Setup the game's rendertarget so it matches the desired resolution.
+            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
             _threadid = Thread.CurrentThread.ManagedThreadId.ToString(); ;
-            GameRenderTarget = new RenderTarget2D(graphicsDevice.GraphicsDevice, UIManager.Viewport.Width, UIManager.Viewport.Height, false, graphicsDevice.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(base.GraphicsDevice);
@@ -249,7 +335,11 @@ namespace Plex.Engine
         }
 
 
-
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            Discord.RPC.Shutdown();
+            base.OnExiting(sender, args);
+        }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -264,6 +354,7 @@ namespace Plex.Engine
         }
         
         private double mouseMS = 0;
+        private double secondssincelastrpcupdate = 0;
 
         private MouseState LastMouseState;
         /// <summary>
@@ -273,6 +364,29 @@ namespace Plex.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (_isRpcOn)
+            {
+                try
+                {
+                    Discord.RPC.RunCallbacks();
+                    if (ServerManager.Connected)
+                        secondssincelastrpcupdate += gameTime.ElapsedGameTime.TotalSeconds;
+                    if (secondssincelastrpcupdate > 15)
+                    {
+                        if (ServerManager.Connected)
+                        {
+                            Discord.RPCHelpers.UpdateRegular();
+                        }
+                        else
+                        {
+                            Discord.RPCHelpers.Initialize();
+                        }
+                        secondssincelastrpcupdate = 0;
+                    }
+                }
+                catch { }
+            }
+
             keyboardListener.Update(gameTime);
             if (UIManager.CrossThreadOperations.Count > 0)
             {
@@ -284,10 +398,10 @@ namespace Plex.Engine
                 //Let's get the mouse state
                 var mouseState = Mouse.GetState(this.Window);
                 bool prc = true;
-                int x = mouseState.X;
-                int y = mouseState.Y;
+                int x = (int)GUI.ProgressBar.linear(mouseState.X, 0, graphicsDevice.PreferredBackBufferWidth, 0, GameRenderTarget.Width);
+                int y = (int)GUI.ProgressBar.linear(mouseState.Y, 0, graphicsDevice.PreferredBackBufferHeight, 0, GameRenderTarget.Height);
                 bool lastclicked = LastMouseState.LeftButton == ButtonState.Pressed;
-                LastMouseState = new MouseState(mouseState.X, mouseState.Y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
+                LastMouseState = new MouseState(x, y, mouseState.ScrollWheelValue, mouseState.LeftButton, mouseState.MiddleButton, mouseState.RightButton, mouseState.XButton1, mouseState.XButton2);
                 if (IsInTutorial)
                 {
                     if (!(x >= MouseEventBounds.X && x <= MouseEventBounds.Right) || !(y >= MouseEventBounds.Y && y <= MouseEventBounds.Bottom))
@@ -371,15 +485,12 @@ namespace Plex.Engine
             UIManager.DrawHUDToTargets(GraphicsDevice, spriteBatch);
 
             graphicsDevice.GraphicsDevice.SetRenderTarget(GameRenderTarget);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
             //Create a graphics context so we can draw shit
             //Draw the desktop BG.
             UIManager.DrawBackgroundLayer(GraphicsDevice, spriteBatch, 640, 480);
-
-            spriteBatch.End();
-
 
             //The desktop is drawn, now we can draw the UI.
             UIManager.DrawTArgets(spriteBatch);
@@ -389,14 +500,8 @@ namespace Plex.Engine
             UIManager.DrawHUD(spriteBatch);
 
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
-
             //Draw a mouse cursor
-            var mousepos = LastMouseState;
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X + 1, mousepos.Y + 1, MouseTexture.Width, MouseTexture.Height), Color.Black * 0.5f);
-            spriteBatch.Draw(MouseTexture, new Rectangle(mousepos.X, mousepos.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+            spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.End();
         

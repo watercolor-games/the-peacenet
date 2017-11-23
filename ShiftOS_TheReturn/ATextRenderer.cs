@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Plex.Engine.GUI;
 using Plex.Engine.TextRenderers;
 using Plex.Engine.GraphicsSubsystem;
+using Plex.Objects;
 
 namespace Plex.Engine
 {
@@ -19,6 +20,42 @@ namespace Plex.Engine
     public static class TextRenderer
     {
         private static ATextRenderer _renderer = null;
+        private static List<ATextRenderer> _renderers = null;
+
+        private static void _getAllRenderers()
+        {
+            _renderers = new List<ATextRenderer>();
+            foreach (var renderer in ReflectMan.Types.Where(x => x.BaseType == typeof(ATextRenderer)))
+            {
+                try
+                {
+                    _renderers.Add((ATextRenderer)Activator.CreateInstance(renderer, null));
+                }
+                catch { }
+            }
+        }
+
+        public static ATextRenderer GetDefaultRenderer()
+        {
+            if (_renderers == null)
+                _getAllRenderers();
+            return _renderers.FirstOrDefault(x=>x.GetType().GetCustomAttributes(false).FirstOrDefault(y=>y is DefaultRenderer) != null);
+        }
+
+        public static ATextRenderer GetFallbackRenderer()
+        {
+            if (_renderers == null)
+                _getAllRenderers();
+            return _renderers.FirstOrDefault(x => x.GetType().GetCustomAttributes(false).FirstOrDefault(y => y is FallbackRenderer) != null);
+        }
+
+        public static ATextRenderer[] GetAvailableRenderers
+        {
+            get
+            {
+                return _renderers.ToArray();
+            }
+        }
 
         internal static void Init(ATextRenderer renderer)
         {
@@ -36,4 +73,14 @@ namespace Plex.Engine
         }
     }
 
+
+    public class DefaultRenderer : Attribute
+    {
+
+    }
+
+    public class FallbackRenderer : Attribute
+    {
+
+    }
 }

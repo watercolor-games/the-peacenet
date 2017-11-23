@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Plex.Frontend.Apps;
 using System.Threading;
+using Plex.Engine.Discord;
 
 namespace Plex.Frontend
 {
@@ -82,6 +83,8 @@ namespace Plex.Frontend
 
         public MainMenu()
         {
+            RPCHelpers.SetArbitraryStatus("In main menu");
+
             Plex.Frontend.Apps.TerminalEmulator.LoadFonts();
             AddControl(_terminal);
             _terminal.StartShell((stdout, stdin) =>
@@ -192,7 +195,7 @@ namespace Plex.Frontend
             };
             _btnOptions.Click += () =>
             {
-                Engine.Infobox.Show("Not yet implemented", "Sorry about that... [pats back] It'll come soon.");
+                AppearanceManager.SetupDialog(new Apps.GameSettings());
             };
 
             _faUser.Image = FontAwesome.user.ToTexture2D(UIManager.GraphicsDevice);

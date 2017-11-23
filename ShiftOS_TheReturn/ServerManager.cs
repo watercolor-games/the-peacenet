@@ -287,19 +287,10 @@ namespace Plex.Engine
 
         internal static void StartSessionManager(string host, int port)
         {
-            var uconf = UserConfig.Get();
             var session = new SessionInfo();
             session.ServerIP = host;
             session.ServerPort = port;
-            if (uconf.SessionCache.ContainsKey(host + ":" + port))
-            {
-                var key = uconf.SessionCache[host + ":" + port];
-                session.SessionID = key;
-            }
-            else
-            {
-                session.SessionID = "";
-             }
+            session.SessionID = "";
             SessionInfo = session;
             using (var sstr = new ServerStream(ServerMessageType.USR_VALIDATEKEY))
             {

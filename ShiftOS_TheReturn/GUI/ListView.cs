@@ -268,8 +268,6 @@ namespace Plex.Engine.GUI
                 }
                 Width = end_width;
                 Height = end_height;
-                QA.Assert(Width == 1, false, "ListView autosize failure - width can't be 1");
-                QA.Assert(Height == 1, false, "ListView autosize failure - height can't be 1");
 
             }
         }

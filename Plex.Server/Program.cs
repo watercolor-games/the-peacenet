@@ -13,12 +13,14 @@ using System.Drawing;
 using System.Threading;
 using System.Collections;
 using WatercolorGames.CommandLine;
+using Peacenet.Backend;
 
 namespace Plex.Server
 {
     public class Program
     {
         private static TcpListener _tcpListener = null;
+        private static Backend _backend = null;
 
         public enum ServerThreadState
         {
@@ -452,108 +454,15 @@ namespace Plex.Server
 
         public static void Main(string[] args)
         {
-            if (!Directory.Exists("userdrives"))
-                Directory.CreateDirectory("userdrives");
-
-            if (!IsMultiplayerServer)
+            _backend = new Backend(_port, IsMultiplayerServer);
+            _backend.Listen();
+            ServerStarted?.Invoke();
+            if (IsMultiplayerServer)
             {
-                ServerLoop();
+                Console.ReadKey();
+                _backend.Shutdown();
+                Console.ReadKey();
             }
-            else
-            {
-                Console.WriteLine("PROJECT: PLEX SERVER SOFTWARE - Copyright (c) 2017 Watercolor Games - Licensed under MIT");
-                Console.WriteLine("===============================");
-                Console.WriteLine();
-
-                Console.WriteLine("Loading configuration....");
-
-                if (System.IO.File.Exists("serverconfig.json"))
-                {
-                    _conf = JsonConvert.DeserializeObject<ServerConfiguration>(File.ReadAllText("serverconfig.json"));
-                    Console.WriteLine("Configuration loaded.");
-                }
-                else
-                {
-                    Console.WriteLine("No config found.");
-                    Console.WriteLine("Name your server: ");
-                    string name = Console.ReadLine();
-                    Console.WriteLine("Discord payload URL (leave blank if you don't want chat to go through discord)");
-                    string chaturl = Console.ReadLine();
-                    Console.WriteLine("Saving config to serverconfig.json.");
-                    _conf = new ServerConfiguration
-                    {
-                        DiscordPayloadURL = chaturl,
-                        ServerName = name
-                    };
-                    File.WriteAllText("serverconfig.json", JsonConvert.SerializeObject(_conf, Formatting.Indented));
-                    Console.WriteLine("At any time you may edit this file to alter the server behaviour.");
-
-                }
-
-
-                LoadWorld();
-
-                Console.WriteLine("Starting HTTP API on port 3253...");
-                var httpThread = new ServerThread();
-                httpThread.Queue(() =>
-                {
-                    new APIHTTPServer().listen();
-
-                });
-                httpThread.Start();
-
-                Console.WriteLine("<plexsrv> Starting server...");
-                var t = new System.Threading.Thread(ServerLoop);
-                t.Start();
-                Console.WriteLine("Server thread running and listening for requests.");
-                Console.WriteLine("Reading banned IP addresses...");
-                if (System.IO.File.Exists("banned-ips.json"))
-                {
-                    BannedIPs = JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText("banned-ips.json"));
-                }
-                Console.WriteLine("{0} IP addresses have been banned.", BannedIPs.Count);
-                Console.WriteLine("Starting server shell. Type 'help' for a list of commands.");
-                Terminal.Populate();
-                while (true)
-                {
-                    Console.Write("> ");
-                    string cmd = Console.ReadLine();
-                    if (cmd == "exit")
-                    {
-                        Console.WriteLine("<worldgen> Saving world...");
-                        SaveWorld();
-                        Environment.Exit(-1);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            
-                            string[] argv = Tokenizer.TokenizeString(cmd);
-                            if (argv.Length > 0)
-                            {
-                                string cmdname = argv[0];
-                                string[] argsarr = new string[0];
-                                if(argv.Length > 1)
-                                {
-                                    var alist = argv.ToList();
-                                    alist.RemoveAt(0);
-                                    argsarr = alist.ToArray();
-                                }
-                                if (!Terminal.RunClient(cmdname, argsarr, "", (StreamWriter)Console.Out, (StreamReader)Console.In, true))
-                                {
-                                    Console.WriteLine("Command not found.");
-                                }
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            Console.WriteLine("Parse error: " + ex.Message);
-                        }
-                    }
-                }
-            }
-
         }
 
         [ServerCommand("banip", "Ban an IP address from this server.", true)]

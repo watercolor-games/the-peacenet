@@ -15,17 +15,14 @@ namespace Plex.Engine.GUI
         private int fontheight = 0;
         private List<object> items = new List<object>();
         private int selectedIndex = -1;
-        private int itemOffset = 0;
-        private int itemsPerPage = 1;
-
         private int _itemOver = -1;
 
         protected override void RenderText(GraphicsContext gfx)
         {
-            for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 int x = 1;
-                int y = fontheight * (i - itemOffset);
+                int y = fontheight * i;
                 if (i >= 0 && i < items.Count)
                 {
                     var state = Theming.ButtonState.Idle;
@@ -44,6 +41,14 @@ namespace Plex.Engine.GUI
 
         }
 
+        public int ItemHeight
+        {
+            get
+            {
+                return fontheight;
+            }
+        }
+
         public ListBox()
         {
             fontheight = (int)Theming.ThemeManager.Theme.MeasureString(TextControlFontStyle.System, "Measure test.").Y;
@@ -52,7 +57,7 @@ namespace Plex.Engine.GUI
                 if (fontheight <= 0)
                     return;
                 int screeni = (loc.Y / fontheight);
-                int i = screeni + itemOffset;
+                int i = screeni;
                 if (_itemOver == i)
                     return;
                 _itemOver = i;
@@ -61,15 +66,14 @@ namespace Plex.Engine.GUI
             Click += () =>
             {
                 //loop through the list of items on the screen
-                for(int i = itemOffset; i < itemOffset + itemsPerPage && i < items.Count; i++)
+                for(int i = 0; i < items.Count; i++)
                 {
-                    int screeni = i - itemOffset;
+                    int screeni = i;
                     int loc = 1+screeni * fontheight;
                     int height = 1+(screeni + 1) * fontheight;
                     if(MouseY >= loc && MouseY <= height)
                     {
                         SelectedIndex = i;
-                        RecalculateItemsPerPage();
                         return;
                     }
                 }
@@ -80,19 +84,6 @@ namespace Plex.Engine.GUI
         }
 
 
-        protected override void OnMouseScroll(int value)
-        {
-            if (this.itemOffset - (value / fontheight) < 0)
-                return;
-            if (this.itemOffset - (value / fontheight) > items.Count - itemsPerPage)
-                return;
-            if (this.itemOffset - (value / fontheight) == itemOffset)
-                return;
-            itemOffset -= value / fontheight;
-            RequireTextRerender();
-            Invalidate();
-        }
-
         public int SelectedIndex
         {
             get
@@ -102,7 +93,6 @@ namespace Plex.Engine.GUI
             set
             {
                 selectedIndex = MathHelper.Clamp(value, -1, items.Count - 1);
-                RecalculateItemsPerPage();
                 SelectedIndexChanged?.Invoke();
             }
         }
@@ -134,7 +124,6 @@ namespace Plex.Engine.GUI
         public void AddItem(object item)
         {
             items.Add(item);
-            RecalculateItemsPerPage();
             RequireTextRerender();
             Invalidate();
         }
@@ -143,42 +132,9 @@ namespace Plex.Engine.GUI
         {
             items.Remove(item);
             selectedIndex = -1;
-            RecalculateItemsPerPage();
             SelectedIndexChanged?.Invoke();
             RequireTextRerender();
             Invalidate();
-        }
-
-        public void RecalculateItemsPerPage()
-        {
-            itemsPerPage = 0;
-           while(itemsPerPage * fontheight < Height && itemsPerPage < items.Count)
-            {
-                itemsPerPage++;
-                RequireTextRerender();
-            }
-           //We have the amount of items we can fit on screen.
-           //Now let's calculate the offset based on this, as well
-           //as the currently selected item.
-           //of course, if there IS one.
-           if(selectedIndex > -1)
-            {
-                if(selectedIndex >= items.Count)
-                {
-                    selectedIndex = items.Count - 1;
-                    RequireTextRerender();
-                }
-                while (this.itemOffset > selectedIndex)
-                {
-                    itemOffset--;
-                    RequireTextRerender();
-                }
-                while (this.itemOffset + itemsPerPage < selectedIndex )
-                {
-                    itemOffset++;
-                    RequireTextRerender();
-                }
-            }
         }
 
         protected override void OnKeyEvent(KeyEvent e)
@@ -188,7 +144,6 @@ namespace Plex.Engine.GUI
                 if(selectedIndex < items.Count - 1)
                 {
                     selectedIndex++;
-                    RecalculateItemsPerPage();
                     SelectedIndexChanged?.Invoke();
                     Invalidate();
                 }
@@ -198,7 +153,6 @@ namespace Plex.Engine.GUI
                 if(selectedIndex > 0)
                 {
                     selectedIndex--;
-                    RecalculateItemsPerPage();
                     SelectedIndexChanged?.Invoke();
                     Invalidate();
                 }
@@ -209,10 +163,10 @@ namespace Plex.Engine.GUI
         {
             Theming.ThemeManager.Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
             var accent = Theming.ThemeManager.Theme.GetAccentColor();
-            for (int i = itemOffset; i < items.Count && i < itemsPerPage; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 int x = 1;
-                int y = fontheight * (i - itemOffset);
+                int y = fontheight * i;
                 int width = Width - 2;
                 int height = fontheight;
                 
@@ -232,7 +186,10 @@ namespace Plex.Engine.GUI
         protected override void OnLayout(GameTime gameTime)
         {
             TextColor = Color.White;
-
+            if (AutoSize)
+            {
+                Height = items.Count * fontheight;
+            }
             
             base.OnLayout(gameTime);
         }

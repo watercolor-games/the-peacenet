@@ -196,10 +196,8 @@ namespace Plex.Frontend.Apps
         private void SlaveThread(PseudoTerminal slave)
         {
 
-            for(;;)
+            while(this.Visible)
             {
-                if (!this.Visible)
-                    continue;
                 var ch = slave.ReadByte();
 
                 if (ch != -1)
