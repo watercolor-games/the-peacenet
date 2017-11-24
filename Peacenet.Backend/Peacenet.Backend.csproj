@@ -47,6 +47,7 @@
     <Compile Include="Backend.cs" />
     <Compile Include="MessageDelegator.cs" />
     <Compile Include="IMessageHandler.cs" />
+    <Compile Include="DependencyAttribute.cs" />
     <Compile Include="Sessions\SessionHandlers.cs" />
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\ADriveMount.cs" />

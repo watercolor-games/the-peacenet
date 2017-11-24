@@ -1,6 +1,6 @@
 ﻿<Properties StartupConfiguration="{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}|Default">
   <MonoDevelop.Ide.ItemProperties.Plex PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Peacenet.Backend/World/WorldBackend.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Peacenet.Backend/Backend.cs">
     <Files>
       <File FileName="ShiftOS.Frontend/Apps/GameSettings.cs" Line="139" Column="9" />
       <File FileName="ShiftOS.Frontend/MainMenu.cs" Line="86" Column="59" />
@@ -55,7 +55,7 @@
       <File FileName="Peacenet.Backend/Sessions/SessionManager.cs" Line="80" Column="28" />
       <File FileName="Peacenet.Backend/Logger.cs" Line="8" Column="22" />
       <File FileName="Peacenet.Backend/IBackendComponent.cs" Line="18" Column="9" />
-      <File FileName="Peacenet.Backend/Backend.cs" Line="60" Column="51" />
+      <File FileName="Peacenet.Backend/Backend.cs" Line="89" Column="18" />
       <File FileName="Peacenet.Backend/MessageDelegator.cs" Line="26" Column="115" />
       <File FileName="ShiftOS.Objects/ReflectMan.cs" Line="43" Column="95" />
       <File FileName="ShiftOS.Objects/FFI/IFFI.cs" Line="17" Column="27" />
