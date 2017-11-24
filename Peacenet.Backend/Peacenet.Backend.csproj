@@ -52,6 +52,7 @@
     <Compile Include="Filesystem\ADriveMount.cs" />
     <Compile Include="Filesystem\FSHandlers.cs" />
     <Compile Include="Terminal\TerminalManager.cs" />
+    <Compile Include="World\WorldBackend.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
@@ -68,10 +69,10 @@
     <Folder Include="Sessions\" />
     <Folder Include="Filesystem\" />
     <Folder Include="Terminal\" />
+    <Folder Include="World\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Main.usage.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

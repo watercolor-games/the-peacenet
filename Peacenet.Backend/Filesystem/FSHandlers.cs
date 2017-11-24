@@ -317,4 +317,127 @@ namespace Peacenet.Backend
         }
     }
 
+    [RequiresSession]
+    public class FileDeleter : IMessageHandler
+    {
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.FS_DELETE;
+            }
+        }
+
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var drivemgr = backend.GetBackendComponent<FSManager>();
+            var sessionmgr = backend.GetBackendComponent<SessionManager>();
+
+            string content = datareader.ReadString();
+            string path;
+            var username = sessionmgr.GetUserFromSession(session).Username;
+            var mount = drivemgr.GetDriveFromPathData(username, content, out path);
+            if (mount == null)
+            {
+                datawriter.Write("Mountpoint not found.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            if (mount.FileExists(path))
+            {
+                mount.DeleteFile(path);
+                return ServerResponseType.REQ_SUCCESS;
+            }
+            if (mount.DirectoryExists(path))
+            {
+                mount.DeleteDirectory(path);
+                return ServerResponseType.REQ_SUCCESS;
+            }
+            datawriter.Write("File or directory not found.");
+            return ServerResponseType.REQ_ERROR;
+        }
+    }
+
+    [RequiresSession]
+    public class FileReader : IMessageHandler
+    {
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.FS_READFROMFILE;
+            }
+        }
+
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var drivemgr = backend.GetBackendComponent<FSManager>();
+            var sessionmgr = backend.GetBackendComponent<SessionManager>();
+
+            string content = datareader.ReadString();
+            string path;
+            var username = sessionmgr.GetUserFromSession(session).Username;
+            var mount = drivemgr.GetDriveFromPathData(username, content, out path);
+            if (mount == null)
+            {
+                datawriter.Write("Mountpoint not found.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            if (!mount.FileExists(path))
+            {
+                datawriter.Write("File not found.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            var bytes = mount.ReadAllBytes(path);
+            datawriter.Write(bytes.Length);
+            datawriter.Write(bytes);
+            return ServerResponseType.REQ_ERROR;
+        }
+    }
+
+    [RequiresSession]
+    public class FileWriter : IMessageHandler
+    {
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.FS_WRITETOFILE;
+            }
+        }
+
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var drivemgr = backend.GetBackendComponent<FSManager>();
+            var sessionmgr = backend.GetBackendComponent<SessionManager>();
+
+            string content = datareader.ReadString();
+            string path;
+            var username = sessionmgr.GetUserFromSession(session).Username;
+            var mount = drivemgr.GetDriveFromPathData(username, content, out path);
+            if (mount == null)
+            {
+                datawriter.Write("Mountpoint not found.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            if (mount.DirectoryExists(path))
+            {
+                datawriter.Write("Cannot write file data to a directory.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            try
+            {
+                int len = datareader.ReadInt32();
+                byte[] bytes = datareader.ReadBytes(len);
+                mount.WriteAllBytes(path, bytes);
+                return ServerResponseType.REQ_SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                datawriter.Write(ex.Message);
+                return ServerResponseType.REQ_ERROR;
+            }
+        }
+    }
+
+
 }

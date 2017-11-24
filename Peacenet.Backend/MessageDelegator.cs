@@ -21,8 +21,8 @@ namespace Peacenet.Backend
             {
                 if (type.GetInterfaces().Contains(typeof(IMessageHandler)))
                 {
-                    Logger.Log($"Found handler: {type.Name}");
                     var handler = (IMessageHandler)Activator.CreateInstance(type, null);
+                    Logger.Log($"Found handler: {type.Name} (for protocol message type {handler.HandledMessageType})");
                     if (_handlers.FirstOrDefault(x => x.HandledMessageType == handler.HandledMessageType) != null)
                     {
                         Logger.Log($"WARNING: Another handler handles the same message type as {handler.GetType().Name}! Ignoring it.");

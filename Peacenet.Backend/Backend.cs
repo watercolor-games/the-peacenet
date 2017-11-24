@@ -49,9 +49,17 @@ namespace Peacenet.Backend
                 }
             }
             Logger.Log("Initiating all backend components...");
-            foreach (var component in _components)
+            foreach (var component in _components.ToArray())
             {
-                component.Initiate();
+                try
+                {
+                    component.Initiate();
+                }
+                catch (NotImplementedException)
+                {
+                    Logger.Log("Skipping non-implemented backend component...");
+                    _components.Remove(component);
+                }
             }
             Logger.Log("Utility thread creating!");
             _utilityThread = new Thread(this.UtilityThread);
