@@ -337,7 +337,8 @@ namespace Plex.Engine
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            Discord.RPC.Shutdown();
+            if(_isRpcOn)
+                Discord.RPC.Shutdown();
             base.OnExiting(sender, args);
         }
 
