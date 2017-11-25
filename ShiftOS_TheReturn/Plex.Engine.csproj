@@ -154,6 +154,7 @@
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Control.cs" />
+    <Compile Include="GUI\WindowSystem.cs" />
     <Compile Include="Interfaces\IEngineComponent.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Plexgate.cs" />

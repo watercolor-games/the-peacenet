@@ -126,7 +126,10 @@ namespace Plex.Engine
                 }
             }
             if (_components.FirstOrDefault(x => x.Component == component).IsInitiated == false)
+            {
                 component.Initiate();
+                _components.FirstOrDefault(x => x.Component == component).IsInitiated = true;
+            }
         }
 
         public IEngineComponent GetEngineComponent(Type t)
