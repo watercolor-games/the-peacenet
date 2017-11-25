@@ -9,7 +9,6 @@ using Plex.Engine.GraphicsSubsystem;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Graphics;
-using Plex.Engine.GUI;
 
 namespace Plex.Engine.TextRenderers
 {

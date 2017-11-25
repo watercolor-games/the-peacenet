@@ -149,49 +149,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppearanceManager.cs" />
-    <Compile Include="AppLauncherDaemon.cs" />
     <Compile Include="ATextRenderer.cs" />
-    <Compile Include="AudioManager.cs" />
-    <Compile Include="AudioPlayerSubsystem.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="CrashHandler.cs" />
-    <Compile Include="CrashHandler.Designer.cs">
-      <DependentUpon>CrashHandler.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CrashHandlerUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CrashHandlerUI.Designer.cs">
-      <DependentUpon>CrashHandlerUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Desktop.cs" />
-    <Compile Include="FSUtils.cs" />
+    <Compile Include="DependencyAttribute.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
-    <Compile Include="GUI\Button.cs" />
-    <Compile Include="GUI\CheckBox.cs" />
     <Compile Include="GUI\Control.cs" />
-    <Compile Include="GUI\FileSkimmerBackend.cs" />
-    <Compile Include="GUI\ItemGroup.cs" />
-    <Compile Include="GUI\ListBox.cs" />
-    <Compile Include="GUI\ListView.cs" />
-    <Compile Include="GUI\Menu.cs" />
-    <Compile Include="GUI\MenuBar.cs" />
-    <Compile Include="GUI\PictureBox.cs" />
-    <Compile Include="GUI\ProgressBar.cs" />
-    <Compile Include="GUI\ScrollView.cs" />
-    <Compile Include="GUI\TextAlignment.cs" />
-    <Compile Include="GUI\TextControl.cs" />
-    <Compile Include="GUI\TextInput.cs" />
-    <Compile Include="IFileHandler.cs" />
-    <Compile Include="Infobox.cs" />
-    <Compile Include="GUI\IShiftOSWindow.cs" />
-    <Compile Include="GUI\IStatusIcon.cs" />
-    <Compile Include="Lunix.cs" />
-    <Compile Include="MissionAttribute.cs" />
-    <Compile Include="NetworkTimeoutException.cs" />
-    <Compile Include="Paths.cs" />
+    <Compile Include="Interfaces\IEngineComponent.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Plexgate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -199,26 +163,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RemoteStream.cs" />
-    <Compile Include="SaveSystem.cs" />
-    <Compile Include="Scripting.cs" />
-    <Compile Include="ServerLoginHandler.cs" />
-    <Compile Include="ServerManager.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
     <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
-    <Compile Include="Theming\Theme.cs" />
-    <Compile Include="Theming\ThemeManager.cs" />
-    <Compile Include="Upgrades.cs" />
-    <Compile Include="Story.cs" />
-    <Compile Include="TerminalBackend.cs" />
-    <Compile Include="GUI\WinOpenAttribute.cs" />
-    <EmbeddedResource Include="CrashHandlerUI.resx">
-      <DependentUpon>CrashHandlerUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infobox.resx">
-      <DependentUpon>Infobox.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Themes\Theme.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -240,17 +189,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="MonoGame.Framework.dll.config" />
-    <Compile Include="Config\ConfigFile.cs" />
-    <Compile Include="Config\ConfigurationManager.cs" />
-    <Compile Include="Discord\CallbackDelegates.cs" />
-    <Compile Include="Discord\RPCEvents.cs" />
-    <Compile Include="Discord\RichPresence.cs" />
-    <Compile Include="Discord\JoinRequest.cs" />
-    <Compile Include="Discord\Reply.cs" />
-    <Compile Include="Discord\RPC.cs" />
-    <Compile Include="GraphicsSubsystem\CheckLabel.cs" />
-    <Compile Include="GUI\ComboBox.cs" />
-    <Compile Include="GUI\IListControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -1967,10 +1905,7 @@
     <None Include="Resources\pywintemplate.txt" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Config\" />
-    <Folder Include="Discord\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

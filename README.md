@@ -4,6 +4,10 @@ Welcome to The Peacenet. Well, not entirely. Instead, welcome to the Peacenet's 
 
 This repository contains the code for the Peacenet backend (aka the multiplayer and campaign server software), engine, and frontend (the game itself). It also contains a custom **Pango** wrapper for native text rendering support.
 
+## This is a rewrite branch.
+
+Barely any of the features in the `monogame` branch are available here. If you're willing to work on the Milestone 1/2 engine codebase, **you don't want this branch!**
+
 ## Compiling the game
 
 ### Dependencies

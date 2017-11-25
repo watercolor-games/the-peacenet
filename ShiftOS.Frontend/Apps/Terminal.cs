@@ -442,7 +442,7 @@ Buffer requires complete redraw: {_resized}";
         private bool _showDebug = false;
 
 
-        protected override void OnKeyEvent(KeyEvent e)
+        protected override void OnKeyEvent(KeyboardEventArgs e)
         {
             charsWrittenSinceLastKeyPress = 0;
 

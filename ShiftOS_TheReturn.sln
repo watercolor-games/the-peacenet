@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Engine", "ShiftOS_TheR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Objects", "ShiftOS.Objects\Plex.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex", "ShiftOS.Frontend\Plex.csproj", "{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Server", "Plex.Server\Plex.Server.csproj", "{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine", "TokenizerThingy\WatercolorGames.CommandLine.csproj", "{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}"
@@ -16,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine.Testing", "WatercolorGames.CommandLine.Testing\WatercolorGames.CommandLine.Testing.csproj", "{5DEC12B1-CA32-4480-942C-7AA06147BA3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.Backend", "Peacenet.Backend\Peacenet.Backend.csproj", "{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet", "Peacenet\Peacenet.csproj", "{D00E3C64-AD90-430C-87F7-A246BE4B84C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,18 +51,6 @@ Global
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x64.Build.0 = Release|Any CPU
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x86.ActiveCfg = Release|Any CPU
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x86.Build.0 = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|x64.Build.0 = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Debug|x86.Build.0 = Debug|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|x64.ActiveCfg = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|x64.Build.0 = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|x86.ActiveCfg = Release|Any CPU
-		{4DFC3088-1B08-4A0E-A9F5-483A7B9811FD}.Release|x86.Build.0 = Release|Any CPU
 		{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -111,6 +99,18 @@ Global
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Release|x64.Build.0 = Release|Any CPU
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Release|x86.ActiveCfg = Release|Any CPU
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Release|x86.Build.0 = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|x64.Build.0 = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|x64.ActiveCfg = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|x64.Build.0 = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{D00E3C64-AD90-430C-87F7-A246BE4B84C2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

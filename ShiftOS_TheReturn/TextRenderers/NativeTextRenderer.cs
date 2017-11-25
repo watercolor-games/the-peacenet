@@ -44,14 +44,14 @@ namespace Plex.Engine.TextRenderers
             System.Runtime.InteropServices.Marshal.PrelinkAll(typeof(Implementation));
         }
 		
-		public override Microsoft.Xna.Framework.Vector2 MeasureText(string text, System.Drawing.Font font, int maxwidth, Plex.Engine.GUI.TextAlignment alignment, WrapMode wrapMode)
+		public override Microsoft.Xna.Framework.Vector2 MeasureText(string text, System.Drawing.Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
 		{
             long result = -1;
             result = Implementation.MeasureString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)wrapMode, maxwidth);
             return new Microsoft.Xna.Framework.Vector2((int)(result & uint.MaxValue), (int)(result >> 32));
 		}
 		
-		public override void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Microsoft.Xna.Framework.Color color, int maxwidth, Plex.Engine.GUI.TextAlignment alignment, WrapMode wrapMode)
+		public override void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
 		{
 			var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
 			var data = new byte[(int)measure.X * (int)measure.Y * 4];
@@ -60,7 +60,7 @@ namespace Plex.Engine.TextRenderers
             Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)wrapMode, maxwidth, (int)measure.X, (int)measure.Y, data);
             var tex2 = new Microsoft.Xna.Framework.Graphics.Texture2D(gfx.Device, (int)measure.X, (int)measure.Y);
 			tex2.SetData<byte>(data);
-            gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2, color, System.Windows.Forms.ImageLayout.Stretch, true);
+            gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2, color, System.Windows.Forms.ImageLayout.Stretch, false);
 		}
 	}
 }

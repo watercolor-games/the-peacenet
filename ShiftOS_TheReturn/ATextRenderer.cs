@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Plex.Engine.GUI;
 using Plex.Engine.TextRenderers;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
@@ -73,6 +72,18 @@ namespace Plex.Engine
         }
     }
 
+    public enum TextAlignment
+    {
+        TopLeft,
+        Top,
+        TopRight,
+        Left,
+        Middle,
+        Right,
+        BottomLeft,
+        Bottom,
+        BottomRight
+    }
 
     public class DefaultRenderer : Attribute
     {
