@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Plex.Engine.GUI
 {
-    public class Control
+    public class Control : IDisposable
     {
         private int _x = 0;
         private int _y = 0;
@@ -28,6 +28,7 @@ namespace Plex.Engine.GUI
         private ButtonState _left;
         private ButtonState _middle;
         private ButtonState _right;
+        private bool _isVisible = true;
 
         public event EventHandler Click;
         public event EventHandler RightClick;
@@ -40,7 +41,27 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseRightUp;
         public event EventHandler MouseMiddleUp;
 
+        public bool Visible
+        {
+            get
+            {
+                return _isVisible;
+            }
+            set
+            {
+                if (_isVisible == value)
+                    return;
+                _isVisible = value;
+            }
+        }
 
+        public bool ContainsMouse
+        {
+            get
+            {
+                return (_mousex >= 0 && _mousex <= Width && _mousey >= 0 && _mousey <= Height);
+            }
+        }
 
         private UIManager _manager = null;
 
@@ -199,6 +220,8 @@ namespace Plex.Engine.GUI
                 if (child.Control.PropagateMouseState(left, middle, right))
                     return true;
             }
+            if (_isVisible == false)
+                return false;
             bool isInCtrl = (_mousex >= 0 && _mousex <= Width && _mousey >= 0 && _mousey <= Height);
             if (_lastLeft == left && _lastRight == right && _lastMiddle == middle)
                 return isInCtrl;
@@ -260,6 +283,8 @@ namespace Plex.Engine.GUI
                 _invalidated = true;
                 _resized = true;
             }
+            if (_isVisible == false)
+                return;
             //Poll the mouse state.
             var mouse = Mouse.GetState();
             //For toplevels, set mouse input loc directly.
@@ -273,8 +298,8 @@ namespace Plex.Engine.GUI
             //For controls with parents, poll mouse information from the parent.
             else
             {
-                _newmousex = X - Parent._mousex;
-                _newmousey = Y - Parent._mousey;
+                _newmousex = Parent._mousex - X;
+                _newmousey = Parent._mousey - Y;
             }
             if(_newmousex != _mousex || _newmousey != _mousey)
             {
@@ -318,6 +343,8 @@ namespace Plex.Engine.GUI
 
         public void Draw(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
         {
+            if (_isVisible == false)
+                return;
             if (_invalidated)
             {
                 if (_resized)
@@ -371,6 +398,24 @@ RasterizerState.CullNone);
             gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White);
             gfx.Batch.End();
 
+        }
+
+        public void Dispose()
+        {
+            if (_rendertarget != null)
+            {
+                _rendertarget.Dispose();
+                _rendertarget = null;
+            }
+            foreach(var rinfo in _children)
+            {
+                rinfo.Control.Dispose();
+                rinfo.RenderTarget.Dispose();
+                rinfo.Control = null;
+                rinfo.RenderTarget = null;
+            }
+            _children.Clear();
+            _children = null;
         }
     }
 

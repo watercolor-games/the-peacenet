@@ -139,7 +139,7 @@ namespace Plex.Engine
             return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
-        private object Inject(object client)
+        internal object Inject(object client)
         {
             foreach (var field in client.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.GetCustomAttributes(false).Any(t => t is DependencyAttribute)))
             {

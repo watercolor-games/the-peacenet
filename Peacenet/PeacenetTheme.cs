@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 
 namespace Peacenet
 {
@@ -25,6 +26,7 @@ namespace Peacenet
         private Texture2D _maximize = null;
         private Texture2D _restore = null;
 
+        private System.Drawing.Font _titleFont;
 
         //Button state colors
         private Color _bStateTextIdle;
@@ -129,11 +131,6 @@ namespace Peacenet
             throw new NotImplementedException();
         }
 
-        public override void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, UIButtonState close, UIButtonState maximize, UIButtonState minimize, bool dialog, string titleText)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Color GetAccentColor()
         {
             return _accent;
@@ -141,7 +138,26 @@ namespace Peacenet
 
         public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
         {
-            throw new NotImplementedException();
+            const int _buttonWidth = 24;
+            const int _spacing = 2;
+
+            int _closeX = (windowWidth - _spacing) - _buttonWidth;
+            int _maximizeX = (_closeX - _spacing) - _buttonWidth;
+            int _minimizeX = (_maximizeX - _spacing) - _buttonWidth;
+
+            int _buttonY = (30 - _buttonWidth) / 2;
+
+            switch(button)
+            {
+                case TitleButton.Close:
+                    return new Rectangle(_closeX, _buttonY, _buttonWidth, _buttonWidth);
+                case TitleButton.Minimize:
+                    return new Rectangle(_minimizeX, _buttonY, _buttonWidth, _buttonWidth);
+
+                case TitleButton.Maximize:
+                    return new Rectangle(_maximizeX, _buttonY, _buttonWidth, _buttonWidth);
+            }
+            return Rectangle.Empty;
         }
 
         public override void LoadThemeData(GraphicsDevice device, ContentManager content)
@@ -164,6 +180,8 @@ namespace Peacenet
             _bgRegular = new Color(32, 32, 32, 255);
             _bgDark = new Color(16, 16, 16, 255);
             _bgLight = new Color(127, 127, 127, 255);
+
+            _titleFont = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif.Name, 12F, System.Drawing.FontStyle.Bold);
         }
 
         public override Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue)
@@ -181,6 +199,60 @@ namespace Peacenet
             _minimize.Dispose();
             _maximize.Dispose();
             _restore.Dispose();
+        }
+
+        public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
+        {
+            var accent = GetAccentColor();
+            if (isFocused == false)
+                accent = accent * 0.5F;
+
+            //First, the titlebar.
+            if (title.Visible)
+            {
+                //The background.
+                graphics.DrawRectangle(title.X, title.Y, title.Width, title.Height, accent);
+                //Now the text.
+                var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.None);
+                int _textX = (int)((title.Width - titleTextMeasure.X) / 2);
+                int _textY = (int)((title.Height - titleTextMeasure.Y) / 2);
+
+                graphics.DrawString(titletext, _textX, _textY, Color.White, _titleFont, TextAlignment.Middle, (int)titleTextMeasure.X, Plex.Engine.TextRenderers.WrapMode.None);
+
+                if (close.Visible)
+                {
+                    if(close.ContainsMouse)
+                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close, this._bStateTextHover);
+                    else
+                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close, this._bStateTextIdle);
+                }
+                if (minimize.Visible)
+                {
+                    if (minimize.ContainsMouse)
+                        graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._minimize, this._bStateTextHover);
+                    else
+                        graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._minimize, this._bStateTextIdle);
+
+                }
+                if (maximize.Visible)
+                {
+                    if (maximize.ContainsMouse)
+                        graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._maximize, this._bStateTextHover);
+                    else
+                        graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._maximize, this._bStateTextIdle);
+                }
+            }
+
+            //We only need to draw the other borders if ONE of them is visible.
+            if (leftBorder.Visible)
+            {
+                graphics.DrawRectangle(leftBorder.X, leftBorder.Y, leftBorder.Width, leftBorder.Height, accent);
+                graphics.DrawRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, accent);
+                graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, bottomBorder.Height, accent);
+                graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, accent);
+                graphics.DrawRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, accent);
+
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.GUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,13 +30,12 @@ namespace Plex.Engine.Themes
         public abstract void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style);
         public abstract void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style, UIButtonState state);
         public abstract void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style);
-        public abstract void DrawWindowBorder(GraphicsContext graphics, int x, int y, int width, int height, bool focused, bool maximized, UIButtonState close, UIButtonState maximize, UIButtonState minimize, bool dialog, string titleText);
+        public abstract void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused);
         public abstract Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight);
         public abstract void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver);
 
         //Measurement
         public abstract Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue);
-
     }
 
     public class DummyThemeAttribute : Attribute

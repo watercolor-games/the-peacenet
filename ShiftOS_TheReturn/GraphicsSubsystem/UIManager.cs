@@ -22,6 +22,22 @@ namespace Plex.Engine.GraphicsSubsystem
         [Dependency]
         private ThemeManager _thememgr = null;
 
+        public int ScreenWidth
+        {
+            get
+            {
+                return _plexgate.GameRenderTarget.Width;
+            }
+        }
+
+        public int ScreenHeight
+        {
+            get
+            {
+                return _plexgate.GameRenderTarget.Height;
+            }
+        }
+
         private List<TopLevel> _topLevels = new List<TopLevel>();
 
         private Control _focused = null;
@@ -50,14 +66,16 @@ namespace Plex.Engine.GraphicsSubsystem
             ctrl.SetManager(this);
         }
 
-        public void Remove(Control ctrl)
+        public void Remove(Control ctrl, bool dispose = true)
         {
             if (ctrl == null)
                 return;
-            if (_topLevels.FirstOrDefault(x => x.Control != ctrl) == null)
+            if (_topLevels.FirstOrDefault(x => x.Control == ctrl) == null)
                 return;
             var tl = _topLevels.FirstOrDefault(x => x.Control == ctrl);
             tl.RenderTarget.Dispose();
+            if (dispose)
+                ctrl.Dispose();
             tl.Control = null;
             _topLevels.Remove(tl);
         }
@@ -93,7 +111,6 @@ namespace Plex.Engine.GraphicsSubsystem
             ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                     SamplerState.LinearWrap, DepthStencilState.Default,
                     RasterizerState.CullNone);
-            ctx.Clear(Color.Red);
             ctx.Batch.End();
             foreach (var ctrl in _topLevels)
             {
@@ -113,7 +130,7 @@ namespace Plex.Engine.GraphicsSubsystem
         RasterizerState.CullNone);
 
             var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
-            ctx.DrawString($"FPS: {fps} - Game time: {time.TotalGameTime}", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
+            ctx.DrawString($"FPS: {fps} - Game time: {time.TotalGameTime} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
             ctx.Batch.End();
         }
 

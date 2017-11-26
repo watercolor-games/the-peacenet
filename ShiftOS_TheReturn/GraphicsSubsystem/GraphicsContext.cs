@@ -160,6 +160,19 @@ namespace Plex.Engine.GraphicsSubsystem
             _spritebatch.Draw(white, new Rectangle(x, y, width, height), color);
         }
 
+        public void BeginDraw()
+        {
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                        SamplerState.LinearClamp, Device.DepthStencilState,
+                        RasterizerState);
+
+        }
+
+        public void EndDraw()
+        {
+            _spritebatch.End();
+        }
+
         public void DrawCircle(int x, int y, int radius, Color color)
         {
             float step = (float) Math.PI / (radius * 4);
