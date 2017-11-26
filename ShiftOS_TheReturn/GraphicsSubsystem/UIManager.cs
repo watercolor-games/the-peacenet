@@ -86,26 +86,35 @@ namespace Plex.Engine.GraphicsSubsystem
                 Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");
 
             }
-            _topLevels.Add(new TopLevel
-            {
-                Control = new Control()
-            });
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
+            ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    SamplerState.LinearWrap, DepthStencilState.Default,
+                    RasterizerState.CullNone);
+            ctx.Clear(Color.Red);
+            ctx.Batch.End();
             foreach (var ctrl in _topLevels)
             {
                 ctx.Device.SetRenderTarget(ctrl.RenderTarget);
                 ctrl.Control.Draw(time, ctx, ctrl.RenderTarget);
-                ctx.Batch.End();
-
+                
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
                 ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
         SamplerState.LinearWrap, DepthStencilState.Default,
         RasterizerState.CullNone);
                 ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White);
+                ctx.Batch.End();
+
             }
+            ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+        SamplerState.LinearWrap, DepthStencilState.Default,
+        RasterizerState.CullNone);
+
+            var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
+            ctx.DrawString($"FPS: {fps} - Game time: {time.TotalGameTime}", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
+            ctx.Batch.End();
         }
 
         public void OnGameUpdate(GameTime time)

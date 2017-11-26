@@ -235,14 +235,14 @@ namespace Plex.Engine
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(GameRenderTarget);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
             GraphicsDevice.Clear(Color.Black);
             foreach(var component in _components)
             {
                 component.Component.OnFrameDraw(gameTime, _ctx);
             }
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                            SamplerState.LinearWrap, DepthStencilState.Default,
+                            RasterizerState.CullNone);
             spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
             spriteBatch.End();

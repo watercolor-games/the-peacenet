@@ -18,7 +18,7 @@ namespace Plex.Engine.GUI
         private int _y = 0;
         private int _width = 350;
         private int _height = 100;
-        private List<Control> _children = null;
+        private List<TopLevel> _children = null;
         private bool _invalidated = true;
         private RenderTarget2D _rendertarget = null;
         private bool _resized = false;
@@ -29,10 +29,18 @@ namespace Plex.Engine.GUI
         private ButtonState _middle;
         private ButtonState _right;
 
-        private event EventHandler Click;
-        private event EventHandler RightClick;
-        private event EventHandler MiddleClick;
-        private event Action<object, Vector2> MouseMove;
+        public event EventHandler Click;
+        public event EventHandler RightClick;
+        public event EventHandler MiddleClick;
+        public event Action<object, Vector2> MouseMove;
+        public event EventHandler MouseLeftDown;
+        public event EventHandler MouseRightDown;
+        public event EventHandler MouseMiddleDown;
+        public event EventHandler MouseLeftUp;
+        public event EventHandler MouseRightUp;
+        public event EventHandler MouseMiddleUp;
+
+
 
         private UIManager _manager = null;
 
@@ -75,12 +83,13 @@ namespace Plex.Engine.GUI
 
         public void AddChild(Control child)
         {
-            if(!_children.Contains(child))
+            if (_children.FirstOrDefault(x => x.Control == child)!=null)
+                return;
+            _children.Add(new TopLevel
             {
-                _children.Add(child);
-                child._parent = this;
-                child._invalidated = true;
-            }
+                Control = child
+            });
+            child._parent = this;
         }
 
         public int MouseX
@@ -170,7 +179,7 @@ namespace Plex.Engine.GUI
 
         public Control()
         {
-            _children = new List<Control>();
+            _children = new List<TopLevel>();
         }
 
         protected virtual void OnUpdate(GameTime time)
@@ -178,14 +187,25 @@ namespace Plex.Engine.GUI
 
         }
 
+        private ButtonState _lastLeft;
+        private ButtonState _lastRight;
+        private ButtonState _lastMiddle;
+
+
         internal bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
             foreach(var child in _children)
             {
-                if (child.PropagateMouseState(left, middle, right))
+                if (child.Control.PropagateMouseState(left, middle, right))
                     return true;
             }
             bool isInCtrl = (_mousex >= 0 && _mousex <= Width && _mousey >= 0 && _mousey <= Height);
+            if (_lastLeft == left && _lastRight == right && _lastMiddle == middle)
+                return isInCtrl;
+            _lastLeft = left;
+            _lastRight = right;
+            _lastMiddle = middle;
+
             if (isInCtrl)
             {
                 bool fireLeft = (_left == ButtonState.Pressed && left == ButtonState.Released);
@@ -193,6 +213,19 @@ namespace Plex.Engine.GUI
                 bool fireMiddle = (_middle == ButtonState.Pressed && middle == ButtonState.Released);
                 if (_left != left || _right != right || _middle != middle)
                     _invalidated = true;
+                if (_left != left && left == ButtonState.Pressed)
+                    MouseLeftDown?.Invoke(this, EventArgs.Empty);
+                if (_right != right && right == ButtonState.Pressed)
+                    MouseRightDown?.Invoke(this, EventArgs.Empty);
+                if (_middle != middle && middle == ButtonState.Pressed)
+                    MouseMiddleDown?.Invoke(this, EventArgs.Empty);
+                if (_left != left && left == ButtonState.Released)
+                    MouseLeftUp?.Invoke(this, EventArgs.Empty);
+                if (_right != right && right == ButtonState.Released)
+                    MouseRightUp?.Invoke(this, EventArgs.Empty);
+                if (_middle != middle && middle == ButtonState.Released)
+                    MouseMiddleUp?.Invoke(this, EventArgs.Empty);
+
                 _left = left;
                 _middle = middle;
                 _right = right;
@@ -234,14 +267,14 @@ namespace Plex.Engine.GUI
             int _newmousey = 0;
             if (Parent == null)
             {
-                _newmousex = X + mouse.X;
-                _newmousey = Y + mouse.Y;
+                _newmousex = mouse.X - X;
+                _newmousey = mouse.Y - Y;
             }
             //For controls with parents, poll mouse information from the parent.
             else
             {
-                _newmousex = X + Parent._mousex;
-                _newmousey = Y + Parent._mousey;
+                _newmousex = X - Parent._mousex;
+                _newmousey = Y - Parent._mousey;
             }
             if(_newmousex != _mousex || _newmousey != _mousey)
             {
@@ -252,7 +285,25 @@ namespace Plex.Engine.GUI
             }
             OnUpdate(time);
             foreach (var child in _children)
-                child.Update(time);
+            {
+                bool makeTarget = false;
+                if (child.RenderTarget == null)
+                    makeTarget = true;
+                else
+                {
+                    if (child.RenderTarget.Width != child.Control.Width || child.RenderTarget.Height != child.Control.Height)
+                        makeTarget = true;
+                }
+                if (makeTarget)
+                {
+                    if(_rendertarget != null)
+                    {
+                        child.RenderTarget = new RenderTarget2D(_rendertarget.GraphicsDevice, child.Control.Width, child.Control.Height, false, _rendertarget.Format, _rendertarget.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
+                        child.Control.Invalidate();
+                    }
+                }
+                child.Control.Update(time);
+            }
         }
 
         protected virtual void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
@@ -267,14 +318,15 @@ namespace Plex.Engine.GUI
 
         public void Draw(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
         {
-            if(_invalidated)
+            if (_invalidated)
             {
-                if(_resized)
+                if (_resized)
                 {
+                    if (_rendertarget != null)
+                        _rendertarget.Dispose();
                     _rendertarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
-                    //_resized = false;
+                    _resized = false;
                 }
-                gfx.Batch.End();
                 int lastw = gfx.Width;
                 int lasth = gfx.Height;
                 gfx.Width = _width;
@@ -287,29 +339,38 @@ namespace Plex.Engine.GUI
                 gfx.Batch.End();
                 gfx.Width = lastw;
                 gfx.Height = lasth;
-                gfx.Device.SetRenderTarget(currentTarget);
-                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                    SamplerState.LinearWrap, DepthStencilState.Default,
-                    RasterizerState.CullNone);
                 _invalidated = false;
             }
-            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White);
-            foreach(var ctrl in _children)
+            foreach (var ctrl in _children)
             {
                 int lastw = gfx.Width;
                 int lasth = gfx.Height;
                 int lastx = gfx.X;
                 int lasty = gfx.Y;
-                gfx.Width = ctrl._width;
-                gfx.Height = ctrl._height;
-                gfx.X = ctrl._x;
-                gfx.Y = ctrl._y;
-                ctrl.Draw(time, gfx, currentTarget);
+                gfx.Width = ctrl.Control._width;
+                gfx.Height = ctrl.Control._height;
+                gfx.Device.SetRenderTarget(ctrl.RenderTarget);
+                ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
+                gfx.Device.SetRenderTarget(_rendertarget);
+                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+    SamplerState.LinearWrap, DepthStencilState.Default,
+    RasterizerState.CullNone);
+                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White);
+                gfx.Batch.End();
+
                 gfx.Width = lastw;
                 gfx.Height = lasth;
                 gfx.X = lastx;
                 gfx.Y = lasty;
             }
+            gfx.Device.SetRenderTarget(currentTarget);
+            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+SamplerState.LinearWrap, DepthStencilState.Default,
+RasterizerState.CullNone);
+
+            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White);
+            gfx.Batch.End();
+
         }
     }
 
