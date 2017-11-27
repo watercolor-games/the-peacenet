@@ -18,7 +18,7 @@ namespace Plex.Engine.TextRenderers
     [FallbackRenderer]
     public class GdiPlusTextRenderer : ATextRenderer
     {
-        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
+        public override Texture2D DrawText(GraphicsContext gfx, string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
             using(var bmp = new Bitmap((int)measure.X, (int)measure.Y))
@@ -50,7 +50,7 @@ namespace Plex.Engine.TextRenderers
                 bmp.UnlockBits(lck);
                 var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height);
                 tex2.SetData<byte>(bytes);
-                gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, System.Windows.Forms.ImageLayout.Stretch, true);
+                return tex2;
             }
         }
 

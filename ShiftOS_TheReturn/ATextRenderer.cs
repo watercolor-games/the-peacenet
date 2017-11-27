@@ -7,19 +7,32 @@ using Microsoft.Xna.Framework;
 using Plex.Engine.TextRenderers;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine
 {
     public abstract class ATextRenderer
     {
         public abstract Vector2 MeasureText(string text, System.Drawing.Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode);
-        public abstract void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode);
+        public abstract Texture2D DrawText(GraphicsContext gfx, string text, System.Drawing.Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode);
+    }
+
+    internal class TextCacheInformation
+    {
+        public string Renderer { get; set; }
+        public string Text { get; set; }
+        public TextAlignment Alignment { get; set; }
+        public WrapMode Wrapping { get; set; }
+        public int MaxWidth { get; set; }
+        public Texture2D Texture { get; set; }
+        public System.Drawing.Font Font { get; set; }
     }
 
     public static class TextRenderer
     {
         private static ATextRenderer _renderer = null;
         private static List<ATextRenderer> _renderers = null;
+        private static List<TextCacheInformation> _cache = new List<TextCacheInformation>();
 
         private static void _getAllRenderers()
         {
@@ -68,7 +81,37 @@ namespace Plex.Engine
 
         public static void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
-            _renderer.DrawText(gfx, x, y, text, font, color, maxwidth, alignment, wrapMode);
+            if(_cache.Count > 10)
+            {
+                var first = _cache[0];
+                first.Texture.Dispose();
+                first.Texture = null;
+                _cache.Remove(first);
+            }
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+            var cache = _cache.FirstOrDefault(z => z.Alignment == alignment && z.Font == font && z.MaxWidth == maxwidth && z.Renderer == _renderer.GetType().Name && z.Text == text && z.Wrapping == wrapMode);
+            if(cache != null)
+            {
+                gfx.DrawRectangle(x, y, cache.Texture.Width, cache.Texture.Height, cache.Texture, color, System.Windows.Forms.ImageLayout.Stretch, false, false);
+                return;
+            }
+            var texture = _renderer.DrawText(gfx, text, font, maxwidth, alignment, wrapMode);
+            if (texture == null)
+                return;
+            cache = new TextCacheInformation
+            {
+                Alignment = alignment,
+                Font = font,
+                MaxWidth = maxwidth,
+                Renderer = _renderer.GetType().Name,
+                Text = text,
+                Texture = texture,
+                Wrapping = wrapMode
+            };
+            _cache.Add(cache);
+            gfx.DrawRectangle(x, y, cache.Texture.Width, cache.Texture.Height, cache.Texture, color, System.Windows.Forms.ImageLayout.Stretch, false, false);
+
         }
     }
 

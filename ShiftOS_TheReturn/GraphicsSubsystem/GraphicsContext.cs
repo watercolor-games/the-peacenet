@@ -133,6 +133,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2, Color tint)
         {
+            if (tint.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
             x1 += X;
@@ -144,6 +146,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Color color)
         {
+            if (color.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
             x1 += X;
@@ -155,6 +159,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
+            if (color.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
             _spritebatch.Draw(white, new Rectangle(x, y, width, height), color);
@@ -162,7 +168,7 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void BeginDraw()
         {
-            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                         SamplerState.LinearClamp, Device.DepthStencilState,
                         RasterizerState);
 
@@ -175,6 +181,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void DrawCircle(int x, int y, int radius, Color color)
         {
+            if (color.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             float step = (float) Math.PI / (radius * 4);
             var rect = new Rectangle(x, y, radius, 1);
             for (float theta = 0; theta < 2 * Math.PI; theta += step)
@@ -188,8 +196,10 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
 
-        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch, bool premultiplied = false)
+        public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch, bool opaque = false, bool premultiplied=true)
         {
+            if (tint.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             if (tex2 == null)
                 return;
             x += X;
@@ -198,17 +208,27 @@ namespace Plex.Engine.GraphicsSubsystem
             var state = SamplerState.LinearClamp;
             if (layout == ImageLayout.Tile)
                 state = SamplerState.LinearWrap;
-            if (premultiplied)
+            if (opaque)
             {
-                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque,
                                         state, Device.DepthStencilState,
                                         RasterizerState);
             }
             else
             {
-                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                                        state, Device.DepthStencilState,
-                                        RasterizerState);
+                if (premultiplied)
+                {
+                    _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                                            state, Device.DepthStencilState,
+                                            RasterizerState);
+                }
+                else
+                {
+                    _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                            state, Device.DepthStencilState,
+                                            RasterizerState);
+
+                }
             }
             switch (layout)
             {
@@ -235,7 +255,7 @@ namespace Plex.Engine.GraphicsSubsystem
                     ;
             }
             _spritebatch.End();
-            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                                     SamplerState.LinearClamp, Device.DepthStencilState,
                                     RasterizerState.CullNone);
 
@@ -249,6 +269,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
+            if (color.A == 0)
+                return; //no sense rendering if you CAN'T SEE IT
             if (string.IsNullOrEmpty(text))
                 return;
             Plex.Engine.TextRenderer.DrawText(this, x, y, text, font, color, wrapWidth, alignment, wrapMode);
@@ -260,13 +282,5 @@ namespace Plex.Engine.GraphicsSubsystem
             float opp = y - y2;
             return (float) Math.Atan2(opp, adj) - (float) Math.PI;
         }
-    }
-
-    public class TextCache
-    {
-        public string Text { get; set; }
-        public System.Drawing.Font FontFamily { get; set; }
-        public Texture2D Cache { get; set; }
-        public int WrapWidth { get; set; }
     }
 }

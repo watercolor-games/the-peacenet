@@ -51,8 +51,8 @@ namespace Plex.Engine
             Window.IsBorderless = false;
             //Set the title
             Window.Title = "Plex";
-            int w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width/2;
-            int h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height/2;
+            int w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphicsDevice.PreferredBackBufferWidth = w;
             graphicsDevice.PreferredBackBufferHeight = h;
 
@@ -72,6 +72,22 @@ namespace Plex.Engine
         {
             foreach (var component in _components)
                 component.Component.OnKeyboardEvent(e);
+        }
+
+        public string[] GetAvailableResolutions()
+        {
+            var modes = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes;
+            List<string> _resolutions = new List<string>();
+            foreach(var mode in modes.OrderByDescending(x=>x.Width*x.Height))
+            {
+                if (mode.Width < 800 || mode.Height < 600)
+                    continue;
+                string resString = $"{mode.Width}x{mode.Height}";
+                if (_resolutions.Contains(resString))
+                    continue;
+                _resolutions.Add(resString);
+            }
+            return _resolutions.ToArray();
         }
 
         /// <summary>
@@ -151,6 +167,41 @@ namespace Plex.Engine
             return client;
         }
 
+        public string GetSystemResolution()
+        {
+            var res = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            return $"{res.Width}x{res.Height}";
+        }
+
+        private int _width = 0;
+        private int _height = 0;
+
+        public void ApplyResolution(string resolution)
+        {
+            if(string.IsNullOrWhiteSpace(resolution))
+                throw new FormatException("Resolution string invalid. Proper format is \"<width>x<height>\".");
+
+            string[] split = resolution.Split('x');
+            if (split.Length != 2)
+                throw new FormatException("Resolution string invalid. Proper format is \"<width>x<height>\".");
+
+            try
+            {
+                _width = Convert.ToInt32(split[0]);
+                _height = Convert.ToInt32(split[1]);
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    graphicsDevice.PreferredBackBufferWidth = _width;
+                    graphicsDevice.PreferredBackBufferHeight = _height;
+
+                }
+            }
+            catch
+            {
+                throw new FormatException("Resolution string invalid. Proper format is \"<width>x<height>\".");
+
+            }
+        }
 
         private Texture2D MouseTexture = null;
 
@@ -197,6 +248,7 @@ namespace Plex.Engine
             Logger.Log("Done.");
             // TODO: Unload any non ContentManager content here
             _instance = null;
+            base.UnloadContent();
         }
 
         private MouseState LastMouseState;
@@ -209,10 +261,17 @@ namespace Plex.Engine
         {
             if(GameRenderTarget == null)
                 //Setup the game's rendertarget so it matches the desired resolution.
-                GameRenderTarget = new RenderTarget2D(GraphicsDevice, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
             if(_ctx==null)
                 _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
 
+            if (GameRenderTarget.Width != _width || GameRenderTarget.Height != _height)
+                _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
+
+            if (_ctx.Width != GameRenderTarget.Width)
+                _ctx.Width = GameRenderTarget.Width;
+            if (_ctx.Height != GameRenderTarget.Height)
+                _ctx.Height = GameRenderTarget.Height;
             keyboardListener.Update(gameTime);
             if (IsActive)
             {

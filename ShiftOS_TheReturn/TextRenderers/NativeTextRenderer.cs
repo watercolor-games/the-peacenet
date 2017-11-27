@@ -1,5 +1,6 @@
 using System;
 using Plex.Engine.GraphicsSubsystem;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.TextRenderers
 {
@@ -51,17 +52,17 @@ namespace Plex.Engine.TextRenderers
             return new Microsoft.Xna.Framework.Vector2((int)(result & uint.MaxValue), (int)(result >> 32));
 		}
 		
-		public override void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
+		public override Texture2D DrawText(GraphicsContext gfx, string text, System.Drawing.Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
 		{
 			var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
 			var data = new byte[(int)measure.X * (int)measure.Y * 4];
 			if (data.Length == 0)
-				return;
+				return null;
             Implementation.DrawString(text, text.Length, font.FontFamily.Name, font.FontFamily.Name.Length, font.SizeInPoints, (int)font.Style, (int)alignment, (int)wrapMode, maxwidth, (int)measure.X, (int)measure.Y, data);
             var tex2 = new Microsoft.Xna.Framework.Graphics.Texture2D(gfx.Device, (int)measure.X, (int)measure.Y);
 			tex2.SetData<byte>(data);
-            gfx.DrawRectangle(x, y, (int)measure.X, (int)measure.Y, tex2, color, System.Windows.Forms.ImageLayout.Stretch, false);
-		}
+            return tex2;
+        }
 	}
 }
 

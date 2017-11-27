@@ -29,6 +29,8 @@ namespace Plex.Engine.GUI
         private ButtonState _middle;
         private ButtonState _right;
         private bool _isVisible = true;
+        private bool _disposed = false;
+        private float _opacity = 1;
 
         public event EventHandler Click;
         public event EventHandler RightClick;
@@ -40,6 +42,29 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseLeftUp;
         public event EventHandler MouseRightUp;
         public event EventHandler MouseMiddleUp;
+
+        public float Opacity
+        {
+            get
+            {
+                return _opacity;
+            }
+            set
+            {
+                value = MathHelper.Clamp(value, 0, 1);
+                if (value == _opacity)
+                    return;
+                _opacity = value;
+            }
+        }
+
+        public bool Disposed
+        {
+            get
+            {
+                return _disposed;
+            }
+        }
 
         public bool Visible
         {
@@ -359,7 +384,7 @@ namespace Plex.Engine.GUI
                 gfx.Width = _width;
                 gfx.Height = _height;
                 gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                     SamplerState.LinearWrap, DepthStencilState.Default,
                     RasterizerState.CullNone);
                 OnPaint(time, gfx, _rendertarget);
@@ -379,10 +404,10 @@ namespace Plex.Engine.GUI
                 gfx.Device.SetRenderTarget(ctrl.RenderTarget);
                 ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
                 gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
     SamplerState.LinearWrap, DepthStencilState.Default,
     RasterizerState.CullNone);
-                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White);
+                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White, System.Windows.Forms.ImageLayout.Stretch,false);
                 gfx.Batch.End();
 
                 gfx.Width = lastw;
@@ -391,11 +416,10 @@ namespace Plex.Engine.GUI
                 gfx.Y = lasty;
             }
             gfx.Device.SetRenderTarget(currentTarget);
-            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
 SamplerState.LinearWrap, DepthStencilState.Default,
 RasterizerState.CullNone);
-
-            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White);
+            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White, System.Windows.Forms.ImageLayout.Stretch, true);
             gfx.Batch.End();
 
         }
@@ -416,6 +440,7 @@ RasterizerState.CullNone);
             }
             _children.Clear();
             _children = null;
+            _disposed = true;
         }
     }
 

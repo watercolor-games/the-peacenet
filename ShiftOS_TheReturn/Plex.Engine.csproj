@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ATextRenderer.cs" />
+    <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="DependencyAttribute.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />

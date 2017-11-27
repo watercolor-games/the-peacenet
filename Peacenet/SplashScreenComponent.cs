@@ -11,6 +11,7 @@ using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.Themes;
 using Plex.Engine.GUI;
+using Peacenet.Applications;
 
 namespace Peacenet
 {
@@ -24,6 +25,9 @@ namespace Peacenet
 
         [Dependency]
         private ThemeManager _themeManager = null;
+
+        [Dependency]
+        private WindowSystem _windowManager = null;
 
         private Texture2D _watercolor = null;
         private Texture2D _peacenet = null;
@@ -57,6 +61,7 @@ namespace Peacenet
 
         private float _menuLabelOpacity = 0.0f;
 
+        private GameSettings _settingsApp = null;
 
         private int animState = 0;
 
@@ -77,6 +82,17 @@ namespace Peacenet
             _uimanager.Add(_hbSettings);
             _uimanager.Add(_hbSingleplayer);
             _uimanager.Add(_hbMultiplayer);
+
+            _settingsApp = new GameSettings(_windowManager);
+
+            _hbSettings.Click += (o, a) =>
+            {
+                if (_settingsApp.Disposed)
+                    _settingsApp = new GameSettings(_windowManager);
+
+                _settingsApp.Show();
+
+            };
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
@@ -101,19 +117,24 @@ namespace Peacenet
             ctx.DrawRectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetSlideLeft), _welcome.Width, _welcome.Height, _welcome, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Zoom, false);
 
             //fake progress bar
-            ctx.DrawRectangle(progressX, progressY, progressWidth, _progressHeight, Color.White * _progressBGFade);
-            ctx.DrawRectangle(progressX + 2, (int)MathHelper.Lerp(progressY + 2, progressY - (int)(_uimanager.ScreenHeight*0.1), _progressFGPos), (int)MathHelper.Lerp(0, progressWidth - 4, _progressFGAmount), _progressHeight - 4, _themeManager.Theme.GetAccentColor() * _progressBGFade);
+            if (_progressBGFade > 0)
+            {
+                ctx.DrawRectangle(progressX, progressY, progressWidth, _progressHeight, Color.White * _progressBGFade);
+                ctx.DrawRectangle(progressX + 2, (int)MathHelper.Lerp(progressY + 2, progressY - (int)(_uimanager.ScreenHeight * 0.1), _progressFGPos), (int)MathHelper.Lerp(0, progressWidth - 4, _progressFGAmount), _progressHeight - 4, _themeManager.Theme.GetAccentColor() * _progressBGFade);
+            }
 
             //"Press ENTER" prompt
-            string _enter = "Press ENTER to continue";
             var fnt = new System.Drawing.Font("Monda", 15F);
-            var measure = TextRenderer.MeasureText(_enter, fnt, _peacenet.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+            if (_progressFGPos > 0)
+            {
+                string _enter = "Press ENTER to continue";
+                var measure = TextRenderer.MeasureText(_enter, fnt, _peacenet.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
 
-            int textX = (int)(_uimanager.ScreenWidth - measure.X) / 2;
-            int textYMin = progressY + (int)(_uimanager.ScreenHeight * 0.1);
+                int textX = (int)(_uimanager.ScreenWidth - measure.X) / 2;
+                int textYMin = progressY + (int)(_uimanager.ScreenHeight * 0.1);
 
-            ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, progressY, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Middle, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-
+                ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, progressY, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Middle, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+            }
 
             //Draw menu items.
 
@@ -141,30 +162,33 @@ namespace Peacenet
             //Now draw the glyphs.
             var colorIdle = new Color(191, 191, 191, 255);
             var colorHover = Color.White;
+            if(_spSlideUp>0)
+                ctx.DrawRectangle(_hbSingleplayer.X, _hbSingleplayer.Y, _hbSingleplayer.Width, _hbSingleplayer.Height, _singleplayer, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle)*_spSlideUp);
+            if (_mpSlideUp > 0)
+                ctx.DrawRectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height, _multiplayer, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle)*_mpSlideUp);
+            if (_seSlideUp > 0)
+                ctx.DrawRectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height, _settings, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle)*_seSlideUp);
+            if (_menuLabelOpacity > 0)
+            {
+                string text_sp = "Singleplayer";
+                string text_mp = "Multiplayer";
+                string text_settings = "Settings";
 
-            ctx.DrawRectangle(_hbSingleplayer.X, _hbSingleplayer.Y, _hbSingleplayer.Width, _hbSingleplayer.Height, _singleplayer, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle)*_spSlideUp);
-            ctx.DrawRectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height, _multiplayer, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle)*_mpSlideUp);
-            ctx.DrawRectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height, _settings, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle)*_seSlideUp);
+                var sp_measure = TextRenderer.MeasureText(text_sp, fnt, _hbSingleplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+                var mp_measure = TextRenderer.MeasureText(text_mp, fnt, _hbMultiplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+                var settings_measure = TextRenderer.MeasureText(text_settings, fnt, _hbSettings.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
 
-            string text_sp = "Singleplayer";
-            string text_mp = "Multiplayer";
-            string text_settings = "Settings";
+                int proposedMenuTextY = _hbMultiplayer.Y + _hbMultiplayer.Height + 30;
+                int realTextY = (int)MathHelper.Lerp(proposedMenuTextY + (int)(_uimanager.ScreenHeight * 0.10), proposedMenuTextY, _menuLabelOpacity);
 
-            var sp_measure = TextRenderer.MeasureText(text_sp, fnt, _hbSingleplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
-            var mp_measure = TextRenderer.MeasureText(text_mp, fnt, _hbMultiplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
-            var settings_measure = TextRenderer.MeasureText(text_settings, fnt, _hbSettings.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+                int spX = _hbSingleplayer.X + ((_hbSingleplayer.Width - (int)sp_measure.X) / 2);
+                int mpX = _hbMultiplayer.X + ((_hbMultiplayer.Width - (int)mp_measure.X) / 2);
+                int seX = _hbSettings.X + ((_hbSettings.Width - (int)settings_measure.X) / 2);
 
-            int proposedMenuTextY = _hbMultiplayer.Y + _hbMultiplayer.Height + 30;
-            int realTextY = (int)MathHelper.Lerp(proposedMenuTextY + (int)(_uimanager.ScreenHeight * 0.10), proposedMenuTextY, _menuLabelOpacity);
-
-            int spX = _hbSingleplayer.X + ((_hbSingleplayer.Width - (int)sp_measure.X) / 2);
-            int mpX = _hbMultiplayer.X + ((_hbMultiplayer.Width - (int)mp_measure.X) / 2);
-            int seX = _hbSettings.X + ((_hbSettings.Width - (int)settings_measure.X) / 2);
-
-            ctx.DrawString(text_sp, spX, realTextY, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)sp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-            ctx.DrawString(text_mp, mpX, realTextY, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)mp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-            ctx.DrawString(text_settings, seX, realTextY, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)settings_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-
+                ctx.DrawString(text_sp, spX, realTextY, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)sp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+                ctx.DrawString(text_mp, mpX, realTextY, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)mp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+                ctx.DrawString(text_settings, seX, realTextY, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)settings_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+            }
             ctx.EndDraw();
         }
 
@@ -277,6 +301,15 @@ namespace Peacenet
 
         public void Unload()
         {
+            _watercolor.Dispose();
+            _peacenet.Dispose();
+            _welcome.Dispose();
+            _uimanager.Remove(_hbSingleplayer);
+            _uimanager.Remove(_hbMultiplayer);
+            _uimanager.Remove(_hbSettings);
+            _hbSingleplayer = null;
+            _hbMultiplayer = null;
+            _hbSettings = null;
         }
     }
 }

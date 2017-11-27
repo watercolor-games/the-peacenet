@@ -17,11 +17,11 @@ namespace Plex.Engine.TextRenderers
     /// </summary>
     public class WindowsFormsTextRenderer : ATextRenderer
     {
-        public override void DrawText(GraphicsContext gfx, int x, int y, string text, Font font, Microsoft.Xna.Framework.Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
+        public override Texture2D DrawText(GraphicsContext gfx, string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
             if ((int)measure.X == 0 || (int)measure.Y == 0)
-                return;
+                return null;
             using (var bmp = new System.Drawing.Bitmap((int)measure.X, (int)measure.Y))
             {
                 using (var cgfx = System.Drawing.Graphics.FromImage(bmp))
@@ -41,12 +41,9 @@ namespace Plex.Engine.TextRenderers
                         bytes[i + 3] = avg;
                 }
                 bmp.UnlockBits(lck);
-                using (var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height))
-                {
-                    tex2.SetData<byte>(bytes);
-                    gfx.DrawRectangle(x, y, bmp.Width, bmp.Height, tex2, color, ImageLayout.Stretch);
-                }
-
+                var tex2 = new Texture2D(gfx.Device, bmp.Width, bmp.Height);
+                tex2.SetData<byte>(bytes);
+                return tex2;
             }
         }
 

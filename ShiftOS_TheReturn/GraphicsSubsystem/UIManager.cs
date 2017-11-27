@@ -85,7 +85,6 @@ namespace Plex.Engine.GraphicsSubsystem
             while (_topLevels.Count > 0)
             {
                 Remove(_topLevels[0].Control);
-                _topLevels.RemoveAt(0);
             }
 
         }
@@ -114,11 +113,14 @@ namespace Plex.Engine.GraphicsSubsystem
             ctx.Batch.End();
             foreach (var ctrl in _topLevels)
             {
+                if (ctrl.RenderTarget == null)
+                    continue;
                 ctx.Device.SetRenderTarget(ctrl.RenderTarget);
+                ctx.Device.Clear(Color.TransparentBlack);
                 ctrl.Control.Draw(time, ctx, ctrl.RenderTarget);
                 
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
         SamplerState.LinearWrap, DepthStencilState.Default,
         RasterizerState.CullNone);
                 ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White);
@@ -130,7 +132,7 @@ namespace Plex.Engine.GraphicsSubsystem
         RasterizerState.CullNone);
 
             var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
-            ctx.DrawString($"FPS: {fps} - Game time: {time.TotalGameTime} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
+            ctx.DrawString($"FPS: {fps} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
             ctx.Batch.End();
         }
 
@@ -161,7 +163,7 @@ namespace Plex.Engine.GraphicsSubsystem
             }
 
             //Propagate mouse events.
-            foreach(var ctrl in _topLevels)
+            foreach(var ctrl in _topLevels.OrderByDescending(x=>_topLevels.IndexOf(x)))
             {
                 if (ctrl.Control.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
                     break;

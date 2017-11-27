@@ -206,7 +206,7 @@ namespace Peacenet
             var accent = GetAccentColor();
             if (isFocused == false)
                 accent = accent * 0.5F;
-
+            graphics.Clear(accent);
             //First, the titlebar.
             if (title.Visible)
             {

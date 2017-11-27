@@ -21,6 +21,23 @@ namespace Plex.Engine.GUI
 
         private List<WindowInfo> _windows = new List<WindowInfo>();
 
+        public int Width
+        {
+            get
+            {
+                return _uiman.ScreenWidth;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return _uiman.ScreenHeight;
+            }
+        }
+
+
         public void SetWindowStyle(int wid, WindowStyle style)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == wid);
@@ -33,14 +50,18 @@ namespace Plex.Engine.GUI
             _plexgate.Inject(window);
         }
 
+        private int _totalWindowsOpened = 0;
+
         public int CreateWindowInfo(Window window, WindowStyle style)
         {
             var info = new WindowInfo
             {
                 Border = new GUI.WindowBorder(this, window, style),
-                WindowID = _windows.Count
+                WindowID = _totalWindowsOpened + 1
             };
+            _totalWindowsOpened++;
             _windows.Add(info);
+            _uiman.Add(info.Border);
             return info.WindowID;
         }
 
@@ -49,7 +70,7 @@ namespace Plex.Engine.GUI
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
             if (win != null)
             {
-                _uiman.Add(win.Border);
+                win.Border.Visible = true;
             }
         }
 
@@ -58,7 +79,7 @@ namespace Plex.Engine.GUI
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
             if (win != null)
             {
-                _uiman.Remove(win.Border, false);
+                win.Border.Visible = false;
             }
         }
 
@@ -238,6 +259,31 @@ namespace Plex.Engine.GUI
                 diff_x = 0;
                 diff_y = 0;
             };
+
+            switch (_windowStyle)
+            {
+                case WindowStyle.NoBorder:
+                    _child.X = 0;
+                    _child.Y = 0;
+                    Width = _child.Width;
+                    Height = _child.Height;
+                    break;
+                case WindowStyle.Default:
+                    _child.X = _borderWidth;
+                    _child.Y = _titleHeight;
+                    Width = _child.X + _child.Width + _borderWidth;
+                    Height = _child.Y + _child.Height + _borderWidth;
+                    break;
+                case WindowStyle.Dialog:
+                    _child.X = 0;
+                    _child.Y = _titleHeight;
+                    Width = _child.Width;
+                    Height = _child.Y + _child.Height;
+                    break;
+            }
+            X = (winsys.Width - Width) / 2;
+            Y = (winsys.Height - Height) / 2;
+
         }
 
         private bool _closeHasMouse = false;
