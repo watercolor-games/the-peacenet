@@ -17,7 +17,7 @@ namespace Peacenet.Applications
             Width = 800;
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
-            Opacity = 0.15F;
+            Title = "System settings";
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)

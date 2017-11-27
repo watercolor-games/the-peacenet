@@ -37,6 +37,13 @@ namespace Plex.Engine.GUI
             }
         }
 
+        public void SetWindowTitle(int winid, string title)
+        {
+            var win = _windows.FirstOrDefault(x => x.WindowID == winid);
+            if (win != null)
+                win.Border.Title = title;
+
+        }
 
         public void SetWindowStyle(int wid, WindowStyle style)
         {
@@ -129,6 +136,29 @@ namespace Plex.Engine.GUI
         private WindowSystem _winsystem = null;
         private int? _wid = null;
         private WindowStyle _preferredStyle = WindowStyle.Default;
+        private string _title = "Peacenet Window";
+
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                if (_wid == null)
+                {
+                    if (_title == value)
+                        return;
+                    _title = value;
+
+                }
+                else
+                {
+                    _winsystem.SetWindowTitle((int)_wid, _title);
+                }
+            }
+        }
 
         public Window(WindowSystem _winsys)
         {
@@ -153,6 +183,7 @@ namespace Plex.Engine.GUI
             if (_wid == null)
                 _wid = _winsystem.CreateWindowInfo(this, _preferredStyle);
             _winsystem.Show((int)_wid);
+            _winsystem.SetWindowTitle((int)_wid, _title);
         }
 
         public void Hide()
@@ -194,6 +225,22 @@ namespace Plex.Engine.GUI
         private Hitbox _bRightHitbox = null;
         private Hitbox _bLeftHitbox = null;
 
+        private string _title = "";
+
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                if (_title == value)
+                    return;
+                _title = value;
+                Invalidate();
+            }
+        }
 
         private bool _moving = false;
         private Vector2 _lastPos;
@@ -402,7 +449,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
         {
-            Theme.DrawWindowBorder(gfx, "Window title", _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, true);
+            Theme.DrawWindowBorder(gfx, _title, _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, true);
         }
 
         public WindowStyle WindowStyle
