@@ -181,3 +181,21 @@
 /processorParam:TextureFormat=NoChange
 /build:MainMenu/MenuButtons/MultiPlayer.png
 
+#begin Audio/MainMenu/DreamsInc.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/MainMenu/DreamsInc.mp3
+
+#begin Audio/MainMenu/PressEnter2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/MainMenu/PressEnter2.mp3
+
+#begin Audio/MainMenu/PressEnter1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/MainMenu/PressEnter1.mp3
+

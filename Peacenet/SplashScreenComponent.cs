@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.Themes;
 using Plex.Engine.GUI;
 using Peacenet.Applications;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Peacenet
 {
@@ -28,6 +29,13 @@ namespace Peacenet
 
         [Dependency]
         private WindowSystem _windowManager = null;
+
+        private SoundEffect _andersJensenDreamsInc = null;
+        private SoundEffectInstance _dreamsIncInstance = null;
+        private bool _isPlayingSong = false;
+        private SoundEffect _introEffect = null;
+        private SoundEffectInstance _introInstance = null;
+        private bool _alreadyPlayedIntro = false;
 
         private Texture2D _watercolor = null;
         private Texture2D _peacenet = null;
@@ -93,6 +101,14 @@ namespace Peacenet
                 _settingsApp.Show();
 
             };
+
+            _andersJensenDreamsInc = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/PressEnter2");
+            _dreamsIncInstance = _andersJensenDreamsInc.CreateInstance();
+            _dreamsIncInstance.IsLooped = true;
+
+            _introEffect = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/PressEnter1");
+            _introInstance = _introEffect.CreateInstance();
+            
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
@@ -194,6 +210,23 @@ namespace Peacenet
 
         public void OnGameUpdate(GameTime time)
         {
+            if(_introInstance.State == SoundState.Stopped)
+            {
+                if (_alreadyPlayedIntro)
+                {
+                    if (_isPlayingSong == false)
+                    {
+                        _dreamsIncInstance.Play();
+                        _isPlayingSong = true;
+                    }
+                }
+                else
+                {
+                    _introInstance.Play();
+                    _alreadyPlayedIntro = true;
+                }
+            }
+
             switch (animState)
             {
                 case 0:
@@ -244,7 +277,13 @@ namespace Peacenet
                     _progressBGFade -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     _progressFGPos += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos >= 1)
+                    {
+                        if(!_isPlayingSong)
+                        {
+                            _dreamsIncInstance.Play();
+                        }
                         animState++;
+                    }
                     break;
                 case 8:
                     _progressFGPos -= (float)time.ElapsedGameTime.TotalSeconds * 4;

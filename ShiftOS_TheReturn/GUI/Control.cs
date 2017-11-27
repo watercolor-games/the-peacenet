@@ -32,6 +32,11 @@ namespace Plex.Engine.GUI
         private bool _disposed = false;
         private float _opacity = 1;
 
+        private int _minWidth = 1;
+        private int _minHeight = 1;
+        private int _maxWidth = 0;
+        private int _maxHeight = 0;
+
         public event EventHandler Click;
         public event EventHandler RightClick;
         public event EventHandler MiddleClick;
@@ -42,6 +47,71 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseLeftUp;
         public event EventHandler MouseRightUp;
         public event EventHandler MouseMiddleUp;
+
+        public int MinWidth
+        {
+            get
+            {
+                return _minWidth;
+            }
+            set
+            {
+                value = Math.Max(1, value);
+                if (value == _minWidth)
+                    return;
+                _minWidth = value;
+                Width = Width;
+            }
+        }
+
+        public int MinHeight
+        {
+            get
+            {
+                return _minHeight;
+            }
+            set
+            {
+                value = Math.Max(1, value);
+                if (value == _minHeight)
+                    return;
+                _minHeight = value;
+                Height = Height;
+            }
+        }
+
+        public int MaxWidth
+        {
+            get
+            {
+                return _maxWidth;
+            }
+            set
+            {
+                value = Math.Max(_minWidth, value);
+                if (value == _maxWidth)
+                    return;
+                _maxWidth = value;
+                Width = Width;
+            }
+        }
+
+        public int MaxHeight
+        {
+            get
+            {
+                return _minHeight;
+            }
+            set
+            {
+                value = Math.Max(1, value);
+                if (value == _minHeight)
+                    return;
+                _minHeight = value;
+                Height = Height;
+            }
+        }
+
 
         public float Opacity
         {
