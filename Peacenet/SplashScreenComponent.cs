@@ -32,10 +32,13 @@ namespace Peacenet
 
         private SoundEffect _andersJensenDreamsInc = null;
         private SoundEffectInstance _dreamsIncInstance = null;
-        private bool _isPlayingSong = false;
+        private bool _hasEnteredMenu = false;
         private SoundEffect _introEffect = null;
         private SoundEffectInstance _introInstance = null;
         private bool _alreadyPlayedIntro = false;
+        private SoundEffect _mainSong = null;
+        private SoundEffectInstance _mainSongInstance = null;
+        private bool _playedMainSong = false;
 
         private Texture2D _watercolor = null;
         private Texture2D _peacenet = null;
@@ -104,11 +107,13 @@ namespace Peacenet
 
             _andersJensenDreamsInc = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/PressEnter2");
             _dreamsIncInstance = _andersJensenDreamsInc.CreateInstance();
-            _dreamsIncInstance.IsLooped = true;
 
             _introEffect = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/PressEnter1");
             _introInstance = _introEffect.CreateInstance();
-            
+
+            _mainSong = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/MainSong");
+            _mainSongInstance = _mainSong.CreateInstance();
+
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
@@ -214,10 +219,20 @@ namespace Peacenet
             {
                 if (_alreadyPlayedIntro)
                 {
-                    if (_isPlayingSong == false)
+                    if(_dreamsIncInstance.State == SoundState.Stopped)
                     {
-                        _dreamsIncInstance.Play();
-                        _isPlayingSong = true;
+                        if (_hasEnteredMenu == false)
+                        {
+                            _dreamsIncInstance.Play();
+                        }
+                        else
+                        {
+                            if (_playedMainSong == false)
+                            {
+                                _mainSongInstance.Play();
+                                _playedMainSong = true;
+                            }
+                        }
                     }
                 }
                 else
@@ -278,10 +293,6 @@ namespace Peacenet
                     _progressFGPos += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos >= 1)
                     {
-                        if(!_isPlayingSong)
-                        {
-                            _dreamsIncInstance.Play();
-                        }
                         animState++;
                     }
                     break;
@@ -333,6 +344,7 @@ namespace Peacenet
             {
                 if (animState == 7)
                 {
+                    _hasEnteredMenu = true;
                     animState++;
                 }
             }
