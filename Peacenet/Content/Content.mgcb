@@ -205,3 +205,10 @@
 /processorParam:Quality=Best
 /build:Audio/MainMenu/MainSong.mp3
 
+#begin Fonts/Monospace.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Monospace.spritefont
+

@@ -16,6 +16,8 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
 using Plex.Engine.Interfaces;
 using System.Reflection;
+using Plex.Engine.DebugConsole;
+using System.IO;
 
 namespace Plex.Engine
 {
@@ -25,6 +27,144 @@ namespace Plex.Engine
     public class Plexgate : Game
     {
         private static Plexgate _instance = null;
+
+        public class ShutdownCommand : IDebugCommand
+        {
+            public string Description
+            {
+                get
+                {
+                    return "Attempt a graceful engine shutdown.";
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return "shutdown";
+                }
+            }
+
+            public IEnumerable<string> UsageStrings
+            {
+                get
+                {
+                    return new List<string>();
+                }
+            }
+
+            [Dependency]
+            private Plexgate _me = null;
+
+            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
+            {
+                _me.Exit();
+            }
+        }
+
+        public class GCCommands : IDebugCommand
+        {
+            public string Description
+            {
+                get
+                {
+                    return "Query information about and perform actions related to the CLR garbage collector.";
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return "gc";
+                }
+            }
+
+            public IEnumerable<string> UsageStrings
+            {
+                get
+                {
+                    yield return "--usage";
+                    yield return "--collect";
+
+                }
+            }
+
+            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
+            {
+                if((bool)args["--usage"] == true)
+                {
+                    stdout.WriteLine($"RAM usage: {(GC.GetTotalMemory(false)/1024)/1024} Megabytes");
+
+                }
+                else if((bool)args["--collect"] == true)
+                {
+                    GC.Collect();
+                }
+            }
+        }
+
+        public class EngineComponentCommand : IDebugCommand
+        {
+            [Dependency]
+            private Plexgate _me = null;
+
+            public string Description
+            {
+                get
+                {
+                    return "Queries information about the engine's loaded modules.";
+                }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    return "modsys";
+                }
+            }
+
+            public IEnumerable<string> UsageStrings
+            {
+                get
+                {
+                    yield return "-d <component>";
+                    yield return "-u <component>";
+                    yield return "-i <component>";
+                    yield return "-l";
+                }
+            }
+
+            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
+            {
+                if((bool)args["-d"] == true)
+                {
+                    var component = _me._components.FirstOrDefault(x => x.Component.GetType().Name == args["<component>"].ToString())?.Component;
+                    if(component == null)
+                    {
+                        stdout.WriteLine("Component not found.");
+                        return;
+                    }
+                    stdout.WriteLine($"Dependencies for {component.GetType().Name}:");
+                    foreach(var field in component.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                    {
+                        if(field.GetCustomAttributes(false).Any(x=>x is DependencyAttribute))
+                        {
+                            stdout.WriteLine($" - {field.FieldType.Name}");
+                        }
+                    }
+                }
+                else if ((bool)args["-l"] == true)
+                {
+                    foreach(var component in _me._components)
+                    {
+                        stdout.WriteLine($" - {component.Component.GetType().Name}");
+                    }
+                }
+            }
+        }
 
         internal static Plexgate GetInstance()
         {
@@ -259,10 +399,10 @@ namespace Plex.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if(GameRenderTarget == null)
+            if (GameRenderTarget == null)
                 //Setup the game's rendertarget so it matches the desired resolution.
                 GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-            if(_ctx==null)
+            if (_ctx == null)
                 _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
 
             if (GameRenderTarget.Width != _width || GameRenderTarget.Height != _height)
@@ -273,17 +413,15 @@ namespace Plex.Engine
             if (_ctx.Height != GameRenderTarget.Height)
                 _ctx.Height = GameRenderTarget.Height;
             keyboardListener.Update(gameTime);
-            if (IsActive)
-            {
-                //Let's get the mouse state
-                var mouseState = Mouse.GetState(this.Window);
-                LastMouseState = mouseState;
+            //Let's get the mouse state
+            var mouseState = Mouse.GetState(this.Window);
+            LastMouseState = mouseState;
 
-                foreach(var component in _components)
-                {
-                    component.Component.OnGameUpdate(gameTime);
-                }
+            foreach (var component in _components)
+            {
+                component.Component.OnGameUpdate(gameTime);
             }
+
             base.Update(gameTime);
         }
 

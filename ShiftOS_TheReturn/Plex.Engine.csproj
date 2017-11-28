@@ -69,6 +69,10 @@
     <Reference Include="Discoursistency.Util">
       <HintPath>..\Libraries\Discoursistency.Util.dll</HintPath>
     </Reference>
+    <Reference Include="DocoptNet, Version=0.6.1.4, Culture=neutral, PublicKeyToken=7a38c71da49a547e, processorArchitecture=MSIL">
+      <HintPath>..\packages\docopt.net.0.6.1.9\lib\net40\DocoptNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="IronPython, Version=2.7.7.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
       <HintPath>..\packages\IronPython.2.7.7\lib\Net45\IronPython.dll</HintPath>
     </Reference>
@@ -151,6 +155,8 @@
   <ItemGroup>
     <Compile Include="ATextRenderer.cs" />
     <Compile Include="Config\ConfigManager.cs" />
+    <Compile Include="DebugConsole\ConsoleControl.cs" />
+    <Compile Include="DebugConsole\DebugConsole.cs" />
     <Compile Include="DependencyAttribute.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
@@ -1907,7 +1913,9 @@
     <None Include="Resources\fileiconcf.bmp" />
     <None Include="Resources\pywintemplate.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

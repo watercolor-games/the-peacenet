@@ -47,6 +47,7 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseLeftUp;
         public event EventHandler MouseRightUp;
         public event EventHandler MouseMiddleUp;
+        public event EventHandler<KeyboardEventArgs> KeyEvent;
 
         public int MinWidth
         {
@@ -176,6 +177,12 @@ namespace Plex.Engine.GUI
         }
 
         internal void ProcessKeyboardEvent(KeyboardEventArgs e)
+        {
+            OnKeyEvent(e);
+            KeyEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnKeyEvent(KeyboardEventArgs e)
         {
 
         }

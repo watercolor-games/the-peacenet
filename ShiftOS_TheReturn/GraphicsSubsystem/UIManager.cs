@@ -66,6 +66,8 @@ namespace Plex.Engine.GraphicsSubsystem
             ctrl.SetManager(this);
         }
 
+        public bool ShowPerfCounters = true;
+
         public void Remove(Control ctrl, bool dispose = true)
         {
             if (ctrl == null)
@@ -127,6 +129,8 @@ namespace Plex.Engine.GraphicsSubsystem
                 ctx.Batch.End();
 
             }
+            if (ShowPerfCounters == false)
+                return;
             ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
         SamplerState.LinearWrap, DepthStencilState.Default,
         RasterizerState.CullNone);
