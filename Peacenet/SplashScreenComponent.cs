@@ -13,6 +13,7 @@ using Plex.Engine.Themes;
 using Plex.Engine.GUI;
 using Peacenet.Applications;
 using Microsoft.Xna.Framework.Audio;
+using Plex.Engine.Cutscene;
 
 namespace Peacenet
 {
@@ -29,6 +30,9 @@ namespace Peacenet
 
         [Dependency]
         private WindowSystem _windowManager = null;
+
+        [Dependency]
+        private CutsceneManager _cutscene = null;
 
         private SoundEffect _andersJensenDreamsInc = null;
         private SoundEffectInstance _dreamsIncInstance = null;
@@ -76,6 +80,8 @@ namespace Peacenet
 
         private int animState = 0;
 
+        private bool _hasVolumeBeenAdjusted = true;
+
         public void Initiate()
         {
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");
@@ -118,6 +124,8 @@ namespace Peacenet
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
+            if (_cutscene.IsPlaying == true)
+                return;
             ctx.BeginDraw();
             ctx.DrawRectangle(0, 0, _uimanager.ScreenWidth, _uimanager.ScreenHeight, _watercolor, Color.White * _wgFade, System.Windows.Forms.ImageLayout.Zoom, true);
 
@@ -215,7 +223,37 @@ namespace Peacenet
 
         public void OnGameUpdate(GameTime time)
         {
-            if(_introInstance.State == SoundState.Stopped)
+            if (_cutscene.IsPlaying)
+            {
+                if (_hasVolumeBeenAdjusted)
+                {
+                    float volume = _dreamsIncInstance.Volume;
+                    volume -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if (volume <= 0)
+                        _hasVolumeBeenAdjusted = false;
+                    volume = MathHelper.Clamp(volume, 0, 1);
+                    _dreamsIncInstance.Volume = volume;
+                    _introInstance.Volume = volume;
+                    this._mainSongInstance.Volume = volume;
+                }
+                
+            }
+            else
+            {
+                if (_hasVolumeBeenAdjusted == false)
+                {
+                    float volume = _dreamsIncInstance.Volume;
+                    volume += (float)time.ElapsedGameTime.TotalSeconds;
+                    if (volume >= 1)
+                        _hasVolumeBeenAdjusted = true;
+                    volume = MathHelper.Clamp(volume, 0, 1);
+                    _dreamsIncInstance.Volume = volume;
+                    _introInstance.Volume = volume;
+                    this._mainSongInstance.Volume = volume;
+                }
+            }
+
+            if (_introInstance.State == SoundState.Stopped)
             {
                 if (_alreadyPlayedIntro)
                 {

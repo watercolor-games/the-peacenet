@@ -212,3 +212,15 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Monospace.spritefont
 
+#begin Audio/Cutscene/Intro/Serenity.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Cutscene/Intro/Serenity.mp3
+
+#begin Audio/Cutscene/Credits.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Cutscene/Credits.mp3
+

@@ -1,0 +1,139 @@
+﻿{
+  "Components": [
+    {
+      "Name": "Gameplay",
+      "People": [
+        {
+          "Name": "phath0m",
+          "Role": "Realistic Internet simulation"
+        },
+      ]
+    },
+    {
+      "Name": "Audio",
+      "People": [
+        {
+          "Name": "Anders Enger Jensen",
+          "Role": "Soundtrack composer"
+        },
+        {
+          "Name": "Declan Hoare",
+          "Role": "Soundtrack processing and conversion"
+        },
+        {
+          "Name": "Philip Adams",
+          "Role": "User-interface sounds"
+        }
+      ]
+    },
+    {
+      "Name": "Graphics",
+      "People": [
+        {
+          "Name": "FontAwesome crew",
+          "Role": "User interface icons"
+        },
+        {
+          "Name": "Canonical",
+          "Role": "Ubuntu Monospace font"
+        },
+        {
+          "Name": "astro",
+          "Role": "Watercolor Games logo design"
+        },
+        {
+          "Name": "Philip Adams",
+          "Role": "Temporary user-interface icons from ShiftOS"
+        }
+      ]
+    },
+    {
+      "Name": "The Watercolor Team",
+      "People": [
+        {
+          "Name": "Victor Tran",
+          "Role": "Community moderator and friendly smiley face :)"
+        },
+        {
+          "Name": "Logan Lowe",
+          "Role": "Community moderator"
+        },
+        {
+          "Name": "Richard Moch (FloppyDiskDrive)",
+          "Role": "Community moderator"
+        },
+        {
+          "Name": "Nebble",
+          "Role": "Mission and storyline writer"
+        },
+        {
+          "Name": "astro",
+          "Role": "Graphic designer"
+        },
+        {
+          "Name": "Declan Hoare",
+          "Role": "Programmer"
+        }
+      ]
+    },
+    {
+      "Name": "Programming",
+      "People": [
+        {
+          "Name": "Declan Hoare",
+          "Role": "Core engine development"
+        },
+        {
+          "Name": "phath0m",
+          "Role": "Terminal and Debug Console development"
+        }
+      ]
+    },
+    {
+      "Name": "Quality assurance",
+      "People": [
+        {
+          "Name": "Declan Hoare",
+          "Role": "Linux bugtesting"
+        },
+        {
+          "Name": "Everyone who's played an unstable build",
+          "Role": "Feature-testing and feedback"
+        },
+        {
+          "Name": "phath0m",
+          "Role": "Convincing me to use unit tests for the command parser."
+        },
+        {
+          "Name": "Jacob Misirian",
+          "Role": "Penetration testing and security auditing"
+        }
+      ]
+    },
+    {
+      "Name": "Special thanks to...",
+      "People": [
+        {
+          "Name": "Anders Enger Jensen",
+          "Role": "...for being extremely generous and providing soundtrack for the game."
+        },
+        {
+          "Name": "Matt Trobbiani",
+          "Role": "...for the insight on how to write a Terminal, and for being a huge inspiration."
+        },
+        {
+          "Name": "Sean Mann (aka the hackmud guy)",
+          "Role": "...for also being a huge inspiration."
+        },
+        {
+          "Name": "Victor Tran",
+          "Role": "...for critiquing my UI animation skills."
+        },
+        {
+          "Name": "Jacob Misirian",
+          "Role": "...for providing me with a real domain name for the Watercolor site"
+        }
+      ]
+    }
+  ]
+}

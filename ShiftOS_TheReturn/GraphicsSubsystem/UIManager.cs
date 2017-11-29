@@ -22,6 +22,30 @@ namespace Plex.Engine.GraphicsSubsystem
         [Dependency]
         private ThemeManager _thememgr = null;
 
+        private bool _isShowingUI = true;
+        private int _uiFadeState = 1;
+        private float _uiFadeAmount = 1;
+
+        public void ShowUI()
+        {
+            if(_isShowingUI == false)
+            {
+                _isShowingUI = true;
+                _uiFadeAmount = 0;
+                _uiFadeState = 0;
+            }
+        }
+
+        public void HideUI()
+        {
+            if(_isShowingUI == true)
+            {
+                _isShowingUI = false;
+                _uiFadeAmount = 1;
+                _uiFadeState = 0;
+            }
+        }
+
         public int ScreenWidth
         {
             get
@@ -75,6 +99,8 @@ namespace Plex.Engine.GraphicsSubsystem
             if (_topLevels.FirstOrDefault(x => x.Control == ctrl) == null)
                 return;
             var tl = _topLevels.FirstOrDefault(x => x.Control == ctrl);
+            if (tl == null)
+                return;
             tl.RenderTarget.Dispose();
             if (dispose)
                 ctrl.Dispose();
@@ -98,6 +124,7 @@ namespace Plex.Engine.GraphicsSubsystem
             {
                 TextRenderer.Init(new NativeTextRenderer());
                 Logger.Log("Using native text renderer.", LogType.Info, "ui");
+                //TextRenderer.Init(new WindowsFormsTextRenderer());
             }
             catch(Exception ex)
             {
@@ -125,7 +152,7 @@ namespace Plex.Engine.GraphicsSubsystem
                 ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
         SamplerState.LinearWrap, DepthStencilState.Default,
         RasterizerState.CullNone);
-                ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White);
+                ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * _uiFadeAmount);
                 ctx.Batch.End();
 
             }
@@ -142,6 +169,30 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnGameUpdate(GameTime time)
         {
+            if(_uiFadeState == 0)
+            {
+                if (_isShowingUI == true)
+                {
+                    _uiFadeAmount += (float)time.ElapsedGameTime.TotalSeconds;
+                    if (_uiFadeAmount >= 1f)
+                    {
+                        _uiFadeState = 1;
+                    }
+                }
+                else
+                {
+                    _uiFadeAmount -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if (_uiFadeAmount <= 0f)
+                    {
+                        _uiFadeState = 1;
+                    }
+
+                }
+            }
+
+
+            if (_isShowingUI == false)
+                return;
             var mouse = Mouse.GetState();
             foreach(var ctrl in _topLevels)
             {
@@ -176,8 +227,9 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
-            if (_focused != null)
-                _focused.ProcessKeyboardEvent(e);
+            if(_isShowingUI)
+                if (_focused != null)
+                    _focused.ProcessKeyboardEvent(e);
         }
 
         public void Unload()

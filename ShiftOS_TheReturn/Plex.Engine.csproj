@@ -155,6 +155,8 @@
   <ItemGroup>
     <Compile Include="ATextRenderer.cs" />
     <Compile Include="Config\ConfigManager.cs" />
+    <Compile Include="Cutscene\Cutscene.cs" />
+    <Compile Include="Cutscene\CutsceneManager.cs" />
     <Compile Include="DebugConsole\ConsoleControl.cs" />
     <Compile Include="DebugConsole\DebugConsole.cs" />
     <Compile Include="DependencyAttribute.cs" />

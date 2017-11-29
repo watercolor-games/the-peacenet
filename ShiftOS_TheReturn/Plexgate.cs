@@ -391,6 +391,15 @@ namespace Plex.Engine
             base.UnloadContent();
         }
 
+        private Queue<Action> _actions = new Queue<Action>();
+
+        public void Invoke(Action act)
+        {
+            if (act == null)
+                return;
+            _actions.Enqueue(act);
+        }
+
         private MouseState LastMouseState;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -420,6 +429,11 @@ namespace Plex.Engine
             foreach (var component in _components)
             {
                 component.Component.OnGameUpdate(gameTime);
+            }
+
+            while (_actions.Count != 0)
+            {
+                _actions.Dequeue().Invoke();
             }
 
             base.Update(gameTime);

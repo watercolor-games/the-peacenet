@@ -43,6 +43,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Applications\GameSettings.cs" />
+    <Compile Include="Cutscene\CreditsScene.cs" />
+    <Compile Include="Cutscene\IntroScene.cs" />
     <Compile Include="PeacenetTheme.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -121,6 +123,9 @@
     </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <Content Include="Content\credits.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

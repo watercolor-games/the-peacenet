@@ -23,6 +23,37 @@ namespace Peacenet.Backend.Sessions
             return data;
         }
 
+private string GenerateToken(int length)
+{
+    //A string representing the token.
+    string token = "";
+    //Byte array for RNG
+    byte[] arr = new byte[1];
+    //RandomNumberGenerator implements IDisposable. It's a good idea to use the 'using' statement in this case.
+    using (var generator = RandomNumberGenerator.Create())
+    {
+        //Do this for each potential character in the token.
+        for (int i = 0; i < length; i++)
+        {
+            //Empty character.
+            char c = '\0';
+            //Make sure the character can be printed on-screen. Just in case you want the user to copy/paste their token.
+            while(!(char.IsLetterOrDigit(c) || char.IsSymbol(c) || char.IsPunctuation(c)))
+            {
+                //Generate a single random byte.
+                generator.GetNonZeroBytes(arr);
+                //Convert said byte to a char, assign to the empty char above.
+                c = (char)arr[0];
+                //Next time this while loop evaluates, if the char is invalid, we'll run it again. If not..
+            }
+            //Add the character to the token!
+            token += c;
+        }
+    }
+    //All good.
+    return token;
+}
+
         private string Hash(string password, byte[] salt)
         {
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);

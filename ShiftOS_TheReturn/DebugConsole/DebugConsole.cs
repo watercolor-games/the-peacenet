@@ -74,22 +74,28 @@ namespace Plex.Engine.DebugConsole
                     string usagestring = _usageBuilder.ToString();
                     var docopt = new Docopt();
                     var argsfinal = new Dictionary<string, object>();
-                    try
+                    bool hasFinished = false;
+                    _plexgate.Invoke(() =>
                     {
-                        var argsv = docopt.Apply(usagestring, argv, version: "Debug console", exit: false);
-                        foreach (var arg in argsv)
+                        try
                         {
-                            if (arg.Value != null)
-                                argsfinal.Add(arg.Key, arg.Value.Value);
-                            else
-                                argsfinal.Add(arg.Key, null);
+                            var argsv = docopt.Apply(usagestring, argv, version: "Debug console", exit: false);
+                            foreach (var arg in argsv)
+                            {
+                                if (arg.Value != null)
+                                    argsfinal.Add(arg.Key, arg.Value.Value);
+                                else
+                                    argsfinal.Add(arg.Key, null);
+                            }
+                            cmdobj.Run(stdout, stdin, argsfinal);
                         }
-                        cmdobj.Run(stdout, stdin, argsfinal);
-                    }
-                    catch(Exception ex)
-                    {
-                        stdout.WriteLine(ex.ToString());
-                    }
+                        catch (Exception ex)
+                        {
+                            stdout.WriteLine(ex.ToString());
+                        }
+                        hasFinished = true;
+                    });
+                    while (hasFinished==false) { }
                 }
             });
 
