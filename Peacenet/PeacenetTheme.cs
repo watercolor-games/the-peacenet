@@ -43,6 +43,46 @@ namespace Peacenet
         private Color _bgDark;
         private Color _bgLight;
 
+        private Color _peace;
+        private Color _gray;
+
+        private System.Drawing.Font _head1;
+        private System.Drawing.Font _head2;
+        private System.Drawing.Font _head3;
+        private System.Drawing.Font _mono;
+        private System.Drawing.Font _system;
+
+        public override System.Drawing.Font GetFont(TextFontStyle style)
+        {
+            switch (style)
+            {
+                case TextFontStyle.Header1:
+                    return _head1;
+                case TextFontStyle.Header2:
+                    return _head2;
+                case TextFontStyle.Header3:
+                    return _head3;
+                case TextFontStyle.Mono:
+                    return _mono;
+                default:
+                    return _system;
+            }
+        }
+
+        public override Color GetFontColor(TextFontStyle style)
+        {
+            switch (style)
+            {
+                case TextFontStyle.Header1:
+                    return _peace;
+                case TextFontStyle.Header2:
+                case TextFontStyle.Header3:
+                case TextFontStyle.Mono:
+                    return Color.White;
+                default:
+                    return _gray;
+            }
+        }
 
         public override void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state, ArrowDirection direction)
         {
@@ -177,11 +217,20 @@ namespace Peacenet
             _bStateTextHover = Color.White;
             _bStateTextPressed = Color.Gray;
 
-            _bgRegular = new Color(32, 32, 32, 255);
-            _bgDark = new Color(16, 16, 16, 255);
+            _bgRegular = new Color(64, 64, 64, 255);
+            _bgDark = new Color(32, 32, 32, 255);
             _bgLight = new Color(127, 127, 127, 255);
 
             _titleFont = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif.Name, 12F, System.Drawing.FontStyle.Bold);
+
+            _head1 = new System.Drawing.Font("Monda", 34F, System.Drawing.FontStyle.Bold);
+            _head2 = new System.Drawing.Font("Monda", 24F, System.Drawing.FontStyle.Bold);
+            _head3 = new System.Drawing.Font("Monda", 16F);
+            _mono = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 10F);
+            _system = new System.Drawing.Font("Monda", 10F);
+
+            _peace = new Color(64, 128, 255,255);
+            _gray = new Color(191, 191, 191, 255);
         }
 
         public override Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue)

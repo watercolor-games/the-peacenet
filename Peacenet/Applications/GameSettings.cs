@@ -12,17 +12,26 @@ namespace Peacenet.Applications
 {
     public class GameSettings : Window
     {
+        private Label _test = null;
+
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
             Width = 800;
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
             Title = "System settings";
+            _test = new Label();
+            _test.AutoSize = true;
+            _test.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
+            _test.Text = "Settings";
+            AddChild(_test);
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnUpdate(GameTime time)
         {
-            base.OnPaint(time, gfx, currentTarget);
+            _test.X = 15;
+            _test.Y = 15;
+            base.OnUpdate(time);
         }
     }
 }

@@ -193,12 +193,6 @@
 /processorParam:Quality=Best
 /build:Audio/MainMenu/PressEnter2.mp3
 
-#begin Audio/MainMenu/PressEnter1.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/PressEnter1.mp3
-
 #begin Audio/MainMenu/MainSong.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -223,4 +217,10 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/Cutscene/Credits.mp3
+
+#begin Audio/MainMenu/PressEnter1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/MainMenu/PressEnter1.wav
 

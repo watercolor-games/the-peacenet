@@ -21,6 +21,7 @@ namespace Plex.Engine.GUI
         private List<TopLevel> _children = null;
         private bool _invalidated = true;
         private RenderTarget2D _rendertarget = null;
+        private RenderTarget2D _userfacingtarget = null;
         private bool _resized = false;
         private Control _parent = null;
         private int _mousex = 0;
@@ -447,6 +448,9 @@ namespace Plex.Engine.GUI
         {
             if (_isVisible == false)
                 return;
+            gfx.Device.SetRenderTarget(_rendertarget);
+            gfx.Device.Clear(Color.Transparent);
+            gfx.Device.SetRenderTarget(currentTarget);
             if (_invalidated)
             {
                 if (_resized)
@@ -454,22 +458,29 @@ namespace Plex.Engine.GUI
                     if (_rendertarget != null)
                         _rendertarget.Dispose();
                     _rendertarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
+                    if (_userfacingtarget != null)
+                        _userfacingtarget.Dispose();
+                    _userfacingtarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
                     _resized = false;
                 }
                 int lastw = gfx.Width;
                 int lasth = gfx.Height;
                 gfx.Width = _width;
                 gfx.Height = _height;
-                gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                    SamplerState.LinearWrap, DepthStencilState.Default,
-                    RasterizerState.CullNone);
-                OnPaint(time, gfx, _rendertarget);
-                gfx.Batch.End();
+                gfx.Device.SetRenderTarget(_userfacingtarget);
+                gfx.Device.Clear(Color.Transparent);
+                gfx.BeginDraw();
+                OnPaint(time, gfx, _userfacingtarget);
+                gfx.EndDraw();
                 gfx.Width = lastw;
                 gfx.Height = lasth;
                 _invalidated = false;
             }
+            gfx.Device.SetRenderTarget(_rendertarget);
+            gfx.Device.Clear(Color.Transparent);
+            gfx.BeginDraw();
+            gfx.DrawRectangle(0, 0, _userfacingtarget.Width, _userfacingtarget.Height, _userfacingtarget, Color.White, System.Windows.Forms.ImageLayout.Stretch, true);
+            gfx.EndDraw();
             foreach (var ctrl in _children)
             {
                 int lastw = gfx.Width;
@@ -479,25 +490,24 @@ namespace Plex.Engine.GUI
                 gfx.Width = ctrl.Control._width;
                 gfx.Height = ctrl.Control._height;
                 gfx.Device.SetRenderTarget(ctrl.RenderTarget);
+                gfx.Device.Clear(Color.Transparent);
                 ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
                 gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-    SamplerState.LinearWrap, DepthStencilState.Default,
-    RasterizerState.CullNone);
+                gfx.BeginDraw();
                 gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White, System.Windows.Forms.ImageLayout.Stretch,false);
-                gfx.Batch.End();
+                gfx.EndDraw();
 
                 gfx.Width = lastw;
                 gfx.Height = lasth;
                 gfx.X = lastx;
                 gfx.Y = lasty;
             }
+
             gfx.Device.SetRenderTarget(currentTarget);
-            gfx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-SamplerState.LinearWrap, DepthStencilState.Default,
-RasterizerState.CullNone);
+            gfx.Device.Clear(Color.Transparent);
+            gfx.BeginDraw();
             gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White, System.Windows.Forms.ImageLayout.Stretch, true);
-            gfx.Batch.End();
+            gfx.EndDraw();
 
         }
 

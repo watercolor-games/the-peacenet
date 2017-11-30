@@ -33,6 +33,8 @@ namespace Plex.Engine.Themes
         public abstract void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused);
         public abstract Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight);
         public abstract void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver);
+        public abstract System.Drawing.Font GetFont(TextFontStyle style);
+        public abstract Color GetFontColor(TextFontStyle style);
 
         //Measurement
         public abstract Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue);
@@ -54,7 +56,8 @@ namespace Plex.Engine.Themes
         Mono,
         Header1,
         Header2,
-        Header3
+        Header3,
+        Custom
     }
 
     public enum TitleButton

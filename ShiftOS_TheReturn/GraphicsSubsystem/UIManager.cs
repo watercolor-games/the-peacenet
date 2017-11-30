@@ -136,10 +136,6 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
-            ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                    SamplerState.LinearWrap, DepthStencilState.Default,
-                    RasterizerState.CullNone);
-            ctx.Batch.End();
             foreach (var ctrl in _topLevels)
             {
                 if (ctrl.RenderTarget == null)
@@ -149,22 +145,17 @@ namespace Plex.Engine.GraphicsSubsystem
                 ctrl.Control.Draw(time, ctx, ctrl.RenderTarget);
                 
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-        SamplerState.LinearWrap, DepthStencilState.Default,
-        RasterizerState.CullNone);
+                ctx.BeginDraw();
                 ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * _uiFadeAmount);
-                ctx.Batch.End();
+                ctx.EndDraw();
 
             }
             if (ShowPerfCounters == false)
                 return;
-            ctx.Batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-        SamplerState.LinearWrap, DepthStencilState.Default,
-        RasterizerState.CullNone);
-
+            ctx.BeginDraw();
             var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
             ctx.DrawString($"FPS: {fps} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
-            ctx.Batch.End();
+            ctx.EndDraw();
         }
 
         public void OnGameUpdate(GameTime time)
