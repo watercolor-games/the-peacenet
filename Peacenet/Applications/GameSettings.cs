@@ -25,6 +25,7 @@ namespace Peacenet.Applications
             _test.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
             _test.Text = "Settings";
             AddChild(_test);
+            
         }
 
         protected override void OnUpdate(GameTime time)

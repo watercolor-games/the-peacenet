@@ -146,7 +146,7 @@ namespace Plex.Engine.GraphicsSubsystem
                 
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
                 ctx.BeginDraw();
-                ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * _uiFadeAmount);
+                ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * (ctrl.Control.Opacity * _uiFadeAmount));
                 ctx.EndDraw();
 
             }

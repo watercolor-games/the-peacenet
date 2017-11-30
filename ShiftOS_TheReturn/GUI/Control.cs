@@ -494,7 +494,7 @@ namespace Plex.Engine.GUI
                 ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
                 gfx.Device.SetRenderTarget(_rendertarget);
                 gfx.BeginDraw();
-                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White, System.Windows.Forms.ImageLayout.Stretch,false);
+                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch,false);
                 gfx.EndDraw();
 
                 gfx.Width = lastw;

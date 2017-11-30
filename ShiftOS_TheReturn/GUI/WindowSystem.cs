@@ -224,7 +224,7 @@ namespace Plex.Engine.GUI
         private Hitbox _bottomHitbox = null;
         private Hitbox _bRightHitbox = null;
         private Hitbox _bLeftHitbox = null;
-
+        
         private string _title = "";
 
         public string Title
@@ -242,6 +242,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        private int _dragAnimState = 1;
         private bool _moving = false;
         private Vector2 _lastPos;
         private int diff_x = 0;
@@ -285,6 +286,7 @@ namespace Plex.Engine.GUI
             _titleHitbox.MouseLeftDown += (o, a) =>
             {
                 _moving = true;
+                _dragAnimState = 2;
                 _lastPos = new Vector2(MouseX, MouseY);
             };
             _titleHitbox.MouseMove += (o, pt) =>
@@ -302,6 +304,7 @@ namespace Plex.Engine.GUI
             };
             _titleHitbox.MouseLeftUp += (o, a) =>
             {
+                _dragAnimState = 0;
                 _moving = false;
                 diff_x = 0;
                 diff_y = 0;
@@ -337,6 +340,29 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
+            switch (_dragAnimState)
+            {
+                case 0:
+                    float opacity = Opacity;
+                    opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                    Opacity = opacity;
+                    if (opacity >= 1)
+                    {
+                        _dragAnimState++;
+                    }
+                    break;
+                case 2:
+                    float opacity2 = Opacity;
+                    opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                    Opacity = opacity2;
+                    if (opacity2 <= 0.75)
+                    {
+                        _dragAnimState++;
+                    }
+
+                    break;
+            }
+
             switch (_windowStyle)
             {
                 case WindowStyle.NoBorder:
