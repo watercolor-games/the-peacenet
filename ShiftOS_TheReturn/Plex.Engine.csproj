@@ -165,6 +165,7 @@
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\Hitbox.cs" />
     <Compile Include="GUI\Label.cs" />
+    <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\WindowSystem.cs" />
     <Compile Include="Interfaces\IEngineComponent.cs" />
     <Compile Include="Logger.cs" />
