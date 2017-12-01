@@ -25,11 +25,13 @@ namespace Peacenet.Applications
             Width = 800;
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
-            Title = "System settings";
+            Title = "Game settings";
+
             _test = new Label();
             _test.AutoSize = true;
             _test.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _test.Text = "Settings";
+            _test.Text = "This text is 50% translucent.";
+            _test.Opacity = 0.5F;
             AddChild(_test);
             AddChild(_picture);
             _picture.AutoSize = true;

@@ -11,16 +11,20 @@ using Plex.Engine.GUI;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine.Themes;
+using Plex.Engine.Config;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
-    public class UIManager : IEngineComponent
+    public class UIManager : IEngineComponent, IConfigurable
     {
         [Dependency]
         private Plexgate _plexgate = null;
 
         [Dependency]
         private ThemeManager _thememgr = null;
+
+        [Dependency]
+        private ConfigManager _config = null;
 
         private bool _isShowingUI = true;
         private int _uiFadeState = 1;
@@ -146,7 +150,14 @@ namespace Plex.Engine.GraphicsSubsystem
                 
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
                 ctx.BeginDraw();
-                ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * (ctrl.Control.Opacity * _uiFadeAmount));
+                if (_ignoreControlOpacityValues)
+                {
+                    ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * _uiFadeAmount);
+                }
+                else
+                {
+                    ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * (ctrl.Control.Opacity * _uiFadeAmount));
+                }
                 ctx.EndDraw();
 
             }
@@ -218,9 +229,28 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
+            if(e.Key == Keys.F11)
+            {
+                bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);
+                fullscreen = !fullscreen;
+                _config.SetValue("uiFullscreen", fullscreen);
+                ApplyConfig();
+                return;
+            }
+
             if(_isShowingUI)
                 if (_focused != null)
                     _focused.ProcessKeyboardEvent(e);
+        }
+
+        private bool _ignoreControlOpacityValues = false;
+
+        public bool IgnoreControlOpacity
+        {
+            get
+            {
+                return _ignoreControlOpacityValues;
+            }
         }
 
         public void Unload()
@@ -228,6 +258,14 @@ namespace Plex.Engine.GraphicsSubsystem
             Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
             Clear();
             Logger.Log("UI system is shutdown.");
+        }
+
+        public void ApplyConfig()
+        {
+            bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);
+            _plexgate.graphicsDevice.IsFullScreen = fullscreen;
+            _plexgate.graphicsDevice.ApplyChanges();
+            _ignoreControlOpacityValues = (bool)_config.GetValue("uiIgnoreControlOpacity", false);
         }
     }
 

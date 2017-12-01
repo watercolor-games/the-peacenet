@@ -28,6 +28,23 @@ namespace Plex.Engine
     {
         private static Plexgate _instance = null;
 
+        public bool DependsOn(object a, object b)
+        {
+            if (a == null || b == null)
+                return false;
+            var atype = a.GetType();
+            var btype = b.GetType();
+            return atype.GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.FieldType == btype) != null;
+        }
+
+        public IEngineComponent [] GetAllComponents()
+        {
+            List<IEngineComponent> cpts = new List<IEngineComponent>();
+            foreach (var cpt in _components)
+                cpts.Add(cpt.Component);
+            return cpts.ToArray();
+        }
+
         public class ShutdownCommand : IDebugCommand
         {
             public string Description
@@ -333,7 +350,7 @@ namespace Plex.Engine
                 {
                     graphicsDevice.PreferredBackBufferWidth = _width;
                     graphicsDevice.PreferredBackBufferHeight = _height;
-
+                    graphicsDevice.ApplyChanges();
                 }
             }
             catch

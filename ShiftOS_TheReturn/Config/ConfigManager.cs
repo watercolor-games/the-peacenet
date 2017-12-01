@@ -14,61 +14,86 @@ namespace Plex.Engine.Config
 {
     public class ConfigManager : IEngineComponent
     {
+        private Dictionary<string, object> _config = null;
+
         [Dependency]
         private Plexgate _plexgate = null;
 
-        private CoreConfig _config = null;
-
         public void Initiate()
         {
-            Logger.Log("Starting configuration manager...");
+            Logger.Log("Loading configuration file...");
             if (!File.Exists("config.json"))
             {
-                Logger.Log("Config file doesn't exist. Creating a new one.", LogType.Warning);
-                _config = new CoreConfig
-                {
-                    Fullscreen = true,
-                    Resolution = _plexgate.GetSystemResolution(),
-                    TextRendererClass = TextRenderer.GetDefaultRenderer().GetType().Name
-                };
-                SaveConfig();
+                Logger.Log("Config file not found. Making new one.");
+                _config = new Dictionary<string, object>();
+                SaveToDisk();
             }
             else
             {
-                LoadConfig();
+                LoadFromDisk();
             }
-            ApplyConfig();
-            Logger.Log("Done.");
+            Apply();
         }
 
-        public void LoadConfig()
+        /// <summary>
+        /// Get the value of a setting in the config file. If the setting doesn't exist, the default value you supply will be added.
+        /// </summary>
+        /// <param name="defaultValue">The default value for the setting if it doesn't exist.</param>
+        /// <param name="name">The name of the setting.</param>
+        /// <returns>The setting's value.</returns>
+        public object GetValue(string name, object defaultValue)
         {
-            _config = JsonConvert.DeserializeObject<CoreConfig>(File.ReadAllText("config.json"));
-            Logger.Log("Config loaded from disk.");
+            if (_config.ContainsKey(name))
+                return _config[name];
+            else
+                _config.Add(name, defaultValue);
+            return defaultValue;
         }
 
-        public void ApplyConfig()
+        public void SetValue(string name, object value)
         {
-            Logger.Log("Applying config...");
-            Logger.Log($"Fullscreen: {_config.Fullscreen}");
-            _plexgate.graphicsDevice.IsFullScreen = _config.Fullscreen;
-            string resolution = _config.Resolution;
+            if (_config.ContainsKey(name))
+                _config[name] = value;
+            else
+                _config.Add(name, value);
+        }
+
+        public void Apply()
+        {
+            Logger.Log("Config file is now being applied.");
+            string defaultResolution = _plexgate.GetSystemResolution();
+            string resolution = GetValue("screenResolution", defaultResolution).ToString();
+
             string[] available = _plexgate.GetAvailableResolutions();
             if (!available.Contains(resolution))
             {
-                Logger.Log($"Resolution {resolution} not supported by this display or GPU. Using system native resolution instead!", LogType.Warning);
-                _config.Resolution = _plexgate.GetSystemResolution();
-                resolution = _config.Resolution;
-                SaveConfig();
+                resolution = defaultResolution;
+                SetValue("screenResolution", resolution);
             }
             _plexgate.ApplyResolution(resolution);
-            _plexgate.graphicsDevice.ApplyChanges();
+
+            foreach(var component in _plexgate.GetAllComponents())
+            {
+                if(_plexgate.DependsOn(component, this))
+                {
+                    if (component.GetType().GetInterfaces().Contains(typeof(IConfigurable)))
+                    {
+                        (component as IConfigurable).ApplyConfig();
+                    }
+                }
+            }
+
             Logger.Log("Done.");
         }
 
-        public void SaveConfig()
+        public void LoadFromDisk()
         {
-            Logger.Log("Saving config to disk.");
+            _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText("config.json"));
+        }
+
+        public void SaveToDisk()
+        {
+            Logger.Log("Saving config to disk...");
             File.WriteAllText("config.json", JsonConvert.SerializeObject(_config, Formatting.Indented));
             Logger.Log("Done.");
         }
@@ -87,17 +112,13 @@ namespace Plex.Engine.Config
 
         public void Unload()
         {
-            SaveConfig();
+            SaveToDisk();
             _config = null;
-            Logger.Log("Config manager's shut down.");
         }
     }
 
-    public class CoreConfig
+    public interface IConfigurable
     {
-        public string TextRendererClass { get; set; }
-        public string Resolution { get; set; }
-        public bool Fullscreen { get; set; }
+        void ApplyConfig();
     }
-
 }

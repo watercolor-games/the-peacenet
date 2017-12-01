@@ -503,7 +503,14 @@ namespace Plex.Engine.GUI
             foreach (var ctrl in _children)
             {
                 gfx.BeginDraw();
-                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch);
+                if (Manager.IgnoreControlOpacity)
+                {
+                    gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
+                }
+                else
+                {
+                    gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch);
+                }
                 gfx.EndDraw();
             }
         }

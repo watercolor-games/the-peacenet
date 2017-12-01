@@ -8,10 +8,11 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.Config;
 
 namespace Plex.Engine.GUI
 {
-    public class WindowSystem : IEngineComponent
+    public class WindowSystem : IEngineComponent, IConfigurable
     {
         [Dependency]
         private UIManager _uiman = null;
@@ -19,7 +20,14 @@ namespace Plex.Engine.GUI
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private Config.ConfigManager _config = null;
+
         private List<WindowInfo> _windows = new List<WindowInfo>();
+
+        private bool _allowFadingWindowsWhileDragging = true;
+
+        public bool FadeWindowsWhileDragging { get { return _allowFadingWindowsWhileDragging; } }
 
         public int Width
         {
@@ -122,6 +130,12 @@ namespace Plex.Engine.GUI
         public void Unload()
         {
             Logger.Log("Stopping window system.", LogType.Info, "pgwinsys");
+        }
+
+        public void ApplyConfig()
+        {
+            _allowFadingWindowsWhileDragging = (bool)_config.GetValue("windowManagerTranslucentWindowsWhileDragging", true);
+
         }
     }
 
@@ -340,27 +354,34 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
-            switch (_dragAnimState)
+            if (_windowManager.FadeWindowsWhileDragging)
             {
-                case 0:
-                    float opacity = Opacity;
-                    opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
-                    Opacity = opacity;
-                    if (opacity >= 1)
-                    {
-                        _dragAnimState++;
-                    }
-                    break;
-                case 2:
-                    float opacity2 = Opacity;
-                    opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
-                    Opacity = opacity2;
-                    if (opacity2 <= 0.75)
-                    {
-                        _dragAnimState++;
-                    }
+                switch (_dragAnimState)
+                {
+                    case 0:
+                        float opacity = Opacity;
+                        opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        Opacity = opacity;
+                        if (opacity >= 1)
+                        {
+                            _dragAnimState++;
+                        }
+                        break;
+                    case 2:
+                        float opacity2 = Opacity;
+                        opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        Opacity = opacity2;
+                        if (opacity2 <= 0.75)
+                        {
+                            _dragAnimState++;
+                        }
 
-                    break;
+                        break;
+                }
+            }
+            else
+            {
+                Opacity = 1;
             }
 
             switch (_windowStyle)
