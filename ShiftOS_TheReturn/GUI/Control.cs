@@ -386,9 +386,15 @@ namespace Plex.Engine.GUI
                 _invalidated = true;
                 _resized = true;
             }
+            if (_userfacingtarget == null)
+            {
+                _invalidated = true;
+                _resized = true;
+            }
+
             if (_isVisible == false)
                 return;
-            //Poll the mouse state.
+            //Pull the mouse state.
             var mouse = Mouse.GetState();
             //For toplevels, set mouse input loc directly.
             int _newmousex = 0;
@@ -421,14 +427,15 @@ namespace Plex.Engine.GUI
                 {
                     if (child.RenderTarget.Width != child.Control.Width || child.RenderTarget.Height != child.Control.Height)
                         makeTarget = true;
+                    if (_rendertarget != null)
+                    {
+                        if (_rendertarget.GraphicsDevice != child.RenderTarget.GraphicsDevice)
+                            makeTarget = true;
+                    }
                 }
                 if (makeTarget)
                 {
-                    if(_rendertarget != null)
-                    {
-                        child.RenderTarget = new RenderTarget2D(_rendertarget.GraphicsDevice, child.Control.Width, child.Control.Height, false, _rendertarget.Format, _rendertarget.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
-                        child.Control.Invalidate();
-                    }
+                    child.RenderTarget = null;
                 }
                 child.Control.Update(time);
             }
@@ -446,11 +453,13 @@ namespace Plex.Engine.GUI
 
         public void Draw(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
         {
+            if (currentTarget == null)
+                return;
             if (_isVisible == false)
                 return;
-            gfx.Device.SetRenderTarget(_rendertarget);
-            gfx.Device.Clear(Color.Transparent);
-            gfx.Device.SetRenderTarget(currentTarget);
+            //gfx.Device.SetRenderTarget(_rendertarget);
+            //gfx.Device.Clear(Color.Transparent);
+            //gfx.Device.SetRenderTarget(currentTarget);
             if (_invalidated)
             {
                 if (_resized)
@@ -463,52 +472,40 @@ namespace Plex.Engine.GUI
                     _userfacingtarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
                     _resized = false;
                 }
-                int lastw = gfx.Width;
-                int lasth = gfx.Height;
-                gfx.Width = _width;
-                gfx.Height = _height;
                 gfx.Device.SetRenderTarget(_userfacingtarget);
                 gfx.Device.Clear(Color.Transparent);
                 gfx.BeginDraw();
                 OnPaint(time, gfx, _userfacingtarget);
                 gfx.EndDraw();
-                gfx.Width = lastw;
-                gfx.Height = lasth;
                 _invalidated = false;
             }
             gfx.Device.SetRenderTarget(_rendertarget);
             gfx.Device.Clear(Color.Transparent);
             gfx.BeginDraw();
-            gfx.DrawRectangle(0, 0, _userfacingtarget.Width, _userfacingtarget.Height, _userfacingtarget, Color.White, System.Windows.Forms.ImageLayout.Stretch, true);
+            gfx.DrawRectangle(0, 0, _userfacingtarget.Width, _userfacingtarget.Height, _userfacingtarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
             gfx.EndDraw();
-            foreach (var ctrl in _children)
-            {
-                int lastw = gfx.Width;
-                int lasth = gfx.Height;
-                int lastx = gfx.X;
-                int lasty = gfx.Y;
-                gfx.Width = ctrl.Control._width;
-                gfx.Height = ctrl.Control._height;
-                gfx.Device.SetRenderTarget(ctrl.RenderTarget);
-                gfx.Device.Clear(Color.Transparent);
-                ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
-                gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.BeginDraw();
-                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch,false);
-                gfx.EndDraw();
-
-                gfx.Width = lastw;
-                gfx.Height = lasth;
-                gfx.X = lastx;
-                gfx.Y = lasty;
-            }
-
             gfx.Device.SetRenderTarget(currentTarget);
             gfx.Device.Clear(Color.Transparent);
             gfx.BeginDraw();
-            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White, System.Windows.Forms.ImageLayout.Stretch, true);
+            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
             gfx.EndDraw();
+            foreach (var ctrl in _children)
+            {
+                if (ctrl.RenderTarget == null)
+                    ctrl.RenderTarget = new RenderTarget2D(gfx.Device, ctrl.Control.Width, ctrl.Control.Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                    gfx.Device.SetRenderTarget(ctrl.RenderTarget);
+                ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
+                
+            }
 
+            gfx.Device.SetRenderTarget(currentTarget);
+
+            foreach (var ctrl in _children)
+            {
+                gfx.BeginDraw();
+                gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch);
+                gfx.EndDraw();
+            }
         }
 
         public void Dispose()

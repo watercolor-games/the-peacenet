@@ -255,10 +255,7 @@ namespace Plex.Engine.GraphicsSubsystem
                     ;
             }
             _spritebatch.End();
-            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                                    SamplerState.LinearClamp, Device.DepthStencilState,
-                                    RasterizerState.CullNone);
-
+            BeginDraw();
         }
 
         public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
