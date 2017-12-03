@@ -494,7 +494,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawWindowBorder(gfx, _title, _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, true);
         }

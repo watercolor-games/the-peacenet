@@ -52,6 +52,8 @@ namespace Peacenet
         private System.Drawing.Font _mono;
         private System.Drawing.Font _system;
 
+        private Color _buttonIdleBG;
+
         public override System.Drawing.Font GetFont(TextFontStyle style)
         {
             switch (style)
@@ -116,20 +118,32 @@ namespace Peacenet
 
         }
 
-        public override void DrawButtonBackground(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state)
+        public override void DrawButton(GraphicsContext gfx, string text, Texture2D image, UIButtonState state, bool showImage, Rectangle imageRect, Rectangle textRect)
         {
-            throw new NotImplementedException();
+            var bg = _buttonIdleBG;
+            var fg = _bStateTextIdle;
+            switch (state)
+            {
+                case UIButtonState.Hover:
+                    bg = GetAccentColor();
+                    fg = _bStateTextHover;
+                    break;
+                case UIButtonState.Pressed:
+                    bg = _bgDark;
+                    fg = _bStateTextPressed;
+                    break;
+            }
+
+            gfx.Clear(bg);
+
+            if (showImage)
+            {
+                gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
+            }
+
+            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, (showImage) ? TextAlignment.Left : TextAlignment.Middle, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
         }
 
-        public override void DrawButtonImage(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state, Texture2D image)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void DrawButtonText(GraphicsContext gfx, string text, int x, int y, int width, int height, UIButtonState state)
-        {
-            throw new NotImplementedException();
-        }
 
         public override void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver)
         {
@@ -220,6 +234,8 @@ namespace Peacenet
             _bgRegular = new Color(64, 64, 64, 255);
             _bgDark = new Color(32, 32, 32, 255);
             _bgLight = new Color(127, 127, 127, 255);
+
+            _buttonIdleBG = new Color(90, 90, 90, 255);
 
             _titleFont = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif.Name, 12F, System.Drawing.FontStyle.Bold);
 

@@ -66,7 +66,7 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
-        private List<TopLevel> _topLevels = new List<TopLevel>();
+        private List<Control> _topLevels = new List<Control>();
 
         private Control _focused = null;
         public void SetFocus(Control ctrl)
@@ -85,13 +85,12 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             if (ctrl == null)
                 return;
-            if (_topLevels.FirstOrDefault(x => x.Control == ctrl) != null)
+            if (_topLevels.Contains(ctrl))
                 return;
-            _topLevels.Add(new TopLevel
-            {
-                Control = ctrl
-            });
+            _topLevels.Add(ctrl);
+            ctrl.Invalidate();
             ctrl.SetManager(this);
+            ctrl.SetTheme(_thememgr.Theme);
         }
 
         public bool ShowPerfCounters = true;
@@ -100,23 +99,18 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             if (ctrl == null)
                 return;
-            if (_topLevels.FirstOrDefault(x => x.Control == ctrl) == null)
+            if (!_topLevels.Contains(ctrl))
                 return;
-            var tl = _topLevels.FirstOrDefault(x => x.Control == ctrl);
-            if (tl == null)
-                return;
-            tl.RenderTarget.Dispose();
+            _topLevels.Remove(ctrl);
             if (dispose)
                 ctrl.Dispose();
-            tl.Control = null;
-            _topLevels.Remove(tl);
         }
 
         public void Clear()
         {
             while (_topLevels.Count > 0)
             {
-                Remove(_topLevels[0].Control);
+                Remove(_topLevels[0]);
             }
 
         }
@@ -142,24 +136,20 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             foreach (var ctrl in _topLevels)
             {
-                if (ctrl.RenderTarget == null)
+                if (!ctrl.Visible)
                     continue;
-                ctx.Device.SetRenderTarget(ctrl.RenderTarget);
-                ctx.Device.Clear(Color.TransparentBlack);
-                ctrl.Control.Draw(time, ctx, ctrl.RenderTarget);
-                
+                ctrl.Draw(time, ctx);
                 ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
                 ctx.BeginDraw();
-                if (_ignoreControlOpacityValues)
+                if (IgnoreControlOpacity)
                 {
-                    ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * _uiFadeAmount);
+                    ctx.DrawRectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height, ctrl.BackBuffer, Color.White * _uiFadeAmount);
                 }
                 else
                 {
-                    ctx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * (ctrl.Control.Opacity * _uiFadeAmount));
+                    ctx.DrawRectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height, ctrl.BackBuffer, Color.White * (_uiFadeAmount * ctrl.Opacity));
                 }
                 ctx.EndDraw();
-
             }
             if (ShowPerfCounters == false)
                 return;
@@ -198,31 +188,13 @@ namespace Plex.Engine.GraphicsSubsystem
             var mouse = Mouse.GetState();
             foreach(var ctrl in _topLevels)
             {
-                var w = ctrl.Control.Width;
-                var h = ctrl.Control.Height;
-                bool makeTarget = false;
-                if (ctrl.RenderTarget == null)
-                    makeTarget = true;
-                else
-                {
-                    if(ctrl.RenderTarget.Width != w || ctrl.RenderTarget.Height != h)
-                    {
-                        makeTarget = true;
-                    }
-                }
-                if (makeTarget)
-                {
-                    ctrl.RenderTarget = new RenderTarget2D(_plexgate.GraphicsDevice, ctrl.Control.Width, ctrl.Control.Height, false, _plexgate.GraphicsDevice.PresentationParameters.BackBufferFormat, _plexgate.GraphicsDevice.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
-                    ctrl.Control.Invalidate();
-                }
-                ctrl.Control.SetTheme(_thememgr.Theme);
-                ctrl.Control.Update(time);
+                ctrl.Update(time);
             }
 
             //Propagate mouse events.
             foreach(var ctrl in _topLevels.OrderByDescending(x=>_topLevels.IndexOf(x)))
             {
-                if (ctrl.Control.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
+                if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
                     break;
             }
         }

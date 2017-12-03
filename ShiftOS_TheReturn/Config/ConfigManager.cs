@@ -9,6 +9,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using System.IO;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Plex.Engine.Config
 {
@@ -41,10 +42,10 @@ namespace Plex.Engine.Config
         /// <param name="defaultValue">The default value for the setting if it doesn't exist.</param>
         /// <param name="name">The name of the setting.</param>
         /// <returns>The setting's value.</returns>
-        public object GetValue(string name, object defaultValue)
+        public T GetValue<T>(string name, T defaultValue)
         {
             if (_config.ContainsKey(name))
-                return _config[name];
+                return (T)Convert.ChangeType(_config[name], typeof(T));
             else
                 _config.Add(name, defaultValue);
             return defaultValue;
@@ -104,6 +105,12 @@ namespace Plex.Engine.Config
 
         public void OnGameUpdate(GameTime time)
         {
+            float sfx = GetValue("audioSfxVolume", 1.0F);
+            float sfxClamped = MathHelper.Clamp(sfx, 0, 1);
+            if (sfxClamped != sfx)
+                SetValue("audioSfxVolume", sfxClamped);
+            SoundEffect.MasterVolume = sfxClamped;
+
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

@@ -102,9 +102,9 @@ namespace Plex.Engine.DebugConsole
             base.OnKeyEvent(e);
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            base.OnPaint(time, gfx, currentTarget);
+            base.OnPaint(time, gfx);
             _charX = 0;
             _charY = 0;
             for (int i = 0; i < _textBuffer.Length; i++)

@@ -17,10 +17,6 @@ namespace Peacenet.Cutscenes
         [Dependency]
         private UIManager _ui = null;
 
-
-        private SoundEffect _serenity = null;
-        private SoundEffectInstance _serenityInstance = null;
-
         private System.Drawing.Font _monda;
 
         private int _csState = 0;
@@ -30,13 +26,10 @@ namespace Peacenet.Cutscenes
         private readonly string[] _introMessages =
         {
             "Hello.",
-            "I regret to inform you...",
-            "That you are dead.",
-            "How, why, you don't know.",
-            "And I can't tell you.",
-            "But I can tell you where you are.",
-            "And what you are.",
-            "But first, I must know your name.",
+            "Welcome to The Peacenet.",
+            "Before I can tell you where you are and what you're doing here...",
+            "You need to tell me some things.",
+            "Please, answer the following questions.",
         };
 
         public override string Name
@@ -65,16 +58,11 @@ namespace Peacenet.Cutscenes
 
         public override void LoadResources()
         {
-            _serenity = Content.Load<SoundEffect>("Audio/Cutscene/Intro/Serenity");
-            _serenityInstance = _serenity.CreateInstance();
             _monda = new System.Drawing.Font("Monda", 28F);
         }
 
         public override void UnloadResources()
         {
-            _serenity.Dispose();
-            _serenityInstance = null;
-            _serenity = null;
         }
 
         public override void Update(GameTime gameTime)
@@ -82,18 +70,8 @@ namespace Peacenet.Cutscenes
             switch (_csState)
             {
                 case 0:
-                    _serenityInstance.Volume = 0;
-                    _serenityInstance.Play();
-                    _csState++;
-                    break;
                 case 1:
-                    float volume = _serenityInstance.Volume;
-                    volume = MathHelper.Clamp(volume + (float)gameTime.ElapsedGameTime.TotalSeconds, 0, 1);
-                    _serenityInstance.Volume = volume;
-                    if(volume >= 1)
-                    {
-                        _csState++;
-                    }
+                    _csState++;
                     break;
                 case 2:
                     _textIndex++;
@@ -129,14 +107,7 @@ namespace Peacenet.Cutscenes
                     }
                     break;
                 case 6:
-                    float nvolume = _serenityInstance.Volume;
-                    nvolume = MathHelper.Clamp(nvolume - (float)gameTime.ElapsedGameTime.TotalSeconds, 0, 1);
-                    _serenityInstance.Volume = nvolume;
-                    if (nvolume <= 0)
-                    {
-                        _csState++;
-                    }
-
+                    _csState++;
                     break;
                 case 7:
                     NotifyFinished();
@@ -154,7 +125,6 @@ namespace Peacenet.Cutscenes
 
         public override void OnFinish()
         {
-            _serenityInstance.Stop();
         }
     }
 }

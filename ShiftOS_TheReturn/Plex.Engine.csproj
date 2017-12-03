@@ -162,6 +162,7 @@
     <Compile Include="DependencyAttribute.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
+    <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\Hitbox.cs" />
     <Compile Include="GUI\Label.cs" />
@@ -176,6 +177,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Saves\SaveManager.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
     <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />

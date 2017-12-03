@@ -134,7 +134,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var font = getFont();
             var color = getColor();

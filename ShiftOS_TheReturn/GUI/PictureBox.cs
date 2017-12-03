@@ -93,7 +93,7 @@ namespace Plex.Engine.GUI
             }
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.DrawRectangle(0, 0, Width, Height, _texture, _tint, _layout, false, _premultiplied);
         }

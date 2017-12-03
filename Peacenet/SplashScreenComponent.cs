@@ -14,6 +14,7 @@ using Plex.Engine.GUI;
 using Peacenet.Applications;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Cutscene;
+using Plex.Engine.Saves;
 
 namespace Peacenet
 {
@@ -69,6 +70,11 @@ namespace Peacenet
         private Hitbox _hbMultiplayer = null;
         private Hitbox _hbSettings = null;
 
+        private Label _lbSingleplayer = null;
+        private Label _lbMultiplayer = null;
+        private Label _lbSettings = null;
+
+
         //Anim values for menu items
         private float _spSlideUp = 0.0F;
         private float _mpSlideUp = 0.0F;
@@ -81,6 +87,12 @@ namespace Peacenet
         private int animState = 0;
 
         private bool _hasVolumeBeenAdjusted = true;
+
+        [Dependency]
+        private SaveManager _saveManager = null;
+
+        [Dependency]
+        private OS _os = null;
 
         public void Initiate()
         {
@@ -110,6 +122,23 @@ namespace Peacenet
                 _settingsApp.Show();
 
             };
+            _hbSingleplayer.Click += (o,a) =>
+            {
+                if (animState < 16)
+                {
+                    var savefiles = _saveManager.GetSavePaths();
+                    if(savefiles.Length < 1)
+                    {
+                        _saveManager.CreateSinglePlayerSave();
+                    }
+                    else
+                    {
+                        _saveManager.StartSinglePlayerSession(savefiles[0]);
+                    }
+                    animState = 16;
+                }
+
+            };
 
             _andersJensenDreamsInc = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/PressEnter2");
             _dreamsIncInstance = _andersJensenDreamsInc.CreateInstance();
@@ -120,7 +149,25 @@ namespace Peacenet
             _mainSong = _plexgate.Content.Load<SoundEffect>("Audio/MainMenu/MainSong");
             _mainSongInstance = _mainSong.CreateInstance();
 
+            _lbSingleplayer = new Label();
+            _lbMultiplayer = new Label();
+            _lbSettings = new Label();
+
+            _uimanager.Add(_lbSingleplayer);
+            _uimanager.Add(_lbMultiplayer);
+            _uimanager.Add(_lbSettings);
+
+            _uimanager.Add(_credits);
+            _credits.Text = "Credits";
+            _credits.ShowImage = true;
+            _credits.Image = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/Credits");
+            _credits.Click += (o, a) =>
+            {
+                _cutscene.Play("credits_00");
+            };
         }
+
+        private Button _credits = new Button();
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
@@ -197,29 +244,12 @@ namespace Peacenet
                 ctx.DrawRectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height, _multiplayer, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle)*_mpSlideUp);
             if (_seSlideUp > 0)
                 ctx.DrawRectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height, _settings, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle)*_seSlideUp);
-            if (_menuLabelOpacity > 0)
-            {
-                string text_sp = "Singleplayer";
-                string text_mp = "Multiplayer";
-                string text_settings = "Settings";
-
-                var sp_measure = TextRenderer.MeasureText(text_sp, fnt, _hbSingleplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
-                var mp_measure = TextRenderer.MeasureText(text_mp, fnt, _hbMultiplayer.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
-                var settings_measure = TextRenderer.MeasureText(text_settings, fnt, _hbSettings.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
-
-                int proposedMenuTextY = _hbMultiplayer.Y + _hbMultiplayer.Height + 30;
-                int realTextY = (int)MathHelper.Lerp(proposedMenuTextY + (int)(_uimanager.ScreenHeight * 0.10), proposedMenuTextY, _menuLabelOpacity);
-
-                int spX = _hbSingleplayer.X + ((_hbSingleplayer.Width - (int)sp_measure.X) / 2);
-                int mpX = _hbMultiplayer.X + ((_hbMultiplayer.Width - (int)mp_measure.X) / 2);
-                int seX = _hbSettings.X + ((_hbSettings.Width - (int)settings_measure.X) / 2);
-
-                ctx.DrawString(text_sp, spX, realTextY, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)sp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-                ctx.DrawString(text_mp, mpX, realTextY, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)mp_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-                ctx.DrawString(text_settings, seX, realTextY, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle) * _menuLabelOpacity, fnt, TextAlignment.Middle, (int)settings_measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
-            }
             ctx.EndDraw();
         }
+
+        private System.Drawing.Font _titlefont = new System.Drawing.Font("Monda", 15F);
+
+
 
         public void OnGameUpdate(GameTime time)
         {
@@ -282,11 +312,14 @@ namespace Peacenet
 
             switch (animState)
             {
-                case 0:
+                case 0: //Start Watercolor splash
+                    _lbSingleplayer.Visible = false;
+                    _lbMultiplayer.Visible = false;
+                    _lbSettings.Visible = false;
                     _hbSingleplayer.Visible = false;
                     _hbSettings.Visible = false;
                     _hbMultiplayer.Visible = false;
-
+                    _credits.Visible = false;
                     _wgFade += (float)(time.ElapsedGameTime.TotalSeconds*2.5);
                     if(_wgFade >= 1)
                     {
@@ -307,7 +340,7 @@ namespace Peacenet
                         animState++;
                     }
                     break;
-                case 3:
+                case 3: //End Watercolor splash, start Peacenet splash
                     _peacenetOpacity += (float)(time.ElapsedGameTime.TotalSeconds*2.5);
                     _peacenetOpacity = MathHelper.Clamp(_peacenetOpacity, 0, 1);
                     _peacenetSlideLeft = _peacenetOpacity;
@@ -326,7 +359,7 @@ namespace Peacenet
                     if (_progressFGAmount >= 1)
                         animState++;
                     break;
-                case 6:
+                case 6: //End Peacenet splash, start Enter wait.
                     _progressBGFade -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     _progressFGPos += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos >= 1)
@@ -334,7 +367,7 @@ namespace Peacenet
                         animState++;
                     }
                     break;
-                case 8:
+                case 8: //End Enter wait, start Peacenet splash -> Menu transition.
                     _progressFGPos -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos <= 0)
                         animState++;
@@ -345,7 +378,7 @@ namespace Peacenet
                         animState++;
 
                     break;
-                case 10:
+                case 10: //Start Menu animation.
                     _spSlideUp += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_spSlideUp >= 1)
                         animState++;
@@ -364,16 +397,120 @@ namespace Peacenet
                     _hbSettings.Visible = true;
                     _hbSingleplayer.Visible = true;
                     _hbMultiplayer.Visible = true;
+                    _lbSingleplayer.Visible = true;
+                    _lbMultiplayer.Visible = true;
+                    _lbSettings.Visible = true;
                     animState++;
                     break;
-                case 14:
+                case 14: //End Menu animation.
                     _menuLabelOpacity += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_menuLabelOpacity >= 1)
+                    {
                         animState++;
+                        _credits.Visible = true;
+                    }
+                    break;
+                case 16: //Start Menu Unload Animation.
+                    _menuLabelOpacity -= (float)time.ElapsedGameTime.TotalSeconds * 4;
+                    if (_menuLabelOpacity <= 0)
+                    {
+                        animState++;
+                        _credits.Visible = false;
+                        _hbSettings.Visible = false;
+                        _hbSingleplayer.Visible = false;
+                        _hbMultiplayer.Visible = false;
+                        _lbSingleplayer.Visible = false;
+                        _lbMultiplayer.Visible = false;
+                        _lbSettings.Visible = false;
+
+                    }
+
+                    break;
+                case 17:
+                    _spSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
+                    if (_spSlideUp <= 0)
+                        animState++;
+
+                    break;
+                case 18:
+                    _mpSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
+                    if (_mpSlideUp <= 0)
+                        animState++;
+
+                    break;
+                case 19:
+                    _seSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
+                    if (_seSlideUp <= 0)
+                        animState++;
+
+                    break;
+                case 20:
+                    float bgmVolume = _dreamsIncInstance.Volume;
+                    bgmVolume = MathHelper.Clamp(bgmVolume - (float)time.ElapsedGameTime.TotalSeconds * 4, 0, 1);
+                    _dreamsIncInstance.Volume = bgmVolume;
+                    _introInstance.Volume = bgmVolume;
+                    this._mainSongInstance.Volume = bgmVolume;
+                    if(bgmVolume <= 0)
+                    {
+                        animState++;
+                    }
+                    break;
+                case 21:
+                    _dreamsIncInstance.Stop();
+                    _mainSongInstance.Stop();
+                    _introInstance.Stop();
+                    _os.OnReady();
+                    animState++;
                     break;
 
-
             }
+
+            _lbSingleplayer.Opacity = _menuLabelOpacity;
+            _lbMultiplayer.Opacity = _menuLabelOpacity;
+            _lbSettings.Opacity = _menuLabelOpacity;
+
+            int labelYMax = _hbMultiplayer.Y + _hbMultiplayer.Height + 25;
+            int labelYMin = labelYMax + (int)(_uimanager.ScreenHeight * 0.1);
+            int labelY = (int)MathHelper.Lerp(labelYMin, labelYMax, _menuLabelOpacity);
+
+            _lbSingleplayer.Y = labelY;
+            _lbMultiplayer.Y = labelY;
+            _lbSettings.Y = labelY;
+
+            _lbSingleplayer.AutoSize = true;
+            _lbSingleplayer.FontStyle = TextFontStyle.Custom;
+            _lbSingleplayer.CustomFont = _titlefont;
+
+            _lbMultiplayer.AutoSize = true;
+            _lbMultiplayer.FontStyle = TextFontStyle.Custom;
+            _lbMultiplayer.CustomFont = _titlefont;
+
+            _lbSettings.AutoSize = true;
+            _lbSettings.FontStyle = TextFontStyle.Custom;
+            _lbSettings.CustomFont = _titlefont;
+
+            _lbSingleplayer.Text = "Single Player";
+            _lbMultiplayer.Text = "Multiplayer";
+            _lbSettings.Text = "Settings";
+
+            _lbSingleplayer.MaxWidth = _hbSingleplayer.Width;
+            _lbSingleplayer.X = _hbSingleplayer.X + ((_hbSingleplayer.Width - _lbSingleplayer.Width) / 2);
+
+            _lbMultiplayer.MaxWidth = _hbMultiplayer.Width;
+            _lbMultiplayer.X = _hbMultiplayer.X + ((_hbMultiplayer.Width - _lbMultiplayer.Width) / 2);
+
+            _lbSettings.MaxWidth = _hbSettings.Width;
+            _lbSettings.X = _hbSettings.X + ((_hbSettings.Width - _lbSettings.Width) / 2);
+
+            var colorIdle = new Color(191, 191, 191, 255);
+            var colorHover = Color.White;
+
+            _lbSingleplayer.CustomColor = (_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle;
+            _lbMultiplayer.CustomColor = (_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle;
+            _lbSettings.CustomColor = (_hbSettings.ContainsMouse) ? colorHover : colorIdle;
+
+            _credits.X = 15;
+            _credits.Y = (_uimanager.ScreenHeight - _credits.Height) - 15;
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

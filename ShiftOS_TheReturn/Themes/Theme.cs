@@ -19,9 +19,7 @@ namespace Plex.Engine.Themes
         public abstract Color GetAccentColor();
 
         //Rendering
-        public abstract void DrawButtonBackground(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state);
-        public abstract void DrawButtonImage(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state, Texture2D image);
-        public abstract void DrawButtonText(GraphicsContext gfx, string text, int x, int y, int width, int height, UIButtonState state);
+        public abstract void DrawButton(GraphicsContext gfx, string text, Texture2D image, UIButtonState state, bool showImage, Rectangle imageRect, Rectangle textRect);
         public abstract void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state, ArrowDirection direction);
         public abstract void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height);
         public abstract void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height);

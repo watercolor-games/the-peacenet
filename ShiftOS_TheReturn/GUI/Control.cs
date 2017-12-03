@@ -6,6 +6,7 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Themes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Plex.Engine.GUI
         private int _y = 0;
         private int _width = 350;
         private int _height = 100;
-        private List<TopLevel> _children = null;
+        private List<Control> _children = null;
         private bool _invalidated = true;
         private RenderTarget2D _rendertarget = null;
         private RenderTarget2D _userfacingtarget = null;
@@ -37,6 +38,15 @@ namespace Plex.Engine.GUI
         private int _minHeight = 1;
         private int _maxWidth = 0;
         private int _maxHeight = 0;
+
+        
+        public RenderTarget2D BackBuffer
+        {
+            get
+            {
+                return _rendertarget;
+            }
+        }
 
         public event EventHandler Click;
         public event EventHandler RightClick;
@@ -207,12 +217,9 @@ namespace Plex.Engine.GUI
 
         public void AddChild(Control child)
         {
-            if (_children.FirstOrDefault(x => x.Control == child)!=null)
+            if (_children.Contains(child))
                 return;
-            _children.Add(new TopLevel
-            {
-                Control = child
-            });
+            _children.Add(child);
             child._parent = this;
         }
 
@@ -303,7 +310,7 @@ namespace Plex.Engine.GUI
 
         public Control()
         {
-            _children = new List<TopLevel>();
+            _children = new List<Control>();
         }
 
         protected virtual void OnUpdate(GameTime time)
@@ -320,7 +327,7 @@ namespace Plex.Engine.GUI
         {
             foreach(var child in _children)
             {
-                if (child.Control.PropagateMouseState(left, middle, right))
+                if (child.PropagateMouseState(left, middle, right))
                     return true;
             }
             if (_isVisible == false)
@@ -412,36 +419,23 @@ namespace Plex.Engine.GUI
             }
             if(_newmousex != _mousex || _newmousey != _mousey)
             {
+                bool hasMouse = ContainsMouse;
                 _mousex = _newmousex;
                 _mousey = _newmousey;
                 MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
-                _invalidated = true;
+                if(hasMouse != ContainsMouse)
+                    _invalidated = true;
             }
             OnUpdate(time);
             foreach (var child in _children)
             {
-                bool makeTarget = false;
-                if (child.RenderTarget == null)
-                    makeTarget = true;
-                else
-                {
-                    if (child.RenderTarget.Width != child.Control.Width || child.RenderTarget.Height != child.Control.Height)
-                        makeTarget = true;
-                    if (_rendertarget != null)
-                    {
-                        if (_rendertarget.GraphicsDevice != child.RenderTarget.GraphicsDevice)
-                            makeTarget = true;
-                    }
-                }
-                if (makeTarget)
-                {
-                    child.RenderTarget = null;
-                }
-                child.Control.Update(time);
+                child.Update(time);
             }
         }
 
-        protected virtual void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+
+
+        protected virtual void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
@@ -451,67 +445,85 @@ namespace Plex.Engine.GUI
             _invalidated = true;
         }
 
-        public void Draw(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        public void Draw(GameTime time, GraphicsContext gfx)
         {
-            if (currentTarget == null)
-                return;
-            if (_isVisible == false)
-                return;
-            //gfx.Device.SetRenderTarget(_rendertarget);
-            //gfx.Device.Clear(Color.Transparent);
-            //gfx.Device.SetRenderTarget(currentTarget);
+            bool makeBack = _invalidated; //normally I'd let this be false but I thought I'd try making the backbuffer reset if the control's invalidated. This seemed to help, but right after restarting the game and doing the same thing, the bug was back. So this only works intermitently.
+            if (_rendertarget == null)
+                makeBack = true;
+            else
+            {
+                if (_rendertarget.Width != Width || _rendertarget.Height != Height)
+                {
+                    _rendertarget.Dispose();
+                    _rendertarget = null;
+                    makeBack = true;
+                }
+            }
+            if (makeBack)
+            {
+                _rendertarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            }
+
             if (_invalidated)
             {
                 if (_resized)
                 {
-                    if (_rendertarget != null)
-                        _rendertarget.Dispose();
-                    _rendertarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
-                    if (_userfacingtarget != null)
-                        _userfacingtarget.Dispose();
-                    _userfacingtarget = new RenderTarget2D(gfx.Device, _width, _height, false, gfx.Device.PresentationParameters.BackBufferFormat, gfx.Device.PresentationParameters.DepthStencilFormat, 1, RenderTargetUsage.PreserveContents);
+                    _userfacingtarget?.Dispose();
+                    _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
                     _resized = false;
                 }
                 gfx.Device.SetRenderTarget(_userfacingtarget);
                 gfx.Device.Clear(Color.Transparent);
                 gfx.BeginDraw();
-                OnPaint(time, gfx, _userfacingtarget);
+                OnPaint(time, gfx);
                 gfx.EndDraw();
                 _invalidated = false;
             }
+
             gfx.Device.SetRenderTarget(_rendertarget);
             gfx.Device.Clear(Color.Transparent);
             gfx.BeginDraw();
-            gfx.DrawRectangle(0, 0, _userfacingtarget.Width, _userfacingtarget.Height, _userfacingtarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
+            gfx.DrawRectangle(0, 0, Width, Height, _userfacingtarget);
             gfx.EndDraw();
-            gfx.Device.SetRenderTarget(currentTarget);
-            gfx.Device.Clear(Color.Transparent);
-            gfx.BeginDraw();
-            gfx.DrawRectangle(0, 0, _rendertarget.Width, _rendertarget.Height, _rendertarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
-            gfx.EndDraw();
-            foreach (var ctrl in _children)
+            foreach (var child in _children)
             {
-                if (ctrl.RenderTarget == null)
-                    ctrl.RenderTarget = new RenderTarget2D(gfx.Device, ctrl.Control.Width, ctrl.Control.Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                    gfx.Device.SetRenderTarget(ctrl.RenderTarget);
-                ctrl.Control.Draw(time, gfx, ctrl.RenderTarget);
-                
-            }
-
-            gfx.Device.SetRenderTarget(currentTarget);
-
-            foreach (var ctrl in _children)
-            {
+                if (!child.Visible)
+                    continue;
+                child.Draw(time, gfx);
+                gfx.Device.SetRenderTarget(_rendertarget);
                 gfx.BeginDraw();
                 if (Manager.IgnoreControlOpacity)
                 {
-                    gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White, System.Windows.Forms.ImageLayout.Stretch);
+                    gfx.DrawRectangle(child.X, child.Y, child.Width, child.Height, child.BackBuffer);
                 }
                 else
                 {
-                    gfx.DrawRectangle(ctrl.Control.X, ctrl.Control.Y, ctrl.Control.Width, ctrl.Control.Height, ctrl.RenderTarget, Color.White * ctrl.Control.Opacity, System.Windows.Forms.ImageLayout.Stretch);
+                    gfx.DrawRectangle(child.X, child.Y, child.Width, child.Height, child.BackBuffer, Color.White * child.Opacity);
                 }
                 gfx.EndDraw();
+            }
+        }
+
+        public ButtonState LeftMouseState
+        {
+            get
+            {
+                return _lastLeft;
+            }
+        }
+
+        public ButtonState RightMouseState
+        {
+            get
+            {
+                return _lastRight;
+            }
+        }
+        public ButtonState MiddleMouseState
+        {
+            get
+            {
+                return _lastMiddle;
             }
         }
 
@@ -522,14 +534,16 @@ namespace Plex.Engine.GUI
                 _rendertarget.Dispose();
                 _rendertarget = null;
             }
-            foreach(var rinfo in _children)
+            if (_userfacingtarget != null)
             {
-                rinfo.Control.Dispose();
-                rinfo.RenderTarget.Dispose();
-                rinfo.Control = null;
-                rinfo.RenderTarget = null;
+                _userfacingtarget.Dispose();
+                _userfacingtarget = null;
             }
-            _children.Clear();
+            while (_children.Count > 0)
+            {
+                _children[0].Dispose();
+                _children.RemoveAt(0);
+            }
             _children = null;
             _disposed = true;
         }
@@ -549,7 +563,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
-        protected override void OnPaint(GameTime time, GraphicsContext gfx, RenderTarget2D currentTarget)
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Gray);
             gfx.DrawString(((int)time.TotalGameTime.TotalSeconds).ToString(), 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.Middle, Width, TextRenderers.WrapMode.Words);

@@ -34,7 +34,9 @@ namespace Plex.Engine.Cutscene
             }
         }
 
-        public bool Play(string name)
+        private Action _callback = null;
+
+        public bool Play(string name, Action callback = null)
         {
             var cs = _cutscenes.FirstOrDefault(x => x.Name == name);
             if (cs == null)
@@ -44,6 +46,7 @@ namespace Plex.Engine.Cutscene
                 _current.IsFinished = true;
                 _current = null;
             }
+            _callback = callback;
             cs.IsFinished = false;
             _current = cs;
             _current.OnPlay();
@@ -88,6 +91,7 @@ namespace Plex.Engine.Cutscene
                 if (_current.IsFinished)
                 {
                     _current.OnFinish();
+                    _callback?.Invoke();
                     _current = null;
                     _ui.ShowUI();
                 }

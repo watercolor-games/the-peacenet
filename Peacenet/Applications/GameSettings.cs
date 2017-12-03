@@ -32,10 +32,18 @@ namespace Peacenet.Applications
             _test.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
             _test.Text = "This text is 50% translucent.";
             _test.Opacity = 0.5F;
-            AddChild(_test);
-            AddChild(_picture);
             _picture.AutoSize = true;
             _picture.Texture = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
+
+            for(int i = 0; i < 15; i++)
+            {
+                var lbl = new Label();
+                lbl.Text = $"Label {i+1}";
+                lbl.AutoSize = true;
+                lbl.X = 15 * i;
+                lbl.Y = 30 * i;
+                AddChild(lbl);
+            }
         }
 
         protected override void OnUpdate(GameTime time)
