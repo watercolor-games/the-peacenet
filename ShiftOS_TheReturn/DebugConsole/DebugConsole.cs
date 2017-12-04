@@ -155,10 +155,6 @@ namespace Plex.Engine.DebugConsole
                     _console.Visible = false;
                 }
             }
-            else
-            {
-                _console.ProcessKeyboardEvent(e);
-            }
         }
 
         public void Unload()

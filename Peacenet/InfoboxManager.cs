@@ -30,6 +30,11 @@ namespace Peacenet
             ibox.ShowYesNo(title, message, callback);
         }
 
+        public void PromptText(string title, string message, Action<string> callback = null, Func<string, bool> validator = null)
+        {
+            var ibox = new Infobox(_winmgr);
+            ibox.PromptText(title, message, callback, validator);
+        }
 
         public void Initiate()
         {
@@ -59,6 +64,7 @@ namespace Peacenet
         private Button _ok = null;
         private Button _yes = null;
         private Button _no = null;
+        private TextBox _inputBox = null;
 
         [Dependency]
         private Plexgate _plexgate = null;
@@ -83,14 +89,20 @@ namespace Peacenet
             _picture.Height = 64;
             SetWindowStyle(WindowStyle.Dialog);
             _picture.Texture = _plexgate.Content.Load<Texture2D>("Infobox/warning");
-
+            _inputBox = new TextBox();
+            AddChild(_inputBox);
         }
 
         public void Show(string title, string message, Action callback = null)
         {
-            _ok.Click += (o, a) => callback?.Invoke();
+            _ok.Click += (o, a) =>
+            {
+                callback?.Invoke();
+                Close();
+            };
             _yes.Visible = false;
             _no.Visible = false;
+            _inputBox.Visible = false;
             _ok.Visible = true;
             Title = title;
             _messageLabel.Text = message;
@@ -99,16 +111,46 @@ namespace Peacenet
 
         public void ShowYesNo(string title, string message, Action<bool> callback = null)
         {
-            _yes.Click += (o, a) => callback?.Invoke(true);
-            _no.Click += (o, a) => callback?.Invoke(false);
+            _yes.Click += (o, a) =>
+            {
+                callback?.Invoke(true);
+                Close();
+            };
+            _no.Click += (o, a) =>
+            {
+                callback?.Invoke(false);
+                Close();
+            };
             _yes.Visible = true;
             _no.Visible = true;
             _ok.Visible = false;
+            _inputBox.Visible = false;
             Title = title;
             _messageLabel.Text = message;
             Show();
         }
 
+        public void PromptText(string title, string message, Action<string> callback = null, Func<string, bool> validator = null)
+        {
+            if (validator == null)
+                validator = (value) => { return true; };
+            _ok.Click += (o, a) =>
+            {
+                if (validator.Invoke(_inputBox.Text) == true)
+                {
+                    callback?.Invoke(_inputBox.Text);
+                    Close();
+                }
+            };
+            _yes.Visible = false;
+            _no.Visible = false;
+            _inputBox.Visible = true;
+            _ok.Visible = true;
+            Title = title;
+            _messageLabel.Text = message;
+            Show();
+
+        }
 
         protected override void OnUpdate(GameTime time)
         {
@@ -123,18 +165,13 @@ namespace Peacenet
             int width = _messageLabel.X + _messageLabel.Width + 15;
 
             Width = width;
-//            if (txtinput.Visible)
-//            {
-//                txtinput.Y = lbmessage.Y + lbmessage.Height + 10;
-//                txtinput.Width = lbmessage.Width;
-//                txtinput.X = lbmessage.X;
-//                contentHeight = Math.Max(pbicon.Height, lbmessage.Height + 15 + txtinput.Height);
-//                UIManager.FocusedControl = txtinput;
-//            }
-//            else
-//            {
-//                UIManager.FocusedControl = this;
-//            }
+            if (_inputBox.Visible)
+            {
+                _inputBox.Y = _messageLabel.Y + _messageLabel.Height + 10;
+                _inputBox.Width = _messageLabel.Width;
+                _inputBox.X = _messageLabel.X;
+                contentHeight = Math.Max(_picture.Height, _messageLabel.Height + 15 + _inputBox.Height);
+            }
 
             Height = 15 + contentHeight + 15 + _ok.Height + 15;
 

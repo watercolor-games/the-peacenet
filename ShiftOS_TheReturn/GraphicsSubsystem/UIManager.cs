@@ -71,7 +71,15 @@ namespace Plex.Engine.GraphicsSubsystem
         private Control _focused = null;
         public void SetFocus(Control ctrl)
         {
+            if (_focused == ctrl)
+                return;
+            var alreadyFocused = _focused;
             _focused = ctrl;
+            if(alreadyFocused!=null)
+            {
+                alreadyFocused.Invalidate();
+            }
+            ctrl.Invalidate();
         }
 
         public bool IsFocused(Control ctrl)

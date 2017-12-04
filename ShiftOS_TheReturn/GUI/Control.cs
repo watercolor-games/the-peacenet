@@ -17,8 +17,8 @@ namespace Plex.Engine.GUI
     {
         private int _x = 0;
         private int _y = 0;
-        private int _width = 350;
-        private int _height = 100;
+        private int _width = 1;
+        private int _height = 1;
         private List<Control> _children = null;
         private bool _invalidated = true;
         private RenderTarget2D _rendertarget = null;
@@ -39,6 +39,30 @@ namespace Plex.Engine.GUI
         private int _maxWidth = 0;
         private int _maxHeight = 0;
 
+        public bool IsFocused
+        {
+            get
+            {
+                return Manager.IsFocused(this);
+            }
+        }
+
+        public bool HasFocused
+        {
+            get
+            {
+                if (IsFocused)
+                    return true;
+                foreach(var child in _children)
+                {
+                    if (child.HasFocused)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
         
         public RenderTarget2D BackBuffer
         {
@@ -322,6 +346,12 @@ namespace Plex.Engine.GUI
         private ButtonState _lastRight;
         private ButtonState _lastMiddle;
 
+        public void RemoveChild(Control child)
+        {
+            if (!_children.Contains(child))
+                return;
+            _children.Remove(child);
+        }
 
         internal bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
@@ -365,6 +395,11 @@ namespace Plex.Engine.GUI
                 if (fireLeft)
                 {
                     Click?.Invoke(this, EventArgs.Empty);
+                    if (!IsFocused)
+                    {
+                        Manager.SetFocus(this);
+                        Invalidate();
+                    }
                 }
                 if (fireRight)
                 {

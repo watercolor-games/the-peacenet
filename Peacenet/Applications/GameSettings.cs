@@ -19,6 +19,7 @@ namespace Peacenet.Applications
 
         private Label _test = null;
         private PictureBox _picture = new PictureBox();
+        private TextBox _somewhereToType = new TextBox();
 
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
@@ -35,15 +36,9 @@ namespace Peacenet.Applications
             _picture.AutoSize = true;
             _picture.Texture = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
 
-            for(int i = 0; i < 15; i++)
-            {
-                var lbl = new Label();
-                lbl.Text = $"Label {i+1}";
-                lbl.AutoSize = true;
-                lbl.X = 15 * i;
-                lbl.Y = 30 * i;
-                AddChild(lbl);
-            }
+            AddChild(_test);
+            AddChild(_picture);
+            AddChild(_somewhereToType);
         }
 
         protected override void OnUpdate(GameTime time)
@@ -53,6 +48,10 @@ namespace Peacenet.Applications
             _picture.X = 15;
             _picture.Y = _test.Y + _test.Height + 5;
             base.OnUpdate(time);
+
+            _somewhereToType.X = 15;
+            _somewhereToType.Y = _picture.Y + _picture.Height + 10;
+            _somewhereToType.Width = 250;
         }
     }
 }

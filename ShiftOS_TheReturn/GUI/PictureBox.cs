@@ -17,6 +17,7 @@ namespace Plex.Engine.GUI
         private bool _autoSize = false;
         private ImageLayout _layout = ImageLayout.Stretch;
         private bool _premultiplied = false;
+        private float _scale = 1;
 
         public Color Tint
         {
@@ -44,6 +45,21 @@ namespace Plex.Engine.GUI
                 if (_autoSize == value)
                     return;
                 _autoSize = value;
+                Invalidate();
+            }
+        }
+
+        public float AutoSizeScale
+        {
+            get
+            {
+                return _scale;
+            }
+            set
+            {
+                if (_scale == value)
+                    return;
+                _scale = value;
                 Invalidate();
             }
         }
@@ -104,8 +120,8 @@ namespace Plex.Engine.GUI
             {
                 if (_texture != null)
                 {
-                    Width = _texture.Width;
-                    Height = _texture.Height;
+                    Width = (int)(_texture.Width*_scale);
+                    Height = (int)(_texture.Height*_scale);
                 }
                 else
                 {

@@ -248,3 +248,45 @@
 /processorParam:TextureFormat=NoChange
 /build:Infobox/warning.png
 
+#begin Music/Ambient/A04 - Anders Enger Jensen - Roland CM32L Song.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Music/Ambient/A04 - Anders Enger Jensen - Roland CM32L Song.wav
+
+#begin Music/Ambient/A07 - Anders Enger Jensen - Ode to Hanna Remix.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Music/Ambient/A07 - Anders Enger Jensen - Ode to Hanna Remix.wav
+
+#begin Music/Ambient/B11 - Anders Enger Jensen - Wave Journey.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Music/Ambient/B11 - Anders Enger Jensen - Wave Journey.wav
+
+#begin Desktop/DesktopBackgroundImage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=NoChange
+/build:Desktop/DesktopBackgroundImage.png
+
+#begin Desktop/UIIcons/ShowDesktop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=NoChange
+/build:Desktop/UIIcons/ShowDesktop.png
+

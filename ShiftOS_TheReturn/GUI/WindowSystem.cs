@@ -205,6 +205,11 @@ namespace Plex.Engine.GUI
             _winsystem.Hide((int)_wid);
         }
 
+        public void Close()
+        {
+            _winsystem.Close((int)_wid);
+        }
+
         public int? WindowID
         {
             get
@@ -352,8 +357,15 @@ namespace Plex.Engine.GUI
 
         private bool _closeHasMouse = false;
 
+        private bool _lastFocused = true;
+
         protected override void OnUpdate(GameTime time)
         {
+            if(_lastFocused != HasFocused)
+            {
+                _lastFocused = HasFocused;
+                Invalidate();
+            }
             if (_windowManager.FadeWindowsWhileDragging)
             {
                 switch (_dragAnimState)
@@ -496,7 +508,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawWindowBorder(gfx, _title, _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, true);
+            Theme.DrawWindowBorder(gfx, _title, _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, HasFocused);
         }
 
         public WindowStyle WindowStyle
