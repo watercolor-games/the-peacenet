@@ -122,7 +122,7 @@ namespace Plex.Engine.GUI
                     realWidth += 3;
                 realWidth += _textureW;
             }
-            realWidth += 8;
+            realWidth += 20;
             Width = realWidth;
             _lY = (Height - _lH) / 2;
             if (_showImage)
