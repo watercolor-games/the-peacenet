@@ -355,6 +355,8 @@ namespace Plex.Engine.GUI
 
         internal bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
+            if (Visible == false)
+                return false;
             foreach(var child in _children)
             {
                 if (child.PropagateMouseState(left, middle, right))
@@ -377,7 +379,14 @@ namespace Plex.Engine.GUI
                 if (_left != left || _right != right || _middle != middle)
                     _invalidated = true;
                 if (_left != left && left == ButtonState.Pressed)
+                {
                     MouseLeftDown?.Invoke(this, EventArgs.Empty);
+                    if (!IsFocused)
+                    {
+                        Manager.SetFocus(this);
+                        Invalidate();
+                    }
+                }
                 if (_right != right && right == ButtonState.Pressed)
                     MouseRightDown?.Invoke(this, EventArgs.Empty);
                 if (_middle != middle && middle == ButtonState.Pressed)
@@ -395,11 +404,6 @@ namespace Plex.Engine.GUI
                 if (fireLeft)
                 {
                     Click?.Invoke(this, EventArgs.Empty);
-                    if (!IsFocused)
-                    {
-                        Manager.SetFocus(this);
-                        Invalidate();
-                    }
                 }
                 if (fireRight)
                 {
@@ -421,8 +425,25 @@ namespace Plex.Engine.GUI
             return isInCtrl;
         }
 
+        private bool? _lastFocus = null;
+
+        public event EventHandler HasFocusedChanged;
+
+        public Control[] Children
+        {
+            get
+            {
+                return _children.ToArray();
+            }
+        }
+
         public void Update(GameTime time)
         {
+            if(_lastFocus != HasFocused)
+            {
+                _lastFocus = HasFocused;
+                HasFocusedChanged?.Invoke(this, EventArgs.Empty);
+            }
             if (_rendertarget == null)
             {
                 _invalidated = true;

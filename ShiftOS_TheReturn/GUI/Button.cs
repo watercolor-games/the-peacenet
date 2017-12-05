@@ -25,6 +25,22 @@ namespace Plex.Engine.GUI
         private int _lW = 0;
         private int _lH = 0;
 
+        public Rectangle ImageRect
+        {
+            get
+            {
+                return new Rectangle(_textureX, _textureY, _textureW, _textureH);
+            }
+        }
+
+        public Rectangle TextRect
+        {
+            get
+            {
+                return new Rectangle(_lX, _lY, _lW, _lH);
+            }
+        }
+
         public bool ShowImage
         {
             get

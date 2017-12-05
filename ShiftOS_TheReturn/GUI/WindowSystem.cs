@@ -23,6 +23,8 @@ namespace Plex.Engine.GUI
         [Dependency]
         private Config.ConfigManager _config = null;
 
+        public event EventHandler WindowListUpdated;
+
         private List<WindowInfo> _windows = new List<WindowInfo>();
 
         private bool _allowFadingWindowsWhileDragging = true;
@@ -57,7 +59,10 @@ namespace Plex.Engine.GUI
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == wid);
             if (win != null)
+            {
                 win.Border.WindowStyle = style;
+                WindowListUpdated?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         internal void InjectDependencies(Window window)
@@ -77,6 +82,7 @@ namespace Plex.Engine.GUI
             _totalWindowsOpened++;
             _windows.Add(info);
             _uiman.Add(info.Border);
+            WindowListUpdated?.Invoke(this, EventArgs.Empty);
             return info.WindowID;
         }
 
@@ -105,10 +111,18 @@ namespace Plex.Engine.GUI
             {
                 _uiman.Remove(win.Border);
                 _windows.Remove(win);
+                WindowListUpdated?.Invoke(this, EventArgs.Empty);
             }
 
         }
 
+        public WindowInfo[] WindowList
+        {
+            get
+            {
+                return _windows.ToArray();
+            }
+        }
 
         public void Initiate()
         {
@@ -139,7 +153,7 @@ namespace Plex.Engine.GUI
         }
     }
 
-    internal class WindowInfo
+    public class WindowInfo
     {
         public WindowBorder Border { get; set; }
         public int WindowID { get; set; }
@@ -192,22 +206,33 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public void Show()
+        public virtual void Show(int x = -1, int y = -1)
         {
             if (_wid == null)
                 _wid = _winsystem.CreateWindowInfo(this, _preferredStyle);
+            if(x > -1)
+            {
+                Parent.X = x;
+            }
+            if (y > -1)
+            {
+                Parent.Y = y;
+            }
             _winsystem.Show((int)_wid);
             _winsystem.SetWindowTitle((int)_wid, _title);
+            Visible = true;
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             _winsystem.Hide((int)_wid);
+            Visible = false;
         }
 
         public void Close()
         {
             _winsystem.Close((int)_wid);
+            _wid = null;
         }
 
         public int? WindowID
@@ -271,6 +296,15 @@ namespace Plex.Engine.GUI
 
         public WindowBorder(WindowSystem winsys, Window child, WindowStyle style)
         {
+            HasFocusedChanged += (o, a) =>
+            {
+                if(_windowStyle != WindowStyle.NoBorder && HasFocused == true)
+                {
+                    Manager.Remove(this, false);
+                    Manager.Add(this);
+                }
+            };
+
             _windowManager = winsys;
             _child = child;
             _windowStyle = style;

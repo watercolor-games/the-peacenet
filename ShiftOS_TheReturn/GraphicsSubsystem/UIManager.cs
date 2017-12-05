@@ -194,7 +194,7 @@ namespace Plex.Engine.GraphicsSubsystem
             if (_isShowingUI == false)
                 return;
             var mouse = Mouse.GetState();
-            foreach(var ctrl in _topLevels)
+            foreach(var ctrl in _topLevels.ToArray())
             {
                 ctrl.Update(time);
             }

@@ -19,35 +19,44 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
-            bool focused = ContainsMouse;
-            if (focused != _lastFocus)
+            float _lastOpacity = _opacityAnim;
+            if (Visible == false)
             {
-                _animState = 0;
-                _lastFocus = focused;
+                _opacityAnim = 0;
             }
-            switch (_animState)
+            else
             {
-                case 0:
-                    if (_lastFocus == true)
-                    {
-                        _opacityAnim += (float)time.ElapsedGameTime.TotalSeconds * 4;
-                        if (_opacityAnim >= 1)
+                bool focused = ContainsMouse;
+                if (focused != _lastFocus)
+                {
+                    _animState = 0;
+                    _lastFocus = focused;
+                }
+                switch (_animState)
+                {
+                    case 0:
+                        if (_lastFocus == true)
                         {
-                            _animState++;
+                            _opacityAnim += (float)time.ElapsedGameTime.TotalSeconds * 8;
+                            if (_opacityAnim >= 1)
+                            {
+                                _animState++;
+                            }
                         }
-                    }
-                    else
-                    {
-                        _opacityAnim -= (float)time.ElapsedGameTime.TotalSeconds * 3;
-                        if (_opacityAnim <= 0)
+                        else
                         {
-                            _animState++;
-                        }
+                            _opacityAnim -= (float)time.ElapsedGameTime.TotalSeconds * 8;
+                            if (_opacityAnim <= 0)
+                            {
+                                _animState++;
+                            }
 
-                    }
-                    break;
+                        }
+                        break;
+                }
             }
-            Invalidate();
+            if (_opacityAnim != _lastOpacity)
+                Invalidate();
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

@@ -17,8 +17,17 @@ namespace Plex.Engine.GUI
         private List<MenuItem> _children = new List<MenuItem>();
         private MenuItem _parent = null;
         private bool _enabled = true;
+        private int _presentX, _presentY = 0;
 
         public event EventHandler Activated;
+        
+        public bool IsOpen
+        {
+            get
+            {
+                return _open;
+            }
+        }
 
         public void CloseFromChild()
         {
@@ -26,6 +35,7 @@ namespace Plex.Engine.GUI
             {
                 Hide();
                 _parent?.CloseFromChild();
+                _open = false;
             }
         }
 
@@ -65,6 +75,18 @@ namespace Plex.Engine.GUI
             }
         }
 
+        public override void Show(int x = -1, int y = -1)
+        {
+            _open = true;
+            base.Show(x, y);
+        }
+
+        public override void Hide()
+        {
+            _open = false;
+            base.Hide();
+        }
+
         public Hitbox Hitbox
         {
             get
@@ -99,6 +121,22 @@ namespace Plex.Engine.GUI
             }
         }
 
+        public void HideRecursive()
+        {
+            foreach (var child in _children)
+                if(child.IsOpen)
+                    child.HideRecursive();
+            if(IsOpen)
+                Hide();
+        }
+
+        public void HideChildren()
+        {
+            foreach (var child in _children)
+                if(child.IsOpen)
+                    child.HideRecursive();
+        }
+
         public MenuItem(WindowSystem _winsys) : base(_winsys)
         {
             SetWindowStyle(WindowStyle.NoBorder);
@@ -108,19 +146,20 @@ namespace Plex.Engine.GUI
                 {
                     if (_open == false)
                     {
-                        Show();
+                        _parent?.HideChildren();
+                        Show(_presentX, _presentY);
                         _open = true;
                     }
                     else
                     {
-                        Hide();
+                        HideRecursive();
                         _open = false;
                     }
                 }
                 else
                 {
                     Activated?.Invoke(this, EventArgs.Empty);
-                    CloseFromChild();
+                    this._parent.CloseFromChild();
                 }
             };
         }
@@ -192,10 +231,10 @@ namespace Plex.Engine.GUI
                 item.Hitbox.X = 2;
                 item.Hitbox.Y = item.Label.Y+2;
                 item._parent = this;
-                item.X = X + Width;
-                item.Y = Y + currentY;
+                item._presentX = Parent.X + Width;
+                item._presentY = Parent.Y + currentY;
 
-                currentY += item.Hitbox.Height;
+                currentY += item.Hitbox.Height+4;
             }
 
             _hitbox.Visible = _enabled;
