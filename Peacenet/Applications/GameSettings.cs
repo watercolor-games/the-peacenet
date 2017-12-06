@@ -11,6 +11,7 @@ using Plex.Engine;
 
 namespace Peacenet.Applications
 {
+    [AppLauncher("System settings", "System")]
     public class GameSettings : Window
     {
         [Dependency]

@@ -94,6 +94,16 @@ namespace Peacenet
         [Dependency]
         private OS _os = null;
 
+        public void Reset()
+        {
+            animState = 0;
+            _alreadyPlayedIntro = false;
+            _hasEnteredMenu = false;
+            _wgRide = 0;
+            _progressFGAmount = 0;
+            _os.Shutdown();
+        }
+
         public void Initiate()
         {
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");

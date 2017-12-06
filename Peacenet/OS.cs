@@ -322,6 +322,15 @@ namespace Peacenet
             _startingDesktop.Y = (int)MathHelper.Lerp(startYMin, startYMax, _startingDesktop.Opacity);
         }
 
+        public void Shutdown()
+        {
+            _previouslyRide = 0;
+            _statusIndex = -1;
+            _peacenetScaleAnim = 0;
+            _startupRide = 0;
+            _save.EndSession();
+        }
+
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
         }

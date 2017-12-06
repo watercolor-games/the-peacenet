@@ -37,8 +37,17 @@ namespace Peacenet
         [Dependency]
         private InfoboxManager _infobox = null;
 
+        [Dependency]
+        private SplashScreenComponent _splash = null;
+
+        [Dependency]
+        private AppLauncherManager _applaunchermgr = null;
+
+        private WindowSystem winsys = null; //why isn't the current winmgr a property of all Window objects
+
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
             _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage");
             _topPanel = new DesktopPanel();
@@ -70,33 +79,71 @@ namespace Peacenet
                 }
             };
             _applauncher.Visible = false;
-            for(int i = 0; i < 3; i++)
-            {
-                var item = new MenuItem(_winsys);
-                item.Text = $"Item {i + 1}";
-                _applauncher.AddItem(item);
-                for(int j = 0; j < 3; j++)
-                {
-                    var subitem = new MenuItem(_winsys);
-                    subitem.Text = $"Subitem {j + 1}";
-                    subitem.Activated += Subitem_Activated;
-                    item.AddItem(subitem);
-                }
-            }
-
+            
             _bottomPanel.AddChild(_windowList);
 
+            ResetAppLauncher(_winsys);
             ResetWindowList(_winsys);
-            _winsys.WindowListUpdated += (o, a) =>
-            {
-                ResetWindowList(_winsys);
-            };
+            _winsys.WindowListUpdated += WindowSystemUpdated;
         }
 
-        private void Subitem_Activated(object sender, EventArgs e)
+        public void WindowSystemUpdated (object o, EventArgs a)
         {
-            _infobox.Show("Menu item clicked", "You clicked a menu item.");
+            ResetWindowList((WindowSystem)o);
         }
+
+        public void ResetAppLauncher(WindowSystem winsys)
+        {
+            _applauncher.ClearItems();
+            bool catAdded = false;
+            foreach (var cat in _applaunchermgr.GetAllCategories())
+            {
+                catAdded = true;
+                var catitem = new MenuItem(winsys);
+                catitem.Text = cat;
+                bool itemAdded = false;
+                foreach (var item in _applaunchermgr.GetAllInCategory(cat))
+                {
+                    itemAdded = true;
+                    var subitem = new MenuItem(winsys);
+                    subitem.Text = item.Attribute.Name;
+                    subitem.Activated += (o, a) =>
+                    {
+                        var win = (Window)Activator.CreateInstance(item.WindowType, new object[] { winsys });
+                        win.Show();
+                    };
+                    catitem.AddItem(subitem);
+                }
+                if(itemAdded == false)
+                {
+                    var noitems = new MenuItem(winsys);
+                    noitems.Text = "No items found";
+                    catitem.AddItem(noitems);
+                }
+                _applauncher.AddItem(catitem);
+            }
+            if(catAdded == false)
+            {
+                var noitems = new MenuItem(winsys);
+                noitems.Text = "No items found";
+                _applauncher.AddItem(noitems);
+
+            }
+            var shutdown = new MenuItem(winsys);
+            shutdown.Activated += (o, a) =>
+            {
+                _infobox.ShowYesNo("End Session", "Are you sure you'd like to end your Peacegate session?", (answer) =>
+                {
+                    if (answer)
+                    {
+                        _animState = 3;
+                    }
+                });
+            };
+            shutdown.Text = "Shut down";
+            _applauncher.AddItem(shutdown);
+        }
+
 
         protected override void OnUpdate(GameTime time)
         {
@@ -115,6 +162,27 @@ namespace Peacenet
                     {
                         _animState++;
                     }
+                    break;
+                case 3:
+                    _panelAnim -= (float)time.ElapsedGameTime.TotalSeconds * 3;
+                    if (_panelAnim <= 0)
+                    {
+                        _animState++;
+                    }
+
+                    break;
+                case 4:
+                    _scaleAnim -= (float)time.ElapsedGameTime.TotalSeconds * 3;
+                    if (_scaleAnim <= 0)
+                    {
+                        _animState++;
+                    }
+
+                    break;
+                case 5:
+                    winsys.WindowListUpdated -= WindowSystemUpdated;
+                    Close();
+                    _splash.Reset();
                     break;
             }
             Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);

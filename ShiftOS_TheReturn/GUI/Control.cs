@@ -483,10 +483,18 @@ namespace Plex.Engine.GUI
                     _invalidated = true;
             }
             OnUpdate(time);
-            foreach (var child in _children)
+            if (_children == null)
+                return;
+            if (_disposed)
+                return;
+            try
             {
-                child.Update(time);
+                foreach (var child in _children)
+                {
+                    child.Update(time);
+                }
             }
+            catch { }
         }
 
 

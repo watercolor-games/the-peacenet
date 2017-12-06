@@ -175,7 +175,7 @@ namespace Peacenet
 
             Height = 15 + contentHeight + 15 + _ok.Height + 15;
 
-            _ok.Y = this.Height - _ok.Height - 10;
+            _ok.Y = this.Height - Math.Max(_ok.Height, _yes.Height) - 10;
             _ok.X = (Width - _ok.Width) / 2;
 
             int yesNoWidth = _yes.Width + _no.Width + 5;

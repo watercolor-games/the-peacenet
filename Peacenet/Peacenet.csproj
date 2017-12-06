@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppLauncherManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Cutscene\CreditsScene.cs" />
     <Compile Include="Cutscene\IntroScene.cs" />
