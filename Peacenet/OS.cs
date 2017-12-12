@@ -22,15 +22,11 @@ namespace Peacenet
     public class OS : IEngineComponent
     {
         [Dependency]
-        private CutsceneManager _cutscene = null;
-        [Dependency]
         private UIManager _ui = null;
         [Dependency]
         private SaveManager _save = null;
         [Dependency]
         private WindowSystem _winmgr = null;
-        [Dependency]
-        private InfoboxManager _infobox = null;
         [Dependency]
         private Plexgate _plexgate = null;
         [Dependency]

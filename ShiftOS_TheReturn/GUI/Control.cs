@@ -141,9 +141,9 @@ namespace Plex.Engine.GUI
             set
             {
                 value = Math.Max(1, value);
-                if (value == _minHeight)
+                if (value == _maxHeight)
                     return;
-                _minHeight = value;
+                _maxHeight = value;
                 Height = Height;
             }
         }

@@ -22,7 +22,6 @@ namespace Plex.Engine.DebugConsole
         private StreamReader _stdin = null;
         private DebugConsole _host = null;
         private string _textBuffer = "";
-        private int _textBufferPos = 0;
         private int _charX = 0;
         private int _charY = 0;
         private int _charWidth = 0;

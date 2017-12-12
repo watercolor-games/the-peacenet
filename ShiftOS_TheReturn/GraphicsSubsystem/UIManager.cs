@@ -132,7 +132,7 @@ namespace Plex.Engine.GraphicsSubsystem
                 Logger.Log("Using native text renderer.", LogType.Info, "ui");
                 //TextRenderer.Init(new WindowsFormsTextRenderer());
             }
-            catch(Exception ex)
+            catch
             {
                 TextRenderer.Init(new GdiPlusTextRenderer());
                 Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");

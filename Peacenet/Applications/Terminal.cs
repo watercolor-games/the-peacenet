@@ -103,10 +103,15 @@ namespace Peacenet.Applications
         {
             while (true)
             {
+                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
                 console.Write("shell> ");
                 try
                 {
-                    _terminal.RunCommand(console.ReadLine(), console);
+                    if (!_terminal.RunCommand(console.ReadLine(), console))
+                    {
+                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
+                        console.WriteLine("Command not found.");
+                    }
                 }
                 catch (Exception ex)
                 {

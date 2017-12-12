@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plex.Objects;
+using Plex.Engine.Server;
+using System.IO;
 
 namespace Plex.Engine.TerminalCommands
 {
@@ -41,7 +43,7 @@ namespace Plex.Engine.TerminalCommands
             console.WriteLine("Command help");
             console.WriteLine("------------------");
             console.WriteLine("");
-            foreach(var command in _terminal.GetCommandList())
+            foreach(var command in _terminal.GetCommandList().OrderBy(x=>x.Name))
             {
                 console.Write($" - {command.Name}");
                 if(!string.IsNullOrWhiteSpace(command.Description))
@@ -60,6 +62,9 @@ namespace Plex.Engine.TerminalCommands
     {
         [Dependency]
         private TerminalManager _terminal = null;
+        
+        [Dependency]
+        private AsyncServerManager _server = null;
 
         public string Description
         {
@@ -89,9 +94,29 @@ namespace Plex.Engine.TerminalCommands
         {
             string command = arguments["<command>"].ToString();
             var commandDescriptor = _terminal.GetCommandList().FirstOrDefault(x => x.Name == command);
-            if(commandDescriptor == null)
+            if(commandDescriptor == null || commandDescriptor?.ManPage == null)
             {
-                console.WriteLine("Manpage not found.");
+                if (_server.Connected)
+                {
+                    using(var memstr = new MemoryStream())
+                    {
+                        using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
+                        {
+                            writer.Write(command);
+                            _server.SendMessage(ServerMessageType.TRM_MANPAGE, memstr.ToArray(), (res, reader) =>
+                            {
+                                if(res == ServerResponseType.REQ_SUCCESS)
+                                {
+                                    console.WriteLine(reader.ReadString());
+                                }
+                            }).Wait();
+                        }
+                    }
+                }
+                else
+                {
+                    console.WriteLine("No manpage found for this command.");
+                }
                 return;
             }
             console.WriteLine(commandDescriptor.ManPage);

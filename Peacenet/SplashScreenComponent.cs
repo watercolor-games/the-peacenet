@@ -15,6 +15,7 @@ using Peacenet.Applications;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Cutscene;
 using Plex.Engine.Saves;
+using Plex.Engine.Server;
 
 namespace Peacenet
 {
@@ -34,6 +35,13 @@ namespace Peacenet
 
         [Dependency]
         private CutsceneManager _cutscene = null;
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
+        [Dependency]
+        private AsyncServerManager _server = null;
+
 
         private SoundEffect _andersJensenDreamsInc = null;
         private SoundEffectInstance _dreamsIncInstance = null;
@@ -131,6 +139,21 @@ namespace Peacenet
 
                 _settingsApp.Show();
 
+            };
+            _hbMultiplayer.Click += (o, a) =>
+            {
+                _infobox.PromptText("Connect to server", "Please enter a hostname and port for a server to connect to.", (address) =>
+                {
+                    if (address.Split(':').Length == 1)
+                        address += ":3251";
+                    _server.Connect(address, () =>
+                    {
+                        _infobox.Show("Connection successful.", $"You have established a TCP connection to {address} :D");
+                    }, (error) =>
+                    {
+                        _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
+                    });
+                });
             };
             _hbSingleplayer.Click += (o,a) =>
             {

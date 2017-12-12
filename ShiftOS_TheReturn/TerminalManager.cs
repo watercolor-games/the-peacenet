@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using System.IO;
+using Plex.Engine.Server;
+using Newtonsoft.Json;
 
 namespace Plex.Engine
 {
@@ -19,6 +21,9 @@ namespace Plex.Engine
 
         [Dependency]
         private Plexgate _plexgate = null;
+
+        [Dependency]
+        private AsyncServerManager _server = null;
 
         public void Initiate()
         {
@@ -81,7 +86,23 @@ namespace Plex.Engine
 
         public IEnumerable<CommandDescriptor> GetCommandList()
         {
-            foreach(var cmd in _localCommands.OrderBy(x => x.Name))
+            CommandDescriptor[] cmds = null;
+            if (_server.Connected)
+            {
+                _server.SendMessage(ServerMessageType.TRM_GETCMDS, null, (res, reader) =>
+                {
+                    int len = reader.ReadInt32();
+
+                    cmds = new CommandDescriptor[len];
+                    for(int i = 0; i < len; i++)
+                    {
+                        cmds[i] = new CommandDescriptor(reader.ReadString(), reader.ReadString(), null);
+                    }
+                }).Wait();
+                foreach (var cmd in cmds)
+                    yield return cmd;
+            }
+            foreach (var cmd in _localCommands)
             {
                 yield return new CommandDescriptor(cmd.Name, cmd.Description, _usages[cmd.Name]);
             }
@@ -99,8 +120,31 @@ namespace Plex.Engine
             //If this is null we'll send it off to the server. Well, I haven't implemented the server yet so we'll just return false.
             if(local == null)
             {
-                //TODO: Server-side commands.
-                return false;
+                if (!_server.Connected)
+                    return false;
+                using(var memstr = new MemoryStream())
+                {
+                    using(var writer = new BinaryWriter(memstr, Encoding.UTF8))
+                    {
+                        writer.Write(JsonConvert.SerializeObject(new
+                        {
+                            cmd = query.Name,
+                            args = query.ArgumentTokens,
+                            sessionfwd = ""
+                        }));
+                        writer.Flush();
+                        _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
+                        {
+                            string output;
+                            while((output = reader.ReadString()) != "\u0013\u0014")
+                            {
+                                console.Write(output);
+                            }
+                            console.WriteLine("");
+                        }).Wait();
+                    }
+                }
+                return true;
             }
             else
             {
