@@ -18,6 +18,7 @@ using Plex.Engine.Interfaces;
 using System.Reflection;
 using Plex.Engine.DebugConsole;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Plex.Engine
 {
@@ -193,12 +194,20 @@ namespace Plex.Engine
         private List<ComponentInfo> _components = new List<ComponentInfo>();
         private GraphicsContext _ctx = null;
 
+        private SplashScreen _splash = null;
+        private Task _splashJob = null;
+
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
         public RenderTarget2D GameRenderTarget = null;
         private KeyboardListener keyboardListener = new KeyboardListener();
         public Plexgate()
         {
+            _splashJob = Task.Run(() =>
+            {
+                _splash = new SplashScreen();
+                System.Windows.Forms.Application.Run(_splash);
+            });
             if (_instance != null)
                 throw new InvalidOperationException("Plexgate is already running! You cannot create multiple instances of Plexgate at the same time in one process. Instead, please let the already-running instance shut down fully.");
             graphicsDevice = new GraphicsDeviceManager(this);
@@ -257,7 +266,10 @@ namespace Plex.Engine
         {
             _instance = this;
             Logger.Log("Beginning engine initialization.");
-            foreach(var type in ReflectMan.Types.Where(x=>x.GetInterfaces().Contains(typeof(IEngineComponent))))
+            _splash.SetProgress(0, 100, "Looking for modules...");
+            _splash.SetProgressType(System.Windows.Forms.ProgressBarStyle.Marquee);
+            List<Type> typesToInit = new List<Type>();
+            foreach (var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(IEngineComponent))))
             {
                 if (type.GetConstructor(Type.EmptyTypes) == null)
                 {
@@ -265,6 +277,12 @@ namespace Plex.Engine
                     continue;
                 }
                 Logger.Log($"Found {type.Name}", LogType.Info, "moduleloader");
+                _splash.SetProgress(0, 100, $"Found module: {type.FullName} [{typesToInit.Count + 1}]");
+                typesToInit.Add(type);
+            }
+            foreach (var type in typesToInit)
+            {
+                _splash.SetProgress(typesToInit.IndexOf(type), typesToInit.Count, $"Loading module: {type.FullName} [{_components.Count + 1}]");
                 var componentInfo = new ComponentInfo
                 {
                     IsInitiated = false,
@@ -283,6 +301,10 @@ namespace Plex.Engine
                 RecursiveInit(component.Component);
             }
             Logger.Log("Done initiating engine.");
+            _splash.Invoke(new Action(() =>
+            {
+                _splash.Close();
+            }));
             base.Initialize();
         }
 
