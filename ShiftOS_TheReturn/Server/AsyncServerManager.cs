@@ -18,12 +18,15 @@ namespace Plex.Engine.Server
 {
     public class AsyncServerManager : IEngineComponent
     {
+        [Dependency]
+        private WatercolorAPIManager _api = null;
+
         private List<ServerInformation> _serverInfo = new List<ServerInformation>();
         private TcpClient _tcpClient = null;
         private BinaryReader _reader = null;
         private BinaryWriter _writer = null;
         private string _session = "";
-
+        private Action<string> _onConnectionError;
         private bool _isMultiplayer = false;
 
         public bool Connected
@@ -92,19 +95,27 @@ namespace Plex.Engine.Server
                     }
 
                     ServerResponseType response = (ServerResponseType)remoteResponse;
-                    if (remoteLen > 0)
+                    if (response == ServerResponseType.REQ_LOGINREQUIRED)
                     {
-                        using(var memstr = new MemoryStream(remoteBody))
-                        {
-                            using (var memreader = new BinaryReader(memstr, Encoding.UTF8))
-                            {
-                                onResponse?.Invoke(response, memreader);
-                            }
-                        }
+                        _onConnectionError?.Invoke("A Watercolor API error occurred on the server and you have lost connection as a result.");
+                        Disconnect();
                     }
                     else
                     {
-                        onResponse?.Invoke(response, null);
+                        if (remoteLen > 0)
+                        {
+                            using (var memstr = new MemoryStream(remoteBody))
+                            {
+                                using (var memreader = new BinaryReader(memstr, Encoding.UTF8))
+                                {
+                                    onResponse?.Invoke(response, memreader);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            onResponse?.Invoke(response, null);
+                        }
                     }
                 }
             });
@@ -121,9 +132,13 @@ namespace Plex.Engine.Server
             {
                 try
                 {
+                    _onConnectionError = onError;
                     if (_tcpClient != null)
                         if (_tcpClient.Connected)
                             throw new InvalidOperationException("Cannot connect to server while an active connection is open!");
+                    if (_api.LoggedIn == false)
+                        throw new InvalidOperationException("Cannot connect to a multiplayer server without a Watercolor account.");
+                    _session = _api.Token;
                     string[] sp = address.Split(':');
                     if (sp.Length != 2) throw new FormatException("The address string was not in the correct format (host:port)");
                     var lookup = Dns.GetHostEntry(sp[0]);
@@ -148,6 +163,7 @@ namespace Plex.Engine.Server
                 catch (Exception ex)
                 {
                     onError?.Invoke(ex.Message);
+                    Disconnect();
                 }
             });
 

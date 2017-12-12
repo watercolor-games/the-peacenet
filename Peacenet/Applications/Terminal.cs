@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plex.Objects;
+using Plex.Engine.Server;
 
 namespace Peacenet.Applications
 {
@@ -75,6 +76,9 @@ namespace Peacenet.Applications
         [Dependency]
         private TerminalManager _terminal = null;
 
+        [Dependency]
+        private WatercolorAPIManager _Api = null;
+
         public string Description
         {
             get
@@ -101,10 +105,15 @@ namespace Peacenet.Applications
 
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
+            string user = "user";
             while (true)
             {
+                if (_Api.LoggedIn)
+                    user = _Api.User.username;
+                else
+                    user = "user";
                 console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                console.Write("shell> ");
+                console.Write($"{user}@127.0.0.1:~$ ");
                 try
                 {
                     if (!_terminal.RunCommand(console.ReadLine(), console))

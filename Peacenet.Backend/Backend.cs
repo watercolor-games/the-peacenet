@@ -92,6 +92,32 @@ namespace Peacenet.Backend
             _tcpthread.IsBackground = true;
         }
 
+        private string getWatercolorId(string token)
+        {
+            string uid = null;
+            var wr = WebRequest.Create("https://getshiftos.net/users/getid");
+            wr.ContentType = "text/plain";
+            wr.Method = "GET";
+            wr.Headers.Add("Authentication: " + token);
+            try
+            {
+                using (var res = wr.GetResponse())
+                {
+                    using (var str = res.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(str))
+                        {
+                            return uid;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
 
         private void ListenThread()
         {
@@ -119,7 +145,7 @@ namespace Peacenet.Backend
                         if (len > 0)
                             content = reader.ReadBytes(len);
                         byte[] returncontent = new byte[] { };
-                        var result = delegator.HandleMessage(this, (ServerMessageType)mtype, session, content, out returncontent);
+                        var result = delegator.HandleMessage(this, (ServerMessageType)mtype, getWatercolorId(session), content, out returncontent);
 
                         writer.Write(muid);
                         writer.Write((int)result);

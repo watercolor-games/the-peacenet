@@ -49,11 +49,9 @@ namespace Peacenet.Backend
                 bool sessionRequired = handler.GetType().GetCustomAttributes(false).FirstOrDefault(x => x is RequiresSessionAttribute) != null;
                 if (sessionRequired)
                 {
-                    var sessionmgr = backend.GetBackendComponent<SessionManager>();
-                    if (sessionmgr.GetUserFromSession(session_id) == null)
+                    if(string.IsNullOrWhiteSpace(session_id))
                     {
-                        Logger.Log("Authentication required but no session token provided. Sending auth error.");
-                        returndgram = new byte[] { };
+                        returndgram = new byte[0];
                         return ServerResponseType.REQ_LOGINREQUIRED;
                     }
                 }

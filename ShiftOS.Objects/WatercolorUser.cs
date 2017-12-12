@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Plex.Objects
 {
-    class WatercolorUser
+    public class WatercolorUser
     {
+        public string email { get; set; }
+        public string username { get; set; }
+        public string fullname { get; set; }
+        public string about { get; set; }
     }
 }

@@ -182,6 +182,7 @@
     </Compile>
     <Compile Include="Saves\SaveManager.cs" />
     <Compile Include="Server\AsyncServerManager.cs" />
+    <Compile Include="Server\WatercolorAPIManager.cs" />
     <Compile Include="SplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>

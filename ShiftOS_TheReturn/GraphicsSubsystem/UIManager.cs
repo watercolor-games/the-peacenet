@@ -142,7 +142,7 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
-            foreach (var ctrl in _topLevels)
+            foreach (var ctrl in _topLevels.ToArray())
             {
                 if (!ctrl.Visible)
                     continue;

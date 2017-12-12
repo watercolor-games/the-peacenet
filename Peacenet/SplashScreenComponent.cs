@@ -82,6 +82,13 @@ namespace Peacenet
         private Label _lbMultiplayer = null;
         private Label _lbSettings = null;
 
+        private Label _username = null;
+        private Label _realname = null;
+        private Button _wgButton = null;
+
+        [Dependency]
+        private WatercolorAPIManager _api = null;
+
 
         //Anim values for menu items
         private float _spSlideUp = 0.0F;
@@ -101,6 +108,8 @@ namespace Peacenet
 
         [Dependency]
         private OS _os = null;
+
+        private float _wgUserFadeIn = 0;
 
         public void Reset()
         {
@@ -130,6 +139,18 @@ namespace Peacenet
             _uimanager.Add(_hbSingleplayer);
             _uimanager.Add(_hbMultiplayer);
 
+            _username = new Label();
+            _realname = new Label();
+            _wgButton = new Button();
+            _username.AutoSize = true;
+            _username.FontStyle = TextFontStyle.Header3;
+            _realname.AutoSize = true;
+            _realname.FontStyle = TextFontStyle.System;
+
+            _uimanager.Add(_username);
+            _uimanager.Add(_realname);
+            _uimanager.Add(_wgButton);
+
             _settingsApp = new GameSettings(_windowManager);
 
             _hbSettings.Click += (o, a) =>
@@ -157,7 +178,7 @@ namespace Peacenet
             };
             _hbSingleplayer.Click += (o,a) =>
             {
-                if (animState < 16)
+                if (animState < 17)
                 {
                     var savefiles = _saveManager.GetSavePaths();
                     if(savefiles.Length < 1)
@@ -168,7 +189,7 @@ namespace Peacenet
                     {
                         _saveManager.StartSinglePlayerSession(savefiles[0]);
                     }
-                    animState = 16;
+                    animState = 17;
                 }
 
             };
@@ -353,6 +374,9 @@ namespace Peacenet
                     _hbSettings.Visible = false;
                     _hbMultiplayer.Visible = false;
                     _credits.Visible = false;
+                    _wgButton.Visible = false;
+                    _username.Visible = false;
+                    _realname.Visible = false;
                     _wgFade += (float)(time.ElapsedGameTime.TotalSeconds*2.5);
                     if(_wgFade >= 1)
                     {
@@ -433,6 +457,9 @@ namespace Peacenet
                     _lbSingleplayer.Visible = true;
                     _lbMultiplayer.Visible = true;
                     _lbSettings.Visible = true;
+                    _realname.Visible = true;
+                    _username.Visible = true;
+                    _wgButton.Visible = true;
                     animState++;
                     break;
                 case 14: //End Menu animation.
@@ -443,7 +470,21 @@ namespace Peacenet
                         _credits.Visible = true;
                     }
                     break;
-                case 16: //Start Menu Unload Animation.
+                case 15:
+                    _wgUserFadeIn += (float)time.ElapsedGameTime.TotalSeconds * 8;
+                    if (_wgUserFadeIn >= 1)
+                    {
+                        animState++;
+                    }
+                    break;
+                case 17:
+                    _wgUserFadeIn -= (float)time.ElapsedGameTime.TotalSeconds * 8;
+                    if (_wgUserFadeIn <= 0)
+                    {
+                        animState++;
+                    }
+                    break;
+                case 18: //Start Menu Unload Animation.
                     _menuLabelOpacity -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_menuLabelOpacity <= 0)
                     {
@@ -455,29 +496,31 @@ namespace Peacenet
                         _lbSingleplayer.Visible = false;
                         _lbMultiplayer.Visible = false;
                         _lbSettings.Visible = false;
-
+                        _username.Visible = false;
+                        _realname.Visible = false;
+                        _wgButton.Visible = false;
                     }
 
                     break;
-                case 17:
+                case 19:
                     _spSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_spSlideUp <= 0)
                         animState++;
 
                     break;
-                case 18:
+                case 20:
                     _mpSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_mpSlideUp <= 0)
                         animState++;
 
                     break;
-                case 19:
+                case 21:
                     _seSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_seSlideUp <= 0)
                         animState++;
 
                     break;
-                case 20:
+                case 22:
                     float bgmVolume = _dreamsIncInstance.Volume;
                     bgmVolume = MathHelper.Clamp(bgmVolume - (float)time.ElapsedGameTime.TotalSeconds * 4, 0, 1);
                     _dreamsIncInstance.Volume = bgmVolume;
@@ -488,7 +531,7 @@ namespace Peacenet
                         animState++;
                     }
                     break;
-                case 21:
+                case 23:
                     _dreamsIncInstance.Stop();
                     _mainSongInstance.Stop();
                     _introInstance.Stop();
@@ -544,6 +587,38 @@ namespace Peacenet
 
             _credits.X = 15;
             _credits.Y = (_uimanager.ScreenHeight - _credits.Height) - 15;
+
+            int _userYMax = _lbMultiplayer.Y + _lbMultiplayer.Height + 30;
+            int _userYMin = _userYMax + (int)(_uimanager.ScreenHeight * 0.1);
+            _username.Opacity = _wgUserFadeIn;
+            _username.Y = (int)MathHelper.Lerp(_userYMin, _userYMax, _wgUserFadeIn);
+            _realname.Opacity = _wgUserFadeIn;
+            _realname.Y = _username.Y + _username.Height;
+            _wgButton.Opacity = _wgUserFadeIn;
+            _wgButton.Y = _realname.Y + _realname.Height;
+            _username.X = (_uimanager.ScreenWidth - _username.Width) / 2;
+            _realname.X = (_uimanager.ScreenWidth - _realname.Width) / 2;
+            _wgButton.X = (_uimanager.ScreenWidth - _wgButton.Width) / 2;
+            if (_api.LoggedIn)
+            {
+                if (string.IsNullOrWhiteSpace(_api.User.fullname))
+                {
+                    _username.Text = _api.User.username;
+                    _realname.Text = "";
+                }
+                else
+                {
+                    _username.Text = _api.User.fullname;
+                    _realname.Text = _api.User.username;
+                }
+                _wgButton.Text = "Log out";
+            }
+            else
+            {
+                _username.Text = "Not signed in";
+                _realname.Text = "Sign into Watercolor Games to get the most out of The Peacenet. Signing in is required for multiplayer.";
+                _wgButton.Text = "Sign in";
+            }
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
