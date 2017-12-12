@@ -219,16 +219,49 @@ namespace Peacenet.Applications
             base.OnKeyEvent(e);
         }
 
+        private void parseEscape(string seq, GraphicsContext gfx)
+        {
+            switch (seq)
+            {
+                case "c":
+                    gfx.Clear(Color.Black);
+                    _charX = 0;
+                    _charY = 0;
+                    _recalcScroll = true;
+                    break;
+            }
+        }
+
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Black);
             _charX = 0;
             _charY = 0;
+            bool escaped = false;
+            string escSeq = "";
             int _lastCharX = -1;
             int _lastCharY = -1;
             for (int i = 0; i < _textBuffer.Length; i++)
             {
                 char c = _textBuffer[i];
+                if (c == 0x1B)
+                {
+                    escaped = !escaped;
+                    if (escaped == true)
+                    {
+                        escSeq = "";
+                    }
+                    else
+                    {
+                        parseEscape(escSeq, gfx);
+                    }
+                    continue;
+                }
+                if (escaped)
+                {
+                    escSeq += c;
+                    continue;
+                }
                 switch (c)
                 {
                     case '\r':

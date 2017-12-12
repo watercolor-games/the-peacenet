@@ -210,4 +210,37 @@ namespace Plex.Engine
         public string Description { get; private set; }
         public string ManPage { get; private set; }
     }
+
+
+    public class ClearCommand : ITerminalCommand
+    {
+        public string Description
+        {
+            get
+            {
+                return "Clears the screen";
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "clear";
+            }
+        }
+
+        public IEnumerable<string> Usages
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public void Run(ConsoleContext console, Dictionary<string, object> arguments)
+        {
+            console.Clear();
+        }
+    }
 }
