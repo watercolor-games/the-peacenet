@@ -181,6 +181,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Saves\SaveManager.cs" />
+    <Compile Include="TerminalCommands\HelpCommand.cs" />
+    <Compile Include="TerminalManager.cs" />
     <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
     <Compile Include="TextRenderers\NativeTextRenderer.cs" />
     <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />

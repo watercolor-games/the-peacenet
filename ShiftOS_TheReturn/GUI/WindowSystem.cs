@@ -229,7 +229,7 @@ namespace Plex.Engine.GUI
             Visible = false;
         }
 
-        public void Close()
+        public virtual void Close()
         {
             _winsystem.Close((int)_wid);
             _wid = null;

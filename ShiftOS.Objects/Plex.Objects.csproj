@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandParser.cs" />
+    <Compile Include="CommandQuery.cs" />
     <Compile Include="FFI\DotNet.cs" />
     <Compile Include="FFI\IFFI.cs" />
     <Compile Include="Hacking\Loot.cs" />
@@ -62,7 +63,6 @@
     <Compile Include="Hacking\Exploit.cs" />
     <Compile Include="Hacking\Hackable.cs" />
     <Compile Include="Hacking\Puzzle.cs" />
-    <Compile Include="IRCNetwork.cs" />
     <Compile Include="PlexFS\EntryType.cs" />
     <Compile Include="PlexFS\OpenMode.cs" />
     <Compile Include="PlexFS\PlexFAT.cs" />
