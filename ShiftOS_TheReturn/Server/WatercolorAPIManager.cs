@@ -13,6 +13,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 using Plex.Objects;
+using System.Threading;
 
 namespace Plex.Engine.Server
 {
@@ -21,7 +22,9 @@ namespace Plex.Engine.Server
         [Dependency]
         private ConfigManager _config = null;
         private string _apiKey = "";
+        private string _sessionToken = "";
         private string _baseUrl = "https://getshiftos.net/api";
+        private bool _offline = false;
 
         [Dependency]
         private WindowSystem _winsys = null;
@@ -32,7 +35,70 @@ namespace Plex.Engine.Server
         {
             _apiKey = _config.GetValue("wgApiKey", _apiKey);
             _baseUrl = _config.GetValue("wgApiBaseUrl", _baseUrl);
-            queryForUser();
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    queryForSession(queryForUser, () =>
+    {
+        _offline = true;
+        _sessionToken = "";
+    });
+                    Thread.Sleep(120000);
+                }
+            });
+        }
+
+        private void queryForSession(Action completed, Action error)
+        {
+            if(!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                error?.Invoke();
+                return;
+            }
+            try
+            {
+                if (string.IsNullOrWhiteSpace(_sessionToken))
+                {
+                    var wr = WebRequest.Create($"{_baseUrl}/sessions/grant");
+                    wr.Method = "GET";
+                    wr.ContentType = "text/plain";
+                    using (var req = wr.GetResponse())
+                    {
+                        using (var stream = req.GetResponseStream())
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                _sessionToken = reader.ReadToEnd();
+                                completed?.Invoke();
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    var wr = WebRequest.Create($"{_baseUrl}/sessions/heyimstillhere");
+                    wr.Method = "GET";
+                    wr.ContentType = "text/plain";
+                    wr.Headers.Add("Authorization: " + _sessionToken);
+                    using (var req = wr.GetResponse())
+                    {
+                        using (var stream = req.GetResponseStream())
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                completed?.Invoke();
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch
+            {
+                error?.Invoke();
+            }
         }
 
         private void queryForUser()
@@ -42,6 +108,7 @@ namespace Plex.Engine.Server
             wr.ContentType = "text/plain";
             wr.Method = "GET";
             wr.Headers.Add("Authentication: " + _apiKey);
+            wr.Headers.Add("Authorization: " + _sessionToken);
             try
             {
                 using (var res = wr.GetResponse())
@@ -59,6 +126,8 @@ namespace Plex.Engine.Server
                     var ur = WebRequest.Create(_baseUrl + "/users/" + uid);
                     ur.Method = "GET";
                     ur.ContentType = "application/json";
+                    ur.Headers.Add("Authorization: " + _sessionToken);
+
                     using (var res = ur.GetResponse())
                     {
                         using (var str = res.GetResponseStream())
@@ -114,6 +183,7 @@ namespace Plex.Engine.Server
                 var wr = WebRequest.Create(_baseUrl + "/users/register");
                 wr.Method = "POST";
                 wr.ContentType = "application/json";
+                wr.Headers.Add("Authorization: " + _sessionToken);
                 using (var req = await wr.GetRequestStreamAsync())
                 {
                     using (var writer = new StreamWriter(req))
@@ -145,13 +215,14 @@ namespace Plex.Engine.Server
                 var wr = WebRequest.Create(_baseUrl + "/users/login");
                 wr.Method = "POST";
                 wr.ContentType = "application/json";
+                wr.Headers.Add("Authorization: " + _sessionToken);
                 using (var req = await wr.GetRequestStreamAsync())
                 {
                     using (var writer = new StreamWriter(req))
                     {
                         writer.Write(JsonConvert.SerializeObject(new
                         {
-                            username = username,
+                            email = username,
                             password = password
                         }));
                     }
@@ -165,6 +236,7 @@ namespace Plex.Engine.Server
                             _apiKey = reader.ReadToEnd();
                             _config.SetValue("wgApiKey", _apiKey);
                             _config.SaveToDisk();
+                            queryForUser();
                         }
                     }
                 }

@@ -16,8 +16,24 @@ namespace Plex.Engine.GUI
         private int _index = 0;
         private int _drawOffset = 0;
         private int _caretX = 0;
+        private bool _hasPassword = false;
 
         public event EventHandler TextChanged;
+
+        public bool HasPassword
+        {
+            get
+            {
+                return _hasPassword;
+            }
+            set
+            {
+                if (_hasPassword == value)
+                    return;
+                _hasPassword = value;
+                Invalidate();
+            }
+        }
 
         public string Text
         {
@@ -62,16 +78,18 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
-            if(_lastText != _text)
+            string displayText = (_hasPassword) ? "*".Repeat(_text.Length) : _text;
+
+            if(_lastText != displayText)
             {
-                _lastText = _text;
+                _lastText = displayText;
                 TextChanged?.Invoke(this, EventArgs.Empty);
             }
 
             var hashMeasure = TextRenderer.MeasureText("#", _drawFont, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None);
             Height = Math.Max((int)hashMeasure.Y + 4, Height);
 
-            if (string.IsNullOrEmpty(_text))
+            if (string.IsNullOrEmpty(displayText))
             {
                 if (_drawOffset != 0)
                 {
@@ -79,7 +97,7 @@ namespace Plex.Engine.GUI
                     Invalidate();
                 }
             }
-            string toCaret = _text.Substring(0, _index);
+            string toCaret = displayText.Substring(0, _index);
             var measure = TextRenderer.MeasureText(toCaret, _drawFont, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None);
             if (_caretX != (int)measure.X)
             {
@@ -104,6 +122,17 @@ namespace Plex.Engine.GUI
         {
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
             {
+                return;
+            }
+            if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Microsoft.Xna.Framework.Input.Keys.V)
+            {
+                string cbText = Manager.GetClipboardText();
+                cbText = cbText?.Replace("\r", "").Replace("\n", "").Replace("\t", "");
+                if (!string.IsNullOrEmpty(cbText))
+                {
+                    Text = Text.Insert(_index, cbText);
+                    _index += cbText.Length;
+                }
                 return;
             }
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Left)
@@ -165,7 +194,7 @@ namespace Plex.Engine.GUI
             }
             else
             {
-                gfx.DrawString(_text, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.TopLeft, int.MaxValue, TextRenderers.WrapMode.None);
+                gfx.DrawString(_lastText, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.TopLeft, int.MaxValue, TextRenderers.WrapMode.None);
                 
             }
             if (IsFocused)
@@ -174,5 +203,18 @@ namespace Plex.Engine.GUI
             }
         }
 
+    }
+
+    public static class StringExtensions
+    {
+        public static string Repeat(this string str, int amount)
+        {
+            string nstr = "";
+            for(int i = 0; i < amount;i++)
+            {
+                nstr += str;
+            }
+            return nstr;
+        }
     }
 }

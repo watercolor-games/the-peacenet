@@ -123,6 +123,13 @@ namespace Plex.Engine.GraphicsSubsystem
 
         }
 
+        public string GetClipboardText()
+        {
+            if (System.Windows.Forms.Clipboard.ContainsText() == false)
+                return null;
+            return System.Windows.Forms.Clipboard.GetText();
+        }
+
         public void Initiate()
         {
             Logger.Log("Loading text renderer...", LogType.Info, "ui");

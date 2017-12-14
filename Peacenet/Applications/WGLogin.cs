@@ -43,6 +43,10 @@ namespace Peacenet.Applications
             _username = new TextBox();
             _password = new TextBox();
 
+            _username.Label = "user@example.com";
+            _password.Label = "Password here";
+            _password.HasPassword = true;
+
             AddChild(_wgLabel);
             AddChild(_usernameLabel);
             AddChild(_username);
