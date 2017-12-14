@@ -55,12 +55,10 @@ namespace Peacenet.Backend
 
         public void SafetyCheck()
         {
-            throw new NotImplementedException();
         }
 
         public void Unload()
         {
-            throw new NotImplementedException();
         }
     }
 

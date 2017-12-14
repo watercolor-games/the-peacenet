@@ -126,7 +126,7 @@ namespace Plex.Engine.GUI
             if (_autoSize)
             {
                 var font = getFont();
-                var measure = TextRenderer.MeasureText(_text, font, int.MaxValue, _alignment, TextRenderers.WrapMode.Words);
+                var measure = TextRenderer.MeasureText(_text, font, (MaxWidth == 0) ? int.MaxValue : MaxWidth, _alignment, TextRenderers.WrapMode.Words);
                 Width = (int)measure.X;
                 Height = (int)measure.Y;
             }

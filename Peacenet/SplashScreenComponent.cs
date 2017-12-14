@@ -121,6 +121,8 @@ namespace Peacenet
             _os.Shutdown();
         }
 
+        private WGLogin _loginScreen = null;
+
         public void Initiate()
         {
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");
@@ -218,6 +220,29 @@ namespace Peacenet
             _credits.Click += (o, a) =>
             {
                 _cutscene.Play("credits_00");
+            };
+
+            _loginScreen = new WGLogin(_windowManager);
+
+            _wgButton.Click += (o, a) =>
+            {
+                if (_api.LoggedIn)
+                {
+                    _infobox.ShowYesNo("Log out", "Are you sure you want to log out of your Watercolor account?",
+                        (answer)=>
+                        {
+                            if (answer)
+                                _api.Logout();
+                        });
+
+
+                }
+                else
+                {
+                    if (_loginScreen.Disposed)
+                        _loginScreen = new WGLogin(_windowManager);
+                    _loginScreen.Show();
+                }
             };
         }
 
