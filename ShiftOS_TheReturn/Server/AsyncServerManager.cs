@@ -1,4 +1,6 @@
-﻿using Plex.Engine.Interfaces;
+﻿#pragma warning disable CS4014 //FUCK OFF I WANT ASYNC CALLS
+
+using Plex.Engine.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
