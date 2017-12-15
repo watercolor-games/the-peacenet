@@ -439,7 +439,7 @@ namespace Plex.Engine.GUI
 
         public void Update(GameTime time)
         {
-            if(_lastFocus != HasFocused)
+            if (_lastFocus != HasFocused)
             {
                 _lastFocus = HasFocused;
                 HasFocusedChanged?.Invoke(this, EventArgs.Empty);
@@ -473,13 +473,13 @@ namespace Plex.Engine.GUI
                 _newmousex = Parent._mousex - X;
                 _newmousey = Parent._mousey - Y;
             }
-            if(_newmousex != _mousex || _newmousey != _mousey)
+            if (_newmousex != _mousex || _newmousey != _mousey)
             {
                 bool hasMouse = ContainsMouse;
                 _mousex = _newmousex;
                 _mousey = _newmousey;
                 MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
-                if(hasMouse != ContainsMouse)
+                if (hasMouse != ContainsMouse)
                     _invalidated = true;
             }
             OnUpdate(time);
@@ -487,14 +487,10 @@ namespace Plex.Engine.GUI
                 return;
             if (_disposed)
                 return;
-            try
+            foreach (var child in _children)
             {
-                foreach (var child in _children)
-                {
-                    child.Update(time);
-                }
+                child.Update(time);
             }
-            catch { }
         }
 
 
