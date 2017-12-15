@@ -195,6 +195,8 @@ namespace Plex.Engine
         private GraphicsContext _ctx = null;
 
         private SplashScreen _splash = null;
+        private EventWaitHandle _splashEv = new AutoResetEvent(true);
+        private volatile bool _splashReady = false;
         private Task _splashJob = null;
 
         internal GraphicsDeviceManager graphicsDevice;
@@ -206,6 +208,8 @@ namespace Plex.Engine
             _splashJob = Task.Run(() =>
             {
                 _splash = new SplashScreen();
+                _splashReady = true;
+                _splashEv.Set();
                 System.Windows.Forms.Application.Run(_splash);
             });
             if (_instance != null)
@@ -266,6 +270,8 @@ namespace Plex.Engine
         {
             _instance = this;
             Logger.Log("Beginning engine initialization.");
+            while (!_splashReady)
+                _splashEv.WaitOne();
             _splash.SetProgress(0, 100, "Looking for modules...");
             _splash.SetProgressType(System.Windows.Forms.ProgressBarStyle.Marquee);
             List<Type> typesToInit = new List<Type>();
