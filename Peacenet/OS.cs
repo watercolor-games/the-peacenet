@@ -193,7 +193,7 @@ namespace Peacenet
                         //If they haven't, we'll do another.
                         if (!_save.GetValue("boot.hasDoneIntro", false))
                         {
-                            _osIntroState = 16;
+                            _osIntroState++;//nyi
                         }
                         else
                         {

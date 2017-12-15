@@ -99,6 +99,8 @@ namespace Peacenet
 
         private GameSettings _settingsApp = null;
 
+        private Button _exitButton = null;
+
         private int animState = 0;
 
         private bool _hasVolumeBeenAdjusted = true;
@@ -243,6 +245,17 @@ namespace Peacenet
                         _loginScreen = new WGLogin(_windowManager);
                     _loginScreen.Show();
                 }
+            };
+
+            _exitButton = new Button();
+            _uimanager.Add(_exitButton);
+            _exitButton.Click += (o, a) =>
+            {
+                _infobox.ShowYesNo("Exit The Peacenet", "Are you sure you'd like to quit to your desktop?", (answer) =>
+                {
+                    if (answer)
+                        _plexgate.Exit();
+                });
             };
         }
 
@@ -399,6 +412,7 @@ namespace Peacenet
                     _hbSettings.Visible = false;
                     _hbMultiplayer.Visible = false;
                     _credits.Visible = false;
+                    _exitButton.Visible = false;
                     _wgButton.Visible = false;
                     _username.Visible = false;
                     _realname.Visible = false;
@@ -485,6 +499,7 @@ namespace Peacenet
                     _realname.Visible = true;
                     _username.Visible = true;
                     _wgButton.Visible = true;
+                    _exitButton.Visible = true;
                     animState++;
                     break;
                 case 14: //End Menu animation.
@@ -524,6 +539,7 @@ namespace Peacenet
                         _username.Visible = false;
                         _realname.Visible = false;
                         _wgButton.Visible = false;
+                        _exitButton.Visible = false;
                     }
 
                     break;
@@ -644,6 +660,10 @@ namespace Peacenet
                 _realname.Text = "Sign into Watercolor Games to get the most out of The Peacenet. Signing in is required for multiplayer.";
                 _wgButton.Text = "Sign in";
             }
+
+            _exitButton.Text = "Quit to desktop";
+            _exitButton.Y = (_uimanager.ScreenHeight - _exitButton.Height) - 15;
+            _exitButton.X = (_uimanager.ScreenWidth - _exitButton.Width) - 15;
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

@@ -20,10 +20,16 @@ namespace Plex.Engine.Config
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private AppDataManager _appdata = null;
+
+        private string _path = "";
+
         public void Initiate()
         {
+            _path = Path.Combine(_appdata.GamePath, "config.json");
             Logger.Log("Loading configuration file...");
-            if (!File.Exists("config.json"))
+            if (!File.Exists(_path))
             {
                 Logger.Log("Config file not found. Making new one.");
                 _config = new Dictionary<string, object>();
@@ -89,13 +95,13 @@ namespace Plex.Engine.Config
 
         public void LoadFromDisk()
         {
-            _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText("config.json"));
+            _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(_path));
         }
 
         public void SaveToDisk()
         {
             Logger.Log("Saving config to disk...");
-            File.WriteAllText("config.json", JsonConvert.SerializeObject(_config, Formatting.Indented));
+            File.WriteAllText(_path, JsonConvert.SerializeObject(_config, Formatting.Indented));
             Logger.Log("Done.");
         }
 
@@ -127,5 +133,39 @@ namespace Plex.Engine.Config
     public interface IConfigurable
     {
         void ApplyConfig();
+    }
+
+    public class AppDataManager : IEngineComponent
+    {
+        private string _path = "";
+
+        public void Initiate()
+        {
+            _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Watercolor Games", "Peacenet");
+        }
+
+        public string GamePath
+        {
+            get
+            {
+                return _path;
+            }
+        }
+
+        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
+        {
+        }
+
+        public void OnGameUpdate(GameTime time)
+        {
+        }
+
+        public void OnKeyboardEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void Unload()
+        {
+        }
     }
 }

@@ -136,6 +136,11 @@ namespace Peacenet
                 {
                     if (answer)
                     {
+                        foreach(var win in winsys.WindowList.ToArray())
+                        {
+                            if (win.Border != this.Parent)
+                                winsys.Close(win.WindowID);
+                        }
                         _animState = 3;
                     }
                 });

@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine.Themes;
 using Plex.Engine.Config;
+using System.IO;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
@@ -25,6 +26,11 @@ namespace Plex.Engine.GraphicsSubsystem
 
         [Dependency]
         private ConfigManager _config = null;
+
+        [Dependency]
+        private AppDataManager _appdata = null;
+
+        private string _screenshots = "";
 
         private bool _isShowingUI = true;
         private int _uiFadeState = 1;
@@ -132,6 +138,9 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void Initiate()
         {
+            _screenshots = Path.Combine(_appdata.GamePath, "screenshots");
+            if (!Directory.Exists(_screenshots))
+                Directory.CreateDirectory(_screenshots);
             Logger.Log("Loading text renderer...", LogType.Info, "ui");
             try
             {
@@ -222,6 +231,15 @@ namespace Plex.Engine.GraphicsSubsystem
                 fullscreen = !fullscreen;
                 _config.SetValue("uiFullscreen", fullscreen);
                 ApplyConfig();
+                return;
+            }
+            if(e.Key == Keys.F3)
+            {
+                string fname = DateTime.Now.ToString("yyyy-M-dd_HH-mm-ss") + ".png";
+                using(var fstream = File.OpenWrite(Path.Combine(_screenshots, fname)))
+                {
+                    _plexgate.GameRenderTarget.SaveAsPng(fstream, _plexgate.GameRenderTarget.Width, _plexgate.GameRenderTarget.Height);
+                }
                 return;
             }
 

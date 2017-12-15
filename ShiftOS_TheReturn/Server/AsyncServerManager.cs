@@ -23,6 +23,9 @@ namespace Plex.Engine.Server
         [Dependency]
         private WatercolorAPIManager _api = null;
 
+        [Dependency]
+        private AppDataManager _appdata = null;
+
         private List<ServerInformation> _serverInfo = new List<ServerInformation>();
         private TcpClient _tcpClient = null;
         private BinaryReader _reader = null;
@@ -56,8 +59,8 @@ namespace Plex.Engine.Server
         public void Initiate()
         {
             Logger.Log("Loading server list from configuration...");
-            if (File.Exists("servers.json"))
-                _serverInfo = JsonConvert.DeserializeObject<List<ServerInformation>>(File.ReadAllText("servers.json"));
+            if (File.Exists(Path.Combine(_appdata.GamePath, "servers.json")))
+                _serverInfo = JsonConvert.DeserializeObject<List<ServerInformation>>(File.ReadAllText(Path.Combine(_appdata.GamePath, "servers.json")));
             Logger.Log($"{_serverInfo.Count} servers loaded.");
         }
 
@@ -199,7 +202,7 @@ namespace Plex.Engine.Server
 
         public void Unload()
         {
-            File.WriteAllText("servers.json", JsonConvert.SerializeObject(_serverInfo, Formatting.Indented));
+            File.WriteAllText(Path.Combine(_appdata.GamePath, "servers.json"), JsonConvert.SerializeObject(_serverInfo, Formatting.Indented));
         }
     }
 

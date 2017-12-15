@@ -53,7 +53,7 @@ namespace Plex.Engine.GUI
             {
                 if (IsFocused)
                     return true;
-                foreach(var child in _children)
+                foreach(var child in Children)
                 {
                     if (child.HasFocused)
                     {
@@ -433,6 +433,8 @@ namespace Plex.Engine.GUI
         {
             get
             {
+                if (_children == null)
+                    return new Control[0];
                 return _children.ToArray();
             }
         }
@@ -487,7 +489,7 @@ namespace Plex.Engine.GUI
                 return;
             if (_disposed)
                 return;
-            foreach (var child in _children)
+            foreach (var child in _children.ToArray())
             {
                 child.Update(time);
             }
