@@ -248,7 +248,8 @@ namespace Plex.Engine.GUI
     {
         Default,
         Dialog,
-        NoBorder
+        NoBorder,
+        DialogNoDrag
     }
 
     public class WindowBorder : Control
@@ -338,6 +339,8 @@ namespace Plex.Engine.GUI
 
             _titleHitbox.MouseLeftDown += (o, a) =>
             {
+                if (_windowStyle == WindowStyle.DialogNoDrag)
+                    return;
                 _moving = true;
                 _dragAnimState = 2;
                 _lastPos = new Vector2(MouseX, MouseY);
@@ -377,6 +380,7 @@ namespace Plex.Engine.GUI
                     Width = _child.X + _child.Width + _borderWidth;
                     Height = _child.Y + _child.Height + _borderWidth;
                     break;
+                case WindowStyle.DialogNoDrag:
                 case WindowStyle.Dialog:
                     _child.X = 0;
                     _child.Y = _titleHeight;
@@ -463,6 +467,7 @@ namespace Plex.Engine.GUI
                     _bRightHitbox.Visible = true;
                     _bLeftHitbox.Visible = true;
                     break;
+                case WindowStyle.DialogNoDrag:
                 case WindowStyle.Dialog:
                     _child.X = 0;
                     _child.Y = _titleHeight;
@@ -536,6 +541,8 @@ namespace Plex.Engine.GUI
                 Invalidate();
                 _titleHitbox.Invalidate();
             }
+
+            
 
             base.OnUpdate(time);
         }

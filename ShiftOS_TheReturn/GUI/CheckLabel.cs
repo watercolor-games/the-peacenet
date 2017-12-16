@@ -56,7 +56,7 @@ namespace Plex.Engine.GUI
             _label.X = _check.X + _check.Width + 3;
             Width = _label.X + _label.Width + 2;
             Height = Math.Max(_label.Height, _check.Height) + 2;
-            _check.Y = (Height - _check.Height) / 2;
+            _check.Y = 2;
             _label.Y = (Height - _label.Height) / 2;
         }
 

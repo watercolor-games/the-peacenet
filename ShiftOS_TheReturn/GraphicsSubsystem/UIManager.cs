@@ -60,6 +60,8 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             get
             {
+                if (_plexgate.GameRenderTarget == null)
+                    return 1;
                 return _plexgate.GameRenderTarget.Width;
             }
         }
@@ -68,6 +70,8 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             get
             {
+                if (_plexgate.GameRenderTarget == null)
+                    return 1;
                 return _plexgate.GameRenderTarget.Height;
             }
         }

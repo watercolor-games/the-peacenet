@@ -87,7 +87,7 @@ namespace Peacenet
             _messageLabel.AutoSize = true;
             _picture.Width = 64;
             _picture.Height = 64;
-            SetWindowStyle(WindowStyle.Dialog);
+            SetWindowStyle(WindowStyle.DialogNoDrag);
             _picture.Texture = _plexgate.Content.Load<Texture2D>("Infobox/warning");
             _inputBox = new TextBox();
             AddChild(_inputBox);
@@ -186,7 +186,8 @@ namespace Peacenet
             _no.X = _yes.X + _yes.Width + 5;
             _no.Y = _yes.Y;
 
-
+            Parent.X = (Manager.ScreenWidth - Width) / 2;
+            Parent.Y = (Manager.ScreenHeight - Height) / 2;
 
         }
     }
