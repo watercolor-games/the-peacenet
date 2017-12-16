@@ -52,6 +52,9 @@ namespace Peacenet
         private System.Drawing.Font _mono;
         private System.Drawing.Font _system;
 
+        private Texture2D _check = null;
+        private Texture2D _times = null;
+
         private Color _buttonIdleBG;
 
         public override System.Drawing.Font GetFont(TextFontStyle style)
@@ -147,7 +150,14 @@ namespace Peacenet
 
         public override void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver)
         {
-            throw new NotImplementedException();
+            var fg = (isMouseOver) ? Color.White : _bStateTextIdle;
+            var bg = (isMouseOver) ? _bgLight : _bgDark;
+
+            gfx.Clear(fg);
+            gfx.DrawRectangle(x + 2, y + 2, width - 4, height - 4, bg);
+
+            if(isChecked)
+            gfx.DrawRectangle(x+2, y+2, width-4, height-4, _check, fg, System.Windows.Forms.ImageLayout.Zoom);
         }
 
         public override void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height)
@@ -239,14 +249,18 @@ namespace Peacenet
 
             _titleFont = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif.Name, 12F, System.Drawing.FontStyle.Bold);
 
-            _head1 = new System.Drawing.Font("Monda", 34F, System.Drawing.FontStyle.Bold);
-            _head2 = new System.Drawing.Font("Monda", 24F, System.Drawing.FontStyle.Bold);
-            _head3 = new System.Drawing.Font("Monda", 16F);
+            _head1 = new System.Drawing.Font("Monda", 24F, System.Drawing.FontStyle.Bold);
+            _head2 = new System.Drawing.Font("Monda", 16F, System.Drawing.FontStyle.Bold);
+            _head3 = new System.Drawing.Font("Monda", 12F);
             _mono = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 10F);
             _system = new System.Drawing.Font("Monda", 10F);
 
             _peace = new Color(64, 128, 255,255);
             _gray = new Color(191, 191, 191, 255);
+
+            _check = content.Load<Texture2D>("ThemeAssets/CheckBox/check");
+            _times = content.Load<Texture2D>("ThemeAssets/CheckBox/times");
+
         }
 
         public override Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue)
