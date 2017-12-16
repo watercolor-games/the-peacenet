@@ -380,6 +380,8 @@ namespace Plex.Engine
                     graphicsDevice.PreferredBackBufferHeight = _height;
                     graphicsDevice.ApplyChanges();
                 }
+                GameRenderTarget?.Dispose();
+                GameRenderTarget = null;
             }
             catch
             {

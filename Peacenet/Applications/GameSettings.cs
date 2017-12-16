@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
+using Plex.Engine.Config;
 
 namespace Peacenet.Applications
 {
@@ -17,42 +18,80 @@ namespace Peacenet.Applications
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private ConfigManager _config = null;
 
-        private Label _test = null;
-        private PictureBox _picture = new PictureBox();
-        private TextBox _somewhereToType = new TextBox();
+        private ListView _resolutions = null;
+
+        private ScrollView _resolutionScroller = null;
+
+        private Button _apply = new Button();
+        private Button _cancel = new Button();
 
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
             Width = 800;
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
-            Title = "Game settings";
+            Title = "System settings";
+            _resolutions = new ListView();
+            _resolutionScroller = new ScrollView();
+            _resolutionScroller.AddChild(_resolutions);
+            AddChild(_resolutionScroller);
+            AddChild(_apply);
+            AddChild(_cancel);
+            _apply.Text = "Apply";
+            _cancel.Text = "Cancel";
+            _cancel.Click += (o, a) =>
+            {
+                Close();
+            };
+            _apply.Click += (o, a) =>
+            {
+                _config.SetValue("screenResolution", _resolutions.SelectedItem.Value.ToString());
 
-            _test = new Label();
-            _test.AutoSize = true;
-            _test.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _test.Text = "This text is 50% translucent.";
-            _test.Opacity = 0.5F;
-            _picture.AutoSize = true;
-            _picture.Texture = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
+                _config.Apply();
+                Close();
+            };
+        }
 
-            AddChild(_test);
-            AddChild(_picture);
-            AddChild(_somewhereToType);
+        private bool _needsPopulate = true;
+
+        public void PopulateResolutions()
+        {
+            _resolutions.Clear();
+            string[] resolutions = _plexgate.GetAvailableResolutions();
+            string defres = _plexgate.GetSystemResolution();
+            string setres = _config.GetValue("screenResolution", defres);
+            foreach (var res in resolutions)
+            {
+                var lvitem = new ListViewItem(_resolutions);
+                lvitem.Value = res;
+                if (setres == res)
+                {
+                    _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Children, lvitem);
+                    lvitem.Selected = true;
+                }
+            }
         }
 
         protected override void OnUpdate(GameTime time)
         {
-            _test.X = 15;
-            _test.Y = 15;
-            _picture.X = 15;
-            _picture.Y = _test.Y + _test.Height + 5;
-            base.OnUpdate(time);
+            if (_needsPopulate)
+            {
+                PopulateResolutions();
+                _needsPopulate = false;
+            }
+            _resolutionScroller.X = 15;
+            _resolutionScroller.Y = 15;
+            _resolutions.Width = (Width - 30) / 3;
+            _resolutionScroller.Height = (Height - 30);
+            _resolutions.Layout = ListViewLayout.List;
 
-            _somewhereToType.X = 15;
-            _somewhereToType.Y = _picture.Y + _picture.Height + 10;
-            _somewhereToType.Width = 250;
+            _apply.X = (Width - _apply.Width) - 15;
+            _apply.Y = (Height - _apply.Height) - 15;
+            _cancel.X = (_apply.X - _cancel.Width) - 5;
+            _cancel.Y = (_apply.Y);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Plex.Engine.GUI
         private Themes.TextFontStyle _style = Themes.TextFontStyle.System;
         private string _text = "";
         private TextAlignment _alignment = TextAlignment.TopLeft;
+        private bool _remeasure = true;
 
         public bool AutoSize
         {
@@ -29,6 +30,7 @@ namespace Plex.Engine.GUI
                 if (_autoSize == value)
                     return;
                 _autoSize = value;
+                _remeasure = true;
             }
         }
 
@@ -59,6 +61,7 @@ namespace Plex.Engine.GUI
                     return;
                 _font = value;
                 Invalidate();
+                _remeasure = true;
             }
         }
 
@@ -74,6 +77,7 @@ namespace Plex.Engine.GUI
                     return;
                 _style = value;
                 Invalidate();
+                _remeasure = true;
             }
         }
 
@@ -89,6 +93,7 @@ namespace Plex.Engine.GUI
                     return;
                 _text = value;
                 Invalidate();
+                _remeasure = true;
             }
         }
 
@@ -104,6 +109,7 @@ namespace Plex.Engine.GUI
                     return;
                 _alignment = value;
                 Invalidate();
+                _remeasure = true;
             }
         }
 
@@ -121,14 +127,27 @@ namespace Plex.Engine.GUI
             return Theme.GetFontColor(_style);
         }
 
+        private int _lastmaxwidth = 0;
+        private int _lastmaxheight = 0;
+
         protected override void OnUpdate(GameTime time)
         {
+            if (_lastmaxheight != MaxHeight)
+                _remeasure = true;
+            if (_lastmaxwidth != MaxWidth)
+                _remeasure = true;
+            _lastmaxheight = MaxHeight;
+            _lastmaxwidth = MaxWidth;
             if (_autoSize)
             {
-                var font = getFont();
-                var measure = TextRenderer.MeasureText(_text, font, (MaxWidth == 0) ? int.MaxValue : MaxWidth, _alignment, TextRenderers.WrapMode.Words);
-                Width = (int)measure.X;
-                Height = (int)measure.Y;
+                if (_remeasure)
+                {
+                    var font = getFont();
+                    var measure = TextRenderer.MeasureText(_text, font, (MaxWidth == 0) ? int.MaxValue : MaxWidth, _alignment, TextRenderers.WrapMode.Words);
+                    Width = (int)measure.X;
+                    Height = (int)measure.Y;
+                    _remeasure = false;
+                }
             }
             
             base.OnUpdate(time);

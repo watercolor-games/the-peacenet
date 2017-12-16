@@ -21,8 +21,8 @@ namespace Plex.Engine.GUI
         private int _height = 1;
         private List<Control> _children = null;
         private bool _invalidated = true;
-        private RenderTarget2D _rendertarget = null;
-        private RenderTarget2D _userfacingtarget = null;
+        protected RenderTarget2D _rendertarget = null;
+        protected RenderTarget2D _userfacingtarget = null;
         private bool _resized = false;
         private Control _parent = null;
         private int _mousex = 0;
@@ -148,6 +148,13 @@ namespace Plex.Engine.GUI
             }
         }
 
+        public void Clear()
+        {
+            while(_children.Count > 0)
+            {
+                RemoveChild(_children[0]);
+            }
+        }
 
         public float Opacity
         {
@@ -239,7 +246,7 @@ namespace Plex.Engine.GUI
             _theme = theme;
         }
 
-        public void AddChild(Control child)
+        public virtual void AddChild(Control child)
         {
             if (_children.Contains(child))
                 return;
@@ -353,7 +360,7 @@ namespace Plex.Engine.GUI
             _children.Remove(child);
         }
 
-        internal bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
+        public virtual bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
             if (Visible == false)
                 return false;

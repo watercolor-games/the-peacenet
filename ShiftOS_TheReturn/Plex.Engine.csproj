@@ -166,9 +166,11 @@
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\Hitbox.cs" />
     <Compile Include="GUI\Label.cs" />
+    <Compile Include="GUI\ListView.cs" />
     <Compile Include="GUI\MenuHitbox.cs" />
     <Compile Include="GUI\MenuItem.cs" />
     <Compile Include="GUI\PictureBox.cs" />
+    <Compile Include="GUI\ScrollView.cs" />
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\WindowSystem.cs" />
     <Compile Include="Interfaces\IEngineComponent.cs" />
