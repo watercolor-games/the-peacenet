@@ -25,6 +25,8 @@ namespace Plex.Engine.GUI
         private int _lW = 0;
         private int _lH = 0;
 
+        private bool _requireLayout = true;
+
         public Rectangle ImageRect
         {
             get
@@ -53,6 +55,7 @@ namespace Plex.Engine.GUI
                     return;
                 _showImage = value;
                 Invalidate();
+                _requireLayout = true;
             }
         }
 
@@ -68,6 +71,7 @@ namespace Plex.Engine.GUI
                     return;
                 _texture = value;
                 Invalidate();
+                _requireLayout = true;
             }
         }
 
@@ -83,59 +87,70 @@ namespace Plex.Engine.GUI
                     return;
                 _text = value;
                 Invalidate();
+                _requireLayout = true;
             }
         }
 
         protected override void OnUpdate(GameTime time)
         {
-            if (_showImage)
+            if (_requireLayout)
             {
-                _textureW = 16;
-                _textureH = 16;
-            }
-            else
-            {
-                _textureW = 0;
-                _textureH = 0;
-            }
-            int _minimumHorizontal = 8;
-            TextAlignment _alignment = TextAlignment.Middle;
-            if (_showImage)
-            {
-                _minimumHorizontal += _textureW+3;
-                _alignment = TextAlignment.Left;
-            }
-            int realMax = MaxWidth == 0 ? int.MaxValue : MaxWidth;
+                if (_showImage)
+                {
+                    _textureW = 16;
+                    _textureH = 16;
+                }
+                else
+                {
+                    _textureW = 0;
+                    _textureH = 0;
+                }
+                int _minimumHorizontal = 0;
+                TextAlignment _alignment = TextAlignment.Middle;
+                if (_showImage)
+                {
+                    _minimumHorizontal += _textureW;
+                    if (!string.IsNullOrEmpty(_text))
+                        _minimumHorizontal += 3;
+                    _alignment = TextAlignment.Left;
+                }
+                int realMax = MaxWidth == 0 ? int.MaxValue : MaxWidth;
 
-            var font = Theme.GetFont(Themes.TextFontStyle.System);
-            var measure = TextRenderer.MeasureText(_text, font, realMax - _minimumHorizontal, _alignment, TextRenderers.WrapMode.Words);
+                var font = Theme.GetFont(Themes.TextFontStyle.System);
+                var measure = TextRenderer.MeasureText(_text, font, realMax - _minimumHorizontal, _alignment, TextRenderers.WrapMode.Words);
 
-            _lW = (int)measure.X;
-            _lH = (int)measure.Y;
+                _lW = (int)measure.X;
+                _lH = (int)measure.Y;
 
-            int realHeight = 6 + (Math.Max(_textureH, _lH));
-            Height = realHeight;
-            int realWidth = (int)measure.X;
-            if (_showImage)
-            {
-                if (realWidth >= 0)
-                    realWidth += 3;
-                realWidth += _textureW;
+                int realHeight = 6 + (Math.Max(_textureH, _lH));
+                Height = realHeight;
+                int realWidth = 0;
+                if (!string.IsNullOrEmpty(_text))
+                    realWidth = (int)measure.X;
+                if (_showImage)
+                {
+                    if (realWidth > 0)
+                        realWidth += 3;
+                    realWidth += _textureW;
+                }
+                if (!string.IsNullOrWhiteSpace(_text))
+                    realWidth += 20;
+                else
+                    realWidth += 8;
+                Width = realWidth;
+                _lY = (Height - _lH) / 2;
+                if (_showImage)
+                {
+                    _textureX = 4;
+                    _textureY = (Height - _textureH) / 2;
+                    _lX = _textureX + _textureW + 3;
+                }
+                else
+                {
+                    _lX = (Width - _lW) / 2;
+                }
+                _requireLayout = false;
             }
-            realWidth += 20;
-            Width = realWidth;
-            _lY = (Height - _lH) / 2;
-            if (_showImage)
-            {
-                _textureX = 4;
-                _textureY = (Height - _textureH) / 2;
-                _lX = _textureX + _textureW + 3;
-            }
-            else
-            {
-                _lX = (Width - _lW) / 2;
-            }
-
 
             base.OnUpdate(time);
         }

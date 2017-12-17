@@ -20,11 +20,13 @@ namespace Plex.Engine.GUI
         private int _vGap = 3;
         private int _selectedIndex = -1;
 
+        public event EventHandler SelectedIndexChanged;
+
         public ListViewItem SelectedItem
         {
             get
             {
-                if (_selectedIndex == -1)
+                if (!(_selectedIndex >= 0 && _selectedIndex < Children.Length))
                     return null;
                 return Children[_selectedIndex] as ListViewItem;
             }
@@ -41,7 +43,7 @@ namespace Plex.Engine.GUI
                 if (SelectedItem != null)
                     SelectedItem.Selected = false;
                 _selectedIndex = value;
-
+                SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -179,6 +181,7 @@ namespace Plex.Engine.GUI
                 case ListViewLayout.SmallIcon:
                     int _x = Margin;
                     int _y = Margin;
+                    int _h = 0;
                     foreach(var child in Children)
                     {
                         child.X = _x;
@@ -192,7 +195,9 @@ namespace Plex.Engine.GUI
                         {
                             _x += child.Width + _hGap;
                         }
+                        _h = Math.Max(_h, child.Y + child.Height + Margin);
                     }
+                    Height = _h;
                     break;
                 case ListViewLayout.List:
                     //Layout as a list
@@ -261,11 +266,13 @@ namespace Plex.Engine.GUI
             }
             set
             {
-                if (_ikey == null)
+                if (_ikey == value)
                     return;
                 _ikey = value;
             }
         }
+
+        public object Tag { get; set; }
 
         public ListViewItem(ListView parent) : base()
         {
@@ -308,6 +315,7 @@ namespace Plex.Engine.GUI
             }
 
             _picture.AutoSize = false;
+            _picture.Layout = System.Windows.Forms.ImageLayout.Zoom;
 
             switch (_view.Layout)
             {
@@ -342,8 +350,8 @@ namespace Plex.Engine.GUI
                     break;
                 case ListViewLayout.List:
                     Width = _view.Width;
-                    _picture.Width = 16;
-                    _picture.Height = 16;
+                    _picture.Width = 20;
+                    _picture.Height = 20;
                     int maxWidth = (Width - 4);
                     if (_picture.Texture != null)
                         maxWidth -= _picture.Width + 3;
@@ -366,7 +374,8 @@ namespace Plex.Engine.GUI
         {
             gfx.Clear(Color.Transparent);
             var accent = Theme.GetAccentColor();
-            _picture.Tint = (_selected) ? accent : Color.White;
+            if(_view.Layout != ListViewLayout.List)
+                _picture.Tint = (_selected) ? accent : Color.White;
 
             var highlight = Color.Transparent;
             if (ContainsMouse)

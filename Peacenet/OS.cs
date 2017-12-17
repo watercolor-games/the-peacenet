@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Plex.Engine.Themes;
+using Plex.Engine.Filesystem;
 
 namespace Peacenet
 {
@@ -105,10 +106,38 @@ namespace Peacenet
             _ui.Add(_startingDesktop);
         }
 
+        [Dependency]
+        private FSManager _fs = null;
+
+        private readonly string[] requiredPaths = new string[]
+        {
+            "/home",
+            "/home/Desktop",
+            "/home/Documents",
+            "/home/Pictures",
+            "/home/Music",
+            "/bin",
+            "/etc",
+            "/etc/peacegate",
+            "/root"
+        };
+
         public void OnReady()
         {
             _osIntroState = 0;
             _statusCount = _previouslyValues.Count();
+            foreach(var dir in requiredPaths)
+            {
+                try
+                {
+                    if (!_fs.DirectoryExists(dir))
+                        _fs.CreateDirectory(dir);
+                }
+                catch
+                {
+
+                }
+            }
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)

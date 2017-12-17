@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppLauncherManager.cs" />
+    <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\WGLogin.cs" />

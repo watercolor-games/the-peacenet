@@ -160,6 +160,7 @@
     <Compile Include="DebugConsole\ConsoleControl.cs" />
     <Compile Include="DebugConsole\DebugConsole.cs" />
     <Compile Include="DependencyAttribute.cs" />
+    <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Button.cs" />
