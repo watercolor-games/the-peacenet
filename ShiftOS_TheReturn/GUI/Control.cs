@@ -339,7 +339,8 @@ namespace Plex.Engine.GUI
                     return;
                 _x = value;
                 XChanged?.Invoke(this, EventArgs.Empty);
-                Invalidate();
+                if (_parent != null)
+                    Invalidate();
             }
         }
 
@@ -355,7 +356,8 @@ namespace Plex.Engine.GUI
                     return;
                 _y = value;
                 YChanged?.Invoke(this, EventArgs.Empty);
-                Invalidate();
+                if(_parent!=null)
+                    Invalidate();
             }
         }
 
