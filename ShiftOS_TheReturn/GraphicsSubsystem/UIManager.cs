@@ -188,26 +188,33 @@ namespace Plex.Engine.GraphicsSubsystem
                 {
                     if (!ctrl.Visible)
                         continue;
-                    ctrl.Draw(time, ctx);
-                    ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                    if (ctrl.BackBuffer != null && ctrl.Opacity>0)
+                    if(ctrl.Opacity>0)
+                        ctrl.Draw(time, ctx);
+                }
+
+                ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
+                ctx.BeginDraw();
+                foreach (var ctrl in _topLevels)
+                {
+                    if (!ctrl.Visible)
+                        continue;
+                    if (ctrl.BackBuffer != null && ctrl.Opacity > 0)
                     {
-                        ctx.BeginDraw();
                         if (IgnoreControlOpacity)
                         {
                             ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White * _uiFadeAmount);
                         }
                         else
                         {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (Color.White*ctrl.Opacity)*_uiFadeAmount);
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (Color.White * ctrl.Opacity) * _uiFadeAmount);
                         }
-                        ctx.EndDraw();
                     }
                     else
                     {
                         ctrl.Invalidate();
                     }
                 }
+                ctx.EndDraw();
             }
             catch { }
             if (ShowPerfCounters == false)
@@ -272,8 +279,9 @@ namespace Plex.Engine.GraphicsSubsystem
                     var ctrl = _topLevels[i];
                     if (ctrl.Visible == false)
                         continue;
-                    if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
-                        break;
+                    if(ctrl.Opacity>0)
+                        if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
+                            break;
                 }
             }
             catch { }

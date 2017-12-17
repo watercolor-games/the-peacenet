@@ -598,7 +598,8 @@ namespace Plex.Engine.GUI
                 {
                     if (!child.Visible)
                         continue;
-                    child.Draw(time, gfx);
+                    if(child.Opacity>0)
+                        child.Draw(time, gfx);
                 }
 
                 gfx.Device.SetRenderTarget(_rendertarget);
