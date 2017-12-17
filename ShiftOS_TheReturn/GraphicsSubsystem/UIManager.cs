@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Input;
 using Plex.Engine.Themes;
 using Plex.Engine.Config;
 using System.IO;
+using System.Diagnostics;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
@@ -140,6 +141,8 @@ namespace Plex.Engine.GraphicsSubsystem
             return System.Windows.Forms.Clipboard.GetText();
         }
 
+        System.Drawing.Font _lucidaConsole = null;
+
         public void Initiate()
         {
             _screenshots = Path.Combine(_appdata.GamePath, "screenshots");
@@ -158,7 +161,15 @@ namespace Plex.Engine.GraphicsSubsystem
                 Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");
 
             }
+            _lucidaConsole = new System.Drawing.Font("Lucida Console", 12F);
+            _debugUpdTimer = 0;
+            _debug = "";
+            _debugCpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         }
+
+        double _debugUpdTimer;
+        string _debug = "";
+        PerformanceCounter _debugCpu;
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
@@ -182,8 +193,13 @@ namespace Plex.Engine.GraphicsSubsystem
             if (ShowPerfCounters == false)
                 return;
             ctx.BeginDraw();
-            var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
-            ctx.DrawString($"FPS: {fps} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
+            _debugUpdTimer += time.ElapsedGameTime.TotalSeconds;
+            if (_debugUpdTimer >= 1)
+            {
+                _debug = $"{Math.Round(1 / time.ElapsedGameTime.TotalSeconds)} FPS | {GC.GetTotalMemory(false) / 1048576} MiB RAM | {Math.Round(_debugCpu.NextValue())}% CPU";
+                _debugUpdTimer %= 1;
+            }
+            ctx.DrawString(_debug, 0, 0, Color.White, _lucidaConsole, TextAlignment.TopLeft);
             ctx.EndDraw();
         }
 
@@ -266,6 +282,9 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
             Clear();
+            _lucidaConsole = null;
+            _debug = "";
+            _debugCpu = null;
             Logger.Log("UI system is shutdown.");
         }
 
