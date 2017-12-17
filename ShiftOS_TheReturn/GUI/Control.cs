@@ -84,6 +84,13 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseMiddleUp;
         public event EventHandler<KeyboardEventArgs> KeyEvent;
 
+        public event EventHandler WidthChanged;
+        public event EventHandler HeightChanged;
+        public event EventHandler XChanged;
+        public event EventHandler YChanged;
+        public event EventHandler VisibleChanged;
+
+
         public int MinWidth
         {
             get
@@ -168,6 +175,7 @@ namespace Plex.Engine.GUI
                 if (value == _opacity)
                     return;
                 _opacity = value;
+                Invalidate();
             }
         }
 
@@ -190,6 +198,8 @@ namespace Plex.Engine.GUI
                 if (_isVisible == value)
                     return;
                 _isVisible = value;
+                VisibleChanged?.Invoke(this, EventArgs.Empty);
+                Invalidate();
             }
         }
 
@@ -252,6 +262,7 @@ namespace Plex.Engine.GUI
                 return;
             _children.Add(child);
             child._parent = this;
+            Invalidate();
         }
 
         public int MouseX
@@ -292,7 +303,8 @@ namespace Plex.Engine.GUI
                     return;
                 _width = value;
                 _resized = true;
-                _invalidated = true;
+                Invalidate(true);
+                WidthChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -310,7 +322,8 @@ namespace Plex.Engine.GUI
                     return;
                 _height = value;
                 _resized = true;
-                _invalidated = true;
+                Invalidate(true);
+                HeightChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -322,7 +335,11 @@ namespace Plex.Engine.GUI
             }
             set
             {
+                if (_x == value)
+                    return;
                 _x = value;
+                XChanged?.Invoke(this, EventArgs.Empty);
+                Invalidate();
             }
         }
 
@@ -334,7 +351,11 @@ namespace Plex.Engine.GUI
             }
             set
             {
+                if (_y == value)
+                    return;
                 _y = value;
+                YChanged?.Invoke(this, EventArgs.Empty);
+                Invalidate();
             }
         }
 
@@ -353,24 +374,27 @@ namespace Plex.Engine.GUI
         private ButtonState _lastRight;
         private ButtonState _lastMiddle;
 
-        public void RemoveChild(Control child)
+        public virtual void RemoveChild(Control child)
         {
             if (!_children.Contains(child))
                 return;
             _children.Remove(child);
+            Invalidate();
         }
 
         public virtual bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
             if (Visible == false)
                 return false;
-            foreach(var child in _children)
+            try
             {
-                if (child.PropagateMouseState(left, middle, right))
-                    return true;
+                foreach(var child in _children)
+                {
+                    if (child.PropagateMouseState(left, middle, right))
+                        return true;
+                }
             }
-            if (_isVisible == false)
-                return false;
+            catch { }
             bool isInCtrl = (_mousex >= 0 && _mousex <= Width && _mousey >= 0 && _mousey <= Height);
             if (_lastLeft == left && _lastRight == right && _lastMiddle == middle)
                 return isInCtrl;
@@ -384,14 +408,14 @@ namespace Plex.Engine.GUI
                 bool fireRight = (_right == ButtonState.Pressed && right == ButtonState.Released);
                 bool fireMiddle = (_middle == ButtonState.Pressed && middle == ButtonState.Released);
                 if (_left != left || _right != right || _middle != middle)
-                    _invalidated = true;
+                    Invalidate(true);
                 if (_left != left && left == ButtonState.Pressed)
                 {
                     MouseLeftDown?.Invoke(this, EventArgs.Empty);
                     if (!IsFocused)
                     {
                         Manager.SetFocus(this);
-                        Invalidate();
+                        Invalidate(true);
                     }
                 }
                 if (_right != right && right == ButtonState.Pressed)
@@ -446,6 +470,8 @@ namespace Plex.Engine.GUI
             }
         }
 
+        private MouseState _lastState;
+
         public void Update(GameTime time)
         {
             if (_lastFocus != HasFocused)
@@ -455,51 +481,59 @@ namespace Plex.Engine.GUI
             }
             if (_rendertarget == null)
             {
-                _invalidated = true;
+                Invalidate(true);
                 _resized = true;
             }
             if (_userfacingtarget == null)
             {
-                _invalidated = true;
+                Invalidate(true);
                 _resized = true;
             }
 
             if (_isVisible == false)
                 return;
             //Pull the mouse state.
-            var mouse = Mouse.GetState();
-            //For toplevels, set mouse input loc directly.
-            int _newmousex = 0;
-            int _newmousey = 0;
-            if (Parent == null)
+            var mouse = Manager.Mouse;
+            if (mouse != _lastState)
             {
-                _newmousex = mouse.X - X;
-                _newmousey = mouse.Y - Y;
-            }
-            //For controls with parents, poll mouse information from the parent.
-            else
-            {
-                _newmousex = Parent._mousex - X;
-                _newmousey = Parent._mousey - Y;
-            }
-            if (_newmousex != _mousex || _newmousey != _mousey)
-            {
-                bool hasMouse = ContainsMouse;
-                _mousex = _newmousex;
-                _mousey = _newmousey;
-                MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
-                if (hasMouse != ContainsMouse)
-                    _invalidated = true;
+                //For toplevels, set mouse input loc directly.
+                int _newmousex = 0;
+                int _newmousey = 0;
+                if (Parent == null)
+                {
+                    _newmousex = mouse.X - X;
+                    _newmousey = mouse.Y - Y;
+                }
+                //For controls with parents, poll mouse information from the parent.
+                else
+                {
+                    _newmousex = Parent._mousex - X;
+                    _newmousey = Parent._mousey - Y;
+                }
+                if (_newmousex != _mousex || _newmousey != _mousey)
+                {
+                    bool hasMouse = ContainsMouse;
+                    _mousex = _newmousex;
+                    _mousey = _newmousey;
+                    MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
+                    if (hasMouse != ContainsMouse)
+                        Invalidate(true);
+                }
+                _lastState = mouse;
             }
             OnUpdate(time);
             if (_children == null)
                 return;
             if (_disposed)
                 return;
-            foreach (var child in _children.ToArray())
+            try
             {
-                child.Update(time);
+                foreach (var child in _children)
+                {
+                    child.Update(time);
+                }
             }
+            catch { }
         }
 
 
@@ -509,10 +543,20 @@ namespace Plex.Engine.GUI
             Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
 
-        public void Invalidate()
+        private bool _needsRerender = true;
+
+        public void Invalidate(bool needsRepaint = false)
         {
-            _invalidated = true;
+            if (needsRepaint)
+            {
+                _invalidated = true;
+            }
+            _needsRerender = true;
+            Parent?.Invalidate();
         }
+
+        
+
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -533,43 +577,62 @@ namespace Plex.Engine.GUI
                 _rendertarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
             }
 
-            if (_invalidated)
+            if (_needsRerender)
             {
-                if (_resized)
+                if (_invalidated)
                 {
-                    _userfacingtarget?.Dispose();
-                    _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-                    _resized = false;
+                    if (_resized)
+                    {
+                        _userfacingtarget?.Dispose();
+                        _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                        _resized = false;
+                    }
+                    gfx.Device.SetRenderTarget(_userfacingtarget);
+                    gfx.Device.Clear(Color.Transparent);
+                    gfx.BeginDraw();
+                    OnPaint(time, gfx);
+                    gfx.EndDraw();
+                    _invalidated = false;
                 }
-                gfx.Device.SetRenderTarget(_userfacingtarget);
-                gfx.Device.Clear(Color.Transparent);
-                gfx.BeginDraw();
-                OnPaint(time, gfx);
-                gfx.EndDraw();
-                _invalidated = false;
-            }
-
-            gfx.Device.SetRenderTarget(_rendertarget);
-            gfx.Device.Clear(Color.Transparent);
-            gfx.BeginDraw();
-            gfx.DrawRectangle(0, 0, Width, Height, _userfacingtarget);
-            gfx.EndDraw();
-            foreach (var child in _children)
-            {
-                if (!child.Visible)
-                    continue;
-                child.Draw(time, gfx);
-                gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.BeginDraw();
-                if (Manager.IgnoreControlOpacity)
+                foreach (var child in _children)
                 {
-                    gfx.DrawRectangle(child.X, child.Y, child.Width, child.Height, child.BackBuffer);
+                    if (!child.Visible)
+                        continue;
+                    child.Draw(time, gfx);
+                }
+
+                gfx.Device.SetRenderTarget(_rendertarget);
+                gfx.Device.Clear(Color.Transparent);
+                if (_userfacingtarget != null)
+                {
+                    gfx.BeginDraw();
+                    gfx.Batch.Draw(_userfacingtarget, new Rectangle(0, 0, Width, Height), Color.White);
+                    foreach (var child in _children)
+                    {
+                        if (!child.Visible)
+                            continue;
+                        if (child.Opacity > 0)
+                        {
+                            if (Manager.IgnoreControlOpacity)
+                            {
+                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), Color.White);
+                            }
+                            else
+                            {
+                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), Color.White * child.Opacity);
+                            }
+                        }
+                    }
+                    gfx.EndDraw();
                 }
                 else
                 {
-                    gfx.DrawRectangle(child.X, child.Y, child.Width, child.Height, child.BackBuffer, Color.White * child.Opacity);
+                    Invalidate(true);
+                    _resized = true;
+                    
                 }
-                gfx.EndDraw();
+                _needsRerender = false;
+
             }
         }
 

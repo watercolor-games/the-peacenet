@@ -283,7 +283,8 @@ namespace Plex.Engine.GUI
                 if (_title == value)
                     return;
                 _title = value;
-                Invalidate();
+                Invalidate(true);
+                _needsLayout = true;
             }
         }
 
@@ -295,6 +296,8 @@ namespace Plex.Engine.GUI
 
         private WindowSystem _windowManager = null;
 
+        private bool _needsLayout = true;
+
         public WindowBorder(WindowSystem winsys, Window child, WindowStyle style)
         {
             HasFocusedChanged += (o, a) =>
@@ -303,6 +306,7 @@ namespace Plex.Engine.GUI
                 {
                     Manager.Remove(this, false);
                     Manager.Add(this);
+                    _needsLayout = true;
                 }
             };
 
@@ -390,7 +394,14 @@ namespace Plex.Engine.GUI
             }
             X = (winsys.Width - Width) / 2;
             Y = (winsys.Height - Height) / 2;
-
+            _child.WidthChanged += (o, a) =>
+            {
+                _needsLayout = true;
+            };
+            _child.HeightChanged += (o, a) =>
+            {
+                _needsLayout = true;
+            };
         }
 
         private bool _closeHasMouse = false;
@@ -399,10 +410,16 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
-            if(_lastFocused != HasFocused)
+            if (_closeHasMouse != _closeHitbox.ContainsMouse)
+            {
+                _closeHasMouse = _closeHitbox.ContainsMouse;
+                Invalidate(true);
+                _titleHitbox.Invalidate();
+            }
+            if (_lastFocused != HasFocused)
             {
                 _lastFocused = HasFocused;
-                Invalidate();
+                Invalidate(true);
             }
             if (_windowManager.FadeWindowsWhileDragging)
             {
@@ -433,6 +450,9 @@ namespace Plex.Engine.GUI
             {
                 Opacity = 1;
             }
+            if (_needsLayout == false)
+                return;
+            _needsLayout = false;
 
             switch (_windowStyle)
             {
@@ -535,12 +555,6 @@ namespace Plex.Engine.GUI
             _maximizeHitbox.X = mxsize.X;
             _maximizeHitbox.Y = mxsize.Y;
 
-            if(_closeHasMouse != _closeHitbox.ContainsMouse)
-            {
-                _closeHasMouse = _closeHitbox.ContainsMouse;
-                Invalidate();
-                _titleHitbox.Invalidate();
-            }
 
             
 
@@ -563,7 +577,8 @@ namespace Plex.Engine.GUI
                 if (_windowStyle == value)
                     return;
                 _windowStyle = value;
-                Invalidate();
+                Invalidate(true);
+                _needsLayout = true;
             }
         }
     }

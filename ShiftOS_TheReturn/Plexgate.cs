@@ -16,7 +16,6 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
 using Plex.Engine.Interfaces;
 using System.Reflection;
-using Plex.Engine.DebugConsole;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -38,150 +37,12 @@ namespace Plex.Engine
             return atype.GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.FieldType == btype) != null;
         }
 
-        public IEngineComponent [] GetAllComponents()
+        public IEngineComponent[] GetAllComponents()
         {
             List<IEngineComponent> cpts = new List<IEngineComponent>();
             foreach (var cpt in _components)
                 cpts.Add(cpt.Component);
             return cpts.ToArray();
-        }
-
-        public class ShutdownCommand : IDebugCommand
-        {
-            public string Description
-            {
-                get
-                {
-                    return "Attempt a graceful engine shutdown.";
-                }
-            }
-
-            public string Name
-            {
-                get
-                {
-                    return "shutdown";
-                }
-            }
-
-            public IEnumerable<string> UsageStrings
-            {
-                get
-                {
-                    return new List<string>();
-                }
-            }
-
-            [Dependency]
-            private Plexgate _me = null;
-
-            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
-            {
-                _me.Exit();
-            }
-        }
-
-        public class GCCommands : IDebugCommand
-        {
-            public string Description
-            {
-                get
-                {
-                    return "Query information about and perform actions related to the CLR garbage collector.";
-                }
-            }
-
-            public string Name
-            {
-                get
-                {
-                    return "gc";
-                }
-            }
-
-            public IEnumerable<string> UsageStrings
-            {
-                get
-                {
-                    yield return "--usage";
-                    yield return "--collect";
-
-                }
-            }
-
-            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
-            {
-                if((bool)args["--usage"] == true)
-                {
-                    stdout.WriteLine($"RAM usage: {(GC.GetTotalMemory(false)/1024)/1024} Megabytes");
-
-                }
-                else if((bool)args["--collect"] == true)
-                {
-                    GC.Collect();
-                }
-            }
-        }
-
-        public class EngineComponentCommand : IDebugCommand
-        {
-            [Dependency]
-            private Plexgate _me = null;
-
-            public string Description
-            {
-                get
-                {
-                    return "Queries information about the engine's loaded modules.";
-                }
-            }
-
-            public string Name
-            {
-                get
-                {
-                    return "modsys";
-                }
-            }
-
-            public IEnumerable<string> UsageStrings
-            {
-                get
-                {
-                    yield return "-d <component>";
-                    yield return "-u <component>";
-                    yield return "-i <component>";
-                    yield return "-l";
-                }
-            }
-
-            public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
-            {
-                if((bool)args["-d"] == true)
-                {
-                    var component = _me._components.FirstOrDefault(x => x.Component.GetType().Name == args["<component>"].ToString())?.Component;
-                    if(component == null)
-                    {
-                        stdout.WriteLine("Component not found.");
-                        return;
-                    }
-                    stdout.WriteLine($"Dependencies for {component.GetType().Name}:");
-                    foreach(var field in component.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                    {
-                        if(field.GetCustomAttributes(false).Any(x=>x is DependencyAttribute))
-                        {
-                            stdout.WriteLine($" - {field.FieldType.Name}");
-                        }
-                    }
-                }
-                else if ((bool)args["-l"] == true)
-                {
-                    foreach(var component in _me._components)
-                    {
-                        stdout.WriteLine($" - {component.Component.GetType().Name}");
-                    }
-                }
-            }
         }
 
         internal static Plexgate GetInstance()
@@ -268,6 +129,18 @@ namespace Plex.Engine
         /// </summary>
         protected override void Initialize()
         {
+
+            AppDomain.CurrentDomain.UnhandledException += (o, a) =>
+            {
+                System.Windows.Forms.MessageBox.Show(caption: "Uncaught .NET exception", text: $@"An uncaught exception has occurred in the Peace engine.
+
+{a.ExceptionObject}", icon: System.Windows.Forms.MessageBoxIcon.Error, buttons: System.Windows.Forms.MessageBoxButtons.OK);
+                Logger.Log("FATAL EXCEPTION: " + a.ExceptionObject.ToString(), LogType.Fatal);
+#if RELEASE
+                this.UnloadContent();
+                Environment.Exit(0);
+#endif
+            };
             _instance = this;
             Logger.Log("Beginning engine initialization.");
             while (!_splashReady)
@@ -492,6 +365,8 @@ namespace Plex.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (GameRenderTarget == null)
+                return;
             GraphicsDevice.SetRenderTarget(GameRenderTarget);
             GraphicsDevice.Clear(Color.Black);
             foreach(var component in _components)

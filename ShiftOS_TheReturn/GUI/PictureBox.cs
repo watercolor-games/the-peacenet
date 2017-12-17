@@ -30,7 +30,7 @@ namespace Plex.Engine.GUI
                 if (_tint == value)
                     return;
                 _tint = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Plex.Engine.GUI
                 if (_autoSize == value)
                     return;
                 _autoSize = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Plex.Engine.GUI
                 if (_scale == value)
                     return;
                 _scale = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Plex.Engine.GUI
                 if (_premultiplied == value)
                     return;
                 _premultiplied = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Plex.Engine.GUI
                 if (_texture == value)
                     return;
                 _texture = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Plex.Engine.GUI
                 if (_layout == value)
                     return;
                 _layout = value;
-                Invalidate();
+                Invalidate(true);
             }
         }
 

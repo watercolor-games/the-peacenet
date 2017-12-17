@@ -22,15 +22,28 @@ namespace Plex.Engine.GUI
             if (child != null)
                 _host = child;
             _scrollOffset = 0;
+            child.WidthChanged += Child_WidthChanged;
+            _needsLayout = true;
         }
+
+        private void Child_WidthChanged(object sender, EventArgs e)
+        {
+            _needsLayout = true;
+        }
+
+        private bool _needsLayout = true;
 
         protected override void OnUpdate(GameTime time)
         {
-            _host.X = 0;
-            _host.Y = 0 - _scrollOffset;
-            Width = _host.Width;
-            _scrollHeight = _host.Height;
-            base.OnUpdate(time);
+            if (_needsLayout)
+            {
+                _host.X = 0;
+                _host.Y = 0 - _scrollOffset;
+                Width = _host.Width;
+                _scrollHeight = _host.Height;
+                base.OnUpdate(time);
+                _needsLayout = false;
+            }
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

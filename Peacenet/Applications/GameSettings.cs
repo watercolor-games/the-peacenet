@@ -90,6 +90,12 @@ namespace Peacenet.Applications
             _configPanel.AddChild(_fadingWindows);
 
             _configPanel.AddChild(_gfxFullscreen);
+            if (_needsPopulate)
+            {
+                PopulateResolutions();
+                _needsPopulate = false;
+            }
+
         }
 
         private bool _needsPopulate = true;
@@ -119,11 +125,6 @@ namespace Peacenet.Applications
 
         protected override void OnUpdate(GameTime time)
         {
-            if (_needsPopulate)
-            {
-                PopulateResolutions();
-                _needsPopulate = false;
-            }
             _resolutionScroller.X = 15;
             _resolutionScroller.Y = 15;
             _resolutions.Width = (Width - 30) / 3;

@@ -54,7 +54,7 @@ namespace Plex.Engine.GUI
                 if (_showImage == value)
                     return;
                 _showImage = value;
-                Invalidate();
+                Invalidate(true);
                 _requireLayout = true;
             }
         }
@@ -70,7 +70,7 @@ namespace Plex.Engine.GUI
                 if (_texture == value)
                     return;
                 _texture = value;
-                Invalidate();
+                Invalidate(true);
                 _requireLayout = true;
             }
         }
@@ -86,7 +86,7 @@ namespace Plex.Engine.GUI
                 if (_text == value)
                     return;
                 _text = value;
-                Invalidate();
+                Invalidate(true);
                 _requireLayout = true;
             }
         }

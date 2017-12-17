@@ -19,6 +19,7 @@ namespace Plex.Engine.GUI
         private int _hGap = 5;
         private int _vGap = 3;
         private int _selectedIndex = -1;
+        private bool _requireLayout = true;
 
         public event EventHandler SelectedIndexChanged;
 
@@ -44,7 +45,13 @@ namespace Plex.Engine.GUI
                     SelectedItem.Selected = false;
                 _selectedIndex = value;
                 SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
+                _requireLayout = true;
             }
+        }
+
+        internal void RequireLayout()
+        {
+            _requireLayout = true;
         }
 
         /// <summary>
@@ -61,6 +68,7 @@ namespace Plex.Engine.GUI
                 if (_hGap == value)
                     return;
                 _hGap = value;
+                _requireLayout = true;
             }
         }
 
@@ -78,6 +86,7 @@ namespace Plex.Engine.GUI
                 if (_vGap == value)
                     return;
                 _vGap = value;
+                _requireLayout = true;
             }
         }
 
@@ -95,6 +104,7 @@ namespace Plex.Engine.GUI
                 if (_margin == value)
                     return;
                 _margin = value;
+                _requireLayout = true;
             }
         }
 
@@ -112,6 +122,7 @@ namespace Plex.Engine.GUI
                 if (_flow == value)
                     return;
                 _flow = value;
+                _requireLayout = true;
             }
         }
 
@@ -129,6 +140,7 @@ namespace Plex.Engine.GUI
                 if (_layout == value)
                     return;
                 _layout = value;
+                _requireLayout = true;
             }
         }
 
@@ -171,10 +183,13 @@ namespace Plex.Engine.GUI
             if (child.GetType() != typeof(ListViewItem))
                 throw new InvalidOperationException("List view controls can only host childs of type " + (typeof(ListViewItem).FullName) + ".");
             base.AddChild(child);
+            _requireLayout = true;
         }
 
         protected override void OnUpdate(GameTime time)
         {
+            if (!_requireLayout)
+                return;
             switch (_layout)
             {
                 case ListViewLayout.LargeIcon:
@@ -211,6 +226,7 @@ namespace Plex.Engine.GUI
                     Height = y;
                     break;
             }
+            _requireLayout = false;
         }
     }
 
@@ -236,7 +252,8 @@ namespace Plex.Engine.GUI
                 if (_selected == value)
                     return;
                 _selected = value;
-                Invalidate();
+                Invalidate(true);
+                _requiresLayout = true;
             }
         }
 
@@ -255,6 +272,7 @@ namespace Plex.Engine.GUI
                     _label.Text = "";
                 else
                     _label.Text = _value.ToString();
+                _requiresLayout = true;
             }
         }
 
@@ -269,6 +287,7 @@ namespace Plex.Engine.GUI
                 if (_ikey == value)
                     return;
                 _ikey = value;
+                _requiresLayout = true;
             }
         }
 
@@ -303,8 +322,13 @@ namespace Plex.Engine.GUI
             Selected = true;
         }
 
+        private bool _requiresLayout = true;
+
         protected override void OnUpdate(GameTime time)
         {
+            if (!_requiresLayout)
+                return;
+            _view.RequireLayout();
             if(!string.IsNullOrWhiteSpace(_ikey))
             {
                 _picture.Texture = _view.GetImage(_ikey);
@@ -368,6 +392,7 @@ namespace Plex.Engine.GUI
 
                     break;
             }
+            _requiresLayout = false;
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

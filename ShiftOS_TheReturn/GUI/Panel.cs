@@ -11,6 +11,7 @@ namespace Plex.Engine.GUI
     public class Panel : Control
     {
         private bool _autosize = false;
+        private bool _needsLayout = true;
 
         public bool AutoSize
         {
@@ -30,9 +31,40 @@ namespace Plex.Engine.GUI
         {
             if (_autosize)
             {
-                var last = Children.Where(x=>x.Visible).OrderByDescending(x => x.Y).First();
-                Height = last.Y + last.Height;
+                if (_needsLayout == true)
+                {
+                    var last = Children.Where(x => x.Visible).OrderByDescending(x => x.Y).First();
+                    Height = last.Y + last.Height;
+                    _needsLayout = false;
+                }
             }
+        }
+
+        private void ControlLayoutChanged(object sender, EventArgs e)
+        {
+            _needsLayout = true;
+        }
+
+        public override void AddChild(Control child)
+        {
+            base.AddChild(child);
+            child.XChanged += ControlLayoutChanged;
+            child.YChanged += ControlLayoutChanged;
+            child.WidthChanged += ControlLayoutChanged;
+            child.HeightChanged += ControlLayoutChanged;
+            child.VisibleChanged += ControlLayoutChanged;
+            _needsLayout = true;
+        }
+
+        public override void RemoveChild(Control child)
+        {
+            base.RemoveChild(child);
+            child.XChanged -= ControlLayoutChanged;
+            child.YChanged -= ControlLayoutChanged;
+            child.WidthChanged -= ControlLayoutChanged;
+            child.HeightChanged -= ControlLayoutChanged;
+            child.VisibleChanged -= ControlLayoutChanged;
+            _needsLayout = true;
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

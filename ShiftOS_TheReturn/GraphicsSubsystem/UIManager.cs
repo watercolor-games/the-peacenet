@@ -142,6 +142,7 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void Initiate()
         {
+            _monospace = _plexgate.Content.Load<SpriteFont>("Fonts/Monospace");
             _screenshots = Path.Combine(_appdata.GamePath, "screenshots");
             if (!Directory.Exists(_screenshots))
                 Directory.CreateDirectory(_screenshots);
@@ -154,38 +155,61 @@ namespace Plex.Engine.GraphicsSubsystem
             }
             catch
             {
-                TextRenderer.Init(new GdiPlusTextRenderer());
+                TextRenderer.Init(new WindowsFormsTextRenderer());
                 Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");
 
             }
         }
 
+        public MouseState Mouse
+        {
+            get
+            {
+                return _lastState;
+            }
+        }
+
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
-            foreach (var ctrl in _topLevels.ToArray())
+            try
             {
-                if (!ctrl.Visible)
-                    continue;
-                ctrl.Draw(time, ctx);
-                ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                ctx.BeginDraw();
-                if (IgnoreControlOpacity)
+                foreach (var ctrl in _topLevels)
                 {
-                    ctx.DrawRectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height, ctrl.BackBuffer, Color.White * _uiFadeAmount);
+                    if (!ctrl.Visible)
+                        continue;
+                    ctrl.Draw(time, ctx);
+                    ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
+                    if (ctrl.BackBuffer != null && ctrl.Opacity>0)
+                    {
+                        ctx.BeginDraw();
+                        if (IgnoreControlOpacity)
+                        {
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White * _uiFadeAmount);
+                        }
+                        else
+                        {
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (Color.White*ctrl.Opacity)*_uiFadeAmount);
+                        }
+                        ctx.EndDraw();
+                    }
+                    else
+                    {
+                        ctrl.Invalidate();
+                    }
                 }
-                else
-                {
-                    ctx.DrawRectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height, ctrl.BackBuffer, Color.White * (_uiFadeAmount * ctrl.Opacity));
-                }
-                ctx.EndDraw();
             }
+            catch { }
             if (ShowPerfCounters == false)
-                return;
+            return;
             ctx.BeginDraw();
             var fps = Math.Round(1 / time.ElapsedGameTime.TotalSeconds);
-            ctx.DrawString($"FPS: {fps} - RAM: {(GC.GetTotalMemory(false)/1024)/1024}MB", 0, 0, Color.White, new System.Drawing.Font("Lucida Console", 12F), TextAlignment.TopLeft);
+            ctx.Batch.DrawString(_monospace, $"FPS: {fps}", Vector2.Zero, Color.White);
             ctx.EndDraw();
         }
+
+        private SpriteFont _monospace = null;
+
+        private MouseState _lastState;
 
         public void OnGameUpdate(GameTime time)
         {
@@ -213,18 +237,30 @@ namespace Plex.Engine.GraphicsSubsystem
 
             if (_isShowingUI == false)
                 return;
-            var mouse = Mouse.GetState();
-            foreach(var ctrl in _topLevels.ToArray())
+            try
             {
-                ctrl.Update(time);
-            }
+                foreach (var ctrl in _topLevels)
+                {
+                    if (!ctrl.Visible)
+                        continue;
+                    ctrl.Update(time);
+                }
 
-            //Propagate mouse events.
-            foreach(var ctrl in _topLevels.OrderByDescending(x=>_topLevels.IndexOf(x)))
-            {
-                if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
-                    break;
+                var mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
+                if (mouse == _lastState)
+                    return;
+                _lastState = mouse;
+                //Propagate mouse events.
+                for (int i = _topLevels.Count - 1; i > 0; i--)
+                {
+                    var ctrl = _topLevels[i];
+                    if (ctrl.Visible == false)
+                        continue;
+                    if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
+                        break;
+                }
             }
+            catch { }
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

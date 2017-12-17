@@ -25,6 +25,8 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
+            if (!ContainsMouse)
+                _isMouseDown = false;
             if (_isMouseDown)
             {
                 float mousex = MouseX;

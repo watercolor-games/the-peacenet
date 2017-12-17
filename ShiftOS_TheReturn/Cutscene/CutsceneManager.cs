@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
-using Plex.Engine.DebugConsole;
 using System.IO;
 using Plex.Objects;
 
@@ -112,78 +111,6 @@ namespace Plex.Engine.Cutscene
                 cs = null;
             }
             _cutscenes = null;
-        }
-    }
-
-    public class HideUICommand : IDebugCommand
-    {
-        public string Description
-        {
-            get
-            {
-                return "Tests smooth UI-to-cutscene transition. WARNING - THIS WILL PUT THE GAME IN AN UNRECOVERABLE STATE!";
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return "smoothcs";
-            }
-        }
-
-        public IEnumerable<string> UsageStrings
-        {
-            get
-            {
-                return new List<string>();
-            }
-        }
-
-        [Dependency]
-        private UIManager _ui = null;
-
-        public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
-        {
-            _ui.HideUI();
-        }
-    }
-
-    public class CutsceneDebugCmd : IDebugCommand
-    {
-        public string Description
-        {
-            get
-            {
-                return "Play a coded cutscene.";
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return "playccs";
-            }
-        }
-
-        public IEnumerable<string> UsageStrings
-        {
-            get
-            {
-                yield return "<name>";
-            }
-        }
-
-        [Dependency]
-        private CutsceneManager _cs = null;
-
-        public void Run(StreamWriter stdout, StreamReader stdin, Dictionary<string, object> args)
-        {
-            string _name = args["<name>"].ToString();
-            if (_cs.Play(_name) == false)
-                stdout.WriteLine("Cutscene not found.");
         }
     }
 }

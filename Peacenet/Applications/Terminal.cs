@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine;
-using Plex.Engine.DebugConsole;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using Plex.Objects.Pty;
@@ -21,17 +20,17 @@ namespace Peacenet.Applications
     public class Terminal : Window
     {
         [Dependency]
-        private DebugConsole _debugConsole = null;
+        private TerminalManager _manager = null;
 
         [Dependency]
-        private TerminalManager _manager = null;
+        private Plexgate _plexgate = null;
 
         private TerminalEmulator _emulator = null;
         private Task _shellJob = null;
         
         public Terminal(WindowSystem _winsys) : base(_winsys)
         {
-            _emulator = new TerminalEmulator(_debugConsole.ConsoleFont);
+            _emulator = new TerminalEmulator(_plexgate.Content.Load<SpriteFont>("Fonts/Monospace"));
             AddChild(_emulator);
 
             SetWindowStyle(WindowStyle.Default);

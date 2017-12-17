@@ -56,7 +56,7 @@ namespace Plex.Engine.GUI
                 }
             }
             if (_opacityAnim != _lastOpacity)
-                Invalidate();
+                Invalidate(true);
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
