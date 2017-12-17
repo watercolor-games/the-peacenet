@@ -94,6 +94,8 @@ namespace Peacenet.Backend
 
         private string getWatercolorId(string token)
         {
+            if (_isMultiplayer == false)
+                return "entity.singleplayeruser";
             string uid = null;
             var wr = WebRequest.Create("https://getshiftos.net/users/getid");
             wr.ContentType = "text/plain";
@@ -127,43 +129,51 @@ namespace Peacenet.Backend
             _listener.Start();
             while (_isRunning)
             {
-                var connection = _listener.AcceptTcpClient();
-                Logger.Log($"New client connection.");
-                var t = new Thread(() =>
+                try
                 {
-                    var stream = connection.GetStream();
-                    var reader = new BinaryReader(stream);
-                    var writer = new BinaryWriter(stream);
-
-                    while (connection.Connected)
+                    var connection = _listener.AcceptTcpClient();
+                    Logger.Log($"New client connection.");
+                    var t = new Thread(() =>
                     {
-                        var muid = reader.ReadString();
-                        var mtype = reader.ReadInt32();
-                        string session = reader.ReadString();
-                        byte[] content = new byte[] { };
-                        int len = reader.ReadInt32();
-                        if (len > 0)
-                            content = reader.ReadBytes(len);
-                        byte[] returncontent = new byte[] { };
-                        var result = delegator.HandleMessage(this, (ServerMessageType)mtype, getWatercolorId(session), content, out returncontent);
+                        var stream = connection.GetStream();
+                        var reader = new BinaryReader(stream);
+                        var writer = new BinaryWriter(stream);
 
-                        writer.Write(muid);
-                        writer.Write((int)result);
-                        writer.Write(session);
-                        writer.Write(returncontent.Length);
-                        if (returncontent.Length > 0)
-                            writer.Write(returncontent);
-                        writer.Flush();
-                    }
-                    reader.Close();
-                    writer.Close();
-                    stream.Close();
-                    reader.Dispose();
-                    writer.Dispose();
-                    stream.Dispose();
-                });
-                t.IsBackground = true;
-                t.Start();
+                        while (connection.Connected)
+                        {
+                            try
+                            {
+                                var muid = reader.ReadString();
+                                var mtype = reader.ReadInt32();
+                                string session = reader.ReadString();
+                                byte[] content = new byte[] { };
+                                int len = reader.ReadInt32();
+                                if (len > 0)
+                                    content = reader.ReadBytes(len);
+                                byte[] returncontent = new byte[] { };
+                                var result = delegator.HandleMessage(this, (ServerMessageType)mtype, getWatercolorId(session), content, out returncontent);
+
+                                writer.Write(muid);
+                                writer.Write((int)result);
+                                writer.Write(session);
+                                writer.Write(returncontent.Length);
+                                if (returncontent.Length > 0)
+                                    writer.Write(returncontent);
+                                writer.Flush();
+                            }
+                            catch (EndOfStreamException) { }
+                        }
+                        reader.Close();
+                        writer.Close();
+                        stream.Close();
+                        reader.Dispose();
+                        writer.Dispose();
+                        stream.Dispose();
+                    });
+                    t.IsBackground = true;
+                    t.Start();
+                }
+                catch (SocketException) { }
             }
         }
 
@@ -252,8 +262,8 @@ namespace Peacenet.Backend
         {
             Logger.Log("Commencing shutdown...");
             Logger.Log("Stopping TCP listener.");
-            _tcpthread.Abort();
             _listener.Stop();
+            _tcpthread.Abort();
             _listener = null;
             Logger.Log("Done.");
             Logger.Log("Stopping everything else...");

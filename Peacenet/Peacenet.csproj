@@ -137,6 +137,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Peacenet.Backend\Peacenet.Backend.csproj">
+      <Project>{d0d04db3-08c9-4ea9-b64a-69596dbb9657}</Project>
+      <Name>Peacenet.Backend</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
       <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
       <Name>Plex.Objects</Name>

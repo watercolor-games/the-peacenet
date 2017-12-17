@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Plex.Engine.Themes;
 using Plex.Engine.Filesystem;
+using Plex.Engine.Server;
 
 namespace Peacenet
 {
@@ -122,11 +123,41 @@ namespace Peacenet
             "/root"
         };
 
+        private Backend.Backend _localBackend = null;
+
+        [Dependency]
+        private AsyncServerManager _server = null;
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
         public void OnReady()
+        {
+            if (!_server.Connected)
+            {
+                _localBackend = new Backend.Backend(3252, false);
+                Task.Run(() =>
+                {
+                    _localBackend.Listen();
+                });
+                Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
+                _server.Connect("localhost:3252", startBoot, (error) =>
+                {
+                    _infobox.Show("Can't start campaign", "Failed to connect to local server. This is usually a sign of a major bug.\r\n\r\n" + error);
+                    Shutdown();
+                });
+            }
+            else
+            {
+                startBoot();
+            }
+        }
+
+        private void startBoot()
         {
             _osIntroState = 0;
             _statusCount = _previouslyValues.Count();
-            foreach(var dir in requiredPaths)
+            foreach (var dir in requiredPaths)
             {
                 try
                 {
@@ -354,6 +385,10 @@ namespace Peacenet
             _peacenetScaleAnim = 0;
             _startupRide = 0;
             _save.EndSession();
+            _localBackend?.Shutdown();
+            _localBackend = null;
+            if(_server.Connected)
+                _server?.Disconnect();
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

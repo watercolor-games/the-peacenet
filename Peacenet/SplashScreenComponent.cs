@@ -167,18 +167,31 @@ namespace Peacenet
             };
             _hbMultiplayer.Click += (o, a) =>
             {
-                _infobox.PromptText("Connect to server", "Please enter a hostname and port for a server to connect to.", (address) =>
+                if (animState < 17)
                 {
-                    if (address.Split(':').Length == 1)
-                        address += ":3251";
-                    _server.Connect(address, () =>
+                    _infobox.PromptText("Connect to server", "Please enter a hostname and port for a server to connect to.", (address) =>
                     {
-                        _infobox.Show("Connection successful.", $"You have established a TCP connection to {address} :D");
-                    }, (error) =>
-                    {
-                        _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
+                        if (address.Split(':').Length == 1)
+                            address += ":3251";
+                        _server.Connect(address, () =>
+                        {
+                            //todo: attach save manager to server if connected to a server.
+                            var savefiles = _saveManager.GetSavePaths();
+                            if (savefiles.Length < 1)
+                            {
+                                _saveManager.CreateSinglePlayerSave();
+                            }
+                            else
+                            {
+                                _saveManager.StartSinglePlayerSession(savefiles[0]);
+                            }
+                            animState = 17;
+                        }, (error) =>
+                        {
+                            _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
+                        });
                     });
-                });
+                }
             };
             _hbSingleplayer.Click += (o,a) =>
             {

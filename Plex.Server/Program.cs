@@ -461,7 +461,6 @@ namespace Plex.Server
             {
                 Console.ReadKey();
                 _backend.Shutdown();
-                Console.ReadKey();
             }
         }
 

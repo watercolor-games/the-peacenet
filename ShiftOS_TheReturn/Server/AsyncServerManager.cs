@@ -141,8 +141,6 @@ namespace Plex.Engine.Server
                     if (_tcpClient != null)
                         if (_tcpClient.Connected)
                             throw new InvalidOperationException("Cannot connect to server while an active connection is open!");
-                    if (_api.LoggedIn == false)
-                        throw new InvalidOperationException("Cannot connect to a multiplayer server without a Watercolor account.");
                     _session = _api.Token;
                     string[] sp = address.Split(':');
                     if (sp.Length != 2) throw new FormatException("The address string was not in the correct format (host:port)");
@@ -162,6 +160,12 @@ namespace Plex.Engine.Server
                     SendMessage(ServerMessageType.U_CONF, null, (res, reader) =>
                     {
                         _isMultiplayer = reader.ReadBoolean();
+                        if (_api.LoggedIn == false)
+                            if (_isMultiplayer)
+                            {
+                                Disconnect();
+                                onError?.Invoke("Cannot connect to a multiplayer server without a Watercolor account.");
+                            }
                         onConnected?.Invoke();
                     });
                 }
