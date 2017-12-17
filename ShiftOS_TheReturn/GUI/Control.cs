@@ -560,7 +560,7 @@ namespace Plex.Engine.GUI
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            bool makeBack = _invalidated; //normally I'd let this be false but I thought I'd try making the backbuffer reset if the control's invalidated. This seemed to help, but right after restarting the game and doing the same thing, the bug was back. So this only works intermitently.
+            bool makeBack = false; //normally I'd let this be false but I thought I'd try making the backbuffer reset if the control's invalidated. This seemed to help, but right after restarting the game and doing the same thing, the bug was back. So this only works intermitently.
             if (_rendertarget == null)
                 makeBack = true;
             else

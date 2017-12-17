@@ -81,36 +81,12 @@ namespace Plex.Engine
 
         public static void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
-            if(_cache.Count > 10)
-            {
-                var first = _cache[0];
-                first.Texture.Dispose();
-                first.Texture = null;
-                _cache.Remove(first);
-            }
             if (string.IsNullOrWhiteSpace(text))
                 return;
-            var cache = _cache.FirstOrDefault(z => z.Alignment == alignment && z.Font == font && z.MaxWidth == maxwidth && z.Renderer == _renderer.GetType().Name && z.Text == text && z.Wrapping == wrapMode);
-            if(cache != null)
-            {
-                gfx.DrawRectangle(x, y, cache.Texture.Width, cache.Texture.Height, cache.Texture, color, System.Windows.Forms.ImageLayout.Stretch, false, false);
-                return;
-            }
             var texture = _renderer.DrawText(gfx, text, font, maxwidth, alignment, wrapMode);
             if (texture == null)
                 return;
-            cache = new TextCacheInformation
-            {
-                Alignment = alignment,
-                Font = font,
-                MaxWidth = maxwidth,
-                Renderer = _renderer.GetType().Name,
-                Text = text,
-                Texture = texture,
-                Wrapping = wrapMode
-            };
-            _cache.Add(cache);
-            gfx.DrawRectangle(x, y, cache.Texture.Width, cache.Texture.Height, cache.Texture, color, System.Windows.Forms.ImageLayout.Stretch, false, false);
+            gfx.DrawRectangle(x, y, texture.Width, texture.Height, texture, color, System.Windows.Forms.ImageLayout.Stretch, false, false);
 
         }
     }
