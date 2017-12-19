@@ -37,6 +37,10 @@ namespace Peacenet.Applications
             Width = (80 * _emulator.CharacterWidth);
             Height = (25 * _emulator.CharacterHeight);
             Title = "Terminal";
+            Click += (o, a) =>
+            {
+                Manager.SetFocus(_emulator);
+            };
         }
 
         public override void Show(int x = -1, int y = -1)
@@ -61,12 +65,32 @@ namespace Peacenet.Applications
             base.Close();
         }
 
+        private int _lastEmulatorY = -1;
+
         protected override void OnUpdate(GameTime time)
         {
             _emulator.X = 0;
-            _emulator.Y = 0;
+            
+            if (_emulator.Height > Height)
+            {
+                int diff_y = _emulator.Height - Height;
+                _emulator.Y = 0 - diff_y;
+            }
+            else
+            {
+                _emulator.Y = 0;
+            }
+            if (_lastEmulatorY != _emulator.Y)
+            {
+                _lastEmulatorY = _emulator.Y;
+                Invalidate(true);
+            }
             _emulator.Width = Width;
-            _emulator.Height = Height;
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            gfx.Clear(Color.Black);
         }
     }
 
@@ -105,6 +129,8 @@ namespace Peacenet.Applications
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string user = "user";
+            string workdir = "/home";
+            console.WorkingDirectory = workdir;
             while (true)
             {
                 if (_Api.LoggedIn)
@@ -112,7 +138,7 @@ namespace Peacenet.Applications
                 else
                     user = "user";
                 console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                console.Write($"{user}@127.0.0.1:~$ ");
+                console.Write($"{user}@127.0.0.1:{console.WorkingDirectory.Replace("/home","~")}$ ");
                 try
                 {
                     if (!_terminal.RunCommand(console.ReadLine(), console))
@@ -141,8 +167,9 @@ namespace Peacenet.Applications
         private int _charY = 0;
         private int _charWidth = 0;
         private int _charHeight = 0;
-        private int _scrollOffset = 0;
-        private bool _recalcScroll = false;
+
+        private double _cursorAnim = 0;
+        private bool _cursorOn = true;
 
         public int CharacterWidth
         {
@@ -207,16 +234,29 @@ namespace Peacenet.Applications
                     if (ch != -1)
                     {
                         _textBuffer += (char)ch;
-                        Invalidate();
-                        _recalcScroll = true;
+                        Invalidate(true);
                     }
                 }
             });
 
+            HasFocusedChanged += (o, a) =>
+            {
+                if (IsFocused)
+                {
+                    _cursorOn = true;
+                    _cursorAnim = 0;
+                    Invalidate(true);
+                }
+            };
         }
 
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
+            if (_cursorOn != true)
+                Invalidate(true);
+            _cursorOn = true;
+            _cursorAnim = 0;
+
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
             {
                 _slave.WriteByte((byte)'\r');
@@ -240,7 +280,6 @@ namespace Peacenet.Applications
                     gfx.Clear(Color.Black);
                     _charX = 0;
                     _charY = 0;
-                    _recalcScroll = true;
                     break;
             }
         }
@@ -252,8 +291,6 @@ namespace Peacenet.Applications
             _charY = 0;
             bool escaped = false;
             string escSeq = "";
-            int _lastCharX = -1;
-            int _lastCharY = -1;
             for (int i = 0; i < _textBuffer.Length; i++)
             {
                 char c = _textBuffer[i];
@@ -285,28 +322,24 @@ namespace Peacenet.Applications
                     case '\b':
                         if (_charX == 0 && _charY == 0)
                             continue;
-                        int newCharY = _lastCharY;
-                        int newCharX = _lastCharX;
 
-                        _lastCharX = _charX;
-                        _lastCharY = _charY;
-
-                        _charX = newCharX;
-                        _charY = newCharY;
+                        if (_charX > 0)
+                            _charX--;
+                        else
+                        {
+                            _charY--;
+                            _charX = (Width / _charWidth) - 1;
+                        }
 
                         gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.Black);
 
                         continue;
                     case '\n':
-                        _lastCharX = _charX;
-                        _lastCharY = _charY;
                         _charX = 0;
                         _charY += 1;
                         break;
                     default:
-                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(_charX * _charWidth, (_charY - _scrollOffset) * _charHeight), Color.White);
-                        _lastCharX = _charX;
-                        _lastCharY = _charY;
+                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(_charX * _charWidth, (_charY) * _charHeight), Color.White);
                         if ((_charX + 1) * _charWidth >= Width)
                         {
                             _charX = 0;
@@ -319,47 +352,24 @@ namespace Peacenet.Applications
                         break;
                 }
             }
-           if(IsFocused)
+           if(IsFocused && _cursorOn)
                 gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.White);
         }
 
         protected override void OnUpdate(GameTime time)
         {
-            if (_recalcScroll)
+            if (Height != (_charY+1)*_charHeight)
             {
-                int _tempx = 0;
-                int _tempy = 0;
-                for (int i = 0; i < _textBuffer.Length; i++)
-                {
-                    if (_textBuffer[i] == '\r')
-                        continue;
-                    if (_textBuffer[i] == '\n')
-                    {
-                        _tempx = 0;
-                        _tempy += _charHeight;
-                    }
+                Height = (_charY+1)*_charHeight;
+            }
 
-                    int next = _tempx + _charWidth;
-                    if (next >= Width)
-                    {
-                        _tempx = 0;
-                        _tempy += _charHeight;
-                        continue;
-                    }
-
-                }
-
-                if (_tempy <= Height)
-                {
-                    _scrollOffset = 0;
-                }
-                else
-                {
-                    int diffy = _tempy - Height;
-                    _scrollOffset = (diffy / _charHeight) + 1;
-                }
-                _recalcScroll = false;
-                Invalidate();
+            _cursorAnim += time.ElapsedGameTime.TotalMilliseconds;
+            if(_cursorAnim >= 500)
+            {
+                _cursorAnim = 0;
+                _cursorOn = !_cursorOn;
+                if(IsFocused)
+                    Invalidate(true);
             }
         }
 

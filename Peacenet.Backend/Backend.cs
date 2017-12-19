@@ -18,9 +18,22 @@ namespace Peacenet.Backend
         private Queue<Action> _utilityActions = new Queue<Action>();
         private volatile bool _isRunning = false;
         private const int _waittimems = 1800000;
+        private const int _wgWaitMS = 60000;
         private TcpListener _listener = null;
         private Thread _tcpthread = null;
         private bool _isMultiplayer = false;
+
+        private EventWaitHandle _serverReady = new ManualResetEvent(false);
+
+        public EventWaitHandle ServerReady
+        {
+            get
+            {
+                return _serverReady;
+            }
+        }
+
+        private string _wgSession = null;
 
         // Fired on any of these events:
         // 1) A new utility action has been enqueued
@@ -30,12 +43,79 @@ namespace Peacenet.Backend
 
         private Timer _safetyWatch = null;
 
+        private Timer _wgTimer = null;
+
         // Set to true before the timer fires.
         private volatile bool _safety = false;
+
+        //set to true before WG timer fires
+        private volatile bool _needsWgExtend = false;
 
         // Fired by the utility thread to let the main thread know that
         // it's done shutting down.
         private EventWaitHandle _shutdownComplete = new AutoResetEvent(false);
+
+        private void requireWgExtend(object o)
+        {
+            _needsWgExtend = true;
+            _workForUtility.Set();
+        }
+
+        private void queryForSession()
+        {
+            if(_isMultiplayer==false)
+            {
+                return;
+            }
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                return;
+            }
+            try
+            {
+                if (string.IsNullOrWhiteSpace(_wgSession))
+                {
+                    var wr = WebRequest.Create($"https://getshiftos.net/api/sessions/grant");
+                    wr.Method = "GET";
+                    wr.ContentType = "text/plain";
+                    using (var req = wr.GetResponse())
+                    {
+                        using (var stream = req.GetResponseStream())
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                _wgSession = reader.ReadToEnd();
+                                Logger.Log("Successfully retrieved Watercolor session ID.");
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    var wr = WebRequest.Create($"https://getshiftos.net/api/sessions/heyimstillhere");
+                    wr.Method = "GET";
+                    wr.ContentType = "text/plain";
+                    wr.Headers.Add("Authorization: " + _wgSession);
+                    using (var req = wr.GetResponse())
+                    {
+                        using (var stream = req.GetResponseStream())
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                Logger.Log("Watercolor API session token extended.");
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Error fetching result from Watercolor API: " + ex);
+            }
+        }
+
 
         public bool IsMultiplayer
         {
@@ -97,10 +177,11 @@ namespace Peacenet.Backend
             if (_isMultiplayer == false)
                 return "entity.singleplayeruser";
             string uid = null;
-            var wr = WebRequest.Create("https://getshiftos.net/users/getid");
+            var wr = WebRequest.Create("https://getshiftos.net/api/users/getid");
             wr.ContentType = "text/plain";
             wr.Method = "GET";
             wr.Headers.Add("Authentication: " + token);
+            wr.Headers.Add("Authorization: " + _wgSession);
             try
             {
                 using (var res = wr.GetResponse())
@@ -109,13 +190,16 @@ namespace Peacenet.Backend
                     {
                         using (var reader = new StreamReader(str))
                         {
+                            uid = reader.ReadToEnd();
+                            Logger.Log($"Hello, {uid}.");
                             return uid;
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log($"Error fetching user ID from WG API: {ex}");
                 return null;
             }
         }
@@ -127,6 +211,7 @@ namespace Peacenet.Backend
                         Logger.Log("Starting TCP thread.");
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();
+            _serverReady.Set();
             while (_isRunning)
             {
                 try
@@ -222,8 +307,12 @@ namespace Peacenet.Backend
         private void UtilityThread()
         {
             Logger.Log("Utility thread started!");
+            _needsWgExtend = true;
+            _workForUtility.Set();
             if (_safetyWatch == null)
                 _safetyWatch = new Timer(InvokeSafetyCheck, null, _waittimems, _waittimems);
+            if (_wgTimer == null)
+                _wgTimer = new Timer(this.requireWgExtend, null, _wgWaitMS, _wgWaitMS);
             while (_isRunning)
             {
                 _workForUtility.WaitOne();
@@ -244,6 +333,12 @@ namespace Peacenet.Backend
                     }
                     Logger.Log("Done.");
                     _safety = false;
+                }
+                if (_needsWgExtend)
+                {
+                    Logger.Log("Requesting/extending Watercolor API session...");
+                    queryForSession();
+                    _needsWgExtend = false;
                 }
                 _workForUtility.Reset();
             }
@@ -282,6 +377,8 @@ namespace Peacenet.Backend
             _workForUtility = null;
             _safetyWatch.Dispose();
             _safetyWatch = null;
+            _wgTimer.Dispose();
+            _wgTimer = null;
         }
 
         public void Dispose()

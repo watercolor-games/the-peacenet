@@ -19,17 +19,43 @@ namespace Peacenet
         [Dependency]
         private AsyncServerManager _server = null;
 
+        private string unresolve(string path)
+        {
+            string[] split = path.Split(new[] { ":" }, StringSplitOptions.None);
+            if (split.Length != 2)
+                throw new FormatException("Path was not in the correct format for unresolving.");
+            int dnum = -1;
+            if (!int.TryParse(split[0], out dnum))
+                throw new FormatException("Invalid drive number. Can't resolve to mount point.");
+            string client = null;
+            try
+            {
+                client = fstab.First(x => x.Value == dnum).Key + split[1];
+            }
+            catch
+            {
+                client = split[1];
+            }
+            while (client.Contains("//"))
+                client = client.Replace("//", "/");
+            return client;
+        }
+
         private int getNumberFromPath(string path, out string local)
         {
             try
             {
                 var first = fstab.OrderByDescending(x => x.Key.Length).First(x => path.StartsWith(x.Key));
-                local = ":" + path.Remove(0, first.Key.Length);
+                local = ":" + path.Remove(0, first.Key.Length-1);
+                if (local.EndsWith("/"))
+                    local = local.Remove(local.Length - 1, 1);
                 return first.Value;
             }
             catch
             {
-                local = ":" + path.Remove(0, 1);
+                local = ":" + path;
+                if (local.EndsWith("/"))
+                    local = local.Remove(local.Length - 1, 1);
                 return fstab["/"];
             }
         }
@@ -139,7 +165,7 @@ namespace Peacenet
                     int length = reader.ReadInt32();
                     for (int i = 0; i < length; i++)
                     {
-                        result.Add(reader.ReadString());
+                        result.Add(unresolve(reader.ReadString()));
                     }
                     return;
                 }
@@ -193,7 +219,7 @@ namespace Peacenet
                     int length = reader.ReadInt32();
                     for (int i = 0; i < length; i++)
                     {
-                        result.Add(reader.ReadString());
+                        result.Add(unresolve(reader.ReadString()));
                     }
                     return;
                 }
@@ -222,28 +248,35 @@ namespace Peacenet
             //Make a call to the server to grab all the user's mounts.
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_GETMOUNTS, null, (res, reader) =>
             {
-                //We should get back REQ_SUCCESS if we got a mountlist - even if it's empty. If we didn't get a success response, report an error.
-                if (res != Plex.Objects.ServerResponseType.REQ_SUCCESS)
-                    err = new Exception($"Server returned error {res} while loading mountpoint information.");
-                else
+                try
                 {
-                    //Read an int32 from the response stream so we know how many mountpoints to read
-                    int mountCount = reader.ReadInt32();
-                    //Read that many mounts
-                    for(int i = 0; i < mountCount; i++)
+                    //We should get back REQ_SUCCESS if we got a mountlist - even if it's empty. If we didn't get a success response, report an error.
+                    if (res != Plex.Objects.ServerResponseType.REQ_SUCCESS)
+                        err = new Exception($"Server returned error {res} while loading mountpoint information.");
+                    else
                     {
-                        //Each mount is stored as a string (drive label) and int (drive number) in sequence.
-                        //We'll use the drive label as the mountpoint's path.
-                        string mPath = reader.ReadString();
-                        int sNumber = reader.ReadInt32();
-                        //If two mounts share the same path, there's a serious problem.
-                        if(fstab.ContainsKey(mPath))
+                        //Read an int32 from the response stream so we know how many mountpoints to read
+                        int mountCount = reader.ReadInt32();
+                        //Read that many mounts
+                        for (int i = 0; i < mountCount; i++)
                         {
-                            err = new InvalidOperationException("Two mountpoints share the same path. This is a serious bug. Tell a developer or server admin immediately. You should never ever see this.");
-                            break;
+                            //Each mount is stored as a string (drive label) and int (drive number) in sequence.
+                            //We'll use the drive label as the mountpoint's path.
+                            string mPath = reader.ReadString();
+                            int sNumber = reader.ReadInt32();
+                            //If two mounts share the same path, there's a serious problem.
+                            if (fstab.ContainsKey(mPath))
+                            {
+                                err = new InvalidOperationException("Two mountpoints share the same path. This is a serious bug. Tell a developer or server admin immediately. You should never ever see this.");
+                                break;
+                            }
+                            fstab.Add(mPath, sNumber);
                         }
-                        fstab.Add(mPath, sNumber);
                     }
+                }
+                catch(Exception ex)
+                {
+                    err = ex;
                 }
             }).Wait();
             //Check for errors.

@@ -286,6 +286,8 @@ namespace Peacenet.Backend.Filesystem
             var lst = new List<string>();
             if (path.EndsWith("/"))
                 path = path.Remove(path.LastIndexOf("/"), 1);
+            if(type == EntryType.DIRECTORY)
+                lst.Add(DriveNumber + path + "/.");
             foreach (var entry in arr)
             {
                 lst.Add(DriveNumber + path + "/" + entry);
@@ -296,7 +298,9 @@ namespace Peacenet.Backend.Filesystem
 
         public override string[] GetDirectories(string path)
         {
-            return searchType(path, EntryType.DIRECTORY);
+            List<string> types = new List<string>();
+            types.AddRange(searchType(path, EntryType.DIRECTORY));
+            return types.ToArray();
         }
 
         public override string[] GetFiles(string path)

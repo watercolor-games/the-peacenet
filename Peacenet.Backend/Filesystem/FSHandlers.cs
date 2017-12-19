@@ -25,12 +25,11 @@ namespace Peacenet.Backend
             var drivemgr = backend.GetBackendComponent<FSManager>();
 
             string content = datareader.ReadString();
-            var sessiondata = sessionmgr.GetUserFromSession(session);
             var volumeinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
             int dnum = Convert.ToInt32(volumeinfo["volume"]);
             string label = volumeinfo["label"].ToString();
 
-            drivemgr.CreateFS(sessiondata.Username, dnum, label);
+            drivemgr.CreateFS(session, dnum, label);
 
             return 0x00;
 

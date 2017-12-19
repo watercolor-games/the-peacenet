@@ -294,8 +294,9 @@ namespace Plex.Objects.PlexFS
                         {
                             vol.fobj.Position = entry.Item1 * 8192;
                             var subdir = Directory.FromVol(vol);
-                            foreach (string sname in subdir.Contents)
-                                subdir.Delete(sname);
+                            foreach (string sname in subdir.Contents.ToArray())
+                                if(sname != "..") //Deleting the parent entry could rape things a bit...
+                                    subdir.Delete(sname);
                         }
                     ushort sec = entry.Item1;
                     while (sec != END)

@@ -160,6 +160,20 @@ namespace Plex.Objects
     {
         private StreamReader _stdin = null;
         private StreamWriter _stdout = null;
+        private string workdir = null;
+
+        public string WorkingDirectory
+        {
+            get
+            {
+                return workdir;
+            }
+            set
+            {
+                workdir = value;
+            }
+        }
+
 
         public ConsoleContext(StreamWriter stdout, StreamReader stdin)
         {
