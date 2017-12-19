@@ -55,7 +55,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             bool result = false;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount != null)
@@ -90,7 +90,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             bool result = false;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount != null)
@@ -126,7 +126,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -169,7 +169,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -213,7 +213,7 @@ namespace Peacenet.Backend
             var drivemgr = backend.GetBackendComponent<FSManager>();
             var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mounts = drivemgr.GetDrivesForUser(username);
             datawriter.Write(mounts.Count);
             foreach (var mount in mounts)
@@ -244,7 +244,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -290,7 +290,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -335,7 +335,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -375,7 +375,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -412,7 +412,7 @@ namespace Peacenet.Backend
 
             string content = datareader.ReadString();
             string path;
-            var username = sessionmgr.GetUserFromSession(session).Username;
+            var username = session;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {

@@ -47,6 +47,7 @@
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\WGLogin.cs" />
+    <Compile Include="AsyncServerFSBackend.cs" />
     <Compile Include="Cutscene\CreditsScene.cs" />
     <Compile Include="Cutscene\IntroScene.cs" />
     <Compile Include="DesktopWindow.cs" />

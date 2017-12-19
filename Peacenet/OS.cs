@@ -155,6 +155,17 @@ namespace Peacenet
 
         private void startBoot()
         {
+            try
+            {
+                _fs.SetBackend(new AsyncServerFSBackend());
+            }
+            catch(Exception ex)
+            {
+                _infobox.Show("Startup error", $"Could not start game session due to an error initializing the filesystem backend.\r\n\r\n{ex.Message}");
+                Shutdown();
+                return;
+            }
+
             _osIntroState = 0;
             _statusCount = _previouslyValues.Count();
             foreach (var dir in requiredPaths)
