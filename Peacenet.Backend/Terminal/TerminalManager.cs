@@ -88,7 +88,7 @@ namespace Peacenet.Backend
             if (backend == null)
                 throw new ArgumentNullException(nameof(backend));
             if (string.IsNullOrWhiteSpace(commandname))
-                throw new InvalidOperationException("Cannot parse empty command string.");
+                return false;
             if (args == null)
                 args = new string[] { };
             var cmd = _commands.FirstOrDefault(x => x.Name == commandname);

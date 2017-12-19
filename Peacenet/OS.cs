@@ -166,6 +166,23 @@ namespace Peacenet
                 startBoot();
             }
         }
+        
+        [Dependency]
+        private WatercolorAPIManager _api = null;
+
+        public IEnumerable<ShellDirectoryInformation> GetShellDirs()
+        {
+            string uname = "Your";
+            if (_api.LoggedIn)
+                uname = (string.IsNullOrWhiteSpace(_api.User.fullname)) ? _api.User.username + "'s" : _api.User.fullname + "'s";
+            yield return new ShellDirectoryInformation($"{uname} Home", "/home", _plexgate.Content.Load<Texture2D>("UIIcons/home"));
+            yield return new ShellDirectoryInformation("Desktop", "/home/Desktop", null);
+            yield return new ShellDirectoryInformation("Documents", "/home/Documents", null);
+            yield return new ShellDirectoryInformation("Downloads", "/home/Downloads", null);
+            yield return new ShellDirectoryInformation("Music", "/home/Music", null);
+            yield return new ShellDirectoryInformation("Pictures", "/home/Pictures", null);
+            yield return new ShellDirectoryInformation("512MB Hard Disk Drive", "/", null);
+        }
 
         private void startBoot()
         {
@@ -447,5 +464,23 @@ namespace Peacenet
             }
             return _contentList.ToArray();
         }
+    }
+
+    public class ShellDirectoryInformation
+    {
+        public ShellDirectoryInformation(string name, string path, Texture2D texture)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentNullException(nameof(path));
+            FriendlyName = name;
+            Path = path;
+            Texture = texture;
+        }
+
+        public Texture2D Texture { get; private set; }
+        public string FriendlyName { get; private set; }
+        public string Path { get; private set; }
     }
 }

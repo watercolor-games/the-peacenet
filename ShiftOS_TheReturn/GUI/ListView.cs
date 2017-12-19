@@ -46,7 +46,20 @@ namespace Plex.Engine.GUI
                 _selectedIndex = value;
                 SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
                 _requireLayout = true;
+                if (SelectedItem.Selected == false)
+                    SelectedItem.Selected = true;
             }
+        }
+
+        public ListViewItem[] GetItems()
+        {
+            List<ListViewItem> items = new List<ListViewItem>();
+            foreach(var child in Children)
+            {
+                if (child is ListViewItem)
+                    items.Add(child as ListViewItem);
+            }
+            return items.ToArray();
         }
 
         internal void RequireLayout()

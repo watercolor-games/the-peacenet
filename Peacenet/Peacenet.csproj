@@ -65,6 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MimeTypeMap.List, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeTypeMap.List.1.1.0\lib\MimeTypeMap.List.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MonoGame.Extended, Version=0.6.602.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Extended.0.6.602\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
       <Private>True</Private>

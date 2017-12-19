@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.Filesystem;
+using Peacenet.CoreUtils;
 
 namespace Peacenet.Applications
 {
@@ -32,6 +33,14 @@ namespace Peacenet.Applications
 
         private Stack<string> _pastLocs = new Stack<string>();
         private Stack<string> _futureLocs = new Stack<string>();
+
+        [Dependency]
+        private OS _os = null;
+
+        [Dependency]
+        private FileUtils _futils = null;
+
+        private bool _showHidden = false;
 
         private string _currentDirectory = "/";
 
@@ -82,6 +91,16 @@ namespace Peacenet.Applications
                     _needsReset = true;
                 }
             };
+
+            foreach(var shelldir in _os.GetShellDirs())
+            {
+                var lvitem = new ListViewItem(_placesView);
+                lvitem.Value = shelldir.FriendlyName;
+                lvitem.Tag = shelldir.Path;
+                lvitem.ImageKey = lvitem.Tag.ToString();
+                if (shelldir.Texture != null)
+                    _placesView.SetImage(lvitem.ImageKey, shelldir.Texture);
+            }
         }
 
         private bool _needsReset = true;
@@ -95,27 +114,55 @@ namespace Peacenet.Applications
             _back.ShowImage = true;
             _searchButton.ShowImage = true;
 
-            _placesView.Clear();
+            var placesItems = _placesView.GetItems();
+            var currentWork = placesItems.OrderByDescending(x => x.Tag.ToString().Length).FirstOrDefault(x => _currentDirectory.StartsWith(x.Tag.ToString()));
+            if (currentWork != null)
+                _placesView.SelectedIndex = Array.IndexOf(placesItems, currentWork);
+            else
+                _placesView.SelectedIndex = -1;
+
             _filesView.Clear();
+            if (!_fs.DirectoryExists(_currentDirectory))
+            {
+                _infobox.Show("File manager", $"The directory {_currentDirectory} was not found on your system.", () =>
+                {
+                    _currentDirectory = "/";
+                    _needsReset = true;
+                });
+                return;
+            }
 
             foreach(var dir in _fs.GetDirectories(_currentDirectory))
             {
+                string shorthand = _futils.GetNameFromPath(dir);
+                if (shorthand == "." || shorthand == "..")
+                    continue;
+                if (shorthand.StartsWith("."))
+                    if (!_showHidden)
+                        continue;
                 var lvitem = new ListViewItem(_filesView);
-                lvitem.ImageKey = "dir";
-                lvitem.Value = _fs.GetFileRecord(dir).Name;
+                lvitem.Value = shorthand;
                 lvitem.Tag = dir;
+                lvitem.ImageKey = "directory";
             }
+            foreach(var dir in _fs.GetFiles(_currentDirectory))
+            {
+                string shorthand = _futils.GetNameFromPath(dir);
+                if (shorthand == "." || shorthand == "..")
+                    continue;
+                if (shorthand.StartsWith("."))
+                    if (!_showHidden)
+                        continue;
+                var lvitem = new ListViewItem(_filesView);
+                lvitem.Value = shorthand;
+                lvitem.Tag = dir;
+                lvitem.ImageKey = _futils.GetMimeType(shorthand);
 
-            _filesView.SetImage("dir", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
-
-            _placesView.SetImage("home", _plexgate.Content.Load<Texture2D>("UIIcons/home"));
-            _placesView.SelectedIndex = -1;
-
-            var homedir = new ListViewItem(_placesView);
-            homedir.ImageKey = "home";
-            homedir.Tag = "/home";
-            homedir.Value = "Your home";
+            }
         }
+        
+        [Dependency]
+        private InfoboxManager _infobox = null;
 
         protected override void OnUpdate(GameTime time)
         {

@@ -56,6 +56,22 @@ namespace Peacenet.CoreUtils
             return absolute;
         }
 
+        /// <summary>
+        /// Gets the MIME type of a specified file name via its extension.
+        /// </summary>
+        /// <param name="filename">The file name to look up</param>
+        /// <returns>The MIME type for the file</returns>
+        public string GetMimeType(string filename)
+        {
+            if (!filename.Contains("."))
+                return "unknown";
+            int last = filename.LastIndexOf(".");
+            int len = filename.Length - last;
+            string ext = filename.Substring(last, len);
+            var types = MimeTypeMap.List.MimeTypeMap.GetMimeType(ext);
+            return (types.Count == 0) ? "unknown" : types.First();
+        }
+
         public void Initiate()
         {
         }

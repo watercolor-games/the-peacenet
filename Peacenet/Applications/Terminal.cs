@@ -51,6 +51,8 @@ namespace Peacenet.Applications
                 {
                     var ctx = _manager.CreateContext(_emulator.StdOut, _emulator.StdIn);
                     _manager.RunCommand("cli", ctx);
+                    if (this.Visible == true && !this.Disposed)
+                        Close();
                 });
             }
             base.Show(x, y);
@@ -141,7 +143,12 @@ namespace Peacenet.Applications
                 console.Write($"{user}@127.0.0.1:{console.WorkingDirectory.Replace("/home","~")}$ ");
                 try
                 {
-                    if (!_terminal.RunCommand(console.ReadLine(), console))
+                    string cmdstr = console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(cmdstr))
+                        continue;
+                    if (cmdstr == "exit")
+                        return;
+                    if (!_terminal.RunCommand(cmdstr, console))
                     {
                         console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
                         console.WriteLine("Command not found.");
@@ -226,18 +233,12 @@ namespace Peacenet.Applications
             _stdin = new StreamReader(_master);
             _stdout.AutoFlush = true;
 
-            Task.Run(() =>
-            {
-                while (!this.Disposed)
-                {
                     var ch = _slave.ReadByte();
                     if (ch != -1)
                     {
                         _textBuffer += (char)ch;
                         Invalidate(true);
                     }
-                }
-            });
 
             HasFocusedChanged += (o, a) =>
             {
@@ -256,6 +257,18 @@ namespace Peacenet.Applications
                 Invalidate(true);
             _cursorOn = true;
             _cursorAnim = 0;
+
+            if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Microsoft.Xna.Framework.Input.Keys.V)
+            {
+                if(System.Windows.Forms.Clipboard.ContainsText())
+                {
+                    foreach(char c in System.Windows.Forms.Clipboard.GetText())
+                    {
+                        _slave.WriteByte((byte)c);
+                    }
+                }
+                return;
+            }
 
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
             {
@@ -358,6 +371,13 @@ namespace Peacenet.Applications
 
         protected override void OnUpdate(GameTime time)
         {
+            var ch = _slave.ReadByte();
+            if (ch != -1)
+            {
+                _textBuffer += (char)ch;
+                Invalidate(true);
+            }
+
             if (Height != (_charY+1)*_charHeight)
             {
                 Height = (_charY+1)*_charHeight;
