@@ -374,7 +374,11 @@ namespace Peacenet.Applications
             var ch = _slave.ReadByte();
             if (ch != -1)
             {
-                _textBuffer += (char)ch;
+                while (ch != -1)
+                {
+                    _textBuffer += (char)ch;
+                    ch = _slave.ReadByte();
+                }
                 Invalidate(true);
             }
 
