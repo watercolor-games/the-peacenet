@@ -338,7 +338,7 @@ namespace Plex.Engine.GUI
 
             _closeHitbox.Click += (o, a) =>
             {
-                _windowManager.Close((int)_child.WindowID);  
+                _child.Close();
             };
 
             _titleHitbox.MouseLeftDown += (o, a) =>

@@ -59,12 +59,12 @@ namespace Plex.Engine.Filesystem
 
         public string[] GetFiles(string path)
         {
-            return _backend.GetFiles(path);
+            return _backend.GetFiles(path).OrderBy(x=>x).ToArray();
         }
 
         public string[] GetDirectories(string path)
         {
-            return _backend.GetDirectories(path);
+            return _backend.GetDirectories(path).OrderBy(x=>x).ToArray();
         }
 
         public void WriteAllBytes(string path, byte[] data)

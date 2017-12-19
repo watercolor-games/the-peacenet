@@ -118,6 +118,7 @@ namespace Peacenet
             "/home/Documents",
             "/home/Pictures",
             "/home/Music",
+            "/home/Downloads",
             "/bin",
             "/etc",
             "/etc/peacegate",

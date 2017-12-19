@@ -93,13 +93,18 @@ namespace Peacenet
             AddChild(_inputBox);
         }
 
+        private Action _okCallback = null;
+        private Action<bool> _yesNoCallback = null;
+
         public void Show(string title, string message, Action callback = null)
         {
             _ok.Click += (o, a) =>
             {
+                _doneCallbacks = true;
                 callback?.Invoke();
                 Close();
             };
+            _okCallback = callback;
             _yes.Visible = false;
             _no.Visible = false;
             _inputBox.Visible = false;
@@ -113,14 +118,17 @@ namespace Peacenet
         {
             _yes.Click += (o, a) =>
             {
+                _doneCallbacks = true;
                 callback?.Invoke(true);
                 Close();
             };
             _no.Click += (o, a) =>
             {
+                _doneCallbacks = true;
                 callback?.Invoke(false);
                 Close();
             };
+            _yesNoCallback = callback;
             _yes.Visible = true;
             _no.Visible = true;
             _ok.Visible = false;
@@ -128,6 +136,18 @@ namespace Peacenet
             Title = title;
             _messageLabel.Text = message;
             Show();
+        }
+
+        private bool _doneCallbacks = false;
+
+        public override void Close()
+        {
+            if (_doneCallbacks == false)
+            {
+                _okCallback?.Invoke();
+                _yesNoCallback?.Invoke(false);
+            }
+            base.Close();
         }
 
         public void PromptText(string title, string message, Action<string> callback = null, Func<string, bool> validator = null)

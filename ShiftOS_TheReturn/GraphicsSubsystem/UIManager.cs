@@ -200,13 +200,14 @@ namespace Plex.Engine.GraphicsSubsystem
                         continue;
                     if (ctrl.BackBuffer != null && ctrl.Opacity > 0)
                     {
+                        var tint = (ctrl.Enabled) ? Color.White : Color.Gray;
                         if (IgnoreControlOpacity)
                         {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White * _uiFadeAmount);
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), tint * _uiFadeAmount);
                         }
                         else
                         {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (Color.White * ctrl.Opacity) * _uiFadeAmount);
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (tint * ctrl.Opacity) * _uiFadeAmount);
                         }
                     }
                     else

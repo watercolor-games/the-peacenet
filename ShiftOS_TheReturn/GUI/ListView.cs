@@ -21,6 +21,16 @@ namespace Plex.Engine.GUI
         private int _selectedIndex = -1;
         private bool _requireLayout = true;
 
+        private int _visibleItems = -1;
+
+        public int VisibleItems
+        {
+            get
+            {
+                return (_visibleItems == -1) ? GetItems().Length : _visibleItems;
+            }
+        }
+
         public event EventHandler SelectedIndexChanged;
 
         public ListViewItem SelectedItem
@@ -196,8 +206,16 @@ namespace Plex.Engine.GUI
             if (child.GetType() != typeof(ListViewItem))
                 throw new InvalidOperationException("List view controls can only host childs of type " + (typeof(ListViewItem).FullName) + ".");
             base.AddChild(child);
+            (child as ListViewItem).ItemClicked += this.child_DoubleClicked;
             _requireLayout = true;
         }
+
+        private void child_DoubleClicked(ListViewItem child)
+        {
+            ItemClicked?.Invoke(child);
+        }
+
+        public event Action<ListViewItem> ItemClicked;
 
         protected override void OnUpdate(GameTime time)
         {
@@ -212,6 +230,8 @@ namespace Plex.Engine.GUI
                     int _h = 0;
                     foreach(var child in Children)
                     {
+                        if (!child.Visible)
+                            continue;
                         child.X = _x;
                         child.Y = _y;
                         if(_x + child.Width + _hGap > Width - (Margin * 2))
@@ -232,6 +252,8 @@ namespace Plex.Engine.GUI
                     int y = 0;
                     foreach(var child in Children)
                     {
+                        if (!child.Visible)
+                            continue;
                         child.X = 0;
                         child.Y = y;
                         y += child.Height;
@@ -240,6 +262,36 @@ namespace Plex.Engine.GUI
                     break;
             }
             _requireLayout = false;
+        }
+
+        public void SetFilter(string name)
+        {
+            int visible = -1;
+            bool isEmpty = string.IsNullOrWhiteSpace(name);
+            foreach(var item in GetItems())
+            {
+                if (isEmpty)
+                    item.Visible = true;
+                else
+                {
+                    if (visible == -1)
+                        visible++;
+                    item.Visible = (bool)item.Value?.ToString()?.Contains(name);
+                    if (item.Visible)
+                        visible++;
+                }
+            }
+            _visibleItems = visible;
+            _requireLayout = true;
+        }
+
+        public override void RemoveChild(Control child)
+        {
+            if (!(child is ListViewItem))
+                throw new InvalidOperationException("You should never EVER see this.");
+            base.RemoveChild(child);
+            _requireLayout = true;
+            (child as ListViewItem).ItemClicked -= this.child_DoubleClicked;
         }
     }
 
@@ -252,7 +304,7 @@ namespace Plex.Engine.GUI
         private object _value = null;
         private string _ikey = null;
 
-        
+        public event Action<ListViewItem> ItemClicked;
 
         public bool Selected
         {
@@ -306,6 +358,11 @@ namespace Plex.Engine.GUI
 
         public object Tag { get; set; }
 
+        private void _doubleClick (object s, EventArgs e)
+        {
+            ItemClicked?.Invoke(this);
+        }
+
         public ListViewItem(ListView parent) : base()
         {
             _label = new GUI.Label();
@@ -327,6 +384,10 @@ namespace Plex.Engine.GUI
             {
                 selectme();
             };
+            _label.DoubleClick += _doubleClick;
+            _picture.DoubleClick += _doubleClick;
+            this.DoubleClick += _doubleClick;
+
         }
 
         private void selectme()

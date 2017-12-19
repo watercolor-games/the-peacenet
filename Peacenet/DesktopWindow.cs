@@ -132,8 +132,16 @@ namespace Peacenet
             var shutdown = new MenuItem(winsys);
             shutdown.Activated += (o, a) =>
             {
+                foreach(var win in winsys.WindowList.ToArray())
+                {
+                    win.Border.Enabled = false;
+                }
                 _infobox.ShowYesNo("End Session", "Are you sure you'd like to end your Peacegate session?", (answer) =>
                 {
+                    foreach (var win in winsys.WindowList.ToArray())
+                    {
+                        win.Border.Enabled = true;
+                    }
                     if (answer)
                     {
                         foreach(var win in winsys.WindowList.ToArray())

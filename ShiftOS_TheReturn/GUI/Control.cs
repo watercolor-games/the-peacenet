@@ -34,6 +34,26 @@ namespace Plex.Engine.GUI
         private bool _disposed = false;
         private float _opacity = 1;
 
+        private bool _enabled = true;
+
+        public bool Enabled
+        {
+            get
+            {
+                return _enabled;
+            }
+            set
+            {
+                if (_enabled == value)
+                    return;
+                _enabled = value;
+                Invalidate();
+            }
+        }
+
+        private bool _doDoubleClick = false;
+        private double _doubleClickCooldown = 0;
+
         private int _minWidth = 1;
         private int _minHeight = 1;
         private int _maxWidth = 0;
@@ -83,6 +103,8 @@ namespace Plex.Engine.GUI
         public event EventHandler MouseRightUp;
         public event EventHandler MouseMiddleUp;
         public event EventHandler<KeyboardEventArgs> KeyEvent;
+        public event EventHandler DoubleClick;
+
 
         public event EventHandler WidthChanged;
         public event EventHandler HeightChanged;
@@ -386,6 +408,8 @@ namespace Plex.Engine.GUI
 
         public virtual bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
         {
+            if (_enabled == false)
+                return false;
             if (Visible == false)
                 return false;
             try
@@ -436,7 +460,18 @@ namespace Plex.Engine.GUI
                 _right = right;
                 if (fireLeft)
                 {
-                    Click?.Invoke(this, EventArgs.Empty);
+                    if (_doDoubleClick)
+                    {
+                        DoubleClick?.Invoke(this, EventArgs.Empty);
+                        _doubleClickCooldown = 0;
+                        _doDoubleClick = false;
+                    }
+                    else
+                    {
+                        _doubleClickCooldown = 250;
+                        _doDoubleClick = true;
+                        Click?.Invoke(this, EventArgs.Empty);
+                    }
                 }
                 if (fireRight)
                 {
@@ -495,34 +530,56 @@ namespace Plex.Engine.GUI
             if (_isVisible == false)
                 return;
             //Pull the mouse state.
-            var mouse = Manager.Mouse;
-            if (mouse != _lastState)
+            if (_enabled)
             {
-                //For toplevels, set mouse input loc directly.
-                int _newmousex = 0;
-                int _newmousey = 0;
-                if (Parent == null)
+                var mouse = Manager.Mouse;
+                if (mouse != _lastState)
                 {
-                    _newmousex = mouse.X - X;
-                    _newmousey = mouse.Y - Y;
+                    //For toplevels, set mouse input loc directly.
+                    int _newmousex = 0;
+                    int _newmousey = 0;
+                    if (Parent == null)
+                    {
+                        _newmousex = mouse.X - X;
+                        _newmousey = mouse.Y - Y;
+                    }
+                    //For controls with parents, poll mouse information from the parent.
+                    else
+                    {
+                        _newmousex = Parent._mousex - X;
+                        _newmousey = Parent._mousey - Y;
+                    }
+                    if (_newmousex != _mousex || _newmousey != _mousey)
+                    {
+                        bool hasMouse = ContainsMouse;
+                        _mousex = _newmousex;
+                        _mousey = _newmousey;
+                        MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
+                        if (hasMouse != ContainsMouse)
+                            Invalidate(true);
+                    }
+                    _lastState = mouse;
                 }
-                //For controls with parents, poll mouse information from the parent.
-                else
-                {
-                    _newmousex = Parent._mousex - X;
-                    _newmousey = Parent._mousey - Y;
-                }
-                if (_newmousex != _mousex || _newmousey != _mousey)
-                {
-                    bool hasMouse = ContainsMouse;
-                    _mousex = _newmousex;
-                    _mousey = _newmousey;
-                    MouseMove?.Invoke(this, new Vector2(_newmousex, _newmousey));
-                    if (hasMouse != ContainsMouse)
-                        Invalidate(true);
-                }
-                _lastState = mouse;
             }
+            else
+            {
+                if(_mousex != -1 && _mousey != -1)
+                {
+                    _mousex = -1;
+                    _mousey = -1;
+                    Invalidate(true);
+                }
+            }
+            if (_doDoubleClick)
+            {
+                _doubleClickCooldown -= time.ElapsedGameTime.TotalMilliseconds;
+                if (_doubleClickCooldown <= 0)
+                {
+                    _doDoubleClick = false;
+                    _doubleClickCooldown = 0;
+                }
+            }
+
             OnUpdate(time);
             if (_children == null)
                 return;
@@ -616,13 +673,14 @@ namespace Plex.Engine.GUI
                             continue;
                         if (child.Opacity > 0)
                         {
+                            var tint = (child.Enabled) ? Color.White : Color.Gray;
                             if (Manager.IgnoreControlOpacity)
                             {
-                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), Color.White);
+                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint);
                             }
                             else
                             {
-                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), Color.White * child.Opacity);
+                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint * child.Opacity);
                             }
                         }
                     }
