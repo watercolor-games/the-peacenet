@@ -19,6 +19,7 @@ using Plex.Engine.Themes;
 using Plex.Engine.Filesystem;
 using Plex.Engine.Server;
 using System.Threading;
+using Plex.Engine.Config;
 
 namespace Peacenet
 {
@@ -116,6 +117,10 @@ namespace Peacenet
         private Backend.Backend _localBackend = null;
 
         [Dependency]
+        private AppDataManager _appdata = null;
+
+
+        [Dependency]
         private AsyncServerManager _server = null;
 
         [Dependency]
@@ -127,7 +132,7 @@ namespace Peacenet
         {
             if (!_server.Connected)
             {
-                _localBackend = new Backend.Backend(3252, false);
+                _localBackend = new Backend.Backend(3252, false, Path.Combine(_appdata.GamePath, "world"));
                 _localBackend.Listen();
                 _localBackend.ServerReady.WaitOne();
                 Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
@@ -398,7 +403,6 @@ namespace Peacenet
             _statusIndex = -1;
             _peacenetScaleAnim = 0;
             _startupRide = 0;
-            _save.EndSession();
             _localBackend?.Shutdown();
             _localBackend = null;
             if(_server.Connected)

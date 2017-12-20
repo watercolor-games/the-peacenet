@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Peacenet.Backend.Filesystem;
-using Peacenet.Backend.Sessions;
 using Plex.Objects;
 
 namespace Peacenet.Backend
@@ -21,7 +20,6 @@ namespace Peacenet.Backend
 
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
             var drivemgr = backend.GetBackendComponent<FSManager>();
 
             string content = datareader.ReadString();
@@ -50,7 +48,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -85,7 +82,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -121,7 +117,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -164,7 +159,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -210,7 +204,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             var username = session;
             var mounts = drivemgr.GetDrivesForUser(username);
@@ -239,7 +232,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -285,7 +277,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -329,7 +320,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -369,7 +359,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;
@@ -406,7 +395,6 @@ namespace Peacenet.Backend
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
-            var sessionmgr = backend.GetBackendComponent<SessionManager>();
 
             string content = datareader.ReadString();
             string path;

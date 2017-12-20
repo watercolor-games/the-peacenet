@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,6 +27,10 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=4.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.4.1.0\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Whoa">
       <HintPath>..\packages\Whoa.1.5.0\lib\net45\Whoa.dll</HintPath>
@@ -39,16 +43,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Saves\SaveManager.cs" />
-    <Compile Include="Sessions\SessionManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="IBackendComponent.cs" />
     <Compile Include="Backend.cs" />
     <Compile Include="MessageDelegator.cs" />
     <Compile Include="IMessageHandler.cs" />
     <Compile Include="DependencyAttribute.cs" />
-    <Compile Include="Sessions\SessionHandlers.cs" />
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\ADriveMount.cs" />
     <Compile Include="Filesystem\FSHandlers.cs" />
@@ -65,13 +68,7 @@
       <Name>WatercolorGames.CommandLine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Saves\" />
-    <Folder Include="Sessions\" />
-    <Folder Include="Filesystem\" />
-    <Folder Include="Terminal\" />
-    <Folder Include="World\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

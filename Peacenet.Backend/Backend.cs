@@ -23,6 +23,16 @@ namespace Peacenet.Backend
         private Thread _tcpthread = null;
         private bool _isMultiplayer = false;
 
+        private string _rootDirectory = null;
+
+        public string RootDirectory
+        {
+            get
+            {
+                return _rootDirectory;
+            }
+        }
+
         private EventWaitHandle _serverReady = new ManualResetEvent(false);
 
         public EventWaitHandle ServerReady
@@ -134,8 +144,13 @@ namespace Peacenet.Backend
             _workForUtility.Set();
         }
 
-        public Backend(int port, bool isMultiplayer = true)
+        public Backend(int port, bool isMultiplayer = true, string rootDir = null)
         {
+            _rootDirectory = rootDir;
+            if (string.IsNullOrWhiteSpace(_rootDirectory))
+                _rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            if (!Directory.Exists(_rootDirectory))
+                Directory.CreateDirectory(_rootDirectory);
             _isMultiplayer = isMultiplayer;
             if (port < 0 || port > 65535)
                 throw new ArgumentOutOfRangeException(nameof(port));

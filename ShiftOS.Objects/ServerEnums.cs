@@ -66,13 +66,20 @@ namespace Plex.Objects
         ACL_GETBANNEDIPS = 0x65,
         ACL_GETBANNEDUSERS = 0x66,
 
+        [Obsolete]
         CASH_DEDUCT = 0x70,
+        [Obsolete]
         CASH_DEPOSIT = 0x71,
 
+        [Obsolete]
         SP_COMPLETESTORY = 0x80,
+        [Obsolete]
         SP_SETPICKUP = 0x81,
 
         STREAM_OP = 0x90,
+
+        SAVE_GETVAL = 0xA0,
+        SAVE_SETVAL = 0xA1
     }
     
     public enum StreamOp : byte

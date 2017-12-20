@@ -1,4 +1,6 @@
-﻿using System;
+﻿//TODO: Use the database backend in some way for storing drive info.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +15,10 @@ namespace Peacenet.Backend.Filesystem
     {
         private List<ADriveMount> _mounts = new List<ADriveMount>();
         private readonly byte[] drivemagic = Encoding.UTF8.GetBytes("f1l3");
+
+        [Dependency]
+        private Backend _backend = null;
+
 
         public ADriveMount GetDriveFromPathData(string username, string pathdata, out string path)
         {
@@ -38,7 +44,7 @@ namespace Peacenet.Backend.Filesystem
             existing = new PlexFATDriveMount(new MountInformation
             {
                  DriveNumber = drivenumber,
-                ImageFilePath = Path.Combine("drives", $"{username}.{drivenumber}.drv"),
+                ImageFilePath = Path.Combine(_drivePath, $"{username}.{drivenumber}.drv"),
                  Specification = DriveSpec.PlexFAT,
                  VolumeLabel = label
             }, username);
@@ -52,17 +58,19 @@ namespace Peacenet.Backend.Filesystem
             return _mounts.FirstOrDefault(x => x.SessionID == username && x.DriveNumber == drivenum);
         }
 
+        private string _drivePath = null;
 
         public void Initiate()
         {
-            if (!System.IO.Directory.Exists("drives"))
+            _drivePath = Path.Combine(_backend.RootDirectory, "drives");
+            if (!System.IO.Directory.Exists(_drivePath))
             {
                 Logger.Log("Creating drive directory...");
-                System.IO.Directory.CreateDirectory("drives");
+                System.IO.Directory.CreateDirectory(_drivePath);
                 Logger.Log("Done.");
             }
             Logger.Log("Now looking for drive mount info.");
-            foreach (var file in System.IO.Directory.GetFiles("drives"))
+            foreach (var file in System.IO.Directory.GetFiles(_drivePath))
             {
                 if (!file.EndsWith(".info", StringComparison.InvariantCultureIgnoreCase))
                     continue;

@@ -5,110 +5,155 @@ using System.IO;
 using Whoa;
 using System.Text;
 using System.Linq;
+using LiteDB;
+using Newtonsoft.Json;
 
 namespace Peacenet.Backend.Saves
 {
     public class SaveManager : IBackendComponent
     {
-        private List<Save> _userSaves = new List<Save>();
-        private readonly byte[] savemagic = Encoding.UTF8.GetBytes("S4V3");
+        private LiteCollection<SaveFile> _saves = null;
 
-        public void AddSave(string username)
-        {
-            var existing = _userSaves.FirstOrDefault(x => x.Username == username);
-            if (existing != null)
-                throw new InvalidOperationException("A save with that username already exists.");
-            Logger.Log($"Creating new save for {username}.");
-            existing = new Save
-            {
-                Cash = 0,
-                Experience = 0,
-                IsSandbox = false,
-                LoadedUpgrades = new List<string>(),
-                MaxLoadedUpgrades = 5,
-                NetworkTasks = null,
-                PickupPoint = "",
-                Rank = 0,
-                StoriesExperienced = new List<string>(),
-                SystemName = "deprecated",
-                Transactions = new List<CashTransaction>(),
-                Upgrades = new Dictionary<string, bool>(),
-                Username = username
-            };
-            _userSaves.Add(existing);
-            Logger.Log("Done.");
-        }
+        private LiteCollection<SaveValue> _values = null;
 
-        public Save GetSave(string username)
-        {
-            Logger.Log("Retrieving save for " + username + "...");
-            return _userSaves.FirstOrDefault(x => x.Username == username);
-        }
+        [Dependency]
+        private DatabaseHolder _db = null;
 
         public void Initiate()
         {
-            Logger.Log("Checking for save directory...");
-            if (!Directory.Exists("saves"))
+            Logger.Log("Save manager is starting...");
+            _saves = _db.Database.GetCollection<SaveFile>("usersaves");
+            _saves.EnsureIndex(x => x.Id);
+            _values = _db.Database.GetCollection<SaveValue>("usersavevalues");
+            _values.EnsureIndex(x => x.Id);
+            Logger.Log($"Done. {_saves.Count()} saves loaded. {_values.Count()} total values loaded.");
+        }
+
+        public bool UserHasSave(string session)
+        {
+            var save = _saves.FindOne(x => x.UserId == session);
+            return (save != null);
+        }
+
+        public SaveFile GetSave(string session)
+        {
+            if (UserHasSave(session))
             {
-                Logger.Log("Creating save directory...");
-                Directory.CreateDirectory("saves");
-                Logger.Log("Done.");
+                return _saves.FindOne(x => x.UserId == session);
             }
-            Logger.Log("Loading user saves...");
-            foreach (var file in Directory.GetFiles("saves"))
+            var save = new SaveFile
             {
-                using (var fs = File.OpenRead(file))
-                {
-                    using (var reader = new BinaryReader(fs))
-                    {
-                        byte[] magic = reader.ReadBytes(4);
-                        if (!magic.SequenceEqual(savemagic))
-                            continue; //not a save file.
-                        int len = reader.ReadInt32();
-                        byte[] data = reader.ReadBytes(len);
-                        using (var ms = new MemoryStream(data))
-                        {
-                            var save = Whoa.Whoa.DeserialiseObject<Save>(ms);
-                            Logger.Log($"Loaded save: {save.Username}");
-                            _userSaves.Add(save);
-                        }
-                    }
-                }
+                Id = Guid.NewGuid().ToString(),
+                UserId = session,
+            };
+            _saves.Insert(save);
+            return save;
+        }
+
+        public string GetValue(string session, string key, string defaultValue)
+        {
+            var save = GetSave(session);
+
+            var val = _values.FindOne(x => x.SaveId == save.Id && x.Key == key);
+            if (val != null)
+                return val.Value;
+            val = new SaveValue
+            {
+                Id = Guid.NewGuid().ToString(),
+                Key = key,
+                SaveId = save.Id,
+                Value = defaultValue,
+            };
+            _values.Insert(val);
+            return val.Value;
+
+        }
+
+        public void SetValue(string session, string key, string value)
+        {
+            var save = GetSave(session);
+
+            var val = _values.FindOne(x => x.SaveId == save.Id && x.Key == key);
+            if (val != null)
+            {
+                val.Value = value;
+                _values.Update(val);
+                return;
             }
-            Logger.Log($"Done loading saves. {_userSaves.Count} saves loaded.");
+            val = new SaveValue
+            {
+                Id = Guid.NewGuid().ToString(),
+                Key = key,
+                SaveId = save.Id,
+                Value = value,
+            };
+            _values.Insert(val);
         }
 
         public void SafetyCheck()
         {
-            Logger.Log("Saving user saves to disk...");
-            foreach (var save in _userSaves)
-            {
-                string path = Path.Combine("saves", $"{save.Username}.whoa");
-                Logger.Log($"Saving {save.Username} to {path}...");
-                using (var fs = File.OpenWrite(path))
-                {
-                    using (var writer = new BinaryWriter(fs))
-                    {
-                        writer.Write(savemagic);
-
-                        using (var ms = new MemoryStream())
-                        {
-                            Whoa.Whoa.SerialiseObject<Save>(ms, save);
-                            var arr = ms.ToArray();
-                            writer.Write(arr.Length);
-                            writer.Write(arr);
-                        }
-                    }
-                }
-                Logger.Log("Done.");
-            }
         }
 
         public void Unload()
         {
-            Logger.Log("Unloading user saves...");
-            _userSaves = null;
-            Logger.Log("Done.");
         }
     }
+
+    public class SaveFile
+    {
+        public string Id { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class SaveValue
+    {
+        public string Id { get; set; }
+        public string SaveId { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
+    [RequiresSession]
+    public class SaveGetValueHandler : IMessageHandler
+    {
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.SAVE_GETVAL;
+            }
+        }
+
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var savemgr = backend.GetBackendComponent<SaveManager>();
+            string key = datareader.ReadString();
+            string val = datareader.ReadString();
+            string ret = savemgr.GetValue(session, key, val);
+            datawriter.Write(ret);
+            return ServerResponseType.REQ_SUCCESS;
+        }
+    }
+
+    [RequiresSession]
+    public class SaveSetValueHandler : IMessageHandler
+    {
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.SAVE_SETVAL;
+            }
+        }
+
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var savemgr = backend.GetBackendComponent<SaveManager>();
+            string key = datareader.ReadString();
+            string val = datareader.ReadString();
+            savemgr.SetValue(session, key, val);
+            return ServerResponseType.REQ_SUCCESS;
+        }
+    }
+
 }

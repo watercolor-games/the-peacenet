@@ -175,20 +175,12 @@ namespace Peacenet
                             address += ":3251";
                         _server.Connect(address, () =>
                         {
-                            //todo: attach save manager to server if connected to a server.
-                            var savefiles = _saveManager.GetSavePaths();
-                            if (savefiles.Length < 1)
-                            {
-                                _saveManager.CreateSinglePlayerSave();
-                            }
-                            else
-                            {
-                                _saveManager.StartSinglePlayerSession(savefiles[0]);
-                            }
+                            _saveManager.SetBackend(new ServerSideSaveBackend());
                             animState = 17;
                         }, (error) =>
                         {
                             _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
+                            Reset();
                         });
                     });
                 }
@@ -197,15 +189,7 @@ namespace Peacenet
             {
                 if (animState < 17)
                 {
-                    var savefiles = _saveManager.GetSavePaths();
-                    if(savefiles.Length < 1)
-                    {
-                        _saveManager.CreateSinglePlayerSave();
-                    }
-                    else
-                    {
-                        _saveManager.StartSinglePlayerSession(savefiles[0]);
-                    }
+                    _saveManager.SetBackend(new ServerSideSaveBackend());
                     animState = 17;
                 }
 
