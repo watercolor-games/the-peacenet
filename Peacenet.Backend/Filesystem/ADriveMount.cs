@@ -152,7 +152,7 @@ namespace Peacenet.Backend.Filesystem
         /// <returns>A list of all found subdirectories.</returns>
         public abstract string[] GetDirectories(string path);
 
-
+        public abstract void Dispose();
     }
 
 
@@ -198,6 +198,13 @@ namespace Peacenet.Backend.Filesystem
 
         private Stream fobj = null;
         private PlexFAT vol = null;
+
+        public override void Dispose()
+        {
+            vol = null;
+            fobj.Close();
+            fobj = null;
+        }
 
         public PlexFATDriveMount(MountInformation mountdata, string usersession) : base(mountdata, usersession)
         {

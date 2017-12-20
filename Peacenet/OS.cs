@@ -54,11 +54,6 @@ namespace Peacenet
 
         private int _osIntroState = -1;
 
-        private SoundEffect[] AmbientMusic = null;
-        private SoundEffectInstance[] AmbientInstances = null;
-        private int _trackIndex = -1;
-        private bool _hasPlayedCHosenSong = false;
-
         private Random _rnd = new Random();
 
         private PictureBox _peacenet = null;
@@ -86,13 +81,6 @@ namespace Peacenet
             _previously.AutoSize = true;
             _ui.Add(_previously);
 
-            AmbientMusic = _plexgate.Content.LoadAllIn<SoundEffect>("Music/Ambient");
-            AmbientInstances = new SoundEffectInstance[AmbientMusic.Length];
-            for(int i = 0; i < AmbientInstances.Length; i++)
-            {
-                AmbientInstances[i] = AmbientMusic[i].CreateInstance();
-            }
-            
             _statusLabel = new Label();
             _statusLabel.Visible = false;
             _statusLabel.FontStyle = TextFontStyle.Header2;
@@ -227,23 +215,6 @@ namespace Peacenet
 
         public void OnGameUpdate(GameTime time)
         {
-            if(_trackIndex != -1)
-            {
-                if(AmbientInstances[_trackIndex].State == SoundState.Stopped)
-                {
-                    if (_hasPlayedCHosenSong == false)
-                    {
-                        _hasPlayedCHosenSong = true;
-                        AmbientInstances[_trackIndex].Play();
-                    }
-                    else
-                    {
-                        _hasPlayedCHosenSong = false;
-                        _trackIndex = _rnd.Next(0, AmbientInstances.Length);
-                    }
-                }
-            }
-
             switch (_osIntroState)
             {
                 case 0:
@@ -264,11 +235,11 @@ namespace Peacenet
                     if (!_save.GetValue("boot.hasDoneIntro", false))
                     {
                         _previously.Text = "Welcome to";
+                        _save.SetValue("boot.hasDoneIntro", true);
                     }
                     else
                     {
                         _previously.Text = "Previously on";
-                        _trackIndex = _rnd.Next(0, AmbientInstances.Length);
                     }
                     _osIntroState++;
                     break;

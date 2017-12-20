@@ -350,3 +350,9 @@
 /processorParam:TextureFormat=NoChange
 /build:UIIcons/folder.png
 
+#begin Audio/Tutorial/TutorialBGM.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/TutorialBGM.wav
+

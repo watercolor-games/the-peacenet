@@ -131,6 +131,14 @@ namespace Plex.Engine.Server
             Connect(information.Address, onConnected, onError);
         }
 
+        public bool IsMultiplayer
+        {
+            get
+            {
+                return _isMultiplayer;
+            }
+        }
+
         public void Connect(string address, Action onConnected, Action<string> onError)
         {
             Task.Run(() =>
@@ -165,6 +173,7 @@ namespace Plex.Engine.Server
                             {
                                 Disconnect();
                                 onError?.Invoke("Cannot connect to a multiplayer server without a Watercolor account.");
+                                return;
                             }
                         onConnected?.Invoke();
                     });

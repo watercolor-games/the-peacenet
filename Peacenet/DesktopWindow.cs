@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
+using Microsoft.Xna.Framework.Audio;
+using Plex.Engine.Saves;
+using Plex.Engine.Server;
 
 namespace Peacenet
 {
@@ -43,10 +46,32 @@ namespace Peacenet
         [Dependency]
         private AppLauncherManager _applaunchermgr = null;
 
+        private SoundEffect _tutorialBgm = null;
+        private SoundEffectInstance _tutorialBgmInstance = null;
+
+        private int _tutorialBgmAnim = -1;
+
         private WindowSystem winsys = null; //why isn't the current winmgr a property of all Window objects
+
+        [Dependency]
+        private SaveManager _save = null;
+
+        [Dependency]
+        private AsyncServerManager _server = null;
 
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _tutorialBgm = _plexgate.Content.Load<SoundEffect>("Audio/Tutorial/TutorialBGM");
+            _tutorialBgmInstance = _tutorialBgm.CreateInstance();
+
+            if (!_server.IsMultiplayer)
+            {
+                if(_save.GetValue("oobe.tutorial", false) == false)
+                {
+                    _tutorialBgmAnim = 0;
+                }
+            }
+
             winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
             _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage");
@@ -186,6 +211,8 @@ namespace Peacenet
                     break;
                 case 4:
                     _scaleAnim -= (float)time.ElapsedGameTime.TotalSeconds * 3;
+                    if (_tutorialBgmInstance.State == SoundState.Playing)
+                        _tutorialBgmInstance.Volume = MathHelper.Clamp(_scaleAnim, 0, 1);
                     if (_scaleAnim <= 0)
                     {
                         _animState++;
@@ -196,6 +223,30 @@ namespace Peacenet
                     winsys.WindowListUpdated -= WindowSystemUpdated;
                     Close();
                     _splash.Reset();
+                    _tutorialBgmInstance.Stop();
+                    _tutorialBgmInstance.Dispose();
+                    break;
+            }
+
+            switch (_tutorialBgmAnim)
+            {
+                case 0:
+                    _tutorialBgmInstance.Play();
+                    _tutorialBgmInstance.IsLooped = true;
+                    _tutorialBgmAnim++;
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+                    float vol = _tutorialBgmInstance.Volume;
+                    vol = MathHelper.Clamp(vol - (float)time.ElapsedGameTime.TotalSeconds, 0, 1);
+                    if(vol == 0)
+                    {
+                        _tutorialBgmInstance.Stop();
+                        _tutorialBgmAnim = -1;
+                    }
+
                     break;
             }
             Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);

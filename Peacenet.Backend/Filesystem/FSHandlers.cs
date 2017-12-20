@@ -312,7 +312,6 @@ namespace Peacenet.Backend
                 datawriter.Write(ex.Message);
                 return ServerResponseType.REQ_ERROR;
             }
-            return ServerResponseType.REQ_SUCCESS;
         }
     }
 

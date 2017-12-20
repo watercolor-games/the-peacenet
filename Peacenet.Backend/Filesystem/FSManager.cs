@@ -125,6 +125,11 @@ namespace Peacenet.Backend.Filesystem
         public void Unload()
         {
             Logger.Log("Unmounting filesystems...");
+            while (_mounts.Count > 0)
+            {
+                _mounts[0].Dispose();
+                _mounts.RemoveAt(0);
+            }
             _mounts.Clear();
             _mounts = null;
             Logger.Log("Done.");
