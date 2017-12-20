@@ -12,7 +12,7 @@ namespace Peacenet.Backend
 {
     public class Backend : IDisposable
     {
-        private List<IBackendComponent> _components = null;
+        private List<ComponentInfo> _components = null;
         private int _port = 0;
         private Thread _utilityThread = null;
         private Queue<Action> _utilityActions = new Queue<Action>();
@@ -156,7 +156,7 @@ namespace Peacenet.Backend
                 throw new ArgumentOutOfRangeException(nameof(port));
             _port = port;
             Logger.Log("Initiating Peacenet backend...");
-            _components = new List<IBackendComponent>();
+            _components = new List<ComponentInfo>();
             Logger.Log("Probing for backend components...");
              foreach (var type in ReflectMan.Types)
              {
@@ -169,15 +169,24 @@ namespace Peacenet.Backend
                     }
                     Logger.Log($"Found {type.Name}.");
                     var component = (IBackendComponent)Activator.CreateInstance(type, null);
-                    _components.Add(component);
+                    _components.Add(new Peacenet.Backend.ComponentInfo
+                    {
+                        Initialized = false,
+                        Component = component
+                    });
                  }
              }
             Logger.Log("Initiating all backend components...");
             foreach (var component in _components.ToArray())
             {
-                Inject(component);
-                component.Initiate();
+                Inject(component.Component);
             }
+
+            foreach (var component in _components.ToArray())
+            {
+                RecursiveInit(component.Component);
+            }
+
 
             Logger.Log("Utility thread creating!");
             _utilityThread = new Thread(this.UtilityThread);
@@ -186,6 +195,26 @@ namespace Peacenet.Backend
             _tcpthread = new Thread(ListenThread);
             _tcpthread.IsBackground = true;
         }
+
+        private void RecursiveInit(IBackendComponent component)
+        {
+            foreach (var field in component.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.GetCustomAttributes(false).Any(t => t is DependencyAttribute)))
+            {
+                if (field.FieldType == this.GetType())
+                    continue;
+                else
+                {
+                    var c = this.GetBackendComponent(field.FieldType);
+                    RecursiveInit(c);
+                }
+            }
+            if (_components.FirstOrDefault(x => x.Component == component).Initialized == false)
+            {
+                component.Initiate();
+                _components.FirstOrDefault(x => x.Component == component).Initialized = true;
+            }
+        }
+
 
         private string getWatercolorId(string token)
         {
@@ -279,14 +308,14 @@ namespace Peacenet.Backend
 
         public T GetBackendComponent<T>() where T : IBackendComponent, new()
         {
-            return (T)_components.First(x => x is T);
+            return (T)_components.First(x => x.Component is T).Component;
         }
 
         public IBackendComponent GetBackendComponent(Type t)
         {
             if (!typeof(IBackendComponent).IsAssignableFrom(t) || t.GetConstructor(Type.EmptyTypes) == null)
                 throw new ArgumentException($"{t.Name} is not an IBackendComponent, or does not provide a parameterless constructor.");
-            return _components.First(x => t.IsAssignableFrom(x.GetType()));
+            return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
         private object Inject(object client)
@@ -344,7 +373,7 @@ namespace Peacenet.Backend
                     Logger.Log("Performing safety check...");
                     foreach (var component in _components)
                     {
-                        component.SafetyCheck();
+                        component.Component.SafetyCheck();
                     }
                     Logger.Log("Done.");
                     _safety = false;
@@ -361,8 +390,8 @@ namespace Peacenet.Backend
             Logger.Log("ONE LAST SAFETY CHECK.");
             foreach (var component in _components)
             {
-                component.SafetyCheck();
-                component.Unload();
+                component.Component.SafetyCheck();
+                component.Component.Unload();
             }
             Logger.Log("Goodnight Australia.");
             _shutdownComplete.Set();
@@ -429,5 +458,11 @@ namespace Peacenet.Backend
             datawriter.Write(backend.IsMultiplayer);
             return ServerResponseType.REQ_SUCCESS;
         }
+    }
+
+    public class ComponentInfo
+    {
+        public bool Initialized { get; set; }
+        public IBackendComponent Component { get; set; }
     }
 }
