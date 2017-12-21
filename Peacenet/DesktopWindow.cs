@@ -74,7 +74,7 @@ namespace Peacenet
 
             winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
-            _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage");
+            _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
             _topPanel = new DesktopPanel();
             _bottomPanel = new DesktopPanel();
             AddChild(_topPanel);
@@ -345,12 +345,12 @@ namespace Peacenet
                     }
                     break;
             }
-            Opacity = MathHelper.Lerp(0.5F, 1, _opacityAnim);
+            Opacity = MathHelper.Lerp(0.75F, 1, _opacityAnim);
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+            Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
     }
 
