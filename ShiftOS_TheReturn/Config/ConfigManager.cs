@@ -142,6 +142,8 @@ namespace Plex.Engine.Config
         public void Initiate()
         {
             _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Watercolor Games", "Peacenet");
+            if (!Directory.Exists(_path))
+                Directory.CreateDirectory(_path);
         }
 
         public string GamePath
