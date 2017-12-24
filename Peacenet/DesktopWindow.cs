@@ -11,6 +11,8 @@ using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Saves;
 using Plex.Engine.Server;
+using Plex.Engine.Filesystem;
+using Peacenet.CoreUtils;
 
 namespace Peacenet
 {
@@ -58,6 +60,8 @@ namespace Peacenet
 
         [Dependency]
         private AsyncServerManager _server = null;
+
+        private ListView _desktopIconsView = null;
 
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
@@ -110,6 +114,60 @@ namespace Peacenet
             ResetAppLauncher(_winsys);
             ResetWindowList(_winsys);
             _winsys.WindowListUpdated += WindowSystemUpdated;
+            _desktopIconsView = new ListView();
+            AddChild(_desktopIconsView);
+            _desktopIconsView.IconFlow = IconFlowDirection.TopDown;
+
+            _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
+            _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
+        }
+
+        private void _desktopIconsView_ItemClicked(ListViewItem obj)
+        {
+            if (_fs.DirectoryExists(obj.Tag.ToString()))
+            {
+                var browser = new Applications.FileManager(WindowSystem);
+                browser.SetCurrentDirectory(obj.Tag.ToString());
+                browser.Show();
+            }
+            else
+            {
+                _infobox.Show("Not yet implemented", "Files cannot yet be opened from the Desktop.");
+            }
+        }
+
+        private bool _needsDesktopReset = true;
+        private double _desktopResetTimer = 0.0;
+
+        [Dependency]
+        private FSManager _fs = null;
+
+        [Dependency]
+        private FileUtils _futils = null;
+
+        public void SetupIcons()
+        {
+            _desktopIconsView.Clear();
+            if (!_fs.DirectoryExists("/home/Desktop"))
+                _fs.CreateDirectory("/home/Desktop");
+            foreach(var dir in _fs.GetDirectories("/home/Desktop"))
+            {
+                if (_futils.GetNameFromPath(dir).StartsWith("."))
+                    continue;
+                var diritem = new ListViewItem(_desktopIconsView);
+                diritem.Tag = dir;
+                diritem.Value = _futils.GetNameFromPath(dir);
+                diritem.ImageKey = "folder";
+            }
+            foreach (var dir in _fs.GetFiles("/home/Desktop"))
+            {
+                if (_futils.GetNameFromPath(dir).StartsWith("."))
+                    continue;
+                var diritem = new ListViewItem(_desktopIconsView);
+                diritem.Tag = dir;
+                diritem.Value = _futils.GetNameFromPath(dir);
+                diritem.ImageKey = _futils.GetMimeType(dir);
+            }
         }
 
         public void WindowSystemUpdated (object o, EventArgs a)
@@ -282,6 +340,41 @@ namespace Peacenet
             _windowList.Height = _bottomPanel.Height;
             _windowList.X = _showDesktopIcon.X + _showDesktopIcon.Width + 2;
             _windowList.Width = _bottomPanel.Width - _windowList.X;
+
+            _desktopIconsView.X = 0;
+            _desktopIconsView.Y = _topPanel.Y + _topPanel.Height;
+            _desktopIconsView.Height = _bottomPanel.Y - _desktopIconsView.Y;
+
+            if (_server.Connected)
+            {
+                if (_needsDesktopReset)
+                {
+                    _desktopResetTimer = 0;
+                    SetupIcons();
+                    _needsDesktopReset = false;
+                }
+                else
+                {
+                    _desktopResetTimer += time.ElapsedGameTime.TotalSeconds;
+                    if (_desktopResetTimer >= 10)
+                    {
+                        _needsDesktopReset = true;
+                    }
+                }
+            }
+            else
+            {
+                if (_animState < 3)
+                {
+                    foreach (var win in winsys.WindowList.ToArray())
+                    {
+                        if (win.Border != this.Parent)
+                            winsys.Close(win.WindowID);
+                    }
+                    _animState = 3;
+
+                }
+            }
 
             base.OnUpdate(time);
         }

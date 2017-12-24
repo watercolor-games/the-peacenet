@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Net;
 using Plex.Objects;
+using System.Threading;
 
 namespace Plex.Engine.Server
 {
@@ -33,6 +34,62 @@ namespace Plex.Engine.Server
         private string _session = "";
         private Action<string> _onConnectionError;
         private bool _isMultiplayer = false;
+        private PlexServerHeader _receivedHeader = null;
+        private Queue<PlexBroadcast> _broadcasts = new Queue<PlexBroadcast>();
+        private EventWaitHandle _messageReceived = new ManualResetEvent(false);
+
+
+        private void _listen()
+        {
+            if (_tcpClient == null)
+                return;
+            while (_tcpClient.Connected)
+            {
+                try
+                {
+                    string muid = _reader.ReadString();
+                    bool isBroadcast = (muid == "broadcast");
+                    if (isBroadcast)
+                    {
+                        int restype = _reader.ReadInt32();
+                        int btype = _reader.ReadInt32();
+                        int len = _reader.ReadInt32();
+                        byte[] data = new byte[len];
+                        if (len > 0)
+                        {
+                            data = _reader.ReadBytes(len);
+                        }
+                        _broadcasts.Enqueue(new PlexBroadcast((ServerBroadcastType)btype, data));
+                    }
+                    else
+                    {
+                        if (muid != _wantedMuid)
+                            continue;
+                        int remoteResponse = _reader.ReadInt32();
+                        _session = _reader.ReadString();
+                        int remoteLen = _reader.ReadInt32();
+                        byte[] remoteBody = new byte[remoteLen];
+                        if (remoteLen > 0)
+                        {
+                            remoteBody = _reader.ReadBytes(remoteLen);
+                        }
+                        _receivedHeader = new PlexServerHeader
+                        {
+                            Content = remoteBody,
+                            Message = (byte)remoteResponse,
+                            SessionID = null,
+                            TransactionKey = null,
+                        };
+                        _messageReceived.Set();
+                    }
+                }
+                catch(Exception ex)
+                {
+                }
+                if (_tcpClient == null)
+                    return;
+            }
+        }
 
         public bool Connected
         {
@@ -64,11 +121,15 @@ namespace Plex.Engine.Server
             Logger.Log($"{_serverInfo.Count} servers loaded.");
         }
 
+        private string _wantedMuid = null;
+
         public async Task SendMessage(ServerMessageType type, byte[] body, Action<ServerResponseType, BinaryReader> onResponse)
         {
             await Task.Run(() =>
             {
                 string muid = Guid.NewGuid().ToString();
+                _messageReceived.Reset();
+                _wantedMuid = muid;
                 lock (_writer)
                 {
                     _writer.Write(muid);
@@ -84,45 +145,31 @@ namespace Plex.Engine.Server
                         _writer.Write(body);
                     _writer.Flush();
                 }
-                lock (_reader)
+                _messageReceived.WaitOne();
+                ServerResponseType response = (ServerResponseType)_receivedHeader.Message;
+                if (response == ServerResponseType.REQ_LOGINREQUIRED)
                 {
-                    readMUID:
-                    string rMuid = _reader.ReadString();
-                    if (rMuid != muid)
-                        goto readMUID;
-                    int remoteResponse = _reader.ReadInt32();
-                    _session = _reader.ReadString();
-                    int remoteLen = _reader.ReadInt32();
-                    byte[] remoteBody = new byte[remoteLen];
-                    if(remoteLen>0)
+                    _onConnectionError?.Invoke("A Watercolor API error occurred on the server and you have lost connection as a result.");
+                    Disconnect();
+                }
+                else
+                {
+                    if (_receivedHeader.Content.Length > 0)
                     {
-                        remoteBody = _reader.ReadBytes(remoteLen);
-                    }
-
-                    ServerResponseType response = (ServerResponseType)remoteResponse;
-                    if (response == ServerResponseType.REQ_LOGINREQUIRED)
-                    {
-                        _onConnectionError?.Invoke("A Watercolor API error occurred on the server and you have lost connection as a result.");
-                        Disconnect();
+                        using (var memstr = new MemoryStream(_receivedHeader.Content))
+                        {
+                            using (var memreader = new BinaryReader(memstr, Encoding.UTF8))
+                            {
+                                onResponse?.Invoke(response, memreader);
+                            }
+                        }
                     }
                     else
                     {
-                        if (remoteLen > 0)
-                        {
-                            using (var memstr = new MemoryStream(remoteBody))
-                            {
-                                using (var memreader = new BinaryReader(memstr, Encoding.UTF8))
-                                {
-                                    onResponse?.Invoke(response, memreader);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            onResponse?.Invoke(response, null);
-                        }
+                        onResponse?.Invoke(response, null);
                     }
                 }
+
             });
         }
 
@@ -165,6 +212,9 @@ namespace Plex.Engine.Server
                     var stream = _tcpClient.GetStream();
                     _reader = new BinaryReader(stream, Encoding.UTF8, true);
                     _writer = new BinaryWriter(stream, Encoding.UTF8, true);
+                    var listener = new Thread(_listen);
+                    listener.IsBackground = true;
+                    listener.Start();
                     SendMessage(ServerMessageType.U_CONF, null, (res, reader) =>
                     {
                         _isMultiplayer = reader.ReadBoolean();
@@ -180,8 +230,8 @@ namespace Plex.Engine.Server
                 }
                 catch (Exception ex)
                 {
-                    onError?.Invoke(ex.Message);
                     Disconnect();
+                    onError?.Invoke(ex.Message);
                 }
             });
 
@@ -193,6 +243,30 @@ namespace Plex.Engine.Server
 
         public void OnGameUpdate(GameTime time)
         {
+            if (Connected)
+            {
+                while (_broadcasts.Count > 0)
+                {
+                    var broadcast = _broadcasts.Dequeue();
+                    if (broadcast.Type == ServerBroadcastType.Shutdown)
+                    {
+                        using (var reader = broadcast.OpenStream())
+                        {
+                            string msg = reader.ReadString();
+                            Disconnect();
+                            _onConnectionError?.Invoke($@"The server has been shut down by an administrator.
+
+{msg}");
+                            _broadcasts.Clear();
+                        }
+                    }
+                    else
+                    {
+                        //todo: we need some way to pull broadcasts from another place in the engine
+                        _broadcasts.Dequeue();
+                    }
+                }
+            }
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)

@@ -82,6 +82,36 @@ namespace Plex.Objects
         SAVE_SETVAL = 0xA1
     }
     
+    public enum ServerBroadcastType : byte
+    {
+        Shutdown = 0x00,
+
+        Chat_UserJoin = 0x10,
+        Chat_UserLeave = 0x11,
+        Chat_Action = 0x12,
+        Chat_Message = 0x13
+    }
+
+    public class PlexBroadcast
+    {
+        private byte[] _data = null;
+
+        public PlexBroadcast(ServerBroadcastType type, byte[] content)
+        {
+            if (content.Length == 0)
+                content = new byte[0];
+            _data = content;
+            Type = type;
+        }
+
+        public ServerBroadcastType Type { get; private set; }
+
+        public System.IO.BinaryReader OpenStream()
+        {
+            return new System.IO.BinaryReader(new System.IO.MemoryStream(_data), Encoding.UTF8, false);
+        }
+    }
+
     public enum StreamOp : byte
     {
         get_CanRead,

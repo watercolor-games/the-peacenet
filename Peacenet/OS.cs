@@ -207,6 +207,8 @@ namespace Peacenet
             }
         }
 
+        private bool _wgDeskOpen = false;
+
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
             ctx.BeginDraw();
@@ -357,6 +359,7 @@ namespace Peacenet
                     }
                     break;
                 case 15:
+                    _wgDeskOpen = true;
                     var desk = new DesktopWindow(_winmgr);
                     desk.Show();
                     _osIntroState = -1;
@@ -399,6 +402,7 @@ namespace Peacenet
 
         public void Shutdown()
         {
+            _wgDeskOpen = false;
             _previouslyRide = 0;
             _statusIndex = -1;
             _peacenetScaleAnim = 0;
@@ -411,6 +415,14 @@ namespace Peacenet
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
+            if (_wgDeskOpen)
+            {
+                if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Microsoft.Xna.Framework.Input.Keys.T)
+                {
+                    var term = new Applications.Terminal(_winmgr);
+                    term.Show();
+                }
+            }
         }
 
         public void Unload()

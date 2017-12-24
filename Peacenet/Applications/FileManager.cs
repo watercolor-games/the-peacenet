@@ -44,6 +44,17 @@ namespace Peacenet.Applications
 
         private string _currentDirectory = "/";
 
+        public void SetCurrentDirectory(string dir)
+        {
+            if (_fs.DirectoryExists(dir))
+            {
+                _needsReset = true;
+                _pastLocs.Clear();
+                _futureLocs.Clear();
+                _currentDirectory = dir;
+            }
+        }
+
         public FileManager(WindowSystem _winsys) : base(_winsys)
         {
             AddChild(_places);
@@ -59,11 +70,11 @@ namespace Peacenet.Applications
             Height = 600;
             Title = "File browser";
 
-            _placesView.SelectedIndexChanged += (o, a) =>
+            _placesView.ItemClicked += (item) =>
             {
                 if (_placesView.SelectedIndex == -1)
                     return;
-                var path = _placesView.SelectedItem?.Tag?.ToString();
+                var path = item?.Tag?.ToString();
                 if(path != _currentDirectory)
                 {
                     _pastLocs.Push(_currentDirectory);

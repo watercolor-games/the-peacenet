@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading;
 using System.Net.Sockets;
 using System.IO;
+using System.Text;
 
 namespace Peacenet.Backend
 {
@@ -22,6 +23,32 @@ namespace Peacenet.Backend
         private TcpListener _listener = null;
         private Thread _tcpthread = null;
         private bool _isMultiplayer = false;
+
+        private List<TcpClient> _connected = new List<TcpClient>();
+
+        public void Broadcast(ServerBroadcastType type, byte[] body)
+        {
+            if (body == null)
+                body = new byte[0];
+            lock (_connected)
+            {
+                foreach(var client in _connected)
+                {
+                    var stream = client.GetStream();
+
+                    using(var writer = new BinaryWriter(stream, Encoding.UTF8, true))
+                    {
+                        writer.Write("broadcast");
+                        writer.Write((int)ServerResponseType.REQ_SUCCESS);
+                        writer.Write((int)type);
+                        writer.Write(body.Length);
+                        if (body.Length > 0)
+                            writer.Write(body);
+                        writer.Flush();
+                    }
+                }
+            }
+        }
 
         private string _rootDirectory = null;
 
@@ -261,6 +288,7 @@ namespace Peacenet.Backend
                 try
                 {
                     var connection = _listener.AcceptTcpClient();
+                    _connected.Add(connection);
                     Logger.Log($"New client connection.");
                     var t = new Thread(() =>
                     {
@@ -290,7 +318,7 @@ namespace Peacenet.Backend
                                     writer.Write(returncontent);
                                 writer.Flush();
                             }
-                            catch (EndOfStreamException) { }
+                            catch (EndOfStreamException) { break; }
                         }
                         reader.Close();
                         writer.Close();
@@ -298,6 +326,7 @@ namespace Peacenet.Backend
                         reader.Dispose();
                         writer.Dispose();
                         stream.Dispose();
+                        _connected.Remove(connection);
                     });
                     t.IsBackground = true;
                     t.Start();
@@ -397,8 +426,16 @@ namespace Peacenet.Backend
             _shutdownComplete.Set();
         }
 
-        public void Shutdown()
+        public void Shutdown(string message = "Server going down for maintenance.")
         {
+            using(var memstr = new MemoryStream())
+            {
+                using(var writer= new BinaryWriter(memstr, Encoding.UTF8))
+                {
+                    writer.Write(message);
+                    Broadcast(ServerBroadcastType.Shutdown, memstr.ToArray());
+                }
+            }
             Logger.Log("Commencing shutdown...");
             Logger.Log("Stopping TCP listener.");
             _listener.Stop();

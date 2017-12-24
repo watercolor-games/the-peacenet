@@ -194,6 +194,8 @@ namespace Plex.Engine.GUI
             _winsystem.InjectDependencies(this);
         }
 
+        public WindowSystem WindowSystem { get { return _winsystem; } }
+
         public void SetWindowStyle(WindowStyle style)
         {
             if(_wid == null)

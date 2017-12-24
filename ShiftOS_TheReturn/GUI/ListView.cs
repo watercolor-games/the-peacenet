@@ -225,8 +225,19 @@ namespace Plex.Engine.GUI
             {
                 case ListViewLayout.LargeIcon:
                 case ListViewLayout.SmallIcon:
-                    int _x = Margin;
-                    int _y = Margin;
+                    int _x = 0;
+                    int _y = 0;
+                    switch (_flow)
+                    {
+                        case IconFlowDirection.LeftToRight:
+                            _x = Margin;
+                            _y = Margin;
+                            break;
+                        case IconFlowDirection.TopDown:
+                            _x = Margin;
+                            _y = Margin;
+                            break;
+                    }
                     int _h = 0;
                     foreach(var child in Children)
                     {
@@ -234,18 +245,42 @@ namespace Plex.Engine.GUI
                             continue;
                         child.X = _x;
                         child.Y = _y;
-                        if(_x + child.Width + _hGap > Width - (Margin * 2))
+                        switch (_flow)
                         {
-                            _x = Margin;
-                            _y += child.Height + _vGap;
+                            case IconFlowDirection.LeftToRight:
+                                if (_x + child.Width + _hGap > Width - (Margin * 2))
+                                {
+                                    _x = Margin;
+                                    _y += child.Height + _vGap;
+                                }
+                                else
+                                {
+                                    _x += child.Width + _hGap;
+                                }
+                                _h = Math.Max(_h, child.Y + child.Height + Margin);
+                                break;
+                            case IconFlowDirection.TopDown:
+                                if (_y + child.Height + _vGap > Height - (Margin * 2))
+                                {
+                                    _y = Margin;
+                                    _x += child.Width + _hGap;
+                                }
+                                else
+                                {
+                                    _y += child.Height + _vGap;
+                                }
+                                _h = Math.Max(_h, child.X + child.Width + Margin);
+                                break;
                         }
-                        else
-                        {
-                            _x += child.Width + _hGap;
-                        }
-                        _h = Math.Max(_h, child.Y + child.Height + Margin);
                     }
-                    Height = _h;
+                    if (_flow == IconFlowDirection.LeftToRight)
+                    {
+                        Height = _h;
+                    }
+                    else
+                    {
+                        Width = _h;
+                    }
                     break;
                 case ListViewLayout.List:
                     //Layout as a list
@@ -506,8 +541,6 @@ namespace Plex.Engine.GUI
     public enum IconFlowDirection
     {
         LeftToRight,
-        RightToLeft,
         TopDown,
-        BottomUp
     }
 }
