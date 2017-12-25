@@ -102,6 +102,9 @@ namespace Plex.Engine.Server
         public void Disconnect()
         {
             _tcpClient?.Close();
+            _reader.Close();
+            _writer.Close();
+            _broadcasts.Clear();
             _tcpClient = null;
         }
 
