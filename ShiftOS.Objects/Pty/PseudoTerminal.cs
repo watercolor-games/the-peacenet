@@ -203,4 +203,12 @@ namespace Plex.Objects.Pty
             slave = new PseudoTerminal(options, inputStream, outputStream, false);
         }
     }
+
+    public class TerminationRequestException : Exception
+    {
+        public TerminationRequestException() : base("User requested termination of the current task.")
+        {
+
+        }
+    }
 }

@@ -262,8 +262,7 @@ namespace Plex.Engine.Server
                     }
                     else
                     {
-                        //todo: we need some way to pull broadcasts from another place in the engine
-                        _broadcasts.Dequeue();
+                        BroadcastReceived?.Invoke(broadcast.Type, broadcast.OpenStream());
                     }
                 }
             }
@@ -272,6 +271,8 @@ namespace Plex.Engine.Server
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
         }
+
+        public event Action<ServerBroadcastType, BinaryReader> BroadcastReceived;
 
         public void SetServer(string name, string address)
         {

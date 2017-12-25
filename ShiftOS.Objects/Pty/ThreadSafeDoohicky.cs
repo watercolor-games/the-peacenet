@@ -76,7 +76,8 @@ namespace Plex.Objects.Pty
                     }
 
                     buffer[i] = queueBuffer.Dequeue();
-
+                    if (buffer[i] == 0x02)
+                        throw new TerminationRequestException();
                     bytesRead++;
                 }
 

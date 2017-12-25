@@ -60,6 +60,7 @@ namespace Peacenet.Applications
 
         public override void Close()
         {
+            _emulator.Terminate();
             if(_shellJob != null)
             {
                 _shellJob = null;
@@ -249,6 +250,16 @@ namespace Peacenet.Applications
                     Invalidate(true);
                 }
             };
+        }
+
+        /// <summary>
+        /// Requests termination of any reads on any console contexts linked to this Terminal. WILL THROW AN EXCEPTION SOMEWHERE. THAT'S HOW IT WORKS.
+        /// </summary>
+        public void Terminate()
+        {
+            _slave.WriteByte(0x02);
+            _master.WriteByte(0x02);
+
         }
 
         protected override void OnKeyEvent(KeyboardEventArgs e)

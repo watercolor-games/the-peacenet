@@ -8,6 +8,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Peacenet.Backend
 {
@@ -362,6 +363,34 @@ namespace Peacenet.Backend
         public T New<T>() where T : new()
         {
             return (T)Inject(new T());
+        }
+
+        public WatercolorUser GetUserInfo(string uid)
+        {
+            if (!IsMultiplayer)
+            {
+                return null;
+            }
+            if (!string.IsNullOrWhiteSpace(uid))
+            {
+                var ur = WebRequest.Create("https://getshiftos.net/api/users/" + uid);
+                ur.Method = "GET";
+                ur.ContentType = "application/json";
+                ur.Headers.Add("Authorization: " + this._wgSession);
+
+                using (var res = ur.GetResponse())
+                {
+                    using (var str = res.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(str))
+                        {
+                            return JsonConvert.DeserializeObject<WatercolorUser>(reader.ReadToEnd());
+
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         public object New(Type t)

@@ -48,7 +48,9 @@
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\WGLogin.cs" />
     <Compile Include="AsyncServerFSBackend.cs" />
+    <Compile Include="ChatBackend.cs" />
     <Compile Include="CoreUtils\cd.cs" />
+    <Compile Include="CoreUtils\irc.cs" />
     <Compile Include="CoreUtils\ls.cs" />
     <Compile Include="CoreUtils\mkdir.cs" />
     <Compile Include="CoreUtils\PathUtils.cs" />
