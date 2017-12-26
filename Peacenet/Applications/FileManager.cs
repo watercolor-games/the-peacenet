@@ -332,6 +332,11 @@ namespace Peacenet.Applications
                 lvitem.Value = shorthand;
                 lvitem.Tag = dir;
                 lvitem.ImageKey = _futils.GetMimeType(shorthand);
+                if (_filesView.GetImage(lvitem.ImageKey) == null)
+                {
+                    _filesView.SetImage(lvitem.ImageKey, _futils.GetMimeIcon(lvitem.ImageKey));
+                }
+
                 noFiles = false;
             }
             if(noFiles == true)

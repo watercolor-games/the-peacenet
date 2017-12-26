@@ -167,6 +167,10 @@ namespace Peacenet
                 diritem.Tag = dir;
                 diritem.Value = _futils.GetNameFromPath(dir);
                 diritem.ImageKey = _futils.GetMimeType(dir);
+                if(_desktopIconsView.GetImage(diritem.ImageKey) == null)
+                {
+                    _desktopIconsView.SetImage(diritem.ImageKey, _futils.GetMimeIcon(diritem.ImageKey));
+                }
             }
         }
 

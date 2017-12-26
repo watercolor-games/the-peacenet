@@ -11,11 +11,16 @@ using Plex.Engine.Filesystem;
 using Plex.Engine;
 using Peacenet.Applications;
 using Plex.Engine.GUI;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Peacenet.CoreUtils
 {
     public class FileUtils : IEngineComponent
     {
+        [Dependency]
+        private Plexgate _plexgate = null;
+
+        [Dependency]
         private FSManager _fs = null;
 
         public string GetNameFromPath(string path)
@@ -42,6 +47,11 @@ namespace Peacenet.CoreUtils
                 {
                     if (pathParts.Count > 0)
                         pathParts.Pop(); //remove the parent directory entry from the path.
+                    continue;
+                }
+                if (part == "~")
+                {
+                    pathParts.Push("home");
                     continue;
                 }
                 pathParts.Push(part);
@@ -73,6 +83,17 @@ namespace Peacenet.CoreUtils
             string ext = filename.Substring(last, len);
             var types = MimeTypeMap.List.MimeTypeMap.GetMimeType(ext);
             return (types.Count == 0) ? "unknown" : types.First();
+        }
+
+        public Texture2D GetMimeIcon(string mimetype)
+        {
+            switch (mimetype)
+            {
+                case "text/plain":
+                    return _plexgate.Content.Load<Texture2D>("UIIcons/FileIcons/file-text");
+                default:
+                    return _plexgate.Content.Load<Texture2D>("UIIcons/FileIcons/unknown");
+            }
         }
 
         public void Initiate()

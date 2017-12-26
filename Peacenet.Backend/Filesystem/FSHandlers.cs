@@ -377,7 +377,7 @@ namespace Peacenet.Backend
             var bytes = mount.ReadAllBytes(path);
             datawriter.Write(bytes.Length);
             datawriter.Write(bytes);
-            return ServerResponseType.REQ_ERROR;
+            return ServerResponseType.REQ_SUCCESS;
         }
     }
 

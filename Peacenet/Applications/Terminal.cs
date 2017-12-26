@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Plex.Objects;
 using Plex.Engine.Server;
+using Plex.Engine.Filesystem;
 
 namespace Peacenet.Applications
 {
@@ -137,8 +138,14 @@ namespace Peacenet.Applications
             }
         }
 
+        [Dependency]
+        private FSManager _fs = null;
+
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
+            string hostname = "127.0.0.1";
+            if (_fs.FileExists("/etc/hostname"))
+                hostname = _fs.ReadAllText("/etc/hostname");
             string user = "user";
             string workdir = "/home";
             console.WorkingDirectory = workdir;
@@ -149,7 +156,7 @@ namespace Peacenet.Applications
                 else
                     user = "user";
                 console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                console.Write($"{user}@127.0.0.1:{console.WorkingDirectory.Replace("/home","~")}$ ");
+                console.Write($"{user}@{hostname}:{console.WorkingDirectory.Replace("/home","~")}$ ");
                 try
                 {
                     string cmdstr = console.ReadLine();
