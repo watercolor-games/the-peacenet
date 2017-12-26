@@ -213,17 +213,22 @@ namespace Plex.Engine
             return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
-        internal object Inject(object client)
+internal object Inject(object client)
+{
+    Type clientType = client.GetType();
+    while (clientType != null)
+    {
+        foreach (var field in clientType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(f => f.GetCustomAttributes(true).Any(t => t is DependencyAttribute)))
         {
-            foreach (var field in client.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.GetCustomAttributes(false).Any(t => t is DependencyAttribute)))
-            {
-                if (field.FieldType == this.GetType())
-                    field.SetValue(client, this);
-                else
-                    field.SetValue(client, GetEngineComponent(field.FieldType));
-            }
-            return client;
+            if (field.FieldType == this.GetType())
+                field.SetValue(client, this);
+            else
+                field.SetValue(client, GetEngineComponent(field.FieldType));
         }
+        clientType = clientType.BaseType;
+    }
+    return client;
+}
 
         public string GetSystemResolution()
         {
