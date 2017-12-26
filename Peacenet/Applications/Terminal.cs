@@ -27,6 +27,14 @@ namespace Peacenet.Applications
 
         private TerminalEmulator _emulator = null;
         private Task _shellJob = null;
+
+        protected virtual string _shell
+        {
+            get
+            {
+                return "cli";
+            }
+        }
         
         public Terminal(WindowSystem _winsys) : base(_winsys)
         {
@@ -50,7 +58,7 @@ namespace Peacenet.Applications
                 _shellJob = Task.Run(() =>
                 {
                     var ctx = _manager.CreateContext(_emulator.StdOut, _emulator.StdIn);
-                    _manager.RunCommand("cli", ctx);
+                    _manager.RunCommand(_shell, ctx);
                     if (this.Visible == true && !this.Disposed)
                         Close();
                 });
