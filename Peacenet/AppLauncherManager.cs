@@ -20,16 +20,13 @@ namespace Peacenet
         public void Initiate()
         {
             Logger.Log("App launcher is now looking for items...");
-            foreach(var type in ReflectMan.Types)
+            foreach(var type in ReflectMan.Types.Where(typeof(Window).IsAssignableFrom))
             {
-                if(type.BaseType == typeof(Window))
+                var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppLauncherAttribute) as AppLauncherAttribute;
+                if(attrib != null)
                 {
-                    var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppLauncherAttribute) as AppLauncherAttribute;
-                    if(attrib != null)
-                    {
-                        Logger.Log($"Found: {type.Name} - {attrib.Category}: {attrib.Name}");
-                        _items.Add(new AppLauncherItem(attrib, type));
-                    }
+                    Logger.Log($"Found: {type.Name} - {attrib.Category}: {attrib.Name}");
+                    _items.Add(new AppLauncherItem(attrib, type));
                 }
             }
         }
