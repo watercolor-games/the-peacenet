@@ -28,6 +28,27 @@ namespace Plex.Engine.Filesystem
         [Dependency]
         private Plexgate _plexgate = null;
 
+        public string ReadAllText(string file)
+        {
+            return Encoding.UTF8.GetString(ReadAllBytes(file));
+        }
+
+        public async Task<string> ReadAllTextAsync(string file)
+        {
+            byte[] data = await ReadAllBytesAsync(file);
+            return Encoding.UTF8.GetString(data);
+        }
+
+        public void WriteAllText(string path, string text)
+        {
+            WriteAllBytes(path, Encoding.UTF8.GetBytes(text));
+        }
+
+        public async Task WriteAllTextAsync(string path, string text)
+        {
+            await WriteAllBytesAsync(path, Encoding.UTF8.GetBytes(text));
+        }
+
         public void SetBackend(IAsyncFSBackend backend)
         {
             if (backend == null)

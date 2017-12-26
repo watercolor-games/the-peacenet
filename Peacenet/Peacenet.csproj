@@ -46,6 +46,7 @@
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\Terminal.cs" />
+    <Compile Include="Applications\TextEditorApp.cs" />
     <Compile Include="Applications\WGLogin.cs" />
     <Compile Include="AsyncServerFSBackend.cs" />
     <Compile Include="ChatBackend.cs" />

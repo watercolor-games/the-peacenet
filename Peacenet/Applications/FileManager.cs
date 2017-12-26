@@ -34,15 +34,36 @@ namespace Peacenet.Applications
         private Stack<string> _pastLocs = new Stack<string>();
         private Stack<string> _futureLocs = new Stack<string>();
 
+        private Button _open = new Button();
+        private TextBox _openField = new TextBox();
+
         [Dependency]
         private OS _os = null;
 
         [Dependency]
         private FileUtils _futils = null;
 
+        private bool _isDialog = false;
+
         private bool _showHidden = false;
 
         private string _currentDirectory = "/";
+
+        private Action<string> _openCallback = null;
+
+        private bool _isSaving = false;
+
+        public void SetDialogCallback(Action<string> callback, bool isSaving)
+        {
+            _isSaving = isSaving;
+            if (callback == null)
+                _isDialog = false;
+            else
+            {
+                _isDialog = true;
+            }
+            _openCallback = callback;
+        }
 
         public void SetCurrentDirectory(string dir)
         {
@@ -55,6 +76,40 @@ namespace Peacenet.Applications
             }
         }
 
+        private void open(string filepath)
+        {
+            if (_isDialog)
+            {
+                if (_isSaving)
+                {
+                    if (_fs.FileExists(filepath))
+                    {
+                        Enabled = false;
+                        _infobox.ShowYesNo("Overwrite file", $"The file {filepath} already exists. Do you really want to overwrite it?", (answer) =>
+                        {
+                            Enabled = true;
+                            if (answer)
+                            {
+                                _openCallback?.Invoke(filepath);
+                                Close();
+                            }
+                        });
+                    }
+                    else
+                    {
+                        _openCallback?.Invoke(filepath);
+                        Close();
+                    }
+                }
+                else
+                {
+                    _openCallback?.Invoke(filepath);
+                    Close();
+                }
+            }
+        }
+            
+        
         public FileManager(WindowSystem _winsys) : base(_winsys)
         {
             AddChild(_places);
@@ -69,6 +124,9 @@ namespace Peacenet.Applications
             Width = 800;
             Height = 600;
             Title = "File browser";
+
+            AddChild(_open);
+            AddChild(_openField);
 
             _placesView.ItemClicked += (item) =>
             {
@@ -115,6 +173,13 @@ namespace Peacenet.Applications
 
             _filesView.SetImage("directory", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
 
+            _filesView.SelectedIndexChanged += (o, a) =>
+            {
+                if(_filesView.SelectedItem != null)
+                {
+                    _openField.Text = _filesView.SelectedItem.Value.ToString();
+                }
+            };
             _filesView.ItemClicked += (item) =>
             {
                 if (_fs.DirectoryExists(item.Tag.ToString()))
@@ -126,8 +191,38 @@ namespace Peacenet.Applications
                 }
                 else
                 {
+                    if (_isDialog)
+                    {
+                        open(item.Tag.ToString());
+                        return;
+                    }
                     _infobox.Show("Not yet implemented", "You cannot yet open files from the File Browser.");
                     return;
+                }
+            };
+            _open.Click += (o, a) =>
+            {
+                string path = _openField.Text;
+                if (path.StartsWith("/"))
+                    path = _futils.Resolve(path);
+                else
+                    path = _futils.Resolve(_currentDirectory + "/" + path);
+                if (_isSaving == false)
+                {
+                    if (_fs.FileExists(path))
+                    {
+                        open(path);
+                        return;
+                    }
+                    Enabled = false;
+                    _infobox.Show("File not found.", $"The system could not find the file specified: {path}", () =>
+                    {
+                        Enabled = true;
+                    });
+                }
+                else
+                {
+                    open(path);
                 }
             };
             _searchButton.Click += (o, a) =>
@@ -288,14 +383,16 @@ namespace Peacenet.Applications
             _back.Y = (_search.Y) + ((_search.Height - _back.Height) / 2);
             _forward.Y = (_search.Y) + ((_search.Height - _forward.Height) / 2);
 
+            _open.Visible = _isDialog;
+            _openField.Visible = _isDialog;
+
+            
             _places.X = 0;
             _places.Y = _search.Y + _search.Height + 5;
             _placesView.Width = Width / 3;
-            _places.Height = Height - _places.Y;
             _files.X = _places.Width + 2;
             _files.Y = _places.Y;
             _filesView.Width = Width - _files.X;
-            _files.Height = _places.Height;
             _placesView.Layout = ListViewLayout.List;
 
             _path.Text = _currentDirectory;
@@ -314,6 +411,29 @@ namespace Peacenet.Applications
 
             _statusHead.Y = _files.Y + 25;
             _statusDescription.Y = _statusHead.Y + _statusHead.Height + 5;
+
+            if (_open.Visible)
+            {
+                _open.Text = (_isSaving) ? "Save" : "Open";
+                _openField.Label = "File name or file path";
+
+                int _larger = Math.Max(_open.Height, _openField.Height);
+                int _starty = (Height - _larger) - 6;
+                _open.Y = _starty + ((_larger - _open.Height) / 2)+3;
+                _openField.Y = _starty + ((_larger - _openField.Height) / 2)+3;
+
+                _open.X = (Width - _open.Width) - 3;
+                _openField.X = 3;
+                _openField.Width = (_open.X - _openField.X) - 6;
+                _places.Height = (Height - _places.Y) - (_larger+3);
+                _open.Enabled = !string.IsNullOrWhiteSpace(_openField.Text);
+            }
+            else
+            {
+                _places.Height = Height - _places.Y;
+
+            }
+            _files.Height = _places.Height;
         }
     }
 }

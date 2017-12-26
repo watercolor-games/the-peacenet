@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Filesystem;
+using Plex.Engine;
+using Peacenet.Applications;
+using Plex.Engine.GUI;
 
 namespace Peacenet.CoreUtils
 {
@@ -90,6 +93,43 @@ namespace Peacenet.CoreUtils
 
         public void Unload()
         {
+        }
+    }
+
+    public class GUIUtils : IEngineComponent
+    {
+        [Dependency]
+        private WindowSystem _winsys = null;
+
+        public void Initiate()
+        {
+        }
+
+        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
+        {
+        }
+
+        public void OnGameUpdate(GameTime time)
+        {
+        }
+
+        public void OnKeyboardEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void Unload()
+        {
+        }
+
+        public void AskForFile(bool saving, Action<string> callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            var fs = new FileManager(_winsys);
+            fs.SetDialogCallback(callback, saving);
+            fs.SetWindowStyle(Plex.Engine.GUI.WindowStyle.Dialog);
+            fs.Show();
         }
     }
 }
