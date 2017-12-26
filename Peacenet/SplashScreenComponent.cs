@@ -443,14 +443,18 @@ namespace Peacenet
                     }
                     break;
                 case 4:
+                    /*
                     _progressBGFade += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressBGFade >= 1)
-                        animState++;
+                        animState++;*/
+                    animState = 6;
                     break;
                 case 5:
+                    /*
                     _progressFGAmount += (float)time.ElapsedGameTime.TotalSeconds / 2.5F;
                     if (_progressFGAmount >= 1)
-                        animState++;
+                        animState++;*/
+                    animState = 6;
                     break;
                 case 6: //End Peacenet splash, start Enter wait.
                     _progressBGFade -= (float)time.ElapsedGameTime.TotalSeconds * 4;
