@@ -162,6 +162,11 @@ namespace Plex.Objects
         private StreamWriter _stdout = null;
         private string workdir = null;
 
+        public string ReadToEnd()
+        {
+            return _stdin.ReadToEnd();
+        }
+
         public string WorkingDirectory
         {
             get

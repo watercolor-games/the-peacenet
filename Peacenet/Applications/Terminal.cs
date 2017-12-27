@@ -141,6 +141,11 @@ namespace Peacenet.Applications
         [Dependency]
         private FSManager _fs = null;
 
+        public void ProcessCommand(ConsoleContext console, string command)
+        {
+            
+        }
+
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string hostname = "127.0.0.1";

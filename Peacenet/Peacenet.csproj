@@ -50,6 +50,7 @@
     <Compile Include="Applications\WGLogin.cs" />
     <Compile Include="AsyncServerFSBackend.cs" />
     <Compile Include="ChatBackend.cs" />
+    <Compile Include="cowsay.cs" />
     <Compile Include="CoreUtils\cat.cs" />
     <Compile Include="CoreUtils\cd.cs" />
     <Compile Include="CoreUtils\irc.cs" />
@@ -147,6 +148,9 @@
     </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <Content Include="Content\cowsaycow.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\credits.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

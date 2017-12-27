@@ -338,7 +338,14 @@ namespace Peacenet.Backend
 
         public T GetBackendComponent<T>() where T : IBackendComponent, new()
         {
-            return (T)_components.First(x => x.Component is T).Component;
+            try
+            {
+                return (T)_components.First(x => x.Component is T).Component;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error loading backend component \"{typeof(T).FullName}\". See inner exception for details.", ex);
+            }
         }
 
         public IBackendComponent GetBackendComponent(Type t)
