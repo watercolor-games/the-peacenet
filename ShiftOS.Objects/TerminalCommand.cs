@@ -162,6 +162,30 @@ namespace Plex.Objects
         private StreamWriter _stdout = null;
         private string workdir = null;
 
+        public StreamReader StandardInput
+        {
+            get
+            {
+                return _stdin;
+            }
+        }
+
+        public StreamWriter StandardOutput
+        {
+            get
+            {
+                return _stdout;
+            }
+        }
+
+        public ConsoleContext Pipe(Stream master)
+        {
+            var writer = new StreamWriter(master);
+            writer.AutoFlush = true;
+            var reader = new StreamReader(_stdout.BaseStream);
+            return new ConsoleContext(writer, reader);
+        }
+
         public string ReadToEnd()
         {
             return _stdin.ReadToEnd();

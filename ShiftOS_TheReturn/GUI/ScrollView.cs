@@ -35,7 +35,7 @@ namespace Plex.Engine.GUI
 
         protected override void OnUpdate(GameTime time)
         {
-            if (_needsLayout)
+            if (_needsLayout && _host != null)
             {
                 _host.X = 0;
                 _host.Y = 0 - _scrollOffset;

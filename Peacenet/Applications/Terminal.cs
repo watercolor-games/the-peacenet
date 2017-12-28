@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using Plex.Objects;
 using Plex.Engine.Server;
 using Plex.Engine.Filesystem;
+using WatercolorGames.CommandLine;
+using Peacenet.CoreUtils;
 
 namespace Peacenet.Applications
 {
@@ -143,7 +145,82 @@ namespace Peacenet.Applications
 
         public void ProcessCommand(ConsoleContext console, string command)
         {
-            
+            var instruction = Tokenizer.GetCommandList(command);
+            var stdin = console.StandardInput;
+            var stdout = console.StandardOutput;
+            var nconsole = new ConsoleContext(stdout, stdin);
+            nconsole.WorkingDirectory = console.WorkingDirectory;
+            MemoryStream lastPipe = null;
+            for (int i = 0; i < instruction.Commands.Length; i++)
+            {
+                bool isPiping = !(i == instruction.Commands.Length - 1);
+                if (lastPipe != null)
+                    lastPipe.Position = 0;
+                if (isPiping)
+                {
+                    var memstr = new MemoryStream();
+                    string worktemp = nconsole.WorkingDirectory;
+                    nconsole = new ConsoleContext(new StreamWriter(memstr) { AutoFlush = true }, nconsole.StandardInput);
+                    nconsole.WorkingDirectory = worktemp;
+                    if (!_terminal.RunCommand(instruction.Commands[i], nconsole))
+                    {
+                        console.WriteLine("Command not found.");
+                        return;
+                    }
+                    lastPipe = memstr;
+                }
+                else
+                {
+                    string worktemp = nconsole.WorkingDirectory;
+                    StreamWriter cout = stdout;
+                    string fpath = null;
+                    if (!string.IsNullOrWhiteSpace(instruction.OutputFile))
+                    {
+                        fpath = instruction.OutputFile;
+                        if (!fpath.StartsWith("/"))
+                            fpath = worktemp + "/" + fpath;
+                        fpath = _futils.Resolve(fpath);
+                        if (_fs.DirectoryExists(fpath))
+                            throw new IOException("Directory exists.");
+                        if(instruction.OutputFileType == OutputFileType.Append)
+                        {
+                            if (!_fs.FileExists(fpath))
+                                throw new IOException("File not found.");
+                        }
+                        var memstr = new MemoryStream();
+                        if(instruction.OutputFileType == OutputFileType.Append)
+                        {
+                            var bytes = _fs.ReadAllBytes(fpath);
+                            memstr.Write(bytes, 0, bytes.Length);
+                            memstr.Position = bytes.Length;
+                        }
+                        cout = new StreamWriter(memstr) { AutoFlush = true };
+                    }
+
+                    if (lastPipe != null)
+                    {
+                        nconsole = new ConsoleContext(cout, new StreamReader(lastPipe));
+                    }
+                    else
+                    {
+                        nconsole = new ConsoleContext(cout, nconsole.StandardInput);
+                    }
+                    nconsole.WorkingDirectory = worktemp;
+                    if (!_terminal.RunCommand(instruction.Commands[i], nconsole))
+                    {
+                        console.WriteLine("Command not found.");
+                        return;
+                    }
+                    if (!string.IsNullOrWhiteSpace(fpath))
+                    {
+                        var memstr = (MemoryStream)nconsole.StandardOutput.BaseStream;
+                        memstr.Position = 0;
+                        var bytes = memstr.ToArray();
+                        _fs.WriteAllBytes(fpath, bytes);
+                    }
+                }
+            }
+            console.WorkingDirectory = nconsole.WorkingDirectory;
         }
 
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
@@ -169,11 +246,7 @@ namespace Peacenet.Applications
                         continue;
                     if (cmdstr == "exit")
                         return;
-                    if (!_terminal.RunCommand(cmdstr, console))
-                    {
-                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
-                        console.WriteLine("Command not found.");
-                    }
+                    ProcessCommand(console, cmdstr);
                 }
                 catch (Exception ex)
                 {
@@ -181,6 +254,9 @@ namespace Peacenet.Applications
                 }
             }
         }
+
+        [Dependency]
+        private FileUtils _futils = null;
     }
 
     public class TerminalEmulator : Control
