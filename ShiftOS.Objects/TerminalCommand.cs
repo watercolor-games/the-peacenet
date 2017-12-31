@@ -162,6 +162,17 @@ namespace Plex.Objects
         private StreamWriter _stdout = null;
         private string workdir = null;
 
+        public void SlowWrite(string text)
+        {
+            foreach(char c in text)
+            {
+                _stdout.Write(c.ToString());
+                System.Threading.Thread.Sleep(25);
+
+            }
+        }
+
+
         public StreamReader StandardInput
         {
             get

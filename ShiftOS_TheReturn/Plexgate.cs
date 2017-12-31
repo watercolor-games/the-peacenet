@@ -213,7 +213,7 @@ namespace Plex.Engine
             return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
-internal object Inject(object client)
+public object Inject(object client)
 {
     Type clientType = client.GetType();
     while (clientType != null)
@@ -363,6 +363,12 @@ internal object Inject(object client)
 
             base.Update(gameTime);
         }
+
+        public T New<T>() where T : new()
+        {
+            return (T)Inject(new T());
+        }
+
 
         /// <summary>
         /// This is called when the game should draw itself.

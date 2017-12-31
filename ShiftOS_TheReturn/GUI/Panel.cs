@@ -33,8 +33,15 @@ namespace Plex.Engine.GUI
             {
                 if (_needsLayout == true)
                 {
-                    var last = Children.Where(x => x.Visible).OrderByDescending(x => x.Y).First();
-                    Height = last.Y + last.Height;
+                    if (Children.Length > 0)
+                    {
+                        var last = Children.Where(x => x.Visible).OrderByDescending(x => x.Y).First();
+                        Height = last.Y + last.Height;
+                    }
+                    else
+                    {
+                        Height = 0;
+                    }
                     _needsLayout = false;
                 }
             }

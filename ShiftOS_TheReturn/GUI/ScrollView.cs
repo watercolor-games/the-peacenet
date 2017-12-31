@@ -23,7 +23,31 @@ namespace Plex.Engine.GUI
                 _host = child;
             _scrollOffset = 0;
             child.WidthChanged += Child_WidthChanged;
+            child.MouseScroll += OnMouseScroll;
             _needsLayout = true;
+        }
+
+        public override void RemoveChild(Control child)
+        {
+            base.RemoveChild(child);
+            if (_host == child)
+            {
+                child.WidthChanged -= Child_WidthChanged;
+                child.MouseScroll -= OnMouseScroll;
+                _host = null;
+                _needsLayout = true;
+                _scrollOffset = 0;
+            }
+        }
+
+        protected override void OnMouseScroll(int delta)
+        {
+            int offset = MathHelper.Clamp(_scrollOffset + delta, 0, _scrollHeight - Height);
+            if(offset != _scrollOffset)
+            {
+                _scrollOffset = offset;
+                _needsLayout = true;
+            }
         }
 
         private void Child_WidthChanged(object sender, EventArgs e)

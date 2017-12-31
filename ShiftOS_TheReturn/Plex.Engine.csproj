@@ -175,9 +175,11 @@
     <Compile Include="GUI\ProgressBar.cs" />
     <Compile Include="GUI\ScrollView.cs" />
     <Compile Include="GUI\SliderBar.cs" />
+    <Compile Include="GUI\TabPanel.cs" />
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\TextEditor.cs" />
     <Compile Include="GUI\WindowSystem.cs" />
+    <Compile Include="HideInHelpAttribute.cs" />
     <Compile Include="Interfaces\IEngineComponent.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Plexgate.cs" />

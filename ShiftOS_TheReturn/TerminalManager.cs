@@ -32,6 +32,8 @@ namespace Plex.Engine
             Logger.Log("Looking for terminal commands...", LogType.Info, "terminal");
             foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(ITerminalCommand))))
             {
+                if (type.GetCustomAttributes(true).Any(x => x is TerminalSkipAutoloadAttribute))
+                    continue;
                 var command = (ITerminalCommand)Activator.CreateInstance(type, null);
                 Logger.Log($"Found: {command.Name} (from {type.FullName})", LogType.Info, "terminal");
                 //Avoid commands with the same name!
@@ -104,6 +106,8 @@ namespace Plex.Engine
             }
             foreach (var cmd in _localCommands)
             {
+                if (cmd.GetType().GetCustomAttributes(true).Any(x => x is HideInHelpAttribute))
+                    continue;
                 yield return new CommandDescriptor(cmd.Name, cmd.Description, _usages[cmd.Name]);
             }
         }
@@ -286,5 +290,14 @@ namespace Plex.Engine
         {
             console.Clear();
         }
+    }
+
+    /// <summary>
+    /// Indicates that this <see cref="ITerminalCommand"/> should be skipped by the <see cref="TerminalManager"/>'s autoload routine, making it unavailable to a player unless explicitly instantiated and run by another piece of code. 
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class TerminalSkipAutoloadAttribute : Attribute
+    {
+
     }
 }

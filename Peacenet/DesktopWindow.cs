@@ -61,12 +61,18 @@ namespace Peacenet
         [Dependency]
         private AsyncServerManager _server = null;
 
+        private Button _missionButton = new Button();
+
         private ListView _desktopIconsView = null;
 
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
             _tutorialBgm = _plexgate.Content.Load<SoundEffect>("Audio/Tutorial/TutorialBGM");
             _tutorialBgmInstance = _tutorialBgm.CreateInstance();
+
+            _missionButton.Image = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flag");
+            _missionButton.ShowImage = true;
+            _missionButton.Text = "NYI";
 
             if (!_server.IsMultiplayer)
             {
@@ -131,7 +137,110 @@ namespace Peacenet
 
             _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
             _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
+
+            AddChild(_overlay);
+            _overlay.Visible = false;
+
+            _overlay.OkayButtonClicked += (o, a) =>
+            {
+                _overlayStage++;
+                ResetOverlay();
+            };
+
+            _topPanel.AddChild(_missionButton);
+
+            _missionButton.Click += (o, a) =>
+            {
+                var noteMgr = new Applications.NotificationManager(_winsys);
+                noteMgr.Show();
+            };
         }
+
+        public bool IsTutorialOpen
+        {
+            get
+            {
+                return _overlay.Visible;
+            }
+        }
+        
+        public void ResetOverlay()
+        {
+            int width = 0;
+            int height = 0;
+            int x = 0;
+            int y = 0;
+            string header = "";
+            string desc = "";
+            switch (_overlayStage)
+            {
+                case 1:
+                    height = _bottomPanel.Y - _topPanel.Height;
+                    width = Width;
+                    x = 0;
+                    y = _topPanel.Y + _topPanel.Height;
+                    header = "This is your workspace.";
+                    desc = "Your workspace is the main area of your screen. Your desktop icons, widgets and open programs are all shown here.";
+                    break;
+                case 2:
+                    x = 0;
+                    y = 0;
+                    width = Width;
+                    height = _topPanel.Height;
+                    header = "The Status Bar";
+                    desc = "The Status Bar is a place where you can see system status as well as have the ability to launch programs, open common folders on your hard drive and access system settings.";
+                    break;
+                case 3:
+                    x = _topPanel.X + _missionButton.X;
+                    y = _topPanel.Y + _missionButton.Y;
+                    width = _missionButton.Width;
+                    height = _missionButton.Height;
+                    header = "Find your missions and notifications here.";
+                    desc = "This button shows you how many missions are currently available for you to play.\r\n\r\nMissions are sets of objectives you can complete which give you cash and XP and let you progress further in your journey through The Peacenet.\r\n\r\nYou can also find system notifications here. Check it often!";
+                    break;
+                case 4:
+                    x = 0;
+                    y = _bottomPanel.Y;
+                    height = _bottomPanel.Height;
+                    width = Width;
+                    header = "This is your window list.";
+                    desc = "Your Window List shows you what windows are open on your desktop and it allows you to easily switch between them.";
+                    break;
+                case 5:
+                    x = _bottomPanel.X + _showDesktopIcon.X;
+                    y = _bottomPanel.Y + _showDesktopIcon.Y;
+                    width = _showDesktopIcon.Width;
+                    height = _showDesktopIcon.Height;
+                    header = "Hide and seek";
+                    desc = "This button allows you to hide all visible windows, revealing your desktop. Clicking it again will reveal all hidden windows.";
+                    break;
+                case 6:
+                    x = _topPanel.X + _appLauncherText.X;
+                    y = _topPanel.Y + _appLauncherText.Y;
+                    width = _appLauncherText.Width;
+                    height = _appLauncherText.Height;
+                    header = "Open your programs here.";
+                    desc = "The Peacegate Menu, otherwise known as the 'app launcher' is one of the most important parts of your Peacegate desktop.\r\n\r\nIt allows you to open programs. Each program is categorized by the type of program they are. You can also shut down your computer from this menu.";
+                    break;
+                case 7:
+                    x = 0;
+                    y = 0;
+                    width = 0;
+                    height = 0;
+                    header = "Let's start.";
+                    desc = "That's all you need to know about Peacegate Desktop for now.\r\n\r\nClick 'OK' to exit the tutorial.";
+                    break;
+                case 8:
+                    _overlay.Visible = false;
+                    _save.SetValue("oobe.tutorial", true);
+                    return;
+            }
+            _overlay.Region = new Rectangle(x, y, width, height);
+            _overlay.HeaderText = header;
+            _overlay.DescriptionText = desc;
+        }
+
+        private int _overlayStage = -2;
 
         private void _desktopIconsView_ItemClicked(ListViewItem obj)
         {
@@ -155,6 +264,8 @@ namespace Peacenet
 
         [Dependency]
         private FileUtils _futils = null;
+
+        private TutorialOverlay _overlay = new TutorialOverlay();
 
         public void SetupIcons()
         {
@@ -258,6 +369,26 @@ namespace Peacenet
 
         protected override void OnUpdate(GameTime time)
         {
+            switch (_overlayStage)
+            {
+                case -2:
+                    if (_server.IsMultiplayer == false)
+                    {
+                        if(_save.GetValue("oobe.tutorial", false) == false)
+                        {
+                            _overlay.Visible = true;
+                            _overlayStage += 2;
+                            _overlay.Region = Rectangle.Empty;
+                            _overlay.HeaderText = "Welcome to Peacegate OS.";
+                            _overlay.DescriptionText = "Since this is your first time using the Peacegate desktop environment, we'll walk you through how to use it quickly.\r\n\r\nClick the 'OK' button to continue.";
+                        }
+                        else
+                        {
+                            _overlayStage += 1;
+                        }
+                    }
+                    break;
+            }
             switch (_animState)
             {
                 case 0:
@@ -322,6 +453,10 @@ namespace Peacenet
 
                     break;
             }
+            _overlay.X = 0;
+            _overlay.Y = 0;
+            _overlay.Width = Width;
+            _overlay.Height = Height;
             Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
             Height = (int)MathHelper.Lerp((Manager.ScreenHeight * 0.75f), Manager.ScreenHeight, _scaleAnim);
             Parent.X = (Manager.ScreenWidth - Width) / 2;
@@ -390,6 +525,9 @@ namespace Peacenet
 
                 }
             }
+
+            _missionButton.Y = (_topPanel.Height - _missionButton.Height) / 2;
+            _missionButton.X = _timeLabel.X - _missionButton.Width - 3;
 
             base.OnUpdate(time);
         }
@@ -587,6 +725,101 @@ namespace Peacenet
             if (ContainsMouse)
                 state = Plex.Engine.Themes.UIButtonState.Hover;
             Theme.DrawButton(gfx, Text, Image, state, ShowImage, ImageRect, TextRect);
+        }
+    }
+
+    public class TutorialOverlay : Control
+    {
+        private Label _header = new Label();
+        private Label _description = new Label();
+        private Button _okay = new Button();
+
+        private Rectangle _unshroudedRegion;
+
+        public TutorialOverlay()
+        {
+            AddChild(_header);
+            _header.AutoSize = true;
+            _header.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
+            AddChild(_description);
+            _description.AutoSize = true;
+            _description.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            AddChild(_okay);
+            _okay.Click += (o, a) =>
+            {
+                OkayButtonClicked?.Invoke(this, a);
+            };
+        }
+
+        public event EventHandler OkayButtonClicked;
+
+        public string HeaderText
+        {
+            get
+            {
+                return _header.Text;
+            }
+            set
+            {
+                _header.Text = value;
+            }
+        }
+
+        public string DescriptionText
+        {
+            get
+            {
+                return _description.Text;
+            }
+            set
+            {
+                _description.Text = value;
+            }
+        }
+
+        public Rectangle Region
+        {
+            get
+            {
+                return _unshroudedRegion;
+            }
+            set
+            {
+                if (_unshroudedRegion == value)
+                    return;
+                _unshroudedRegion = value;
+                Invalidate(true);
+            }
+        }
+
+        protected override void OnUpdate(GameTime time)
+        {
+            _header.MaxWidth = Width / 3;
+            _description.MaxWidth = Width / 2;
+            _header.Alignment = TextAlignment.Top;
+            _description.Alignment = TextAlignment.Middle;
+
+            int combinedHeight = _header.Height + 10 + _description.Height + 5 + _okay.Height;
+            _header.X = (Width - _header.Width) / 2;
+            _header.Y = (Height - combinedHeight) / 2;
+            _description.X = (Width - _description.Width) / 2;
+            _description.Y = _header.Y + _header.Height + 10;
+            _okay.X = (Width - _okay.Width) / 2;
+            _okay.Y = _description.Y + _description.Height + 5;
+
+            _okay.Text = "OK";
+            base.OnUpdate(time);
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            var color = Color.Black * 0.5F;
+            gfx.Clear(Color.Transparent);
+            gfx.DrawRectangle(0, 0, _unshroudedRegion.Left, Height, color);
+            gfx.DrawRectangle(_unshroudedRegion.Left, 0, Width - _unshroudedRegion.Left, _unshroudedRegion.Top, color);
+            gfx.DrawRectangle(_unshroudedRegion.Left, _unshroudedRegion.Top + _unshroudedRegion.Height, Width - _unshroudedRegion.Left, Height - (_unshroudedRegion.Top + _unshroudedRegion.Height), color);
+            gfx.DrawRectangle(_unshroudedRegion.Left + _unshroudedRegion.Width, _unshroudedRegion.Top, Width - (_unshroudedRegion.Left + _unshroudedRegion.Width), _unshroudedRegion.Height, color);
+
         }
     }
 }

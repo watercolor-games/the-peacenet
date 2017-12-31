@@ -36,65 +36,21 @@ namespace Peacenet
         [Dependency]
         private ThemeManager _theme = null;
 
+        //Variables for bootup.
+        private float _peacegateIconOpacity = 0.0f;
+        private double _peacegateRide = 0.0;
 
-        private Label _statusLabel = null;
-
-
-        private IEnumerable<string> _previouslyValues
-        {
-            get
-            {
-                yield return $"Cash: ${_save.GetValue<double>("game.cash", 0)}";
-                yield return $"XP: {_save.GetValue<int>("game.xp", 0)}";
-                yield return $"Rank: {_save.GetValue<int>("game.rank", 0)}";
-            }
-        }
-
-        private int _statusIndex = -1;
-        private int _statusCount = 0;
 
         private int _osIntroState = -1;
 
         private Random _rnd = new Random();
-
-        private PictureBox _peacenet = null;
-        private Label _previously = null;
-
-        private float _peacenetScaleAnim = 0;
-
-        private double _previouslyRide = 0;
-
-        private Label _startingDesktop = new Label();
-
+        
         public void Initiate()
         {
             _osIntroState = -1;
-            _peacenet = new PictureBox();
-            _peacenet.Texture = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
-            _peacenet.AutoSize = true;
-            _peacenet.Visible = false;
-            _ui.Add(_peacenet);
-            _previously = new Label();
-            _previously.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _previously.CustomFont = new System.Drawing.Font("Monda", 15F);
-            _previously.CustomColor = new Color(191, 191, 191, 255);
-            _previously.Visible = false;
-            _previously.AutoSize = true;
-            _ui.Add(_previously);
-
-            _statusLabel = new Label();
-            _statusLabel.Visible = false;
-            _statusLabel.FontStyle = TextFontStyle.Header2;
-            _statusLabel.AutoSize = true;
-            _statusLabel.Opacity = 0;
-            _ui.Add(_statusLabel);
-
-            _startingDesktop = new Label();
-            _startingDesktop.Text = "Starting Peacegate session...";
-            _startingDesktop.AutoSize = true;
-            _startingDesktop.FontStyle = TextFontStyle.Header1;
-            _startingDesktop.Visible = false;
-            _ui.Add(_startingDesktop);
+            _peacegate = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/Peacegate");
+            _jingle = _plexgate.Content.Load<SoundEffect>("Audio/PeacegateStartup/Jingle");
+            _jingleInstance = _jingle.CreateInstance();
         }
 
         [Dependency]
@@ -122,6 +78,8 @@ namespace Peacenet
 
         [Dependency]
         private AsyncServerManager _server = null;
+
+        private Texture2D _peacegate = null;
 
         [Dependency]
         private InfoboxManager _infobox = null;
@@ -192,7 +150,6 @@ namespace Peacenet
             }
 
             _osIntroState = 0;
-            _statusCount = _previouslyValues.Count();
             foreach (var dir in requiredPaths)
             {
                 try
@@ -207,210 +164,101 @@ namespace Peacenet
             }
         }
 
+        private System.Drawing.Font _bootFont = new System.Drawing.Font("Monda", 60F);
+
         private bool _wgDeskOpen = false;
+
+        public DesktopWindow Desktop
+        {
+            get;
+            private set;
+        }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)
         {
+            int peacegateX = (_ui.ScreenWidth - _peacegate.Width) / 2;
+            int peacegateYMax = (_ui.ScreenHeight - _peacegate.Height) / 2;
+            int peacegateYMin = peacegateYMax + (int)(_ui.ScreenHeight * 0.15);
+            int peacegateY = (int)MathHelper.Lerp(peacegateYMin, peacegateYMax, _peacegateIconOpacity);
             ctx.BeginDraw();
-            ctx.DrawRectangle(0, 30 + (_peacenet.Texture.Height / 2), (int)MathHelper.Lerp(0, _ui.ScreenWidth, _peacenetScaleAnim), 2, _theme.Theme.GetAccentColor());
+            ctx.DrawRectangle(peacegateX, peacegateY, _peacegate.Width, _peacegate.Height, _peacegate, Color.White * _peacegateIconOpacity);
+
+            int _textY = peacegateY + _peacegate.Height + 25;
+            string text = "Welcome to Peacegate.";
+            var measure = TextRenderer.MeasureText(text, _bootFont, int.MaxValue, TextAlignment.TopLeft, Plex.Engine.TextRenderers.WrapMode.None);
+            int _textX = ((_ui.ScreenWidth - (int)measure.X) / 2);
+            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.TopLeft, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
+
             ctx.EndDraw();
         }
 
-        private double _statusRide = 0;
-        private double _startupRide = 0;
+        private Applications.SystemInitTerminal _init = null;
 
+        private SoundEffect _jingle = null;
+        private SoundEffectInstance _jingleInstance = null;
 
         public void OnGameUpdate(GameTime time)
         {
             switch (_osIntroState)
             {
                 case 0:
-                    _peacenet.Opacity = 0;
-                    _peacenet.Visible = true;
+                    _init = new Applications.SystemInitTerminal(_winmgr);
+                    _init.Show();
                     _osIntroState++;
                     break;
+
                 case 1:
-                    _peacenet.Opacity += (float)time.ElapsedGameTime.TotalSeconds * 3;
-                    if (_peacenet.Opacity >= 1)
-                    {
+                    if (_init.Visible == false || _init.Disposed == true)
                         _osIntroState++;
-                    }
                     break;
                 case 2:
-                    _previously.Visible = true;
-                    _previously.Opacity = 0;
-                    if (!_save.GetValue("boot.hasDoneIntro", false))
+                    if (_jingleInstance.State != SoundState.Playing)
+                        _jingleInstance.Play();
+                    _peacegateIconOpacity += (float)time.ElapsedGameTime.TotalSeconds * 3;
+                    if (_peacegateIconOpacity >= 1F)
                     {
-                        _previously.Text = "Welcome to";
-                        _save.SetValue("boot.hasDoneIntro", true);
-                    }
-                    else
-                    {
-                        _previously.Text = "Previously on";
-                    }
-                    _osIntroState++;
-                    break;
-                case 3:
-                    _previously.Opacity += (float)time.ElapsedGameTime.TotalSeconds * 3;
-                    if (_previously.Opacity >= 1)
-                    {
+                        _peacegateRide = 0;
                         _osIntroState++;
                     }
                     break;
+                case 3:
+                    if (_jingleInstance.State == SoundState.Stopped)
+                        _osIntroState++;
+                    break;
                 case 4:
-                    _previouslyRide += time.ElapsedGameTime.TotalSeconds;
-                    if (_previouslyRide >= 3)
+                    _peacegateIconOpacity -= (float)time.ElapsedGameTime.TotalSeconds * 3;
+                    if(_peacegateIconOpacity<=0)
                     {
                         _osIntroState++;
                     }
                     break;
                 case 5:
-                    _previously.Opacity -= (float)time.ElapsedGameTime.TotalSeconds * 3;
-                    _peacenetScaleAnim = 1 - _previously.Opacity;
-                    if (_peacenetScaleAnim >= 1)
-                    {
-                        //Let's decide where to go based on the save file.
-                        //If the user's played the intro sequence, we'll do one animation.
-                        //If they haven't, we'll do another.
-                        if (!_save.GetValue("boot.hasDoneIntro", false))
-                        {
-                            _osIntroState++;//nyi
-                        }
-                        else
-                        {
-                            _osIntroState++;
-                        }
-
-                    }
-                    break;
-                case 6:
-                    _statusIndex++;
-                    _osIntroState++;
-                    _statusLabel.Visible = true;
-                    _statusRide = 0;
-                    _statusLabel.Text = _previouslyValues.ToArray()[_statusIndex];
-                    break;
-                case 7:
-                    _statusLabel.Opacity += (float)time.ElapsedGameTime.TotalSeconds * 4;
-                    if (_statusLabel.Opacity >= 1)
-                    {
-                        _osIntroState++;
-                    }
-                    break;
-                case 8:
-                    _statusRide += time.ElapsedGameTime.TotalSeconds;
-                    if(_statusRide >= 1.5)
-                    {
-                        _osIntroState++;
-                    }
-                    break;
-                case 9:
-                    _statusLabel.Opacity -= (float)time.ElapsedGameTime.TotalSeconds * 4;
-                    if (_statusLabel.Opacity <= 0)
-                    {
-                        if (_statusIndex < _statusCount - 1)
-                        {
-                            _osIntroState = 6;
-                        }
-                        else
-                        {
-                            _osIntroState++;
-                        }
-                    }
-
-                    break;
-                case 10:
-                    //RESERVED FOR DESKTOP START ANIMATIONS.
-                    _peacenetScaleAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if(_peacenetScaleAnim<=0)
-                    {
-                        _osIntroState++;
-                        _startingDesktop.Visible = true;
-                        _startingDesktop.Opacity = 0;
-                    }
-                    break;
-                case 11:
-                    _startingDesktop.Opacity += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_startingDesktop.Opacity >= 1)
-                    {
-                        _osIntroState++;
-                    }
-                    break;
-                case 12:
-                    _startupRide += time.ElapsedGameTime.TotalSeconds;
-                    if (_startupRide > 3)
-                    {
-                        _osIntroState++;
-                    }
-                    break;
-                case 13:
-                    _startingDesktop.Opacity -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_startingDesktop.Opacity <= 0)
-                    {
-                        _osIntroState++;
-                    }
-
-                    break;
-                case 14:
-                    _peacenet.Opacity -= (float)time.ElapsedGameTime.TotalSeconds * 3;
-                    if (_peacenet.Opacity <= 0)
-                    {
-                        _osIntroState++;
-                    }
-                    break;
-                case 15:
                     _wgDeskOpen = true;
                     var desk = new DesktopWindow(_winmgr);
                     desk.Show();
+                    Desktop = desk;
                     _osIntroState = -1;
                     break;
             }
+        }
 
-            int peacenetXMin = (_ui.ScreenWidth - _peacenet.Width) / 2;
-            int peacenetXMax = (_ui.ScreenWidth - (_peacenet.Texture.Width/2)) - 15;
-
-            int peacenetYFirstPassMin = (_ui.ScreenHeight - _peacenet.Height) / 2;
-            int peacenetYFirstPassMax = 15;
-
-            _peacenet.AutoSizeScale = MathHelper.Lerp(2, 0.5F, _peacenetScaleAnim);
-
-            int peacenetX = (int)MathHelper.Lerp(peacenetXMin, peacenetXMax, _peacenetScaleAnim);
-            int peacenetYFirstPass = (int)MathHelper.Lerp(peacenetYFirstPassMin, peacenetYFirstPassMax, _peacenetScaleAnim);
-
-            int peacenetY = (int)MathHelper.Lerp(peacenetYFirstPass + (int)(_ui.ScreenHeight * 0.1), peacenetYFirstPass, _peacenet.Opacity);
-
-            _peacenet.X = peacenetX;
-            _peacenet.Y = peacenetY;
-
-            int _previouslyYFirstPassMax = _peacenet.Y - _previously.Height;
-            int _previouslyYFirstPassMin = _previouslyYFirstPassMax + (int)(_ui.ScreenHeight * 0.1);
-            int _previouslyYFirstPass = (int)MathHelper.Lerp(_previouslyYFirstPassMin, _previouslyYFirstPassMax, _previously.Opacity);
-            _previously.Y = _previouslyYFirstPass;
-            _previously.X = (_ui.ScreenWidth - (_peacenet.Texture.Width*2)) / 2;
-
-            _statusLabel.X = (_ui.ScreenWidth - _statusLabel.Width) / 2;
-
-            int statusYMax = (_ui.ScreenHeight - _statusLabel.Height) / 2;
-            int statusYMin = statusYMax + (int)(_ui.ScreenHeight * 0.1);
-            _statusLabel.Y = (int)MathHelper.Lerp(statusYMin, statusYMax, _statusLabel.Opacity);
-
-            _startingDesktop.X = (_ui.ScreenWidth - _startingDesktop.Width) / 2;
-            int startYMax = _peacenet.Y + _peacenet.Height;
-            int startYMin = startYMax + (int)(_ui.ScreenHeight * 0.1);
-            _startingDesktop.Y = (int)MathHelper.Lerp(startYMin, startYMax, _startingDesktop.Opacity);
+        public bool IsDesktopOpen
+        {
+            get
+            {
+                return _wgDeskOpen;
+            }
         }
 
         public void Shutdown()
         {
             _wgDeskOpen = false;
-            _previouslyRide = 0;
-            _statusIndex = -1;
-            _peacenetScaleAnim = 0;
-            _startupRide = 0;
-            _localBackend?.Shutdown();
+            if (_localBackend != null)
+                _localBackend.Shutdown();
             _localBackend = null;
             if(_server.Connected)
                 _server?.Disconnect();
+            Desktop = null;
         }
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
@@ -427,6 +275,7 @@ namespace Peacenet
 
         public void Unload()
         {
+            _peacegate.Dispose();
         }
     }
 

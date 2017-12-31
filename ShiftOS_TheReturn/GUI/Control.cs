@@ -406,7 +406,16 @@ namespace Plex.Engine.GUI
             Invalidate();
         }
 
-        public virtual bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right)
+        private int _lastScrollValue = 0;
+
+        protected virtual void OnMouseScroll(int delta)
+        {
+
+        }
+
+        public event Action<int> MouseScroll;
+
+        public virtual bool PropagateMouseState(ButtonState left, ButtonState middle, ButtonState right, int scroll)
         {
             if (_enabled == false)
                 return false;
@@ -416,13 +425,13 @@ namespace Plex.Engine.GUI
             {
                 foreach(var child in _children)
                 {
-                    if (child.PropagateMouseState(left, middle, right))
+                    if (child.PropagateMouseState(left, middle, right, scroll))
                         return true;
                 }
             }
             catch { }
             bool isInCtrl = (_mousex >= 0 && _mousex <= Width && _mousey >= 0 && _mousey <= Height);
-            if (_lastLeft == left && _lastRight == right && _lastMiddle == middle)
+            if (_lastLeft == left && _lastRight == right && _lastMiddle == middle && _lastScrollValue == scroll)
                 return isInCtrl;
             _lastLeft = left;
             _lastRight = right;
@@ -535,6 +544,13 @@ namespace Plex.Engine.GUI
                 var mouse = Manager.Mouse;
                 if (mouse != _lastState)
                 {
+                    int scroll = mouse.ScrollWheelValue;
+                    if (scroll != _lastScrollValue)
+                    {
+                        OnMouseScroll(_lastScrollValue - scroll);
+                        MouseScroll?.Invoke(_lastScrollValue - scroll);
+                        _lastScrollValue = scroll;
+                    }
                     //For toplevels, set mouse input loc directly.
                     int _newmousex = 0;
                     int _newmousey = 0;

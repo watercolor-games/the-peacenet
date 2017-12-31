@@ -112,7 +112,7 @@ namespace Plex.Engine.GraphicsSubsystem
             ctrl.SetTheme(_thememgr.Theme);
         }
 
-        public bool ShowPerfCounters = true;
+        public bool ShowPerfCounters = false;
 
         public void Remove(Control ctrl, bool dispose = true)
         {
@@ -281,7 +281,7 @@ namespace Plex.Engine.GraphicsSubsystem
                     if (ctrl.Visible == false)
                         continue;
                     if(ctrl.Opacity>0)
-                        if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton))
+                        if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton, mouse.ScrollWheelValue))
                             break;
                 }
             }
@@ -290,6 +290,11 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void OnKeyboardEvent(KeyboardEventArgs e)
         {
+            if(e.Key == Keys.F4)
+            {
+                ShowPerfCounters = !ShowPerfCounters;
+                return;
+            }
             if(e.Key == Keys.F11)
             {
                 bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);

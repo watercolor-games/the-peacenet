@@ -46,11 +46,15 @@
     <Compile Include="Applications\Appearance.cs" />
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
+    <Compile Include="Applications\NotificationManager.cs" />
+    <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\TextEditorApp.cs" />
     <Compile Include="Applications\WGLogin.cs" />
     <Compile Include="AsyncServerFSBackend.cs" />
     <Compile Include="ChatBackend.cs" />
+    <Compile Include="CoreUtils\date.cs" />
+    <Compile Include="CoreUtils\echo.cs" />
     <Compile Include="cowsay.cs" />
     <Compile Include="CoreUtils\cat.cs" />
     <Compile Include="CoreUtils\cd.cs" />
@@ -63,6 +67,7 @@
     <Compile Include="Cutscene\IntroScene.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="InfoboxManager.cs" />
+    <Compile Include="InitCommand.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="PeacenetTheme.cs" />
     <Compile Include="Program.cs" />
@@ -70,6 +75,7 @@
     <Compile Include="ServerSideSaveBackend.cs" />
     <Compile Include="SplashScreenComponent.cs" />
     <Compile Include="Applications\RelayChat.cs" />
+    <Compile Include="Storyboard.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
