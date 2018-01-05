@@ -14,10 +14,19 @@ namespace Plex.Engine.Saves
 {
     public class SaveManager : IEngineComponent
     {
+
         private ISaveBackend _backend = null;
 
         [Dependency]
         private Plexgate _plexgate = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Initiate()
         {

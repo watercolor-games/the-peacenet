@@ -17,8 +17,9 @@ using System.Threading;
 
 namespace Plex.Engine.Server
 {
-    public class WatercolorAPIManager : IEngineComponent
+    public class WatercolorAPIManager : IEngineComponent, IDisposable
     {
+
         [Dependency]
         private ConfigManager _config = null;
         private string _apiKey = "";
@@ -32,11 +33,13 @@ namespace Plex.Engine.Server
 
         private WatercolorUser _user = null;
 
+        private Thread _wgThread = null;
+
         public void Initiate()
         {
             _apiKey = _config.GetValue("wgApiKey", _apiKey);
             _baseUrl = _config.GetValue("wgApiBaseUrl", _baseUrl);
-            Task.Run(() =>
+            _wgThread = new Thread(() =>
             {
                 while (true)
                 {
@@ -48,6 +51,14 @@ namespace Plex.Engine.Server
                     Thread.Sleep(120000);
                 }
             });
+            _wgThread.IsBackground = true;
+            _wgThread.Start();
+        }
+
+        public void Dispose()
+        {
+            _wgThread.Abort();
+            _wgThread = null;
         }
 
         private void queryForSession(Action completed, Action error)
@@ -169,6 +180,14 @@ namespace Plex.Engine.Server
             }
         }
 
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
+
         public void Logout()
         {
             _user = null;
@@ -247,18 +266,6 @@ namespace Plex.Engine.Server
             {
                 onError?.Invoke(ex.Message);
             }
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
         }
 
         public void Unload()

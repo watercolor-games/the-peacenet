@@ -15,7 +15,16 @@ namespace Peacenet
 {
     public class AppLauncherManager : IEngineComponent
     {
+
         private List<AppLauncherItem> _items = new List<AppLauncherItem>();
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Initiate()
         {

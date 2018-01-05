@@ -14,22 +14,232 @@ using Plex.Engine.Themes;
 using Plex.Engine.Config;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Content;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
     public class UIManager : IEngineComponent, IConfigurable
     {
+        private class UIContainer : IEntity, ILoadable, IDisposable
+        {
+            [Dependency]
+            private ThemeManager _thememgr = null;
+
+            [Dependency]
+            private AppDataManager _appdata = null;
+
+            [Dependency]
+            private UIManager _ui = null;
+
+            [Dependency]
+            private ConfigManager _config = null;
+
+            [Dependency]
+            private Plexgate _plexgate = null;
+
+            private List<Control> _toplevels = new List<Control>();
+
+            private Control _focused = null;
+            private SpriteFont _monospace = null;
+            private string _screenshots = null;
+            private double _debugUpdTimer;
+            private string _debug = "";
+            private PerformanceCounter _debugCpu;
+            private bool ShowPerfCounters = true;
+            private MouseState _lastMouseState;
+
+            public Control[] Controls
+            {
+                get
+                {
+                    return _toplevels.ToArray();
+                }
+            }
+
+            public void AddControl(Control ctrl)
+            {
+                if (ctrl == null)
+                    return;
+                if (_toplevels.Contains(ctrl))
+                    return;
+                _toplevels.Add(ctrl);
+                ctrl.SetManager(_ui);
+                ctrl.SetTheme(_thememgr.Theme);
+                ctrl.Invalidate(true);
+            }
+
+            public void RemoveControl(Control ctrl, bool dispose)
+            {
+                if (ctrl == null)
+                    return;
+                if (!_toplevels.Contains(ctrl))
+                    return;
+                _toplevels.Remove(ctrl);
+                if (dispose)
+                    ctrl.Dispose();
+            }
+
+            public bool IsFocused(Control ctrl)
+            {
+                return ctrl == _focused;
+            }
+
+            public void SetFocus(Control ctrl)
+            {
+                if (_focused == ctrl)
+                    return;
+                var alreadyFocused = _focused;
+                _focused = ctrl;
+                if (alreadyFocused != null)
+                {
+                    alreadyFocused.Invalidate();
+                }
+                ctrl.Invalidate();
+
+            }
+
+            public void Draw(GameTime time, GraphicsContext ctx)
+            {
+                foreach (var ctrl in Controls)
+                {
+                    if (!ctrl.Visible)
+                        continue;
+                    if (ctrl.Opacity > 0)
+                        ctrl.Draw(time, ctx);
+                }
+
+                ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
+                ctx.BeginDraw();
+                foreach (var ctrl in Controls)
+                {
+                    if (!ctrl.Visible)
+                        continue;
+                    if (ctrl.BackBuffer != null && ctrl.Opacity > 0)
+                    {
+                        var tint = (ctrl.Enabled) ? Color.White : Color.Gray;
+                        if (_ui.IgnoreControlOpacity)
+                        {
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), tint);
+                        }
+                        else
+                        {
+                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (tint * ctrl.Opacity));
+                        }
+                    }
+                    else
+                    {
+                        ctrl.Invalidate();
+                    }
+                }
+                ctx.EndDraw();
+                if (ShowPerfCounters == false)
+                    return;
+                ctx.BeginDraw();
+                _debugUpdTimer += time.ElapsedGameTime.TotalSeconds;
+                if (_debugUpdTimer >= 1)
+                {
+                    _debug = $"{Math.Round(1 / time.ElapsedGameTime.TotalSeconds)} FPS | {GC.GetTotalMemory(false) / 1048576} MiB RAM | {Math.Round(_debugCpu.NextValue())}% CPU";
+                    _debugUpdTimer %= 1;
+                }
+                ctx.Batch.DrawString(_monospace, _debug, Vector2.Zero, Color.White);
+                ctx.EndDraw();
+
+            }
+
+            public void OnKeyEvent(KeyboardEventArgs e)
+            {
+                if (e.Key == Keys.F4)
+                {
+                    ShowPerfCounters = !ShowPerfCounters;
+                    return;
+                }
+                if (e.Key == Keys.F11)
+                {
+                    bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);
+                    fullscreen = !fullscreen;
+                    _config.SetValue("uiFullscreen", fullscreen);
+                    _ui.ApplyConfig();
+                    return;
+                }
+                if (e.Key == Keys.F3)
+                {
+                    string fname = DateTime.Now.ToString("yyyy-M-dd_HH-mm-ss") + ".png";
+                    using (var fstream = File.OpenWrite(Path.Combine(_screenshots, fname)))
+                    {
+                        _plexgate.GameRenderTarget.SaveAsPng(fstream, _plexgate.GameRenderTarget.Width, _plexgate.GameRenderTarget.Height);
+                    }
+                    return;
+                }
+
+                if (_focused != null)
+                    _focused.ProcessKeyboardEvent(e);
+            }
+
+            public void OnMouseUpdate(MouseState mouse)
+            {
+                _plexgate.BringToFront(_ui._uiLayer);
+                if (mouse == _lastMouseState)
+                    return;
+                _lastMouseState = mouse;
+                //Propagate mouse events.
+                var controls = Controls.OrderByDescending(x => Array.IndexOf(Controls, x)).ToArray();
+                bool skipEvents = false;
+                foreach (var ctrl in controls)
+                {
+                    if (ctrl.Visible == false)
+                        continue;
+                    bool res = ctrl.PropagateMouseState(mouse, skipEvents);
+                    if (res == true)
+                    {
+                        skipEvents = true;
+                    }
+                }
+            }
+
+            public void Update(GameTime time)
+            {
+                foreach (var ctrl in Controls)
+                {
+                    if (!ctrl.Visible)
+                        continue;
+                    ctrl.Update(time);
+                }
+
+
+            }
+
+            public void Load(ContentManager content)
+            {
+                _monospace = content.Load<SpriteFont>("Fonts/Monospace");
+                _screenshots = Path.Combine(_appdata.GamePath, "screenshots");
+                if (!Directory.Exists(_screenshots))
+                    Directory.CreateDirectory(_screenshots);
+                _debugUpdTimer = 0;
+                _debug = "";
+                _debugCpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+            }
+
+            public void Dispose()
+            {
+                Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
+                while(Controls.Length>0)
+                {
+                    var ctrl = Controls[0];
+                    RemoveControl(ctrl, true);
+                }
+                _debug = "";
+                _debugCpu = null;
+                Logger.Log("UI system is shutdown.");
+
+            }
+        }
+
+        private Layer _uiLayer = new Layer();
+        private UIContainer _container = null;
+
         [Dependency]
         private Plexgate _plexgate = null;
-
-        [Dependency]
-        private ThemeManager _thememgr = null;
-
-        [Dependency]
-        private ConfigManager _config = null;
-
-        [Dependency]
-        private AppDataManager _appdata = null;
 
         private string _screenshots = "";
 
@@ -39,22 +249,12 @@ namespace Plex.Engine.GraphicsSubsystem
 
         public void ShowUI()
         {
-            if(_isShowingUI == false)
-            {
-                _isShowingUI = true;
-                _uiFadeAmount = 0;
-                _uiFadeState = 0;
-            }
+            _plexgate.AddLayer(_uiLayer);
         }
 
         public void HideUI()
         {
-            if(_isShowingUI == true)
-            {
-                _isShowingUI = false;
-                _uiFadeAmount = 1;
-                _uiFadeState = 0;
-            }
+            _plexgate.RemoveLayer(_uiLayer);
         }
 
         public int ScreenWidth
@@ -77,61 +277,30 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
-        private List<Control> _topLevels = new List<Control>();
-
-        private Control _focused = null;
         public void SetFocus(Control ctrl)
         {
-            if (_focused == ctrl)
-                return;
-            var alreadyFocused = _focused;
-            _focused = ctrl;
-            if(alreadyFocused!=null)
-            {
-                alreadyFocused.Invalidate();
-            }
-            ctrl.Invalidate();
+            _container.SetFocus(ctrl);
         }
 
         public bool IsFocused(Control ctrl)
         {
             if (ctrl == null)
                 return false;
-            return ctrl == _focused;
+            return _container.IsFocused(ctrl);
         }
 
         public void Add(Control ctrl)
         {
-            if (ctrl == null)
+            if (_container.Controls.Contains(ctrl))
                 return;
-            if (_topLevels.Contains(ctrl))
-                return;
-            _topLevels.Add(ctrl);
-            ctrl.Invalidate();
-            ctrl.SetManager(this);
-            ctrl.SetTheme(_thememgr.Theme);
+            _container.AddControl(ctrl);
         }
-
-        public bool ShowPerfCounters = false;
 
         public void Remove(Control ctrl, bool dispose = true)
         {
-            if (ctrl == null)
+            if (!_container.Controls.Contains(ctrl))
                 return;
-            if (!_topLevels.Contains(ctrl))
-                return;
-            _topLevels.Remove(ctrl);
-            if (dispose)
-                ctrl.Dispose();
-        }
-
-        public void Clear()
-        {
-            while (_topLevels.Count > 0)
-            {
-                Remove(_topLevels[0]);
-            }
-
+            _container.RemoveControl(ctrl, dispose);
         }
 
         public string GetClipboardText()
@@ -141,14 +310,8 @@ namespace Plex.Engine.GraphicsSubsystem
             return System.Windows.Forms.Clipboard.GetText();
         }
 
-        System.Drawing.Font _lucidaConsole = null;
-
         public void Initiate()
         {
-            _monospace = _plexgate.Content.Load<SpriteFont>("Fonts/Monospace");
-            _screenshots = Path.Combine(_appdata.GamePath, "screenshots");
-            if (!Directory.Exists(_screenshots))
-                Directory.CreateDirectory(_screenshots);
             Logger.Log("Loading text renderer...", LogType.Info, "ui");
             try
             {
@@ -162,194 +325,31 @@ namespace Plex.Engine.GraphicsSubsystem
                 Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");
 
             }
-            _lucidaConsole = new System.Drawing.Font("Lucida Console", 12F);
-            _debugUpdTimer = 0;
-            _debug = "";
-            _debugCpu = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            _uiLayer = new Layer();
+            _container = _plexgate.New<UIContainer>();
+            _uiLayer.AddEntity(_container);
+            _plexgate.AddLayer(_uiLayer);
         }
 
-        public MouseState Mouse
-        {
-            get
-            {
-                return _lastState;
-            }
-        }
-
-        double _debugUpdTimer;
-        string _debug = "";
-        PerformanceCounter _debugCpu;
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-            try
-            {
-                foreach (var ctrl in _topLevels)
-                {
-                    if (!ctrl.Visible)
-                        continue;
-                    if(ctrl.Opacity>0)
-                        ctrl.Draw(time, ctx);
-                }
-
-                ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                ctx.BeginDraw();
-                foreach (var ctrl in _topLevels)
-                {
-                    if (!ctrl.Visible)
-                        continue;
-                    if (ctrl.BackBuffer != null && ctrl.Opacity > 0)
-                    {
-                        var tint = (ctrl.Enabled) ? Color.White : Color.Gray;
-                        if (IgnoreControlOpacity)
-                        {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), tint * _uiFadeAmount);
-                        }
-                        else
-                        {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (tint * ctrl.Opacity) * _uiFadeAmount);
-                        }
-                    }
-                    else
-                    {
-                        ctrl.Invalidate();
-                    }
-                }
-                ctx.EndDraw();
-            }
-            catch { }
-            if (ShowPerfCounters == false)
-            return;
-            ctx.BeginDraw();
-            _debugUpdTimer += time.ElapsedGameTime.TotalSeconds;
-            if (_debugUpdTimer >= 1)
-            {
-                _debug = $"{Math.Round(1 / time.ElapsedGameTime.TotalSeconds)} FPS | {GC.GetTotalMemory(false) / 1048576} MiB RAM | {Math.Round(_debugCpu.NextValue())}% CPU";
-                _debugUpdTimer %= 1;
-            }
-            ctx.Batch.DrawString(_monospace, _debug, Vector2.Zero, Color.White);
-            ctx.EndDraw();
-        }
-
-        private SpriteFont _monospace = null;
-
-        private MouseState _lastState;
-
-        public void OnGameUpdate(GameTime time)
-        {
-            if(_uiFadeState == 0)
-            {
-                if (_isShowingUI == true)
-                {
-                    _uiFadeAmount += (float)time.ElapsedGameTime.TotalSeconds;
-                    if (_uiFadeAmount >= 1f)
-                    {
-                        _uiFadeState = 1;
-                    }
-                }
-                else
-                {
-                    _uiFadeAmount -= (float)time.ElapsedGameTime.TotalSeconds;
-                    if (_uiFadeAmount <= 0f)
-                    {
-                        _uiFadeState = 1;
-                    }
-
-                }
-            }
-
-
-            if (_isShowingUI == false)
-                return;
-            try
-            {
-                foreach (var ctrl in _topLevels)
-                {
-                    if (!ctrl.Visible)
-                        continue;
-                    ctrl.Update(time);
-                }
-
-                var mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
-                if (mouse == _lastState)
-                    return;
-                _lastState = mouse;
-                //Propagate mouse events.
-                for (int i = _topLevels.Count - 1; i > 0; i--)
-                {
-                    var ctrl = _topLevels[i];
-                    if (ctrl.Visible == false)
-                        continue;
-                    if(ctrl.Opacity>0)
-                        if (ctrl.PropagateMouseState(mouse.LeftButton, mouse.MiddleButton, mouse.RightButton, mouse.ScrollWheelValue))
-                            break;
-                }
-            }
-            catch { }
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-            if(e.Key == Keys.F4)
-            {
-                ShowPerfCounters = !ShowPerfCounters;
-                return;
-            }
-            if(e.Key == Keys.F11)
-            {
-                bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);
-                fullscreen = !fullscreen;
-                _config.SetValue("uiFullscreen", fullscreen);
-                ApplyConfig();
-                return;
-            }
-            if(e.Key == Keys.F3)
-            {
-                string fname = DateTime.Now.ToString("yyyy-M-dd_HH-mm-ss") + ".png";
-                using(var fstream = File.OpenWrite(Path.Combine(_screenshots, fname)))
-                {
-                    _plexgate.GameRenderTarget.SaveAsPng(fstream, _plexgate.GameRenderTarget.Width, _plexgate.GameRenderTarget.Height);
-                }
-                return;
-            }
-
-            if(_isShowingUI)
-                if (_focused != null)
-                    _focused.ProcessKeyboardEvent(e);
-        }
-
-        private bool _ignoreControlOpacityValues = false;
+        private bool _ignoreControlOpacity = false;
 
         public bool IgnoreControlOpacity
         {
             get
             {
-                return _ignoreControlOpacityValues;
+                return _ignoreControlOpacity;
             }
         }
 
-        public void Unload()
-        {
-            Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
-            Clear();
-            _lucidaConsole = null;
-            _debug = "";
-            _debugCpu = null;
-            Logger.Log("UI system is shutdown.");
-        }
+        [Dependency]
+        private ConfigManager _config = null;
 
         public void ApplyConfig()
         {
             bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);
             _plexgate.graphicsDevice.IsFullScreen = fullscreen;
             _plexgate.graphicsDevice.ApplyChanges();
-            _ignoreControlOpacityValues = (bool)_config.GetValue("uiIgnoreControlOpacity", false);
+            _ignoreControlOpacity = (bool)_config.GetValue("uiIgnoreControlOpacity", false);
         }
-    }
-
-    public class TopLevel
-    {
-        public Control Control { get; set; }
-        public RenderTarget2D RenderTarget { get; set; }
     }
 }

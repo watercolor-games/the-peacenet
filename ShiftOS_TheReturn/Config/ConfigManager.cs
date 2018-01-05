@@ -15,6 +15,7 @@ namespace Plex.Engine.Config
 {
     public class ConfigManager : IEngineComponent
     {
+
         private Dictionary<string, object> _config = null;
 
         [Dependency]
@@ -24,6 +25,14 @@ namespace Plex.Engine.Config
         private AppDataManager _appdata = null;
 
         private string _path = "";
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Initiate()
         {
@@ -151,6 +160,14 @@ namespace Plex.Engine.Config
             get
             {
                 return _path;
+            }
+        }
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
             }
         }
 

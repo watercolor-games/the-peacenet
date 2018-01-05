@@ -17,11 +17,20 @@ namespace Peacenet.CoreUtils
 {
     public class FileUtils : IEngineComponent
     {
+
         [Dependency]
         private Plexgate _plexgate = null;
 
         [Dependency]
         private FSManager _fs = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public string GetNameFromPath(string path)
         {
@@ -124,6 +133,14 @@ namespace Peacenet.CoreUtils
 
         public void Initiate()
         {
+        }
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
         }
 
         public void OnFrameDraw(GameTime time, GraphicsContext ctx)

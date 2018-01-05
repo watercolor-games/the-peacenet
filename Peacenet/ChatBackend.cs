@@ -15,10 +15,19 @@ namespace Peacenet
 {
     public class ChatBackend : IEngineComponent
     {
+
         [Dependency]
         private AsyncServerManager _server = null;
 
         private IChatFrontend frontend = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Initiate()
         {

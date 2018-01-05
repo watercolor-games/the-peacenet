@@ -13,6 +13,7 @@ namespace Plex.Engine.Themes
 {
     public class ThemeManager : IEngineComponent
     {
+
         [Dependency]
         private Plexgate _plexgate = null;
 
@@ -56,6 +57,14 @@ namespace Plex.Engine.Themes
             get
             {
                 return _theme;
+            }
+        }
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
             }
         }
 

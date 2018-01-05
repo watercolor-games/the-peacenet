@@ -319,7 +319,13 @@ namespace Peacenet.Backend
                                     writer.Write(returncontent);
                                 writer.Flush();
                             }
-                            catch (EndOfStreamException) { break; }
+                            catch (Exception ex)
+                            {
+                                Logger.Log($"An error occurred in a TCP connection thread. The connection has been terminated.");
+                                Logger.Log("Error details:");
+                                Logger.Log(ex.ToString());
+                                break;
+                            }
                         }
                         reader.Close();
                         writer.Close();

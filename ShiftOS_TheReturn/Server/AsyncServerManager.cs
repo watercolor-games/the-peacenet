@@ -21,6 +21,8 @@ namespace Plex.Engine.Server
 {
     public class AsyncServerManager : IEngineComponent
     {
+
+
         [Dependency]
         private WatercolorAPIManager _api = null;
 
@@ -186,6 +188,14 @@ namespace Plex.Engine.Server
             get
             {
                 return _isMultiplayer;
+            }
+        }
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
             }
         }
 

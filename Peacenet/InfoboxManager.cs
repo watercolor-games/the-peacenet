@@ -15,8 +15,18 @@ namespace Peacenet
 {
     public class InfoboxManager : IEngineComponent
     {
+
+
         [Dependency]
         private WindowSystem _winmgr = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Show(string title, string message, Action callback = null)
         {

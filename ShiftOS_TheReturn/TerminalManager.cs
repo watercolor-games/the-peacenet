@@ -16,6 +16,8 @@ namespace Plex.Engine
 {
     public class TerminalManager : IEngineComponent
     {
+
+
         private List<ITerminalCommand> _localCommands = null;
         private Dictionary<string, string> _usages = null;
 
@@ -24,6 +26,14 @@ namespace Plex.Engine
 
         [Dependency]
         private AsyncServerManager _server = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public void Initiate()
         {

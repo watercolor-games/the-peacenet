@@ -11,6 +11,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace Peacenet.Cutscenes
 {
@@ -31,6 +32,9 @@ namespace Peacenet.Cutscenes
 
         [Dependency]
         private UIManager _ui = null;
+        
+        [Dependency]
+        private SplashScreenComponent _splash = null;
 
         private System.Drawing.Font _mondaBig;
         private System.Drawing.Font _mondaMedium;
@@ -115,7 +119,7 @@ namespace Peacenet.Cutscenes
             gfx.EndDraw();
         }
 
-        public override void LoadResources()
+        public override void Load(ContentManager Content)
         {
             _yesMyGrassIsGreen = Content.Load<SoundEffect>("Audio/Cutscene/Credits");
             _grassInstance = _yesMyGrassIsGreen.CreateInstance();
@@ -130,16 +134,20 @@ namespace Peacenet.Cutscenes
 
         public override void OnFinish()
         {
+            _ui.ShowUI();
             _grassInstance.Stop();
+            _splash.MakeVisible();
         }
 
         public override void OnPlay()
         {
+            _ui.HideUI();
             _csState = 0;
             _grassInstance.Play();
+            _splash.MakeHidden();
         }
 
-        public override void UnloadResources()
+        public override void Dispose()
         {
             _yesMyGrassIsGreen.Dispose();
             _peacenet.Dispose();

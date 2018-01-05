@@ -14,6 +14,7 @@ namespace Plex.Engine.GUI
 {
     public class WindowSystem : IEngineComponent, IConfigurable
     {
+
         [Dependency]
         private UIManager _uiman = null;
 
@@ -121,6 +122,14 @@ namespace Plex.Engine.GUI
             get
             {
                 return _windows.ToArray();
+            }
+        }
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
             }
         }
 
@@ -233,6 +242,8 @@ namespace Plex.Engine.GUI
 
         public virtual void Close()
         {
+            if (_wid == null)
+                return;
             _winsystem.Close((int)_wid);
             _wid = null;
         }
@@ -429,7 +440,7 @@ namespace Plex.Engine.GUI
                 {
                     case 0:
                         float opacity = Opacity;
-                        opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0.75f, 1);
                         Opacity = opacity;
                         if (opacity >= 1)
                         {
@@ -438,7 +449,7 @@ namespace Plex.Engine.GUI
                         break;
                     case 2:
                         float opacity2 = Opacity;
-                        opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0.75F, 1);
                         Opacity = opacity2;
                         if (opacity2 <= 0.75)
                         {

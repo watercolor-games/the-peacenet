@@ -60,6 +60,66 @@ namespace Plex.Engine
         private volatile bool _splashReady = false;
         private Task _splashJob = null;
 
+        private List<Layer> _layers = new List<Layer>();
+
+        public void AddLayer(Layer layer)
+        {
+            if (layer == null)
+                return;
+            if (_layers.Contains(layer))
+                return;
+            _layers.Add(layer);
+        }
+
+        public void RemoveLayer(Layer layer)
+        {
+            if (layer == null)
+                return;
+            if (!_layers.Contains(layer))
+                return;
+            _layers.Remove(layer);
+        }
+
+        public void ClearLayers()
+        {
+            while (_layers.Count > 0)
+            {
+                var layer = _layers[0];
+                while (layer.Entities.Length > 0)
+                {
+                    var entity = layer.Entities[0];
+                    if (entity is IDisposable)
+                        (entity as IDisposable).Dispose();
+                    layer.RemoveEntity(entity);
+                }
+                _layers.Remove(layer);
+            }
+        }
+
+        public void SendToBack(Layer layer)
+        {
+            if (layer == null)
+                return;
+            if (!_layers.Contains(layer))
+                return;
+            if (_layers.IndexOf(layer) == 0)
+                return;
+            _layers.Remove(layer);
+            _layers.Insert(0, layer);
+        }
+
+        public void BringToFront(Layer layer)
+        {
+            if (layer == null)
+                return;
+            if (!_layers.Contains(layer))
+                return;
+            if (_layers.IndexOf(layer) == _layers.Count - 1)
+                return;
+            _layers.Remove(layer);
+            AddLayer(layer);
+        }
+
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
         public RenderTarget2D GameRenderTarget = null;
@@ -101,8 +161,13 @@ namespace Plex.Engine
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
         {
-            foreach (var component in _components)
-                component.Component.OnKeyboardEvent(e);
+            foreach(var layer in _layers.ToArray())
+            {
+                foreach(var entity in layer.Entities)
+                {
+                    entity.OnKeyEvent(e);
+                }
+            }
         }
 
         public string[] GetAvailableResolutions()
@@ -213,22 +278,23 @@ namespace Plex.Engine
             return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
-public object Inject(object client)
-{
-    Type clientType = client.GetType();
-    while (clientType != null)
-    {
-        foreach (var field in clientType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(f => f.GetCustomAttributes(true).Any(t => t is DependencyAttribute)))
+        public object Inject(object client)
         {
-            if (field.FieldType == this.GetType())
-                field.SetValue(client, this);
-            else
-                field.SetValue(client, GetEngineComponent(field.FieldType));
+            Type clientType = client.GetType();
+            while (clientType != null)
+            {
+                foreach (var field in clientType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(f => f.GetCustomAttributes(true).Any(t => t is DependencyAttribute)))
+                {
+                    if (field.FieldType == this.GetType())
+                        field.SetValue(client, this);
+                    else
+                        field.SetValue(client, GetEngineComponent(field.FieldType));
+                        
+                }
+                clientType = clientType.BaseType;
+            }
+            return client;
         }
-        clientType = clientType.BaseType;
-    }
-    return client;
-}
 
         public string GetSystemResolution()
         {
@@ -290,6 +356,12 @@ public object Inject(object client)
             MouseTexture = new Texture2D(GraphicsDevice, bmp.Width, bmp.Height);
             MouseTexture.SetData<byte>(rgb);
             rgb = null;
+
+            foreach(var component in _components)
+            {
+                if (component.Component is ILoadable)
+                    (component.Component as ILoadable).Load(Content);
+            }
             base.LoadContent();
         }
 
@@ -302,12 +374,26 @@ public object Inject(object client)
         {
             MouseTexture.Dispose();
             MouseTexture = null;
+            Logger.Log("Despawning all entities...");
+            while(_layers.Count > 0)
+            {
+                var layer = _layers[0];
+                while(layer.Entities.Length > 0)
+                {
+                    var entity = layer.Entities[0];
+                    if (entity is IDisposable)
+                        (entity as IDisposable).Dispose();
+                    layer.RemoveEntity(entity);
+                }
+                _layers.RemoveAt(0);
+            }
             Logger.Log("Unloading all engine modules!");
             while(_components.Count > 0)
             {
                 var component = _components[0];
                 Logger.Log("Unloading: " + component.Component.GetType().Name, LogType.Info, "moduleloader");
-                component.Component.Unload();
+                if(component.Component is IDisposable)
+                    (component.Component as IDisposable).Dispose();
                 _components.RemoveAt(0);
             }
             Logger.Log("Done.");
@@ -325,6 +411,7 @@ public object Inject(object client)
             _actions.Enqueue(act);
         }
 
+        private IEngineComponent[] _drawables = null;
         private MouseState LastMouseState;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -349,24 +436,34 @@ public object Inject(object client)
             keyboardListener.Update(gameTime);
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
+            bool doMouse = LastMouseState != mouseState;
             LastMouseState = mouseState;
-
-            foreach (var component in _components)
-            {
-                component.Component.OnGameUpdate(gameTime);
-            }
 
             while (_actions.Count != 0)
             {
                 _actions.Dequeue().Invoke();
             }
+            if (!IsActive)
+                doMouse = false;
 
+            foreach (var layer in _layers.ToArray())
+            {
+                foreach (var entity in layer.Entities)
+                {
+                    if (doMouse)
+                        entity.OnMouseUpdate(mouseState);
+                    entity.Update(gameTime);
+                }
+            }
             base.Update(gameTime);
         }
 
         public T New<T>() where T : new()
         {
-            return (T)Inject(new T());
+            var obj = (T)Inject(new T());
+            if (obj is ILoadable)
+                (obj as ILoadable).Load(Content);
+            return obj;
         }
 
 
@@ -380,10 +477,10 @@ public object Inject(object client)
                 return;
             GraphicsDevice.SetRenderTarget(GameRenderTarget);
             GraphicsDevice.Clear(Color.Black);
-            foreach(var component in _components)
-            {
-                component.Component.OnFrameDraw(gameTime, _ctx);
-            }
+            foreach (var layer in _layers.ToArray())
+                foreach (var entity in layer.Entities)
+                    entity.Draw(gameTime, this._ctx);
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
                             RasterizerState.CullNone);
@@ -403,5 +500,65 @@ public object Inject(object client)
     {
         public bool IsInitiated { get; set; }
         public IEngineComponent Component { get; set; }
+    }
+
+    public sealed class Layer
+    {
+        private List<IEntity> _entities = new List<IEntity>();
+
+        public IEntity[] Entities
+        {
+            get
+            {
+                return _entities.ToArray();
+            }
+        }
+
+        public void AddEntity(IEntity entity)
+        {
+            if (entity == null)
+                return;
+            if (_entities.Contains(entity))
+                return;
+            _entities.Add(entity);
+        }
+
+        public void RemoveEntity(IEntity entity)
+        {
+            if (entity == null)
+                return;
+            if (!_entities.Contains(entity))
+                return;
+            _entities.Remove(entity);
+        }
+
+        public void ClearEntities()
+        {
+            _entities.Clear();
+        }
+
+        public void SendToBack(IEntity entity)
+        {
+            if (entity == null)
+                return;
+            if (!_entities.Contains(entity))
+                return;
+            if (_entities.IndexOf(entity) == 0)
+                return;
+            RemoveEntity(entity);
+            _entities.Insert(0, entity);
+        }
+
+        public void BringToFront(IEntity entity)
+        {
+            if (entity == null)
+                return;
+            if (!_entities.Contains(entity))
+                return;
+            if (_entities.IndexOf(entity) == _entities.Count - 1)
+                return;
+            RemoveEntity(entity);
+            AddEntity(entity);
+        }
     }
 }

@@ -23,6 +23,9 @@ namespace Peacenet
         private Texture2D _wallpaper = null;
         private float _panelAnim = 0;
 
+        private double _missionCheckTime = 0;
+        private bool _needsMissionCheck = true;
+
         private DesktopPanel _topPanel = null;
         private DesktopPanel _bottomPanel = null;
 
@@ -426,7 +429,7 @@ namespace Peacenet
                 case 5:
                     winsys.WindowListUpdated -= WindowSystemUpdated;
                     Close();
-                    _splash.Reset();
+                    _os.Shutdown();
                     _tutorialBgmInstance.Stop();
                     _tutorialBgmInstance.Dispose();
                     break;
@@ -529,8 +532,35 @@ namespace Peacenet
             _missionButton.Y = (_topPanel.Height - _missionButton.Height) / 2;
             _missionButton.X = _timeLabel.X - _missionButton.Width - 3;
 
+            _missionButton.Enabled = (_missionButton.Text != "0");
+
+            //Mission check.
+            if (_needsMissionCheck)
+            {
+                Task.Run(() =>
+                {
+                    _missionButton.Text = (IsTutorialOpen) ? "0" : _story.AvailableMissions.Count().ToString();
+                });
+                _needsMissionCheck = false;
+            }
+            else
+            {
+                _missionCheckTime += time.ElapsedGameTime.TotalSeconds;
+                if(_missionCheckTime>=10)
+                {
+                    _needsMissionCheck = true;
+                    _missionCheckTime = 0;
+                }
+            }
+
             base.OnUpdate(time);
         }
+
+        [Dependency]
+        private OS _os = null;
+
+        [Dependency]
+        private Storyboard _story = null;
 
         public void ResetWindowList(WindowSystem winsys)
         {

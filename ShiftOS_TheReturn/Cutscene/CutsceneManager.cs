@@ -12,17 +12,26 @@ using Plex.Objects;
 
 namespace Plex.Engine.Cutscene
 {
-    public class CutsceneManager : IEngineComponent
+    public class CutsceneManager : IEngineComponent, IDisposable
     {
+
+
         [Dependency]
         private Plexgate _plexgate = null;
 
-        [Dependency]
-        private UIManager _ui = null;
+        private Layer _cutsceneLayer = new Layer();
 
         private List<Cutscene> _cutscenes = null;
         private Cutscene _current = null;
         
+        public int DrawIndex
+        {
+            get
+            {
+                return 5;
+            }
+        }
+
         public bool IsPlaying
         {
             get
@@ -35,21 +44,31 @@ namespace Plex.Engine.Cutscene
 
         private Action _callback = null;
 
+        public void Stop(bool runCallback = true)
+        {
+            if(_current != null)
+            {
+                _current.IsFinished = true;
+                _current.OnFinish();
+                _cutsceneLayer.RemoveEntity(_current);
+                if (runCallback)
+                    _callback?.Invoke();
+                _callback = null;
+                _current = null;
+            }
+        }
+
         public bool Play(string name, Action callback = null)
         {
             var cs = _cutscenes.FirstOrDefault(x => x.Name == name);
             if (cs == null)
                 return false;
-            if (_current != null)
-            {
-                _current.IsFinished = true;
-                _current = null;
-            }
+            Stop(false);
             _callback = callback;
             cs.IsFinished = false;
             _current = cs;
             _current.OnPlay();
-            _ui.HideUI();
+            _cutsceneLayer.AddEntity(_current);
             return true;
         }
 
@@ -67,46 +86,20 @@ namespace Plex.Engine.Cutscene
                     continue;
                 }
                 _plexgate.Inject(cs);
-                cs.Content = _plexgate.Content;
-                cs.LoadResources();
+                cs.Load(_plexgate.Content);
                 _cutscenes.Add(cs);
             }
             Logger.Log($"{_cutscenes.Count} cutscenes loaded.");
+            _cutsceneLayer = new Engine.Layer();
+            _plexgate.AddLayer(_cutsceneLayer);
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-            if(_current != null)
-            {
-                _current.Draw(time, ctx);
-            }
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-            if (_current != null)
-            {
-                _current.Update(time);
-                if (_current.IsFinished)
-                {
-                    _current.OnFinish();
-                    _callback?.Invoke();
-                    _current = null;
-                    _ui.ShowUI();
-                }
-            }
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
+        public void Dispose()
         {
             while(_cutscenes.Count == 0)
             {
                 var cs = _cutscenes[0];
-                cs.UnloadResources();
+                cs.Dispose();
                 _cutscenes.RemoveAt(0);
                 cs = null;
             }

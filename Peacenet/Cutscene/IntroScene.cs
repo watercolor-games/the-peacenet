@@ -56,12 +56,12 @@ namespace Peacenet.Cutscenes
             }
         }
 
-        public override void LoadResources()
+        public override void Load(ContentManager content)
         {
             _monda = new System.Drawing.Font("Monda", 28F);
         }
 
-        public override void UnloadResources()
+        public override void Dispose()
         {
         }
 

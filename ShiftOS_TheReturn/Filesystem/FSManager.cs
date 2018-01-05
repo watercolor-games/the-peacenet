@@ -17,6 +17,8 @@ namespace Plex.Engine.Filesystem
 {
     public class FSManager : IEngineComponent
     {
+
+
         [Dependency]
         private AppDataManager _appdata = null;
 
@@ -27,6 +29,14 @@ namespace Plex.Engine.Filesystem
 
         [Dependency]
         private Plexgate _plexgate = null;
+
+        public int DrawIndex
+        {
+            get
+            {
+                return -1;
+            }
+        }
 
         public string ReadAllText(string file)
         {

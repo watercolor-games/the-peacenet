@@ -68,7 +68,11 @@
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="InfoboxManager.cs" />
     <Compile Include="InitCommand.cs" />
+    <Compile Include="MainMenu\SplashEntity.cs" />
+    <Compile Include="Missions\Prologue.cs" />
+    <Compile Include="Objectives\CutsceneObjective.cs" />
     <Compile Include="OS.cs" />
+    <Compile Include="OSEntity.cs" />
     <Compile Include="PeacenetTheme.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

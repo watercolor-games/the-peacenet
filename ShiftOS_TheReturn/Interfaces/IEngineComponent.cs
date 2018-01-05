@@ -12,9 +12,5 @@ namespace Plex.Engine.Interfaces
     public interface IEngineComponent
     {
         void Initiate();
-        void OnKeyboardEvent(KeyboardEventArgs e);
-        void OnGameUpdate(GameTime time);
-        void OnFrameDraw(GameTime time, GraphicsContext ctx);
-        void Unload();
     }
 }

@@ -12,11 +12,46 @@ using Plex.Engine.Saves;
 using Plex.Engine.Cutscene;
 using Plex.Engine.Server;
 using System.Threading;
+using Plex.Objects;
+using Microsoft.Xna.Framework.Input;
 
 namespace Peacenet
 {
-    public class Storyboard : IEngineComponent
+    public class Storyboard : IEngineComponent, IDisposable
     {
+        private class StoryboardEntity : IEntity
+        {
+            [Dependency]
+            private Storyboard _story = null;
+
+            public void Draw(GameTime time, GraphicsContext gfx)
+            {
+            }
+
+            public void OnKeyEvent(KeyboardEventArgs e)
+            {
+            }
+
+            public void OnMouseUpdate(MouseState mouse)
+            {
+            }
+
+            public void Update(GameTime time)
+            {
+                if (_story._currentObjective != null)
+                {
+                    if (_story._completed == false)
+                    {
+                        if (_story._currentObjective.Update(time) == true)
+                        {
+                            _story._completed = true;
+                            _story._objectiveComplete.Set();
+                        }
+                    }
+                }
+            }
+        }
+
         [Dependency]
         private OS _os = null;
 
@@ -32,6 +67,7 @@ namespace Peacenet
         private EventWaitHandle _missionStarted = new ManualResetEvent(false);
         private EventWaitHandle _objectiveComplete = new ManualResetEvent(false);
 
+        private List<Mission> _foundMissions = new List<Mission>();
 
         private Mission _currentMission = null;
 
@@ -41,55 +77,104 @@ namespace Peacenet
 
         private bool _running = true;
 
+        private Mission[] _available = null;
+
         [Dependency]
         private Plexgate _plexgate = null;
 
+        public void StartMission(Mission mission)
+        {
+            if (_currentMission != null)
+                throw new InvalidOperationException("Cannot start a mission while another mission is in progress.");
+            _currentMission = mission;
+            _missionStarted.Set();
+        }
+        
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
         public void Initiate()
         {
+            Logger.Log("Storyboard is looking for missions...");
+
+            foreach(var type in ReflectMan.Types.Where(x=>x.BaseType == typeof(Mission)))
+            {
+                var mission = (Mission)Activator.CreateInstance(type, null);
+                Logger.Log($"Found mission: {mission.Name.ToUpper()} from {type.FullName}.");
+                _plexgate.Inject(mission);
+                _foundMissions.Add(mission);
+            }
+
+            Logger.Log("Done.");
+
             Task.Run(() =>
             {
                 while (_running)
                 {
-                    _missionStarted.WaitOne();
-                    if (_currentMission != null)
+                    try
                     {
-                        if (_currentMission.Objectives != null)
+                        _missionStarted.WaitOne();
+                        if (_currentMission != null)
                         {
-                            while(_currentMission.Objectives.Count > 0)
+                            _currentMission.OnStart();
+                            if (_currentMission.Objectives != null)
                             {
-                                _currentObjective = _currentMission.Objectives.Dequeue();
-                                if (_currentObjective == null)
-                                    continue;
-                                _plexgate.Inject(_currentObjective);
-                                _currentObjective.OnLoad();
-                                _objectiveComplete.WaitOne();
-                                _currentObjective.OnUnload();
-                                _objectiveComplete.Reset();
+                                var objectives = _currentMission.Objectives;
+                                if (objectives != null)
+                                {
+                                    while (objectives.Count > 0)
+                                    {
+                                        _currentObjective = objectives.Dequeue();
+                                        if (_currentObjective == null)
+                                            continue;
+                                        _completed = false;
+                                        _plexgate.Inject(_currentObjective);
+                                        _currentObjective.OnLoad();
+                                        _objectiveComplete.WaitOne();
+                                        _currentObjective.OnUnload();
+                                        _objectiveComplete.Reset();
+                                    }
+                                }
+                                
                             }
-
+                            _currentMission.OnComplete();
+                            _currentMission = null;
                         }
-                        _save.SetValue(_currentMission.SaveValue, true);
-                        _currentMission = null;
+                        _missionStarted.Reset();
                     }
-                    _missionStarted.Reset();
+                    catch(Exception ex)
+                    {
+                        _infobox.Show("Mission aborted.", $"Sorry to break the immersion, but an error occurred while running a Peacenet mission that required the mission to be aborted.\r\n\r\n{ex.Message}");
+                        _currentMission = null;
+                        _currentObjective = null;
+                        _missionStarted.Reset();
+                        _objectiveComplete.Reset();
+                    }
                 }
             });
+            var layer = new Layer();
+            _entity = _plexgate.New<StoryboardEntity>();
+            layer.AddEntity(_entity);
+            _plexgate.AddLayer(layer);
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
+        private StoryboardEntity _entity = null;
+
+        private Thread _bgThread = null;
+
+        public Mission[] AvailableMissions
         {
+            get
+            {
+                if (_server.IsMultiplayer)
+                    return new Mission[0];
+                return _foundMissions.Where(x => x.IsAvailable == true && x.IsComplete == false).ToArray();
+            }
         }
 
-        public void OnGameUpdate(GameTime time)
-        {
-        }
+        private bool _completed = false;
 
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-            
-        }
-
-        public void Unload()
+        public void Dispose()
         {
             _running = false;
             _currentMission = null;
@@ -101,9 +186,13 @@ namespace Peacenet
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
-        public abstract string SaveValue { get; }
 
         public abstract Queue<Objective> Objectives { get; }
+
+        public abstract bool IsAvailable { get; }
+        public abstract bool IsComplete { get; }
+        public abstract void OnComplete();
+        public abstract void OnStart();
     }
 
     public class Objective
