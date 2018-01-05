@@ -282,6 +282,8 @@ namespace Plex.Engine.GUI
 
         public virtual void AddChild(Control child)
         {
+            if (_children == null)
+                return;
             if (_children.Contains(child))
                 return;
             _children.Add(child);
@@ -458,6 +460,12 @@ namespace Plex.Engine.GUI
             {
                 if (ContainsMouse)
                 {
+                    if(state.ScrollWheelValue != _lastScrollValue)
+                    {
+                        _lastScrollValue = state.ScrollWheelValue;
+                        OnMouseScroll(state.ScrollWheelValue);
+                        MouseScroll?.Invoke(state.ScrollWheelValue);
+                    }
                     bool left = LeftMouseState == ButtonState.Pressed;
                     bool right = RightMouseState == ButtonState.Pressed;
                     bool middle = MiddleMouseState == ButtonState.Pressed;
@@ -466,7 +474,15 @@ namespace Plex.Engine.GUI
                     {
                         if(left)
                         {
-                            Click?.Invoke(this, EventArgs.Empty);
+                            if (_doubleClickCooldown == 0)
+                            {
+                                Click?.Invoke(this, EventArgs.Empty);
+                                _doubleClickCooldown = 250;
+                            }
+                            else
+                            {
+                                DoubleClick?.Invoke(this, EventArgs.Empty);
+                            }
                             MouseLeftUp?.Invoke(this, EventArgs.Empty);
                         }
                         else
@@ -556,6 +572,10 @@ namespace Plex.Engine.GUI
                 }
             }
             catch { }
+            if (_doubleClickCooldown >= 0)
+            {
+                _doubleClickCooldown = MathHelper.Clamp((int)(_doubleClickCooldown - time.ElapsedGameTime.TotalMilliseconds), 0, 250);
+            }
         }
 
 
