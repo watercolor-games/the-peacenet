@@ -9,6 +9,9 @@ using Plex.Objects;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// Creates a directory with the specified name in the current working directory - if it doesn't already exist.
+    /// </summary>
     public class mkdir : ITerminalCommand
     {
         [Dependency]
@@ -17,6 +20,7 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private FSManager _fs = null;
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -25,6 +29,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -33,6 +38,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -41,6 +47,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string dir = arguments["<directory>"].ToString();

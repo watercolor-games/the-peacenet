@@ -14,7 +14,10 @@ using Newtonsoft.Json;
 
 namespace Plex.Engine
 {
-    public class TerminalManager : IEngineComponent
+    /// <summary>
+    /// Provides an engine component facilitating the execution of Peacenet terminal commands.
+    /// </summary>
+    public class TerminalManager : IEngineComponent, IDisposable
     {
 
 
@@ -26,14 +29,6 @@ namespace Plex.Engine
 
         [Dependency]
         private AsyncServerManager _server = null;
-
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
 
         public void Initiate()
         {
@@ -96,6 +91,10 @@ namespace Plex.Engine
             return new ConsoleContext(stdout, stdin);
         }
 
+        /// <summary>
+        /// Retrieves a list of available commands.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{CommandDescriptor}"/> containing a list of command manual entries.</returns>
         public IEnumerable<CommandDescriptor> GetCommandList()
         {
             CommandDescriptor[] cmds = null;
@@ -122,6 +121,12 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Runs a command with the given console context.
+        /// </summary>
+        /// <param name="command">The command (including raw arguments) to parse and run.</param>
+        /// <param name="console">The <see cref="ConsoleContext"/> to run the command in.</param>
+        /// <returns>Whether the command was actually found.</returns>
         public bool RunCommand(string command, ConsoleContext console)
         {
             //First we need to parse the command string into something we can actually use as a query.
@@ -195,6 +200,11 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Parse a command string into a command name and list of arguments.
+        /// </summary>
+        /// <param name="command">The raw command string to parse.</param>
+        /// <returns>The parsed <see cref="CommandQuery"/>. Returns null if a null or empty command string was provided.</returns>
         public CommandQuery ParseCommand(string command)
         {
             //We can use the Watercolor tokenizer just like we do for the server console and the Debug console.
@@ -219,19 +229,7 @@ namespace Plex.Engine
             return new CommandQuery(tokens[0], arguments); //First element of tokens is always the command name
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
+        public void Dispose()
         {
             Logger.Log("Terminal is shutting down...");
             while (_localCommands.Count > 0)
@@ -246,17 +244,45 @@ namespace Plex.Engine
         }
     }
 
+    /// <summary>
+    /// Provides an API for creating in-game Terminal commands.
+    /// </summary>
     public interface ITerminalCommand
     {
+        /// <summary>
+        /// Retrieves the name of the command. Implementing classes should note that command names may not contain spaces, and are case-sensitive. "Cat" is not the same as "cat". You also cannot have two <see cref="ITerminalCommand"/>s with the same name. 
+        /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Retrieves the description of the command. This is used to construct a command manual page.
+        /// </summary>
         string Description { get; }
+
+        /// <summary>
+        /// Retrieves the syntaxes of the command. Return null if your command doesn't have a syntax. Each element in the <see cref="IEnumerable{String}"/> represents a new line in the compiled usage string. See <see cref="DocoptNet.Docopt"/> and http://docopt.org/ for information on how to write your command-ilne syntax.   
+        /// </summary>
         IEnumerable<string> Usages { get; }
 
+        /// <summary>
+        /// The entry point of the command.
+        /// </summary>
+        /// <param name="console">A <see cref="ConsoleContext"/> providing methods for receiving user input and writing command output to and from the console.</param>
+        /// <param name="arguments">A <see cref="Dictionary{String, Object}"/> containing the command-line arguments provided by the player.</param>
         void Run(ConsoleContext console, Dictionary<string, object> arguments); 
     }
 
+    /// <summary>
+    /// Contains the data necessary to construct a manual entry for an <see cref="ITerminalCommand"/>. 
+    /// </summary>
     public class CommandDescriptor
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="CommandDescriptor"/> class. 
+        /// </summary>
+        /// <param name="name">The name of the command.</param>
+        /// <param name="desc">The description of the command.</param>
+        /// <param name="man">The command's manual page.</param>
         public CommandDescriptor(string name, string desc, string man)
         {
             Name = name;
@@ -264,14 +290,26 @@ namespace Plex.Engine
             ManPage = man;
         }
 
+        /// <summary>
+        /// Retrieves the name of the command.
+        /// </summary>
         public string Name { get; private set; }
+        /// <summary>
+        /// Retrieves the command's description.
+        /// </summary>
         public string Description { get; private set; }
+        /// <summary>
+        /// Retrieves the full compiled manual page for the command.
+        /// </summary>
         public string ManPage { get; private set; }
     }
 
-
+    /// <summary>
+    /// A command which clears the console.
+    /// </summary>
     public class ClearCommand : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -280,6 +318,7 @@ namespace Plex.Engine
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -288,6 +327,7 @@ namespace Plex.Engine
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -296,6 +336,7 @@ namespace Plex.Engine
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.Clear();

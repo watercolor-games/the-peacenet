@@ -12,6 +12,9 @@ using Microsoft.Xna.Framework;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a user-interface for logging into or registering for a Watercolor Games community account. This is a fire-and-forget user interface. Once it is shown to the user, it will handle everything on its own.
+    /// </summary>
     public class WGLogin : Window
     {
         private Button _cancel = null;

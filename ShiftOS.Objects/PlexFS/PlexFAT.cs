@@ -25,6 +25,9 @@ namespace Plex.Objects.PlexFS
     // There is not really support for attributes. The "length" field of
     // directories will be set to -1 so that they can't be opened as
     // files.
+    /// <summary>
+    /// An implementation of a simple sector-based streamable file allocation table.
+    /// </summary>
     public class PlexFAT
     {
         private static class Helpers
@@ -174,6 +177,9 @@ namespace Plex.Objects.PlexFS
             }
         }
         
+        /// <summary>
+        /// Represents a PlexFAT directory.
+        /// </summary>
         public class Directory
         {
             internal Directory()
@@ -184,6 +190,11 @@ namespace Plex.Objects.PlexFS
             internal Dictionary<string, Tuple<ushort, int>> entries;
             internal ushort firstSector;
             
+            /// <summary>
+            /// Create a directory from a PlexFAT volume.
+            /// </summary>
+            /// <param name="vol">The PlexFAT volume from which the directory will be created.</param>
+            /// <returns>The resulting directory.</returns>
             public static Directory FromVol(PlexFAT vol)
             {
                 var ret = new Directory();
@@ -273,13 +284,26 @@ namespace Plex.Objects.PlexFS
                 }
             }
             
+            /// <summary>
+            /// Gets whether an entry with the specified name exists in the directory.
+            /// </summary>
+            /// <param name="fname">The entry name.</param>
+            /// <returns>Whether the entry exists.</returns>
             public bool Exists(string fname)
             {
                 return entries.ContainsKey(fname);
             }
             
+            /// <summary>
+            /// Gets the contents of this directory.
+            /// </summary>
             public IEnumerable<string> Contents { get { return entries.Keys; } }
             
+            /// <summary>
+            /// Deletes an entry from the directory.
+            /// </summary>
+            /// <param name="fname"></param>
+            /// <exception cref="IOException">The entry doesn't exist.</exception> 
             public void Delete(string fname)
             {
 				if (!entries.ContainsKey(fname))
@@ -309,6 +333,12 @@ namespace Plex.Objects.PlexFS
                 entries.Remove(fname);
             }
             
+            /// <summary>
+            /// Rename an entry.
+            /// </summary>
+            /// <param name="oldName">The entry to rename</param>
+            /// <param name="newName">The entry's new name</param>
+            /// <exception cref="IOException">The entry doesn't exist.</exception> 
             public void Rename(string oldName, string newName)
             {
                 if (oldName == newName)
@@ -326,6 +356,14 @@ namespace Plex.Objects.PlexFS
                 }
             }
             
+            /// <summary>
+            /// Move an entry from this directory to a new directory.
+            /// </summary>
+            /// <param name="fname">The entry to move.</param>
+            /// <param name="destDir">The destination directory</param>
+            /// <param name="destName">The name of the destination entry.</param>
+            /// <exception cref="NotSupportedException">The user requested the entry to be moved across two PlexFAT images.</exception>
+            /// 
             public void Move(string fname, Directory destDir, string destName)
             {
                 // Validate the destination name.
@@ -357,6 +395,14 @@ namespace Plex.Objects.PlexFS
                 this.entries.Remove(fname);
             }
             
+            /// <summary>
+            /// Retrieves a <see cref="Directory"/> representing a sub-directory within this directory.
+            /// </summary>
+            /// <param name="dname">The name of the entry</param>
+            /// <param name="mode">How the entry should be opened</param>
+            /// <returns>The resulting subdirectory</returns>
+            /// <exception cref="IOException">The directory entry is of a file.</exception>
+            /// <exception cref="DirectoryNotFoundException">The directory was not found.</exception> 
             public Directory GetSubdirectory(string dname, OpenMode mode = OpenMode.Open)
             {
                 if (dname == ".")
@@ -400,6 +446,14 @@ namespace Plex.Objects.PlexFS
                     throw new DirectoryNotFoundException($"'{dname}' does not exist.");
             }
             
+            /// <summary>
+            /// Opens a file inside this directory.
+            /// </summary>
+            /// <param name="fname">The entry name to open.</param>
+            /// <param name="mode">The mode representing how the file should be opened</param>
+            /// <returns>A <see cref="System.IO.Stream"/> containing the file's contents</returns>
+            /// <exception cref="IOException">The directory entry is of a folder.</exception>
+            /// <exception cref="FileNotFoundException">The file wasn't found.</exception> 
             public Stream OpenFile(string fname, OpenMode mode = OpenMode.Open)
             {
                 if (fname == ".")
@@ -426,6 +480,11 @@ namespace Plex.Objects.PlexFS
                 return new LocalSubstream(vol, entries[fname].Item1, entries[fname].Item2 + 252);
             }
             
+            /// <summary>
+            /// Gets the type of the specified entry.
+            /// </summary>
+            /// <param name="fname">The entry to look up.</param>
+            /// <returns>The type of the entry.</returns>
             public EntryType TypeOf(string fname)
             {
                 if (!entries.ContainsKey(fname))
@@ -435,6 +494,12 @@ namespace Plex.Objects.PlexFS
                     return read.ReadInt32() < 0 ? EntryType.DIRECTORY : EntryType.FILE;
             }
             
+            /// <summary>
+            /// Gets the size of a file in the directory.
+            /// </summary>
+            /// <param name="fname">The directory entry to search</param>
+            /// <returns>The size of the file</returns>
+            /// <exception cref="IOException">The directory entry is of a folder</exception> 
             public int SizeOf(string fname)
             {
                 int ret;
@@ -454,7 +519,13 @@ namespace Plex.Objects.PlexFS
         private Stream fobj;
         private ushort[] theFAT;
         
+        /// <summary>
+        /// Gets the root directory of this PlexFAT image.
+        /// </summary>
         public Directory Root { get; private set; }
+        /// <summary>
+        /// Retrieves the free space in the file system.
+        /// </summary>
         public int FreeSpace
         {
             get
@@ -463,6 +534,11 @@ namespace Plex.Objects.PlexFS
             }
         }
         
+        /// <summary>
+        /// Create a PlexFAT instance from a stream.
+        /// </summary>
+        /// <param name="fobj">The stream to create the instance from.</param>
+        /// <returns>The resulting PlexFAT image.</returns>
         public static PlexFAT FromStream(Stream fobj)
         {
             var ret = new PlexFAT();
@@ -479,6 +555,11 @@ namespace Plex.Objects.PlexFS
             return ret;
         }
         
+        /// <summary>
+        /// Creates a PlexFAT instance inside an empty stream.
+        /// </summary>
+        /// <param name="fobj">The stream to store the filesystem in.</param>
+        /// <returns>The resulting PlexFAT image.</returns>
         public static PlexFAT New(Stream fobj)
         {
             var ret = new PlexFAT();

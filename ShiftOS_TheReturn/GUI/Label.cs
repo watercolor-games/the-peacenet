@@ -9,6 +9,9 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A class representing a control that contains text.
+    /// </summary>
     public class Label : Control
     {
         private bool _autoSize = false;
@@ -19,6 +22,9 @@ namespace Plex.Engine.GUI
         private TextAlignment _alignment = TextAlignment.TopLeft;
         private bool _remeasure = true;
 
+        /// <summary>
+        /// Gets or sets whether the control should be auto-sized based on the size of the text
+        /// </summary>
         public bool AutoSize
         {
             get
@@ -34,6 +40,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// If the <see cref="FontStyle"/> is <see cref="Themes.TextFontStyle.Custom"/>, this is the color of the text.  
+        /// </summary>
         public Color CustomColor
         {
             get
@@ -49,6 +58,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// If the <see cref="FontStyle"/> is <see cref="Themes.TextFontStyle.Custom"/>, this is the font of the text.  
+        /// </summary>
         public System.Drawing.Font CustomFont
         {
             get
@@ -65,6 +77,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// The font style of the label
+        /// </summary>
         public Themes.TextFontStyle FontStyle
         {
             get
@@ -81,6 +96,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the label's text.
+        /// </summary>
         public string Text
         {
             get
@@ -97,6 +115,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the alignment of the label's text.
+        /// </summary>
         public TextAlignment Alignment
         {
             get
@@ -130,6 +151,7 @@ namespace Plex.Engine.GUI
         private int _lastmaxwidth = 0;
         private int _lastmaxheight = 0;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_lastmaxheight != MaxHeight)
@@ -153,6 +175,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var font = getFont();

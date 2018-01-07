@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Plex.Server.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,14 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CashManager.cs" />
-    <Compile Include="Chat.cs" />
-    <Compile Include="DriveSpecs\PlexFATDriveMount.cs" />
-    <Compile Include="DriveSpecs\ShiftFSDriveMount.cs" />
-    <Compile Include="FS.cs" />
-    <Compile Include="Hacking.cs" />
-    <Compile Include="HackingCommands.cs" />
-    <Compile Include="PasswordHasher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -74,26 +67,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PuzzleAttribute.cs" />
-    <Compile Include="Puzzles\Crypt_Polybius.cs" />
-    <Compile Include="Puzzles\Riddle.cs" />
-    <Compile Include="RemoteStreams.cs" />
-    <Compile Include="SaveManager.cs" />
-    <Compile Include="ServerCommand.cs" />
-    <Compile Include="SessionManager.cs" />
-    <Compile Include="Terminal.cs" />
-    <Compile Include="UpgradeManager.cs" />
-    <Compile Include="Networking\Interfaces\IInterface.cs" />
-    <Compile Include="Networking\Interfaces\IGateway.cs" />
-    <Compile Include="Networking\Interfaces\INetworkDevice.cs" />
-    <Compile Include="Networking\IP\IpAddress.cs" />
-    <Compile Include="Networking\IP\IpNetwork.cs" />
-    <Compile Include="Networking\IP\Packet.cs" />
-    <Compile Include="Networking\Routing\RouterInterface.cs" />
-    <Compile Include="Networking\Routing\Router.cs" />
-    <Compile Include="Networking\Routing\RoutingRule.cs" />
-    <Compile Include="Networking\Routing\Switch.cs" />
-    <Compile Include="WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -135,12 +108,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\upgradedb.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Networking\" />
-    <Folder Include="Networking\Interfaces\" />
-    <Folder Include="Networking\IP\" />
-    <Folder Include="Networking\Routing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

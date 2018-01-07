@@ -28,6 +28,12 @@ namespace Plex.Engine
     {
         private static Plexgate _instance = null;
 
+        /// <summary>
+        /// Determines whether object A depends on object B.
+        /// </summary>
+        /// <param name="a">The object to check for dependencies.</param>
+        /// <param name="b">The object to check whether object A depends on it</param>
+        /// <returns>The result of the dependency check</returns>
         public bool DependsOn(object a, object b)
         {
             if (a == null || b == null)
@@ -37,6 +43,10 @@ namespace Plex.Engine
             return atype.GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.FieldType == btype) != null;
         }
 
+        /// <summary>
+        /// Retrieve all loaded <see cref="IEngineComponent"/> objects. 
+        /// </summary>
+        /// <returns>Every loaded engine component.</returns>
         public IEngineComponent[] GetAllComponents()
         {
             List<IEngineComponent> cpts = new List<IEngineComponent>();
@@ -62,6 +72,10 @@ namespace Plex.Engine
 
         private List<Layer> _layers = new List<Layer>();
 
+        /// <summary>
+        /// Add a layer to the game.
+        /// </summary>
+        /// <param name="layer">The layer to add.</param>
         public void AddLayer(Layer layer)
         {
             if (layer == null)
@@ -71,6 +85,10 @@ namespace Plex.Engine
             _layers.Add(layer);
         }
 
+        /// <summary>
+        /// Remove a layer from the game.
+        /// </summary>
+        /// <param name="layer">The layer to remove.</param>
         public void RemoveLayer(Layer layer)
         {
             if (layer == null)
@@ -80,6 +98,9 @@ namespace Plex.Engine
             _layers.Remove(layer);
         }
 
+        /// <summary>
+        /// Clear all layers from the game.
+        /// </summary>
         public void ClearLayers()
         {
             while (_layers.Count > 0)
@@ -96,6 +117,10 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Send a layer to the back of the game.
+        /// </summary>
+        /// <param name="layer">The layer to move.</param>
         public void SendToBack(Layer layer)
         {
             if (layer == null)
@@ -108,6 +133,10 @@ namespace Plex.Engine
             _layers.Insert(0, layer);
         }
 
+        /// <summary>
+        /// Bring a layer to the front of the game.
+        /// </summary>
+        /// <param name="layer">The layer to move.</param>
         public void BringToFront(Layer layer)
         {
             if (layer == null)
@@ -122,8 +151,14 @@ namespace Plex.Engine
 
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
+        /// <summary>
+        /// The main render target for the game.
+        /// </summary>
         public RenderTarget2D GameRenderTarget = null;
         private KeyboardListener keyboardListener = new KeyboardListener();
+        /// <summary>
+        /// Creates a new instance of the <see cref="Plexgate"/> game loop. 
+        /// </summary>
         public Plexgate()
         {
             _splashJob = Task.Run(() =>
@@ -170,6 +205,10 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Get all available screen resolutions.
+        /// </summary>
+        /// <returns>A list of available screen resolutions.</returns>
         public string[] GetAvailableResolutions()
         {
             var modes = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes;
@@ -271,6 +310,12 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Get the engine component of the specified type
+        /// </summary>
+        /// <param name="t">The type to search for</param>
+        /// <returns>The engine component instance.</returns>
+        /// <exception cref="ArgumentException">No components were found.</exception> 
         public IEngineComponent GetEngineComponent(Type t)
         {
             if (!typeof(IEngineComponent).IsAssignableFrom(t) || t.GetConstructor(Type.EmptyTypes) == null)
@@ -278,6 +323,11 @@ namespace Plex.Engine
             return _components.First(x => t.IsAssignableFrom(x.Component.GetType())).Component;
         }
 
+        /// <summary>
+        /// Inject all dependencies into the specified object.
+        /// </summary>
+        /// <param name="client">The object to inject dependencies into</param>
+        /// <returns>The now-injected object.</returns>
         public object Inject(object client)
         {
             Type clientType = client.GetType();
@@ -296,6 +346,10 @@ namespace Plex.Engine
             return client;
         }
 
+        /// <summary>
+        /// Retrieve the system default resolution
+        /// </summary>
+        /// <returns>The system default resolution string.</returns>
         public string GetSystemResolution()
         {
             var res = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
@@ -305,6 +359,10 @@ namespace Plex.Engine
         private int _width = 0;
         private int _height = 0;
 
+        /// <summary>
+        /// Change the game resolution.
+        /// </summary>
+        /// <param name="resolution">A resolution string in the format "WIDTHxHEIGHT".</param>
         public void ApplyResolution(string resolution)
         {
             if(string.IsNullOrWhiteSpace(resolution))
@@ -404,6 +462,10 @@ namespace Plex.Engine
 
         private Queue<Action> _actions = new Queue<Action>();
 
+        /// <summary>
+        /// Invoke an action on the next game update.
+        /// </summary>
+        /// <param name="act">The action to invoke.</param>
         public void Invoke(Action act)
         {
             if (act == null)
@@ -458,6 +520,11 @@ namespace Plex.Engine
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// Create a new instance of the specified type, injecting all dependencies.
+        /// </summary>
+        /// <typeparam name="T">The type to instantiate</typeparam>
+        /// <returns>The new instance.</returns>
         public T New<T>() where T : new()
         {
             var obj = (T)Inject(new T());
@@ -496,16 +563,31 @@ namespace Plex.Engine
         }
     }
 
+    /// <summary>
+    /// Contains an <see cref="IEngineComponent"/> and whether it's been initialized properly yet. 
+    /// </summary>
     public class ComponentInfo
     {
+        /// <summary>
+        /// Whether the component has been initialized.
+        /// </summary>
         public bool IsInitiated { get; set; }
+        /// <summary>
+        /// The underlying component.
+        /// </summary>
         public IEngineComponent Component { get; set; }
     }
 
+    /// <summary>
+    /// A class containing a list of <see cref="IEntity"/> objects that acts as a top-level entity container. 
+    /// </summary>
     public sealed class Layer
     {
         private List<IEntity> _entities = new List<IEntity>();
 
+        /// <summary>
+        /// Gets a list of all entities on the layer.
+        /// </summary>
         public IEntity[] Entities
         {
             get
@@ -514,6 +596,10 @@ namespace Plex.Engine
             }
         }
 
+        /// <summary>
+        /// Adds an entity to the layer.
+        /// </summary>
+        /// <param name="entity">The entity to add.</param>
         public void AddEntity(IEntity entity)
         {
             if (entity == null)
@@ -523,6 +609,10 @@ namespace Plex.Engine
             _entities.Add(entity);
         }
 
+        /// <summary>
+        /// Removes an entity from the layer.
+        /// </summary>
+        /// <param name="entity">The entity to remove.</param>
         public void RemoveEntity(IEntity entity)
         {
             if (entity == null)
@@ -532,11 +622,18 @@ namespace Plex.Engine
             _entities.Remove(entity);
         }
 
+        /// <summary>
+        /// Clears all entities from the layer.
+        /// </summary>
         public void ClearEntities()
         {
             _entities.Clear();
         }
 
+        /// <summary>
+        /// Sends the specified entity to the back of the layer.
+        /// </summary>
+        /// <param name="entity">The entity to move.</param>
         public void SendToBack(IEntity entity)
         {
             if (entity == null)
@@ -549,6 +646,10 @@ namespace Plex.Engine
             _entities.Insert(0, entity);
         }
 
+        /// <summary>
+        /// Brings the specified entity to the front of the layer.
+        /// </summary>
+        /// <param name="entity">The entity to mve.</param>
         public void BringToFront(IEntity entity)
         {
             if (entity == null)

@@ -58,7 +58,7 @@ namespace Peacenet.Backend
         }
     }
 
-    public class InternetServiceProvider
+    internal class InternetServiceProvider
     {
         public string Id { get; set; }
 
@@ -68,7 +68,7 @@ namespace Peacenet.Backend
         public byte IpRange2 { get; set; }
     }
 
-    public class ISPNet
+    internal class ISPNet
     {
         public string Id { get; set; }
         public byte NetIpRange { get; set; }
@@ -76,7 +76,7 @@ namespace Peacenet.Backend
         public string Name { get; set; }
     }
 
-    public enum NetworkType
+    internal enum NetworkType
     {
         Player,
         NPC,

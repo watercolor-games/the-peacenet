@@ -8,6 +8,9 @@ using LiteDB;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides the Peacenet server with access to a simple <see cref="LiteDatabase"/>. 
+    /// </summary>
     public class DatabaseHolder : IBackendComponent
     {
         [Dependency]
@@ -46,6 +49,9 @@ namespace Peacenet.Backend
 "         NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN"
         };
 
+        /// <summary>
+        /// Retrieves the underlying <see cref="LiteDatabase"/> instance. 
+        /// </summary>
         public LiteDatabase Database
         {
             get
@@ -54,6 +60,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _dbPath = Path.Combine(_backend.RootDirectory, "server.db");
@@ -70,10 +77,12 @@ namespace Peacenet.Backend
             _db = new LiteDatabase(_dbPath);
         }
 
+        /// <inheritdoc/>
         public void SafetyCheck()
         {
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
             Logger.Log("Database says bye bye.");

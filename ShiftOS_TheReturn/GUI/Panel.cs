@@ -8,11 +8,17 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// Gets or sets a UI element which can host other UI elements and resize based on its contents.
+    /// </summary>
     public class Panel : Control
     {
         private bool _autosize = false;
         private bool _needsLayout = true;
 
+        /// <summary>
+        /// Gets or sets whether the panel should auto-size based on its contents.
+        /// </summary>
         public bool AutoSize
         {
             get
@@ -27,6 +33,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_autosize)
@@ -52,6 +59,7 @@ namespace Plex.Engine.GUI
             _needsLayout = true;
         }
 
+        /// <inheritdoc/>
         public override void AddChild(Control child)
         {
             base.AddChild(child);
@@ -63,6 +71,7 @@ namespace Plex.Engine.GUI
             _needsLayout = true;
         }
 
+        /// <inheritdoc/>
         public override void RemoveChild(Control child)
         {
             base.RemoveChild(child);
@@ -74,6 +83,7 @@ namespace Plex.Engine.GUI
             _needsLayout = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
         }

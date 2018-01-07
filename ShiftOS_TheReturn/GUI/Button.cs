@@ -9,6 +9,9 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A class representing a clickable button.
+    /// </summary>
     public class Button : Control
     {
         private string _text = "";
@@ -27,6 +30,9 @@ namespace Plex.Engine.GUI
 
         private bool _requireLayout = true;
 
+        /// <summary>
+        /// Retrieves a rectangle where the button's icon is situated.
+        /// </summary>
         public Rectangle ImageRect
         {
             get
@@ -35,6 +41,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Retrieves a rectangle where the button's text is situated.
+        /// </summary>
         public Rectangle TextRect
         {
             get
@@ -43,6 +52,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether an icon should be rendered on the button.
+        /// </summary>
         public bool ShowImage
         {
             get
@@ -59,6 +71,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets an icon texture for the button.
+        /// </summary>
         public Texture2D Image
         {
             get
@@ -75,6 +90,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text of the button.
+        /// </summary>
         public string Text
         {
             get
@@ -91,6 +109,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_requireLayout)
@@ -155,6 +174,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var state = Themes.UIButtonState.Idle;

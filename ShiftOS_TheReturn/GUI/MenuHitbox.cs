@@ -17,6 +17,7 @@ namespace Plex.Engine.GUI
         private bool? _lastFocus = null;
         private int _animState = -1;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             float _lastOpacity = _opacityAnim;
@@ -59,6 +60,7 @@ namespace Plex.Engine.GUI
                 Invalidate(true);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor() * _opacityAnim);

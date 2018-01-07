@@ -11,11 +11,18 @@ using Newtonsoft.Json;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides terminal command support in the Peacenet server.
+    /// </summary>
     public class TerminalManager : IBackendComponent
     {
         private List<ITerminalCommand> _commands = null;
         Dictionary<string, string> _usages = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Get a list of all commands.
+        /// </summary>
+        /// <returns>A list containing all commands plus their descriptions.</returns>
         public IEnumerable<KeyValuePair<string, string>> GetCommandList()
         {
             foreach (var cmd in _commands)
@@ -24,6 +31,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Initiating Terminal module...");
@@ -76,6 +84,11 @@ namespace Peacenet.Backend
             Logger.Log("Manpages built.");
         }
 
+        /// <summary>
+        /// Retrieve the manual page of a command.
+        /// </summary>
+        /// <param name="cmdname">The name of the command</param>
+        /// <returns>The command's manual page</returns>
         public string GetManpage(string cmdname)
         {
             if (_usages.ContainsKey(cmdname))
@@ -83,6 +96,16 @@ namespace Peacenet.Backend
             return null;
         }
 
+        /// <summary>
+        /// Run a command.
+        /// </summary>
+        /// <param name="backend">The server backend environment</param>
+        /// <param name="commandname">The command name</param>
+        /// <param name="args">The tokenized arguments for the command</param>
+        /// <param name="session">The user ID of the caller</param>
+        /// <param name="stdin">The standard input stream</param>
+        /// <param name="stdout">The standard output stream</param>
+        /// <returns>Whether the command was found</returns>
         public bool RunCommand(Backend backend, string commandname, string[] args, string session, StreamReader stdin, StreamWriter stdout)
         {
             if (backend == null)
@@ -121,10 +144,12 @@ namespace Peacenet.Backend
             return true;
         }
 
+        /// <inheritdoc/>
         public void SafetyCheck()
         {
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
             Logger.Log("Clearing commands...");
@@ -157,55 +182,39 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Provides an API for creating server-side terminal commands.
+    /// </summary>
     public interface ITerminalCommand
     {
+        /// <summary>
+        /// The name of the command
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// The description of the command
+        /// </summary>
         string Description { get; }
+        /// <summary>
+        /// The syntax of the command
+        /// </summary>
         IEnumerable<string> UsageStrings { get; }
+        /// <summary>
+        /// The entry of the command.
+        /// </summary>
+        /// <param name="backend">The server backend environment.</param>
+        /// <param name="console">The console context for the command</param>
+        /// <param name="sessionid">The user ID of the caller.</param>
+        /// <param name="args">The arguments for the command.</param>
         void Run(Backend backend, ConsoleContext console,  string sessionid, Dictionary<string, object> args);
     }
 
-    public class TestCommand : ITerminalCommand
-    {
-        public string Description
-        {
-            get
-            {
-                return "This is a test server-side command.";
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return "hello";
-            }
-        }
-
-        public IEnumerable<string> UsageStrings
-        {
-            get
-            {
-                yield return "[--echo <echotext>]";
-            }
-        }
-
-        public void Run(Backend backend, ConsoleContext console, string sessionid, Dictionary<string, object> args)
-        {
-            if ((bool)args["--echo"] == true)
-            {
-                console.WriteLine(args["<echotext>"].ToString());
-            }
-            else
-            {
-                console.WriteLine("Hello world!");
-            }
-        }
-    }
-
+    /// <summary>
+    /// Handler for retrieving manual pages.
+    /// </summary>
     public class ManpageRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -214,6 +223,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var termmgr = backend.GetBackendComponent<TerminalManager>();
@@ -230,8 +240,12 @@ namespace Peacenet.Backend
             return ServerResponseType.REQ_SUCCESS;
         }
 
+        /// <summary>
+        /// Handler for running commands
+        /// </summary>
         public class CommandRunner : IMessageHandler
         {
+            /// <inheritdoc/>
             public ServerMessageType HandledMessageType
             {
                 get
@@ -240,6 +254,7 @@ namespace Peacenet.Backend
                 }
             }
 
+            /// <inheritdoc/>
             public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
             {
                 //TODO: Persistent connection to client so that stdin reads from client and stdout sends to client.

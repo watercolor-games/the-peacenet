@@ -11,11 +11,16 @@ using Plex.Engine.TextRenderers;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
-    public class GraphicsContext
+    /// <summary>
+    /// Encapsulates a <see cref="GraphicsDevice"/> and <see cref="SpriteBatch"/> and contains methods for easily rendering various objects using those encapsulated objects. This class cannot be inherited.
+    /// </summary>
+    public sealed class GraphicsContext
     {
         private static Texture2D white = null;
 
-
+        /// <summary>
+        /// Retrieves the sprite batch associated with this graphics context.
+        /// </summary>
         public SpriteBatch Batch
         {
             get
@@ -24,6 +29,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Retrieves the graphics device associated with this graphics context.
+        /// </summary>
         public GraphicsDevice Device
         {
             get
@@ -32,6 +40,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Gets or sets the X coordinate of the scissor rectangle.
+        /// </summary>
         public int X
         {
             get
@@ -44,6 +55,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Gets or sets the Y coordinate of the scissor rectangle.
+        /// </summary>
         public int Y
         {
             get
@@ -56,6 +70,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Gets or sets the width of the scissor rectangle.
+        /// </summary>
         public int Width
         {
             get
@@ -68,6 +85,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Gets or sets the height of the scissor rectangle.
+        /// </summary>
         public int Height
         {
             get
@@ -79,7 +99,13 @@ namespace Plex.Engine.GraphicsSubsystem
                 Device.ScissorRectangle = new Rectangle(X, Y, Width, value);
             }
         }
-        
+
+        /// <summary>
+        /// Draw an outlined polygon.
+        /// </summary>
+        /// <param name="c">The color of the polygon's outlines</param>
+        /// <param name="locs">The various X and Y coordinates relative to the scissor rectangle of the polygon. The size of this array must be a multiple of 2.</param>
+        /// <exception cref="Exception">The <paramref name="locs"/> array does not have a length which is a multiple of 2.</exception> 
         public void DrawPolygon(Color c, params int[] locs)
         {
             if ((locs.Length % 2) != 0)
@@ -103,6 +129,15 @@ namespace Plex.Engine.GraphicsSubsystem
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spritebatch;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="GraphicsContext"/> class. 
+        /// </summary>
+        /// <param name="device">The graphics device where rendering will take place.</param>
+        /// <param name="batch">The sprite batch to associate with the graphics context.</param>
+        /// <param name="x">The starting X coordinate of the scissor rectangle.</param>
+        /// <param name="y">The starting Y coordinate of the scissor rectangle.</param>
+        /// <param name="width">The starting width of the scissor rectangle.</param>
+        /// <param name="height">The starting height of the scissor rectangle.</param>
         public GraphicsContext(GraphicsDevice device, SpriteBatch batch, int x, int y, int width, int height)
         {
             if (device == null || batch == null)
@@ -121,16 +156,39 @@ namespace Plex.Engine.GraphicsSubsystem
             Y = y;
         }
 
+        /// <summary>
+        /// Clears the canvas with the specified color.
+        /// </summary>
+        /// <param name="c">The color to render</param>
         public void Clear(Color c)
         {
             DrawRectangle(0, 0, Width, Height, c);
         }
 
+        /// <summary>
+        /// Draw a line between two separate points on the canvas
+        /// </summary>
+        /// <param name="x">The X coordinate of the first point</param>
+        /// <param name="y">The Y coordinate of the first point</param>
+        /// <param name="x1">The X coordinate of the second point</param>
+        /// <param name="y1">The Y coordinate of the second point</param>
+        /// <param name="thickness">The thickness of the line</param>
+        /// <param name="tex2">The line's texture</param>
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2)
         {
             DrawLine(x, y, x1, y1, thickness, tex2, Color.White);
         }
 
+        /// <summary>
+        /// Draw a line with a tint between two separate points on the canvas
+        /// </summary>
+        /// <param name="x">The X coordinate of the first point</param>
+        /// <param name="y">The Y coordinate of the first point</param>
+        /// <param name="x1">The X coordinate of the second point</param>
+        /// <param name="y1">The Y coordinate of the second point</param>
+        /// <param name="thickness">The thickness of the line</param>
+        /// <param name="tex2">The line's texture</param>
+        /// <param name="tint">The tint of the texture</param>
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2, Color tint)
         {
             if (tint.A == 0)
@@ -144,6 +202,15 @@ namespace Plex.Engine.GraphicsSubsystem
             _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, tint, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
+        /// <summary>
+        /// Draw a line with a tint between two separate points on the canvas
+        /// </summary>
+        /// <param name="x">The X coordinate of the first point</param>
+        /// <param name="y">The Y coordinate of the first point</param>
+        /// <param name="x1">The X coordinate of the second point</param>
+        /// <param name="y1">The Y coordinate of the second point</param>
+        /// <param name="thickness">The thickness of the line</param>
+        /// <param name="color">The color of the line</param>
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Color color)
         {
             if (color.A == 0)
@@ -157,6 +224,14 @@ namespace Plex.Engine.GraphicsSubsystem
             _spritebatch.Draw(white, new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
 
+        /// <summary>
+        /// Draw a rectangle with the specified color to the canvas.
+        /// </summary>
+        /// <param name="x">The X coordinate of the rectangle</param>
+        /// <param name="y">The Y coordinate of the rectangle</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <param name="color">The color of the rectangle</param>
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
             if (color.A == 0)
@@ -166,6 +241,9 @@ namespace Plex.Engine.GraphicsSubsystem
             _spritebatch.Draw(white, new Rectangle(x, y, width, height), color);
         }
 
+        /// <summary>
+        /// Begin a draw call.
+        /// </summary>
         public void BeginDraw()
         {
             _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
@@ -174,11 +252,21 @@ namespace Plex.Engine.GraphicsSubsystem
 
         }
 
+        /// <summary>
+        /// End the current draw call.
+        /// </summary>
         public void EndDraw()
         {
             _spritebatch.End();
         }
 
+        /// <summary>
+        /// Draw a circle to the canvas.
+        /// </summary>
+        /// <param name="x">The X coordinate of the circle</param>
+        /// <param name="y">The Y coordinate of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="color">The color of the circle</param>
         public void DrawCircle(int x, int y, int radius, Color color)
         {
             if (color.A == 0)
@@ -189,13 +277,37 @@ namespace Plex.Engine.GraphicsSubsystem
                 _spritebatch.Draw(white, rect, null, color, theta, Vector2.Zero, SpriteEffects.None, 0);
         }
 
+        /// <summary>
+        /// Draw a rectangle with the specified texture and tint to the canvas.
+        /// </summary>
+        /// <param name="x">The X coordinate of the rectangle</param>
+        /// <param name="y">The Y coordinate of the rectangle</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <param name="tex2">The texture of the rectangle</param>
+        /// <param name="layout">The tint of the rectangle</param>
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, ImageLayout layout = ImageLayout.Stretch)
         {
             DrawRectangle(x, y, width, height, tex2, Color.White, layout);
         }
 
+        /// <summary>
+        /// Retrieves a new <see cref="RasterizerState"/> preferred to be used by the graphics context. 
+        /// </summary>
         public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
 
+        /// <summary>
+        /// Draw a rectangle with the specified texture, tint and <see cref="System.Windows.Forms.ImageLayout"/> to the canvas.
+        /// </summary>
+        /// <param name="x">The X coordinate of the rectangle</param>
+        /// <param name="y">The Y coordinate of the rectangle</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <param name="tex2">The texture of the rectangle</param>
+        /// <param name="tint">The tint of the texture</param>
+        /// <param name="layout">The layout of the texture</param>
+        /// <param name="opaque">Whether the rectangle should be opaque regardless of the texture data or tint's alpha value.</param>
+        /// <param name="premultiplied">Whether the texture data is already pre-multiplied.</param>
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch, bool opaque = false, bool premultiplied=true)
         {
             if (tint.A == 0)
@@ -258,12 +370,32 @@ namespace Plex.Engine.GraphicsSubsystem
             BeginDraw();
         }
 
+        /// <summary>
+        /// Measure a string. Note that this method is a stub and just calls <see cref="TextRenderer.MeasureText(string, System.Drawing.Font, int, TextAlignment, WrapMode)"/>. This stub will be removed soon. 
+        /// </summary>
+        /// <param name="text">The text to measure</param>
+        /// <param name="font">The font to measure with</param>
+        /// <param name="alignment">The alignment of the text</param>
+        /// <param name="wrapWidth">The maximum width text can be before it is wrapped</param>
+        /// <param name="wrapMode">The wrap mode of the text</param>
+        /// <returns>The size of the text in pixels</returns>
         public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
             return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, alignment, wrapMode);
 
         }
 
+        /// <summary>
+        /// Draw a string of text.
+        /// </summary>
+        /// <param name="text">The text to render</param>
+        /// <param name="x">The X coordinate of the text</param>
+        /// <param name="y">The Y coordinate of the text</param>
+        /// <param name="color">The color of the text</param>
+        /// <param name="font">The font of the text</param>
+        /// <param name="alignment">The alignment of the text</param>
+        /// <param name="wrapWidth">The maximum width text can be before it is wrapped.</param>
+        /// <param name="wrapMode">The wrap mode of the text</param>
         public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
             if (color.A == 0)

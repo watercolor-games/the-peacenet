@@ -14,6 +14,7 @@ namespace Plex.Engine.GUI
     /// </summary>
     public class Hitbox : Control
     {
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
         }

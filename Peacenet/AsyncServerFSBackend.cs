@@ -12,6 +12,9 @@ using Plex.Engine;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides a server-based file system backend for the Peacenet.
+    /// </summary>
     public class AsyncServerFSBackend : IAsyncFSBackend
     {
         private Dictionary<string, int> fstab = null;
@@ -80,6 +83,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public void CreateDirectory(string path)
         {
             Exception err = null;
@@ -99,6 +103,7 @@ namespace Peacenet
                 throw err;
         }
 
+        /// <inheritdoc/>
         public void Delete(string path)
         {
             Exception err = null;
@@ -118,6 +123,7 @@ namespace Peacenet
                 throw err;
         }
 
+        /// <inheritdoc/>
         public bool DirectoryExists(string path)
         {
             Exception err = null;
@@ -136,6 +142,7 @@ namespace Peacenet
             return result;
         }
 
+        /// <inheritdoc/>
         public bool FileExists(string path)
         {
             Exception err = null;
@@ -154,6 +161,7 @@ namespace Peacenet
             return result;
         }
 
+        /// <inheritdoc/>
         public string[] GetDirectories(string path)
         {
             List<string> result = new List<string>();
@@ -183,6 +191,7 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public FileRecord GetFileRecord(string path)
         {
             FileRecord result = null;
@@ -208,6 +217,7 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public string[] GetFiles(string path)
         {
             List<string> result = new List<string>();
@@ -236,6 +246,7 @@ namespace Peacenet
             return result.ToArray();
         }
 
+        /// <inheritdoc/>
         public void Initialize()
         {
             //What we want to do is we want to first get a list of all mounts (partitions) from the server.
@@ -323,6 +334,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public byte[] ReadAllBytes(string path)
         {
             byte[] result = new byte[0];
@@ -349,12 +361,14 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
             fstab.Clear();
             fstab = null;
         }
 
+        /// <inheritdoc/>
         public void WriteAllBytes(string path, byte[] data)
         {
             byte[] bdata = null;

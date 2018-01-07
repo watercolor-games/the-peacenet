@@ -6,72 +6,9 @@ using System.Threading;
 
 namespace Plex.Objects.ShiftFS
 {
-
-    public class File
-    {
-        public string Name;
-        public byte[] Data;
-        public byte[] HeaderData;
-        public bool ReadAccessToLowUsers;
-        public System.IO.Stream GetStream()
-        {
-            return new System.IO.MemoryStream(Data);
-        }
-
-        public File(string name, byte[] data, bool ReadAccess_to_low_users)
-        {
-            Name = name;
-            Data = data;
-            ReadAccessToLowUsers = ReadAccess_to_low_users;
-        }
-    }
-    public class Directory
-    {
-        public string Name;
-        public List<File> Files = new List<File>();
-        public List<Directory> Subdirectories = new List<Directory>();
-        public bool ReadAccessToLowUsers;
-        public void AddFile(File file)
-        {
-            Files.Add(file);
-        }
-
-        public void RemoveFile(string name)
-        {
-            Files.Remove(Files.Find(x => x.Name == name));
-        }
-
-        public void RemoveFile(File file)
-        {
-            Files.Remove(file);
-        }
-
-        public File FindFileByName(string name)
-        {
-            return Files.Find(x => x.Name == name);
-        }
-
-        public void AddDirectory(Directory dir)
-        {
-            Subdirectories.Add(dir);
-        }
-
-        public void RemoveDirectory(string name)
-        {
-            Subdirectories.Remove(Subdirectories.Find(x => x.Name == name));
-        }
-
-        public void RemoveDirectory(Directory dir)
-        {
-            Subdirectories.Remove(dir);
-        }
-
-        public Directory FindDirectoryByName(string name)
-        {
-            return Subdirectories.Find(x => x.Name == name);
-        }
-    }
-
+    /// <summary>
+    /// Represents a parsed path.
+    /// </summary>
     public class PathData
     {
         /// <summary>
@@ -90,10 +27,22 @@ namespace Plex.Objects.ShiftFS
         public string AdditionalData { get; set; }
     }
 
+    /// <summary>
+    /// Contains information about a file or directory in a virtual file system.
+    /// </summary>
     public class FileRecord
     {
+        /// <summary>
+        /// Gets or sets the name of the file.
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the file size in bytes.
+        /// </summary>
         public long SizeBytes { get; set; }
+        /// <summary>
+        /// Gets or sets whether the record is of a directory.
+        /// </summary>
         public bool IsDirectory { get; set; }
     }
 }

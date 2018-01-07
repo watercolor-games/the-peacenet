@@ -12,6 +12,9 @@ using Plex.Engine.Config;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a GUI for managing Peace engine configuration values.
+    /// </summary>
     [AppLauncher("System settings", "System")]
     public class GameSettings : Window
     {
@@ -45,8 +48,7 @@ namespace Peacenet.Applications
 
         private Label _ux = new Label();
 
-        
-
+        /// <inheritdoc/>
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
             Width = 800;
@@ -100,6 +102,9 @@ namespace Peacenet.Applications
 
         private bool _needsPopulate = true;
 
+        /// <summary>
+        /// Forces re-population of the list of available screen resolutions.
+        /// </summary>
         public void PopulateResolutions()
         {
             _resolutions.Clear();
@@ -123,6 +128,7 @@ namespace Peacenet.Applications
             _fadingWindows.Checked = _config.GetValue("windowManagerTranslucentWindowsWhileDragging", true);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _resolutionScroller.X = 15;

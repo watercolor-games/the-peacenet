@@ -234,16 +234,37 @@ namespace WatercolorGames.CommandLine
 
     }
 
+    /// <summary>
+    /// Represents a parsed command line.
+    /// </summary>
     public class CommandInstruction
     {
+        /// <summary>
+        /// The list of commands to run.
+        /// </summary>
         public string[] Commands { get; set; }
+        /// <summary>
+        /// The file to write final command output to.
+        /// </summary>
         public string OutputFile { get; set; }
+        /// <summary>
+        /// The way in which text should be written to the output file.
+        /// </summary>
         public OutputFileType OutputFileType { get; set; }
     }
 
+    /// <summary>
+    /// Represents a way that text should be written to a file.
+    /// </summary>
     public enum OutputFileType
     {
+        /// <summary>
+        /// Text should be appended to the end of the file.
+        /// </summary>
         Append,
+        /// <summary>
+        /// The file should be overwritten with the text.
+        /// </summary>
         Overwrite
     }
 }

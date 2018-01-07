@@ -8,11 +8,17 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// Represents a labeled check box.
+    /// </summary>
     public class CheckLabel : Control
     {
         private CheckBox _check = null;
         private Label _label = null;
 
+        /// <summary>
+        /// Gets or sets the value of the check box.
+        /// </summary>
         public bool Checked
         {
             get
@@ -25,6 +31,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text of the checkbox's label.
+        /// </summary>
         public string Text
         {
             get
@@ -37,6 +46,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CheckLabel"/> control. 
+        /// </summary>
         public CheckLabel()
         {
             _check = new CheckBox();
@@ -45,6 +57,7 @@ namespace Plex.Engine.GUI
             AddChild(_label);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _check.X = 2;
@@ -58,10 +71,6 @@ namespace Plex.Engine.GUI
             Height = Math.Max(_label.Height, _check.Height) + 2;
             _check.Y = 2;
             _label.Y = (Height - _label.Height) / 2;
-        }
-
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
         }
     }
 }

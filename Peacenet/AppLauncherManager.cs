@@ -13,19 +13,15 @@ using Plex.Engine.GUI;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides a simple app launcher backend for the Peacenet.
+    /// </summary>
     public class AppLauncherManager : IEngineComponent
     {
 
         private List<AppLauncherItem> _items = new List<AppLauncherItem>();
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("App launcher is now looking for items...");
@@ -40,6 +36,10 @@ namespace Peacenet
             }
         }
 
+        /// <summary>
+        /// Retrieve a list of all categories.
+        /// </summary>
+        /// <returns>A list of all the App Launcher categories found in the database.</returns>
         public string[] GetAllCategories()
         {
             var cats = new List<string>();
@@ -51,50 +51,68 @@ namespace Peacenet
             return cats.ToArray();
         }
 
+        /// <summary>
+        /// Retrieve all app launcher items in a category.
+        /// </summary>
+        /// <param name="cat">The category to search</param>
+        /// <returns>An array of <see cref="AppLauncherItem"/> objects representing items found in the category.</returns>
         public AppLauncherItem[] GetAllInCategory(string cat)
         {
             return _items.Where(x => x.Attribute.Category == cat).ToArray();
         }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
-        }
     }
 
+    /// <summary>
+    /// Indicates that a <see cref="Window"/> should be displayed in the Peacegate OS's App Launcher menu. 
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class AppLauncherAttribute : Attribute
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="AppLauncherAttribute"/> class. 
+        /// </summary>
+        /// <param name="name">The name of the app launcher item for this window.</param>
+        /// <param name="cat">The category where this window's app launcher item should reside.</param>
         public AppLauncherAttribute(string name, string cat)
         {
             Name = name;
             Category = cat;
         }
 
+        /// <summary>
+        /// Retrieves the name of this app launcher attribute.
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Retrieves the category where this app launcher attribute should reside.
+        /// </summary>
         public string Category { get; set; }
     }
 
+    /// <summary>
+    /// A class which describes an app launcher item.
+    /// </summary>
     public class AppLauncherItem
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="AppLauncherItem"/> class. 
+        /// </summary>
+        /// <param name="attribute">An <see cref="AppLauncherAttribute"/> specifying the name and category for the app launcher item</param>
+        /// <param name="window">A <see cref="Type"/> describing a <see cref="Window"/> to open when the item is activated.</param>
         public AppLauncherItem(AppLauncherAttribute attribute, Type window)
         {
             Attribute = attribute;
             WindowType = window;
         }
 
+        /// <summary>
+        /// Retrieves the app launcher item's attribute data.
+        /// </summary>
         public AppLauncherAttribute Attribute { get; private set; }
+        /// <summary>
+        /// Retrieves the type of <see cref="Window"/> to open when the item is clicked. 
+        /// </summary>
         public Type WindowType { get; private set; }
     }
 }

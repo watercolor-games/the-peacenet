@@ -8,8 +8,12 @@ using Plex.Objects;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// A command which prints the current date to the console.
+    /// </summary>
     public class date : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -18,6 +22,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -26,6 +31,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -34,14 +40,19 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.WriteLine(DateTime.Now.ToLongDateString());
         }
     }
 
+    /// <summary>
+    /// Writes the current time to the console.
+    /// </summary>
     public class time : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -50,6 +61,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -58,6 +70,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -66,6 +79,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.WriteLine(DateTime.Now.ToLongTimeString());

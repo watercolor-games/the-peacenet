@@ -10,8 +10,12 @@ using System.IO;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// A C# implementation of Linux's famous Cowsay command.
+    /// </summary>
     public class cowsay : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -20,6 +24,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -28,6 +33,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -36,6 +42,12 @@ namespace Peacenet
             }
         }
 
+        /// <summary>
+        /// Turn text into a talking cow.
+        /// </summary>
+        /// <param name="text">A string representing what the cow will say</param>
+        /// <param name="cow">The cow ASCII art.</param>
+        /// <returns>The talking cow.</returns>
         public string MakeSpeech(string text, string cow)
         {
             string[] cowlines = cow.Split('\n');
@@ -79,6 +91,12 @@ namespace Peacenet
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Split text into lines of a specified length.
+        /// </summary>
+        /// <param name="text">The text to split.</param>
+        /// <param name="wrap">The preferred length of each line, in characters.</param>
+        /// <returns>The split text.</returns>
         public string[] SplitLines(string text, int wrap)
         {
             List<string> lines = new List<string>();
@@ -117,6 +135,7 @@ namespace Peacenet
             return lines.ToArray();
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string basedir = AppDomain.CurrentDomain.BaseDirectory;
@@ -126,8 +145,17 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// Simple string extensions for command-line UIs.
+    /// </summary>
     public static class StringExtensionsForCowsay
     {
+        /// <summary>
+        /// Repeats the specified <paramref name="input"/> a specified amount of times. 
+        /// </summary>
+        /// <param name="input">The input string to repeat.</param>
+        /// <param name="length">The amount of times the string should be repeated.</param>
+        /// <returns>The resulting string of the repeat operation.</returns>
         public static string Repeat(this string input, int length)
         {
             string output = "";
@@ -136,43 +164,6 @@ namespace Peacenet
                 output += input;
             }
             return output;
-        }
-    }
-
-    public class CommandTest : ITerminalCommand
-    {
-        public string Description
-        {
-            get
-            {
-                return "Syntactically evaluates a command string.";
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return "clitest";
-            }
-        }
-
-        public IEnumerable<string> Usages
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public void Run(ConsoleContext console, Dictionary<string, object> arguments)
-        {
-            console.WriteLine("Enter a command string.");
-            string cmd = console.ReadLine();
-            var commandEvaluated = WatercolorGames.CommandLine.Tokenizer.GetCommandList(cmd);
-            console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(commandEvaluated, Newtonsoft.Json.Formatting.Indented));
-
-        
         }
     }
 }

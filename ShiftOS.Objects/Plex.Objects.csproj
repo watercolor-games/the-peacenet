@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Plex.Objects.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,16 +59,9 @@
     <Compile Include="CommandQuery.cs" />
     <Compile Include="FFI\DotNet.cs" />
     <Compile Include="FFI\IFFI.cs" />
-    <Compile Include="Hacking\Loot.cs" />
-    <Compile Include="Hacking\Port.cs" />
-    <Compile Include="Hacking\Payload.cs" />
-    <Compile Include="Hacking\Exploit.cs" />
-    <Compile Include="Hacking\Hackable.cs" />
-    <Compile Include="Hacking\Puzzle.cs" />
     <Compile Include="PlexFS\EntryType.cs" />
     <Compile Include="PlexFS\OpenMode.cs" />
     <Compile Include="PlexFS\PlexFAT.cs" />
-    <Compile Include="Plexnet.cs" />
     <Compile Include="PlexServerHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pty\PseudoTerminal.cs" />
@@ -86,9 +80,7 @@
     <Compile Include="Streams\ReadOnlyStream.cs" />
     <Compile Include="Streams\WriteOnlyStream.cs" />
     <Compile Include="TerminalCommand.cs" />
-    <Compile Include="Upgrades.cs" />
     <Compile Include="WatercolorUser.cs" />
-    <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

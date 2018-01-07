@@ -17,6 +17,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// The Peacenet Storyboard engine component, which contains methods useful for missions and other storyline elements.
+    /// </summary>
     public class Storyboard : IEngineComponent, IDisposable
     {
         private class StoryboardEntity : IEntity
@@ -82,8 +85,16 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        /// <summary>
+        /// Starts a mission.
+        /// </summary>
+        /// <param name="mission">The mission to start.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="mission"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the player is already in a mission.</exception> 
         public void StartMission(Mission mission)
         {
+            if (mission == null)
+                throw new ArgumentNullException(nameof(mission));
             if (_currentMission != null)
                 throw new InvalidOperationException("Cannot start a mission while another mission is in progress.");
             _currentMission = mission;
@@ -160,8 +171,9 @@ namespace Peacenet
 
         private StoryboardEntity _entity = null;
 
-        private Thread _bgThread = null;
-
+        /// <summary>
+        /// SLOW: Retrieves a list of available missions.
+        /// </summary>
         public Mission[] AvailableMissions
         {
             get
@@ -174,6 +186,9 @@ namespace Peacenet
 
         private bool _completed = false;
 
+        /// <summary>
+        /// Force-quits the current mission as the engine unloads.
+        /// </summary>
         public void Dispose()
         {
             _running = false;
@@ -182,40 +197,86 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// A class representing a Peacenet story mission.
+    /// </summary>
     public abstract class Mission
     {
+        /// <summary>
+        /// Retrieves the name of the mission.
+        /// </summary>
         public abstract string Name { get; }
+        /// <summary>
+        /// Retrieves the description of the mission.
+        /// </summary>
         public abstract string Description { get; }
 
+        /// <summary>
+        /// Retrieves an ordered <see cref="Queue{Objective}"/> containing a list of all tasks the player must perform to complete this mission. 
+        /// </summary>
         public abstract Queue<Objective> Objectives { get; }
 
+        /// <summary>
+        /// Retrieves whether the mission is available to be played.
+        /// </summary>
         public abstract bool IsAvailable { get; }
+        /// <summary>
+        /// Retrieves whether the mission has been completed yet. If true, the mission cannot be played regardless of <see cref="IsAvailable"/>'s value. 
+        /// </summary>
         public abstract bool IsComplete { get; }
+        /// <summary>
+        /// Occurs when all objectives have been completed. This is a good time to mark the mission itself as complete.
+        /// </summary>
         public abstract void OnComplete();
+        /// <summary>
+        /// Occurs when the mission is about to start.
+        /// </summary>
         public abstract void OnStart();
     }
 
-    public class Objective
+    /// <summary>
+    /// A class representing a task for the player to complete in a <see cref="Mission"/>. 
+    /// </summary>
+    public abstract class Objective
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="Objective"/> class. 
+        /// </summary>
+        /// <param name="name">The name of the objective.</param>
+        /// <param name="description">The description of the objective.</param>
         public Objective(string name, string description)
         {
             Name = name;
             Description = description;
         }
 
+        /// <summary>
+        /// Retrieves the name of this objective.
+        /// </summary>
         public string Name { get; private set; }
+        /// <summary>
+        /// Retrieves the description of the objective.
+        /// </summary>
         public string Description { get; private set; }
 
+        /// <summary>
+        /// A method which is run when the objective is started.
+        /// </summary>
         public virtual void OnLoad()
         {
 
         }
 
-        public virtual bool Update(GameTime time)
-        {
-            return false;
-        }
+        /// <summary>
+        /// Occurs every frame while the objective is active and determines whether the objective is completed.
+        /// </summary>
+        /// <param name="time">The time that has passed since the last frame update. See the MonoGame <see cref="GameTime"/> class for details.</param>
+        /// <returns>Whether the objective is now complete.</returns>
+        public abstract bool Update(GameTime time);
 
+        /// <summary>
+        /// Occurs once the objective is completed and unloaded.
+        /// </summary>
         public virtual void OnUnload()
         {
 

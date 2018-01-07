@@ -12,6 +12,9 @@ using Plex.Objects;
 
 namespace Plex.Engine.Cutscene
 {
+    /// <summary>
+    /// Provides an engine component capable of handling playback of <see cref="Cutscene"/> objects. 
+    /// </summary>
     public class CutsceneManager : IEngineComponent, IDisposable
     {
 
@@ -23,15 +26,10 @@ namespace Plex.Engine.Cutscene
 
         private List<Cutscene> _cutscenes = null;
         private Cutscene _current = null;
-        
-        public int DrawIndex
-        {
-            get
-            {
-                return 5;
-            }
-        }
 
+        /// <summary>
+        /// Retrieves whether a cutscene is playing.
+        /// </summary>
         public bool IsPlaying
         {
             get
@@ -44,6 +42,10 @@ namespace Plex.Engine.Cutscene
 
         private Action _callback = null;
 
+        /// <summary>
+        /// Stop playing a cutscene.
+        /// </summary>
+        /// <param name="runCallback">Whether the cutscene end callback should be fired.</param>
         public void Stop(bool runCallback = true)
         {
             if(_current != null)
@@ -58,6 +60,12 @@ namespace Plex.Engine.Cutscene
             }
         }
 
+        /// <summary>
+        /// Play a cutscene.
+        /// </summary>
+        /// <param name="name">The name of the cutscene to play.</param>
+        /// <param name="callback">A callback function to run when the cutscene ends.</param>
+        /// <returns>Whether the cutscene was able to start playing.</returns>
         public bool Play(string name, Action callback = null)
         {
             var cs = _cutscenes.FirstOrDefault(x => x.Name == name);
@@ -72,6 +80,7 @@ namespace Plex.Engine.Cutscene
             return true;
         }
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _cutscenes = new List<Cutscene>();
@@ -94,6 +103,7 @@ namespace Plex.Engine.Cutscene
             _plexgate.AddLayer(_cutsceneLayer);
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             while(_cutscenes.Count == 0)

@@ -12,6 +12,9 @@ using Peacenet.CoreUtils;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a graphical user interface allowing the player to browse and manage files and folders in their in-game hard drive.
+    /// </summary>
     [AppLauncher("File browser", "Accessories")]
     public class FileManager : Window
     {
@@ -53,6 +56,11 @@ namespace Peacenet.Applications
 
         private bool _isSaving = false;
 
+        /// <summary>
+        /// Sets a callback <see cref="Action"/> to be run when the user selects a file path. Setting the callback to null transforms the GUI into "browse mode", as if the file manager was opened from the App Launcher or command-line. Setting it to anything else will transform the GUI into either "open mode" or "save mode" depending on the value of <paramref name="isSaving"/>. When the callback is run, the GUI is closed and the <see cref="string"/> argument of the callback is populated with an absolute path to the file the player selected. 
+        /// </summary>
+        /// <param name="callback">A callback to be run when the user selects a file. Set to null to disable dialog mode.</param>
+        /// <param name="isSaving">If in dialog mode, whether or not the player is saving a file.</param>
         public void SetDialogCallback(Action<string> callback, bool isSaving)
         {
             _isSaving = isSaving;
@@ -65,6 +73,10 @@ namespace Peacenet.Applications
             _openCallback = callback;
         }
 
+        /// <summary>
+        /// Changes the current directory of the GUI.
+        /// </summary>
+        /// <param name="dir">A path pointing to an existing Peacenet directory within the player's in-game FS.</param>
         public void SetCurrentDirectory(string dir)
         {
             if (_fs.DirectoryExists(dir))
@@ -108,8 +120,9 @@ namespace Peacenet.Applications
                 }
             }
         }
-            
-        
+
+
+        /// <inheritdoc/>
         public FileManager(WindowSystem _winsys) : base(_winsys)
         {
             AddChild(_places);
@@ -273,7 +286,9 @@ namespace Peacenet.Applications
         private Label _statusHead = new Label();
         private Label _statusDescription = new Label();
 
-
+        /// <summary>
+        /// Force a reset of the GUI causing reloading of icons and re-population of the Places and Files lists.
+        /// </summary>
         public void ResetUI()
         {
             _search.Text = "";
@@ -361,6 +376,7 @@ namespace Peacenet.Applications
         [Dependency]
         private InfoboxManager _infobox = null;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if(_needsReset)

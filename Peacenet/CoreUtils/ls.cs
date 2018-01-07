@@ -9,8 +9,12 @@ using Plex.Engine.Filesystem;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// Lists all directories and files in the current working directory. By default, any files/directories with filenames starting with "." are not displayed. The -a flag overrides this behavior.
+    /// </summary>
     public class ls : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -19,6 +23,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -27,6 +32,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -46,6 +52,7 @@ namespace Peacenet.CoreUtils
             return _futils.GetNameFromPath(path);
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             bool doHidden = (bool)arguments["-a"];

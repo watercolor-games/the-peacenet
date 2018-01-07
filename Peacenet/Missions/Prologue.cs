@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 
 namespace Peacenet.Missions
 {
+    /// <summary>
+    /// The Peacenet's prologue mission.
+    /// </summary>
     public class Prologue : Mission
     {
         [Dependency]
         private SaveManager _save = null;
 
+        /// <inheritdoc/>
         public override string Description
         {
             get
@@ -22,6 +26,7 @@ namespace Peacenet.Missions
             }
         }
 
+        /// <inheritdoc/>
         public override bool IsAvailable
         {
             get
@@ -30,6 +35,7 @@ namespace Peacenet.Missions
             }
         }
 
+        /// <inheritdoc/>
         public override bool IsComplete
         {
             get
@@ -38,6 +44,7 @@ namespace Peacenet.Missions
             }
         }
 
+        /// <inheritdoc/>
         public override string Name
         {
             get
@@ -46,6 +53,7 @@ namespace Peacenet.Missions
             }
         }
 
+        /// <inheritdoc/>
         public override Queue<Objective> Objectives
         {
             get
@@ -56,10 +64,12 @@ namespace Peacenet.Missions
             }
         }
 
+        /// <inheritdoc/>
         public override void OnComplete()
         {
         }
 
+        /// <inheritdoc/>
         public override void OnStart()
         {
         }

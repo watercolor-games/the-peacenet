@@ -13,6 +13,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides an engine component that allows the use of classic ShiftOS infoboxes in The Peacenet.
+    /// </summary>
     public class InfoboxManager : IEngineComponent
     {
 
@@ -20,53 +23,36 @@ namespace Peacenet
         [Dependency]
         private WindowSystem _winmgr = null;
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <inheritdoc cref="Infobox.Show(string, string, Action)"/>
         public void Show(string title, string message, Action callback = null)
         {
             var ibox = new Infobox(_winmgr);
             ibox.Show(title, message, callback);
         }
 
+        /// <inheritdoc cref="Infobox.ShowYesNo(string, string, Action{Boolean})"/>
         public void ShowYesNo(string title, string message, Action<bool> callback = null)
         {
             var ibox = new Infobox(_winmgr);
             ibox.ShowYesNo(title, message, callback);
         }
 
+        /// <inheritdoc cref="Infobox.PromptText(string, string, Action{string}, Func{string, bool})"/>
         public void PromptText(string title, string message, Action<string> callback = null, Func<string, bool> validator = null)
         {
             var ibox = new Infobox(_winmgr);
             ibox.PromptText(title, message, callback, validator);
         }
 
+        /// <inheritdoc/>
         public void Initiate()
-        {
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
         {
         }
     }
 
+    /// <summary>
+    /// A dialog box allowing you to ask the player for input or just display information.
+    /// </summary>
     public class Infobox : Window
     {
         private Label _messageLabel = null;
@@ -79,6 +65,7 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        /// <inheritdoc/>
         public Infobox(WindowSystem _winsys) : base(_winsys)
         {
             _messageLabel = new Label();
@@ -106,6 +93,12 @@ namespace Peacenet
         private Action _okCallback = null;
         private Action<bool> _yesNoCallback = null;
 
+        /// <summary>
+        /// Show the infobox.
+        /// </summary>
+        /// <param name="title">The title of the infobox</param>
+        /// <param name="message">The message to display to the player</param>
+        /// <param name="callback">A callback to run when the infobox closes</param>
         public void Show(string title, string message, Action callback = null)
         {
             _ok.Click += (o, a) =>
@@ -124,6 +117,12 @@ namespace Peacenet
             Show();
         }
 
+        /// <summary>
+        /// Show the infobox, asking the player a "yes or no" question.
+        /// </summary>
+        /// <param name="title">The title of the infobox</param>
+        /// <param name="message">The question to ask the player.</param>
+        /// <param name="callback">A callback to run when the player chooses their answer.</param>
         public void ShowYesNo(string title, string message, Action<bool> callback = null)
         {
             _yes.Click += (o, a) =>
@@ -150,6 +149,7 @@ namespace Peacenet
 
         private bool _doneCallbacks = false;
 
+        /// <inheritdoc/>
         public override void Close()
         {
             if (_doneCallbacks == false)
@@ -160,6 +160,13 @@ namespace Peacenet
             base.Close();
         }
 
+        /// <summary>
+        /// Show the infobox, prompting the player for text input.
+        /// </summary>
+        /// <param name="title">The title of the infobox</param>
+        /// <param name="message">The message to display to the player</param>
+        /// <param name="callback">A callback to run when the player has submitted their text and it has been validated</param>
+        /// <param name="validator">A validator callback to run when the player submits their text. If the function returns false, the infobox will not close and the final callback won't run.</param>
         public void PromptText(string title, string message, Action<string> callback = null, Func<string, bool> validator = null)
         {
             if (validator == null)
@@ -182,6 +189,7 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             int contentHeight = Math.Max(_picture.Height, _messageLabel.Height);

@@ -9,6 +9,9 @@ using Plex.Objects;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// A command which changes the working directory of its <see cref="ConsoleContext"/>. 
+    /// </summary>
     public class cd : ITerminalCommand
     {
         [Dependency]
@@ -17,6 +20,7 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private FSManager _fs = null;
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -25,6 +29,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -33,6 +38,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -41,6 +47,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string directory = arguments["<directory>"].ToString();

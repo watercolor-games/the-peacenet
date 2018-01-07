@@ -9,6 +9,9 @@ using Plex.Engine.Filesystem;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// Deletes a specified file or directory from the filesystem.
+    /// </summary>
     public class rm : ITerminalCommand
     {
         [Dependency]

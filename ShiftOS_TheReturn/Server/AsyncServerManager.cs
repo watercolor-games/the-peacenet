@@ -16,9 +16,13 @@ using System.Net.Sockets;
 using System.Net;
 using Plex.Objects;
 using System.Threading;
+using Microsoft.Xna.Framework.Input;
 
 namespace Plex.Engine.Server
 {
+    /// <summary>
+    /// Provides an engine component for connecting to and talking with a Peacenet server.
+    /// </summary>
     public class AsyncServerManager : IEngineComponent
     {
 
@@ -29,7 +33,6 @@ namespace Plex.Engine.Server
         [Dependency]
         private AppDataManager _appdata = null;
 
-        private List<ServerInformation> _serverInfo = new List<ServerInformation>();
         private TcpClient _tcpClient = null;
         private BinaryReader _reader = null;
         private BinaryWriter _writer = null;
@@ -85,7 +88,7 @@ namespace Plex.Engine.Server
                         _messageReceived.Set();
                     }
                 }
-                catch(Exception ex)
+                catch
                 {
                 }
                 if (_tcpClient == null)
@@ -93,6 +96,9 @@ namespace Plex.Engine.Server
             }
         }
 
+        /// <summary>
+        /// Retrieves whether the engine is connected to a server.
+        /// </summary>
         public bool Connected
         {
             get
@@ -101,6 +107,9 @@ namespace Plex.Engine.Server
             }
         }
 
+        /// <summary>
+        /// Disconnects from a server.
+        /// </summary>
         public void Disconnect()
         {
             _tcpClient?.Close();
@@ -110,24 +119,27 @@ namespace Plex.Engine.Server
             _tcpClient = null;
         }
 
-        public ServerInformation[] GetServers
-        {
-            get
-            {
-                return _serverInfo.ToArray();
-            }
-        }
+        [Dependency]
+        private Plexgate _plexgate = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("Loading server list from configuration...");
-            if (File.Exists(Path.Combine(_appdata.GamePath, "servers.json")))
-                _serverInfo = JsonConvert.DeserializeObject<List<ServerInformation>>(File.ReadAllText(Path.Combine(_appdata.GamePath, "servers.json")));
-            Logger.Log($"{_serverInfo.Count} servers loaded.");
+            var layer = new Layer();
+            var entity = _plexgate.New<serverEntity>();
+            layer.AddEntity(entity);
+            _plexgate.AddLayer(layer);
         }
 
         private string _wantedMuid = null;
 
+        /// <summary>
+        /// Send a message to a server.
+        /// </summary>
+        /// <param name="type">The type of message to send.</param>
+        /// <param name="body">The body of the message.</param>
+        /// <param name="onResponse">A callback to run when the server responds.</param>
+        /// <returns>A <see cref="Task"/> which may be awaited with <see langword="await"/> keyword or with <see cref="Task.Wait()"/>.</returns>
         public async Task SendMessage(ServerMessageType type, byte[] body, Action<ServerResponseType, BinaryReader> onResponse)
         {
             await Task.Run(() =>
@@ -178,11 +190,9 @@ namespace Plex.Engine.Server
             });
         }
 
-        public void Connect(ServerInformation information, Action onConnected, Action<string> onError)
-        {
-            Connect(information.Address, onConnected, onError);
-        }
-
+        /// <summary>
+        /// Retrieves whether the current server is a Multiplayer server.
+        /// </summary>
         public bool IsMultiplayer
         {
             get
@@ -191,14 +201,12 @@ namespace Plex.Engine.Server
             }
         }
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <summary>
+        /// Connect to a Peacenet server.
+        /// </summary>
+        /// <param name="address">The address (including the port!) of the server to connect to.</param>
+        /// <param name="onConnected">A callback action to be called when connection has succeeded.</param>
+        /// <param name="onError">A callback action to be called any time there is a fatal connection error and the engine has disconnected from the server.</param>
         public void Connect(string address, Action onConnected, Action<string> onError)
         {
             Task.Run(() =>
@@ -250,66 +258,54 @@ namespace Plex.Engine.Server
 
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
+        private class serverEntity : IEntity
         {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-            if (Connected)
+            [Dependency]
+            private AsyncServerManager _server = null;
+            public void Draw(GameTime time, GraphicsContext gfx)
             {
-                while (_broadcasts.Count > 0)
+            }
+
+            public void OnKeyEvent(KeyboardEventArgs e)
+            {
+            }
+
+            public void OnMouseUpdate(MouseState mouse)
+            {
+            }
+
+            public void Update(GameTime time)
+            {
+                if (_server.Connected)
                 {
-                    var broadcast = _broadcasts.Dequeue();
-                    if (broadcast.Type == ServerBroadcastType.Shutdown)
+                    while (_server._broadcasts.Count > 0)
                     {
-                        using (var reader = broadcast.OpenStream())
+                        var broadcast = _server._broadcasts.Dequeue();
+                        if (broadcast.Type == ServerBroadcastType.Shutdown)
                         {
-                            string msg = reader.ReadString();
-                            Disconnect();
-                            _onConnectionError?.Invoke($@"The server has been shut down by an administrator.
+                            using (var reader = broadcast.OpenStream())
+                            {
+                                string msg = reader.ReadString();
+                                _server.Disconnect();
+                                _server._onConnectionError?.Invoke($@"The server has been shut down by an administrator.
 
 {msg}");
-                            _broadcasts.Clear();
+                                _server._broadcasts.Clear();
+                            }
+                        }
+                        else
+                        {
+                            _server.BroadcastReceived?.Invoke(broadcast.Type, broadcast.OpenStream());
                         }
                     }
-                    else
-                    {
-                        BroadcastReceived?.Invoke(broadcast.Type, broadcast.OpenStream());
-                    }
                 }
+
             }
         }
 
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
+        /// <summary>
+        /// Occurs when a broadcasted message is received from the server.
+        /// </summary>
         public event Action<ServerBroadcastType, BinaryReader> BroadcastReceived;
-
-        public void SetServer(string name, string address)
-        {
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(address))
-                return;
-            if (_serverInfo.FirstOrDefault(x => x.Name == name) != null)
-                _serverInfo.FirstOrDefault(x => x.Name == name).Address = address;
-            else
-                _serverInfo.Add(new ServerInformation
-                {
-                    Name = name,
-                    Address = address
-                });
-        }
-
-        public void Unload()
-        {
-            File.WriteAllText(Path.Combine(_appdata.GamePath, "servers.json"), JsonConvert.SerializeObject(_serverInfo, Formatting.Indented));
-        }
-    }
-
-    public class ServerInformation
-    {
-        public string Name { get; set; }
-        public string Address { get; set; }
     }
 }

@@ -8,8 +8,12 @@ using Plex.Objects;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// A command which prints user-specified text to the console.
+    /// </summary>
     public class echo : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -18,6 +22,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -26,6 +31,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -34,6 +40,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.Write(arguments["<text>"].ToString());

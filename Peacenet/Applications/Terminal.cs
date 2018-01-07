@@ -19,6 +19,9 @@ using Peacenet.CoreUtils;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a terminal emulator and command-line interpreter for running in-game programs in a Bash-like environment.
+    /// </summary>
     [AppLauncher("Terminal", "System")]
     public class Terminal : Window
     {
@@ -108,6 +111,9 @@ namespace Peacenet.Applications
         }
     }
 
+    /// <summary>
+    /// Provides a Bash-like command-line shell for Peacenet.
+    /// </summary>
     public class ShellCommand : ITerminalCommand
     {
         [Dependency]
@@ -143,6 +149,11 @@ namespace Peacenet.Applications
         [Dependency]
         private FSManager _fs = null;
 
+        /// <summary>
+        /// Processes and evaluates a command string with the specified <see cref="ConsoleContext"/>. 
+        /// </summary>
+        /// <param name="console">A console context containing an input and output stream for commands to use.</param>
+        /// <param name="command">The command string to parse and evaluate.</param>
         public void ProcessCommand(ConsoleContext console, string command)
         {
             var instruction = Tokenizer.GetCommandList(command);
@@ -259,6 +270,9 @@ namespace Peacenet.Applications
         private FileUtils _futils = null;
     }
 
+    /// <summary>
+    /// Implements a basic terminal emulator as a Peacenet UI element.
+    /// </summary>
     public class TerminalEmulator : Control
     {
         private PseudoTerminal _master = null;
@@ -275,6 +289,9 @@ namespace Peacenet.Applications
         private double _cursorAnim = 0;
         private bool _cursorOn = true;
 
+        /// <summary>
+        /// Retrieves the width (in pixels) of a single character.
+        /// </summary>
         public int CharacterWidth
         {
             get
@@ -283,6 +300,9 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <summary>
+        /// Retrieves the height (in pixels) of a single character.
+        /// </summary>
         public int CharacterHeight
         {
             get
@@ -291,6 +311,9 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <summary>
+        /// Retrieves a <see cref="StreamWriter"/> which can be used to write text to the terminal. 
+        /// </summary>
         public StreamWriter StdOut
         {
             get
@@ -299,6 +322,9 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <summary>
+        /// Retrieves a <see cref="StreamReader"/> which can be used to read user input from the terminal. 
+        /// </summary>
         public StreamReader StdIn
         {
             get
@@ -307,6 +333,10 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of a <see cref="TerminalEmulator"/> using the specified font to display text.
+        /// </summary>
+        /// <param name="font">A MonoGame <see cref="SpriteFont"/> object used for displaying text. While theoretically any font may be used, monospace fonts are preferred as the layout and rendering code is optimized for monospace fonts.</param>
         public TerminalEmulator(SpriteFont font)
         {
             if (font == null)

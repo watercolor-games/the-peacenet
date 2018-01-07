@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A menu item which can contain child menu items.
+    /// </summary>
     public class MenuItem : Window
     {
         private MenuHitbox _hitbox = new MenuHitbox();
@@ -19,8 +22,14 @@ namespace Plex.Engine.GUI
         private bool _enabled = true;
         private int _presentX, _presentY = 0;
 
+        /// <summary>
+        /// Occurs when the menu item is activated.
+        /// </summary>
         public event EventHandler Activated;
         
+        /// <summary>
+        /// Gets whether the menu itself is open
+        /// </summary>
         public bool IsOpen
         {
             get
@@ -29,7 +38,7 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public void CloseFromChild()
+        internal void CloseFromChild()
         {
             if(_open)
             {
@@ -39,7 +48,8 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public bool Enabled
+        /// <inheritdoc/>
+        public override bool Enabled
         {
             get
             {
@@ -51,6 +61,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets the parent menu item
+        /// </summary>
         public MenuItem ParentMenuItem
         {
             get
@@ -59,6 +72,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets the menu item's picture box.
+        /// </summary>
         public PictureBox PictureBox
         {
             get
@@ -67,6 +83,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets the menu item's label.
+        /// </summary>
         public Label Label
         {
             get
@@ -75,18 +94,23 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         public override void Show(int x = -1, int y = -1)
         {
             _open = true;
             base.Show(x, y);
         }
 
+        /// <inheritdoc/>
         public override void Hide()
         {
             _open = false;
             base.Hide();
         }
 
+        /// <summary>
+        /// Gets the menu item's hitbox.
+        /// </summary>
         public Hitbox Hitbox
         {
             get
@@ -97,6 +121,9 @@ namespace Plex.Engine.GUI
 
         private bool _open = false;
 
+        /// <summary>
+        /// Gets or sets the menu item's text.
+        /// </summary>
         public string Text
         {
             get
@@ -109,6 +136,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the menu item's image.
+        /// </summary>
         public Texture2D Image
         {
             get
@@ -121,7 +151,7 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public void HideRecursive()
+        internal void HideRecursive()
         {
             foreach (var child in _children)
                 if(child.IsOpen)
@@ -130,13 +160,14 @@ namespace Plex.Engine.GUI
                 Hide();
         }
 
-        public void HideChildren()
+        internal void HideChildren()
         {
             foreach (var child in _children)
                 if(child.IsOpen)
                     child.HideRecursive();
         }
 
+        /// <inheritdoc/>
         public MenuItem(WindowSystem _winsys) : base(_winsys)
         {
             SetWindowStyle(WindowStyle.NoBorder);
@@ -164,6 +195,10 @@ namespace Plex.Engine.GUI
             };
         }
 
+        /// <summary>
+        /// Add a menu item to this menu
+        /// </summary>
+        /// <param name="item">The item to add</param>
         public void AddItem(MenuItem item)
         {
             if (_children.Contains(item))
@@ -171,6 +206,10 @@ namespace Plex.Engine.GUI
             _children.Add(item);
         }
 
+        /// <summary>
+        /// Remove a menu item from this menu
+        /// </summary>
+        /// <param name="item">The menu item to remove</param>
         public void RemoveItem(MenuItem item)
         {
             if (!_children.Contains(item))
@@ -182,18 +221,23 @@ namespace Plex.Engine.GUI
 
         }
 
+        /// <summary>
+        /// Clear all items from the menu
+        /// </summary>
         public void ClearItems()
         {
             while (_children.Count > 0)
                 RemoveItem(_children[0]);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
             Theme.DrawControlBG(gfx, 2, 2, 18, Height-4);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             int margin = 2;

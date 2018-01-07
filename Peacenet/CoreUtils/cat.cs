@@ -9,8 +9,18 @@ using Plex.Engine.Filesystem;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// Contains core command-line utilities for the in-game Terminal.
+    /// </summary>
+    [System.Runtime.CompilerServices.CompilerGenerated]
+    class NamespaceDoc { }
+
+    /// <summary>
+    /// Provides a command capable of reading text from a file and displaying it in the console.
+    /// </summary>
     public class cat : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -19,6 +29,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -27,6 +38,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -41,6 +53,7 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private FSManager _fs = null;
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string file = arguments["<file>"].ToString();

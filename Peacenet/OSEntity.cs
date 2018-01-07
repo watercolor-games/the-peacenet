@@ -18,6 +18,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// A <see cref="IEntity"/> which acts as the Peacegate OS bootscreen. 
+    /// </summary>
     public class OSEntity : IEntity, ILoadable, IDisposable
     {
         #region Boot animation
@@ -55,6 +58,7 @@ namespace Peacenet
 
 
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             if(_desktop != null)
@@ -69,6 +73,9 @@ namespace Peacenet
             _peacegate.Dispose();
         }
 
+        /// <summary>
+        /// Retrieves this OS entity's desktop.
+        /// </summary>
         public DesktopWindow Desktop
         {
             get
@@ -77,6 +84,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext ctx)
         {
             int peacegateX = (_ui.ScreenWidth - _peacegate.Width) / 2;
@@ -95,6 +103,7 @@ namespace Peacenet
             ctx.EndDraw();
         }
 
+        /// <inheritdoc/>
         public void OnKeyEvent(KeyboardEventArgs e)
         {
             if (_wgDeskOpen)
@@ -107,10 +116,12 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public void OnMouseUpdate(MouseState mouse)
         {
         }
 
+        /// <inheritdoc/>
         public void Update(GameTime time)
         {
             switch (_osIntroState)
@@ -158,6 +169,7 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public void Load(ContentManager content)
         {
             _osIntroState = 0;

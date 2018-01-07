@@ -7,10 +7,14 @@ using System.IO;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides a backend component that ISN'T modular which handles receiving and handling of server requests.
+    /// </summary>
     public class MessageDelegator : IBackendComponent
     {
         private List<IMessageHandler> _handlers = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Message delegator is loading...");
@@ -33,6 +37,15 @@ namespace Peacenet.Backend
             Logger.Log($"Done loading handlers. {_handlers.Count} found.");
         }
 
+        /// <summary>
+        /// Handles an incoming server message.
+        /// </summary>
+        /// <param name="backend">The server backend environment</param>
+        /// <param name="messagetype">The type of the message</param>
+        /// <param name="session_id">The caller user ID</param>
+        /// <param name="dgram">The message body</param>
+        /// <param name="returndgram">The returned message body</param>
+        /// <returns>The result of the handler.</returns>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType messagetype, string session_id, byte[] dgram, out byte[] returndgram)
         {
             Logger.Log("Attempting to handle a " + messagetype + "...");
@@ -67,11 +80,13 @@ namespace Peacenet.Backend
 
         }
 
+        /// <inheritdoc/>
         public void SafetyCheck()
         {
             //are you nuts?
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
             Logger.Log("Clearing handler list...");

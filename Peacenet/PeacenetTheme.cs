@@ -13,6 +13,9 @@ using Plex.Engine.GUI;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// A <see cref="Theme"/> object which renders the UI with a sleek dark user interface with a light blue accent color. 
+    /// </summary>
     public class PeacenetTheme : Theme
     {
         //Textures
@@ -57,6 +60,7 @@ namespace Peacenet
 
         private Color _buttonIdleBG;
 
+        /// <inheritdoc/>
         public override System.Drawing.Font GetFont(TextFontStyle style)
         {
             switch (style)
@@ -74,6 +78,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public override Color GetFontColor(TextFontStyle style)
         {
             switch (style)
@@ -89,6 +94,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public override void DrawArrow(GraphicsContext gfx, int x, int y, int width, int height, UIButtonState state, ArrowDirection direction)
         {
             var arrow = _arrowup;
@@ -121,6 +127,7 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public override void DrawButton(GraphicsContext gfx, string text, Texture2D image, UIButtonState state, bool showImage, Rectangle imageRect, Rectangle textRect)
         {
             var bg = _buttonIdleBG;
@@ -148,6 +155,7 @@ namespace Peacenet
         }
 
 
+        /// <inheritdoc/>
         public override void DrawCheckbox(GraphicsContext gfx, int x, int y, int width, int height, bool isChecked, bool isMouseOver)
         {
             var fg = (isMouseOver) ? Color.White : _bStateTextIdle;
@@ -160,46 +168,55 @@ namespace Peacenet
             gfx.DrawRectangle(x+2, y+2, width-4, height-4, _check, fg, System.Windows.Forms.ImageLayout.Zoom);
         }
 
+        /// <inheritdoc/>
         public override void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
             graphics.DrawRectangle(x, y, width, height, _bgRegular);
         }
 
+        /// <inheritdoc/>
         public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
             graphics.DrawRectangle(x, y, width, height, _bgDark);
         }
 
+        /// <inheritdoc/>
         public override void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
             graphics.DrawRectangle(x, y, width, height, _bgLight);
         }
 
+        /// <inheritdoc/>
         public override void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style, UIButtonState state)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override Color GetAccentColor()
         {
             return _accent;
         }
 
+        /// <inheritdoc/>
         public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
         {
             const int _buttonWidth = 24;
@@ -224,6 +241,7 @@ namespace Peacenet
             return Rectangle.Empty;
         }
 
+        /// <inheritdoc/>
         public override void LoadThemeData(GraphicsDevice device, ContentManager content)
         {
             _arrowup = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-up");
@@ -263,11 +281,13 @@ namespace Peacenet
 
         }
 
+        /// <inheritdoc/>
         public override Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override void UnloadThemeData()
         {
             _arrowup.Dispose();
@@ -280,6 +300,7 @@ namespace Peacenet
             _restore.Dispose();
         }
 
+        /// <inheritdoc/>
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
             var accent = GetAccentColor();

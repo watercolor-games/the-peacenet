@@ -21,6 +21,9 @@ using Plex.Engine.Cutscene;
 
 namespace Peacenet.MainMenu
 {
+    /// <summary>
+    /// A Peace engine entity which displays the Watercolor Games splash screen and Peacenet's main menu.
+    /// </summary>
     public class SplashEntity : IEntity, ILoadable, IDisposable
     {
         #region Animation state
@@ -121,6 +124,7 @@ namespace Peacenet.MainMenu
 
         #endregion
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             _watercolor.Dispose();
@@ -134,6 +138,7 @@ namespace Peacenet.MainMenu
             _hbSettings = null;
         }
 
+        /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext ctx)
         {
             ctx.BeginDraw();
@@ -203,6 +208,7 @@ namespace Peacenet.MainMenu
             ctx.EndDraw();
         }
 
+        /// <inheritdoc/>
         public void Load(ContentManager content)
         {
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");
@@ -327,6 +333,7 @@ namespace Peacenet.MainMenu
             };
         }
 
+        /// <inheritdoc/>
         public void OnKeyEvent(KeyboardEventArgs e)
         {
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
@@ -340,10 +347,12 @@ namespace Peacenet.MainMenu
 
         }
 
+        /// <inheritdoc/>
         public void OnMouseUpdate(MouseState mouse)
         {
         }
 
+        /// <inheritdoc/>
         public void Update(GameTime time)
         {
             switch (animState)

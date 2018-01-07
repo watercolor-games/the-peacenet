@@ -106,10 +106,25 @@ namespace Plex.Engine.Saves
         }
     }
 
-
+    /// <summary>
+    /// Provides an API for interacting with a save file.
+    /// </summary>
     public interface ISaveBackend
     {
+        /// <summary>
+        /// Retrieve a value from the save file.
+        /// </summary>
+        /// <typeparam name="T">The type of value to retrieve</typeparam>
+        /// <param name="key">The key of the entry to search for. If an entry is not found, the default value is added as this entry.</param>
+        /// <param name="defaultValue">The default value of the entry if it is not found</param>
+        /// <returns>The value of the save entry</returns>
         T GetValue<T>(string key, T defaultValue);
+        /// <summary>
+        /// Set a value in a save file.
+        /// </summary>
+        /// <typeparam name="T">The type of entry to save</typeparam>
+        /// <param name="key">The key of the entry to set. If it doesn't exist, it will be created.</param>
+        /// <param name="value">The value of the entry.</param>
         void SetValue<T>(string key, T value);
     }
 }

@@ -3,6 +3,9 @@ using Plex.Objects;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides a simple API for a modular backend component.
+    /// </summary>
     public interface IBackendComponent
     {
         /// <summary>

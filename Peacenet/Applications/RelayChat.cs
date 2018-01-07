@@ -2,6 +2,9 @@
 using Plex.Engine.GUI;
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides in-game chat as a standalone App Launcher entry through the use of a <see cref="Terminal"/> and associated <see cref="Plex.Engine.ITerminalCommand"/>.  
+    /// </summary>
     [AppLauncher("Relay Chat", "Communications")]
     public class RelayChat : Terminal
     {

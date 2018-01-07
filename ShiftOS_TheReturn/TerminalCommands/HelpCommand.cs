@@ -9,11 +9,15 @@ using System.IO;
 
 namespace Plex.Engine.TerminalCommands
 {
+    /// <summary>
+    /// Lists all available commands and their descriptions.
+    /// </summary>
     public class HelpCommand : ITerminalCommand
     {
         [Dependency]
         private TerminalManager _terminal = null;
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -22,6 +26,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -30,6 +35,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -38,6 +44,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.WriteLine("Command help");
@@ -58,6 +65,9 @@ namespace Plex.Engine.TerminalCommands
         }
     }
 
+    /// <summary>
+    /// Prints the manual page for a command
+    /// </summary>
     public class ManCommand : ITerminalCommand
     {
         [Dependency]
@@ -66,6 +76,7 @@ namespace Plex.Engine.TerminalCommands
         [Dependency]
         private AsyncServerManager _server = null;
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -74,6 +85,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -82,6 +94,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -90,6 +103,7 @@ namespace Plex.Engine.TerminalCommands
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string command = arguments["<command>"].ToString();

@@ -15,6 +15,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Peacenet.Cutscenes
 {
+    /// <summary>
+    /// The cutscene that displays the game's credits.
+    /// </summary>
     public class CreditsScene : Cutscene
     {
         private SoundEffect _yesMyGrassIsGreen = null;
@@ -47,6 +50,7 @@ namespace Peacenet.Cutscenes
         private float _peacenetFade = 0;
         private float _thanksFade = 0;
 
+        /// <inheritdoc/>
         public override string Name
         {
             get
@@ -55,6 +59,7 @@ namespace Peacenet.Cutscenes
             }
         }
 
+        /// <inheritdoc/>
         public override void Draw(GameTime time, GraphicsContext gfx)
         {
             gfx.BeginDraw();
@@ -119,6 +124,7 @@ namespace Peacenet.Cutscenes
             gfx.EndDraw();
         }
 
+        /// <inheritdoc/>
         public override void Load(ContentManager Content)
         {
             _yesMyGrassIsGreen = Content.Load<SoundEffect>("Audio/Cutscene/Credits");
@@ -132,6 +138,7 @@ namespace Peacenet.Cutscenes
             _peacenet = Content.Load<Texture2D>("Splash/Peacenet");
         }
 
+        /// <inheritdoc/>
         public override void OnFinish()
         {
             _ui.ShowUI();
@@ -139,6 +146,7 @@ namespace Peacenet.Cutscenes
             _splash.MakeVisible();
         }
 
+        /// <inheritdoc/>
         public override void OnPlay()
         {
             _ui.HideUI();
@@ -147,12 +155,14 @@ namespace Peacenet.Cutscenes
             _splash.MakeHidden();
         }
 
+        /// <inheritdoc/>
         public override void Dispose()
         {
             _yesMyGrassIsGreen.Dispose();
             _peacenet.Dispose();
         }
 
+        /// <inheritdoc/>
         public override void Update(GameTime gameTime)
         {
             switch (_csState)
@@ -281,20 +291,44 @@ namespace Peacenet.Cutscenes
         }
     }
 
+    /// <summary>
+    /// Represents a JSON-based credits list for the game.
+    /// </summary>
     public class CreditsFile
     {
+        /// <summary>
+        /// Gets or sets a list of major parts of the game.
+        /// </summary>
         public Component[] Components { get; set; }
     }
 
+    /// <summary>
+    /// A major part of The Peacenet which people have worked on.
+    /// </summary>
     public class Component
     {
+        /// <summary>
+        /// The name of the component.
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// The people who helped work on it.
+        /// </summary>
         public Person[] People { get; set; }
     }
 
+    /// <summary>
+    /// Represents a person who has helped work on The Peacenet.
+    /// </summary>
     public class Person
     {
+        /// <summary>
+        /// The name of the person.
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// What they've done.
+        /// </summary>
         public string Role { get; set; }
     }
 }

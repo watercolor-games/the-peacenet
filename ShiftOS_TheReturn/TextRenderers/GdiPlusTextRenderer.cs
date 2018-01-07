@@ -18,6 +18,7 @@ namespace Plex.Engine.TextRenderers
     [FallbackRenderer]
     public class GdiPlusTextRenderer : ATextRenderer
     {
+        /// <inheritdoc/>
         public override Texture2D DrawText(GraphicsContext gfx, string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
@@ -54,6 +55,7 @@ namespace Plex.Engine.TextRenderers
             }
         }
 
+        /// <inheritdoc/>
         public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             using(var gfx = Graphics.FromHwnd(IntPtr.Zero))

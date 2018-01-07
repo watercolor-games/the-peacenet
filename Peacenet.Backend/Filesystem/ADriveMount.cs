@@ -9,13 +9,21 @@ using Plex.Objects.ShiftFS;
 
 namespace Peacenet.Backend.Filesystem
 {
-    public abstract class ADriveMount
+    /// <summary>
+    /// A class containing methods for writing to and reading from a virtual file system.
+    /// </summary>
+    public abstract class ADriveMount : IDisposable
     {
         private int _volumenum = 0;
         private string _diskLoc = "";
         private string _usersession = "";
         private string _label = null;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="ADriveMount"/> class. 
+        /// </summary>
+        /// <param name="mountdata">Information about how the mount should be stored.</param>
+        /// <param name="usersession">Who this specific mount belongs to.</param>
         public ADriveMount(MountInformation mountdata, string usersession)
         {
             _volumenum = mountdata.DriveNumber;
@@ -25,6 +33,9 @@ namespace Peacenet.Backend.Filesystem
             EnsureDriveExistence();
         }
 
+        /// <summary>
+        /// Retrieve the volume label of the mount.
+        /// </summary>
         public string VolumeLabel
         {
             get
@@ -152,10 +163,13 @@ namespace Peacenet.Backend.Filesystem
         /// <returns>A list of all found subdirectories.</returns>
         public abstract string[] GetDirectories(string path);
 
+        /// <inheritdoc/>
         public abstract void Dispose();
     }
 
-
+    /// <summary>
+    /// A <see cref="PlexFAT"/> implementation compatible with the <see cref="ADriveMount"/> API.  
+    /// </summary>
     public class PlexFATDriveMount : ADriveMount
     {
         private PlexFAT.Directory getDirectory(string path)
@@ -199,6 +213,7 @@ namespace Peacenet.Backend.Filesystem
         private Stream fobj = null;
         private PlexFAT vol = null;
 
+        /// <inheritdoc/>
         public override void Dispose()
         {
             vol = null;
@@ -206,11 +221,13 @@ namespace Peacenet.Backend.Filesystem
             fobj = null;
         }
 
+        /// <inheritdoc/>
         public PlexFATDriveMount(MountInformation mountdata, string usersession) : base(mountdata, usersession)
         {
             Console.WriteLine("PlexFAT mount started at {0}:", mountdata.DriveNumber);
         }
 
+        /// <inheritdoc/>
         public override FileRecord GetFileInfo(string path)
         {
             PlexFAT.Directory parent;
@@ -228,6 +245,7 @@ namespace Peacenet.Backend.Filesystem
             return ret;
         }
 
+        /// <inheritdoc/>
         public override void CreateDirectory(string path)
         {
             PlexFAT.Directory parent;
@@ -238,6 +256,7 @@ namespace Peacenet.Backend.Filesystem
             parent.GetSubdirectory(dname, OpenMode.OpenOrCreate);
         }
 
+        /// <inheritdoc/>
         public override void DeleteDirectory(string path)
         {
             PlexFAT.Directory parent;
@@ -248,6 +267,7 @@ namespace Peacenet.Backend.Filesystem
                 parent.Delete(dname);
         }
 
+        /// <inheritdoc/>
         public override void DeleteFile(string path)
         {
             PlexFAT.Directory parent;
@@ -258,6 +278,7 @@ namespace Peacenet.Backend.Filesystem
                 parent.Delete(fname);
         }
 
+        /// <inheritdoc/>
         public override bool DirectoryExists(string path)
         {
             if (!path.Contains("/"))
@@ -269,6 +290,7 @@ namespace Peacenet.Backend.Filesystem
             return type == EntryType.DIRECTORY;
         }
 
+        /// <inheritdoc/>
         public override void EnsureDriveExistence()
         {
             fobj?.Close();
@@ -277,6 +299,7 @@ namespace Peacenet.Backend.Filesystem
             vol = extant ? PlexFAT.FromStream(fobj) : PlexFAT.New(fobj);
         }
 
+        /// <inheritdoc/>
         public override bool FileExists(string path)
         {
             PlexFAT.Directory parent;
@@ -303,6 +326,7 @@ namespace Peacenet.Backend.Filesystem
             return lst.ToArray();
         }
 
+        /// <inheritdoc/>
         public override string[] GetDirectories(string path)
         {
             List<string> types = new List<string>();
@@ -310,11 +334,13 @@ namespace Peacenet.Backend.Filesystem
             return types.ToArray();
         }
 
+        /// <inheritdoc/>
         public override string[] GetFiles(string path)
         {
             return searchType(path, EntryType.FILE);
         }
 
+        /// <inheritdoc/>
         public override byte[] ReadAllBytes(string path)
         {
             PlexFAT.Directory parent;
@@ -326,12 +352,14 @@ namespace Peacenet.Backend.Filesystem
             return bytes;
         }
 
+        /// <inheritdoc/>
         public override string ReadAllText(string path)
         {
             // This really should be defined by ADriveMount.
             return Encoding.UTF8.GetString(ReadAllBytes(path));
         }
 
+        /// <inheritdoc/>
         public override void WriteAllBytes(string path, byte[] bytes)
         {
             PlexFAT.Directory parent;
@@ -344,6 +372,7 @@ namespace Peacenet.Backend.Filesystem
             }
         }
 
+        /// <inheritdoc/>
         public override void WriteAllText(string path, string text)
         {
             // ... and this.

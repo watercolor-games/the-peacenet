@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Encapsulates a Peacenet server.
+    /// </summary>
     public class Backend : IDisposable
     {
         private List<ComponentInfo> _components = null;
@@ -27,6 +30,11 @@ namespace Peacenet.Backend
 
         private List<TcpClient> _connected = new List<TcpClient>();
 
+        /// <summary>
+        /// Broadcast a message to all clients.
+        /// </summary>
+        /// <param name="type">The type of message</param>
+        /// <param name="body">The body of the message.</param>
         public void Broadcast(ServerBroadcastType type, byte[] body)
         {
             if (body == null)
@@ -53,6 +61,9 @@ namespace Peacenet.Backend
 
         private string _rootDirectory = null;
 
+        /// <summary>
+        /// Retrieves the root directory of the server where server data may be stored.
+        /// </summary>
         public string RootDirectory
         {
             get
@@ -63,6 +74,9 @@ namespace Peacenet.Backend
 
         private EventWaitHandle _serverReady = new ManualResetEvent(false);
 
+        /// <summary>
+        /// Retrieves an <see cref="EventWaitHandle"/> which can be used to determine when the server is ready to be connected to. 
+        /// </summary>
         public EventWaitHandle ServerReady
         {
             get
@@ -155,6 +169,9 @@ namespace Peacenet.Backend
         }
 
 
+        /// <summary>
+        /// Retrieves whether this is a Multiplayer server.
+        /// </summary>
         public bool IsMultiplayer
         {
             get
@@ -172,6 +189,12 @@ namespace Peacenet.Backend
             _workForUtility.Set();
         }
 
+        /// <summary>
+        /// Creates a new instance of the Peacenet server.
+        /// </summary>
+        /// <param name="port">The port to listen on.</param>
+        /// <param name="isMultiplayer">Whether this is a multiplayer server</param>
+        /// <param name="rootDir">The root directory for server data.</param>
         public Backend(int port, bool isMultiplayer = true, string rootDir = null)
         {
             _rootDirectory = rootDir;
@@ -342,6 +365,12 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <summary>
+        /// Retrieves an instance of a given backend component.
+        /// </summary>
+        /// <typeparam name="T">The type of backend component to look for.</typeparam>
+        /// <returns>The instance of the backend component.</returns>
+        /// <exception cref="InvalidOperationException">The requested backend component type was never found or loaded.</exception> 
         public T GetBackendComponent<T>() where T : IBackendComponent, new()
         {
             try
@@ -354,6 +383,12 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <summary>
+        /// Retrieves an <see cref="IBackendComponent"/> of the specified type. 
+        /// </summary>
+        /// <param name="t">The type to search for.</param>
+        /// <returns>The backend component instance.</returns>
+        /// <exception cref="ArgumentException">The requested backend component type couldn't be found.</exception> 
         public IBackendComponent GetBackendComponent(Type t)
         {
             if (!typeof(IBackendComponent).IsAssignableFrom(t) || t.GetConstructor(Type.EmptyTypes) == null)
@@ -373,11 +408,21 @@ namespace Peacenet.Backend
             return client;
         }
 
+        /// <summary>
+        /// Creates a new instance of the specified object, injecting any dependencies into it. Ahhh, don't stop. Keep injecting me those dependencies.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to create</typeparam>
+        /// <returns>The newly-created object with all dependencies injected.</returns>
         public T New<T>() where T : new()
         {
             return (T)Inject(new T());
         }
 
+        /// <summary>
+        /// Retrieves a <see cref="WatercolorUser"/>. 
+        /// </summary>
+        /// <param name="uid">The user ID to look up</param>
+        /// <returns>The Watercolor user found on the API. Returns null if no ID was specified, or the server is a singleplayer server.</returns>
         public WatercolorUser GetUserInfo(string uid)
         {
             if (!IsMultiplayer)
@@ -406,6 +451,12 @@ namespace Peacenet.Backend
             return null;
         }
 
+        /// <summary>
+        /// Creates a new instance of the specified type and injects all dependencies.
+        /// </summary>
+        /// <param name="t">The type of the object to create.</param>
+        /// <returns>The newly created object with all dependencies injected.</returns>
+        /// <exception cref="ArgumentException">The specified type doesn't define a public parameterless constructor.</exception> 
         public object New(Type t)
         {
             if (t.GetConstructor(Type.EmptyTypes) == null)
@@ -468,6 +519,10 @@ namespace Peacenet.Backend
             _shutdownComplete.Set();
         }
 
+        /// <summary>
+        /// Shuts down the server, disconnecting all clients and unloading resources.
+        /// </summary>
+        /// <param name="message">A message to broadcast to all clients as the server shuts down.</param>
         public void Shutdown(string message = "Server going down for maintenance.")
         {
             using(var memstr = new MemoryStream())
@@ -504,11 +559,16 @@ namespace Peacenet.Backend
             _wgTimer = null;
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Shutdown();
         }
 
+        /// <summary>
+        /// Starts the server and allows connections.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The server is already running.</exception> 
         public void Listen()
         {
             if (_isRunning)
@@ -522,8 +582,12 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for retrieving server config.
+    /// </summary>
     public class ServerConfigHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -532,6 +596,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             datawriter.Write(backend.IsMultiplayer);
@@ -539,9 +604,18 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// A class encapsulating an <see cref="IBackendComponent"/> that indicates whether it has been initialized properly or not. 
+    /// </summary>
     public class ComponentInfo
     {
+        /// <summary>
+        /// Gets or sets whether the component has been initialized.
+        /// </summary>
         public bool Initialized { get; set; }
+        /// <summary>
+        /// Gets or sets the underlying <see cref="IBackendComponent"/>. 
+        /// </summary>
         public IBackendComponent Component { get; set; }
     }
 }

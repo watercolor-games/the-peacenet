@@ -8,8 +8,12 @@ using Plex.Objects;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// A command-line frontend for the game's chat system.
+    /// </summary>
     public class irc : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -18,6 +22,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -26,6 +31,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -37,7 +43,7 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private ChatBackend _chat = null;
 
-        public class CmdChatFrontend : IChatFrontend
+        private class CmdChatFrontend : IChatFrontend
         {
             private ConsoleContext console = null;
 
@@ -83,6 +89,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             console.WriteLine("Starting chat... type /exit to exit.");

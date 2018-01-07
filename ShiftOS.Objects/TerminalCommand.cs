@@ -8,160 +8,20 @@ using System.Threading.Tasks;
 using DocoptNet;
 
 namespace Plex.Objects
-{
-    public class TerminalCommand
-    {
-        public virtual bool MatchShell(string shell)
-        {
-            if (ShellMatch != "metacmd")
-            {
-                return (ShellMatch == shell);
-            }
-            return true;
-        }
-
-        public TerminalCommand()
-        {
-            UsageStrings = new List<UsageStringAttribute>();
-        }
-
-        public List<UsageStringAttribute> UsageStrings { get; set; }
-        public bool AllowInMP { get; set; }
-        public string ShellMatch { get; set; }
-
-        public override int GetHashCode()
-        {
-            int hash = 0;
-            foreach (char c in ToString())
-            {
-                hash += (int)c;
-            }
-            return hash;
-        }
-
-        public Command CommandInfo { get; set; }
-
-        public List<string> RequiredArguments { get; set; }
-        public string Dependencies { get; set; }
-
-        public MethodInfo CommandHandler;
-
-        public Type CommandType;
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(this.CommandInfo.name);
-            if (this.RequiredArguments.Count > 0)
-            {
-                sb.Append(" ");
-                foreach (var arg in RequiredArguments)
-                {
-                    sb.Append("--" + arg);
-                    sb.Append(" ");
-                    if (RequiredArguments.IndexOf(arg) < RequiredArguments.Count - 1)
-                        sb.Append(',');
-                }
-                sb.Append("}");
-            }
-            sb.Append("|");
-            sb.Append(CommandHandler.Name + "()");
-            return sb.ToString();
-        }
-
-        public bool RequiresElevation { get; set; }
-
-        public string GetManPage()
-        {
-            StringBuilder _usageBuilder = new StringBuilder();
-            _usageBuilder.AppendLine(CommandInfo.name + ": " + CommandInfo.description);
-            _usageBuilder.AppendLine();
-            _usageBuilder.AppendLine("    Usage:");
-            if (UsageStrings.Count == 0)
-                _usageBuilder.Append("      " + CommandInfo.name);
-            foreach (var ustr in UsageStrings)
-            {
-                _usageBuilder.AppendLine($"      {CommandInfo.name} {ustr.Usage}");
-            }
-            _usageBuilder.AppendLine();
-            return _usageBuilder.ToString();
-        }
-
-        public virtual void Invoke(string[] args, string shell, StreamWriter stdout, StreamReader stdin)
-        {
-            List<string> errors = new List<string>();
-            if (ShellMatch != "metacmd")
-            {
-                if (ShellMatch != shell)
-                {
-                    errors.Add("Command not found.");
-                }
-            }
-
-            Dictionary<string, object> argss = new Dictionary<string, object>();
-
-            if(UsageStrings.Count > 0)
-            {
-                StringBuilder _usageBuilder = new StringBuilder();
-                _usageBuilder.AppendLine(CommandInfo.name + ": " + CommandInfo.description);
-                _usageBuilder.AppendLine();
-                _usageBuilder.AppendLine("    Usage:");
-                foreach(var ustr in UsageStrings)
-                {
-                    _usageBuilder.AppendLine($"      {CommandInfo.name} {ustr.Usage}");
-                }
-                _usageBuilder.AppendLine();
-
-                try
-                {
-                    var docopt = new Docopt();
-                    var argsv = docopt.Apply(_usageBuilder.ToString(), args, version: CommandInfo.name, exit: false);
-                    foreach(var arg in argsv)
-                    {
-                        if (arg.Value != null)
-                            argss.Add(arg.Key, arg.Value.Value);
-                        else
-                            argss.Add(arg.Key, null);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    errors.Add($"{CommandInfo.name}: invalid syntax (Please see the manpage for this command.)");
-                    errors.Add(ex.Message);
-                }
-
-            }
-
-            if (errors.Count > 0)
-            {
-                foreach (var error in errors)
-                {
-                    stdout.WriteLine(error);
-                }
-                return;
-            }
-            try
-            {
-                CommandHandler.Invoke(null, new object[] { argss, new ConsoleContext(stdout, stdin) });
-
-            }
-            catch (System.Reflection.TargetParameterCountException)
-            {
-                CommandHandler.Invoke(null, new object[] { new ConsoleContext(stdout, stdin) });
-            }
-            catch (Exception ex)
-            {
-                stdout.WriteLine(ex.Message);
-            }
-        }
-    }
-
+{ 
+    /// <summary>
+    /// Encapsulates a standard input and output stream for a Peacenet console.
+    /// </summary>
     public class ConsoleContext
     {
         private StreamReader _stdin = null;
         private StreamWriter _stdout = null;
         private string workdir = null;
 
+        /// <summary>
+        /// Slowly write text to the console.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
         public void SlowWrite(string text)
         {
             foreach(char c in text)
@@ -172,7 +32,9 @@ namespace Plex.Objects
             }
         }
 
-
+        /// <summary>
+        /// Retrieve the standard input stream.
+        /// </summary>
         public StreamReader StandardInput
         {
             get
@@ -181,6 +43,9 @@ namespace Plex.Objects
             }
         }
 
+        /// <summary>
+        /// Retrieve the standard output stream.
+        /// </summary>
         public StreamWriter StandardOutput
         {
             get
@@ -189,6 +54,11 @@ namespace Plex.Objects
             }
         }
 
+        /// <summary>
+        /// Create a console context which uses this context's standard output as the input, and the specified <see cref="Stream"/> as its output. 
+        /// </summary>
+        /// <param name="master">A stream to which output should be written.</param>
+        /// <returns>The piped <see cref="ConsoleContext"/> object.</returns>
         public ConsoleContext Pipe(Stream master)
         {
             var writer = new StreamWriter(master);
@@ -197,11 +67,18 @@ namespace Plex.Objects
             return new ConsoleContext(writer, reader);
         }
 
+        /// <summary>
+        /// Reads to the end of the standard input stream.
+        /// </summary>
+        /// <returns>The text read from the stream.</returns>
         public string ReadToEnd()
         {
             return _stdin.ReadToEnd();
         }
 
+        /// <summary>
+        /// Gets or sets the working directory for the command.
+        /// </summary>
         public string WorkingDirectory
         {
             get
@@ -214,7 +91,11 @@ namespace Plex.Objects
             }
         }
 
-
+        /// <summary>
+        /// Creates a new instance of the <see cref="ConsoleContext"/> class. 
+        /// </summary>
+        /// <param name="stdout">The stream writer for standard output.</param>
+        /// <param name="stdin">The stream reader for standard input.</param>
         public ConsoleContext(StreamWriter stdout, StreamReader stdin)
         {
             if (stdout == null || stdin == null)
@@ -223,6 +104,11 @@ namespace Plex.Objects
             _stdin = stdin;
         }
 
+        /// <summary>
+        /// Write a line of text to the console. This method behaves similar to <see cref="string.Format(string, object[])"/>. 
+        /// </summary>
+        /// <param name="format">The text to write to the console.</param>
+        /// <param name="data">The data to inject into the text.</param>
         public void WriteLine(string format, params object[] data)
         {
             for (int i = 0; i < data.Length; i++)
@@ -232,6 +118,11 @@ namespace Plex.Objects
             WriteLine(format);
         }
 
+        /// <summary>
+        /// Sets the foreground and background colors of any following text in the console.
+        /// </summary>
+        /// <param name="background">The color for the background.</param>
+        /// <param name="foreground">The color for the foreground.</param>
         public void SetColors(ConsoleColor background, ConsoleColor foreground)
         {
             _stdout.Write((char)0x1B);
@@ -241,6 +132,10 @@ namespace Plex.Objects
             _stdout.Write((char)0x1B);
         }
 
+        /// <summary>
+        /// Sets whether any following text should be italic.
+        /// </summary>
+        /// <param name="value">Whether text should be italic.</param>
         public void SetItalic(bool value)
         {
             _stdout.Write((char)0x1B);
@@ -251,6 +146,10 @@ namespace Plex.Objects
             _stdout.Write((char)0x1B);
         }
 
+        /// <summary>
+        /// Sets whether any following text should be bolded.
+        /// </summary>
+        /// <param name="value">Whether text should be bolded.</param>
         public void SetBold(bool value)
         {
             _stdout.Write((char)0x1B);
@@ -261,26 +160,45 @@ namespace Plex.Objects
             _stdout.Write((char)0x1B);
         }
 
+        /// <summary>
+        /// Write text to the console.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
         public void Write(string text)
         {
             _stdout.Write(text);
         }
 
+        /// <summary>
+        /// Write a line of text to the console.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
         public void WriteLine(string text)
         {
             _stdout.WriteLine(text);
         }
 
+        /// <summary>
+        /// Read a line of text from standard input.
+        /// </summary>
+        /// <returns>The text that was read from the stream.</returns>
         public string ReadLine()
         {
             return _stdin.ReadLine();
         }
 
+        /// <summary>
+        /// Read a character from standard input.
+        /// </summary>
+        /// <returns>The character that was read.</returns>
         public char Read()
         {
             return (char)_stdin.Read();
         }
 
+        /// <summary>
+        /// Clear the console.
+        /// </summary>
         public void Clear()
         {
             _stdout.Write((char)0x1B);
@@ -289,17 +207,50 @@ namespace Plex.Objects
         }
     }
 
+    /// <summary>
+    /// Represents a Peacenet console color.
+    /// </summary>
     public enum ConsoleColor
     {
+        /// <summary>
+        /// Represents black.
+        /// </summary>
         Black,
+        /// <summary>
+        /// Represents full white.
+        /// </summary>
         White,
+        /// <summary>
+        /// Represents gray.
+        /// </summary>
         Gray,
+        /// <summary>
+        /// Represents full red.
+        /// </summary>
         Red,
+        /// <summary>
+        /// Represents full green.
+        /// </summary>
         Green,
+        /// <summary>
+        /// Represents full blue.
+        /// </summary>
         Blue,
+        /// <summary>
+        /// Represents yellow.
+        /// </summary>
         Yellow,
+        /// <summary>
+        /// Represents orange.
+        /// </summary>
         Orange,
+        /// <summary>
+        /// Represents purple.
+        /// </summary>
         Purple,
+        /// <summary>
+        /// Represents pink.
+        /// </summary>
         Pink
     }
 }

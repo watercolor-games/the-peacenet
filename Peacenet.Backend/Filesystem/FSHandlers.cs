@@ -7,9 +7,13 @@ using Plex.Objects;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Handler for creating user FS mounts.
+    /// </summary>
     [RequiresSession]
     public class DriveCreator : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -18,6 +22,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -34,9 +39,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for checking if a directory exists
+    /// </summary>
     [RequiresSession]
     public class DirectoryExistsHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -45,6 +54,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -68,9 +78,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for checking if a file exists.
+    /// </summary>
     [RequiresSession]
     public class FileExistsHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -79,6 +93,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -102,10 +117,13 @@ namespace Peacenet.Backend
         }
     }
 
-
+    /// <summary>
+    /// Handler for creating a directory.
+    /// </summary>
     [RequiresSession]
     public class DirectoryCreator : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -114,6 +132,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -145,9 +164,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for retrieving a file list.
+    /// </summary>
     [RequiresSession]
     public class FileListRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -156,6 +179,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -190,9 +214,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for retrieving a mount list.
+    /// </summary>
     [RequiresSession]
     public class MountListRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -201,6 +229,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -217,10 +246,13 @@ namespace Peacenet.Backend
         }
     }
 
-
+    /// <summary>
+    /// Handler for retrieving a directory list.
+    /// </summary>
     [RequiresSession]
     public class DirListRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -229,6 +261,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -263,9 +296,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for retrieving a file record.
+    /// </summary>
     [RequiresSession]
     public class FileRecordRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -274,6 +311,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -306,9 +344,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for deleting a file or directory.
+    /// </summary>
     [RequiresSession]
     public class FileDeleter : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -317,6 +359,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -345,9 +388,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for reading a file.
+    /// </summary>
     [RequiresSession]
     public class FileReader : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -356,6 +403,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();
@@ -381,9 +429,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for writing to a file.
+    /// </summary>
     [RequiresSession]
     public class FileWriter : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -392,6 +444,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var drivemgr = backend.GetBackendComponent<FSManager>();

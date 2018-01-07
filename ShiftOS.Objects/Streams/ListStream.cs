@@ -16,20 +16,27 @@ namespace Plex.Objects.Streams
     /// </summary>
     public class ListStream: Stream
     {
+        /// <inheritdoc/>
         public override bool CanRead { get { return true; } }
+        /// <inheritdoc/>
         public override bool CanWrite { get { return true; } }
+        /// <inheritdoc/>
         public override bool CanSeek { get { return false; } }
         private List<byte> myBuffer;
         private bool closed;
         private EventWaitHandle haveWritten;
-        
+
+        /// <inheritdoc/>
         public override long Length { get { throw new NotSupportedException("The stream does not support seeking."); } }
+        /// <inheritdoc/>
         public override long Position { get { throw new NotSupportedException("The stream does not support seeking."); } set { throw new NotSupportedException("The stream does not support seeking."); } }
-        
+
+        /// <inheritdoc/>
         public override void Flush()
         {
         }
-        
+
+        /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
             int curcount, read = 0;
@@ -48,17 +55,20 @@ namespace Plex.Objects.Streams
             }
             return read;
         }
-        
+
+        /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotSupportedException("The stream does not support seeking.");
         }
-        
+
+        /// <inheritdoc/>
         public override void SetLength(long value)
         {
             throw new NotSupportedException("The stream does not support seeking.");
         }
-        
+
+        /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
             lock (myBuffer)
@@ -82,6 +92,9 @@ namespace Plex.Objects.Streams
             }
         }
         
+        /// <summary>
+        /// Creates a new instance of the <see cref="ListStream"/> class. 
+        /// </summary>
         public ListStream()
         {
             myBuffer = new List<byte>();

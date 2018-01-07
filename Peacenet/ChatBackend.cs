@@ -13,6 +13,9 @@ using System.IO;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides support for chat using the Peacenet server's chat system.
+    /// </summary>
     public class ChatBackend : IEngineComponent
     {
 
@@ -21,14 +24,7 @@ namespace Peacenet
 
         private IChatFrontend frontend = null;
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <inheritdoc/>
         public void Initiate()
         {
             _server.BroadcastReceived += (type, reader) =>
@@ -59,6 +55,9 @@ namespace Peacenet
             };
         }
 
+        /// <summary>
+        /// Log out of chat.
+        /// </summary>
         public void Logout()
         {
             if(frontend != null)
@@ -71,22 +70,11 @@ namespace Peacenet
             }
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
 
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
-        }
-
+        /// <summary>
+        /// Log into chat.
+        /// </summary>
+        /// <param name="fend">A frontend to pipe server chat events to.</param>
         public void Login(IChatFrontend fend)
         {
             if (!_server.IsMultiplayer)
@@ -105,6 +93,10 @@ namespace Peacenet
             }).Wait();
         }
 
+        /// <summary>
+        /// Send a message to chat.
+        /// </summary>
+        /// <param name="message">The message text to send.</param>
         public void SendMessage(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -124,6 +116,10 @@ namespace Peacenet
             }
         }
 
+        /// <summary>
+        /// Send an action to chat.
+        /// </summary>
+        /// <param name="message">The action body to send.</param>
         public void SendAction(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -145,11 +141,35 @@ namespace Peacenet
 
     }
 
+    /// <summary>
+    /// Provides a simple API for handling server-side chat events.
+    /// </summary>
     public interface IChatFrontend
     {
+        /// <summary>
+        /// REport that a user has joined the chat.
+        /// </summary>
+        /// <param name="user">The username of the user.</param>
         void UserJoined(string user);
+
+        /// <summary>
+        /// Report that a user has left the chat.
+        /// </summary>
+        /// <param name="user">The username of the user.</param>
         void UserLeft(string user);
+
+        /// <summary>
+        /// Report that a message has been received.
+        /// </summary>
+        /// <param name="user">The author's username.</param>
+        /// <param name="message">The message text.</param>
         void MessageReceived(string user, string message);
+
+        /// <summary>
+        /// Report that an action has been received.
+        /// </summary>
+        /// <param name="user">The author's username.</param>
+        /// <param name="message">The action body.</param>
         void ActionReceived(string user, string message);
     }
 

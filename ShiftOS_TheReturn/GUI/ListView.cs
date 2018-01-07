@@ -9,6 +9,9 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A control capable of holding a list of items and displaying them in various different views.
+    /// </summary>
     public class ListView : Control
     {
         //Fields
@@ -23,6 +26,9 @@ namespace Plex.Engine.GUI
 
         private int _visibleItems = -1;
 
+        /// <summary>
+        /// Retrieves the number of items which are visible based on the currently applied item filter.
+        /// </summary>
         public int VisibleItems
         {
             get
@@ -31,8 +37,14 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Occurs when the player selects a different item in the list.
+        /// </summary>
         public event EventHandler SelectedIndexChanged;
 
+        /// <summary>
+        /// Retrieves the currently selected item. Returns null if none is selected.
+        /// </summary>
         public ListViewItem SelectedItem
         {
             get
@@ -43,6 +55,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Retrieves the index of the selected item. Returns -1 if no item is selected.
+        /// </summary>
         public int SelectedIndex
         {
             get { return _selectedIndex; }
@@ -61,6 +76,10 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Retrieves an array of all items in the list.
+        /// </summary>
+        /// <returns>All items in the list.</returns>
         public ListViewItem[] GetItems()
         {
             List<ListViewItem> items = new List<ListViewItem>();
@@ -167,11 +186,19 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="ListView"/> control. 
+        /// </summary>
         public ListView()
         {
             _imagecache = new Dictionary<string, Texture2D>();
         }
 
+        /// <summary>
+        /// Retrieve the icon with the specified key.
+        /// </summary>
+        /// <param name="key">The key of the requested icon.</param>
+        /// <returns>The icon found by the search. Returns null if no icon was found.</returns>
         public Texture2D GetImage(string key)
         {
             if (_imagecache.ContainsKey(key))
@@ -180,6 +207,11 @@ namespace Plex.Engine.GUI
                 return null;
         }
 
+        /// <summary>
+        /// Set the icon of a specified key.
+        /// </summary>
+        /// <param name="key">The key of the icon to set.</param>
+        /// <param name="texture">The new icon to set.</param>
         public void SetImage(string key, Texture2D texture)
         {
             if (_imagecache.ContainsKey(key))
@@ -188,17 +220,22 @@ namespace Plex.Engine.GUI
                 _imagecache.Add(key, texture);
         }
 
+        /// <summary>
+        /// Remove an icon from the icon list.
+        /// </summary>
+        /// <param name="key">The key of the icon to remove.</param>
         public void RemoveImage(string key)
         {
             if (_imagecache.ContainsKey(key))
                 _imagecache.Remove(key);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
         }
 
-        //Method overrides for list view
+        /// <inheritdoc/>
         public override void AddChild(Control child)
         {
             if (child == null)
@@ -215,8 +252,12 @@ namespace Plex.Engine.GUI
             ItemClicked?.Invoke(child);
         }
 
+        /// <summary>
+        /// Occurs when a list view item is clicked.
+        /// </summary>
         public event Action<ListViewItem> ItemClicked;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (!_requireLayout)
@@ -299,6 +340,10 @@ namespace Plex.Engine.GUI
             _requireLayout = false;
         }
 
+        /// <summary>
+        /// Set an item filter on this list view.
+        /// </summary>
+        /// <param name="name">The filter for the list view. Only items which contain this string will show. Set to null or an empty string to disable the filter.</param>
         public void SetFilter(string name)
         {
             int visible = -1;
@@ -320,6 +365,7 @@ namespace Plex.Engine.GUI
             _requireLayout = true;
         }
 
+        /// <inheritdoc/>
         public override void RemoveChild(Control child)
         {
             if (!(child is ListViewItem))
@@ -330,6 +376,9 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// Represents a control displayable within a <see cref="ListView"/>. 
+    /// </summary>
     public class ListViewItem : Control
     {
         private Label _label = null;
@@ -339,8 +388,14 @@ namespace Plex.Engine.GUI
         private object _value = null;
         private string _ikey = null;
 
+        /// <summary>
+        /// Occurs when the item is double-clicked.
+        /// </summary>
         public event Action<ListViewItem> ItemClicked;
 
+        /// <summary>
+        /// Gets or sets whether the item is selected.
+        /// </summary>
         public bool Selected
         {
             get
@@ -357,6 +412,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the value of the item.
+        /// </summary>
         public object Value
         {
             get
@@ -376,6 +434,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the key of the icon for the item.
+        /// </summary>
         public string ImageKey
         {
             get
@@ -391,6 +452,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets an optional data tag to associate with the item. Use it for whatever you want.
+        /// </summary>
         public object Tag { get; set; }
 
         private void _doubleClick (object s, EventArgs e)
@@ -398,6 +462,10 @@ namespace Plex.Engine.GUI
             ItemClicked?.Invoke(this);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="ListViewItem"/> control. 
+        /// </summary>
+        /// <param name="parent">The <see cref="ListView"/> to which this item will be added.</param>
         public ListViewItem(ListView parent) : base()
         {
             _label = new GUI.Label();
@@ -433,6 +501,7 @@ namespace Plex.Engine.GUI
 
         private bool _requiresLayout = true;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (!_requiresLayout)
@@ -504,6 +573,7 @@ namespace Plex.Engine.GUI
             _requiresLayout = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Transparent);
@@ -531,16 +601,37 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// Represents a layout style for a <see cref="ListView"/>. 
+    /// </summary>
     public enum ListViewLayout
     {
+        /// <summary>
+        /// Text should be below the icon and the icon should be large.
+        /// </summary>
         LargeIcon,
+        /// <summary>
+        /// Text should be beside the icon and the icon should be small.
+        /// </summary>
         SmallIcon,
+        /// <summary>
+        /// Text should be beside the icon, the icon should be small, and the width of the item should match the list view's width.
+        /// </summary>
         List
     }
 
+    /// <summary>
+    /// Represents a direction in which list view icons should flow
+    /// </summary>
     public enum IconFlowDirection
     {
+        /// <summary>
+        /// Icons should flow horizontally
+        /// </summary>
         LeftToRight,
+        /// <summary>
+        /// Icons should flow vertically
+        /// </summary>
         TopDown,
     }
 }

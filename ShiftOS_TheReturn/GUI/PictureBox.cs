@@ -10,6 +10,9 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A control which simply displays a picture.
+    /// </summary>
     public class PictureBox : Control
     {
         private Texture2D _texture = null;
@@ -19,6 +22,9 @@ namespace Plex.Engine.GUI
         private bool _premultiplied = false;
         private float _scale = 1;
 
+        /// <summary>
+        /// Gets or sets the tint of the picture.
+        /// </summary>
         public Color Tint
         {
             get
@@ -34,6 +40,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether the control should auto-size to match the size of the picture
+        /// </summary>
         public bool AutoSize
         {
             get
@@ -49,6 +58,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the scale of the picture if the contol is auto-sizing. A value of 1.0 means 1:1 scale.
+        /// </summary>
         public float AutoSizeScale
         {
             get
@@ -64,6 +76,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether the picture's texture data is pre-multiplied.
+        /// </summary>
         public bool Premultipied
         {
             get
@@ -79,6 +94,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the picture's texture.
+        /// </summary>
         public Texture2D Texture
         {
             get
@@ -94,6 +112,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the layout of the texture
+        /// </summary>
         public ImageLayout Layout
         {
             get
@@ -109,11 +130,13 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.DrawRectangle(0, 0, Width, Height, _texture, _tint, _layout, false, _premultiplied);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (AutoSize)

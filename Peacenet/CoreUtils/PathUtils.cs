@@ -15,6 +15,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Peacenet.CoreUtils
 {
+    /// <summary>
+    /// Provides an engine component for retrieving client-side information about a given file or directory path.
+    /// </summary>
     public class FileUtils : IEngineComponent
     {
 
@@ -24,14 +27,11 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private FSManager _fs = null;
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <summary>
+        /// Parses a path string and retrieves the destination file name.
+        /// </summary>
+        /// <param name="path">The file or directory path to parse.</param>
+        /// <returns>The file or directory name that the path points to.</returns>
         public string GetNameFromPath(string path)
         {
             while (path.EndsWith("/"))
@@ -94,6 +94,11 @@ namespace Peacenet.CoreUtils
             return (types.Count == 0) ? "unknown" : types.First();
         }
 
+        /// <summary>
+        /// Retrieves an icon for a given MIME type.
+        /// </summary>
+        /// <param name="mimetype">The MIME type to look up.</param>
+        /// <returns>A <see cref="Texture2D"/> containing the icon for the MIME type.</returns>
         public Texture2D GetMimeIcon(string mimetype)
         {
             switch (mimetype)
@@ -105,60 +110,31 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public void Initiate()
-        {
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
         {
         }
     }
 
+    /// <summary>
+    /// Provides an engine component allowing the creation of dialogs for retrieving file paths from the player.
+    /// </summary>
     public class GUIUtils : IEngineComponent
     {
         [Dependency]
         private WindowSystem _winsys = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
         }
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
-        }
-
+        /// <summary>
+        /// Ask the user for a file.
+        /// </summary>
+        /// <param name="saving">Whether the player is saving to a file or opening an existing file.</param>
+        /// <param name="callback">A callback to be run when the file is selected.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="callback"/> is null.</exception> 
         public void AskForFile(bool saving, Action<string> callback)
         {
             if (callback == null)

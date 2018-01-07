@@ -10,10 +10,14 @@ using Plex.Engine.GraphicsSubsystem;
 using System.IO;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace Plex.Engine.Config
 {
-    public class ConfigManager : IEngineComponent
+    /// <summary>
+    /// Provides an engine component that allows other components to have user-configurable values.
+    /// </summary>
+    public class ConfigManager : IEngineComponent, IDisposable
     {
 
         private Dictionary<string, object> _config = null;
@@ -26,14 +30,35 @@ namespace Plex.Engine.Config
 
         private string _path = "";
 
-        public int DrawIndex
+        private class configEntity : IEntity
         {
-            get
+            [Dependency]
+            private ConfigManager _config = null;
+            public void Draw(GameTime time, GraphicsContext gfx)
             {
-                return -1;
+            }
+
+            public void OnKeyEvent(KeyboardEventArgs e)
+            {
+            }
+
+            public void OnMouseUpdate(MouseState mouse)
+            {
+            }
+
+            public void Update(GameTime time)
+            {
+                float sfx = _config.GetValue("audioSfxVolume", 1.0F);
+                float sfxClamped = MathHelper.Clamp(sfx, 0, 1);
+                if (sfxClamped != sfx)
+                {
+                    _config.SetValue("audioSfxVolume", sfxClamped);
+                }
+                SoundEffect.MasterVolume = sfxClamped;
             }
         }
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _path = Path.Combine(_appdata.GamePath, "config.json");
@@ -49,7 +74,13 @@ namespace Plex.Engine.Config
                 LoadFromDisk();
             }
             Apply();
+
+            var layer = new Layer();
+            var entity = _plexgate.New<configEntity>();
+            layer.AddEntity(entity);
+            _plexgate.AddLayer(layer);
         }
+
 
         /// <summary>
         /// Get the value of a setting in the config file. If the setting doesn't exist, the default value you supply will be added.
@@ -66,6 +97,11 @@ namespace Plex.Engine.Config
             return defaultValue;
         }
 
+        /// <summary>
+        /// Sets the value of the config entry with the specified name. If the entry doesn't exist, a new one will be created with this value.
+        /// </summary>
+        /// <param name="name">The entry name to set.</param>
+        /// <param name="value">The value to set.</param>
         public void SetValue(string name, object value)
         {
             if (_config.ContainsKey(name))
@@ -74,6 +110,9 @@ namespace Plex.Engine.Config
                 _config.Add(name, value);
         }
 
+        /// <summary>
+        /// Applies the loaded configuration dictionary to the engine and all components.
+        /// </summary>
         public void Apply()
         {
             Logger.Log("Config file is now being applied.");
@@ -102,11 +141,17 @@ namespace Plex.Engine.Config
             Logger.Log("Done.");
         }
 
+        /// <summary>
+        /// Loads the configuration dictionary from disk, causing any unsaved changes to be lost.
+        /// </summary>
         public void LoadFromDisk()
         {
             _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(_path));
         }
 
+        /// <summary>
+        /// Saves the current configuration dictionary to disk.
+        /// </summary>
         public void SaveToDisk()
         {
             Logger.Log("Saving config to disk...");
@@ -114,40 +159,33 @@ namespace Plex.Engine.Config
             Logger.Log("Done.");
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-            float sfx = GetValue("audioSfxVolume", 1.0F);
-            float sfxClamped = MathHelper.Clamp(sfx, 0, 1);
-            if (sfxClamped != sfx)
-                SetValue("audioSfxVolume", sfxClamped);
-            SoundEffect.MasterVolume = sfxClamped;
-
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
+        /// <inheritdoc/>
+        public void Dispose()
         {
             SaveToDisk();
             _config = null;
         }
     }
 
+    /// <summary>
+    /// Provides an API for a configurable <see cref="IEngineComponent"/>. 
+    /// </summary>
     public interface IConfigurable
     {
+        /// <summary>
+        /// Occurs when <see cref="ConfigManager"/> applies its configuration dictionary.
+        /// </summary>
         void ApplyConfig();
     }
 
+    /// <summary>
+    /// Provides a cross-platform path where game data may be stored.
+    /// </summary>
     public class AppDataManager : IEngineComponent
     {
         private string _path = "";
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Watercolor Games", "Peacenet");
@@ -155,36 +193,15 @@ namespace Plex.Engine.Config
                 Directory.CreateDirectory(_path);
         }
 
+        /// <summary>
+        /// Retrieves the game data path.
+        /// </summary>
         public string GamePath
         {
             get
             {
                 return _path;
             }
-        }
-
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
         }
     }
 }

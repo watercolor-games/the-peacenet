@@ -14,9 +14,13 @@ using WatercolorGames.CommandLine;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// A command which runs when the in-game Peacegate OS boots.
+    /// </summary>
     [HideInHelp]
     public class InitCommand : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -25,6 +29,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -33,6 +38,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -116,6 +122,7 @@ namespace Peacenet
         [Dependency]
         private TerminalManager _terminal = null;
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             if (_os.IsDesktopOpen)
@@ -227,10 +234,14 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// Provides a shell for the Terminal which can be arbitrarily locked down as part of a tutorial.
+    /// </summary>
     [HideInHelp]
     [TerminalSkipAutoload]
     public class TutorialBash : ITerminalCommand
     {
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -239,6 +250,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -247,6 +259,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -267,8 +280,14 @@ namespace Peacenet
         private bool _showHostInfo = false;
         private bool _allowCommands = false;
 
+        /// <summary>
+        /// Retrieves a list of all commands run by the player in this shell.
+        /// </summary>
         public readonly List<CommandInstruction> CommandsRun = new List<CommandInstruction>();
 
+        /// <summary>
+        /// Gets or sets whether system commands may be run in the shell.
+        /// </summary>
         public bool AllowCommands
         {
             get
@@ -281,6 +300,9 @@ namespace Peacenet
             }
         }
         
+        /// <summary>
+        /// Gets or sets whether the shell should show info about the player's system in the prompt text.
+        /// </summary>
         public bool ShowHostInfo
         {
             get
@@ -293,6 +315,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             CommandsRun.Clear();

@@ -5,12 +5,16 @@ using Plex.Objects.Streams;
 
 namespace Plex.Objects.Pty
 {
+    /// <summary>
+    /// Represents a stream used for a pseudo-terminal.
+    /// </summary>
     public class PseudoTerminal : Stream
     {
 
         ThreadSafeFifoBuffer inputStream;
         ThreadSafeFifoBuffer outputStream;
 
+        /// <inheritdoc/>
         public override bool CanRead
         {
             get
@@ -19,6 +23,7 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public override bool CanSeek
         {
             get
@@ -27,6 +32,7 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public override bool CanWrite
         {
             get
@@ -35,6 +41,7 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public override long Length
         {
             get
@@ -43,6 +50,7 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public override long Position
         {
             get
@@ -145,10 +153,12 @@ namespace Plex.Objects.Pty
 
         }
 
+        /// <inheritdoc/>
         public override void Flush()
         {
         }
 
+        /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (!isMaster)
@@ -167,15 +177,18 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
             return -1;
         }
 
+        /// <inheritdoc/>
         public override void SetLength(long value)
         {
         }
 
+        /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (isMaster)
@@ -194,6 +207,7 @@ namespace Plex.Objects.Pty
             }
         }
 
+        /// <inheritdoc/>
         public static void CreatePair(out PseudoTerminal master, out PseudoTerminal slave, TerminalOptions options)
         {
             var inputStream = new ThreadSafeFifoBuffer();
@@ -204,8 +218,14 @@ namespace Plex.Objects.Pty
         }
     }
 
+    /// <summary>
+    /// An exception thrown by a <see cref="PseudoTerminal"/> when encountering a termination request byte. 
+    /// </summary>
     public class TerminationRequestException : Exception
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="TerminationRequestException"/> exception. 
+        /// </summary>
         public TerminationRequestException() : base("User requested termination of the current task.")
         {
 

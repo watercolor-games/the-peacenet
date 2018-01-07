@@ -13,6 +13,15 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// A namespace containing classes pertaining to in-game programs.
+    /// </summary>
+    [System.Runtime.CompilerServices.CompilerGenerated]
+    class NamespaceDoc { }
+
+    /// <summary>
+    /// A program that allows the player to customize various parameters of the <see cref="Plex.Engine.Themes.Theme"/> and <see cref="DesktopWindow"/> allowing the player to customize the look of the game's user interface.  
+    /// </summary>
     [AppLauncher("Appearance settings", "System")]
     public class Appearance : Window
     {
@@ -35,10 +44,16 @@ namespace Peacenet.Applications
         private FileUtils _futils = null;
         private WallpaperGrid _wallpaperGrid = new WallpaperGrid();
 
+        /// <summary>
+        /// A <see cref="Control"/> for displaying a grid of <see cref="Texture2D"/> wallpaper thumbnails. Used within the <see cref="Appearance"/> application.  
+        /// </summary>
         public class WallpaperGrid : Control
         {
             private int _selectedIndex = -1;
 
+            /// <summary>
+            /// Retrieves the currently selected <see cref="Texture2D"/> wallpaper. Returns null if none is selected.  
+            /// </summary>
             public Texture2D SelectedTexture
             {
                 get
@@ -51,6 +66,7 @@ namespace Peacenet.Applications
                 }
             }
 
+            /// <inheritdoc/>
             public override void AddChild(Control child)
             {
                 if (!(child is PictureBox))
@@ -72,6 +88,7 @@ namespace Peacenet.Applications
                 
             }
 
+            /// <inheritdoc/>
             protected override void OnUpdate(GameTime time)
             {
                 int x = 5;
@@ -95,10 +112,7 @@ namespace Peacenet.Applications
                 Height = h;
             }
 
-            protected override void OnPaint(GameTime time, GraphicsContext gfx)
-            {
-            }
-
+            /// <inheritdoc/>
             public override void RemoveChild(Control child)
             {
                 child.Click -= Child_Click;
@@ -112,6 +126,7 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <inheritdoc/>
         public Appearance(WindowSystem _winsys) : base(_winsys)
         {
             _wallpapers = _plexgate.Content.LoadAllIn<Texture2D>("Desktop");
@@ -134,6 +149,7 @@ namespace Peacenet.Applications
             
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _header.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;

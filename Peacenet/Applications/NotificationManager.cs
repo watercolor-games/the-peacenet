@@ -11,6 +11,9 @@ using Plex.Engine.Server;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a GUI for managing Peacegate OS notifications as well as displaying available and active <see cref="Mission"/>s. 
+    /// </summary>
     public class NotificationManager : Window
     {
         [Dependency]
@@ -31,6 +34,7 @@ namespace Peacenet.Applications
         private Mission _selectedMission = null;
         private int _missionUIState = 0;
 
+        /// <inheritdoc/>
         public NotificationManager(WindowSystem _winsys) : base(_winsys)
         {
             Width = 800;
@@ -162,6 +166,7 @@ namespace Peacenet.Applications
         private Button _missionsStart = new Button();
         private ListView _missionsObjectives = new ListView();
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_needsReset)
@@ -208,11 +213,17 @@ namespace Peacenet.Applications
         }
     }
 
+    /// <summary>
+    /// A <see cref="Panel"/> which displays notification/mission summaries with a heading and description label. Also contains <see cref="Button"/>-like mouse behavior.  
+    /// </summary>
     public class NotificationItem : Panel
     {
         private Label _header = new Label();
         private Label _desc = new Label();
         
+        /// <summary>
+        /// Creates a new instance of the <see cref="NotificationItem"/> control. 
+        /// </summary>
         public NotificationItem()
         {
             AutoSize = false;
@@ -224,6 +235,9 @@ namespace Peacenet.Applications
             Click += _header_Click;
         }
 
+        /// <summary>
+        /// Occurs when the notification panel is clicked. This event exists as a workaround of the fact that <see cref="Control.Click"/> cannot be invoked outside the context of <see cref="Control"/> and we must propagate <see cref="Control.Click"/> events from the child <see cref="Label"/>s in the panel to prevent you having to pull your hair out.    
+        /// </summary>
         public event Action Activated;
 
         private void _header_Click(object sender, EventArgs e)
@@ -231,6 +245,7 @@ namespace Peacenet.Applications
             Activated?.Invoke();
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             if(LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
@@ -246,7 +261,8 @@ namespace Peacenet.Applications
                 Theme.DrawControlBG(gfx, 0, 0, Width, Height);
             }
         }
-    
+
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _header.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
@@ -262,6 +278,9 @@ namespace Peacenet.Applications
             Height = _desc.Y + _desc.Height + 3;
         }
 
+        /// <summary>
+        /// Gets or sets the title text of this notification panel.
+        /// </summary>
         public string Title
         {
             get
@@ -274,6 +293,9 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <summary>
+        /// Gets or sets the description text of this notification label.
+        /// </summary>
         public string Message
         {
             get

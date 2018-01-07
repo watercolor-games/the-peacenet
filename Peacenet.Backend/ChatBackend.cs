@@ -9,6 +9,9 @@ using System.IO;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides a backend for basic server chat.
+    /// </summary>
     public class ChatBackend : IBackendComponent
     {
         private LiteCollection<ChatMessage> _chatlog = null;
@@ -16,6 +19,7 @@ namespace Peacenet.Backend
         [Dependency]
         private DatabaseHolder _db = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Chat system is starting...");
@@ -24,10 +28,12 @@ namespace Peacenet.Backend
             Logger.Log("Done.");
         }
 
+        /// <inheritdoc/>
         public void SafetyCheck()
         {
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
         }
@@ -35,6 +41,13 @@ namespace Peacenet.Backend
         [Dependency]
         private Backend _backend = null;
 
+        /// <summary>
+        /// Add a message to the log.
+        /// </summary>
+        /// <param name="author">The author's username</param>
+        /// <param name="uid">The Watercolor user ID of the author</param>
+        /// <param name="message">The message text</param>
+        /// <param name="type">The type of message</param>
         public void AddMessage(string author, string uid, string message, ChatMessageType type = ChatMessageType.Regular)
         {
             _chatlog.Insert(new ChatMessage
@@ -91,6 +104,11 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <summary>
+        /// Retrieve the last <paramref name="count"/> messages in the log.
+        /// </summary>
+        /// <param name="count">The amount of messages to retrieve.</param>
+        /// <returns>An <see cref="IEnumerable{ChatMessage}"/> containing the latest messages found.</returns>
         public IEnumerable<ChatMessage> RetrieveLast(int count)
         {
             int sent = 0;
@@ -106,10 +124,13 @@ namespace Peacenet.Backend
 
     }
 
-
+    /// <summary>
+    /// Handler for chat join requests.
+    /// </summary>
     [RequiresSession]
     public class ChatJoinHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -118,6 +139,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var usr = backend.GetUserInfo(session);
@@ -130,9 +152,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for chat leave requests.
+    /// </summary>
     [RequiresSession]
     public class ChatLeaveHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -141,6 +167,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var usr = backend.GetUserInfo(session);
@@ -153,9 +180,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for incoming chat messages.
+    /// </summary>
     [RequiresSession]
     public class ChatMessageHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -164,6 +195,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var usr = backend.GetUserInfo(session);
@@ -177,9 +209,13 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// A handler for chat actions.
+    /// </summary>
     [RequiresSession]
     public class ChatActionHandler : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -188,6 +224,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var usr = backend.GetUserInfo(session);

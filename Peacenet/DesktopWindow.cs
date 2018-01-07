@@ -16,6 +16,9 @@ using Peacenet.CoreUtils;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// The Peacegate OS Desktop Environment user interface.
+    /// </summary>
     public class DesktopWindow : Window
     {
         private int _animState = 0;
@@ -68,6 +71,7 @@ namespace Peacenet
 
         private ListView _desktopIconsView = null;
 
+        /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
             _tutorialBgm = _plexgate.Content.Load<SoundEffect>("Audio/Tutorial/TutorialBGM");
@@ -159,6 +163,9 @@ namespace Peacenet
             };
         }
 
+        /// <summary>
+        /// Retrieves whether the tutorial overlay is showing.
+        /// </summary>
         public bool IsTutorialOpen
         {
             get
@@ -167,6 +174,9 @@ namespace Peacenet
             }
         }
         
+        /// <summary>
+        /// Resets the tutorial overlay UI.
+        /// </summary>
         public void ResetOverlay()
         {
             int width = 0;
@@ -270,6 +280,9 @@ namespace Peacenet
 
         private TutorialOverlay _overlay = new TutorialOverlay();
 
+        /// <summary>
+        /// Repopulates the desktop icon list view.
+        /// </summary>
         public void SetupIcons()
         {
             _desktopIconsView.Clear();
@@ -299,12 +312,12 @@ namespace Peacenet
             }
         }
 
-        public void WindowSystemUpdated (object o, EventArgs a)
+        private void WindowSystemUpdated (object o, EventArgs a)
         {
             ResetWindowList((WindowSystem)o);
         }
 
-        public void ResetAppLauncher(WindowSystem winsys)
+        private void ResetAppLauncher(WindowSystem winsys)
         {
             _applauncher.ClearItems();
             bool catAdded = false;
@@ -370,6 +383,7 @@ namespace Peacenet
         }
 
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             switch (_overlayStage)
@@ -562,7 +576,7 @@ namespace Peacenet
         [Dependency]
         private Storyboard _story = null;
 
-        public void ResetWindowList(WindowSystem winsys)
+        private void ResetWindowList(WindowSystem winsys)
         {
             while (_windowList.Children.Length > 0)
                 _windowList.RemoveChild(_windowList.Children[0]);
@@ -576,6 +590,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.DrawRectangle(0, 0, Width, Height, _wallpaper);
@@ -591,6 +606,7 @@ namespace Peacenet
         private bool? _lastFocus = null;
         private float _opacityAnim = 0;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             bool focused = ContainsMouse;
@@ -624,14 +640,23 @@ namespace Peacenet
             Opacity = MathHelper.Lerp(0.75F, 1, _opacityAnim);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
     }
 
+    /// <summary>
+    /// Provides extensions for formatting <see cref="DateTime"/> objects into strings. 
+    /// </summary>
     public static class TimeExtensions
     {
+        /// <summary>
+        /// Transforms a <see cref="DateTime"/> into a presentable Peacegate time string. 
+        /// </summary>
+        /// <param name="timeSpan">The <see cref="DateTime"/> to transform</param>
+        /// <returns>The resulting presentable string</returns>
         public static string ToPresentableString(this TimeSpan timeSpan)
         {
             string hour = "00";
@@ -671,12 +696,12 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// An item group primarly used in <see cref="DesktopPanel"/> elements for displaying the window list. 
+    /// </summary>
     public class DesktopPanelItemGroup : Control
     {
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
-        }
-
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             int x = 2;
@@ -699,12 +724,20 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// A special <see cref="Button"/> capable of sticking in the "Pressed" state while an associated <see cref="Window"/> is active.  
+    /// </summary>
     public class WindowListButton : Button
     {
         private WindowInfo _win = null;
         private bool _lastFocused = false;
         private WindowSystem _winmgr = null;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="WindowListButton"/>. 
+        /// </summary>
+        /// <param name="winmgr">A <see cref="WindowSystem"/> component for modifying the window state.</param>
+        /// <param name="win">The window associated with this control.</param>
         public WindowListButton(WindowSystem winmgr, WindowInfo win)
         {
             if (winmgr == null)
@@ -735,6 +768,7 @@ namespace Peacenet
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             Text = _win.Border?.Title;
@@ -747,6 +781,7 @@ namespace Peacenet
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var state = Plex.Engine.Themes.UIButtonState.Idle;
@@ -758,6 +793,9 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// An overlay element that is used for showing the player around the user interface.
+    /// </summary>
     public class TutorialOverlay : Control
     {
         private Label _header = new Label();
@@ -766,6 +804,9 @@ namespace Peacenet
 
         private Rectangle _unshroudedRegion;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="TutorialOverlay"/> control. 
+        /// </summary>
         public TutorialOverlay()
         {
             AddChild(_header);
@@ -781,8 +822,14 @@ namespace Peacenet
             };
         }
 
+        /// <summary>
+        /// Occurs when the player clicks the "OK" button on the overlay.
+        /// </summary>
         public event EventHandler OkayButtonClicked;
 
+        /// <summary>
+        /// Gets or sets the title of the overlay.
+        /// </summary>
         public string HeaderText
         {
             get
@@ -795,6 +842,9 @@ namespace Peacenet
             }
         }
 
+        /// <summary>
+        /// Gets or sets the description of the overlay.
+        /// </summary>
         public string DescriptionText
         {
             get
@@ -807,6 +857,9 @@ namespace Peacenet
             }
         }
 
+        /// <summary>
+        /// Gets or sets a region on the overlay where the control is completely transparent, thus showing other controls rendering behind the overlay.
+        /// </summary>
         public Rectangle Region
         {
             get
@@ -822,6 +875,7 @@ namespace Peacenet
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _header.MaxWidth = Width / 3;
@@ -841,6 +895,7 @@ namespace Peacenet
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var color = Color.Black * 0.5F;

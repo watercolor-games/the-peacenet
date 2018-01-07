@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace Plex.Engine.Interfaces
 {
+    /// <summary>
+    /// Provides an extremely simple API for creating modular Peacenet engine components.
+    /// </summary>
     public interface IEngineComponent
     {
+        /// <summary>
+        /// This method is run when your component is successfully loaded into the engine.
+        /// </summary>
         void Initiate();
     }
 }

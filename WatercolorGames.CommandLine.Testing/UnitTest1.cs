@@ -10,7 +10,7 @@ using WatercolorGames.CommandLine;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace tercolorGames.CommandLine.Testing
+namespace WatercolorGames.CommandLine.Testing
 {
 #if FUCK_THIS_SHITTY_LANGUAGE
     // irrelevant lyrics
@@ -318,9 +318,9 @@ cat /tmp/*.tmp
         }
     }
 
-    public static class Serializer
+    internal static class Serializer
     {
-        public static string ToJSON(this object obj)
+        internal static string ToJSON(this object obj)
         {
             return JsonConvert.SerializeObject(obj);
         }

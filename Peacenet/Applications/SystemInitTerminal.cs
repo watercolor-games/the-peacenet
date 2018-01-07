@@ -8,6 +8,9 @@ using Plex.Engine.GUI;
 
 namespace Peacenet.Applications
 {
+    /// <summary>
+    /// Provides a full-screen <see cref="Terminal"/> that runs the <see cref="InitCommand"/>, creating the illusion of a verbose operating system boot sequence.  
+    /// </summary>
     public class SystemInitTerminal : Terminal
     {
         public SystemInitTerminal(WindowSystem _winsys) : base(_winsys)

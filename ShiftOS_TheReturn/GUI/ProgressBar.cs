@@ -8,10 +8,16 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// Represents a user interface element that can display progress.
+    /// </summary>
     public class ProgressBar : Control
     {
         private float _value = 0.0f;
 
+        /// <summary>
+        /// The value of the progress bar (between 0.0 and 1.0).
+        /// </summary>
         public float Value
         {
             get
@@ -28,6 +34,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Black);

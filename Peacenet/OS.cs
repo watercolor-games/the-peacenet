@@ -23,6 +23,9 @@ using Plex.Engine.Config;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides the Peacegate OS engine component.
+    /// </summary>
     public class OS : IEngineComponent
     {
         [Dependency]
@@ -33,7 +36,8 @@ namespace Peacenet
 
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
-        
+
+        /// <inheritdoc/>
         public void Initiate()
         {
             _osLayer = new Layer();
@@ -73,7 +77,7 @@ namespace Peacenet
 
         private EventWaitHandle _clientReady = new ManualResetEvent(false);
 
-        public void OnReady()
+        internal void OnReady()
         {
             if(_osEntity != null)
             {
@@ -118,6 +122,10 @@ namespace Peacenet
         [Dependency]
         private WatercolorAPIManager _api = null;
 
+        /// <summary>
+        /// Retrieves all shell folders.
+        /// </summary>
+        /// <returns>A list containing all shell folders.</returns>
         public IEnumerable<ShellDirectoryInformation> GetShellDirs()
         {
             string uname = "Your";
@@ -162,7 +170,7 @@ namespace Peacenet
         }
 
 
-        public void Shutdown()
+        internal void Shutdown()
         {
             if(_osEntity != null)
             {
@@ -173,6 +181,9 @@ namespace Peacenet
             _splash.Reset();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether Peacegate OS's desktop is open
+        /// </summary>
         public bool IsDesktopOpen
         {
             get
@@ -184,8 +195,19 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// Extension methods for the MonoGame content pipeline.
+    /// </summary>
     public static class ContentHelper
     {
+        /// <summary>
+        /// Loads all resources at the given path.
+        /// </summary>
+        /// <typeparam name="T">The type of resource to load.</typeparam>
+        /// <param name="content">The <see cref="ContentManager"/> object responsible for loading the content.</param>
+        /// <param name="contentdir">The path to the content directory where the resources should be loaded from.</param>
+        /// <returns>All resources of the given type loaded from the specified directory</returns>
+        /// <exception cref="DirectoryNotFoundException">The specified content directory doesn't exist.</exception>
         public static T[] LoadAllIn<T>(this ContentManager content, string contentdir)
         {
             List<T> _contentList = new List<T>();
@@ -208,8 +230,17 @@ namespace Peacenet
         }
     }
 
+    /// <summary>
+    /// Contains information about a Peacegate shell directory.
+    /// </summary>
     public class ShellDirectoryInformation
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="ShellDirectoryInformation"/> class. 
+        /// </summary>
+        /// <param name="name">The name of the directory presented to the player.</param>
+        /// <param name="path">The full, absolute path to the directory on disk.</param>
+        /// <param name="texture">The icon for the directory.</param>
         public ShellDirectoryInformation(string name, string path, Texture2D texture)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -221,8 +252,17 @@ namespace Peacenet
             Texture = texture;
         }
 
+        /// <summary>
+        /// Retrieves the icon for this directory.
+        /// </summary>
         public Texture2D Texture { get; private set; }
+        /// <summary>
+        /// Retrieves the user-presentable name of this directory.
+        /// </summary>
         public string FriendlyName { get; private set; }
+        /// <summary>
+        /// Retrieves the full path of the directory.
+        /// </summary>
         public string Path { get; private set; }
     }
 }
