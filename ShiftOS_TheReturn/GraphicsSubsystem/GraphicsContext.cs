@@ -14,6 +14,15 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <summary>
     /// Encapsulates a <see cref="GraphicsDevice"/> and <see cref="SpriteBatch"/> and contains methods for easily rendering various objects using those encapsulated objects. This class cannot be inherited.
     /// </summary>
+    /// <remarks>
+    ///     <para>The <see cref="GraphicsContext"/> class employs scissor testing in all of its draw calls. This makes it so that any data rendering outside the scissor rectangle (defined by the <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/> and <see cref="Height"/> properties) will be clipped and not rendered to the screen.</para>
+    ///     <para>Also, apart from the <see cref="X"/> and <see cref="Y"/> properties of the graphics context, any X/Y coordinate pairs are relative to the coordinates of the scissor rectangle. So, the coordinates (0,5) refer to <see cref="X"/>+0,<see cref="Y"/>+5.</para>
+    /// </remarks>
+    /// <seealso cref="RasterizerState.ScissorTestEnable"/>
+    /// <seealso cref="GraphicsDevice.ScissorRectangle"/>
+    /// <seealso cref="GraphicsDevice"/>
+    /// <seealso cref="SpriteBatch"/>
+    /// <threadsafety static="true" instance="false"/>
     public sealed class GraphicsContext
     {
         private static Texture2D white = null;

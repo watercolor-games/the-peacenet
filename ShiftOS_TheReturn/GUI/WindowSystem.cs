@@ -15,6 +15,14 @@ namespace Plex.Engine.GUI
     /// <summary>
     /// Provides basic window management.
     /// </summary>
+    /// <remarks>
+    ///     <para>The methods in this class allow you to manage windows even if you don't have access to a <see cref="Window"/> object. Only use these if you know what you're doing. The <see cref="Window"/> class has methods which wrap this component and make the experience more-or-less easy on you.</para>
+    /// </remarks>
+    /// <threadsafety static="true" instance="false"/>
+    /// <seealso cref="Window"/>
+    /// <see cref="WindowInfo"/>
+    /// <seealso cref="UIManager"/>
+    /// <seealso cref="IEngineComponent"/> 
     public class WindowSystem : IEngineComponent, IConfigurable
     {
 

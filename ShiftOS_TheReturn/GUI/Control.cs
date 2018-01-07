@@ -807,7 +807,7 @@ namespace Plex.Engine.GUI
                     gfx.EndDraw();
                     _invalidated = false;
                 }
-                foreach (var child in _children)
+                foreach (var child in Children)
                 {
                     if (!child.Visible)
                         continue;
@@ -821,7 +821,7 @@ namespace Plex.Engine.GUI
                 {
                     gfx.BeginDraw();
                     gfx.Batch.Draw(_userfacingtarget, new Rectangle(0, 0, Width, Height), Color.White);
-                    foreach (var child in _children)
+                    foreach (var child in Children)
                     {
                         if (!child.Visible)
                             continue;

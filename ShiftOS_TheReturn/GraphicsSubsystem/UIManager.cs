@@ -21,6 +21,20 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <summary>
     /// Provides an advanced 2D user interface engine for the Peace engine.
     /// </summary>
+    /// <remarks>
+    ///     <para>The <see cref="UIManager"/> class is used as a way to simply add, remove and reorder top-level user interface elements in the Peace engine. Unless you need to directly access these abilities from a <see cref="IEngineComponent"/>, <see cref="IEntity"/> or <see cref="Window"/> object, you do not under any circumstances need to depend on this component.</para>
+    ///     <para>This component is also not meant to be used for the opening and closing of <see cref="Window"/>s. This functionality is built directly into the <see cref="Window"/> class and available through the <see cref="WindowSystem"/> engine component.</para>
+    ///     <para>In most cases, you shouldn't need to directly access the UIManager unless you are working inside the engine itself. Mods and games should use the <see cref="Window"/> and <see cref="WindowSystem"/> APIs for managing top-levels.</para>
+    ///     <para>Also, <see cref="UIManager"/> is strictly meant for user interface entities. For other <see cref="IEntity"/> entities, use the <see cref="Plexgate"/> and <see cref="Layer"/> APIs.</para>
+    /// </remarks>
+    /// <threadsafety static="true" instance="false"/>
+    /// <seealso cref="Window"/>
+    /// <seealso cref="Control"/>
+    /// <seealso cref="WindowSystem"/> 
+    /// <seealso cref="Plexgate"/>
+    /// <seealso cref="Layer"/>
+    /// <seealso cref="IEngineComponent"/>
+    /// <seealso cref="IEntity"/>
     public class UIManager : IEngineComponent, IConfigurable
     {
         private class UIContainer : IEntity, ILoadable, IDisposable
