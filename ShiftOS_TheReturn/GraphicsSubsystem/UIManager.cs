@@ -18,6 +18,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Plex.Engine.GraphicsSubsystem
 {
+    /// <summary>
+    /// Provides an advanced 2D user interface engine for the Peace engine.
+    /// </summary>
     public class UIManager : IEngineComponent, IConfigurable
     {
         private class UIContainer : IEntity, ILoadable, IDisposable
@@ -241,22 +244,26 @@ namespace Plex.Engine.GraphicsSubsystem
         [Dependency]
         private Plexgate _plexgate = null;
 
-        private string _screenshots = "";
 
-        private bool _isShowingUI = true;
-        private int _uiFadeState = 1;
-        private float _uiFadeAmount = 1;
-
+        /// <summary>
+        /// Make the user interface visible.
+        /// </summary>
         public void ShowUI()
         {
             _plexgate.AddLayer(_uiLayer);
         }
 
+        /// <summary>
+        /// Make the user interface invisible.
+        /// </summary>
         public void HideUI()
         {
             _plexgate.RemoveLayer(_uiLayer);
         }
 
+        /// <summary>
+        /// Gets the screen width available to user interface elements.
+        /// </summary>
         public int ScreenWidth
         {
             get
@@ -267,6 +274,9 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Gets the screen height available to user interface elements.
+        /// </summary>
         public int ScreenHeight
         {
             get
@@ -277,11 +287,20 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
+        /// <summary>
+        /// Set a control to be the focused control.
+        /// </summary>
+        /// <param name="ctrl">The control to focus.</param>
         public void SetFocus(Control ctrl)
         {
             _container.SetFocus(ctrl);
         }
 
+        /// <summary>
+        /// Determines whether a control is in focus.
+        /// </summary>
+        /// <param name="ctrl">The control to check</param>
+        /// <returns>Whether the control is in focus.</returns>
         public bool IsFocused(Control ctrl)
         {
             if (ctrl == null)
@@ -289,6 +308,10 @@ namespace Plex.Engine.GraphicsSubsystem
             return _container.IsFocused(ctrl);
         }
 
+        /// <summary>
+        /// Add a control as a top-level.
+        /// </summary>
+        /// <param name="ctrl">The control to add.</param>
         public void Add(Control ctrl)
         {
             if (_container.Controls.Contains(ctrl))
@@ -296,6 +319,11 @@ namespace Plex.Engine.GraphicsSubsystem
             _container.AddControl(ctrl);
         }
 
+        /// <summary>
+        /// Remove a control from the top-level list.
+        /// </summary>
+        /// <param name="ctrl">The control to remove.</param>
+        /// <param name="dispose">Whether the control should be disposed.</param>
         public void Remove(Control ctrl, bool dispose = true)
         {
             if (!_container.Controls.Contains(ctrl))
@@ -303,6 +331,10 @@ namespace Plex.Engine.GraphicsSubsystem
             _container.RemoveControl(ctrl, dispose);
         }
 
+        /// <summary>
+        /// Retrieve the text in the system clipboard if any.
+        /// </summary>
+        /// <returns>The text found in the clipboard. Returns null if no text is in the clipboard.</returns>
         public string GetClipboardText()
         {
             if (System.Windows.Forms.Clipboard.ContainsText() == false)
@@ -310,6 +342,7 @@ namespace Plex.Engine.GraphicsSubsystem
             return System.Windows.Forms.Clipboard.GetText();
         }
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Loading text renderer...", LogType.Info, "ui");
@@ -333,6 +366,9 @@ namespace Plex.Engine.GraphicsSubsystem
 
         private bool _ignoreControlOpacity = false;
 
+        /// <summary>
+        /// Retrieves whether the engine is configured to ignore the value of any control's <see cref="Control.Opacity"/> value and instead render the control as opaque. 
+        /// </summary>
         public bool IgnoreControlOpacity
         {
             get
@@ -344,6 +380,7 @@ namespace Plex.Engine.GraphicsSubsystem
         [Dependency]
         private ConfigManager _config = null;
 
+        /// <inheritdoc/>
         public void ApplyConfig()
         {
             bool fullscreen = (bool)_config.GetValue("uiFullscreen", true);

@@ -8,7 +8,8 @@ namespace Peacenet.Applications
     [AppLauncher("Relay Chat", "Communications")]
     public class RelayChat : Terminal
     {
-        protected override string _shell
+        /// <inheritdoc/>
+        protected override string Shell
         {
             get
             {
@@ -17,6 +18,7 @@ namespace Peacenet.Applications
         }
         // Constructors are not automatically inherited because C# is a bad language.
         // No further information is required or will be provided.
+        /// <inheritdoc/>
         public RelayChat(WindowSystem _winsys) : base(_winsys)
         {
         }

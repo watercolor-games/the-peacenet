@@ -30,6 +30,7 @@ namespace Plex.Engine
         [Dependency]
         private AsyncServerManager _server = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _localCommands = new List<ITerminalCommand>();
@@ -229,6 +230,7 @@ namespace Plex.Engine
             return new CommandQuery(tokens[0], arguments); //First element of tokens is always the command name
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Logger.Log("Terminal is shutting down...");

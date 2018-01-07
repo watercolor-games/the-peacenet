@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// Provides extremely basic multi-line text editing support. This user interface element is extremely buggy.
+    /// </summary>
     public class TextEditor : Control
     {
         private System.Drawing.Font _font = null;
@@ -26,6 +29,9 @@ namespace Plex.Engine.GUI
         private bool _needsHeightMeasure = false;
         private int _lineHeight = 0;
 
+        /// <summary>
+        /// Gets or sets whether the height of the control is determined by the height of the text.
+        /// </summary>
         public bool AutoSize
         {
             get
@@ -37,8 +43,9 @@ namespace Plex.Engine.GUI
                 if (_autoSize != value)
                     _autoSize = value;
             }
-        }        
+        }
 
+        /// <inheritdoc/>
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
             switch (e.Key)
@@ -80,6 +87,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text of the text box.
+        /// </summary>
         public string Text
         {
             get
@@ -96,6 +106,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_font == null)
@@ -113,6 +124,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             _charX = 0;

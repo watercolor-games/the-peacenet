@@ -9,6 +9,9 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A control which contains editable text.
+    /// </summary>
     public class TextBox : Control
     {
         private string _text = "";
@@ -18,8 +21,14 @@ namespace Plex.Engine.GUI
         private int _caretX = 0;
         private bool _hasPassword = false;
 
+        /// <summary>
+        /// Occurs when the text in the text box is changed.
+        /// </summary>
         public event EventHandler TextChanged;
 
+        /// <summary>
+        /// Gets or sets whether text should be masked as dots to protect over-the-shoulder snooping of passwords.
+        /// </summary>
         public bool HasPassword
         {
             get
@@ -35,6 +44,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text of the text box.
+        /// </summary>
         public string Text
         {
             get
@@ -51,6 +63,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text to be displayed in the text box when it is empty and out of focus.
+        /// </summary>
         public string Label
         {
             get
@@ -76,6 +91,7 @@ namespace Plex.Engine.GUI
 
         private string _lastText = "";
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             string displayText = (_hasPassword) ? "*".Repeat(_text.Length) : _text;
@@ -118,6 +134,7 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
             if(e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
@@ -172,6 +189,7 @@ namespace Plex.Engine.GUI
             base.OnKeyEvent(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
@@ -205,8 +223,17 @@ namespace Plex.Engine.GUI
 
     }
 
+    /// <summary>
+    /// Simple string extensions that should really be in .NET by default but aren't
+    /// </summary>
     public static class StringExtensions
     {
+        /// <summary>
+        /// Repeat a string for a specified amount of times
+        /// </summary>
+        /// <param name="str">The string to repeat</param>
+        /// <param name="amount">The amount of times the string should be repeated</param>
+        /// <returns>The resulting string of the repeat operation</returns>
         public static string Repeat(this string str, int amount)
         {
             string nstr = "";

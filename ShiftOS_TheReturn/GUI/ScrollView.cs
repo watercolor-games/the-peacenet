@@ -8,12 +8,16 @@ using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A GUI element which can only contain one child and allows the child to be scrolled up and down by the mouse.
+    /// </summary>
     public class ScrollView : Control
     {
         private int _scrollOffset = 0;
         private Control _host = null;
         private int _scrollHeight = 0;
 
+        /// <inheritdoc/>
         public override void AddChild(Control child)
         {
             if (Children.Length > 0)
@@ -27,6 +31,7 @@ namespace Plex.Engine.GUI
             _needsLayout = true;
         }
 
+        /// <inheritdoc/>
         public override void RemoveChild(Control child)
         {
             base.RemoveChild(child);
@@ -40,6 +45,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseScroll(int delta)
         {
             int offset = MathHelper.Clamp(_scrollOffset + delta, 0, _scrollHeight - Height);
@@ -57,6 +63,7 @@ namespace Plex.Engine.GUI
 
         private bool _needsLayout = true;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_needsLayout && _host != null)
@@ -70,6 +77,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);

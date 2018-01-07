@@ -34,14 +34,18 @@ namespace Peacenet.Applications
         private TerminalEmulator _emulator = null;
         private Task _shellJob = null;
 
-        protected virtual string _shell
+        /// <summary>
+        /// Gets a Terminal command string to be run when the Terminal window opens.
+        /// </summary>
+        protected virtual string Shell
         {
             get
             {
                 return "cli";
             }
         }
-        
+
+        /// <inheritdoc/>
         public Terminal(WindowSystem _winsys) : base(_winsys)
         {
             _emulator = new TerminalEmulator(_plexgate.Content.Load<SpriteFont>("Fonts/Monospace"));
@@ -57,6 +61,7 @@ namespace Peacenet.Applications
             };
         }
 
+        /// <inheritdoc/>
         public override void Show(int x = -1, int y = -1)
         {
             if(_shellJob == null)
@@ -64,7 +69,7 @@ namespace Peacenet.Applications
                 _shellJob = Task.Run(() =>
                 {
                     var ctx = _manager.CreateContext(_emulator.StdOut, _emulator.StdIn);
-                    _manager.RunCommand(_shell, ctx);
+                    _manager.RunCommand(Shell, ctx);
                     if (this.Visible == true && !this.Disposed)
                         Close();
                 });
@@ -72,6 +77,7 @@ namespace Peacenet.Applications
             base.Show(x, y);
         }
 
+        /// <inheritdoc/>
         public override void Close()
         {
             _emulator.Terminate();
@@ -84,6 +90,7 @@ namespace Peacenet.Applications
 
         private int _lastEmulatorY = -1;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _emulator.X = 0;
@@ -105,6 +112,7 @@ namespace Peacenet.Applications
             _emulator.Width = Width;
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Black);
@@ -122,6 +130,7 @@ namespace Peacenet.Applications
         [Dependency]
         private WatercolorAPIManager _Api = null;
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -130,6 +139,7 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -138,6 +148,7 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -234,6 +245,7 @@ namespace Peacenet.Applications
             console.WorkingDirectory = nconsole.WorkingDirectory;
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string hostname = "127.0.0.1";
@@ -388,6 +400,7 @@ namespace Peacenet.Applications
 
         }
 
+        /// <inheritdoc/>
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
             if (_cursorOn != true)
@@ -434,6 +447,7 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.Clear(Color.Black);
@@ -506,6 +520,7 @@ namespace Peacenet.Applications
                 gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.White);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             var ch = _slave.ReadByte();

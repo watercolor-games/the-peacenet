@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Peacenet.Backend
 {
+    /// <summary>
+    /// Provides world management for the Peacenet.
+    /// </summary>
     public class WorldBackend : IBackendComponent
     {
         private LiteCollection<InternetServiceProvider> _isps = null;
@@ -19,6 +22,7 @@ namespace Peacenet.Backend
         private string[] _companySuffixes = new string[] { "Inc.", "Corp", "Corporation", "LLC", "Foundation", "Facility", "Software", "Games", "Medicine", "Research", "Consultants", "Bank" };
         private string[] _companyNames = new string[] { "Peacegate", "EOX Studios"/*nod to Anders Jensen*/, };
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("World generator is now reading ISP table...");
@@ -49,10 +53,12 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public void SafetyCheck()
         {
         }
 
+        /// <inheritdoc/>
         public void Unload()
         {
         }

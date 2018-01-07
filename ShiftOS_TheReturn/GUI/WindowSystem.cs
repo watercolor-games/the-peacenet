@@ -12,6 +12,9 @@ using Plex.Engine.Config;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// Provides basic window management.
+    /// </summary>
     public class WindowSystem : IEngineComponent, IConfigurable
     {
 
@@ -24,14 +27,23 @@ namespace Plex.Engine.GUI
         [Dependency]
         private Config.ConfigManager _config = null;
 
+        /// <summary>
+        /// Occurs when the window list is updated.
+        /// </summary>
         public event EventHandler WindowListUpdated;
 
         private List<WindowInfo> _windows = new List<WindowInfo>();
 
         private bool _allowFadingWindowsWhileDragging = true;
 
+        /// <summary>
+        /// Retrieves whether windows should fade while dragging.
+        /// </summary>
         public bool FadeWindowsWhileDragging { get { return _allowFadingWindowsWhileDragging; } }
 
+        /// <summary>
+        /// See <see cref="UIManager.ScreenWidth"/>. 
+        /// </summary>
         public int Width
         {
             get
@@ -40,6 +52,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// See <see cref="UIManager.ScreenHeight"/>. 
+        /// </summary>
         public int Height
         {
             get
@@ -47,7 +62,12 @@ namespace Plex.Engine.GUI
                 return _uiman.ScreenHeight;
             }
         }
-
+        
+        /// <summary>
+        /// Set the title of a window.
+        /// </summary>
+        /// <param name="winid">The ID of the window to set</param>
+        /// <param name="title">The new title of the window</param>
         public void SetWindowTitle(int winid, string title)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
@@ -56,6 +76,11 @@ namespace Plex.Engine.GUI
 
         }
 
+        /// <summary>
+        /// Set the style of a window
+        /// </summary>
+        /// <param name="wid">The ID of the window to set</param>
+        /// <param name="style">The new style for the window</param>
         public void SetWindowStyle(int wid, WindowStyle style)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == wid);
@@ -73,6 +98,12 @@ namespace Plex.Engine.GUI
 
         private int _totalWindowsOpened = 0;
 
+        /// <summary>
+        /// Create a new window border.
+        /// </summary>
+        /// <param name="window">The window for the border to host</param>
+        /// <param name="style">The style of the window border</param>
+        /// <returns>The ID of the new window border</returns>
         public int CreateWindowInfo(Window window, WindowStyle style)
         {
             var info = new WindowInfo
@@ -87,6 +118,10 @@ namespace Plex.Engine.GUI
             return info.WindowID;
         }
 
+        /// <summary>
+        /// Show a window.
+        /// </summary>
+        /// <param name="winid">The ID of the window to show</param>
         public void Show(int winid)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
@@ -96,6 +131,10 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Hide a window
+        /// </summary>
+        /// <param name="winid">The ID of the window to hide</param>
         public void Hide(int winid)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
@@ -105,6 +144,10 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Close a window
+        /// </summary>
+        /// <param name="winid">The ID of the window to close</param>
         public void Close(int winid)
         {
             var win = _windows.FirstOrDefault(x => x.WindowID == winid);
@@ -117,6 +160,9 @@ namespace Plex.Engine.GUI
 
         }
 
+        /// <summary>
+        /// Retrieves an array containing information about all open windows.
+        /// </summary>
         public WindowInfo[] WindowList
         {
             get
@@ -125,36 +171,13 @@ namespace Plex.Engine.GUI
             }
         }
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Starting window system.", LogType.Info, "pgwinsys");
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
-            Logger.Log("Stopping window system.", LogType.Info, "pgwinsys");
-        }
-
+        /// <inheritdoc/>
         public void ApplyConfig()
         {
             _allowFadingWindowsWhileDragging = (bool)_config.GetValue("windowManagerTranslucentWindowsWhileDragging", true);
@@ -162,12 +185,24 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// A class containing information about an open window.
+    /// </summary>
     public class WindowInfo
     {
+        /// <summary>
+        /// Gets or sets the window's border.
+        /// </summary>
         public WindowBorder Border { get; set; }
+        /// <summary>
+        /// Gets or sets the ID of the window.
+        /// </summary>
         public int WindowID { get; set; }
     }
 
+    /// <summary>
+    /// A control which is tied to a <see cref="WindowSystem"/> and acts as a program window's client area. 
+    /// </summary>
     public abstract class Window : Control
     {
         private WindowSystem _winsystem = null;
@@ -175,6 +210,9 @@ namespace Plex.Engine.GUI
         private WindowStyle _preferredStyle = WindowStyle.Default;
         private string _title = "Peacenet Window";
 
+        /// <summary>
+        /// Gets or sets the title text of the window.
+        /// </summary>
         public string Title
         {
             get
@@ -197,14 +235,25 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of the window.
+        /// </summary>
+        /// <param name="_winsys">The <see cref="WindowSystem"/> instance to associate the window with.</param>
         public Window(WindowSystem _winsys)
         {
             _winsystem = _winsys;
             _winsystem.InjectDependencies(this);
         }
-
+        
+        /// <summary>
+        /// Retrieves the window system associated with the window.
+        /// </summary>
         public WindowSystem WindowSystem { get { return _winsystem; } }
 
+        /// <summary>
+        /// Set the style of the window's border.
+        /// </summary>
+        /// <param name="style">The new style for the border.</param>
         public void SetWindowStyle(WindowStyle style)
         {
             if(_wid == null)
@@ -217,6 +266,14 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Present the window to the player.
+        /// </summary>
+        /// <param name="x">The starting X coordinate of the window border</param>
+        /// <param name="y">The starting Y coordinate of the window border</param>
+        /// <remarks>
+        ///     <para>By default, the <paramref name="x"/> and <paramref name="y"/> values are both set to -1. This causes the window manager to determine the location of the new window on its own, causing the window to be placed in the center of the screen.</para>
+        /// </remarks>
         public virtual void Show(int x = -1, int y = -1)
         {
             if (_wid == null)
@@ -234,12 +291,18 @@ namespace Plex.Engine.GUI
             Visible = true;
         }
 
+        /// <summary>
+        /// Hide the window from the screen.
+        /// </summary>
         public virtual void Hide()
         {
             _winsystem.Hide((int)_wid);
             Visible = false;
         }
 
+        /// <summary>
+        /// Close the window.
+        /// </summary>
         public virtual void Close()
         {
             if (_wid == null)
@@ -248,6 +311,9 @@ namespace Plex.Engine.GUI
             _wid = null;
         }
 
+        /// <summary>
+        /// Retrieves the ID of this window.
+        /// </summary>
         public int? WindowID
         {
             get
@@ -257,14 +323,32 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// Represents the style of a <see cref="WindowBorder"/>. 
+    /// </summary>
     public enum WindowStyle
     {
+        /// <summary>
+        /// The default style. The borders and title bar are shown, and the window can be closed, minimized, maximized and dragged around.
+        /// </summary>
         Default,
+        /// <summary>
+        /// The window has a titlebar, and no borders. It can still be dragged around and closed, but can't be minimized or maximized.
+        /// </summary>
         Dialog,
+        /// <summary>
+        /// The window has no border or title bar whatsoever.
+        /// </summary>
         NoBorder,
+        /// <summary>
+        /// Same as <see cref="Dialog"/> but dragging is disabled. 
+        /// </summary>
         DialogNoDrag
     }
 
+    /// <summary>
+    /// A control which acts as the non-client area of a <see cref="Window"/> and as its window border. 
+    /// </summary>
     public class WindowBorder : Control
     {
         private WindowStyle _windowStyle = WindowStyle.Default;
@@ -285,6 +369,9 @@ namespace Plex.Engine.GUI
         
         private string _title = "";
 
+        /// <summary>
+        /// Gets or sets the title of the window.
+        /// </summary>
         public string Title
         {
             get
@@ -311,6 +398,12 @@ namespace Plex.Engine.GUI
 
         private bool _needsLayout = true;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="WindowBorder"/> control. 
+        /// </summary>
+        /// <param name="winsys">The window system to associate with the window border</param>
+        /// <param name="child">The window to associate with the window border</param>
+        /// <param name="style">The style of the window border</param>
         public WindowBorder(WindowSystem winsys, Window child, WindowStyle style)
         {
             HasFocusedChanged += (o, a) =>
@@ -421,6 +514,7 @@ namespace Plex.Engine.GUI
 
         private bool _lastFocused = true;
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_closeHasMouse != _closeHitbox.ContainsMouse)
@@ -574,11 +668,15 @@ namespace Plex.Engine.GUI
             base.OnUpdate(time);
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Theme.DrawWindowBorder(gfx, _title, _leftHitbox, _rightHitbox, _bottomHitbox, _bLeftHitbox, _bRightHitbox, _titleHitbox, _closeHitbox, _minimizeHitbox, _maximizeHitbox, HasFocused);
         }
 
+        /// <summary>
+        /// Gets or sets the style of the window border.
+        /// </summary>
         public WindowStyle WindowStyle
         {
             get

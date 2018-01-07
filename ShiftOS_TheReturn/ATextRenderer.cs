@@ -123,8 +123,10 @@ namespace Plex.Engine
         /// <param name="maxwidth">The maximum width text can be before it is wrapped.</param>
         /// <param name="alignment">The alignment of the text.</param>
         /// <param name="wrapMode">The type of text wrapping to use.</param>
+        /// <param name="color">The color of the text to render</param>
         public static void DrawText(GraphicsContext gfx, int x, int y, string text, System.Drawing.Font font, Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
+
             if (string.IsNullOrWhiteSpace(text))
                 return;
             var texture = _renderer.DrawText(gfx, text, font, maxwidth, alignment, wrapMode);

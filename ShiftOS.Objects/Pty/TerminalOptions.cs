@@ -1,11 +1,11 @@
 ﻿namespace Plex.Objects.Pty
 {
+    /// <summary>
+    /// A class containing settings for a <see cref="PseudoTerminal"/> master/slave pair. 
+    /// </summary>
     public class TerminalOptions
     {
-        /// <summary>
-        /// Gets or sets the output flag
-        /// </summary>
-        /// <value>The OF lag.</value>
+#pragma warning disable CS1591
         public uint OFlag
         {
             set;

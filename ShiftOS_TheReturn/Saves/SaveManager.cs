@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 
 namespace Plex.Engine.Saves
 {
+    /// <summary>
+    /// Provides a simple API for interacting with a save file.
+    /// </summary>
     public class SaveManager : IEngineComponent
     {
 
@@ -20,34 +23,16 @@ namespace Plex.Engine.Saves
         [Dependency]
         private Plexgate _plexgate = null;
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
+        /// <inheritdoc/>
         public void Initiate()
         {
         }
 
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
-        {
-        }
-
+        /// <summary>
+        /// Set the backend for the save manager to use.
+        /// </summary>
+        /// <param name="backend">An <see cref="ISaveBackend"/> instance implementing methods required to fetch and modify values of a save file.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="backend"/> was null.</exception> 
         public void SetBackend(ISaveBackend backend)
         {
             if (backend == null)
@@ -56,6 +41,15 @@ namespace Plex.Engine.Saves
             _plexgate.Inject(_backend);
         }
 
+        /// <summary>
+        /// Asynchronously retrieve a save value.
+        /// </summary>
+        /// <typeparam name="T">The type of value you'd like to be given</typeparam>
+        /// <param name="key">THe key for the entry you'd like to look up</param>
+        /// <param name="defaultValue">The default value to be set for the entry if an entry with the specified key wasn't found.</param>
+        /// <param name="result">A callback to be run when the entry was read successfully.</param>
+        /// <param name="error">A callback to be run when an error occurred.</param>
+        /// <returns>A <see cref="Task"/> you can use to await the method.</returns>
         public async Task GetValueAsync<T>(string key, T defaultValue, Action<T> result, Action<Exception> error)
         {
             await Task.Run(() =>
@@ -70,7 +64,14 @@ namespace Plex.Engine.Saves
                 }
             });
         }
-
+        
+        /// <summary>
+        /// Retrieve the value of a specified save entry.
+        /// </summary>
+        /// <typeparam name="T">The type of value you'd like to receive.</typeparam>
+        /// <param name="key">The key of the entry to look up.</param>
+        /// <param name="defaultValue">The default value for the entry if no entry was found.</param>
+        /// <returns>The value of the entry.</returns>
         public T GetValue<T>(string key, T defaultValue)
         {
             object result = null;
@@ -81,6 +82,15 @@ namespace Plex.Engine.Saves
             return (T)result;
         }
 
+        /// <summary>
+        /// Asynchronously set the value of a save entry.
+        /// </summary>
+        /// <typeparam name="T">The type of value that will be set</typeparam>
+        /// <param name="key">The key of the entry to modify</param>
+        /// <param name="value">The value to be set in the entry</param>
+        /// <param name="done">A callback to be run when the save modification was completed.</param>
+        /// <param name="error">A callback to be run when an error has occurred.</param>
+        /// <returns>A <see cref="Task"/> you can use to await the method.</returns>
         public async Task SetValueAsync<T>(string key, T value, Action done, Action<Exception> error)
         {
             await Task.Run(() =>
@@ -97,6 +107,12 @@ namespace Plex.Engine.Saves
             });
         }
 
+        /// <summary>
+        /// Set the value of a save entry.
+        /// </summary>
+        /// <typeparam name="T">The type of value to be set</typeparam>
+        /// <param name="key">The key of the entry to be set</param>
+        /// <param name="value">The new value for the entry</param>
         public void SetValue<T>(string key, T value)
         {
             Exception error = null;

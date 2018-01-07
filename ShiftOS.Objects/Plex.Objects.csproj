@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatMessage.cs" />
-    <Compile Include="CommandParser.cs" />
     <Compile Include="CommandQuery.cs" />
     <Compile Include="FFI\DotNet.cs" />
     <Compile Include="FFI\IFFI.cs" />
@@ -68,11 +67,8 @@
     <Compile Include="Pty\TerminalConstants.cs" />
     <Compile Include="Pty\TerminalOptions.cs" />
     <Compile Include="Pty\ThreadSafeDoohicky.cs" />
-    <Compile Include="Rank.cs" />
-    <Compile Include="RankManager.cs" />
     <Compile Include="ReflectMan.cs" />
     <Compile Include="Save.cs" />
-    <Compile Include="ServerDetails.cs" />
     <Compile Include="ServerEnums.cs" />
     <Compile Include="ShiftFS.cs" />
     <Compile Include="ShiftoriumUpgrade.cs" />

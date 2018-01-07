@@ -13,12 +13,14 @@ namespace Peacenet.Applications
     /// </summary>
     public class SystemInitTerminal : Terminal
     {
+        /// <inheritdoc/>
         public SystemInitTerminal(WindowSystem _winsys) : base(_winsys)
         {
             SetWindowStyle(WindowStyle.NoBorder);
         }
 
-        protected override string _shell
+        /// <inheritdoc/>
+        protected override string Shell
         {
             get
             {
@@ -26,6 +28,7 @@ namespace Peacenet.Applications
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             Width = Manager.ScreenWidth;

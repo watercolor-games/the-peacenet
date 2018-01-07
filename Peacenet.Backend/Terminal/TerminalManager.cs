@@ -158,8 +158,12 @@ namespace Peacenet.Backend
         }
     }
 
+    /// <summary>
+    /// Handler for retrieving terminal command lists
+    /// </summary>
     public class TerminalHelpRetriever : IMessageHandler
     {
+        /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
             get
@@ -168,6 +172,7 @@ namespace Peacenet.Backend
             }
         }
 
+        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
             var trmmgr = backend.GetBackendComponent<TerminalManager>();

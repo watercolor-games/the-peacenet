@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A control capable of displaying its children in separate clickable tabs.
+    /// </summary>
     public class TabPanel : Control
     {
         private int _selectedPage = -1;
@@ -19,6 +22,9 @@ namespace Plex.Engine.GUI
 
         private List<TabPage> _pages = new List<TabPage>();
 
+        /// <summary>
+        /// Retrieves all the pages of this tab panel.
+        /// </summary>
         public TabPage[] Pages
         {
             get
@@ -27,6 +33,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         public override void AddChild(Control child)
         {
             bool makeActive = Pages.Length == 0;
@@ -66,6 +73,7 @@ namespace Plex.Engine.GUI
             _needsLayout = true;
         }
 
+        /// <inheritdoc/>
         public override void RemoveChild(Control child)
         {
             if (!(child is TabPage))
@@ -91,6 +99,7 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (_needsLayout)
@@ -133,10 +142,16 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// A <see cref="Panel"/> suitable for use in a <see cref="TabPanel"/> control.  
+    /// </summary>
     public class TabPage : Panel
     {
         private TabButton _tabButton = new TabButton();
         
+        /// <summary>
+        /// Retrieves the associated <see cref="TabButton"/> for this page 
+        /// </summary>
         public TabButton Button
         {
             get
@@ -145,6 +160,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the name of this tab.
+        /// </summary>
         public string Name
         {
             get
@@ -157,6 +175,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the icon of this tab.
+        /// </summary>
         public Texture2D Image
         {
             get
@@ -173,6 +194,9 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether this tab is active.
+        /// </summary>
         public bool Active
         {
             get
@@ -185,9 +209,18 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Occurs when the tab is activated.
+        /// </summary>
         public event EventHandler Activated;
+        /// <summary>
+        /// Occurs when the tab is deactivated.
+        /// </summary>
         public event EventHandler Deactivated;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="TabPage"/> control. 
+        /// </summary>
         public TabPage()
         {
             AutoSize = true;
@@ -202,10 +235,16 @@ namespace Plex.Engine.GUI
         }
     }
 
+    /// <summary>
+    /// A special <see cref="Button"/> useful for the tabs of a <see cref="TabPanel"/>.  
+    /// </summary>
     public sealed class TabButton : Button
     {
         private bool _active = false;
 
+        /// <summary>
+        /// Gets or sets whether the tab button is active or not
+        /// </summary>
         public bool Active
         {
             get
@@ -226,10 +265,19 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Occurs when the tab button is activated.
+        /// </summary>
         public event EventHandler Activated;
 
+        /// <summary>
+        /// Occurs when the tab button is deactivated.
+        /// </summary>
         public event EventHandler Deactivated;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="TabButton"/> control. 
+        /// </summary>
         public TabButton() : base()
         {
             Click += (o, a) =>
@@ -238,6 +286,7 @@ namespace Plex.Engine.GUI
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             Themes.UIButtonState state = Themes.UIButtonState.Idle;

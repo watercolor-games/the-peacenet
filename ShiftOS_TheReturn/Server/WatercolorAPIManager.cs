@@ -17,6 +17,9 @@ using System.Threading;
 
 namespace Plex.Engine.Server
 {
+    /// <summary>
+    /// Provides access to the Watercolor Games Community API.
+    /// </summary>
     public class WatercolorAPIManager : IEngineComponent, IDisposable
     {
 
@@ -35,6 +38,7 @@ namespace Plex.Engine.Server
 
         private Thread _wgThread = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             _apiKey = _config.GetValue("wgApiKey", _apiKey);
@@ -55,6 +59,7 @@ namespace Plex.Engine.Server
             _wgThread.Start();
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             _wgThread.Abort();
@@ -156,6 +161,9 @@ namespace Plex.Engine.Server
             catch { }
         }
 
+        /// <summary>
+        /// Retrieve the API key given to the client by the server for a temporary session.
+        /// </summary>
         public string Token
         {
             get
@@ -164,6 +172,9 @@ namespace Plex.Engine.Server
             }
         }
 
+        /// <summary>
+        /// Retrieve the currently logged-in user.
+        /// </summary>
         public WatercolorUser User
         {
             get
@@ -172,6 +183,9 @@ namespace Plex.Engine.Server
             }
         }
 
+        /// <summary>
+        /// Determine whether the client is logged in to the API as a valid user.
+        /// </summary>
         public bool LoggedIn
         {
             get
@@ -180,14 +194,10 @@ namespace Plex.Engine.Server
             }
         }
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
 
+        /// <summary>
+        /// Log out of the API if you are logged in as a user.
+        /// </summary>
         public void Logout()
         {
             _user = null;
@@ -196,6 +206,15 @@ namespace Plex.Engine.Server
             _config.SaveToDisk();
         }
 
+        /// <summary>
+        /// Create a new account on the Watercolor community.
+        /// </summary>
+        /// <param name="username">The username for the account.</param>
+        /// <param name="password">The password for the account.</param>
+        /// <param name="email">The email for the account.</param>
+        /// <param name="onComplete">A callback to be run when the account has been created.</param>
+        /// <param name="onError">A callback to be run when an error has occurred.</param>
+        /// <returns>A <see cref="Task"/> you can use to await the operation.</returns>
         public async Task Register(string username, string password, string email, Action onComplete, Action<string> onError)
         {
             try
@@ -228,6 +247,14 @@ namespace Plex.Engine.Server
 
         }
 
+        /// <summary>
+        /// Log in to the Watercolor API.
+        /// </summary>
+        /// <param name="username">Misnomer. The email address of the account to log in as.</param>
+        /// <param name="password">The password of the account.</param>
+        /// <param name="onComplete">A callback to be run when the login is successful.</param>
+        /// <param name="onError">A callback to be run when an error has occurred.</param>
+        /// <returns>A <see cref="Task"/> you can use to await the method.</returns>
         public async Task Login(string username, string password, Action onComplete, Action<string> onError)
         {
             try
@@ -266,10 +293,6 @@ namespace Plex.Engine.Server
             {
                 onError?.Invoke(ex.Message);
             }
-        }
-
-        public void Unload()
-        {
         }
     }
 }

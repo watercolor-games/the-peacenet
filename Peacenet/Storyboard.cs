@@ -104,6 +104,7 @@ namespace Peacenet
         [Dependency]
         private InfoboxManager _infobox = null;
 
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Storyboard is looking for missions...");

@@ -7,10 +7,16 @@ using Microsoft.Xna.Framework;
 
 namespace Plex.Engine.GUI
 {
+    /// <summary>
+    /// A <see cref="ProgressBar"/> whose progress value can be modified using the mouse. This is useful for allowing the player to adjust percentage values. 
+    /// </summary>
     public class SliderBar : ProgressBar
     {
         private bool _isMouseDown = false;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="SliderBar"/> class. 
+        /// </summary>
         public SliderBar()
         {
             MouseLeftDown += (o, a) =>
@@ -23,6 +29,7 @@ namespace Plex.Engine.GUI
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (!ContainsMouse)

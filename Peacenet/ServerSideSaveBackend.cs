@@ -11,11 +11,15 @@ using Newtonsoft.Json;
 
 namespace Peacenet
 {
+    /// <summary>
+    /// Provides an implementation of <see cref="ISaveBackend"/> capable of interacting with a Peacenet server's save files. 
+    /// </summary>
     public class ServerSideSaveBackend : ISaveBackend
     {
         [Dependency]
         private AsyncServerManager _server = null;
 
+        /// <inheritdoc/>
         public T GetValue<T>(string key, T defaultValue)
         {
             if (_server.Connected == false)
@@ -62,6 +66,7 @@ namespace Peacenet
             return (T)result;
         }
 
+        /// <inheritdoc/>
         public void SetValue<T>(string key, T value)
         {
             if (_server.Connected == false)

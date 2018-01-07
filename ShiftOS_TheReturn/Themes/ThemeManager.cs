@@ -11,13 +11,17 @@ using Plex.Objects;
 
 namespace Plex.Engine.Themes
 {
-    public class ThemeManager : IEngineComponent
+    /// <summary>
+    /// Provides simple user interface theming.
+    /// </summary>
+    public class ThemeManager : IEngineComponent, IDisposable
     {
 
         [Dependency]
         private Plexgate _plexgate = null;
 
         private Theme _theme = null;
+        /// <inheritdoc/>
         public void Initiate()
         {
             Logger.Log("Searching for a Plexgate theme object...", LogType.Info, "themer");
@@ -52,6 +56,9 @@ namespace Plex.Engine.Themes
             }
         }
 
+        /// <summary>
+        /// Retrieves the currently loaded theme.
+        /// </summary>
         public Theme Theme
         {
             get
@@ -60,27 +67,8 @@ namespace Plex.Engine.Themes
             }
         }
 
-        public int DrawIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
-        public void OnFrameDraw(GameTime time, GraphicsContext ctx)
-        {
-        }
-
-        public void OnGameUpdate(GameTime time)
-        {
-        }
-
-        public void OnKeyboardEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void Unload()
+        /// <inheritdoc/>
+        public void Dispose()
         {
             _theme?.UnloadThemeData();
         }

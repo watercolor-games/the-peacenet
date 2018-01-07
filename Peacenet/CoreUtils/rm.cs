@@ -20,6 +20,7 @@ namespace Peacenet.CoreUtils
         [Dependency]
         private FSManager _fs = null;
 
+        /// <inheritdoc/>
         public string Description
         {
             get
@@ -28,6 +29,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get
@@ -36,6 +38,7 @@ namespace Peacenet.CoreUtils
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Usages
         {
             get
@@ -92,6 +95,7 @@ namespace Peacenet.CoreUtils
             return true;
         }
 
+        /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             string path = arguments["<path>"].ToString();

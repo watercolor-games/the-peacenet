@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.TextRenderers
 {
-
+    /// <summary>
+    /// Describes a way in which text is wrapped as it is rendered or measured.
+    /// </summary>
     public enum WrapMode
     {
         /// <summary>

@@ -39,6 +39,7 @@ namespace Peacenet.Applications
         [Dependency]
         private InfoboxManager _infobox = null;
 
+        /// <inheritdoc/>
         public WGLogin(WindowSystem _winsys) : base(_winsys)
         {
             Title = "Watercolor Games - Login";
@@ -124,6 +125,7 @@ namespace Peacenet.Applications
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             int baseWidth = 500;

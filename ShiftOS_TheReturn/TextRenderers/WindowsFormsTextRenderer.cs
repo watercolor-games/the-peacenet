@@ -17,6 +17,7 @@ namespace Plex.Engine.TextRenderers
     /// </summary>
     public class WindowsFormsTextRenderer : ATextRenderer
     {
+        /// <inheritdoc/>
         public override Texture2D DrawText(GraphicsContext gfx, string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             var measure = MeasureText(text, font, maxwidth, alignment, wrapMode);
@@ -47,9 +48,9 @@ namespace Plex.Engine.TextRenderers
             }
         }
 
-        public readonly TextFormatFlags baseFlags = TextFormatFlags.NoPadding | TextFormatFlags.TextBoxControl;
+        private readonly TextFormatFlags baseFlags = TextFormatFlags.NoPadding | TextFormatFlags.TextBoxControl;
 
-        public TextFormatFlags GetFlags(TextAlignment alignment, WrapMode wrapMode)
+        private TextFormatFlags GetFlags(TextAlignment alignment, WrapMode wrapMode)
         {
             TextFormatFlags flags = baseFlags;
             switch (alignment)
@@ -93,6 +94,7 @@ namespace Plex.Engine.TextRenderers
             return flags;
         }
 
+        /// <inheritdoc/>
         public override Vector2 MeasureText(string text, Font font, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
             using (var gfx = Graphics.FromHwnd(IntPtr.Zero))

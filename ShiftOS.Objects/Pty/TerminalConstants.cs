@@ -5,11 +5,11 @@
 namespace Plex.Objects.Pty
 {
     /// <summary>
-    /// Terminal constants
+    /// termios constant values. Please see http://pubs.opengroup.org/onlinepubs/7908799/xsh/termios.h.html for more details.
     /// </summary>
     public static class PtyConstants
     {
-
+#pragma warning disable CS1591
         public const uint VEOF = 0;
         public const uint VEOL = 1;
         public const uint VEOL2 = 2;

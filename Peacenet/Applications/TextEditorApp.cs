@@ -33,6 +33,7 @@ namespace Peacenet.Applications
 
         private string _filetext = null;
 
+        /// <inheritdoc/>
         public TextEditorApp(WindowSystem _winsys) : base(_winsys)
         {
             Title = "New document - Text Editor";
@@ -67,6 +68,7 @@ namespace Peacenet.Applications
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _new.Text = "New";
