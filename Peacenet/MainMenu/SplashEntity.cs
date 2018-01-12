@@ -18,6 +18,7 @@ using Peacenet.Applications;
 using Plex.Engine.Saves;
 using Plex.Engine.Server;
 using Plex.Engine.Cutscene;
+using Peacenet.RichPresence;
 
 namespace Peacenet.MainMenu
 {
@@ -347,6 +348,9 @@ namespace Peacenet.MainMenu
 
         }
 
+        [Dependency]
+        private DiscordRPCModule _discord = null;
+
         /// <inheritdoc/>
         public void OnMouseUpdate(MouseState mouse)
         {
@@ -418,6 +422,8 @@ namespace Peacenet.MainMenu
                     if (_progressFGPos >= 1)
                     {
                         animState++;
+                        _discord.GameState = "In Main Menu";
+                        _discord.GameDetails = "Welcome to The Peacenet.";
                     }
                     break;
                 case 8: //End Enter wait, start Peacenet splash -> Menu transition.
@@ -457,6 +463,7 @@ namespace Peacenet.MainMenu
                     _username.Visible = true;
                     _wgButton.Visible = true;
                     _exitButton.Visible = true;
+                    _discord.GameDetails = "Selecting game mode";
                     animState++;
                     break;
                 case 14: //End Menu animation.

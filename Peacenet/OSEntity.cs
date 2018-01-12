@@ -15,6 +15,7 @@ using floaty = System.Single;
 using Plex.Engine.GUI;
 using doublefloaty = System.Double;
 using Microsoft.Xna.Framework.Content;
+using Peacenet.RichPresence;
 
 namespace Peacenet
 {
@@ -44,7 +45,10 @@ namespace Peacenet
 
         [Dependency]
         private UIManager _ui = null;
-        
+
+        [Dependency]
+        private DiscordRPCModule _discord = null;
+
         [Dependency]
         private WindowSystem _winmgr = null;
 
@@ -129,6 +133,8 @@ namespace Peacenet
                 case 0:
                     _init = new Applications.SystemInitTerminal(_winmgr);
                     _init.Show();
+                    _discord.GameState = "Peacegate OS version 1.4";
+                    _discord.GameDetails = "Starting kernel...";
                     _osIntroState++;
                     break;
 
@@ -142,6 +148,9 @@ namespace Peacenet
                     {
                         _peacegateRide = 0;
                         _osIntroState++;
+                        _discord.GameState = "Peacegate OS version 1.4";
+                        _discord.GameDetails = "System initializing.";
+
                     }
                     break;
                 case 3:

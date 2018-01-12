@@ -11,6 +11,7 @@ using Plex.Engine.Filesystem;
 using Plex.Engine.Server;
 using Plex.Engine.Saves;
 using WatercolorGames.CommandLine;
+using Peacenet.RichPresence;
 
 namespace Peacenet
 {
@@ -122,6 +123,9 @@ namespace Peacenet
         [Dependency]
         private TerminalManager _terminal = null;
 
+        [Dependency]
+        private DiscordRPCModule _discord = null;
+
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
@@ -136,7 +140,7 @@ namespace Peacenet
             {
                 hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", hasDoneTutorial);
             }
-            console.SlowWrite("Peacegate Kernel v1.0 Evaluation Copy");
+            console.SlowWrite("Peacegate Kernel v1.4");
             Thread.Sleep(60);
             console.WriteLine("");
             console.SlowWrite("-------------------------------------");
@@ -155,6 +159,8 @@ namespace Peacenet
             console.WorkingDirectory = "/home";
             if (!hasDoneTutorial)
             {
+                _discord.GameState = "Peacegate OS 1.4: IN MISSION";
+                _discord.GameDetails = "Prologue - Command-line Tutorial";
                 var interpreter = _plexgate.New<TutorialBash>();
                 interpreter.ShowHostInfo = false;
                 interpreter.AllowCommands = false;

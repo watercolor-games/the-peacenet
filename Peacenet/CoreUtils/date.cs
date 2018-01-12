@@ -85,4 +85,21 @@ namespace Peacenet.CoreUtils
             console.WriteLine(DateTime.Now.ToLongTimeString());
         }
     }
+
+    /// <summary>
+    /// Contains extension methods for converting DateTime objects to other time formats
+    /// </summary>
+    public static class DateTimeExtensions
+    {
+        /// <summary>
+        /// Converts the <see cref="DateTime"/> object to a <see cref="Int64"/> representing the equivalent UNIX epoch timestamp.  
+        /// </summary>
+        /// <param name="datetime">The <see cref="DateTime"/> object to convert</param>
+        /// <returns>The Epoch time represented by the specified DateTime object.</returns>
+        public static long Epoch(this DateTime datetime)
+        {
+            var epoch = (long)(datetime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            return epoch;
+        }
+    }
 }

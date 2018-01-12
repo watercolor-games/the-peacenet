@@ -243,5 +243,18 @@ namespace Plex.Engine.GUI
             }
             return nstr;
         }
+
+        /// <summary>
+        /// Truncate a string to fit under a certain length.
+        /// </summary>
+        /// <param name="value">The input string to truncate</param>
+        /// <param name="maxLength">The allowed length for the string</param>
+        /// <returns>The truncated string</returns>
+        public static string Truncate(this string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+            return value.Substring(0, Math.Min(value.Length, maxLength));
+        }
     }
 }
