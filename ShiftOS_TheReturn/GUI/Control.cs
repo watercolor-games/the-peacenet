@@ -787,7 +787,7 @@ namespace Plex.Engine.GUI
             }
             if (makeBack)
             {
-                _rendertarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                _rendertarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
             }
 
             if (_needsRerender)
@@ -797,7 +797,7 @@ namespace Plex.Engine.GUI
                     if (_resized)
                     {
                         _userfacingtarget?.Dispose();
-                        _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                        _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
                         _resized = false;
                     }
                     gfx.Device.SetRenderTarget(_userfacingtarget);

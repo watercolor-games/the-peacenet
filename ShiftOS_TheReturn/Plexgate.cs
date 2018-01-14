@@ -191,7 +191,7 @@ namespace Plex.Engine
 
             IsFixedTimeStep = true;
             graphicsDevice.SynchronizeWithVerticalRetrace = true;
-            graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
+            
         }
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -233,6 +233,12 @@ namespace Plex.Engine
         /// </summary>
         protected override void Initialize()
         {
+            GraphicsAdapter.UseDriverType = GraphicsAdapter.DriverType.Hardware;
+            //MSAA (Multi-sample Anti Aliasing as requested by lempamo)
+            graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
+            graphicsDevice.PreferMultiSampling = true;
+            GraphicsDevice.PresentationParameters.MultiSampleCount = 8; //8x MSAA, should be a configurable thing
+            graphicsDevice.ApplyChanges();
 
             AppDomain.CurrentDomain.UnhandledException += (o, a) =>
             {
@@ -484,7 +490,7 @@ namespace Plex.Engine
         {
             if (GameRenderTarget == null)
                 //Setup the game's rendertarget so it matches the desired resolution.
-                GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+                GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
             if (_ctx == null)
                 _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
 
@@ -555,9 +561,13 @@ namespace Plex.Engine
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
+            var rstate = new RasterizerState
+            {
+                MultiSampleAntiAlias = true
+            };
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
+                            rstate);
             spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, GameRenderTarget.Width, GameRenderTarget.Height), Color.White);
             spriteBatch.End();
         }

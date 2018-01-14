@@ -303,7 +303,7 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <summary>
         /// Retrieves a new <see cref="RasterizerState"/> preferred to be used by the graphics context. 
         /// </summary>
-        public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true };
+        public readonly RasterizerState RasterizerState = new RasterizerState { ScissorTestEnable = true, MultiSampleAntiAlias = true };
 
         /// <summary>
         /// Draw a rectangle with the specified texture, tint and <see cref="System.Windows.Forms.ImageLayout"/> to the canvas.

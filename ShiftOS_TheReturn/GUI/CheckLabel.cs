@@ -72,5 +72,9 @@ namespace Plex.Engine.GUI
             _check.Y = 2;
             _label.Y = (Height - _label.Height) / 2;
         }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+        }
     }
 }
