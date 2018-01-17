@@ -362,8 +362,8 @@ namespace Plex.Engine.GUI
         private WindowStyle _windowStyle = WindowStyle.Default;
         private Window _child = null;
 
-        private const int _borderWidth = 2;
-        private const int _titleHeight = 30;
+        private int _borderWidth { get { return Theme.WindowBorderWidth; } }
+        private int _titleHeight { get { return Theme.WindowTitleHeight; } }
 
         private Hitbox _titleHitbox = null;
         private Hitbox _closeHitbox = null;
@@ -484,31 +484,9 @@ namespace Plex.Engine.GUI
                 diff_y = 0;
             };
 
-            switch (_windowStyle)
-            {
-                case WindowStyle.NoBorder:
-                    _child.X = 0;
-                    _child.Y = 0;
-                    Width = _child.Width;
-                    Height = _child.Height;
-                    break;
-                case WindowStyle.Default:
-                    _child.X = _borderWidth;
-                    _child.Y = _titleHeight;
-                    Width = _child.X + _child.Width + _borderWidth;
-                    Height = _child.Y + _child.Height + _borderWidth;
-                    break;
-                case WindowStyle.DialogNoDrag:
-                case WindowStyle.Dialog:
-                    _child.X = 0;
-                    _child.Y = _titleHeight;
-                    Width = _child.Width;
-                    Height = _child.Y + _child.Height;
-                    break;
-            }
-            X = (winsys.Width - Width) / 2;
-            Y = (winsys.Height - Height) / 2;
-            _child.WidthChanged += (o, a) =>
+            X = (winsys.Width - _child.Width) / 2;
+            Y = (winsys.Height - _child.Height) / 2;
+            _child.WidthChanged += (o, a) => 
             {
                 _needsLayout = true;
             };
@@ -541,18 +519,18 @@ namespace Plex.Engine.GUI
                 switch (_dragAnimState)
                 {
                     case 0:
-                        float opacity = Opacity;
+                        float opacity = this._child.Opacity;
                         opacity = MathHelper.Clamp(opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0.75f, 1);
-                        Opacity = opacity;
+                        this._child.Opacity = opacity;
                         if (opacity >= 1)
                         {
                             _dragAnimState++;
                         }
                         break;
                     case 2:
-                        float opacity2 = Opacity;
+                        float opacity2 = this._child.Opacity;
                         opacity2 = MathHelper.Clamp(opacity2 - (float)time.ElapsedGameTime.TotalSeconds * 2, 0.75F, 1);
-                        Opacity = opacity2;
+                        this._child.Opacity = opacity2;
                         if (opacity2 <= 0.75)
                         {
                             _dragAnimState++;
@@ -563,7 +541,7 @@ namespace Plex.Engine.GUI
             }
             else
             {
-                Opacity = 1;
+                this._child.Opacity = 1;
             }
             if (_needsLayout == false)
                 return;

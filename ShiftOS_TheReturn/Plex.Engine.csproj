@@ -184,6 +184,7 @@
     <Compile Include="Interfaces\IEngineComponent.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\ILoadable.cs" />
+    <Compile Include="ItchOAuthClient.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Plexgate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

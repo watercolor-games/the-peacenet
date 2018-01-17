@@ -183,6 +183,18 @@ namespace Plex.Engine.Themes
         /// <param name="maxwidth">The wrap width of the text</param>
         /// <returns>A <see cref="Vector2"/> representing the size in pixels of the text.</returns>
         public abstract Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue);
+
+
+        /// <summary>
+        /// Retrieves the height in pixels of the window title bar.
+        /// </summary>
+        public abstract int WindowTitleHeight { get; }
+        
+
+        /// <summary>
+        /// Retrieves the width in pixels of each window border.
+        /// </summary>
+        public abstract int WindowBorderWidth { get; }
     }
 
     /// <summary>

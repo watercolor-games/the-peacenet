@@ -127,7 +127,7 @@ namespace Peacenet.Backend
             {
                 if (string.IsNullOrWhiteSpace(_wgSession))
                 {
-                    var wr = WebRequest.Create($"https://getshiftos.net/api/sessions/grant");
+                    var wr = WebRequest.Create($"https://watercolorgames.net/api/sessions/grant");
                     wr.Method = "GET";
                     wr.ContentType = "text/plain";
                     using (var req = wr.GetResponse())
@@ -145,7 +145,7 @@ namespace Peacenet.Backend
                 }
                 else
                 {
-                    var wr = WebRequest.Create($"https://getshiftos.net/api/sessions/heyimstillhere");
+                    var wr = WebRequest.Create($"https://watercolorgames.net/api/sessions/heyimstillhere");
                     wr.Method = "GET";
                     wr.ContentType = "text/plain";
                     wr.Headers.Add("Authorization: " + _wgSession);
@@ -272,7 +272,7 @@ namespace Peacenet.Backend
             if (_isMultiplayer == false)
                 return "entity.singleplayeruser";
             string uid = null;
-            var wr = WebRequest.Create("https://getshiftos.net/api/users/getid");
+            var wr = WebRequest.Create("https://watercolorgames.net/api/users/getid");
             wr.ContentType = "text/plain";
             wr.Method = "GET";
             wr.Headers.Add("Authentication: " + token);
@@ -431,7 +431,7 @@ namespace Peacenet.Backend
             }
             if (!string.IsNullOrWhiteSpace(uid))
             {
-                var ur = WebRequest.Create("https://getshiftos.net/api/users/" + uid);
+                var ur = WebRequest.Create("https://watercolorgames.net/api/users/" + uid);
                 ur.Method = "GET";
                 ur.ContentType = "application/json";
                 ur.Headers.Add("Authorization: " + this._wgSession);

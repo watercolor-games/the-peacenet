@@ -27,7 +27,7 @@ namespace Plex.Engine.Server
         private ConfigManager _config = null;
         private string _apiKey = "";
         private string _sessionToken = "";
-        private string _baseUrl = "https://getshiftos.net/api";
+        private string _baseUrl = "http://watercolorgames.net/api";
         private bool _offline = false;
 
 
@@ -42,7 +42,6 @@ namespace Plex.Engine.Server
         public void Initiate()
         {
             _apiKey = _config.GetValue("wgApiKey", _apiKey);
-            _baseUrl = _config.GetValue("wgApiBaseUrl", _baseUrl);
             _wgThread = new Thread(() =>
             {
                 while (true)

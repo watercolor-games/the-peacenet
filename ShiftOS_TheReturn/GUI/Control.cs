@@ -602,9 +602,9 @@ namespace Plex.Engine.GUI
             bool doEvents = !skipEvents;
             foreach(var child in Children.OrderByDescending(z=>Array.IndexOf(Children, z)))
             {
-                bool res = child.PropagateMouseState(state, !doEvents);
+                bool res = child.PropagateMouseState(state, skipEvents);
                 if (doEvents == true && res == true)
-                    doEvents = false;
+                    return true;
             }
             if (doEvents)
             {
@@ -628,6 +628,11 @@ namespace Plex.Engine.GUI
                             {
                                 Click?.Invoke(this, EventArgs.Empty);
                                 _doubleClickCooldown = 250;
+                                if(!Manager.IsFocused(this))
+                                {
+                                    Manager.SetFocus(this);
+                                    Invalidate(true);
+                                }
                             }
                             else
                             {

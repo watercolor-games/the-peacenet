@@ -85,7 +85,7 @@ namespace Peacenet.MainMenu
         private CutsceneManager _cutscene = null;
 
         [Dependency]
-        private WatercolorAPIManager _api = null;
+        private ItchOAuthClient _api = null;
 
         [Dependency]
         private OS _os = null;
@@ -316,9 +316,7 @@ namespace Peacenet.MainMenu
                 }
                 else
                 {
-                    if (_loginScreen.Disposed)
-                        _loginScreen = new WGLogin(_windowManager);
-                    _loginScreen.Show();
+                    _api.Login("17a4b2de3caf06c14a524936d88402c1");
                 }
             };
 
@@ -595,22 +593,10 @@ namespace Peacenet.MainMenu
             _wgButton.X = (_uimanager.ScreenWidth - _wgButton.Width) / 2;
             if (_api.LoggedIn)
             {
-                if (string.IsNullOrWhiteSpace(_api.User.fullname))
-                {
-                    _username.Text = _api.User.username;
-                    _realname.Text = "";
-                }
-                else
-                {
-                    _username.Text = _api.User.fullname;
-                    _realname.Text = _api.User.username;
-                }
                 _wgButton.Text = "Log out";
             }
             else
             {
-                _username.Text = "Not signed in";
-                _realname.Text = "Sign into Watercolor Games to get the most out of The Peacenet. Signing in is required for multiplayer.";
                 _wgButton.Text = "Sign in";
             }
 

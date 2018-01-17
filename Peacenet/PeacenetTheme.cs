@@ -18,6 +18,15 @@ namespace Peacenet
     /// </summary>
     public class PeacenetTheme : Theme
     {
+        //New theme variables
+        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Raspberry;
+
+        //Lime assets
+        private Texture2D bleftlime;
+        private Texture2D closelime;
+        private Texture2D leftlime;
+        private Texture2D _closelime;
+
         //Textures
         private Texture2D _arrowup = null;
         private Texture2D _arrowdown = null;
@@ -59,6 +68,24 @@ namespace Peacenet
         private Texture2D _times = null;
 
         private Color _buttonIdleBG;
+
+        /// <inheritdoc/>
+        public override int WindowBorderWidth
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override int WindowTitleHeight
+        {
+            get
+            {
+                return 24;
+            }
+        }
 
         /// <inheritdoc/>
         public override System.Drawing.Font GetFont(TextFontStyle style)
@@ -213,20 +240,33 @@ namespace Peacenet
         /// <inheritdoc/>
         public override Color GetAccentColor()
         {
-            return _accent;
+            switch(_pnAccent)
+            {
+                case PeacenetAccentColor.Blueberry:
+                    return _accentBlueberry;
+                case PeacenetAccentColor.Orange:
+                    return _accentTangerine;
+                case PeacenetAccentColor.Grape:
+                    return _accentGrape;
+                case PeacenetAccentColor.Raspberry:
+                    return _accentRaspberry;
+                case PeacenetAccentColor.Lime:
+                    return _accentLime;
+            }
+            return _accentLime;
         }
 
         /// <inheritdoc/>
         public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
         {
-            const int _buttonWidth = 24;
+            const int _buttonWidth = 16;
             const int _spacing = 2;
 
             int _closeX = (windowWidth - _spacing) - _buttonWidth;
             int _maximizeX = (_closeX - _spacing) - _buttonWidth;
             int _minimizeX = (_maximizeX - _spacing) - _buttonWidth;
 
-            int _buttonY = (30 - _buttonWidth) / 2;
+            int _buttonY = (WindowTitleHeight - _buttonWidth) / 2;
 
             switch(button)
             {
@@ -248,10 +288,13 @@ namespace Peacenet
             _arrowdown = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-down");
             _arrowleft = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-left");
             _arrowright = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-right");
-            _close = content.Load<Texture2D>("ThemeAssets/WindowBorder/Close");
-            _minimize = content.Load<Texture2D>("ThemeAssets/WindowBorder/Minimize");
-            _maximize = content.Load<Texture2D>("ThemeAssets/WindowBorder/Maximize");
+            _close = content.Load<Texture2D>("ThemeAssets/New/close");
+            _closelime = content.Load<Texture2D>("ThemeAssets/New/closelime");
+            _minimize = content.Load<Texture2D>("ThemeAssets/New/min");
+            _maximize = content.Load<Texture2D>("ThemeAssets/New/max");
             _restore = content.Load<Texture2D>("ThemeAssets/WindowBorder/Restore");
+            leftlime = content.Load<Texture2D>("ThemeAssets/New/leftlime");
+            bar = content.Load<Texture2D>("ThemeAssets/New/bar");
 
             _accent = new Color(64, 128, 255, 255);
 
@@ -279,6 +322,11 @@ namespace Peacenet
             _check = content.Load<Texture2D>("ThemeAssets/CheckBox/check");
             _times = content.Load<Texture2D>("ThemeAssets/CheckBox/times");
 
+            _accentTangerine = new Color(0xF7, 0x94, 0x1B);
+            _accentBlueberry = new Color(0x1B, 0xAA, 0xF7);
+            _accentLime = new Color(0x2C, 0xD3, 0x1D);
+            _accentGrape = new Color(0x94, 0x44, 0xFF);
+            _accentRaspberry = new Color(0xF7, 0x1B, 0x1B);
         }
 
         /// <inheritdoc/>
@@ -300,6 +348,16 @@ namespace Peacenet
             _restore.Dispose();
         }
 
+        private Texture2D bar;
+
+        //accent colors
+        private Color _accentTangerine;
+        private Color _accentRaspberry;
+        private Color _accentGrape;
+        private Color _accentBlueberry;
+        private Color _accentLime;
+
+
         /// <inheritdoc/>
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
@@ -311,7 +369,8 @@ namespace Peacenet
             if (title.Visible)
             {
                 //The background.
-                graphics.DrawRectangle(title.X, title.Y, title.Width, title.Height, accent);
+                graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, leftlime, System.Windows.Forms.ImageLayout.Stretch);
+                graphics.DrawRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
                 //Now the text.
                 var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.None);
                 int _textX = (int)((title.Width - titleTextMeasure.X) / 2);
@@ -322,9 +381,9 @@ namespace Peacenet
                 if (close.Visible)
                 {
                     if(close.ContainsMouse)
-                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close, this._bStateTextHover);
+                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._closelime); //todo: dynamic accent textures
                     else
-                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close, this._bStateTextIdle);
+                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close);
                 }
                 if (minimize.Visible)
                 {
@@ -354,5 +413,32 @@ namespace Peacenet
 
             }
         }
+    }
+
+    /// <summary>
+    /// Represents an accent color within the Peacenet theme.
+    /// </summary>
+    public enum PeacenetAccentColor
+    {
+        /// <summary>
+        /// Represents a lime accent color.
+        /// </summary>
+        Lime,
+        /// <summary>
+        /// represents a blue accent color.
+        /// </summary>
+        Blueberry,
+        /// <summary>
+        /// Represents an orange accent color.
+        /// </summary>
+        Orange,
+        /// <summary>
+        /// Represents a purple accent color.
+        /// </summary>
+        Grape,
+        /// <summary>
+        /// Represents a red accent color.
+        /// </summary>
+        Raspberry
     }
 }
