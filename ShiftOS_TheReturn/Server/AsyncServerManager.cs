@@ -103,7 +103,14 @@ namespace Plex.Engine.Server
         {
             get
             {
-                return (_tcpClient == null) ? false : _tcpClient.Connected;
+                try
+                {
+                    return (_tcpClient == null) ? false : _tcpClient.Connected;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 

@@ -19,13 +19,39 @@ namespace Peacenet
     public class PeacenetTheme : Theme
     {
         //New theme variables
-        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Raspberry;
+        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
 
         //Lime assets
         private Texture2D bleftlime;
-        private Texture2D closelime;
         private Texture2D leftlime;
         private Texture2D _closelime;
+
+        //Tangerine assets
+        private Texture2D blefttangerine;
+        private Texture2D lefttangerine;
+        private Texture2D _closetangerine;
+
+        //Raspberry assets
+        private Texture2D bleftraspberry;
+        private Texture2D leftraspberry;
+        private Texture2D _closeraspberry;
+
+        //Blueberry assets
+        private Texture2D bleftblueberry;
+        private Texture2D leftblueberry;
+        private Texture2D _closeblueberry;
+
+        //Grape assets
+        private Texture2D bleftgrape;
+        private Texture2D leftgrape;
+        private Texture2D _closegrape;
+
+        //Inactive assets
+        private Texture2D bleftinactive;
+        private Texture2D leftinactive;
+        private Texture2D _closeinactive;
+
+
 
         //Textures
         private Texture2D _arrowup = null;
@@ -281,6 +307,43 @@ namespace Peacenet
             return Rectangle.Empty;
         }
 
+        private Texture2D _getLeftAsset()
+        {
+            switch (_pnAccent)
+            {
+                case PeacenetAccentColor.Blueberry:
+                    return leftblueberry;
+                case PeacenetAccentColor.Grape:
+                    return leftgrape;
+                case PeacenetAccentColor.Lime:
+                    return leftlime;
+                case PeacenetAccentColor.Orange:
+                    return lefttangerine;
+                case PeacenetAccentColor.Raspberry:
+                    return leftraspberry;
+            }
+            return bar;
+        }
+
+        private Texture2D _getCloseAsset()
+        {
+            switch (_pnAccent)
+            {
+                case PeacenetAccentColor.Blueberry:
+                    return _closeblueberry;
+                case PeacenetAccentColor.Grape:
+                    return _closegrape;
+                case PeacenetAccentColor.Lime:
+                    return _closelime;
+                case PeacenetAccentColor.Orange:
+                    return _closetangerine;
+                case PeacenetAccentColor.Raspberry:
+                    return _closeraspberry;
+            }
+            return _close;
+        }
+
+
         /// <inheritdoc/>
         public override void LoadThemeData(GraphicsDevice device, ContentManager content)
         {
@@ -295,6 +358,27 @@ namespace Peacenet
             _restore = content.Load<Texture2D>("ThemeAssets/WindowBorder/Restore");
             leftlime = content.Load<Texture2D>("ThemeAssets/New/leftlime");
             bar = content.Load<Texture2D>("ThemeAssets/New/bar");
+
+            _closeraspberry = content.Load<Texture2D>("ThemeAssets/New/closered");
+            bleftraspberry = content.Load<Texture2D>("ThemeAssets/New/bleftred");
+            leftraspberry = content.Load<Texture2D>("ThemeAssets/New/leftred");
+
+            _closeblueberry = content.Load<Texture2D>("ThemeAssets/New/closeblue");
+            bleftblueberry = content.Load<Texture2D>("ThemeAssets/New/bleftblue");
+            leftblueberry = content.Load<Texture2D>("ThemeAssets/New/leftblue");
+
+            _closegrape = content.Load<Texture2D>("ThemeAssets/New/closepurple");
+            bleftgrape = content.Load<Texture2D>("ThemeAssets/New/bleftpurple");
+            leftgrape = content.Load<Texture2D>("ThemeAssets/New/leftpurple");
+
+            _closetangerine = content.Load<Texture2D>("ThemeAssets/New/closeorange");
+            blefttangerine = content.Load<Texture2D>("ThemeAssets/New/bleftorange");
+            lefttangerine = content.Load<Texture2D>("ThemeAssets/New/leftorange");
+
+            _closeinactive = content.Load<Texture2D>("ThemeAssets/New/closeinactive");
+            bleftinactive = content.Load<Texture2D>("ThemeAssets/New/bleftinactive");
+            leftinactive = content.Load<Texture2D>("ThemeAssets/New/leftinactive");
+
 
             _accent = new Color(64, 128, 255, 255);
 
@@ -327,6 +411,7 @@ namespace Peacenet
             _accentLime = new Color(0x2C, 0xD3, 0x1D);
             _accentGrape = new Color(0x94, 0x44, 0xFF);
             _accentRaspberry = new Color(0xF7, 0x1B, 0x1B);
+            _accentInactive = new Color(121, 121, 121);
         }
 
         /// <inheritdoc/>
@@ -356,20 +441,19 @@ namespace Peacenet
         private Color _accentGrape;
         private Color _accentBlueberry;
         private Color _accentLime;
-
+        private Color _accentInactive;
 
         /// <inheritdoc/>
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
             var accent = GetAccentColor();
             if (isFocused == false)
-                accent = accent * 0.5F;
-            graphics.Clear(accent);
+                accent = _accentInactive;
             //First, the titlebar.
             if (title.Visible)
             {
                 //The background.
-                graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, leftlime, System.Windows.Forms.ImageLayout.Stretch);
+                graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
                 graphics.DrawRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
                 //Now the text.
                 var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.None);
@@ -381,7 +465,7 @@ namespace Peacenet
                 if (close.Visible)
                 {
                     if(close.ContainsMouse)
-                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._closelime); //todo: dynamic accent textures
+                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, (isFocused) ? this._getCloseAsset() : _closeinactive); //todo: dynamic accent textures
                     else
                         graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close);
                 }
@@ -406,9 +490,10 @@ namespace Peacenet
             if (leftBorder.Visible)
             {
                 graphics.DrawRectangle(leftBorder.X, leftBorder.Y, leftBorder.Width, leftBorder.Height, accent);
-                graphics.DrawRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, accent);
-                graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, bottomBorder.Height, accent);
-                graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, accent);
+                graphics.DrawRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, bar);
+                graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, _getLeftAsset().Width, bottomBorder.Height, (isFocused) ? _getLeftAsset() : leftinactive);
+                graphics.DrawRectangle(bottomBorder.X+_getLeftAsset().Width, bottomBorder.Y, bottomBorder.Width-_getLeftAsset().Width, bottomBorder.Height, bar);
+                graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, bar);
                 graphics.DrawRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, accent);
 
             }
