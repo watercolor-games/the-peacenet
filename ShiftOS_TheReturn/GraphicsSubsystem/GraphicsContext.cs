@@ -384,13 +384,12 @@ namespace Plex.Engine.GraphicsSubsystem
         /// </summary>
         /// <param name="text">The text to measure</param>
         /// <param name="font">The font to measure with</param>
-        /// <param name="alignment">The alignment of the text</param>
         /// <param name="wrapWidth">The maximum width text can be before it is wrapped</param>
         /// <param name="wrapMode">The wrap mode of the text</param>
         /// <returns>The size of the text in pixels</returns>
-        public static Vector2 MeasureString(string text, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
+        public static Vector2 MeasureString(string text, SpriteFont font, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
-            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, alignment, wrapMode);
+            return Plex.Engine.TextRenderer.MeasureText(text, font, wrapWidth, wrapMode);
 
         }
 
@@ -405,7 +404,7 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="alignment">The alignment of the text</param>
         /// <param name="wrapWidth">The maximum width text can be before it is wrapped.</param>
         /// <param name="wrapMode">The wrap mode of the text</param>
-        public void DrawString(string text, int x, int y, Color color, System.Drawing.Font font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
+        public void DrawString(string text, int x, int y, Color color, SpriteFont font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
             if (color.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT

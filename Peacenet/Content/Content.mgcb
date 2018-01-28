@@ -734,3 +734,38 @@
 /processorParam:TextureFormat=NoChange
 /build:ThemeAssets/New/restore.png
 
+#begin ThemeAssets/Fonts/Titlebar.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Titlebar.spritefont
+
+#begin ThemeAssets/Fonts/Head1.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Head1.spritefont
+
+#begin ThemeAssets/Fonts/Head2.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Head2.spritefont
+
+#begin ThemeAssets/Fonts/Head3.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Head3.spritefont
+
+#begin ThemeAssets/Fonts/System.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/System.spritefont
+

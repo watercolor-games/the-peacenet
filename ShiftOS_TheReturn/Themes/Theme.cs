@@ -166,24 +166,13 @@ namespace Plex.Engine.Themes
         /// </summary>
         /// <param name="style">The font style to use</param>
         /// <returns>A <see cref="System.Drawing.Font"/> representing the name, size and other properties of the font.</returns>
-        public abstract System.Drawing.Font GetFont(TextFontStyle style);
+        public abstract SpriteFont GetFont(TextFontStyle style);
         /// <summary>
         /// Get the color of a font based on the font style.
         /// </summary>
         /// <param name="style">The font style to use</param>
         /// <returns>The <see cref="Color"/> of any text rendered with this font style</returns>
         public abstract Color GetFontColor(TextFontStyle style);
-
-        /// <summary>
-        /// Measure a themed string to get its size in pixels.
-        /// </summary>
-        /// <param name="style">The style of the string</param>
-        /// <param name="text">The text to measure</param>
-        /// <param name="alignment">The alignment of the text</param>
-        /// <param name="maxwidth">The wrap width of the text</param>
-        /// <returns>A <see cref="Vector2"/> representing the size in pixels of the text.</returns>
-        public abstract Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue);
-
 
         /// <summary>
         /// Retrieves the height in pixels of the window title bar.

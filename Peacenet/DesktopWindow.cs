@@ -881,7 +881,7 @@ namespace Peacenet
             _header.MaxWidth = Width / 3;
             _description.MaxWidth = Width / 2;
             _header.Alignment = TextAlignment.Top;
-            _description.Alignment = TextAlignment.Middle;
+            _description.Alignment = TextAlignment.Center;
 
             int combinedHeight = _header.Height + 10 + _description.Height + 5 + _okay.Height;
             _header.X = (Width - _header.Width) / 2;

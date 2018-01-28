@@ -27,7 +27,7 @@ namespace Peacenet
         #region Boot animation
 
         private int _osIntroState = 0;
-        private System.Drawing.Font _bootFont = new System.Drawing.Font("Monda", 60F);
+        private SpriteFont _bootFont = null;
         private floaty _peacegateIconOpacity = 0;
         private doublefloaty _peacegateRide = 0;
         private bool _wgDeskOpen = false;
@@ -100,9 +100,9 @@ namespace Peacenet
 
             int _textY = peacegateY + _peacegate.Height + 25;
             string text = "Welcome to Peacegate.";
-            var measure = TextRenderer.MeasureText(text, _bootFont, int.MaxValue, TextAlignment.TopLeft, Plex.Engine.TextRenderers.WrapMode.None);
+            var measure = TextRenderer.MeasureText(text, _bootFont, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
             int _textX = ((_ui.ScreenWidth - (int)measure.X) / 2);
-            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.TopLeft, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
+            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
 
             ctx.EndDraw();
         }
@@ -181,6 +181,7 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Load(ContentManager content)
         {
+            _bootFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
             _osIntroState = 0;
             _peacegate = content.Load<Texture2D>("Desktop/UIIcons/Peacegate");
         }

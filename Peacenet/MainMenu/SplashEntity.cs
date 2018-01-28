@@ -64,6 +64,9 @@ namespace Peacenet.MainMenu
         private UIManager _uimanager = null;
 
         [Dependency]
+        private ThemeManager _thememgr = null;
+
+        [Dependency]
         private Plexgate _plexgate = null;
 
         [Dependency]
@@ -162,16 +165,16 @@ namespace Peacenet.MainMenu
             ctx.DrawRectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetSlideLeft), _welcome.Width, _welcome.Height, _welcome, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Zoom, false);
 
             //"Press ENTER" prompt
-            var fnt = new System.Drawing.Font("Monda", 15F);
+            var fnt = _thememgr.Theme.GetFont(TextFontStyle.Header1);
             if (_progressFGPos > 0)
             {
                 string _enter = "Press ENTER to continue";
-                var measure = TextRenderer.MeasureText(_enter, fnt, _peacenet.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+                var measure = TextRenderer.MeasureText(_enter, fnt, _peacenet.Width, Plex.Engine.TextRenderers.WrapMode.Words);
 
                 int textX = (int)(_uimanager.ScreenWidth - measure.X) / 2;
                 int textYMin = progressY + (int)(_uimanager.ScreenHeight * 0.1);
 
-                ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, progressY, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Middle, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+                ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, progressY, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Center, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
             }
 
             //Draw menu items.
@@ -546,16 +549,13 @@ namespace Peacenet.MainMenu
             _lbSettings.Y = labelY;
 
             _lbSingleplayer.AutoSize = true;
-            _lbSingleplayer.FontStyle = TextFontStyle.Custom;
-            _lbSingleplayer.CustomFont = _titlefont;
-
+            _lbSingleplayer.FontStyle = TextFontStyle.Header2;
+            
             _lbMultiplayer.AutoSize = true;
-            _lbMultiplayer.FontStyle = TextFontStyle.Custom;
-            _lbMultiplayer.CustomFont = _titlefont;
+            _lbMultiplayer.FontStyle = TextFontStyle.Header2;
 
             _lbSettings.AutoSize = true;
-            _lbSettings.FontStyle = TextFontStyle.Custom;
-            _lbSettings.CustomFont = _titlefont;
+            _lbSettings.FontStyle = TextFontStyle.Header2;
 
             _lbSingleplayer.Text = "Single Player";
             _lbMultiplayer.Text = "Multiplayer";

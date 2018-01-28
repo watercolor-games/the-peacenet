@@ -149,6 +149,9 @@ namespace Plex.Engine.GraphicsSubsystem
                     }
                 }
                 ctx.EndDraw();
+
+                
+
                 if (ShowPerfCounters == false)
                     return;
                 ctx.BeginDraw();
@@ -159,6 +162,9 @@ namespace Plex.Engine.GraphicsSubsystem
                     _debugUpdTimer %= 1;
                 }
                 ctx.Batch.DrawString(_monospace, _debug, Vector2.Zero, Color.White);
+
+
+
                 ctx.EndDraw();
 
             }
@@ -359,19 +365,6 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("Loading text renderer...", LogType.Info, "ui");
-            try
-            {
-                TextRenderer.Init(new NativeTextRenderer());
-                Logger.Log("Using native text renderer.", LogType.Info, "ui");
-                //TextRenderer.Init(new WindowsFormsTextRenderer());
-            }
-            catch
-            {
-                TextRenderer.Init(new WindowsFormsTextRenderer());
-                Logger.Log("Couldn't load native text renderer. Falling back to GDI+.", LogType.Error, "ui");
-
-            }
             _uiLayer = new Layer();
             _container = _plexgate.New<UIContainer>();
             _uiLayer.AddEntity(_container);

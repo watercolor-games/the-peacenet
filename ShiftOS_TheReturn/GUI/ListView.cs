@@ -559,7 +559,7 @@ namespace Plex.Engine.GUI
                         maxWidth -= _picture.Width + 3;
                     _label.AutoSize = true;
                     _label.MaxWidth = maxWidth;
-                    _label.Alignment = TextAlignment.Left;
+                    _label.Alignment = TextAlignment.Left | TextAlignment.Top;
                     _label.Update(time);
                     _picture.X = 2;
                     if (_picture.Texture != null)

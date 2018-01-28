@@ -204,9 +204,7 @@
     </Compile>
     <Compile Include="TerminalCommands\HelpCommand.cs" />
     <Compile Include="TerminalManager.cs" />
-    <Compile Include="TextRenderers\GdiPlusTextRenderer.cs" />
-    <Compile Include="TextRenderers\NativeTextRenderer.cs" />
-    <Compile Include="TextRenderers\WindowsFormsTextRenderer.cs" />
+    <Compile Include="TextRenderers\WrapMode.cs" />
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

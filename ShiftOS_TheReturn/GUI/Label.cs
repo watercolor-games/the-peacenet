@@ -15,11 +15,11 @@ namespace Plex.Engine.GUI
     public class Label : Control
     {
         private bool _autoSize = false;
-        private System.Drawing.Font _font;
+        private SpriteFont _font;
         private Color _color;
         private Themes.TextFontStyle _style = Themes.TextFontStyle.System;
         private string _text = "";
-        private TextAlignment _alignment = TextAlignment.TopLeft;
+        private TextAlignment _alignment = TextAlignment.Top | TextAlignment.Left;
         private bool _remeasure = true;
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Plex.Engine.GUI
         /// <summary>
         /// If the <see cref="FontStyle"/> is <see cref="Themes.TextFontStyle.Custom"/>, this is the font of the text.  
         /// </summary>
-        public System.Drawing.Font CustomFont
+        public SpriteFont CustomFont
         {
             get
             {
@@ -134,7 +134,7 @@ namespace Plex.Engine.GUI
             }
         }
 
-        private System.Drawing.Font getFont()
+        private SpriteFont getFont()
         {
             if (_style == Themes.TextFontStyle.Custom)
                 return _font;
@@ -165,7 +165,7 @@ namespace Plex.Engine.GUI
                 if (_remeasure)
                 {
                     var font = getFont();
-                    var measure = TextRenderer.MeasureText(_text, font, (MaxWidth == 0) ? int.MaxValue : MaxWidth, _alignment, TextRenderers.WrapMode.Words);
+                    var measure = TextRenderer.MeasureText(_text, font, (MaxWidth == 0) ? int.MaxValue : MaxWidth, TextRenderers.WrapMode.Words);
                     Width = (int)measure.X;
                     Height = (int)measure.Y;
                     _remeasure = false;
@@ -180,46 +180,32 @@ namespace Plex.Engine.GUI
         {
             var font = getFont();
             var color = getColor();
-            var measure = TextRenderer.MeasureText(_text, font, Width, _alignment, TextRenderers.WrapMode.Words);
+            var measure = TextRenderer.MeasureText(_text, font, Width, TextRenderers.WrapMode.Words);
 
             int x = 0;
             int y = 0;
-            switch (_alignment)
+
+            if(_alignment.HasFlag( TextAlignment.Center))
             {
-                case TextAlignment.Top:
-                    x = (Width - (int)measure.X) / 2;
-                    break;
-                case TextAlignment.TopRight:
-                    x = (Width - (int)measure.X);
-                    break;
-                case TextAlignment.Left:
-                    x = 0;
-                    y = (Height - (int)measure.Y) / 2;
-                    break;
-                case TextAlignment.Middle:
-                    x = (Width - (int)measure.X)/2;
-                    y = (Height - (int)measure.Y) / 2;
-                    break;
-                case TextAlignment.Right:
-                    x = (Width - (int)measure.X);
-                    y = (Height - (int)measure.Y)/2;
+                x = (Width - (int)measure.X) / 2;
+                y = (Height - (int)measure.Y) / 2;
+            }
 
-                    break;
-                case TextAlignment.BottomLeft:
-                    x = 0;
-                    y = (Height - (int)measure.Y);
-
-                    break;
-                case TextAlignment.Bottom:
-                    x = (Width - (int)measure.X)/2;
-                    y = (Height - (int)measure.Y);
-
-                    break;
-                case TextAlignment.BottomRight:
-                    x = (Width - (int)measure.X);
-                    y = (Height - (int)measure.Y);
-
-                    break;
+            if (_alignment.HasFlag(TextAlignment.Left))
+            {
+                x = 0;
+            }
+            if(_alignment.HasFlag(TextAlignment.Right))
+            {
+                x = Width - (int)measure.X;
+            }
+            if(_alignment.HasFlag(TextAlignment.Top))
+            {
+                y = 0;
+            }
+            if(_alignment.HasFlag(TextAlignment.Bottom))
+            {
+                y = Height - (int)measure.Y;
             }
 
             gfx.DrawString(_text, x, y, color, font, _alignment, (int)measure.X, TextRenderers.WrapMode.Words);

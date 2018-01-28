@@ -39,9 +39,9 @@ namespace Peacenet.Cutscenes
         [Dependency]
         private SplashScreenComponent _splash = null;
 
-        private System.Drawing.Font _mondaBig;
-        private System.Drawing.Font _mondaMedium;
-        private System.Drawing.Font _mondaSmall;
+        private SpriteFont _mondaBig;
+        private SpriteFont _mondaMedium;
+        private SpriteFont _mondaSmall;
         private Color _peace = new Color(64, 128, 255, 255);
         private Color _gray = new Color(191, 191, 191, 255);
         private double _personRide = 0;
@@ -78,9 +78,9 @@ namespace Peacenet.Cutscenes
                 }
             }
 
-            var cMeasure = TextRenderer.MeasureText(c, _mondaBig, (_ui.ScreenWidth / 4), TextAlignment.TopLeft, Plex.Engine.TextRenderers.WrapMode.Words);
-            var pMeasure = TextRenderer.MeasureText(p, _mondaMedium, (_ui.ScreenWidth / 4), TextAlignment.TopLeft, Plex.Engine.TextRenderers.WrapMode.Words);
-            var rMeasure = TextRenderer.MeasureText(r, _mondaSmall, (_ui.ScreenWidth / 4), TextAlignment.TopLeft, Plex.Engine.TextRenderers.WrapMode.Words);
+            var cMeasure = TextRenderer.MeasureText(c, _mondaBig, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
+            var pMeasure = TextRenderer.MeasureText(p, _mondaMedium, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
+            var rMeasure = TextRenderer.MeasureText(r, _mondaSmall, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
 
             var startX = (_ui.ScreenWidth - (_ui.ScreenWidth / 3)) / 2;
             var startY = (_ui.ScreenHeight - (_ui.ScreenHeight / 3)) / 2;
@@ -88,18 +88,18 @@ namespace Peacenet.Cutscenes
             var _titleMinX = 0 - (int)cMeasure.X;
 
             var titleX = (int)MathHelper.Lerp(_titleMinX, startX, _componentSlide);
-            gfx.DrawString(c, titleX, startY, _peace * _componentSlide, _mondaBig, TextAlignment.TopLeft, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(c, titleX, startY, _peace * _componentSlide, _mondaBig, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
             var _personYMax = startY + cMeasure.Y + 25;
             var _personYMin = _personYMax + (_ui.ScreenHeight * 0.1);
 
             var personY = (int)MathHelper.Lerp((float)_personYMin, _personYMax, _personSlide);
-            gfx.DrawString(p, startX, personY, _gray * _personSlide, _mondaMedium, TextAlignment.TopLeft, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(p, startX, personY, _gray * _personSlide, _mondaMedium, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
             var roleYMax = _personYMax + pMeasure.Y + 10;
             var roleYMin = roleYMax + (_ui.ScreenHeight * 0.1);
             var roleY = (int)MathHelper.Lerp((float)roleYMin, roleYMax, _roleSlide);
-            gfx.DrawString(r, startX, roleY, _gray * _roleSlide, _mondaSmall, TextAlignment.TopLeft, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(r, startX, roleY, _gray * _roleSlide, _mondaSmall, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
 
             int pnWidth = _peacenet.Width * 2;
@@ -113,13 +113,13 @@ namespace Peacenet.Cutscenes
             gfx.DrawRectangle(pnX, pnY, pnWidth, pnHeight, _peacenet, Color.White * _peacenetFade);
 
             string thanks = "Thanks for playing.";
-            var thanksMeasure = TextRenderer.MeasureText(thanks, _mondaBig, int.MaxValue, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.Words);
+            var thanksMeasure = TextRenderer.MeasureText(thanks, _mondaBig, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.Words);
 
             int thanksX = (_ui.ScreenWidth - (int)thanksMeasure.X) / 2;
             int thanksYMax = (pnY + pnHeight + 25);
             int thanksYMin = thanksYMax + (int)(_ui.ScreenHeight * 0.1);
             int thanksY = (int)MathHelper.Lerp(thanksYMin, thanksYMax, _thanksFade);
-            gfx.DrawString(thanks, thanksX, thanksY, _gray * _thanksFade, _mondaBig, TextAlignment.Middle, (int)thanksMeasure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(thanks, thanksX, thanksY, _gray * _thanksFade, _mondaBig, TextAlignment.Center, (int)thanksMeasure.X, Plex.Engine.TextRenderers.WrapMode.Words);
 
             gfx.EndDraw();
         }
@@ -132,9 +132,9 @@ namespace Peacenet.Cutscenes
             string creditsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "credits.json");
             string json = File.ReadAllText(creditsPath);
             _creditsFile = JsonConvert.DeserializeObject<CreditsFile>(json);
-            _mondaBig = new System.Drawing.Font("Monda", 24F, System.Drawing.FontStyle.Bold);
-            _mondaMedium = new System.Drawing.Font("Monda", 16F);
-            _mondaSmall = new System.Drawing.Font("Monda", 12F);
+            _mondaBig = Content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
+            _mondaMedium = Content.Load<SpriteFont>("ThemeAssets/Fonts/Head2");
+            _mondaSmall = Content.Load<SpriteFont>("ThemeAssets/Fonts/System");
             _peacenet = Content.Load<Texture2D>("Splash/Peacenet");
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.GUI
 {
@@ -81,7 +82,7 @@ namespace Plex.Engine.GUI
             }
         }
 
-        private System.Drawing.Font _drawFont
+        private SpriteFont _drawFont
         {
             get
             {
@@ -102,7 +103,7 @@ namespace Plex.Engine.GUI
                 TextChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            var hashMeasure = TextRenderer.MeasureText("#", _drawFont, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None);
+            var hashMeasure = TextRenderer.MeasureText("#", _drawFont, int.MaxValue, TextRenderers.WrapMode.None);
             Height = Math.Max((int)hashMeasure.Y + 4, Height);
 
             if (string.IsNullOrEmpty(displayText))
@@ -114,7 +115,7 @@ namespace Plex.Engine.GUI
                 }
             }
             string toCaret = displayText.Substring(0, _index);
-            var measure = TextRenderer.MeasureText(toCaret, _drawFont, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None);
+            var measure = TextRenderer.MeasureText(toCaret, _drawFont, int.MaxValue, TextRenderers.WrapMode.None);
             if (_caretX != (int)measure.X)
             {
                 _caretX = (int)measure.X;
@@ -207,12 +208,12 @@ namespace Plex.Engine.GUI
             {
                 if (!IsFocused)
                 {
-                    gfx.DrawString(_label, 2, 2, Color.Gray, _drawFont, TextAlignment.TopLeft, int.MaxValue, TextRenderers.WrapMode.None);
+                    gfx.DrawString(_label, 2, 2, Color.Gray, _drawFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
                 }
             }
             else
             {
-                gfx.DrawString(_lastText, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.TopLeft, int.MaxValue, TextRenderers.WrapMode.None);
+                gfx.DrawString(_lastText, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
                 
             }
             if (IsFocused)

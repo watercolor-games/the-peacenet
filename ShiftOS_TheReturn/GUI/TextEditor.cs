@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Plex.Engine.GUI
 {
@@ -15,7 +16,7 @@ namespace Plex.Engine.GUI
     /// </summary>
     public class TextEditor : Control
     {
-        private System.Drawing.Font _font = null;
+        private SpriteFont _font = null;
 
         private string _text = "";
         private bool _acceptsReturn = true;
@@ -116,7 +117,7 @@ namespace Plex.Engine.GUI
             }
             if (_needsHeightMeasure)
             {
-                _lineHeight = (int)TextRenderer.MeasureText("#", _font, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None).Y;
+                _lineHeight = (int)TextRenderer.MeasureText("#", _font, int.MaxValue, TextRenderers.WrapMode.None).Y;
                 _needsHeightMeasure = false;
             }
             if(_autoSize)
@@ -147,8 +148,8 @@ namespace Plex.Engine.GUI
                             _charY += _lineHeight;
                             break;
                         default:
-                            var measure = (int)TextRenderer.MeasureText(c.ToString(), _font, int.MaxValue, TextAlignment.TopLeft, TextRenderers.WrapMode.None).X;
-                            gfx.DrawString(c.ToString(), _charX, _charY, Color.White, _font, TextAlignment.TopLeft);
+                            var measure = (int)TextRenderer.MeasureText(c.ToString(), _font, int.MaxValue, TextRenderers.WrapMode.None).X;
+                            gfx.DrawString(c.ToString(), _charX, _charY, Color.White, _font, TextAlignment.Top | TextAlignment.Left);
                             if(_charX + measure >= Width)
                             {
                                 _charX = 0;

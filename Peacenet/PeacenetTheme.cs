@@ -64,7 +64,7 @@ namespace Peacenet
         private Texture2D _maximize = null;
         private Texture2D _restore = null;
 
-        private System.Drawing.Font _titleFont;
+        private SpriteFont _titleFont;
 
         //Button state colors
         private Color _bStateTextIdle;
@@ -84,11 +84,11 @@ namespace Peacenet
         private Color _peace;
         private Color _gray;
 
-        private System.Drawing.Font _head1;
-        private System.Drawing.Font _head2;
-        private System.Drawing.Font _head3;
-        private System.Drawing.Font _mono;
-        private System.Drawing.Font _system;
+        private SpriteFont _head1;
+        private SpriteFont _head2;
+        private SpriteFont _head3;
+        private SpriteFont _mono;
+        private SpriteFont _system;
 
         private Texture2D _check = null;
         private Texture2D _times = null;
@@ -114,7 +114,7 @@ namespace Peacenet
         }
 
         /// <inheritdoc/>
-        public override System.Drawing.Font GetFont(TextFontStyle style)
+        public override SpriteFont GetFont(TextFontStyle style)
         {
             switch (style)
             {
@@ -177,7 +177,6 @@ namespace Peacenet
                     break;
             }
             gfx.DrawRectangle(x, y, width, height, arrow, cstate, System.Windows.Forms.ImageLayout.Zoom);
-
         }
 
         /// <inheritdoc/>
@@ -203,8 +202,7 @@ namespace Peacenet
             {
                 gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
-
-            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, (showImage) ? TextAlignment.Left : TextAlignment.Middle, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, TextAlignment.Top | TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
         }
 
 
@@ -392,13 +390,13 @@ namespace Peacenet
 
             _buttonIdleBG = new Color(90, 90, 90, 255);
 
-            _titleFont = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif.Name, 12F, System.Drawing.FontStyle.Bold);
+            _titleFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Titlebar");
 
-            _head1 = new System.Drawing.Font("Monda", 24F, System.Drawing.FontStyle.Bold);
-            _head2 = new System.Drawing.Font("Monda", 16F, System.Drawing.FontStyle.Bold);
-            _head3 = new System.Drawing.Font("Monda", 12F);
-            _mono = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace.Name, 10F);
-            _system = new System.Drawing.Font("Monda", 10F);
+            _head1 = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
+            _head2 = content.Load < SpriteFont>("ThemeAssets/Fonts/Head2"); ;
+            _head3 = content.Load < SpriteFont>("ThemeAssets/Fonts/Head3");
+            _mono = content.Load < SpriteFont>("Fonts/Monospace");
+            _system = content.Load < SpriteFont>("ThemeAssets/Fonts/System");
 
             _peace = new Color(64, 128, 255,255);
             _gray = new Color(191, 191, 191, 255);
@@ -412,12 +410,6 @@ namespace Peacenet
             _accentGrape = new Color(0x94, 0x44, 0xFF);
             _accentRaspberry = new Color(0xF7, 0x1B, 0x1B);
             _accentInactive = new Color(121, 121, 121);
-        }
-
-        /// <inheritdoc/>
-        public override Vector2 MeasureString(TextFontStyle style, string text, TextAlignment alignment = TextAlignment.TopLeft, int maxwidth = int.MaxValue)
-        {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -456,11 +448,11 @@ namespace Peacenet
                 graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
                 graphics.DrawRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
                 //Now the text.
-                var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, TextAlignment.Middle, Plex.Engine.TextRenderers.WrapMode.None);
-                int _textX = (int)((title.Width - titleTextMeasure.X) / 2);
+                var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, Plex.Engine.TextRenderers.WrapMode.None);
+                int _textX = 50;
                 int _textY = (int)((title.Height - titleTextMeasure.Y) / 2);
 
-                graphics.DrawString(titletext, _textX, _textY, Color.White, _titleFont, TextAlignment.Middle, (int)titleTextMeasure.X, Plex.Engine.TextRenderers.WrapMode.None);
+                graphics.DrawString(titletext, _textX, _textY, Color.White, _titleFont, TextAlignment.Left, (int)titleTextMeasure.X, Plex.Engine.TextRenderers.WrapMode.None);
 
                 if (close.Visible)
                 {

@@ -125,7 +125,7 @@ namespace Plex.Engine.GUI
                     _textureH = 0;
                 }
                 int _minimumHorizontal = 0;
-                TextAlignment _alignment = TextAlignment.Middle;
+                TextAlignment _alignment = TextAlignment.Center;
                 if (_showImage)
                 {
                     _minimumHorizontal += _textureW;
@@ -136,7 +136,7 @@ namespace Plex.Engine.GUI
                 int realMax = MaxWidth == 0 ? int.MaxValue : MaxWidth;
 
                 var font = Theme.GetFont(Themes.TextFontStyle.System);
-                var measure = TextRenderer.MeasureText(_text, font, realMax - _minimumHorizontal, _alignment, TextRenderers.WrapMode.Words);
+                var measure = TextRenderer.MeasureText(_text, font, realMax - _minimumHorizontal, TextRenderers.WrapMode.Words);
 
                 _lW = (int)measure.X;
                 _lH = (int)measure.Y;
