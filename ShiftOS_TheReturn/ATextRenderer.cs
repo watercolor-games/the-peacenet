@@ -20,6 +20,7 @@ namespace Plex.Engine
         {
             if (mode == WrapMode.Words)
             {
+                text = text.Trim();
                 string[] words = text.Split(' ');
                 StringBuilder sb = new StringBuilder();
                 float lineWidth = 0;
@@ -35,14 +36,14 @@ namespace Plex.Engine
                         lineWidth = 0;
                     }
 
-                    if (lineWidth + size.X < maxLineWidth)
+                    if (lineWidth + size.X <= maxLineWidth)
                     {
                         sb.Append(word + " ");
                         lineWidth += size.X + spaceWidth;
                     }
                     else
                     {
-                        if (size.X > maxLineWidth)
+                        if (size.X >= maxLineWidth)
                         {
                             if (sb.ToString() == " ")
                             {
@@ -61,7 +62,7 @@ namespace Plex.Engine
                         }
                     }
                 }
-                return sb.ToString();
+                return sb.ToString().TrimEnd();
             }
             else
             {
@@ -117,7 +118,7 @@ namespace Plex.Engine
         {
             string measured = (wrapMode == WrapMode.None) ? text : WrapText(font, text, maxwidth, wrapMode);
             Vector2 size = font.MeasureString(measured);
-            var bounds = new Rectangle(x, y, (int)size.X, (int)(size.Y));
+            var bounds = new Rectangle(x, y, maxwidth, (int)(size.Y));
             Vector2 pos = bounds.Center.ToVector2();
             Vector2 origin = size * 0.5f;
 
