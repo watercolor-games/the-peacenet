@@ -1,4 +1,8 @@
-﻿using Plex.Engine.Interfaces;
+﻿using Newtonsoft.Json;
+using Plex.Engine;
+using Plex.Engine.Config;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Plex.Engine
+namespace Peacenet
 {
     /// <summary>
     /// Provides an OAuth2 client for itch.io.
@@ -24,29 +28,102 @@ namespace Plex.Engine
         [Dependency]
         private Plexgate _plebgate = null;
 
-        /// <inheritdoc/>
-        public void Initiate()
+        [Dependency]
+        private ConfigManager _config = null;
+
+        [Dependency]
+        private UIManager _ui = null;
+
+        private ItchUser _user = null;
+
+        /// <summary>
+        /// Gets the currently logged-in user.
+        /// </summary>
+        public ItchUser User
         {
-            _callbackSrv = _plebgate.New<ItchOAuthCallbackServer>();
+            get
+            {
+                return _user;
+            }
         }
 
         /// <summary>
-        /// Direct the user to the itch.io OAuth login page.
+        /// Gets the API token of this user.
+        /// </summary>
+        public string Token
+        {
+            get
+            {
+                return _token;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Initiate()
+        {
+            _token = _config.GetValue<string>("itch.apikey", _token);
+            _callbackSrv = _plebgate.New<ItchOAuthCallbackServer>();
+            fetchUserData();
+        }
+
+        /// <summary>
+        /// Direct the user to the itch.io OAuth login page. This function runs asynchronously and cannot be awaited.
         /// </summary>
         /// <param name="clientId">The itch.io Client ID to use</param>
-        public void Login(string clientId)
+        /// <param name="onWaitBegin">A function that is called just before the client waits for itch.io to respond. Use this to show any UI that you need to.</param>
+        /// <param name="onComplete">A function to be called when the login is complete.</param>
+        public void Login(string clientId, Action onWaitBegin, Action onComplete)
         {
             if (LoggedIn)
                 return;
             Logger.Log("Starting internal server for callback...");
-            Task.Run(() =>
-            {
-                _callbackSrv.listen();
-            });
             Logger.Log("Starting oauth2 request...");
             string uri = Uri.EscapeDataString("http://localhost:3254/itch_callback");
             Process.Start("https://itch.io/user/oauth?client_id=17a4b2de3caf06c14a524936d88402c1&scope=profile%3Ame&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3254%2Fitch_callback");
-            (_callbackSrv as ItchOAuthCallbackServer).WaitForToken();
+            Task.Run(() =>
+            {
+                _ui.HideUI();
+                onWaitBegin?.Invoke();
+                string token = (_callbackSrv as ItchOAuthCallbackServer).WaitForToken();
+                _token = token;
+                _config.SetValue("itch.apikey", _token);
+                _config.SaveToDisk(); fetchUserData();
+                onComplete?.Invoke();
+                _ui.ShowUI();
+            });
+        }
+
+        private void fetchUserData()
+        {
+            if (string.IsNullOrWhiteSpace(_token))
+                return;
+            var wr = WebRequest.Create("https://itch.io/api/1/key/me");
+            wr.Headers.Add("Authorization: Bearer " + _token);
+            using (var response = wr.GetResponse())
+            {
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        string json = reader.ReadToEnd();
+                        var responseObject = JsonConvert.DeserializeObject<ItchResponse>(json);
+                        if(responseObject.errors != null)
+                        {
+                            foreach(var error in responseObject.errors)
+                            {
+                                Logger.Log(error, LogType.Error, "itchio");
+                            }
+                            _token = null;
+                            _user = null;
+                            _config.SetValue("itch.apikey", null);
+                            _config.SaveToDisk();
+                            return;
+                        }
+                        _user = responseObject.user;
+                    }
+                }
+            }
+            
         }
 
         /// <summary>
@@ -56,7 +133,7 @@ namespace Plex.Engine
         {
             get
             {
-                return !string.IsNullOrWhiteSpace(_token);
+                return !string.IsNullOrWhiteSpace(_token) && (_user != null);
             }
         }
 
@@ -69,6 +146,64 @@ namespace Plex.Engine
             _token = null;
         }
 
+    }
+
+    internal class ItchResponse
+    {
+        /// <summary>
+        /// Gets or sets any errors in the response
+        /// </summary>
+        public string[] errors { get; set; }
+        /// <summary>
+        /// Gets or sets the user's profile
+        /// </summary>
+        public ItchUser user { get; set; }
+    }
+
+    /// <summary>
+    /// Represents an itch.io public profile.
+    /// </summary>
+    public class ItchUser
+    {
+        /// <summary>
+        /// Gets or sets the ID of the user
+        /// </summary>
+        public int id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's username.
+        /// </summary>
+        public string username { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether this user plays games.
+        /// </summary>
+        public bool gamer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's display name.
+        /// </summary>
+        public string display_name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cover URL of the user.
+        /// </summary>
+        public string cover_url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the profile URL of the user.
+        /// </summary>
+        public string url { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether this is a press user...? What the fuck is a press user?
+        /// </summary>
+        public bool press_user { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether this user develops games.
+        /// </summary>
+        public bool developer { get; set; }
     }
 
     /// <summary>
@@ -411,24 +546,36 @@ namespace Plex.Engine
 
     <body>
         <script>
-            var hash = window.location.hash.match('(#access_token=)(.+)')
+            var hash = window.location.hash;
             $.ajax(""http://localhost:3254/itch_callback"", {
                     type: ""POST"",
                     contentType: ""text/plain"",
                     data: hash,
                     success: function (a,b,c){
-                        window.close();
+                        close();
                     }
                 });
         </script>
+        <h1>Sign-in complete</h1>
+
+        <p>This browser window should close automatically once Peacenet has successfully logged you in to itch.io.</p>
+
+        <p>If the window doesn't close and the game IS logged in, you can safely close the window on your own.</p>
+
+        <p><strong>DO NOT refresh this page.</strong> By the time the game has received your itch.io API key, the webserver responsible for showing this page has been shut down.</p>
     </body>
 </html>";
 
 
         public string WaitForToken()
         {
+            Task.Run(() =>
+            {
+                listen();
+            });
             _receivedToken.Reset();
             _receivedToken.WaitOne();
+
             return _token;
         }
 
@@ -454,8 +601,10 @@ namespace Plex.Engine
             if(p.http_url == "/itch_callback")
             {
                 string hash = inputData.ReadToEnd();
-                _token = hash.Replace("access_token=", "");
+                _token = hash.Replace("#access_token=", "");
                 p.writeSuccess();
+                _receivedToken.Set();
+                stop();
                 return;
             }
             p.writeFailure();

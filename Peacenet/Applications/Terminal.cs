@@ -12,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plex.Objects;
-using Plex.Engine.Server;
 using Plex.Engine.Filesystem;
 using WatercolorGames.CommandLine;
 using Peacenet.CoreUtils;
@@ -128,7 +127,7 @@ namespace Peacenet.Applications
         private TerminalManager _terminal = null;
 
         [Dependency]
-        private WatercolorAPIManager _Api = null;
+        private ItchOAuthClient _Api = null;
 
         /// <inheritdoc/>
         public string Description

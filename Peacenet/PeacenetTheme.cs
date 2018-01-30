@@ -19,7 +19,7 @@ namespace Peacenet
     public class PeacenetTheme : Theme
     {
         //New theme variables
-        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
+        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Raspberry;
 
         //Lime assets
         private Texture2D bleftlime;

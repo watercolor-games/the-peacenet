@@ -65,8 +65,8 @@ namespace Plex.Engine.GUI
             _check.Height = 16;
             _label.AutoSize = true;
             _label.Alignment = TextAlignment.Left;
-            _label.MaxWidth = (MaxWidth - _check.X + _check.Width + 3);
             _label.X = _check.X + _check.Width + 3;
+            _label.MaxWidth = (MaxWidth - (_label.X));
             Width = _label.X + _label.Width + 2;
             Height = Math.Max(_label.Height, _check.Height) + 2;
             _check.Y = 2;

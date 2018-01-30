@@ -27,6 +27,7 @@ namespace Peacenet
 
             using (var game = new Plexgate())
                 game.Run();
+            Environment.Exit(0);
         }
     }
 }

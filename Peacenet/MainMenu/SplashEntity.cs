@@ -16,9 +16,9 @@ using floaty = System.Single;
 using Plex.Engine.Themes;
 using Peacenet.Applications;
 using Plex.Engine.Saves;
-using Plex.Engine.Server;
 using Plex.Engine.Cutscene;
 using Peacenet.RichPresence;
+using Peacenet.Server;
 
 namespace Peacenet.MainMenu
 {
@@ -124,8 +124,7 @@ namespace Peacenet.MainMenu
         #region Window entities
 
         private GameSettings _settingsApp = null;
-        private WGLogin _loginScreen = null;
-
+        
         #endregion
 
         /// <inheritdoc/>
@@ -141,6 +140,8 @@ namespace Peacenet.MainMenu
             _hbMultiplayer = null;
             _hbSettings = null;
         }
+
+        private bool _isWaitingForSignin = false;
 
         /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext ctx)
@@ -302,7 +303,6 @@ namespace Peacenet.MainMenu
                 _cutscene.Play("credits_00");
             };
 
-            _loginScreen = new WGLogin(_windowManager);
 
             _wgButton.Click += (o, a) =>
             {
@@ -319,7 +319,13 @@ namespace Peacenet.MainMenu
                 }
                 else
                 {
-                    _api.Login("17a4b2de3caf06c14a524936d88402c1");
+                    _api.Login("17a4b2de3caf06c14a524936d88402c1", ()=>
+                    {
+                        _isWaitingForSignin = true;
+                    }, ()=>
+                    {
+                        _isWaitingForSignin = false;
+                    });
                 }
             };
 
@@ -585,18 +591,22 @@ namespace Peacenet.MainMenu
             _username.Opacity = _wgUserFadeIn;
             _username.Y = (int)MathHelper.Lerp(_userYMin, _userYMax, _wgUserFadeIn);
             _realname.Opacity = _wgUserFadeIn;
-            _realname.Y = _username.Y + _username.Height;
+            _realname.Y = _username.Y + _username.Height+5;
             _wgButton.Opacity = _wgUserFadeIn;
-            _wgButton.Y = _realname.Y + _realname.Height;
+            _wgButton.Y = _realname.Y + _realname.Height+10;
             _username.X = (_uimanager.ScreenWidth - _username.Width) / 2;
             _realname.X = (_uimanager.ScreenWidth - _realname.Width) / 2;
             _wgButton.X = (_uimanager.ScreenWidth - _wgButton.Width) / 2;
             if (_api.LoggedIn)
             {
+                _realname.Text = _api.User.username;
+                _username.Text = _api.User.display_name;
                 _wgButton.Text = "Log out";
             }
             else
             {
+                _username.Text = "Not logged in";
+                _realname.Text = "Sign into itch.io to play Peacenet in multiplayer and gain other useful perks!";
                 _wgButton.Text = "Sign in";
             }
 

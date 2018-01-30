@@ -17,8 +17,9 @@ using System.Net;
 using Plex.Objects;
 using System.Threading;
 using Microsoft.Xna.Framework.Input;
+using Plex.Engine;
 
-namespace Plex.Engine.Server
+namespace Peacenet.Server
 {
     /// <summary>
     /// Provides an engine component for connecting to and talking with a Peacenet server.
@@ -28,7 +29,7 @@ namespace Plex.Engine.Server
 
 
         [Dependency]
-        private WatercolorAPIManager _api = null;
+        private ItchOAuthClient _api = null;
 
         [Dependency]
         private AppDataManager _appdata = null;

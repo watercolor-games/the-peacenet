@@ -15,7 +15,6 @@ using Peacenet.Applications;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Cutscene;
 using Plex.Engine.Saves;
-using Plex.Engine.Server;
 using Peacenet.MainMenu;
 using Microsoft.Xna.Framework.Content;
 

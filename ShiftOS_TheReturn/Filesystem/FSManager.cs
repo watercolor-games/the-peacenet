@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Config;
-using Plex.Engine.Server;
 using System.IO;
 using Plex.Objects.PlexFS;
 using Plex.Objects.ShiftFS;

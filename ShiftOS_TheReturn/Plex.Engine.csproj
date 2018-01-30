@@ -184,7 +184,6 @@
     <Compile Include="Interfaces\IEngineComponent.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\ILoadable.cs" />
-    <Compile Include="ItchOAuthClient.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Plexgate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -194,16 +193,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Saves\SaveManager.cs" />
-    <Compile Include="Server\AsyncServerManager.cs" />
-    <Compile Include="Server\WatercolorAPIManager.cs" />
     <Compile Include="SplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SplashScreen.Designer.cs">
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="TerminalCommands\HelpCommand.cs" />
-    <Compile Include="TerminalManager.cs" />
     <Compile Include="TextRenderers\WrapMode.cs" />
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeManager.cs" />

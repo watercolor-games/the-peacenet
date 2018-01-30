@@ -9,10 +9,11 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using System.IO;
-using Plex.Engine.Server;
 using Newtonsoft.Json;
+using Plex.Engine;
+using Peacenet.Server;
 
-namespace Plex.Engine
+namespace Peacenet
 {
     /// <summary>
     /// Provides an engine component facilitating the execution of Peacenet terminal commands.

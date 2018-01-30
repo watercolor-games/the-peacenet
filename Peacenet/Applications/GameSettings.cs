@@ -185,7 +185,7 @@ namespace Peacenet.Applications
 
             _ignoreOpacity.X = 25;
             _ignoreOpacity.Y = _ux.Y + _ux.Height + 10;
-            _ignoreOpacity.MaxWidth = (_configPanel.Width - 35);
+            _ignoreOpacity.MaxWidth = (_configPanel.Width - 70);
             _ignoreOpacity.Text = @"Disable UI transparency effects?
                 
 Disabling transparency effects can help gain performance on low-end GPUs but can degrade the user-experience since a lot of UX-related features rely on this setting being off.";

@@ -8,10 +8,10 @@ using Plex.Objects;
 using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.Filesystem;
-using Plex.Engine.Server;
 using Plex.Engine.Saves;
 using WatercolorGames.CommandLine;
 using Peacenet.RichPresence;
+using Peacenet.Server;
 
 namespace Peacenet
 {
@@ -77,7 +77,7 @@ namespace Peacenet
         }
 
         [Dependency]
-        private WatercolorAPIManager _api = null;
+        private ItchOAuthClient _api = null;
 
         [Dependency]
         private FSManager _fs = null;
@@ -281,7 +281,7 @@ namespace Peacenet
         private FSManager _fs = null;
 
         [Dependency]
-        private WatercolorAPIManager _Api = null;
+        private ItchOAuthClient _Api = null;
 
         private bool _showHostInfo = false;
         private bool _allowCommands = false;

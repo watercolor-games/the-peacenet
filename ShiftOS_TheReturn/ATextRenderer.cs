@@ -21,22 +21,36 @@ namespace Plex.Engine
             if (mode == WrapMode.Words)
             {
                 text = text.Trim();
-                string[] words = text.Split(' ');
+                var words = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 StringBuilder sb = new StringBuilder();
                 float lineWidth = 0;
                 float spaceWidth = font.MeasureString(" ").X;
 
-                for(int i = 0; i < words.Length; i++)
+                for(int i = 0; i < words.Count; i++)
                 {
-                    string word = words[i];
-                    Vector2 size = font.MeasureString(word);
+                    string word = words[i].Replace("\r", "");
+                    bool insertLineEnding = false;
 
-                    if(word.Contains("\r") || word.Contains("\n"))
+                    if (word.Contains("\n"))
                     {
-                        lineWidth = 0;
+                        int indexOfNewline = word.IndexOf('\n');
+                        string nextWord = word.Substring(indexOfNewline+1);
+                        word = word.Substring(0, indexOfNewline);
+                        if(nextWord.Length>0)
+                            words.Insert(i + 1, nextWord);
+                        if (word.Length < 1)
+                        {
+                            sb.Append("\n");
+                            lineWidth = 0;
+                            continue;
+                        }
+                        insertLineEnding = true;
                     }
 
-                    if (lineWidth + size.X <= maxLineWidth)
+
+                    Vector2 size = font.MeasureString(word);
+
+                    if (lineWidth + size.X <= maxLineWidth) 
                     {
                         sb.Append(word + " ");
                         lineWidth += size.X + spaceWidth;
@@ -58,8 +72,13 @@ namespace Plex.Engine
                         else
                         {
                             sb.Append("\n" + word + " ");
-                            lineWidth = size.X + spaceWidth;
+                            lineWidth = 0;
                         }
+                    }
+                    if(insertLineEnding)
+                    {
+                        sb.Append("\n");
+                        lineWidth = 0;
                     }
                 }
                 return sb.ToString().TrimEnd();

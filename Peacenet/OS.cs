@@ -17,9 +17,9 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Plex.Engine.Themes;
 using Plex.Engine.Filesystem;
-using Plex.Engine.Server;
 using System.Threading;
 using Plex.Engine.Config;
+using Peacenet.Server;
 
 namespace Peacenet
 {
@@ -120,7 +120,7 @@ namespace Peacenet
         }
         
         [Dependency]
-        private WatercolorAPIManager _api = null;
+        private ItchOAuthClient _api = null;
 
         /// <summary>
         /// Retrieves all shell folders.
@@ -130,7 +130,7 @@ namespace Peacenet
         {
             string uname = "Your";
             if (_api.LoggedIn)
-                uname = (string.IsNullOrWhiteSpace(_api.User.fullname)) ? _api.User.username + "'s" : _api.User.fullname + "'s";
+                uname = (_api.User.display_name.ToLower().EndsWith("s")) ? _api.User.display_name + "'" : _api.User.display_name + "'s";
             yield return new ShellDirectoryInformation($"{uname} Home", "/home", _plexgate.Content.Load<Texture2D>("UIIcons/home"));
             yield return new ShellDirectoryInformation("Desktop", "/home/Desktop", null);
             yield return new ShellDirectoryInformation("Documents", "/home/Documents", null);
