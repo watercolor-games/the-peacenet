@@ -23,10 +23,12 @@ namespace Peacenet.Backend
         private Queue<Action> _utilityActions = new Queue<Action>();
         private volatile bool _isRunning = false;
         private const int _waittimems = 1800000;
-        private const int _wgWaitMS = 60000;
         private TcpListener _listener = null;
         private Thread _tcpthread = null;
         private bool _isMultiplayer = false;
+        private Dictionary<string, ItchUser> _users = new Dictionary<string, ItchUser>();
+        private Dictionary<string, string> _keys = new Dictionary<string, string>();
+
 
         private List<TcpClient> _connected = new List<TcpClient>();
 
@@ -85,8 +87,6 @@ namespace Peacenet.Backend
             }
         }
 
-        private string _wgSession = null;
-
         // Fired on any of these events:
         // 1) A new utility action has been enqueued
         // 2) The timer has expired - it's time to call SafetyCheck()
@@ -100,73 +100,9 @@ namespace Peacenet.Backend
         // Set to true before the timer fires.
         private volatile bool _safety = false;
 
-        //set to true before WG timer fires
-        private volatile bool _needsWgExtend = false;
-
         // Fired by the utility thread to let the main thread know that
         // it's done shutting down.
         private EventWaitHandle _shutdownComplete = new AutoResetEvent(false);
-
-        private void requireWgExtend(object o)
-        {
-            _needsWgExtend = true;
-            _workForUtility.Set();
-        }
-
-        private void queryForSession()
-        {
-            if(_isMultiplayer==false)
-            {
-                return;
-            }
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
-            {
-                return;
-            }
-            try
-            {
-                if (string.IsNullOrWhiteSpace(_wgSession))
-                {
-                    var wr = WebRequest.Create($"https://watercolorgames.net/api/sessions/grant");
-                    wr.Method = "GET";
-                    wr.ContentType = "text/plain";
-                    using (var req = wr.GetResponse())
-                    {
-                        using (var stream = req.GetResponseStream())
-                        {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                _wgSession = reader.ReadToEnd();
-                                Logger.Log("Successfully retrieved Watercolor session ID.");
-                            }
-                        }
-                    }
-
-                }
-                else
-                {
-                    var wr = WebRequest.Create($"https://watercolorgames.net/api/sessions/heyimstillhere");
-                    wr.Method = "GET";
-                    wr.ContentType = "text/plain";
-                    wr.Headers.Add("Authorization: " + _wgSession);
-                    using (var req = wr.GetResponse())
-                    {
-                        using (var stream = req.GetResponseStream())
-                        {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                Logger.Log("Watercolor API session token extended.");
-                            }
-                        }
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Error fetching result from Watercolor API: " + ex);
-            }
-        }
 
 
         /// <summary>
@@ -187,6 +123,18 @@ namespace Peacenet.Backend
                 _utilityActions.Enqueue(action);
             }
             _workForUtility.Set();
+        }
+
+        /// <summary>
+        /// Retrieves the profile data of an itch.io user.
+        /// </summary>
+        /// <param name="id">The ID of the itch.io user</param>
+        /// <returns>A <see cref="ItchUser"/> representing the cached profile data for this user. For security purposes, this method returns null if no user with the specified id is connected to the server</returns>
+        public ItchUser GetUserInfo(string id)
+        {
+            if (_users.ContainsKey(id))
+                return _users[id];
+            return null;
         }
 
         /// <summary>
@@ -266,39 +214,35 @@ namespace Peacenet.Backend
             }
         }
 
-
-        private string getWatercolorId(string token)
+        private ItchUser getItchUser(string apikey)
         {
-            if (_isMultiplayer == false)
-                return "entity.singleplayeruser";
-            string uid = null;
-            var wr = WebRequest.Create("https://watercolorgames.net/api/users/getid");
-            wr.ContentType = "text/plain";
-            wr.Method = "GET";
-            wr.Headers.Add("Authentication: " + token);
-            wr.Headers.Add("Authorization: " + _wgSession);
-            try
+            if (_keys.ContainsKey(apikey))
+                return GetUserInfo(_keys[apikey]);
+            var wr = WebRequest.Create("https://itch.io/api/1/key/me");
+            wr.Headers.Add("Authorization: " + apikey);
+            using (var response = wr.GetResponse())
             {
-                using (var res = wr.GetResponse())
+                using (var stream = response.GetResponseStream())
                 {
-                    using (var str = res.GetResponseStream())
+                    using (var reader = new StreamReader(stream))
                     {
-                        using (var reader = new StreamReader(str))
+                        string json = reader.ReadToEnd();
+                        var responseData = JsonConvert.DeserializeObject<ItchResponse>(json);
+                        if(responseData.errors!=null)
                         {
-                            uid = reader.ReadToEnd();
-                            Logger.Log($"Hello, {uid}.");
-                            return uid;
+                            foreach(var error in responseData.errors)
+                            {
+                                Logger.Log($"itch.io api error: {error}");
+                            }
+                            return null;
                         }
+                        _keys.Add(apikey, responseData.user.id.ToString());
+                        _users.Add(_keys[apikey], responseData.user);
+                        return responseData.user;
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.Log($"Error fetching user ID from WG API: {ex}");
-                return null;
-            }
         }
-
 
         private void ListenThread()
         {
@@ -332,7 +276,12 @@ namespace Peacenet.Backend
                                 if (len > 0)
                                     content = reader.ReadBytes(len);
                                 byte[] returncontent = new byte[] { };
-                                var result = delegator.HandleMessage(this, (ServerMessageType)mtype, getWatercolorId(session), content, out returncontent);
+                                if(!_keys.ContainsKey(session))
+                                {
+                                    var user = getItchUser(session);
+                                    Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                }
+                                var result = delegator.HandleMessage(this, (ServerMessageType)mtype, _keys[session], content, out returncontent);
 
                                 writer.Write(muid);
                                 writer.Write((int)result);
@@ -417,40 +366,6 @@ namespace Peacenet.Backend
         {
             return (T)Inject(new T());
         }
-
-        /// <summary>
-        /// Retrieves a <see cref="WatercolorUser"/>. 
-        /// </summary>
-        /// <param name="uid">The user ID to look up</param>
-        /// <returns>The Watercolor user found on the API. Returns null if no ID was specified, or the server is a singleplayer server.</returns>
-        public WatercolorUser GetUserInfo(string uid)
-        {
-            if (!IsMultiplayer)
-            {
-                return null;
-            }
-            if (!string.IsNullOrWhiteSpace(uid))
-            {
-                var ur = WebRequest.Create("https://watercolorgames.net/api/users/" + uid);
-                ur.Method = "GET";
-                ur.ContentType = "application/json";
-                ur.Headers.Add("Authorization: " + this._wgSession);
-
-                using (var res = ur.GetResponse())
-                {
-                    using (var str = res.GetResponseStream())
-                    {
-                        using (var reader = new StreamReader(str))
-                        {
-                            return JsonConvert.DeserializeObject<WatercolorUser>(reader.ReadToEnd());
-
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
         /// <summary>
         /// Creates a new instance of the specified type and injects all dependencies.
         /// </summary>
@@ -464,6 +379,8 @@ namespace Peacenet.Backend
             return Inject(Activator.CreateInstance(t, null));
         }
 
+
+
         private void InvokeSafetyCheck(object o)
         {
             _safety = true;
@@ -473,12 +390,9 @@ namespace Peacenet.Backend
         private void UtilityThread()
         {
             Logger.Log("Utility thread started!");
-            _needsWgExtend = true;
             _workForUtility.Set();
             if (_safetyWatch == null)
                 _safetyWatch = new Timer(InvokeSafetyCheck, null, _waittimems, _waittimems);
-            if (_wgTimer == null)
-                _wgTimer = new Timer(this.requireWgExtend, null, _wgWaitMS, _wgWaitMS);
             while (_isRunning)
             {
                 _workForUtility.WaitOne();
@@ -499,12 +413,6 @@ namespace Peacenet.Backend
                     }
                     Logger.Log("Done.");
                     _safety = false;
-                }
-                if (_needsWgExtend)
-                {
-                    Logger.Log("Requesting/extending Watercolor API session...");
-                    queryForSession();
-                    _needsWgExtend = false;
                 }
                 _workForUtility.Reset();
             }
@@ -555,8 +463,6 @@ namespace Peacenet.Backend
             _workForUtility = null;
             _safetyWatch.Dispose();
             _safetyWatch = null;
-            _wgTimer.Dispose();
-            _wgTimer = null;
         }
 
         /// <inheritdoc/>

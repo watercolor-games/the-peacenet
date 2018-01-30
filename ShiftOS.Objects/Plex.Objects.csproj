@@ -58,6 +58,7 @@
     <Compile Include="CommandQuery.cs" />
     <Compile Include="FFI\DotNet.cs" />
     <Compile Include="FFI\IFFI.cs" />
+    <Compile Include="ItchUser.cs" />
     <Compile Include="PlexFS\EntryType.cs" />
     <Compile Include="PlexFS\OpenMode.cs" />
     <Compile Include="PlexFS\PlexFAT.cs" />

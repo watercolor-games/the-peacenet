@@ -16,72 +16,72 @@ namespace Plex.Engine
     /// </summary>
     public static class TextRenderer
     {
-        private static string WrapText(SpriteFont font, string text, float maxLineWidth, WrapMode mode)
+        private static string WrapLine(SpriteFont font, string text, float maxLineWidth)
         {
-            if (mode == WrapMode.Words)
+            text = text.Trim();
+            var words = text.Split(' ').ToList();
+            StringBuilder sb = new StringBuilder();
+            float lineWidth = 0;
+            float spaceWidth = font.MeasureString(" ").X;
+
+            for (int i = 0; i < words.Count; i++)
             {
-                text = text.Trim();
-                var words = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                StringBuilder sb = new StringBuilder();
-                float lineWidth = 0;
-                float spaceWidth = font.MeasureString(" ").X;
+                string word = words[i];
+                
+                Vector2 size = font.MeasureString(word);
 
-                for(int i = 0; i < words.Count; i++)
+                if (lineWidth + size.X <= maxLineWidth)
                 {
-                    string word = words[i].Replace("\r", "");
-                    bool insertLineEnding = false;
-
-                    if (word.Contains("\n"))
+                    sb.Append(word + " ");
+                    lineWidth += size.X + spaceWidth;
+                }
+                else
+                {
+                    if (size.X >= maxLineWidth)
                     {
-                        int indexOfNewline = word.IndexOf('\n');
-                        string nextWord = word.Substring(indexOfNewline+1);
-                        word = word.Substring(0, indexOfNewline);
-                        if(nextWord.Length>0)
-                            words.Insert(i + 1, nextWord);
-                        if (word.Length < 1)
+                        if (sb.ToString() == " ")
                         {
-                            sb.Append("\n");
-                            lineWidth = 0;
-                            continue;
-                        }
-                        insertLineEnding = true;
-                    }
-
-
-                    Vector2 size = font.MeasureString(word);
-
-                    if (lineWidth + size.X <= maxLineWidth) 
-                    {
-                        sb.Append(word + " ");
-                        lineWidth += size.X + spaceWidth;
-                    }
-                    else
-                    {
-                        if (size.X >= maxLineWidth)
-                        {
-                            if (sb.ToString() == " ")
-                            {
-                                sb.Append(WrapText(font, word.Insert(word.Length / 2, " "), maxLineWidth, mode));
-                            }
-                            else
-                            {
-                                sb.Append("\n" + WrapText(font, word.Insert(word.Length / 2, " "), maxLineWidth, mode));
-                            }
-                            
+                            sb.Append(WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth));
                         }
                         else
                         {
-                            sb.Append("\n" + word + " ");
-                            lineWidth = 0;
+                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth));
                         }
+
                     }
-                    if(insertLineEnding)
+                    else
                     {
-                        sb.Append("\n");
-                        lineWidth = 0;
+                        sb.Append("\n" + word + " ");
+                        lineWidth = size.X + spaceWidth;
                     }
                 }
-                return sb.ToString().TrimEnd();
+            }
+            return sb.ToString().TrimEnd();
+        }
+
+        /// <summary>
+        /// Perform text wrapping on a string of text using the specified <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="font">The <see cref="SpriteFont"/> representing the font to measure the text in.</param>
+        /// <param name="text">The text to wrap.</param>
+        /// <param name="maxLineWidth">The maximum width (in pixels) that a line of text can be.</param>
+        /// <param name="mode">The type of text wrapping to apply.</param>
+        /// <returns>The resulting wrapped text.</returns>
+        public static string WrapText(SpriteFont font, string text, float maxLineWidth, WrapMode mode)
+        {
+            if (mode == WrapMode.Words)
+            {
+                float space = font.MeasureString(" ").X;
+                text = text.Trim().Replace("\r", "");
+                string[] lines = text.Split('\n');
+                StringBuilder realString = new StringBuilder();
+                foreach (var line in lines)
+                {
+                    if (realString.Length > 0)
+                        realString.Append("\n");
+                    realString.Append(WrapLine(font, line, maxLineWidth));
+                }
+                return realString.ToString();
             }
             else
             {

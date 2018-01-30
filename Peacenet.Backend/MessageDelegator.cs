@@ -48,7 +48,9 @@ namespace Peacenet.Backend
         /// <returns>The result of the handler.</returns>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType messagetype, string session_id, byte[] dgram, out byte[] returndgram)
         {
+#if HANG_DEBUG
             Logger.Log("Attempting to handle a " + messagetype + "...");
+#endif
             var handler = _handlers.FirstOrDefault(x => x.HandledMessageType == messagetype);
             if (handler == null)
             {
