@@ -18,16 +18,20 @@ namespace Plex.Engine
     {
         private static string WrapLine(SpriteFont font, string text, float maxLineWidth)
         {
+            float spaceWidth = font.MeasureString(" ").X;
+            if (maxLineWidth < spaceWidth)
+            {
+                return text;
+            }
             text = text.Trim();
             var words = text.Split(' ').ToList();
             StringBuilder sb = new StringBuilder();
             float lineWidth = 0;
-            float spaceWidth = font.MeasureString(" ").X;
 
             for (int i = 0; i < words.Count; i++)
             {
                 string word = words[i];
-                
+
                 Vector2 size = font.MeasureString(word);
 
                 if (lineWidth + size.X <= maxLineWidth)
@@ -41,11 +45,11 @@ namespace Plex.Engine
                     {
                         if (sb.ToString() == " ")
                         {
-                            sb.Append(WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth));
+                            sb.Append(WrapLine(font, word.Insert(word.Length / 4, " ").Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
                         }
                         else
                         {
-                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth));
+                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 4, " ").Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
                         }
 
                     }

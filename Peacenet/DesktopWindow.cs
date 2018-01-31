@@ -547,7 +547,6 @@ namespace Peacenet
             _missionButton.X = _timeLabel.X - _missionButton.Width - 3;
 
             _missionButton.Enabled = (_missionButton.Text != "0");
-
             //Mission check.
             if (_needsMissionCheck)
             {

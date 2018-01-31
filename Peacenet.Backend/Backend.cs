@@ -193,6 +193,22 @@ namespace Peacenet.Backend
 
             _tcpthread = new Thread(ListenThread);
             _tcpthread.IsBackground = true;
+
+            if(!_isMultiplayer)
+            {
+                _keys.Add("__SINGLEPLAYER", "-1");
+                _users.Add("-1", new ItchUser
+                {
+                    cover_url = null,
+                    developer = false,
+                    display_name = "Player",
+                    gamer = true,
+                    id = -1,
+                    press_user = false,
+                    url = null,
+                    username = "player"
+                });
+            }
         }
 
         private void RecursiveInit(IBackendComponent component)
@@ -216,6 +232,8 @@ namespace Peacenet.Backend
 
         private ItchUser getItchUser(string apikey)
         {
+            if (_isMultiplayer == false)
+                apikey = "__SINGLEPLAYER";
             if (_keys.ContainsKey(apikey))
                 return GetUserInfo(_keys[apikey]);
             var wr = WebRequest.Create("https://itch.io/api/1/key/me");
@@ -271,6 +289,8 @@ namespace Peacenet.Backend
                                 var muid = reader.ReadString();
                                 var mtype = reader.ReadInt32();
                                 string session = reader.ReadString();
+                                if (_isMultiplayer == false)
+                                    session = "__SINGLEPLAYER";
                                 byte[] content = new byte[] { };
                                 int len = reader.ReadInt32();
                                 if (len > 0)
