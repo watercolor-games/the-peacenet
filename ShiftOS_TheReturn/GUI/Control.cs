@@ -563,14 +563,150 @@ namespace Plex.Engine.GUI
         /// </summary>
         public event Action<int> MouseScroll;
 
+        internal void ResetMouseState()
+        {
+            _mousex = -1;
+            _mousey = -1;
+            _left = ButtonState.Released;
+            _right = ButtonState.Released;
+            _middle = ButtonState.Released;
+        }
+
         /// <summary>
         /// Handle a mouse state update.
         /// </summary>
         /// <param name="state">The <see cref="MouseState"/> object containing mouse information.</param>
-        /// <param name="skipEvents">Whether the control should skip firing of mouse button events.</param>
         /// <returns>Whether the mouse was inside the control and button events were fired.</returns>
-        public virtual bool PropagateMouseState(MouseState state, bool skipEvents = false)
+        public virtual bool PropagateMouseState(MouseState state)
         {
+            //Let's see if this beats Matt Trobbiani's mouse handler...
+
+            //Skip mouse events if the control is disabled.
+            if(_enabled == false)
+            {
+                return false;
+            }
+            //Skip them if it's not visible.
+            if(_isVisible==false)
+            {
+                return false;
+            }
+
+            //Grab the X and Y coordinates of the mouse, relative to this control.
+            int x, y = 0;
+            if(_parent == null)
+            {
+                x = state.X - X;
+                y = state.Y - Y;
+            }
+            else
+            {
+                x = _parent._mousex - X;
+                y = _parent._mousey - Y;
+            }
+
+            //Has the mouse moved?
+            bool moved = (x != _mousex) || (y != _mousey);
+            //Was the mouse previously in the control?
+            bool previouslyInControl = (_mousex >= 0 && _mousex <= Width) && (_mousey >= 0 && _mousey <= Height);
+
+            //Update the mouse coordinates.
+            _mousex = x;
+            _mousey = y;
+
+            //Get the state of the three mouse buttons we care about.
+            var leftState = state.LeftButton;
+            var rightState = state.RightButton;
+            var middleState = state.MiddleButton;
+
+            //If the mouse is inside the control...
+            if (x >= 0 && x <= Width && y >= 0 && y <= Height)
+            {
+                bool ret = false;
+                //Propagate the mouse events to all children - returning true if a child does.
+                foreach(var child in Children.OrderByDescending(z=>Array.IndexOf(Children, z)))
+                {
+                    if(ret == false)
+                    {
+                        bool res = child.PropagateMouseState(state);
+                        if (res)
+
+                            ret = true;
+                    }
+                    else
+                    {
+                        child.ResetMouseState();
+                    }
+                }
+                if (ret)
+                    return true;
+                //If we moved, fire the MouseMove event.
+                if(moved)
+                {
+                    MouseMove?.Invoke(this, new Vector2(x, y));
+                }
+                //If the mouse has entered the control...
+                if(previouslyInControl == false)
+                {
+                    Invalidate(true);
+                }
+
+                //Let's handle left clicking!
+                if(_left == ButtonState.Pressed && leftState == ButtonState.Released)
+                {
+                    if (_doubleClickCooldown <= 0)
+                    {
+                        //We've clicked.
+                        Click?.Invoke(this, EventArgs.Empty);
+                        //Give 250 milliseconds of double-clickiness.
+                        _doubleClickCooldown = 250;
+                    }
+                    else
+                    {
+                        DoubleClick?.Invoke(this, EventArgs.Empty);
+                        _doubleClickCooldown = 0;
+                    }
+                    //And the mouse has also been released.
+                    MouseLeftUp?.Invoke(this, EventArgs.Empty);
+                    //Also, we gain focus.
+                    if (!Manager.IsFocused(this))
+                    {
+                        Manager.SetFocus(this);
+                    }
+                    Invalidate(true);
+                }
+                //Now for left mouse-down...
+                else if(_left == ButtonState.Released && leftState == ButtonState.Pressed)
+                {
+                    //The mouse button has been pressed down.
+                    MouseLeftDown?.Invoke(this, EventArgs.Empty);
+                    Invalidate(true);
+                }
+                //update the left state
+                _left = leftState;
+            }
+            else
+            {
+                //If the mouse left the control...
+                if(previouslyInControl)
+                {
+                    Invalidate(true);
+                }
+                //If we moved, fire the MouseMove event.
+                if (moved)
+                {
+                    MouseMove?.Invoke(this, new Vector2(x, y));
+                }
+
+                //Reset the mouse states
+                _left = ButtonState.Released;
+                _right = ButtonState.Released;
+                _middle = ButtonState.Released;
+                return false;
+            }
+            return true;
+
+            /* Old code.
             if (_enabled == false || _isVisible == false)
                 return false;
             int x = 0;
@@ -675,7 +811,7 @@ namespace Plex.Engine.GUI
 
                 }
             }
-            return false;
+            return false;*/
         }
 
         private bool? _lastFocus = null;
@@ -863,7 +999,7 @@ namespace Plex.Engine.GUI
         {
             get
             {
-                return _lastLeft;
+                return _left;
             }
         }
 
@@ -874,7 +1010,7 @@ namespace Plex.Engine.GUI
         {
             get
             {
-                return _lastRight;
+                return _right;
             }
         }
 
@@ -885,7 +1021,7 @@ namespace Plex.Engine.GUI
         {
             get
             {
-                return _lastMiddle;
+                return _middle;
             }
         }
 

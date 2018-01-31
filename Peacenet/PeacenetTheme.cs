@@ -19,7 +19,7 @@ namespace Peacenet
     public class PeacenetTheme : Theme
     {
         //New theme variables
-        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Raspberry;
+        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
 
         //Lime assets
         private Texture2D bleftlime;
@@ -137,13 +137,11 @@ namespace Peacenet
             switch (style)
             {
                 case TextFontStyle.Header1:
-                    return _peace;
                 case TextFontStyle.Header2:
                 case TextFontStyle.Header3:
-                case TextFontStyle.Mono:
-                    return Color.White;
+                    return GetAccentColor().Lighten(0.75F).Lighten(0.75F);
                 default:
-                    return _gray;
+                    return Color.White;
             }
         }
 
@@ -182,17 +180,18 @@ namespace Peacenet
         /// <inheritdoc/>
         public override void DrawButton(GraphicsContext gfx, string text, Texture2D image, UIButtonState state, bool showImage, Rectangle imageRect, Rectangle textRect)
         {
-            var bg = _buttonIdleBG;
+            var bg = GetAccentColor().Darken(0.35F);
             var fg = _bStateTextIdle;
+
             switch (state)
             {
                 case UIButtonState.Hover:
-                    bg = GetAccentColor();
+                    bg = bg.Lighten(0.2F);
                     fg = _bStateTextHover;
                     break;
                 case UIButtonState.Pressed:
-                    bg = _bgDark;
-                    fg = _bStateTextPressed;
+                    bg = bg.Darken(0.2F);
+                    fg = _bStateTextIdle;
                     break;
             }
 

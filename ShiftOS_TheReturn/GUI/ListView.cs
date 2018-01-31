@@ -500,10 +500,16 @@ namespace Plex.Engine.GUI
         }
 
         private bool _requiresLayout = true;
+        private bool _lastContainedMouse = false;
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            if (_lastContainedMouse != ContainsMouse)
+            {
+                _lastContainedMouse = ContainsMouse;
+                Invalidate(true);
+            }
             if (!_requiresLayout)
                 return;
             _view.RequireLayout();
