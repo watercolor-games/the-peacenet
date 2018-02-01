@@ -21,6 +21,18 @@ namespace Peacenet
         //New theme variables
         private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
 
+        /// <summary>
+        /// Set the accent color for this theme.
+        /// </summary>
+        /// <param name="color">The new accent color of the theme.</param>
+        /// <param name="gfx">The graphics device used for creating assets with the new color..</param>
+        /// <param name="content">The content manager for loading new assets with the new color.</param>
+        public void SetAccentColor(GraphicsDevice gfx, ContentManager content, PeacenetAccentColor color)
+        {
+            _pnAccent = color;
+            this.LoadThemeData(gfx, content);
+        }
+
         //Lime assets
         private Texture2D bleftlime;
         private Texture2D leftlime;

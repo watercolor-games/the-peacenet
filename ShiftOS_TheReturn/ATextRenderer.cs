@@ -43,13 +43,13 @@ namespace Plex.Engine
                 {
                     if (size.X >= maxLineWidth)
                     {
-                        if (sb.ToString() == " ")
+                        if (string.IsNullOrEmpty(sb.ToString()))
                         {
-                            sb.Append(WrapLine(font, word.Insert(word.Length / 4, " ").Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
+                            sb.Append(WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
                         }
                         else
                         {
-                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 4, " ").Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
+                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
                         }
 
                     }

@@ -239,6 +239,14 @@ namespace Plex.Engine.GraphicsSubsystem
 
             }
 
+            public void InvalidateAll()
+            {
+                foreach(var ctrl in _toplevels.ToArray())
+                {
+                    ctrl.InvalidateAll();
+                }
+            }
+
             public void Dispose()
             {
                 Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
@@ -288,6 +296,14 @@ namespace Plex.Engine.GraphicsSubsystem
                     return 1;
                 return _plexgate.GameRenderTarget.Width;
             }
+        }
+
+        /// <summary>
+        /// Recursively invalidate ALL UI elements.
+        /// </summary>
+        public void InvalidateAll()
+        {
+            this._container.InvalidateAll();
         }
 
         /// <summary>

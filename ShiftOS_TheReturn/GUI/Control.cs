@@ -573,6 +573,16 @@ namespace Plex.Engine.GUI
         }
 
         /// <summary>
+        /// Recursively invalidate ALL child UI elements.
+        /// </summary>
+        public void InvalidateAll()
+        {
+            Invalidate(true);
+            foreach (var child in Children)
+                child.InvalidateAll();
+        }
+
+        /// <summary>
         /// Handle a mouse state update.
         /// </summary>
         /// <param name="state">The <see cref="MouseState"/> object containing mouse information.</param>

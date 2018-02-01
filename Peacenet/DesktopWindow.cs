@@ -642,7 +642,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+            gfx.Clear(Theme.GetAccentColor().Darken(0.35F));
         }
     }
 
@@ -720,6 +720,11 @@ namespace Peacenet
                 x += control.Width;
             }
             base.OnUpdate(time);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
         }
     }
 
