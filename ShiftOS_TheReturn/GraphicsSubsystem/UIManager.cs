@@ -206,12 +206,20 @@ namespace Plex.Engine.GraphicsSubsystem
                 _lastMouseState = mouse;
                 //Propagate mouse events.
                 var controls = Controls.OrderByDescending(x => Array.IndexOf(Controls, x)).ToArray();
+                bool hasBeenHandled = false;
                 foreach (var ctrl in controls)
                 {
                     if (ctrl.Visible == false)
                         continue;
-                    if (ctrl.PropagateMouseState(mouse))
-                        break;
+                    if (hasBeenHandled)
+                    {
+                        ctrl.ResetMouseState();
+                    }
+                    else
+                    {
+                        if (ctrl.PropagateMouseState(mouse))
+                            hasBeenHandled = true;
+                    }
                 }
             }
 
