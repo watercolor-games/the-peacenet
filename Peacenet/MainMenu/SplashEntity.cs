@@ -216,6 +216,9 @@ namespace Peacenet.MainMenu
         /// <inheritdoc/>
         public void Load(ContentManager content)
         {
+            ((PeacenetTheme)_thememgr.Theme).SetAccentColor(_plexgate.GraphicsDevice, content, PeacenetAccentColor.Blueberry);
+            _uimanager.InvalidateAll();
+
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");
             _peacenet = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
             _welcome = _plexgate.Content.Load<Texture2D>("Splash/Welcome");

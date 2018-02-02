@@ -12,6 +12,8 @@ using Plex.Engine.Saves;
 using WatercolorGames.CommandLine;
 using Peacenet.RichPresence;
 using Peacenet.Server;
+using Plex.Engine.Themes;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Peacenet
 {
@@ -71,7 +73,7 @@ namespace Peacenet
                 yield return $"<filesystem> {_countDirs("/")} directories and {_countFiles("/")} files found.\n";
                 yield return "Loading userland...";
                 yield return (_api.LoggedIn) ? $"User: {_api.User.username}" : "User: <unknown>";
-                yield return (_fs.FileExists("/etc/hostname")) ? "Hostname: 127.0.0.1" : "Hostname: " + _fs.ReadAllText("/etc/hostname");
+                yield return (!_fs.FileExists("/etc/hostname")) ? "Hostname: 127.0.0.1" : "Hostname: " + _fs.ReadAllText("/etc/hostname");
                 yield return "Peacegate Kernel Loaded Successfully!";
             }
         }
@@ -121,6 +123,12 @@ namespace Peacenet
         private SaveManager _save = null;
 
         [Dependency]
+        private ThemeManager _theme = null;
+
+        [Dependency]
+        private UIManager _ui = null;
+
+        [Dependency]
         private TerminalManager _terminal = null;
 
         [Dependency]
@@ -152,6 +160,11 @@ namespace Peacenet
                 Thread.Sleep(100);
                 console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {line}");
             }
+
+            console.WriteLine("Loading user interface settings...");
+            var accent = _save.GetValue<PeacenetAccentColor>("theme.accent", PeacenetAccentColor.Blueberry);
+            ((PeacenetTheme)_theme.Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, accent);
+            _ui.InvalidateAll();
 
             console.WriteLine("");
             console.WriteLine("Starting Peacegate Session!");
