@@ -72,7 +72,7 @@ namespace Peacenet
 
         private AppLauncherMenu _applauncher = null;
 
-        public void ResetWallpaper()
+        private void ResetWallpaper()
         {
             string wallpaperId = _save.GetValue("desktop.wallpaper", "DesktopBackgroundImage2");
             try
@@ -86,6 +86,7 @@ namespace Peacenet
                 _save.SetValue("desktop.wallpaper", wallpaperId);
                 _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
             }
+            Invalidate(true);
         }
 
         /// <inheritdoc/>

@@ -23,12 +23,14 @@ namespace Plex.Engine
             {
                 return text;
             }
+            if (font.MeasureString(text).X <= maxLineWidth)
+                return text;
             text = text.Trim();
-            var words = text.Split(' ').ToList();
-            StringBuilder sb = new StringBuilder();
+            var words = text.Split(' ');
+            string result = "";
             float lineWidth = 0;
 
-            for (int i = 0; i < words.Count; i++)
+            for (int i = 0; i < words.Length; i++)
             {
                 string word = words[i];
 
@@ -37,31 +39,31 @@ namespace Plex.Engine
                 if (lineWidth + size.X <= maxLineWidth)
                 {
 
-                    sb.Append(word + " ");
+                    result += word + " ";
                     lineWidth += size.X + spaceWidth;
                 }
                 else
                 {
                     if (size.X >= maxLineWidth)
                     {
-                        if (string.IsNullOrEmpty(sb.ToString()))
+                        if (string.IsNullOrEmpty(result))
                         {
-                            sb.Append(WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
+                            result += WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth);
                         }
                         else
                         {
-                            sb.Append("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
+                            result += ("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
                         }
 
                     }
                     else
                     {
-                        sb.Append("\n" + word + " ");
+                        result += ("\n" + word + " ");
                         lineWidth = size.X + spaceWidth;
                     }
                 }
             }
-            return sb.ToString().TrimEnd();
+            return result.TrimEnd();
         }
 
         /// <summary>
@@ -74,19 +76,21 @@ namespace Plex.Engine
         /// <returns>The resulting wrapped text.</returns>
         public static string WrapText(SpriteFont font, string text, float maxLineWidth, WrapMode mode)
         {
+            if (font.MeasureString(text).X <= maxLineWidth)
+                return text;
             if (mode == WrapMode.Words)
             {
                 float space = font.MeasureString(" ").X;
                 text = text.Trim().Replace("\r", "");
                 string[] lines = text.Split('\n');
-                StringBuilder realString = new StringBuilder();
+                string result = "";
                 foreach (var line in lines)
                 {
-                    if (realString.Length > 0)
-                        realString.Append("\n");
-                    realString.Append(WrapLine(font, line, maxLineWidth));
+                    if (!string.IsNullOrWhiteSpace(result))
+                        result += ("\n");
+                    result += (WrapLine(font, line, maxLineWidth));
                 }
-                return realString.ToString();
+                return result;
             }
             else
             {
