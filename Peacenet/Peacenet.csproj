@@ -64,6 +64,7 @@
     <Compile Include="CoreUtils\PathUtils.cs" />
     <Compile Include="CoreUtils\rm.cs" />
     <Compile Include="Cutscene\CreditsScene.cs" />
+    <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="InfoboxManager.cs" />
     <Compile Include="InitCommand.cs" />

@@ -71,8 +71,9 @@ namespace Plex.Engine.GUI
                 _selectedIndex = value;
                 SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
                 _requireLayout = true;
-                if (SelectedItem.Selected == false)
-                    SelectedItem.Selected = true;
+                if(SelectedItem != null)
+                    if (SelectedItem.Selected == false)
+                        SelectedItem.Selected = true;
             }
         }
 

@@ -170,8 +170,6 @@
     <Compile Include="GUI\Hitbox.cs" />
     <Compile Include="GUI\Label.cs" />
     <Compile Include="GUI\ListView.cs" />
-    <Compile Include="GUI\MenuHitbox.cs" />
-    <Compile Include="GUI\MenuItem.cs" />
     <Compile Include="GUI\Panel.cs" />
     <Compile Include="GUI\PictureBox.cs" />
     <Compile Include="GUI\ProgressBar.cs" />

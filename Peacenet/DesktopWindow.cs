@@ -13,6 +13,7 @@ using Plex.Engine.Saves;
 using Plex.Engine.Filesystem;
 using Peacenet.CoreUtils;
 using Peacenet.Server;
+using Peacenet.DesktopUI;
 
 namespace Peacenet
 {
@@ -35,8 +36,6 @@ namespace Peacenet
         private Label _timeLabel = new Label();
 
         private PictureBox _showDesktopIcon = new PictureBox();
-
-        private MenuItem _applauncher = null;
 
         private Label _appLauncherText = new Label();
 
@@ -71,9 +70,13 @@ namespace Peacenet
 
         private ListView _desktopIconsView = null;
 
+        private AppLauncherMenu _applauncher = null;
+
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _applauncher = new AppLauncherMenu(_winsys, this);
+
             _tutorialBgm = _plexgate.Content.Load<SoundEffect>("Audio/Tutorial/TutorialBGM");
             _tutorialBgmInstance = _tutorialBgm.CreateInstance();
 
@@ -115,27 +118,12 @@ namespace Peacenet
             _showDesktopIcon.AutoSize = true;
             _bottomPanel.AddChild(_showDesktopIcon);
 
-            _applauncher = new MenuItem(_winsys);
-
             _topPanel.AddChild(_appLauncherText);
             _appLauncherText.AutoSize = true;
             _appLauncherText.FontStyle = Plex.Engine.Themes.TextFontStyle.Custom;
-            _appLauncherText.Click += (o, a) =>
-            {
-                if (_applauncher.IsOpen == false)
-                {
-                    _applauncher.Show(0, _topPanel.Y + _topPanel.Height);
-                }
-                else
-                {
-                    _applauncher.Hide();
-                }
-            };
-            _applauncher.Visible = false;
             
             _bottomPanel.AddChild(_windowList);
 
-            ResetAppLauncher(_winsys);
             ResetWindowList(_winsys);
             _winsys.WindowListUpdated += WindowSystemUpdated;
             _desktopIconsView = new ListView();
@@ -160,6 +148,20 @@ namespace Peacenet
             {
                 var noteMgr = new Applications.NotificationManager(_winsys);
                 noteMgr.Show();
+            };
+
+            _appLauncherText.Click += (o, a) =>
+            {
+                if(_winsys.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null)
+                {
+                    _applauncher.Close();
+                }
+                else
+                {
+                    if (_applauncher.Disposed)
+                        _applauncher = new AppLauncherMenu(_winsys, this);
+                    _applauncher.Show(0, _topPanel.Height);
+                }
             };
         }
 
@@ -316,72 +318,6 @@ namespace Peacenet
         {
             ResetWindowList((WindowSystem)o);
         }
-
-        private void ResetAppLauncher(WindowSystem winsys)
-        {
-            _applauncher.ClearItems();
-            bool catAdded = false;
-            foreach (var cat in _applaunchermgr.GetAllCategories())
-            {
-                catAdded = true;
-                var catitem = new MenuItem(winsys);
-                catitem.Text = cat;
-                bool itemAdded = false;
-                foreach (var item in _applaunchermgr.GetAllInCategory(cat))
-                {
-                    itemAdded = true;
-                    var subitem = new MenuItem(winsys);
-                    subitem.Text = item.Attribute.Name;
-                    subitem.Activated += (o, a) =>
-                    {
-                        var win = (Window)Activator.CreateInstance(item.WindowType, new object[] { winsys });
-                        win.Show();
-                    };
-                    catitem.AddItem(subitem);
-                }
-                if(itemAdded == false)
-                {
-                    var noitems = new MenuItem(winsys);
-                    noitems.Text = "No items found";
-                    catitem.AddItem(noitems);
-                }
-                _applauncher.AddItem(catitem);
-            }
-            if(catAdded == false)
-            {
-                var noitems = new MenuItem(winsys);
-                noitems.Text = "No items found";
-                _applauncher.AddItem(noitems);
-
-            }
-            var shutdown = new MenuItem(winsys);
-            shutdown.Activated += (o, a) =>
-            {
-                foreach(var win in winsys.WindowList.ToArray())
-                {
-                    win.Border.Enabled = false;
-                }
-                _infobox.ShowYesNo("End Session", "Are you sure you'd like to end your Peacegate session?", (answer) =>
-                {
-                    foreach (var win in winsys.WindowList.ToArray())
-                    {
-                        win.Border.Enabled = true;
-                    }
-                    if (answer)
-                    {
-                        foreach(var win in winsys.WindowList.ToArray())
-                        {
-                            if (win.Border != this.Parent)
-                                winsys.Close(win.WindowID);
-                        }
-                        _animState = 3;
-                    }
-                });
-            };
-            shutdown.Text = "Shut down";
-            _applauncher.AddItem(shutdown);
-        }
-
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
@@ -567,6 +503,14 @@ namespace Peacenet
             }
 
             base.OnUpdate(time);
+        }
+
+        /// <summary>
+        /// Plays the Desktop Close animation and shuts down the session, returning to main menu.
+        /// </summary>
+        public void Shutdown()
+        {
+            _animState = 3;
         }
 
         [Dependency]

@@ -664,6 +664,10 @@ namespace Plex.Engine.GUI
                 //Let's handle left clicking!
                 if(_left == ButtonState.Pressed && leftState == ButtonState.Released)
                 {
+                    if (!Manager.IsFocused(this))
+                    {
+                        Manager.SetFocus(this);
+                    }
                     if (_doubleClickCooldown <= 0)
                     {
                         //We've clicked.
@@ -679,10 +683,7 @@ namespace Plex.Engine.GUI
                     //And the mouse has also been released.
                     MouseLeftUp?.Invoke(this, EventArgs.Empty);
                     //Also, we gain focus.
-                    if (!Manager.IsFocused(this))
-                    {
-                        Manager.SetFocus(this);
-                    }
+                    
                     Invalidate(true);
                 }
                 //Now for left mouse-down...

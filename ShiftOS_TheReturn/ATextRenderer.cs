@@ -36,6 +36,7 @@ namespace Plex.Engine
 
                 if (lineWidth + size.X <= maxLineWidth)
                 {
+
                     sb.Append(word + " ");
                     lineWidth += size.X + spaceWidth;
                 }

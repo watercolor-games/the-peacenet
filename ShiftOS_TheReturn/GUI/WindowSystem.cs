@@ -297,7 +297,11 @@ namespace Plex.Engine.GUI
             _winsystem.Show((int)_wid);
             _winsystem.SetWindowTitle((int)_wid, _title);
             Visible = true;
+            _ui.SetFocus(this);
         }
+
+        [Dependency]
+        private UIManager _ui = null;
 
         /// <summary>
         /// Hide the window from the screen.
