@@ -122,6 +122,16 @@ namespace Peacenet
         [Dependency]
         private ItchOAuthClient _api = null;
 
+        internal event Action WallpaperChanged;
+
+        /// <summary>
+        /// Fires the "Wallpaper Changed" event.
+        /// </summary>
+        public void FireWallpaperChanged()
+        {
+            WallpaperChanged?.Invoke();
+        }
+
         /// <summary>
         /// Retrieves all shell folders.
         /// </summary>

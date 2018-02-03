@@ -38,11 +38,14 @@ namespace Peacenet.Applications
 
         [Dependency]
         private SaveManager _save = null;
-        private string _activeWallpaper = null;
 
         [Dependency]
-        private FileUtils _futils = null;
+        private OS _os = null;
+
+        private string _activeWallpaper = null;
+
         private WallpaperGrid _wallpaperGrid = new WallpaperGrid();
+
 
         /// <summary>
         /// A <see cref="Control"/> for displaying a grid of <see cref="Texture2D"/> wallpaper thumbnails. Used within the <see cref="Appearance"/> application.  
@@ -66,6 +69,11 @@ namespace Peacenet.Applications
                 }
             }
 
+            /// <summary>
+            /// Occurs when a new wallpaper is selected.
+            /// </summary>
+            public event Action<Texture2D> SelectedTextureChanged;
+
             /// <inheritdoc/>
             public override void AddChild(Control child)
             {
@@ -84,7 +92,8 @@ namespace Peacenet.Applications
                 }
                 _selectedIndex = Array.IndexOf(Children, sender);
                 var nchild = (PictureBox)Children[_selectedIndex];
-                nchild.Tint = Theme.GetAccentColor();
+                nchild.Tint = Theme.GetAccentColor().Lighten(1);
+                SelectedTextureChanged?.Invoke(nchild.Texture);
                 
             }
 
@@ -124,6 +133,11 @@ namespace Peacenet.Applications
                 _selectedIndex = -1;
                 base.RemoveChild(child);
             }
+
+            /// <inheritdoc/>
+            protected override void OnPaint(GameTime time, GraphicsContext gfx)
+            {
+            }
         }
 
         /// <inheritdoc/>
@@ -136,7 +150,7 @@ namespace Peacenet.Applications
             AddChild(_description);
             AddChild(_wallpaperHeader);
             AddChild(_wallpaperViewer);
-            Width = 450;
+            Width = 675;
             Height = 700;
             Title = "Appearance Settings";
             foreach (var texture in _wallpapers)
@@ -146,7 +160,15 @@ namespace Peacenet.Applications
                 _wallpaperGrid.AddChild(pbox);
             }
             _wallpaperViewer.AddChild(_wallpaperGrid);
-            
+            _wallpaperGrid.SelectedTextureChanged += (texture) =>
+            {
+                if(texture != null)
+                {
+                    string name = texture.Name.Remove(0, 8);
+                    _save.SetValue("desktop.wallpaper", name);
+                    _os.FireWallpaperChanged();
+                }
+            };
         }
 
         /// <inheritdoc/>

@@ -72,6 +72,22 @@ namespace Peacenet
 
         private AppLauncherMenu _applauncher = null;
 
+        public void ResetWallpaper()
+        {
+            string wallpaperId = _save.GetValue("desktop.wallpaper", "DesktopBackgroundImage2");
+            try
+            {
+                _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
+            }
+            catch
+            {
+                //ContentManager throws if the asset path isn't found or is invalid.
+                wallpaperId = "DesktopBackgroundImage2";
+                _save.SetValue("desktop.wallpaper", wallpaperId);
+                _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
+            }
+        }
+
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
@@ -94,18 +110,8 @@ namespace Peacenet
 
             winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
-            string wallpaperId = _save.GetValue("desktop.wallpaper", "DesktopBackgroundImage2");
-            try
-            {
-                _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
-            }
-            catch
-            {
-                //ContentManager throws if the asset path isn't found or is invalid.
-                wallpaperId = "DesktopBackgroundImage2";
-                _save.SetValue("desktop.wallpaper", wallpaperId);
-                _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
-            }
+            ResetWallpaper();
+            _os.WallpaperChanged += ResetWallpaper;
             _topPanel = new DesktopPanel();
             _bottomPanel = new DesktopPanel();
             AddChild(_topPanel);
