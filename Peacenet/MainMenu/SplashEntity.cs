@@ -170,7 +170,7 @@ namespace Peacenet.MainMenu
             if (_progressFGPos > 0)
             {
                 string _enter = "Press ENTER to continue";
-                var measure = TextRenderer.MeasureText(_enter, fnt, _peacenet.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+                var measure = TextRenderer.MeasureText(_enter, fnt, (this._uimanager.ScreenWidth/2), Plex.Engine.TextRenderers.WrapMode.Words);
 
                 int textX = (int)(_uimanager.ScreenWidth - measure.X) / 2;
                 int textYMin = progressY + (int)(_uimanager.ScreenHeight * 0.1);

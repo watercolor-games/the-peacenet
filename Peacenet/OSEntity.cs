@@ -74,7 +74,6 @@ namespace Peacenet
                 _desktop.Dispose();
                 _desktop = null;
             }
-            _peacegate.Dispose();
         }
 
         /// <summary>
