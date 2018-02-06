@@ -34,8 +34,24 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        private bool _preventStartup = false;
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
+
+        /// <summary>
+        /// Gets or sets whether the OS module should prevent the desktop from starting after the kernel messages end. Useful for the tutorial.
+        /// </summary>
+        public bool PreventStartup
+        {
+            get
+            {
+                return _preventStartup;
+            }
+            set
+            {
+                _preventStartup = value;
+            }
+        }
 
         /// <inheritdoc/>
         public void Initiate()

@@ -94,20 +94,9 @@ namespace Peacenet
         {
             _applauncher = new AppLauncherMenu(_winsys, this);
 
-            _tutorialBgm = _plexgate.Content.Load<SoundEffect>("Audio/Tutorial/TutorialBGM");
-            _tutorialBgmInstance = _tutorialBgm.CreateInstance();
-
             _missionButton.Image = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flag");
             _missionButton.ShowImage = true;
             _missionButton.Text = "NYI";
-
-            if (!_server.IsMultiplayer)
-            {
-                if(_save.GetValue("oobe.tutorial", false) == false)
-                {
-                    _tutorialBgmAnim = 0;
-                }
-            }
 
             winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
@@ -140,15 +129,6 @@ namespace Peacenet
             _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
             _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
 
-            AddChild(_overlay);
-            _overlay.Visible = false;
-
-            _overlay.OkayButtonClicked += (o, a) =>
-            {
-                _overlayStage++;
-                ResetOverlay();
-            };
-
             _topPanel.AddChild(_missionButton);
 
             _missionButton.Click += (o, a) =>
@@ -179,91 +159,10 @@ namespace Peacenet
         {
             get
             {
-                return _overlay.Visible;
+                return false;
             }
         }
-        
-        /// <summary>
-        /// Resets the tutorial overlay UI.
-        /// </summary>
-        public void ResetOverlay()
-        {
-            int width = 0;
-            int height = 0;
-            int x = 0;
-            int y = 0;
-            string header = "";
-            string desc = "";
-            switch (_overlayStage)
-            {
-                case 1:
-                    height = _bottomPanel.Y - _topPanel.Height;
-                    width = Width;
-                    x = 0;
-                    y = _topPanel.Y + _topPanel.Height;
-                    header = "This is your workspace.";
-                    desc = "Your workspace is the main area of your screen. Your desktop icons, widgets and open programs are all shown here.";
-                    break;
-                case 2:
-                    x = 0;
-                    y = 0;
-                    width = Width;
-                    height = _topPanel.Height;
-                    header = "The Status Bar";
-                    desc = "The Status Bar is a place where you can see system status as well as have the ability to launch programs, open common folders on your hard drive and access system settings.";
-                    break;
-                case 3:
-                    x = _topPanel.X + _missionButton.X;
-                    y = _topPanel.Y + _missionButton.Y;
-                    width = _missionButton.Width;
-                    height = _missionButton.Height;
-                    header = "Find your missions and notifications here.";
-                    desc = "This button shows you how many missions are currently available for you to play.\r\n\r\nMissions are sets of objectives you can complete which give you cash and XP and let you progress further in your journey through The Peacenet.\r\n\r\nYou can also find system notifications here. Check it often!";
-                    break;
-                case 4:
-                    x = 0;
-                    y = _bottomPanel.Y;
-                    height = _bottomPanel.Height;
-                    width = Width;
-                    header = "This is your window list.";
-                    desc = "Your Window List shows you what windows are open on your desktop and it allows you to easily switch between them.";
-                    break;
-                case 5:
-                    x = _bottomPanel.X + _showDesktopIcon.X;
-                    y = _bottomPanel.Y + _showDesktopIcon.Y;
-                    width = _showDesktopIcon.Width;
-                    height = _showDesktopIcon.Height;
-                    header = "Hide and seek";
-                    desc = "This button allows you to hide all visible windows, revealing your desktop. Clicking it again will reveal all hidden windows.";
-                    break;
-                case 6:
-                    x = _topPanel.X + _appLauncherText.X;
-                    y = _topPanel.Y + _appLauncherText.Y;
-                    width = _appLauncherText.Width;
-                    height = _appLauncherText.Height;
-                    header = "Open your programs here.";
-                    desc = "The Peacegate Menu, otherwise known as the 'app launcher' is one of the most important parts of your Peacegate desktop.\r\n\r\nIt allows you to open programs. Each program is categorized by the type of program they are. You can also shut down your computer from this menu.";
-                    break;
-                case 7:
-                    x = 0;
-                    y = 0;
-                    width = 0;
-                    height = 0;
-                    header = "Let's start.";
-                    desc = "That's all you need to know about Peacegate Desktop for now.\r\n\r\nClick 'OK' to exit the tutorial.";
-                    break;
-                case 8:
-                    _overlay.Visible = false;
-                    _save.SetValue("oobe.tutorial", true);
-                    return;
-            }
-            _overlay.Region = new Rectangle(x, y, width, height);
-            _overlay.HeaderText = header;
-            _overlay.DescriptionText = desc;
-        }
-
-        private int _overlayStage = -2;
-
+   
         private void _desktopIconsView_ItemClicked(ListViewItem obj)
         {
             if (_fs.DirectoryExists(obj.Tag.ToString()))
@@ -329,26 +228,6 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            switch (_overlayStage)
-            {
-                case -2:
-                    if (_server.IsMultiplayer == false)
-                    {
-                        if(_save.GetValue("oobe.tutorial", false) == false)
-                        {
-                            _overlay.Visible = true;
-                            _overlayStage += 2;
-                            _overlay.Region = Rectangle.Empty;
-                            _overlay.HeaderText = "Welcome to Peacegate OS.";
-                            _overlay.DescriptionText = "Since this is your first time using the Peacegate desktop environment, we'll walk you through how to use it quickly.\r\n\r\nClick the 'OK' button to continue.";
-                        }
-                        else
-                        {
-                            _overlayStage += 1;
-                        }
-                    }
-                    break;
-            }
             switch (_animState)
             {
                 case 0:
@@ -387,37 +266,9 @@ namespace Peacenet
                     winsys.WindowListUpdated -= WindowSystemUpdated;
                     Close();
                     _os.Shutdown();
-                    _tutorialBgmInstance.Stop();
-                    _tutorialBgmInstance.Dispose();
                     break;
             }
-
-            switch (_tutorialBgmAnim)
-            {
-                case 0:
-                    _tutorialBgmInstance.Play();
-                    _tutorialBgmInstance.IsLooped = true;
-                    _tutorialBgmAnim++;
-                    break;
-                case 1:
-
-                    break;
-                case 2:
-                    float vol = _tutorialBgmInstance.Volume;
-                    vol = MathHelper.Clamp(vol - (float)time.ElapsedGameTime.TotalSeconds, 0, 1);
-                    if(vol == 0)
-                    {
-                        _tutorialBgmInstance.Stop();
-                        _tutorialBgmAnim = -1;
-                    }
-
-                    break;
-            }
-            _overlay.X = 0;
-            _overlay.Y = 0;
-            _overlay.Width = Width;
-            _overlay.Height = Height;
-            Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
+           Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
             Height = (int)MathHelper.Lerp((Manager.ScreenHeight * 0.75f), Manager.ScreenHeight, _scaleAnim);
             Parent.X = (Manager.ScreenWidth - Width) / 2;
             Parent.Y = (Manager.ScreenHeight - Height) / 2;
@@ -460,7 +311,10 @@ namespace Peacenet
                 if (_needsDesktopReset)
                 {
                     _desktopResetTimer = 0;
-                    SetupIcons();
+                    Task.Run(() =>
+                    {
+                        SetupIcons();
+                    });
                     _needsDesktopReset = false;
                 }
                 else

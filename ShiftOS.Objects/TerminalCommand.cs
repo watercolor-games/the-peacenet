@@ -30,6 +30,7 @@ namespace Plex.Objects
                 System.Threading.Thread.Sleep(25);
 
             }
+            _stdout.Write("\n");
         }
 
         /// <summary>

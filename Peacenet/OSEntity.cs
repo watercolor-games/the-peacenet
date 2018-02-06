@@ -52,6 +52,9 @@ namespace Peacenet
         [Dependency]
         private WindowSystem _winmgr = null;
 
+        [Dependency]
+        private OS _os = null;
+
         #endregion
 
         #region Textures
@@ -138,7 +141,7 @@ namespace Peacenet
                     break;
 
                 case 1:
-                    if (_init.Visible == false || _init.Disposed == true)
+                    if (_os.PreventStartup == false && (_init.Visible == false || _init.Disposed == true))
                         _osIntroState++;
                     break;
                 case 2:

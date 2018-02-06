@@ -350,12 +350,6 @@
 /processorParam:TextureFormat=NoChange
 /build:UIIcons/folder.png
 
-#begin Audio/Tutorial/TutorialBGM.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/TutorialBGM.wav
-
 #begin Desktop/DesktopBackgroundImage2.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -768,4 +762,40 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:ThemeAssets/Fonts/System.spritefont
+
+#begin Audio/Tutorial/Installing Peacegate.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Installing Peacegate.ogg
+
+#begin Audio/Tutorial/Intro Loop 1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Intro Loop 1.ogg
+
+#begin Audio/Tutorial/Intro Loop 2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Intro Loop 2.ogg
+
+#begin Audio/Tutorial/Main Loop.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Main Loop.ogg
+
+#begin Audio/Tutorial/Mission Complete.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Mission Complete.ogg
+
+#begin Audio/Tutorial/Preparing Installation.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Tutorial/Preparing Installation.ogg
 

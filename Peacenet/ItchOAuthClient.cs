@@ -62,9 +62,17 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
+            
             _token = _config.GetValue<string>("itch.apikey", _token);
             _callbackSrv = _plebgate.New<ItchOAuthCallbackServer>();
-            fetchUserData();
+            try
+            {
+                fetchUserData();
+            }
+            catch
+            {
+                Logger.Log("Connection to itch.io failed.", LogType.Warning, "itch");
+            }
         }
 
         /// <summary>

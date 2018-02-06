@@ -18,52 +18,12 @@ namespace Plex.Engine
     {
         private static string WrapLine(SpriteFont font, string text, float maxLineWidth)
         {
-            float spaceWidth = font.MeasureString(" ").X;
-            if (maxLineWidth < spaceWidth)
-            {
-                return text;
-            }
             if (font.MeasureString(text).X <= maxLineWidth)
                 return text;
             text = text.Trim();
-            var words = text.Split(' ');
-            string result = "";
-            float lineWidth = 0;
-
-            for (int i = 0; i < words.Length; i++)
-            {
-                string word = words[i];
-
-                Vector2 size = font.MeasureString(word);
-
-                if (lineWidth + size.X <= maxLineWidth)
-                {
-
-                    result += word + " ";
-                    lineWidth += size.X + spaceWidth;
-                }
-                else
-                {
-                    if (size.X >= maxLineWidth)
-                    {
-                        if (string.IsNullOrEmpty(result))
-                        {
-                            result += WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth);
-                        }
-                        else
-                        {
-                            result += ("\n" + WrapLine(font, word.Insert(word.Length / 2, " "), maxLineWidth)); //Culprit
-                        }
-
-                    }
-                    else
-                    {
-                        result += ("\n" + word + " ");
-                        lineWidth = size.X + spaceWidth;
-                    }
-                }
-            }
-            return result.TrimEnd();
+            var sb = new StringBuilder();
+            
+            return sb.ToString().TrimEnd();
         }
 
         /// <summary>
@@ -80,17 +40,55 @@ namespace Plex.Engine
                 return text;
             if (mode == WrapMode.Words)
             {
-                float space = font.MeasureString(" ").X;
+                float spacewidth = font.MeasureString(" ").X;
+                if (maxLineWidth < spacewidth)
+                    return text;
                 text = text.Trim().Replace("\r", "");
                 string[] lines = text.Split('\n');
-                string result = "";
+                float lineWidth = 0;
+                var sb = new StringBuilder();
                 foreach (var line in lines)
                 {
-                    if (!string.IsNullOrWhiteSpace(result))
-                        result += ("\n");
-                    result += (WrapLine(font, line, maxLineWidth));
+                    lineWidth = 0;
+                    if (sb.Length>0)
+                        sb.Append("\n");
+                    var words = line.Split(' ').ToList();
+                    for (int i = 0; i < words.Count; i++)
+                    {
+                        string word = words[i];
+
+                        Vector2 size = font.MeasureString(word);
+
+                        if (lineWidth + size.X <= maxLineWidth)
+                        {
+
+                            sb.Append(word + " ");
+                            lineWidth += size.X + spacewidth;
+                        }
+                        else
+                        {
+                            if (size.X >= maxLineWidth)
+                            {
+                                if (sb.Length>0)
+                                    sb.Append("\n");
+                                int half = word.Length / 2;
+                                string first = word.Substring(0, half);
+                                string second = word.Substring(half);
+                                words[i] = first;
+                                words.Insert(i + 1, second);
+                                i--;
+                                continue;
+                            }
+                            else
+                            {
+                                sb.Append("\n" + word + " ");
+                                lineWidth = size.X + spacewidth;
+                            }
+                        }
+                    }
+
                 }
-                return result;
+                return sb.ToString().TrimEnd();
             }
             else
             {
