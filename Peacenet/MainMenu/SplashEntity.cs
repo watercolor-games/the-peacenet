@@ -19,6 +19,7 @@ using Plex.Engine.Saves;
 using Plex.Engine.Cutscene;
 using Peacenet.RichPresence;
 using Peacenet.Server;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Peacenet.MainMenu
 {
@@ -55,6 +56,13 @@ namespace Peacenet.MainMenu
         private Texture2D _multiplayer = null;
         private Texture2D _singleplayer = null;
         private Texture2D _settings = null;
+
+        #endregion
+
+        #region Sound Effects
+
+        private SoundEffect _watercolorSplash = null;
+        private SoundEffectInstance _wgsInstance = null;
 
         #endregion
 
@@ -218,6 +226,9 @@ namespace Peacenet.MainMenu
         {
             ((PeacenetTheme)_thememgr.Theme).SetAccentColor(_plexgate.GraphicsDevice, content, PeacenetAccentColor.Blueberry);
             _uimanager.InvalidateAll();
+
+            _watercolorSplash = content.Load<SoundEffect>("Audio/MainMenu/WatercolorSplash");
+            _wgsInstance = _watercolorSplash.CreateInstance();
 
             _watercolor = _plexgate.Content.Load<Texture2D>("Splash/Watercolor");
             _peacenet = _plexgate.Content.Load<Texture2D>("Splash/Peacenet");
@@ -383,6 +394,8 @@ namespace Peacenet.MainMenu
                     _wgButton.Visible = false;
                     _username.Visible = false;
                     _realname.Visible = false;
+                    if (_wgsInstance.State != SoundState.Playing)
+                        _wgsInstance.Play();
                     _wgFade += (float)(time.ElapsedGameTime.TotalSeconds * 2.5);
                     if (_wgFade >= 1)
                     {

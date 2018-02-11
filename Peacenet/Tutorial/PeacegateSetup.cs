@@ -30,6 +30,25 @@ namespace Peacenet.Tutorial
         private double _animRide = 0;
 
         private TutorialBgmEntity _tutorial = null;
+        private Label _introHeader = new Label();
+        private Label _introText = new Label();
+
+        private Panel _introPanel = new Panel();
+
+        private void _resetUI()
+        {
+            _mainView.Clear();
+            switch(_uiState)
+            {
+                case 0:
+                    _back.Enabled = false;
+                    _mainView.AddChild(_introPanel);
+                    break;
+                case 1:
+                    _back.Enabled = true;
+                    break;
+            }
+        }
 
         /// <inheritdoc/>
         public PeacegateSetup(WindowSystem _winsys, TutorialBgmEntity tutorial) : base(_winsys)
@@ -47,6 +66,36 @@ namespace Peacenet.Tutorial
             _next.Text = "Next";
             _setupMode.AutoSize = true;
             _setupMode.Text = "Introduction";
+
+            _introPanel.AddChild(_introHeader);
+            _introPanel.AddChild(_introText);
+            _introPanel.AutoSize = true;
+
+            _introHeader.AutoSize = true;
+            _introText.AutoSize = true;
+            _introHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+
+            _introHeader.Text = "Welcome to Peacegate OS.";
+            _introText.Text = @"Peacegate OS is the gateway to the Peacenet. You will use it to run programs, interact with other members of the network, and perform other tasks. It is your primary user interface.
+
+We will guide you through how to use Peacegate OS and the Peacegate Desktop, but first we must set some things up for first use. This installer program will guide you through the setup process and prepare your new environment for you.
+
+Click 'Next' to get started.";
+
+            _back.Click += (o, a) =>
+            {
+                if (_animState == 6)
+                    return;
+                _uiState--;
+                _animState = 6;
+            };
+            _next.Click += (o, a) =>
+            {
+                if (_animState == 6)
+                    return;
+                _uiState++;
+                _animState = 6;
+            };
 
             AddChild(_mainView);
         }
@@ -81,6 +130,10 @@ namespace Peacenet.Tutorial
                     }
                     break;
                 case 3:
+                    _resetUI();
+                    _animState++;
+                    break;
+                case 4:
                     _uiAnim += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_uiAnim >= 1.0f)
                     {
@@ -88,7 +141,7 @@ namespace Peacenet.Tutorial
                         _animState++;
                     }
                     break;
-                case 5:
+                case 6:
                     _uiAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_uiAnim <= 0f)
                     {
@@ -145,6 +198,19 @@ namespace Peacenet.Tutorial
             _mainView.Width = Width;
 
             Opacity = _welcomeAnim;
+
+            switch(_uiState)
+            {
+                case 0:
+                    _introHeader.X = 30;
+                    _introHeader.Y = 30;
+                    _introHeader.MaxWidth = (_introPanel.Width - 60);
+                    _introText.X = 30;
+                    _introText.Y = _introHeader.Y + _introHeader.Height + 10;
+                    _introText.MaxWidth = _introHeader.MaxWidth;
+                    _introPanel.Width = Width;
+                    break;
+            }
 
             base.OnUpdate(time);
         }

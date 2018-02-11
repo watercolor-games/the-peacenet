@@ -494,6 +494,7 @@ namespace Peacenet.Applications
                             _charX = (Width / _charWidth) - 1;
                         }
 
+
                         gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.Black);
 
                         continue;

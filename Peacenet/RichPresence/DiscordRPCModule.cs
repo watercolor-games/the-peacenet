@@ -123,11 +123,19 @@ namespace Peacenet.RichPresence
         /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("Starting Rich Presence integration module", LogType.Info, "discord");
-            var layer = new Layer();
-            layer.AddEntity(_plebgate.New<DiscordRPCEntity>());
-            _plebgate.AddLayer(layer);
-            _presence.startTimestamp = DateTime.UtcNow.Epoch();
+            try
+            {
+                Logger.Log("Starting Rich Presence integration module", LogType.Info, "discord");
+                var layer = new Layer();
+                layer.AddEntity(_plebgate.New<DiscordRPCEntity>());
+                _plebgate.AddLayer(layer);
+                _presence.startTimestamp = DateTime.UtcNow.Epoch();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Rich Presence has been disabled due to an error.", LogType.Error, "discord");
+                Logger.Log(ex.Message, LogType.Error, "discord");
+            }
         }
 
         /// <summary>
