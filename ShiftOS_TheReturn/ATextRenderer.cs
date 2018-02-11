@@ -18,6 +18,8 @@ namespace Plex.Engine
     {
         private static string WrapLine(SpriteFont font, string text, float maxLineWidth)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
             if (font.MeasureString(text).X <= maxLineWidth)
                 return text;
             text = text.Trim();
@@ -36,6 +38,8 @@ namespace Plex.Engine
         /// <returns>The resulting wrapped text.</returns>
         public static string WrapText(SpriteFont font, string text, float maxLineWidth, WrapMode mode)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
             if (font.MeasureString(text).X <= maxLineWidth)
                 return text;
             if (mode == WrapMode.Words)
@@ -119,7 +123,9 @@ namespace Plex.Engine
         /// <returns>The size in pixels of the text.</returns>
         public static Vector2 MeasureText(string text, SpriteFont font, int maxwidth, WrapMode wrapMode)
         {
-            switch(wrapMode)
+            if (string.IsNullOrEmpty(text))
+                return Vector2.Zero;
+            switch (wrapMode)
             {
                 case WrapMode.None:
                     return font.MeasureString(text);
@@ -142,6 +148,8 @@ namespace Plex.Engine
         /// <param name="color">The color of the text to render</param>
         public static void DrawText(GraphicsContext gfx, int x, int y, string text, SpriteFont font, Color color, int maxwidth, TextAlignment alignment, WrapMode wrapMode)
         {
+            if (string.IsNullOrEmpty(text))
+                return;
             string measured = (wrapMode == WrapMode.None) ? text : WrapText(font, text, maxwidth, wrapMode);
             Vector2 size = font.MeasureString(measured);
             var bounds = new Rectangle(x, y, maxwidth, (int)(size.Y));
