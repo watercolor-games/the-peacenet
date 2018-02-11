@@ -22,6 +22,8 @@ namespace Peacenet.Tutorial
         private Button _back = new Button();
         private float _uiAnim = 0;
 
+        private ScrollView _mainView = new ScrollView();
+
         private int _uiState = 0;
         private int _animState = 0;
 
@@ -40,6 +42,13 @@ namespace Peacenet.Tutorial
             AddChild(_setupMode);
             AddChild(_back);
             AddChild(_next);
+
+            _back.Text = "Back";
+            _next.Text = "Next";
+            _setupMode.AutoSize = true;
+            _setupMode.Text = "Introduction";
+
+            AddChild(_mainView);
         }
 
         /// <inheritdoc/>
@@ -109,7 +118,31 @@ namespace Peacenet.Tutorial
             _setupTitle.Y = titleLocY;
             _setupTitle.Opacity = _welcomeAnim;
 
+            //Align the setup category title.
+            _setupMode.X = _setupMode.X;
+            int setupModeYMax = _setupTitle.Y + _setupTitle.Height + 5;
+            _setupMode.X = _setupTitle.X;
+            _setupMode.Y = (int)MathHelper.Lerp(setupModeYMax + (WindowSystem.Height * 0.25f), setupModeYMax, _uiAnim);
+            _setupMode.Opacity = _uiAnim;
 
+            int buttonY = (Height - _next.Height) - 15;
+            _next.Y = (int)MathHelper.Lerp(buttonY + (WindowSystem.Height * 0.25F), buttonY, _uiAnim);
+            _back.Y = _next.Y;
+            _next.Opacity = _uiAnim;
+            _back.Opacity = _uiAnim;
+
+            _next.X = (Width - _next.Width) - 15;
+            _back.X = (_next.X - _back.Width) - 5;
+
+            _setupMode.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
+
+            _mainView.X = 0;
+            _mainView.Y = _setupMode.Y + _setupMode.Height + 25;
+            _mainView.Opacity = _uiAnim;
+            _mainView.Height = (_next.Y-15) - _mainView.Y;
+            _mainView.MinWidth = Width;
+            _mainView.MaxWidth = Width;
+            _mainView.Width = Width;
 
             Opacity = _welcomeAnim;
 

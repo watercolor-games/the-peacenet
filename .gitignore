@@ -16,6 +16,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# MonoDevelop user preferences files
+*.userprefs
+
 # Roslyn cache directories
 *.ide/
 
