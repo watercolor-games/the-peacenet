@@ -5,6 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using static Peacenet.Applications.Appearance;
+using Microsoft.Xna.Framework.Graphics;
+using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine;
+using Plex.Engine.Saves;
 
 namespace Peacenet.Tutorial
 {
@@ -33,6 +38,20 @@ namespace Peacenet.Tutorial
         private Label _introHeader = new Label();
         private Label _introText = new Label();
 
+        private Panel _desktopWallpaperPanel = new Panel();
+        private Label _desktopHeader = new Label();
+        private Label _desktopText = new Label();
+        private WallpaperGrid _wallpapers = new WallpaperGrid();
+
+        private Panel _accentPanel = new Panel();
+        private Label _accentHeader = new Label();
+        private Label _accentText = new Label();
+        private ListView _accentColors = new ListView();
+
+
+
+        private Texture2D _loadedWallpaper = null;
+
         private Panel _introPanel = new Panel();
 
         private void _resetUI()
@@ -41,14 +60,31 @@ namespace Peacenet.Tutorial
             switch(_uiState)
             {
                 case 0:
+                    _setupMode.Text = "Introduction";
                     _back.Enabled = false;
                     _mainView.AddChild(_introPanel);
                     break;
                 case 1:
+                    _setupMode.Text = "Personalization";
                     _back.Enabled = true;
+                    _mainView.AddChild(_desktopWallpaperPanel);
+                    if(_wallpapers.SelectedTexture == null)
+                    {
+                        _loadedWallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
+                    }
+                    break;
+                case 2:
+                    _setupMode.Text = "Personalization";
+                    _mainView.AddChild(_accentPanel);
                     break;
             }
         }
+
+        [Dependency]
+        private Plexgate _plexgate = null;
+
+        [Dependency]
+        private SaveManager _save = null;
 
         /// <inheritdoc/>
         public PeacegateSetup(WindowSystem _winsys, TutorialBgmEntity tutorial) : base(_winsys)
@@ -96,6 +132,67 @@ Click 'Next' to get started.";
                 _uiState++;
                 _animState = 6;
             };
+
+            var wall1 = new PictureBox();
+            var wall2 = new PictureBox();
+            wall1.Texture = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage");
+            wall2.Texture = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
+            _wallpapers.AddChild(wall1);
+            _wallpapers.AddChild(wall2);
+
+            _desktopWallpaperPanel.AddChild(_desktopHeader);
+            _desktopWallpaperPanel.AddChild(_desktopText);
+            _desktopWallpaperPanel.AddChild(_wallpapers);
+
+            _desktopHeader.AutoSize = true;
+            _desktopText.AutoSize = true;
+            _desktopWallpaperPanel.AutoSize = true;
+
+            _desktopHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _desktopHeader.Text = "Choose a wallpaper";
+            _desktopText.Text = "A wallpaper is displayed in the background of your desktop. You will see it when there are no windows open or anywhere where a window is not being displayed. Right now you only have a small selection of wallpapers, but you will unlock more as you explore the Peacenet.";
+
+            _save.SetValue("desktop.wallpaper", "DesktopBackgroundImage2");
+
+            _wallpapers.SelectedTextureChanged += (texture) =>
+            {
+                _loadedWallpaper = texture;
+                string name = texture.Name.Remove(0, 8);
+                _save.SetValue("desktop.wallpaper", name);
+                Invalidate(true);
+            };
+
+            _accentHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _accentHeader.AutoSize = true;
+            _accentHeader.Text = "Choose an accent color";
+            _accentText.Text = "An accent color defines the general color of your Peacegate user interface. The accent color defines the color of buttons, window borders, the Desktop Panels, and other UI elements. You can change this later in your Terminal.";
+            _accentText.AutoSize = true;
+            _accentPanel.AutoSize = true;
+            _accentColors.Layout = ListViewLayout.List;
+
+            var currentAccent = _save.GetValue("theme.accent", PeacenetAccentColor.Blueberry);
+            int index = 0;
+            foreach (var accent in Enum.GetNames(typeof(PeacenetAccentColor)))
+            {
+                if(accent != currentAccent.ToString())
+                    index++;
+                var lvitem = new ListViewItem(_accentColors);
+                lvitem.Value = accent.ToString();
+                lvitem.Tag = (PeacenetAccentColor)Enum.Parse(typeof(PeacenetAccentColor), accent);
+            }
+            _accentColors.SelectedIndex = index;
+            _accentColors.SelectedIndexChanged += (o, a) =>
+            {
+                if (_accentColors.SelectedItem == null)
+                    return;
+                _save.SetValue<PeacenetAccentColor>("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                Manager.InvalidateAll();
+            };
+            _accentPanel.AddChild(_accentColors);
+            _accentPanel.AddChild(_accentHeader);
+            _accentPanel.AddChild(_accentText);
+
 
             AddChild(_mainView);
         }
@@ -210,9 +307,47 @@ Click 'Next' to get started.";
                     _introText.MaxWidth = _introHeader.MaxWidth;
                     _introPanel.Width = Width;
                     break;
+                case 1:
+                    _desktopWallpaperPanel.Width = Width;
+                    _wallpapers.Width = Width - 30;
+                    _desktopHeader.X = 30;
+                    _desktopHeader.Y = 30;
+                    _desktopText.X = 30;
+                    _desktopText.Y = _desktopHeader.Y + _desktopHeader.Height + 10;
+                    _desktopText.MaxWidth = Width - 60;
+                    _desktopHeader.MaxWidth = _desktopText.MaxWidth;
+                    _wallpapers.X = 30;
+                    _wallpapers.Y = _desktopText.Y + _desktopText.Height + 30;
+                    _wallpapers.MaxWidth = Width - 30;
+                    break;
+                case 2:
+                    _accentText.X = 30;
+                    _accentHeader.X = 30;
+                    _accentHeader.Y = 30;
+                    _accentText.Y = _accentHeader.Y + _accentHeader.Height + 10;
+                    _accentHeader.MaxWidth = (Width - 60);
+                    _accentText.MaxWidth = _accentHeader.MaxWidth;
+                    _accentPanel.Width = Width;
+                    _accentColors.Width = _accentHeader.MaxWidth;
+                    _accentColors.Y = _accentText.Y + _accentText.Height + 30;
+                    _accentColors.X = 30;
+                    break;
             }
 
             base.OnUpdate(time);
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            if(_loadedWallpaper != null)
+            {
+                gfx.Clear(Color.Black);
+                gfx.DrawRectangle(0, 0, Width, Height, _loadedWallpaper, Color.White * 0.5f);
+            }
+            else
+            {
+                Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+            }
         }
     }
 }
