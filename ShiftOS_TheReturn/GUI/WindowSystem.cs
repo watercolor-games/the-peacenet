@@ -99,6 +99,38 @@ namespace Plex.Engine.GUI
             }
         }
 
+        /// <summary>
+        /// Set whether a window can be closed by its Close button.
+        /// </summary>
+        /// <param name="wid">The ID of the window to modify</param>
+        /// <param name="canClose">Whether it can be closed.</param>
+        public void SetCanClose(int wid, bool canClose)
+        {
+            var win = _windows.FirstOrDefault(x => x.WindowID == wid);
+            if (win != null)
+            {
+                win.Border.AllowClose = canClose;
+                WindowListUpdated?.Invoke(this, EventArgs.Empty);
+            }
+
+        }
+
+        /// <summary>
+        /// Retrieves whether a window can be closed by its Close button.
+        /// </summary>
+        /// <param name="wid">The ID of the window to check</param>
+        /// <returns>Whether it can be closed.</returns>
+        public bool CanClose(int wid)
+        {
+            var win = _windows.FirstOrDefault(x => x.WindowID == wid);
+            if (win != null)
+            {
+                return win.Border.AllowClose;
+            }
+            return false;
+
+        }
+
         internal void InjectDependencies(Window window)
         {
             _plexgate.Inject(window);
@@ -111,14 +143,16 @@ namespace Plex.Engine.GUI
         /// </summary>
         /// <param name="window">The window for the border to host</param>
         /// <param name="style">The style of the window border</param>
+        /// <param name="canClose">Can the window be closed by the Close button?</param>
         /// <returns>The ID of the new window border</returns>
-        public int CreateWindowInfo(Window window, WindowStyle style)
+        public int CreateWindowInfo(Window window, WindowStyle style, bool canClose)
         {
             var info = new WindowInfo
             {
                 Border = new GUI.WindowBorder(this, window, style),
                 WindowID = _totalWindowsOpened + 1
             };
+            info.Border.AllowClose = canClose;
             _totalWindowsOpened++;
             _windows.Add(info);
             _uiman.Add(info.Border);
@@ -217,6 +251,7 @@ namespace Plex.Engine.GUI
         private int? _wid = null;
         private WindowStyle _preferredStyle = WindowStyle.Default;
         private string _title = "Peacenet Window";
+        private bool _preferredCanClose = true;
 
         /// <summary>
         /// Gets or sets the title text of the window.
@@ -240,6 +275,26 @@ namespace Plex.Engine.GUI
                 {
                     _winsystem.SetWindowTitle((int)_wid, _title);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether this window can be closed by the window border's close button.
+        /// </summary>
+        public bool CanClose
+        {
+            get
+            {
+                if (_wid == null)
+                    return _preferredCanClose;
+                return _winsystem.CanClose((int)_wid);
+            }
+            set
+            {
+                if (_wid == null)
+                    _preferredCanClose = value;
+                else
+                    _winsystem.SetCanClose((int)_wid, value);
             }
         }
 
@@ -285,7 +340,7 @@ namespace Plex.Engine.GUI
         public virtual void Show(int x = -1, int y = -1)
         {
             if (_wid == null)
-                _wid = _winsystem.CreateWindowInfo(this, _preferredStyle);
+                _wid = _winsystem.CreateWindowInfo(this, _preferredStyle, _preferredCanClose);
             if(x > -1)
             {
                 Parent.X = x;
@@ -379,6 +434,24 @@ namespace Plex.Engine.GUI
         private Hitbox _bRightHitbox = null;
         private Hitbox _bLeftHitbox = null;
         
+        /// <summary>
+        /// Gets or sets whether the window border can be closed using the close button.
+        /// </summary>
+        public bool AllowClose
+        {
+            get
+            {
+                return _closeHitbox.Enabled;
+            }
+            set
+            {
+                if (_closeHitbox.Enabled == value)
+                    return;
+                _closeHitbox.Enabled = value;
+                Invalidate(true);
+            }
+        }
+
         private string _title = "";
 
         /// <summary>

@@ -21,6 +21,9 @@ namespace Peacenet
         //New theme variables
         private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
 
+        //Are we a light theme?
+        private bool _isLight = false;
+
         /// <summary>
         /// Set the accent color for this theme.
         /// </summary>
@@ -151,8 +154,11 @@ namespace Peacenet
                 case TextFontStyle.Header1:
                 case TextFontStyle.Header2:
                 case TextFontStyle.Header3:
+                    if (_isLight) return GetAccentColor();
                     return GetAccentColor().Lighten(0.75F).Lighten(0.75F);
                 default:
+                    if (_isLight)
+                        return Color.Black;
                     return Color.White;
             }
         }
@@ -395,9 +401,18 @@ namespace Peacenet
             _bStateTextHover = Color.White;
             _bStateTextPressed = Color.Gray;
 
-            _bgRegular = new Color(64, 64, 64, 255);
-            _bgDark = new Color(32, 32, 32, 255);
-            _bgLight = new Color(127, 127, 127, 255);
+            if (_isLight)
+            {
+                _bgRegular = Color.White;
+                _bgDark = Color.WhiteSmoke;
+                _bgLight = Color.LightGray;
+            }
+            else
+            {
+                _bgRegular = new Color(64, 64, 64, 255);
+                _bgDark = new Color(32, 32, 32, 255);
+                _bgLight = new Color(127, 127, 127, 255);
+            }
 
             _buttonIdleBG = new Color(90, 90, 90, 255);
 

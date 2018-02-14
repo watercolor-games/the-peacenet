@@ -27,6 +27,27 @@ namespace Peacenet
         private Texture2D _wallpaper = null;
         private float _panelAnim = 0;
 
+        private bool _showPanels = true;
+
+        public bool ShowPanels
+        {
+            get
+            {
+                return _showPanels;
+            }
+            set
+            {
+                if (_showPanels == value)
+                    return;
+                _showPanels = value;
+                if(value)
+                {
+                    _panelAnim = 0;
+                    _animState = 1;
+                }
+            }
+        }
+
         private double _missionCheckTime = 0;
         private bool _needsMissionCheck = true;
 
@@ -228,6 +249,9 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            _topPanel.Visible = _showPanels;
+            _bottomPanel.Visible = _showPanels;
+
             switch (_animState)
             {
                 case 0:
@@ -254,8 +278,6 @@ namespace Peacenet
                     break;
                 case 4:
                     _scaleAnim -= (float)time.ElapsedGameTime.TotalSeconds * 3;
-                    if (_tutorialBgmInstance.State == SoundState.Playing)
-                        _tutorialBgmInstance.Volume = MathHelper.Clamp(_scaleAnim, 0, 1);
                     if (_scaleAnim <= 0)
                     {
                         _animState++;

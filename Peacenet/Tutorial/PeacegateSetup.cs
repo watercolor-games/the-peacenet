@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
 using Plex.Engine.Saves;
+using Plex.Engine.Interfaces;
 
 namespace Peacenet.Tutorial
 {
@@ -20,6 +21,9 @@ namespace Peacenet.Tutorial
     {
         private float _welcomeAnim = 0f;
         private float _cornerAnim = 0f;
+
+        [Dependency]
+        private OS _os = null;
 
         private Label _setupTitle = new Label();
         private Label _setupMode = new Label();
@@ -48,7 +52,9 @@ namespace Peacenet.Tutorial
         private Label _accentText = new Label();
         private ListView _accentColors = new ListView();
 
-
+        private Panel _setupComplete = new Panel();
+        private Label _completeHead = new Label();
+        private Label _completeText = new Label();
 
         private Texture2D _loadedWallpaper = null;
 
@@ -71,11 +77,22 @@ namespace Peacenet.Tutorial
                     if(_wallpapers.SelectedTexture == null)
                     {
                         _loadedWallpaper = _plexgate.Content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
+                        Invalidate(true);
                     }
                     break;
                 case 2:
                     _setupMode.Text = "Personalization";
                     _mainView.AddChild(_accentPanel);
+                    _next.Text = "Next";
+                    break;
+                case 3:
+                    _setupMode.Text = "Setup Complete";
+                    _mainView.AddChild(_setupComplete);
+                    _next.Text = "Finish";
+                    break;
+                case 4:
+                    _setupTitle.Text = "Thanks for choosing Peacegate OS as your Peacenet gateway.";
+                    _animState = 7;
                     break;
             }
         }
@@ -193,6 +210,19 @@ Click 'Next' to get started.";
             _accentPanel.AddChild(_accentHeader);
             _accentPanel.AddChild(_accentText);
 
+            _completeHead.Text = "You have successfully completed the Peacegate OS Setup.";
+            _completeText.Text = @"That's all the information we need from you for now. Feel free to go back and change what you have set.
+
+You will also be able to change your desktop wallpaper, accent color and other settings at any time in the Peacegate Settings program.
+
+Press 'Finish' to exit Setup and continue system boot. When the system starts up again, you will have to complete the Peacegate GUI Crash Course. Good luck!";
+            _completeHead.AutoSize = true;
+            _completeHead.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _completeText.AutoSize = true;
+            _setupComplete.AddChild(_completeHead);
+            _setupComplete.AddChild(_completeText);
+
+            _setupTitle.Text = "Peacegate OS Setup";
 
             AddChild(_mainView);
         }
@@ -227,11 +257,12 @@ Click 'Next' to get started.";
                     }
                     break;
                 case 3:
-                    _resetUI();
                     _animState++;
+                    _resetUI();
                     break;
                 case 4:
                     _uiAnim += (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    Invalidate(true);
                     if (_uiAnim >= 1.0f)
                     {
                         _uiAnim = 1;
@@ -240,13 +271,45 @@ Click 'Next' to get started.";
                     break;
                 case 6:
                     _uiAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    Invalidate(true);
                     if (_uiAnim <= 0f)
                     {
                         _uiAnim = 0;
                         _animState = 3;
                     }
                     break;
-
+                case 7:
+                    _cornerAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    if (_cornerAnim <= 0.0f)
+                    {
+                        _animRide = 0;
+                        _cornerAnim = 0;
+                        _animState++;
+                    }
+                    break;
+                case 8:
+                    _tutorial.MoveToNextSection();
+                    _animState++;
+                    break;
+                case 9:
+                    if (_tutorial.WaitingForNextTrack == false)
+                        _animState++;
+                    break;
+                case 10:
+                    _welcomeAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    if (_welcomeAnim <= 0.0f)
+                    {
+                        _welcomeAnim = 0;
+                        _animState++;
+                    }
+                    break;
+                case 11:
+                    var layer = new Layer();
+                    layer.AddEntity((IEntity)_plexgate.Inject(new TutorialInstructionEntity(_tutorial)));
+                    _plexgate.AddLayer(layer);
+                    _os.PreventStartup = false;
+                    Close();
+                    break;
             }
             Width = (int)MathHelper.Lerp(WindowSystem.Width - 50, WindowSystem.Width, _welcomeAnim);
             Height = (int)MathHelper.Lerp(WindowSystem.Height - 50, WindowSystem.Height, _welcomeAnim);
@@ -254,7 +317,6 @@ Click 'Next' to get started.";
             Parent.Y = (int)MathHelper.Lerp(25, 0, _welcomeAnim);
 
             _setupTitle.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _setupTitle.Text = "Peacegate OS Setup";
             _setupTitle.AutoSize = true;
 
             //first we calculate where the title should ACTUALLY BE
@@ -332,6 +394,16 @@ Click 'Next' to get started.";
                     _accentColors.Y = _accentText.Y + _accentText.Height + 30;
                     _accentColors.X = 30;
                     break;
+                case 3:
+                    _setupComplete.Width = Width;
+                    _setupComplete.AutoSize = true;
+                    _completeHead.MaxWidth = Width - 60;
+                    _completeText.MaxWidth = _completeHead.MaxWidth;
+                    _completeHead.X = 30;
+                    _completeText.X = 30;
+                    _completeHead.Y = 30;
+                    _completeText.Y = _completeHead.Y + _completeHead.Height + 10;
+                    break;
             }
 
             base.OnUpdate(time);
@@ -342,7 +414,7 @@ Click 'Next' to get started.";
             if(_loadedWallpaper != null)
             {
                 gfx.Clear(Color.Black);
-                gfx.DrawRectangle(0, 0, Width, Height, _loadedWallpaper, Color.White * 0.5f);
+                gfx.DrawRectangle(0, 0, Width, Height, _loadedWallpaper, Color.White * (MathHelper.Lerp(1, 0.5F, _uiAnim)));
             }
             else
             {

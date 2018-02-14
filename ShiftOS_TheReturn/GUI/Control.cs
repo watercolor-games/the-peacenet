@@ -963,10 +963,9 @@ namespace Plex.Engine.GUI
                 {
                     if (!child.Visible)
                         continue;
-                    if(child.Opacity>0)
+                    if (child.Opacity > 0)
                         child.Draw(time, gfx);
                 }
-
                 gfx.Device.SetRenderTarget(_rendertarget);
                 gfx.Device.Clear(Color.Transparent);
                 if (_userfacingtarget != null)
@@ -996,7 +995,7 @@ namespace Plex.Engine.GUI
                 {
                     Invalidate(true);
                     _resized = true;
-                    
+
                 }
                 _needsRerender = false;
 

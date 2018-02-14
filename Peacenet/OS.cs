@@ -39,6 +39,19 @@ namespace Peacenet
         private OSEntity _osEntity = null;
 
         /// <summary>
+        /// Retrieves the current Peacegate OS Desktop window.
+        /// </summary>
+        public DesktopWindow Desktop
+        {
+            get
+            {
+                if (IsDesktopOpen == false)
+                    return null;
+                return _osEntity.Desktop;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets whether the OS module should prevent the desktop from starting after the kernel messages end. Useful for the tutorial.
         /// </summary>
         public bool PreventStartup

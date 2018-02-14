@@ -255,6 +255,25 @@ namespace Plex.Engine.GraphicsSubsystem
                 }
             }
 
+            public void SendToBack(Control ctrl)
+            {
+                if (_toplevels.Contains(ctrl))
+                {
+                    _toplevels.Remove(ctrl);
+                    _toplevels.Insert(0, ctrl);
+                }
+            }
+
+
+            public void BringToFront(Control ctrl)
+            {
+                if (_toplevels.Contains(ctrl))
+                {
+                    _toplevels.Remove(ctrl);
+                    _toplevels.Add(ctrl);
+                }
+            }
+
             public void Dispose()
             {
                 Logger.Log("Clearing out ui controls...", LogType.Info, "ui");
@@ -414,6 +433,15 @@ namespace Plex.Engine.GraphicsSubsystem
             _plexgate.graphicsDevice.IsFullScreen = fullscreen;
             _plexgate.graphicsDevice.ApplyChanges();
             _ignoreControlOpacity = (bool)_config.GetValue("uiIgnoreControlOpacity", false);
+        }
+
+        /// <summary>
+        /// Bring a control to the front of the UI.
+        /// </summary>
+        /// <param name="_tutorialLabel">The control to move.</param>
+        public void BringToFront(Control _tutorialLabel)
+        {
+            _container.BringToFront(_tutorialLabel);
         }
     }
 }

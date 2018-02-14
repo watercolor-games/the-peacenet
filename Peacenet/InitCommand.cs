@@ -21,6 +21,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.GUI;
+using Peacenet.Applications;
 
 namespace Peacenet
 {
@@ -350,6 +351,242 @@ namespace Peacenet
                     _current.IsLooped = _looping;
                     break;
             }
+        }
+    }
+
+    /// <summary>
+    /// Provides the front-end for the GUI Crash Course.
+    /// </summary>
+    public class TutorialInstructionEntity : IEntity
+    {
+        [Dependency]
+        private OS _os = null;
+
+        [Dependency]
+        private WindowSystem _windowSystem = null;
+
+        [Dependency]
+        private UIManager _ui = null;
+
+        private Label _tutorialLabel = new Label();
+        private Label _tutorialDescription = new Label();
+        private Button _tutorialButton = new Button();
+
+        private int _tutorialStage = -1;
+
+        private TutorialBgmEntity _music = null;
+
+        private TutorialHitbox _hitbox = new TutorialHitbox();
+
+        private Terminal _terminal = null;
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="TutorialInstructionEntity"/>. 
+        /// </summary>
+        /// <param name="music">The <see cref="TutorialBgmEntity"/> currently playing music.</param>
+        public TutorialInstructionEntity(TutorialBgmEntity music)
+        {
+            if (music == null)
+                throw new ArgumentNullException(nameof(music));
+            _music = music;
+            
+            _tutorialLabel.AutoSize = true;
+            _tutorialDescription.AutoSize = true;
+            _tutorialLabel.FontStyle = TextFontStyle.Header1;
+
+            _tutorialButton.Click += (o, a) =>
+            {
+                _tutorialStage++;
+            };
+        }
+
+        /// <inheritdoc/>
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+        }
+
+        /// <inheritdoc/>
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+        }
+
+        /// <inheritdoc/>
+        public void OnMouseUpdate(MouseState mouse)
+        {
+        }
+
+        /// <inheritdoc/>
+        public void Update(GameTime time)
+        {
+            bool isDesktopOpen = _os.IsDesktopOpen;
+
+            _tutorialLabel.MaxWidth = _ui.ScreenWidth / 4;
+            _tutorialDescription.MaxWidth = _tutorialLabel.MaxWidth;
+
+            if(isDesktopOpen)
+            {
+                var desk = _os.Desktop;
+
+                
+
+                _ui.BringToFront(_hitbox);
+                _ui.BringToFront(_tutorialLabel);
+                _ui.BringToFront(_tutorialDescription);
+                _ui.BringToFront(_tutorialButton);
+
+                int height = 0;
+                if (_tutorialLabel.Visible)
+                    height += _tutorialLabel.Height;
+                if (_tutorialDescription.Visible)
+                    height += 10 + _tutorialDescription.Height;
+                if (_tutorialButton.Visible)
+                    height += 5 + _tutorialButton.Height;
+
+                _tutorialLabel.Y = (_ui.ScreenHeight - height) / 2;
+                _tutorialLabel.X = (_ui.ScreenWidth - _tutorialLabel.Width) / 2;
+
+                //Get the window Y.
+                int winY = (_terminal == null) ? 0 : _terminal.Parent.Y;
+                int winX = (_terminal == null) ? 0 : _terminal.Parent.X;
+
+                bool canFitAbove = (winY - height) - 30 >= height + 30;
+
+
+                switch (_tutorialStage)
+                {
+                    case -1:
+                        _ui.Add(_tutorialLabel);
+                        _ui.Add(_tutorialDescription);
+                        _ui.Add(_tutorialButton);
+                        desk.AddChild(_hitbox);
+                        _tutorialStage++;
+                        break;
+                    case 0:
+                        desk.ShowPanels = false;
+                        _tutorialLabel.Text = "Welcome to Peacegate OS!";
+                        _tutorialDescription.Text = "You are currently in the GUI Crash Course. This guide will teach you everything you need to know about your Peacegate OS GUI and how to use it. When you're ready, click Next.";
+                        _tutorialButton.Text = "Next";
+                        _tutorialLabel.Visible = true;
+                        _tutorialDescription.Visible = true;
+                        _tutorialButton.Visible = true;
+                        _hitbox.Visible = false;
+                        break;
+                    case 1:
+                        _terminal = new Terminal(_windowSystem);
+                        _terminal.CanClose = false;
+                        _terminal.SetWindowStyle(WindowStyle.DialogNoDrag);
+                        _terminal.Show();
+                        _terminal.Enabled = false;
+                        _tutorialStage++;
+                        break;
+                    case 2:
+                        if (canFitAbove)
+                            _tutorialLabel.Y = (winY - height) - 30;
+                        else
+                            _tutorialLabel.Y = (winY + _terminal.Parent.Height) + 30;
+
+                        _tutorialLabel.X = winX;
+
+                        _tutorialLabel.Text = "This is a window.";
+                        _tutorialDescription.Text = "Windows are draggable frames that contain program controls. In this case, this is a Terminal window.";
+                        break;
+                    case 3:
+                        if (canFitAbove)
+                            _tutorialLabel.Y = (winY - height) - 30;
+                        else
+                            _tutorialLabel.Y = (winY + _terminal.Parent.Height) + 30;
+
+                        _tutorialLabel.X = winX;
+
+                        _terminal.SetWindowStyle(WindowStyle.Dialog);
+
+                        _tutorialLabel.Text = "Try dragging this window around.";
+                        _tutorialDescription.Text = "You can drag windows by clicking on their titles and dragging the mouse as you hold down the button. Release the button to let it go. Drag the window so it fits within the highlighted area.";
+                        _hitbox.Visible = true;
+                        _tutorialButton.Visible = false;
+                        _hitbox.Width = _terminal.Parent.Width + 60;
+                        _hitbox.Height = _terminal.Parent.Height + 60;
+                        _hitbox.X = 30;
+                        _hitbox.Y = (_ui.ScreenHeight - _hitbox.Height) - 30;
+
+                        if(winX >= _hitbox.X && winX + _terminal.Parent.Width <= _hitbox.X + _hitbox.Width && winY >= _hitbox.Y && winY + _terminal.Parent.Height <= _hitbox.Y + _hitbox.Height)
+                        {
+                            _hitbox.Visible = false;
+                            _tutorialStage++;
+                        }
+                        break;
+                    case 4:
+                        _terminal.CanClose = true;
+                        if (canFitAbove)
+                            _tutorialLabel.Y = (winY - height) - 30;
+                        else
+                            _tutorialLabel.Y = (winY + _terminal.Parent.Height) + 30;
+
+                        _tutorialLabel.Text = "Close the window.";
+                        _tutorialDescription.Text = "When you're done with a program, close it to free memory. Click the circular 'X' button in the corner to close it.";
+
+                        if (_windowSystem.WindowList.FirstOrDefault(x => x.Border == _terminal.Parent) == null)
+                            _tutorialStage++;
+
+                        break;
+                }
+
+                _tutorialDescription.X = _tutorialLabel.X;
+                _tutorialDescription.Y = _tutorialLabel.Y + _tutorialLabel.Height + 10;
+                _tutorialButton.X = _tutorialDescription.X + ((_tutorialDescription.Width - _tutorialButton.Width) / 2);
+                _tutorialButton.Y = _tutorialDescription.Y + _tutorialDescription.Height + 10;
+
+            }
+            else
+            {
+                _tutorialLabel.Visible = false;
+                _tutorialDescription.Visible = false;
+                _tutorialButton.Visible = false;
+                _hitbox.Visible = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// A pulsing control for highlighting an area in a tutorial.
+    /// </summary>
+    public class TutorialHitbox : Control
+    {
+        private float _colorFade = 0.0f;
+        private int _animState = 0;
+
+        /// <inheritdoc/>
+        protected override void OnUpdate(GameTime time)
+        {
+            switch(_animState)
+            {
+                case 0:
+                    _colorFade += (float)time.ElapsedGameTime.TotalSeconds;
+                    Invalidate(true);
+                    if(_colorFade >= 1)
+                    {
+                        _colorFade = 1;
+                        _animState++;
+                    }
+                    break;
+                case 1:
+                    _colorFade -= (float)time.ElapsedGameTime.TotalSeconds;
+                    Invalidate(true);
+                    if (_colorFade <= 0)
+                    {
+                        _colorFade = 0;
+                        _animState--;
+                    }
+
+                    break;
+            }
+            base.OnUpdate(time);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor() * _colorFade);
         }
     }
 }
