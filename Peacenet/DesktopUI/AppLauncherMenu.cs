@@ -20,6 +20,23 @@ namespace Peacenet.DesktopUI
         private ListView _applications = new ListView();
         private ListView _places = new ListView();
 
+        private bool _closeOnFocusLoss = true;
+
+        /// <summary>
+        /// Gets or sets whether the menu will close when it loses focus.
+        /// </summary>
+        public bool CloseOnFocusLoss
+        {
+            get
+            {
+                return _closeOnFocusLoss;
+            }
+            set
+            {
+                _closeOnFocusLoss = value;
+            }
+        }
+
         //...These two columns are scrollable.
         private ScrollView _appsView = new ScrollView();
         private ScrollView _placesView = new ScrollView();
@@ -176,12 +193,30 @@ namespace Peacenet.DesktopUI
             base.Show(x, y);
         }
 
+        private bool _allowShutdowns = true;
+
+        /// <summary>
+        /// Gets or sets whether the player may shut down the system.
+        /// </summary>
+        public bool AllowShutdown
+        {
+            get
+            {
+                return _allowShutdowns;
+            }
+            set
+            {
+                _allowShutdowns = value;
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             if (!HasFocused)
-                Close();
-
+                if(_closeOnFocusLoss)
+                    Close();
+            _shutdown.Enabled = _allowShutdowns;
             _username.X = 3;
             _username.Y = 3;
             _username.AutoSize = true;

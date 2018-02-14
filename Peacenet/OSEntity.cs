@@ -109,6 +109,26 @@ namespace Peacenet
             ctx.EndDraw();
         }
 
+        private bool _allowControlT = true;
+
+        /// <summary>
+        /// Gets or sets whether the player may use CTRL+T to open the Terminal.
+        /// </summary>
+        public bool AllowTerminalHotkey
+        {
+            get
+            {
+                return _allowControlT;
+            }
+            set
+            {
+                _allowControlT = value;
+            }
+        }
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
         /// <inheritdoc/>
         public void OnKeyEvent(KeyboardEventArgs e)
         {
@@ -116,6 +136,11 @@ namespace Peacenet
             {
                 if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Microsoft.Xna.Framework.Input.Keys.T)
                 {
+                    if(!_allowControlT)
+                    {
+                        _infobox.Show("Feature not unlocked", "You cannot do this right now. Continue playing to unlock this feature.");
+                        return;
+                    }
                     var term = new Applications.Terminal(_winmgr);
                     term.Show();
                 }

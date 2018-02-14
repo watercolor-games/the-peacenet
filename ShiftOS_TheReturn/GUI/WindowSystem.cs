@@ -484,6 +484,17 @@ namespace Plex.Engine.GUI
         private bool _needsLayout = true;
 
         /// <summary>
+        /// Gets the window associated with this border.
+        /// </summary>
+        public Window Window
+        {
+            get
+            {
+                return _child;
+            }
+        }
+
+        /// <summary>
         /// Creates a new instance of the <see cref="WindowBorder"/> control. 
         /// </summary>
         /// <param name="winsys">The window system to associate with the window border</param>

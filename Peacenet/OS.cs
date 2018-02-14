@@ -38,6 +38,19 @@ namespace Peacenet
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
 
+        /// <inheritdoc cref="OSEntity.AllowTerminalHotkey"/>
+        public bool AllowTerminalHotkey
+        {
+            get
+            {
+                return _osEntity.AllowTerminalHotkey;
+            }
+            set
+            {
+                _osEntity.AllowTerminalHotkey = value;
+            }
+        }
+
         /// <summary>
         /// Retrieves the current Peacegate OS Desktop window.
         /// </summary>

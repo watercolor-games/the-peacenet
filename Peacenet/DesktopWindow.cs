@@ -173,6 +173,34 @@ namespace Peacenet
             };
         }
 
+        private bool _appLauncherClosesWhenFocusLost = true;
+
+        /// <summary>
+        /// Gets or sets whether the App Launcher should close when its focus is lost.
+        /// </summary>
+        public bool CloseALOnFocusLoss
+        {
+            get
+            {
+                return _appLauncherClosesWhenFocusLost;
+            }
+            set
+            {
+                _appLauncherClosesWhenFocusLost = value;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves whether the App Launcher menu is open.
+        /// </summary>
+        public bool IsAppLauncherOpen
+        {
+            get
+            {
+                return WindowSystem.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null;
+            }
+        }
+
         /// <summary>
         /// Retrieves whether the tutorial overlay is showing.
         /// </summary>
@@ -246,11 +274,25 @@ namespace Peacenet
             ResetWindowList((WindowSystem)o);
         }
 
+        /// <summary>
+        /// Gets the App Launcher Menu for this desktop.
+        /// </summary>
+        public AppLauncherMenu AppLauncher
+        {
+            get
+            {
+                return _applauncher;
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _topPanel.Visible = _showPanels;
             _bottomPanel.Visible = _showPanels;
+
+            if (IsAppLauncherOpen)
+                _applauncher.CloseOnFocusLoss = _appLauncherClosesWhenFocusLost;
 
             switch (_animState)
             {
@@ -401,6 +443,21 @@ namespace Peacenet
 
         [Dependency]
         private Storyboard _story = null;
+
+        /// <summary>
+        /// Gets or sets whether the App Launcher button is visible.
+        /// </summary>
+        public bool ShowAppLauncherButton
+        {
+            get
+            {
+                return _appLauncherText.Visible;
+            }
+            set
+            {
+                _appLauncherText.Visible = value;
+            }
+        }
 
         private void ResetWindowList(WindowSystem winsys)
         {

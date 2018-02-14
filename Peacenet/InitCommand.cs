@@ -287,6 +287,16 @@ namespace Peacenet
             _animState = 0;
         }
 
+        private bool _fading = false;
+
+        /// <summary>
+        /// Tell the tutorial to fade to the next track.
+        /// </summary>
+        public void FadeToNextTrack()
+        {
+            _fading = true;
+        }
+
         /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -310,7 +320,7 @@ namespace Peacenet
         {
             get
             {
-                return _animState == 0;
+                return _animState == 0 || _fading;
             }
         }
 
@@ -350,6 +360,27 @@ namespace Peacenet
                 case 1:
                     _current.IsLooped = _looping;
                     break;
+            }
+
+            if(_fading)
+            {
+                if(_current!=null)
+                {
+                    _current.IsLooped = true;
+                    if(_current.State == SoundState.Playing)
+                    {
+                        float vol = _current.Volume;
+                        vol = MathHelper.Clamp(vol - (float)time.ElapsedGameTime.TotalSeconds, 0, 1);
+                        _current.Volume = vol;
+                        if(vol <= 0)
+                        {
+                            _current.Stop();
+                            _fading = false;
+                            _track++;
+                            _animState = 0;
+                        }
+                    }
+                }
             }
         }
     }
@@ -415,6 +446,9 @@ namespace Peacenet
         {
         }
 
+        [Dependency]
+        private SaveManager _save = null;
+
         /// <inheritdoc/>
         public void Update(GameTime time)
         {
@@ -455,6 +489,7 @@ namespace Peacenet
                 switch (_tutorialStage)
                 {
                     case -1:
+                        _os.AllowTerminalHotkey = false;
                         _ui.Add(_tutorialLabel);
                         _ui.Add(_tutorialDescription);
                         _ui.Add(_tutorialButton);
@@ -511,6 +546,7 @@ namespace Peacenet
 
                         if(winX >= _hitbox.X && winX + _terminal.Parent.Width <= _hitbox.X + _hitbox.Width && winY >= _hitbox.Y && winY + _terminal.Parent.Height <= _hitbox.Y + _hitbox.Height)
                         {
+                            _terminal.SetWindowStyle(WindowStyle.DialogNoDrag);
                             _hitbox.Visible = false;
                             _tutorialStage++;
                         }
@@ -522,13 +558,131 @@ namespace Peacenet
                         else
                             _tutorialLabel.Y = (winY + _terminal.Parent.Height) + 30;
 
+                        _tutorialLabel.X = winX;
+
+
                         _tutorialLabel.Text = "Close the window.";
                         _tutorialDescription.Text = "When you're done with a program, close it to free memory. Click the circular 'X' button in the corner to close it.";
 
                         if (_windowSystem.WindowList.FirstOrDefault(x => x.Border == _terminal.Parent) == null)
+                        {
+                            _terminal.Dispose();
+                            _terminal = null;
                             _tutorialStage++;
+                        }
+                        break;
+                    case 5:
+                        _os.AllowTerminalHotkey = true;
+                        _tutorialLabel.Text = "Open another Terminal.";
+                        _tutorialDescription.Text = "At any time, you may open a new Terminal window by pressing CTRL+T on your keyboard.\n\nPlease do this to continue.";
+
+                        var win = _windowSystem.WindowList.FirstOrDefault(x => x.Border.Window is Terminal);
+                        if(win != null)
+                        {
+                            _os.AllowTerminalHotkey = false;
+                            _terminal = win.Border.Window as Terminal;
+                            _terminal.CanClose = false;
+                            _terminal.Enabled = false;
+                            _terminal.SetWindowStyle(WindowStyle.Dialog);
+                            _tutorialStage++;
+                        }
+                        break;
+                    case 6:
+                        desk.ShowPanels = true;
+                        desk.ShowAppLauncherButton = false;
+                        _tutorialLabel.Text = "Welcome to Peacegate Desktop.";
+                        _tutorialDescription.Text = "These two panels at the top and bottom of your screen are part of the Peacegate Desktop.\n\nThey give you useful information about your environment - such as what windows are open, what time it is, and the notifications you have available to read.";
+                        _tutorialButton.Visible = true;
+                        break;
+                    case 7:
+                        desk.ShowAppLauncherButton = true;
+                        _tutorialLabel.X = 30;
+                        _tutorialLabel.Y = 54;
+                        _tutorialLabel.Text = "Open the Peacegate Menu.";
+                        _tutorialDescription.Text = "The Peacegate Menu allows you to open new programs, view and open folders in your environment, and end your Peacegate session.\n\nGo ahead and open it.";
+                        _tutorialButton.Visible = false;
+
+                        if(desk.IsAppLauncherOpen)
+                        {
+                            desk.CloseALOnFocusLoss = false;
+                            desk.ShowAppLauncherButton = false;
+                            desk.AppLauncher.AllowShutdown = false;
+                            _tutorialStage++;
+                        }
+                        break;
+                    case 8:
+                        _tutorialLabel.X = desk.AppLauncher.X + desk.AppLauncher.Width + 15;
+                        _tutorialLabel.Y = desk.AppLauncher.Parent.Y + 15;
+
+                        _tutorialLabel.Text = "The Peacegate Menu";
+                        _tutorialDescription.Text = "The Peacegate Menu is a very simple interface that allows you to easily get to pretty much anywhere in Peacegate OS.\n\nOn the left column are all the programs available to you. On the right column, you will find storage volumes and useful folders. At the bottom, you can find buttons for actions such as ending your Peacegate session.\n\n";
+                        _tutorialButton.Visible = true;
+
+                        _hitbox.Visible = true;
+                        _hitbox.X = desk.AppLauncher.Parent.X;
+                        _hitbox.Y = desk.AppLauncher.Parent.Y;
+                        _hitbox.Width = desk.AppLauncher.Width;
+                        _hitbox.Height = desk.AppLauncher.Height;
+                        break;
+                    case 9:
+                        _tutorialLabel.X = desk.AppLauncher.X + desk.AppLauncher.Width + 15;
+                        _tutorialLabel.Y = desk.AppLauncher.Parent.Y + 15;
+
+                        _tutorialLabel.Text = "Click on a program or folder to open it.";
+                        _tutorialDescription.Text = "Open a program or folder to close the Peacegate menu and end the GUI crash course.\n\nWe'll open up the rest of the UI once you do so. Go ahead and explore!";
+
+                        _hitbox.Visible = false;
+                        _tutorialButton.Visible = false;
+
+                        if(_terminal!=null)
+                        {
+                            _terminal.Close();
+                            _terminal = null;
+                        }
+
+                        if(!desk.IsAppLauncherOpen)
+                        {
+                            _music.FadeToNextTrack();
+                            _tutorialStage++;
+                        }
 
                         break;
+                    case 10:
+                        _tutorialLabel.Visible = false;
+                        _tutorialDescription.Visible = false;
+
+                        if(!_music.WaitingForNextTrack)
+                        {
+                            _music.Looping = false;
+                            _tutorialStage++;
+                        }
+                        break;
+                    case 11:
+                        _tutorialLabel.Visible = true;
+                        _tutorialDescription.Visible = true;
+
+                        _tutorialLabel.Text = "Tutorial complete!";
+                        _tutorialDescription.Text = "You have successfully finished the Peacegate OS GUI Crash Course!\n\nClick 'Finish' to continue to free-roam mode. Enjoy your new environment!";
+
+                        _tutorialButton.Text = "Finish";
+                        _tutorialButton.Visible = true;
+                        break;
+                    case 12:
+                        desk.ShowAppLauncherButton = true;
+                        _os.AllowTerminalHotkey = true;
+                        desk.CloseALOnFocusLoss = true;
+                        _ui.Remove(_tutorialLabel);
+                        _ui.Remove(_tutorialDescription);
+                        desk.RemoveChild(_hitbox);
+                        _ui.Remove(_tutorialButton);
+                        _tutorialLabel.Dispose();
+                        _tutorialDescription.Dispose();
+                        _hitbox.Dispose();
+                        _tutorialButton.Dispose();
+                        _save.SetValue("boot.hasDoneCmdTutorial", true);
+                        _tutorialStage++;
+                        break;
+
                 }
 
                 _tutorialDescription.X = _tutorialLabel.X;
