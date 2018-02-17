@@ -70,84 +70,8 @@ namespace Plex.Engine
         private volatile bool _splashReady = false;
         private Task _splashJob = null;
 
-        private List<Layer> _layers = new List<Layer>();
+        private Layer[] _layers = null;
 
-        /// <summary>
-        /// Add a layer to the game.
-        /// </summary>
-        /// <param name="layer">The layer to add.</param>
-        public void AddLayer(Layer layer)
-        {
-            if (layer == null)
-                return;
-            if (_layers.Contains(layer))
-                return;
-            _layers.Add(layer);
-        }
-
-        /// <summary>
-        /// Remove a layer from the game.
-        /// </summary>
-        /// <param name="layer">The layer to remove.</param>
-        public void RemoveLayer(Layer layer)
-        {
-            if (layer == null)
-                return;
-            if (!_layers.Contains(layer))
-                return;
-            _layers.Remove(layer);
-        }
-
-        /// <summary>
-        /// Clear all layers from the game.
-        /// </summary>
-        public void ClearLayers()
-        {
-            while (_layers.Count > 0)
-            {
-                var layer = _layers[0];
-                while (layer.Entities.Length > 0)
-                {
-                    var entity = layer.Entities[0];
-                    if (entity is IDisposable)
-                        (entity as IDisposable).Dispose();
-                    layer.RemoveEntity(entity);
-                }
-                _layers.Remove(layer);
-            }
-        }
-
-        /// <summary>
-        /// Send a layer to the back of the game.
-        /// </summary>
-        /// <param name="layer">The layer to move.</param>
-        public void SendToBack(Layer layer)
-        {
-            if (layer == null)
-                return;
-            if (!_layers.Contains(layer))
-                return;
-            if (_layers.IndexOf(layer) == 0)
-                return;
-            _layers.Remove(layer);
-            _layers.Insert(0, layer);
-        }
-
-        /// <summary>
-        /// Bring a layer to the front of the game.
-        /// </summary>
-        /// <param name="layer">The layer to move.</param>
-        public void BringToFront(Layer layer)
-        {
-            if (layer == null)
-                return;
-            if (!_layers.Contains(layer))
-                return;
-            if (_layers.IndexOf(layer) == _layers.Count - 1)
-                return;
-            _layers.Remove(layer);
-            AddLayer(layer);
-        }
 
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
@@ -191,7 +115,23 @@ namespace Plex.Engine
 
             IsFixedTimeStep = true;
             graphicsDevice.SynchronizeWithVerticalRetrace = true;
-            
+
+            int layerCount = Enum.GetValues(typeof(LayerType)).Length;
+            _layers = new Layer[layerCount];
+            for (int i = 0; i < layerCount; i++)
+            {
+                _layers[i] = new Engine.Layer();
+            }
+        }
+
+        /// <summary>
+        /// Gets the layer represented by the specified layer type.
+        /// </summary>
+        /// <param name="type">The type of the layer to find</param>
+        /// <returns>The found layer</returns>
+        public Layer GetLayer(LayerType type)
+        {
+            return _layers[(int)type];
         }
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -439,9 +379,8 @@ namespace Plex.Engine
             MouseTexture.Dispose();
             MouseTexture = null;
             Logger.Log("Despawning all entities...");
-            while(_layers.Count > 0)
+            foreach(var layer in _layers)
             {
-                var layer = _layers[0];
                 while(layer.Entities.Length > 0)
                 {
                     var entity = layer.Entities[0];
@@ -449,8 +388,8 @@ namespace Plex.Engine
                         (entity as IDisposable).Dispose();
                     layer.RemoveEntity(entity);
                 }
-                _layers.RemoveAt(0);
             }
+            _layers = null;
             Logger.Log("Unloading all engine modules!");
             while(_components.Count > 0)
             {

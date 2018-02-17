@@ -200,7 +200,6 @@ namespace Plex.Engine.GraphicsSubsystem
 
             public void OnMouseUpdate(MouseState mouse)
             {
-                _plexgate.BringToFront(_ui._uiLayer);
                 if (mouse == _lastMouseState)
                     return;
                 _lastMouseState = mouse;
@@ -289,7 +288,6 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
-        private Layer _uiLayer = new Layer();
         private UIContainer _container = null;
 
         [Dependency]
@@ -301,7 +299,7 @@ namespace Plex.Engine.GraphicsSubsystem
         /// </summary>
         public void ShowUI()
         {
-            _plexgate.AddLayer(_uiLayer);
+            _plexgate.GetLayer(LayerType.UserInterface).AddEntity(_container);
         }
 
         /// <summary>
@@ -309,7 +307,7 @@ namespace Plex.Engine.GraphicsSubsystem
         /// </summary>
         public void HideUI()
         {
-            _plexgate.RemoveLayer(_uiLayer);
+            _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(_container);
         }
 
         /// <summary>
@@ -404,10 +402,8 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <inheritdoc/>
         public void Initiate()
         {
-            _uiLayer = new Layer();
             _container = _plexgate.New<UIContainer>();
-            _uiLayer.AddEntity(_container);
-            _plexgate.AddLayer(_uiLayer);
+            _plexgate.GetLayer(LayerType.UserInterface).AddEntity(_container);
         }
 
         private bool _ignoreControlOpacity = false;

@@ -25,9 +25,16 @@ namespace Peacenet
         private int _animState = 0;
         private float _scaleAnim = 0;
         private Texture2D _wallpaper = null;
-        private float _panelAnim = 0;
+        private float _panelAnim = -1;
 
         private bool _showPanels = true;
+
+        private float _notificationBannerFade = 0f;
+        private double _notificationRide = 0;
+        private int _notificationAnimState = 0;
+        private Label _notificationTitle = new Label();
+        private Label _notificationDescription = new Label();
+
 
         public bool ShowPanels
         {
@@ -48,9 +55,6 @@ namespace Peacenet
             }
         }
 
-        private double _missionCheckTime = 0;
-        private bool _needsMissionCheck = true;
-
         private DesktopPanel _topPanel = null;
         private DesktopPanel _bottomPanel = null;
 
@@ -67,17 +71,6 @@ namespace Peacenet
 
         [Dependency]
         private InfoboxManager _infobox = null;
-
-        [Dependency]
-        private SplashScreenComponent _splash = null;
-
-        [Dependency]
-        private AppLauncherManager _applaunchermgr = null;
-
-        private SoundEffect _tutorialBgm = null;
-        private SoundEffectInstance _tutorialBgmInstance = null;
-
-        private int _tutorialBgmAnim = -1;
 
         private WindowSystem winsys = null; //why isn't the current winmgr a property of all Window objects
 
@@ -154,8 +147,6 @@ namespace Peacenet
 
             _missionButton.Click += (o, a) =>
             {
-                var noteMgr = new Applications.NotificationManager(_winsys);
-                noteMgr.Show();
             };
 
             _appLauncherText.Click += (o, a) =>
@@ -171,7 +162,30 @@ namespace Peacenet
                     _applauncher.Show(0, _topPanel.Height);
                 }
             };
+
+            AddChild(_notificationTitle);
+            AddChild(_notificationDescription);
+
+            _notificationTitle.AutoSize = true;
+            _notificationTitle.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
+            _notificationDescription.AutoSize = true;
+            _notificationDescription.MaxWidth = 450;
+            _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
         }
+
+        /// <summary>
+        /// Show a notification banner on the desktop.
+        /// </summary>
+        /// <param name="title">The title for the notification.</param>
+        /// <param name="description">The message for the notification.</param>
+        public void ShowNotification(string title, string description)
+        {
+            _notificationTitle.Text = title;
+            _notificationDescription.Text = description;
+            _notificationAnimState = 0;
+            _notificationBannerFade = 0;
+        }
+
 
         private bool _appLauncherClosesWhenFocusLost = true;
 
@@ -234,8 +248,6 @@ namespace Peacenet
 
         [Dependency]
         private FileUtils _futils = null;
-
-        private TutorialOverlay _overlay = new TutorialOverlay();
 
         /// <summary>
         /// Repopulates the desktop icon list view.
@@ -332,11 +344,53 @@ namespace Peacenet
                     _os.Shutdown();
                     break;
             }
+
+            switch(_notificationAnimState)
+            {
+                case 0:
+                    _notificationBannerFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    if(_notificationBannerFade>=1)
+                    {
+                        _notificationBannerFade = 1;
+                        _notificationAnimState++;
+                        _notificationRide = 0;
+                    }
+                    Invalidate(true);
+                    break;
+                case 1:
+                    _notificationRide += time.ElapsedGameTime.TotalSeconds;
+                    if(_notificationRide>=5)
+                    {
+                        _notificationAnimState++;
+                    }
+                    break;
+                case 2:
+                    _notificationBannerFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    if (_notificationBannerFade <= 0)
+                    {
+                        _notificationBannerFade = 0;
+                        _notificationAnimState = -1;
+                        _notificationRide = 0;
+                    }
+                    Invalidate(true);
+                    break;
+            }
            Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
             Height = (int)MathHelper.Lerp((Manager.ScreenHeight * 0.75f), Manager.ScreenHeight, _scaleAnim);
             Parent.X = (Manager.ScreenWidth - Width) / 2;
             Parent.Y = (Manager.ScreenHeight - Height) / 2;
             Parent.Opacity = _scaleAnim;
+
+            int noteYMin = 0;
+            int noteYMax = _topPanel.Y + _topPanel.Height + 15;
+            int noteY = (int)MathHelper.Lerp(noteYMin, noteYMax, _notificationBannerFade);
+            _notificationTitle.Opacity = _notificationBannerFade;
+            _notificationDescription.Opacity = _notificationTitle.Opacity;
+            _notificationTitle.Y = noteY;
+            _notificationDescription.Y = _notificationTitle.Y + _notificationTitle.Height + 10;
+            int noteWidthMax = Math.Max(_notificationTitle.Width, _notificationDescription.Width);
+            _notificationTitle.X = Width - noteWidthMax - 15;
+            _notificationDescription.X = _notificationTitle.X;
 
             _topPanel.Height = 24;
             _topPanel.Width = Width;
@@ -407,26 +461,6 @@ namespace Peacenet
             _missionButton.Y = (_topPanel.Height - _missionButton.Height) / 2;
             _missionButton.X = _timeLabel.X - _missionButton.Width - 3;
 
-            _missionButton.Enabled = (_missionButton.Text != "0");
-            //Mission check.
-            if (_needsMissionCheck)
-            {
-                Task.Run(() =>
-                {
-                    _missionButton.Text = (IsTutorialOpen) ? "0" : _story.AvailableMissions.Count().ToString();
-                });
-                _needsMissionCheck = false;
-            }
-            else
-            {
-                _missionCheckTime += time.ElapsedGameTime.TotalSeconds;
-                if(_missionCheckTime>=10)
-                {
-                    _needsMissionCheck = true;
-                    _missionCheckTime = 0;
-                }
-            }
-
             base.OnUpdate(time);
         }
 
@@ -440,9 +474,6 @@ namespace Peacenet
 
         [Dependency]
         private OS _os = null;
-
-        [Dependency]
-        private Storyboard _story = null;
 
         /// <summary>
         /// Gets or sets whether the App Launcher button is visible.
@@ -477,6 +508,7 @@ namespace Peacenet
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.DrawRectangle(0, 0, Width, Height, _wallpaper);
+            gfx.DrawRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
         }
     }
 

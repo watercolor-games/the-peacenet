@@ -32,8 +32,6 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
-            layer = new Layer();
-            _plexgate.AddLayer(layer);
 
         }
 
@@ -43,7 +41,7 @@ namespace Peacenet
         public void Load(ContentManager content)
         {
             splash = (_plexgate.New<SplashEntity>());
-            layer.AddEntity(splash);
+            MakeVisible();
         }
         
         /// <summary>
@@ -51,9 +49,7 @@ namespace Peacenet
         /// </summary>
         public void Reset()
         {
-            layer.ClearEntities();
             splash = _plexgate.New<SplashEntity>();
-            layer.AddEntity(splash);
             MakeVisible();
         }
 
@@ -62,7 +58,7 @@ namespace Peacenet
         /// </summary>
         public void MakeVisible()
         {
-            _plexgate.AddLayer(layer);
+            _plexgate.GetLayer(LayerType.Main).AddEntity(splash);
         }
 
         /// <summary>
@@ -70,7 +66,7 @@ namespace Peacenet
         /// </summary>
         public void MakeHidden()
         {
-            _plexgate.RemoveLayer(layer);
+            _plexgate.GetLayer(LayerType.Main).RemoveEntity(splash);
         }
 
     }

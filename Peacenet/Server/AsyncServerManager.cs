@@ -53,24 +53,32 @@ namespace Peacenet.Server
             {
                 try
                 {
+                    Logger.Log("Receiving message from server...");
                     string muid = _reader.ReadString();
                     bool isBroadcast = (muid == "broadcast");
+                    Logger.Log("Got message ID");
                     if (isBroadcast)
                     {
                         int restype = _reader.ReadInt32();
+                        Logger.Log("Got message result type");
                         int btype = _reader.ReadInt32();
+                        Logger.Log("Got broadcast code");
                         int len = _reader.ReadInt32();
                         byte[] data = new byte[len];
                         if (len > 0)
                         {
                             data = _reader.ReadBytes(len);
                         }
+                        Logger.Log("Broadcast body read.");
                         _broadcasts.Enqueue(new PlexBroadcast((ServerBroadcastType)btype, data));
                     }
                     else
                     {
                         if (muid != _wantedMuid)
+                        {
+                            Logger.Log("Skipping read of direct reply. It's not for us.");
                             continue;
+                        }
                         int remoteResponse = _reader.ReadInt32();
                         _session = _reader.ReadString();
                         int remoteLen = _reader.ReadInt32();
@@ -89,8 +97,9 @@ namespace Peacenet.Server
                         _messageReceived.Set();
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Logger.Log(ex.ToString(), LogType.Warning, "server_read");
                 }
                 if (_tcpClient == null)
                     return;
@@ -133,13 +142,13 @@ namespace Peacenet.Server
         /// <inheritdoc/>
         public void Initiate()
         {
-            var layer = new Layer();
             var entity = _plexgate.New<serverEntity>();
-            layer.AddEntity(entity);
-            _plexgate.AddLayer(layer);
+            _plexgate.GetLayer(LayerType.NoDraw).AddEntity(entity);
         }
 
         private string _wantedMuid = null;
+
+        private EventWaitHandle _messageHandled = new ManualResetEvent(true);
 
         /// <summary>
         /// Send a message to a server.
@@ -152,6 +161,9 @@ namespace Peacenet.Server
         {
             await Task.Run(() =>
             {
+                _messageHandled.WaitOne();
+                _messageHandled.Reset();
+                Logger.Log($"Sending message to server: {type} (body is {body?.Length} bytes long)");
                 string muid = Guid.NewGuid().ToString();
                 _messageReceived.Reset();
                 _wantedMuid = muid;
@@ -194,7 +206,7 @@ namespace Peacenet.Server
                         onResponse?.Invoke(response, null);
                     }
                 }
-
+                _messageHandled.Set();
             });
         }
 

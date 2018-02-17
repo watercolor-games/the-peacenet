@@ -106,6 +106,15 @@ namespace Plex.Engine
                         newstr += "\n";
                         lineWidth = 0;
                     }
+                    else
+                    {
+                        if (c == '\n')
+                        {
+                            lineWidth = 0;
+                        }
+                        else
+                            lineWidth += measure.X;
+                    }
                     newstr += c;
                 }
                 return newstr;

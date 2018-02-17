@@ -5,7 +5,10 @@ namespace Peacenet.Backend
     {
         public static void Log(string message)
         {
-            Console.WriteLine("[{0}] {1}", DateTime.Now, message);
+            lock (Console.Out)
+            {
+                Console.WriteLine("[{0}] {1}", DateTime.Now, message);
+            }
         }
     }
 }

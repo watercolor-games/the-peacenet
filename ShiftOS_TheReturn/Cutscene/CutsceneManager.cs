@@ -99,8 +99,6 @@ namespace Plex.Engine.Cutscene
                 _cutscenes.Add(cs);
             }
             Logger.Log($"{_cutscenes.Count} cutscenes loaded.");
-            _cutsceneLayer = new Engine.Layer();
-            _plexgate.AddLayer(_cutsceneLayer);
         }
 
         /// <inheritdoc/>

@@ -19,31 +19,33 @@ namespace Plex.Engine
         /// <param name="source">The source of the log</param>
         public static void Log(string message, LogType type = LogType.Info, string source = "engine")
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append($"[{DateTime.Now}] <{source}/");
-            switch(type)
+            lock (Console.Out)
             {
-                case LogType.Info:
-                    sb.Append("info");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    break;
-                case LogType.Warning:
-                    sb.Append("warning");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogType.Error:
-                    sb.Append("error");
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case LogType.Fatal:
-                    sb.Append("FATAL");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"[{DateTime.Now}] <{source}/");
+                switch (type)
+                {
+                    case LogType.Info:
+                        sb.Append("info");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        break;
+                    case LogType.Warning:
+                        sb.Append("warning");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    case LogType.Error:
+                        sb.Append("error");
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        break;
+                    case LogType.Fatal:
+                        sb.Append("FATAL");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
 
+                }
+                sb.Append($"> {message}");
+                Console.WriteLine(sb.ToString());
             }
-            sb.Append($"> {message}");
-            Console.WriteLine(sb.ToString());
-
         }
     }
 

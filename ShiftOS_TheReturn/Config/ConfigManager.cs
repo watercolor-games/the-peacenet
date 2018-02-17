@@ -75,10 +75,8 @@ namespace Plex.Engine.Config
             }
             Apply();
 
-            var layer = new Layer();
             var entity = _plexgate.New<configEntity>();
-            layer.AddEntity(entity);
-            _plexgate.AddLayer(layer);
+            _plexgate.GetLayer(LayerType.NoDraw).AddEntity(entity);
         }
 
 

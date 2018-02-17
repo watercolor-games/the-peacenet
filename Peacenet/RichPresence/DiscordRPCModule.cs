@@ -126,9 +126,7 @@ namespace Peacenet.RichPresence
             try
             {
                 Logger.Log("Starting Rich Presence integration module", LogType.Info, "discord");
-                var layer = new Layer();
-                layer.AddEntity(_plebgate.New<DiscordRPCEntity>());
-                _plebgate.AddLayer(layer);
+                _plebgate.GetLayer(LayerType.NoDraw).AddEntity(_plebgate.New<DiscordRPCEntity>());
                 _presence.startTimestamp = DateTime.UtcNow.Epoch();
             }
             catch (Exception ex)

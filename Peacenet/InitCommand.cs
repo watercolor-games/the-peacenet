@@ -137,9 +137,7 @@ namespace Peacenet
             }
             if(hasDoneTutorial == false)
             {
-                var layer = new Layer();
                 var tutorial = _plexgate.New<TutorialBgmEntity>();
-                layer.AddEntity(tutorial);
                 console.SlowWrite("Peacegate Live Environment v1.0");
                 Thread.Sleep(200);
                 console.SlowWrite("");
@@ -150,7 +148,6 @@ namespace Peacenet
                 Thread.Sleep(200);
                 console.WriteLine("");
                 Thread.Sleep(5000);
-                _plexgate.AddLayer(layer);
                 console.WriteLine("");
                 console.SlowWrite("    ...Hello?");
                 Thread.Sleep(500);
@@ -162,6 +159,7 @@ namespace Peacenet
                 Thread.Sleep(500);
                 console.SlowWrite("    I hope someone can see this on the other end of the connection... Please say something!");
                 string something = console.ReadLine();
+                _plexgate.GetLayer(LayerType.NoDraw).AddEntity(tutorial);
                 console.SlowWrite($"    \"{something}\"...Well...at least you can use your keyboard - and your Terminal.");
                 Thread.Sleep(500);
                 console.SlowWrite($"    I'm not sure who you are or how you can read this. But for the sake of comforting you, my name is Thelma.");

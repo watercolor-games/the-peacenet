@@ -47,7 +47,6 @@
     <Compile Include="Applications\Appearance.cs" />
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
-    <Compile Include="Applications\NotificationManager.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\TextEditorApp.cs" />
@@ -70,8 +69,8 @@
     <Compile Include="InitCommand.cs" />
     <Compile Include="ItchOAuthClient.cs" />
     <Compile Include="MainMenu\SplashEntity.cs" />
-    <Compile Include="Missions\Prologue.cs" />
-    <Compile Include="Objectives\CutsceneObjective.cs" />
+    <Compile Include="MissionManager.cs" />
+    <Compile Include="Missions\Prologue\TerminalTutorial.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="OSEntity.cs" />
     <Compile Include="PeacenetTheme.cs" />
@@ -82,8 +81,8 @@
     <Compile Include="Server\AsyncServerManager.cs" />
     <Compile Include="SplashScreenComponent.cs" />
     <Compile Include="Applications\RelayChat.cs" />
-    <Compile Include="Storyboard.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
+    <Compile Include="TerminalCommands\NotificationTestCommand.cs" />
     <Compile Include="TerminalManager.cs" />
     <Compile Include="ThemeConfigurationCommand.cs" />
     <Compile Include="Tutorial\PeacegateSetup.cs" />

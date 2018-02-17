@@ -82,8 +82,6 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
-            _osLayer = new Layer();
-            _plexgate.AddLayer(_osLayer);
         }
 
         [Dependency]
@@ -123,7 +121,6 @@ namespace Peacenet
         {
             if(_osEntity != null)
             {
-                _osLayer.RemoveEntity(_osEntity);
                 _osEntity.Dispose();
                 _osEntity = null;
             }
@@ -192,10 +189,21 @@ namespace Peacenet
             yield return new ShellDirectoryInformation("512MB Hard Disk Drive", "/", null);
         }
 
+        /// <summary>
+        /// Occurs once the Peacegate desktop starts.
+        /// </summary>
+        public event Action SessionStart;
+        
+        /// <summary>
+        /// Occurs once the Peacegate desktop session ends.
+        /// </summary>
+        public event Action SessionEnd;
+
         private void startBoot()
         {
+            SessionStart?.Invoke();
             _osEntity = _plexgate.New<OSEntity>();
-            _osLayer.AddEntity(_osEntity);
+            _plexgate.GetLayer(LayerType.Main).AddEntity(_osEntity);
             try
             {
                 _fs.SetBackend(new AsyncServerFSBackend());
@@ -226,6 +234,7 @@ namespace Peacenet
         {
             if(_osEntity != null)
             {
+                SessionEnd?.Invoke();
                 _osLayer.RemoveEntity(_osEntity);
                 _osEntity.Dispose();
                 _osEntity = null;

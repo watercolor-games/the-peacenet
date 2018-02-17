@@ -304,9 +304,7 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
                     }
                     break;
                 case 11:
-                    var layer = new Layer();
-                    layer.AddEntity((IEntity)_plexgate.Inject(new TutorialInstructionEntity(_tutorial)));
-                    _plexgate.AddLayer(layer);
+                    _plexgate.GetLayer(LayerType.UserInterface).AddEntity((IEntity)_plexgate.Inject(new TutorialInstructionEntity(_tutorial)));
                     _os.PreventStartup = false;
                     Close();
                     break;
