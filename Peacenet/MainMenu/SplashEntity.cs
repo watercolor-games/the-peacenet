@@ -20,6 +20,8 @@ using Plex.Engine.Cutscene;
 using Peacenet.RichPresence;
 using Peacenet.Server;
 using Microsoft.Xna.Framework.Audio;
+using Plex.Engine.Cutscenes;
+using System.IO;
 
 namespace Peacenet.MainMenu
 {
@@ -30,7 +32,10 @@ namespace Peacenet.MainMenu
     {
         #region Animation state
 
-        private int animState = 0;
+        private IVideoFormat vid;
+        private Stream vidf;
+        private VideoPlayer vidp;
+        private int animState = -1;
         private floaty _wgFade = 0;
         private floaty _peacenetSlideLeft = 0;
         private floaty _peacenetOpacity = 0;
@@ -138,6 +143,8 @@ namespace Peacenet.MainMenu
         /// <inheritdoc/>
         public void Dispose()
         {
+            (vid as IDisposable)?.Dispose();
+            vidf?.Dispose();
             _watercolor.Dispose();
             _peacenet.Dispose();
             _welcome.Dispose();
@@ -353,6 +360,22 @@ namespace Peacenet.MainMenu
                         _plexgate.Exit();
                 });
             };
+
+            try
+            {
+                vidf = File.OpenRead("Content/Cutscenes/PeaceEngine1080p.pnv");
+                vid = new PNV(vidf);
+                vidp = new VideoPlayer(vid);
+                _uimanager.Add(vidp);
+                vidp.X = vidp.Y = 0;
+                vidp.Finished += (sender, e) => { _uimanager.Remove(vidp); vidp?.Dispose(); (vid as IDisposable)?.Dispose(); vidf?.Dispose(); animState = 0; };
+                Logger.Log("Loaded intro video");
+            }
+            catch (FileNotFoundException)
+            {
+                animState = 0;
+                Logger.Log("Intro video not found, skipping", LogType.Warning);
+            }
         }
 
         /// <inheritdoc/>
@@ -382,6 +405,10 @@ namespace Peacenet.MainMenu
         {
             switch (animState)
             {
+                case -1: // Waiting for video to finish
+                    vidp.Width = _uimanager.ScreenWidth;
+                    vidp.Height = _uimanager.ScreenHeight;
+                    return;
                 case 0: //Start Watercolor splash
                     _lbSingleplayer.Visible = false;
                     _lbMultiplayer.Visible = false;

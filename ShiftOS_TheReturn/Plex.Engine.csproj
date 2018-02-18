@@ -226,6 +226,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="MonoGame.Framework.dll.config" />
+    <Compile Include="Cutscenes\IVideoFormat.cs" />
+    <Compile Include="Cutscenes\VideoFrame.cs" />
+    <Compile Include="Cutscenes\PNV.cs" />
+    <Compile Include="GUI\VideoPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
