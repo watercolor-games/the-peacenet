@@ -1,11 +1,11 @@
-using Plex.Frontend.GraphicsSubsystem;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Plex.Engine.Cutscenes
 {
     public interface IVideoFormat
     {
-        uint Length { get; }
-        float MsPerFrame { get; }
+        int Length { get; }
+        int FlicksPerFrame { get; }
         
         VideoFrame NextFrame(GraphicsContext gfx);
     }
