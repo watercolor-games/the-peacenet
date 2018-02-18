@@ -208,12 +208,12 @@ namespace Plex.Engine.GUI
             {
                 if (!IsFocused)
                 {
-                    gfx.DrawString(_label, 2, 2, Color.Gray, _drawFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
+                    gfx.DrawString(_label, 2, 2, Color.Gray, _drawFont, TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
                 }
             }
             else
             {
-                gfx.DrawString(_lastText, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
+                gfx.DrawString(_lastText, 2 - _drawOffset, 2, Color.White, _drawFont, TextAlignment.Left, int.MaxValue, TextRenderers.WrapMode.None);
                 
             }
             if (IsFocused)

@@ -167,7 +167,8 @@ namespace Peacenet
             AddChild(_notificationDescription);
 
             _notificationTitle.AutoSize = true;
-            _notificationTitle.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
+            _notificationDescription.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            
             _notificationDescription.AutoSize = true;
             _notificationDescription.MaxWidth = 450;
             _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
@@ -348,7 +349,7 @@ namespace Peacenet
             switch(_notificationAnimState)
             {
                 case 0:
-                    _notificationBannerFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
+                    _notificationBannerFade += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if(_notificationBannerFade>=1)
                     {
                         _notificationBannerFade = 1;
@@ -359,6 +360,7 @@ namespace Peacenet
                     break;
                 case 1:
                     _notificationRide += time.ElapsedGameTime.TotalSeconds;
+                    Invalidate(true);
                     if(_notificationRide>=5)
                     {
                         _notificationAnimState++;
@@ -710,121 +712,6 @@ namespace Peacenet
             if (ContainsMouse)
                 state = Plex.Engine.Themes.UIButtonState.Hover;
             Theme.DrawButton(gfx, Text, Image, state, ShowImage, ImageRect, TextRect);
-        }
-    }
-
-    /// <summary>
-    /// An overlay element that is used for showing the player around the user interface.
-    /// </summary>
-    public class TutorialOverlay : Control
-    {
-        private Label _header = new Label();
-        private Label _description = new Label();
-        private Button _okay = new Button();
-
-        private Rectangle _unshroudedRegion;
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="TutorialOverlay"/> control. 
-        /// </summary>
-        public TutorialOverlay()
-        {
-            AddChild(_header);
-            _header.AutoSize = true;
-            _header.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            AddChild(_description);
-            _description.AutoSize = true;
-            _description.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
-            AddChild(_okay);
-            _okay.Click += (o, a) =>
-            {
-                OkayButtonClicked?.Invoke(this, a);
-            };
-        }
-
-        /// <summary>
-        /// Occurs when the player clicks the "OK" button on the overlay.
-        /// </summary>
-        public event EventHandler OkayButtonClicked;
-
-        /// <summary>
-        /// Gets or sets the title of the overlay.
-        /// </summary>
-        public string HeaderText
-        {
-            get
-            {
-                return _header.Text;
-            }
-            set
-            {
-                _header.Text = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the description of the overlay.
-        /// </summary>
-        public string DescriptionText
-        {
-            get
-            {
-                return _description.Text;
-            }
-            set
-            {
-                _description.Text = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a region on the overlay where the control is completely transparent, thus showing other controls rendering behind the overlay.
-        /// </summary>
-        public Rectangle Region
-        {
-            get
-            {
-                return _unshroudedRegion;
-            }
-            set
-            {
-                if (_unshroudedRegion == value)
-                    return;
-                _unshroudedRegion = value;
-                Invalidate(true);
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnUpdate(GameTime time)
-        {
-            _header.MaxWidth = Width / 3;
-            _description.MaxWidth = Width / 2;
-            _header.Alignment = TextAlignment.Top;
-            _description.Alignment = TextAlignment.Center;
-
-            int combinedHeight = _header.Height + 10 + _description.Height + 5 + _okay.Height;
-            _header.X = (Width - _header.Width) / 2;
-            _header.Y = (Height - combinedHeight) / 2;
-            _description.X = (Width - _description.Width) / 2;
-            _description.Y = _header.Y + _header.Height + 10;
-            _okay.X = (Width - _okay.Width) / 2;
-            _okay.Y = _description.Y + _description.Height + 5;
-
-            _okay.Text = "OK";
-            base.OnUpdate(time);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
-            var color = Color.Black * 0.5F;
-            gfx.Clear(Color.Transparent);
-            gfx.DrawRectangle(0, 0, _unshroudedRegion.Left, Height, color);
-            gfx.DrawRectangle(_unshroudedRegion.Left, 0, Width - _unshroudedRegion.Left, _unshroudedRegion.Top, color);
-            gfx.DrawRectangle(_unshroudedRegion.Left, _unshroudedRegion.Top + _unshroudedRegion.Height, Width - _unshroudedRegion.Left, Height - (_unshroudedRegion.Top + _unshroudedRegion.Height), color);
-            gfx.DrawRectangle(_unshroudedRegion.Left + _unshroudedRegion.Width, _unshroudedRegion.Top, Width - (_unshroudedRegion.Left + _unshroudedRegion.Width), _unshroudedRegion.Height, color);
-
         }
     }
 }

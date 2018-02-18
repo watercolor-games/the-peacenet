@@ -29,6 +29,24 @@ namespace Plex.Engine.Saves
         }
 
         /// <summary>
+        /// Create a snapshot of the current save file
+        /// </summary>
+        /// <returns>The ID of the new snapshot</returns>
+        public string CreateSnapshot()
+        {
+            return _backend.CreateSnapshot();
+        }
+
+        /// <summary>
+        /// Restore the save to a previous snapshot
+        /// </summary>
+        /// <param name="id">The ID of the snapshot to restore</param>
+        public void RestoreSnapshot(string id)
+        {
+            _backend.RestoreSnapshot(id);
+        }
+
+        /// <summary>
         /// Set the backend for the save manager to use.
         /// </summary>
         /// <param name="backend">An <see cref="ISaveBackend"/> instance implementing methods required to fetch and modify values of a save file.</param>
@@ -142,5 +160,17 @@ namespace Plex.Engine.Saves
         /// <param name="key">The key of the entry to set. If it doesn't exist, it will be created.</param>
         /// <param name="value">The value of the entry.</param>
         void SetValue<T>(string key, T value);
+
+        /// <summary>
+        /// Create a snapshot of the current save file.
+        /// </summary>
+        /// <returns>The ID of the snapshot</returns>
+        string CreateSnapshot();
+
+        /// <summary>
+        /// Restore the save file to a specified snapshot.
+        /// </summary>
+        /// <param name="id">The ID of the snapshot to restore to.</param>
+        void RestoreSnapshot(string id);
     }
 }

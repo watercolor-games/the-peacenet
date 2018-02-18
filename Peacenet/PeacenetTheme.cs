@@ -219,7 +219,7 @@ namespace Peacenet
             {
                 gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
-            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, TextAlignment.Top | TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
         }
 
 

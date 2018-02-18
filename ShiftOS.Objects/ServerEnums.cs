@@ -107,7 +107,17 @@ namespace Plex.Objects
         /// <summary>
         /// Set a value in a user's save file.
         /// </summary>
-        SAVE_SETVAL = 0xA1
+        SAVE_SETVAL = 0xA1,
+
+        /// <summary>
+        /// Create a snapshot of the current save file for the user. Only works in Single-player.
+        /// </summary>
+        SAVE_TAKESNAPSHOT = 0xA2,
+
+        /// <summary>
+        /// Restore the current user's save file to an existing snapshot. Only works in Single-player.
+        /// </summary>
+        SAVE_RESTORESNAPSHOT = 0xA3
     }
     
     /// <summary>

@@ -447,6 +447,9 @@ namespace Peacenet
         [Dependency]
         private SaveManager _save = null;
 
+        [Dependency]
+        private Plexgate _plexgate = null;
+
         /// <inheritdoc/>
         public void Update(GameTime time)
         {
@@ -678,6 +681,7 @@ namespace Peacenet
                         _hitbox.Dispose();
                         _tutorialButton.Dispose();
                         _save.SetValue("boot.hasDoneCmdTutorial", true);
+                        _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(this);
                         _tutorialStage++;
                         break;
 

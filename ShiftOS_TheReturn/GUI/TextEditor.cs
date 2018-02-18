@@ -289,7 +289,7 @@ namespace Plex.Engine.GUI
                     string line = _lines[i];
                     if(i == _currentLine && HasFocused)
                     {
-                        gfx.DrawString(line, 0, lineHeight * i, Theme.GetFontColor(Themes.TextFontStyle.System), _font, TextAlignment.Top | TextAlignment.Left, 0, TextRenderers.WrapMode.None);
+                        gfx.DrawString(line, 0, lineHeight * i, Theme.GetFontColor(Themes.TextFontStyle.System), _font, TextAlignment.Left, 0, TextRenderers.WrapMode.None);
                         if (_caretVisible)
                         {
                             string toCaret = (_currentChar == 0) ? "" : line.Substring(0, _currentChar);
@@ -299,7 +299,7 @@ namespace Plex.Engine.GUI
                     }
                     else
                     {
-                        gfx.DrawString(line, 0, lineHeight * i, Theme.GetFontColor(Themes.TextFontStyle.System)*0.5f, _font, TextAlignment.Top | TextAlignment.Left, 0, TextRenderers.WrapMode.None);
+                        gfx.DrawString(line, 0, lineHeight * i, Theme.GetFontColor(Themes.TextFontStyle.System)*0.5f, _font, TextAlignment.Left, 0, TextRenderers.WrapMode.None);
                     }
                 }
             }

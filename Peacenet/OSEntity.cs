@@ -104,7 +104,7 @@ namespace Peacenet
             string text = "Welcome to Peacegate.";
             var measure = TextRenderer.MeasureText(text, _bootFont, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
             int _textX = ((_ui.ScreenWidth - (int)measure.X) / 2);
-            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.Top | TextAlignment.Left, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
+            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.Left, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
 
             ctx.EndDraw();
         }

@@ -51,8 +51,6 @@ namespace Peacenet.Server
                 return;
             while (_tcpClient.Connected)
             {
-                try
-                {
                     Logger.Log("Receiving message from server...");
                     string muid = _reader.ReadString();
                     bool isBroadcast = (muid == "broadcast");
@@ -96,11 +94,6 @@ namespace Peacenet.Server
                         };
                         _messageReceived.Set();
                     }
-                }
-                catch(Exception ex)
-                {
-                    Logger.Log(ex.ToString(), LogType.Warning, "server_read");
-                }
                 if (_tcpClient == null)
                     return;
             }

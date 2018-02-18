@@ -805,3 +805,9 @@
 /processorParam:Quality=Best
 /build:Audio/MainMenu/WatercolorSplash.ogg
 
+#begin Audio/Mission1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Mission1.ogg
+

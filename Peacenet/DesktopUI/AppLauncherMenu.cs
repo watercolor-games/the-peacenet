@@ -153,12 +153,9 @@ namespace Peacenet.DesktopUI
                 var item = _applications.SelectedItem;
                 if (item != null)
                 {
-                    Task.Run(() =>
-                    {
-                        var wintype = (item.Tag as Type);
-                        var window = Activator.CreateInstance(wintype, new[] { WindowSystem });
-                        (window as Window).Show();
-                    });
+                    var wintype = (item.Tag as Type);
+                    var window = Activator.CreateInstance(wintype, new[] { WindowSystem });
+                    (window as Window).Show();
                     Close();
                 }
             };

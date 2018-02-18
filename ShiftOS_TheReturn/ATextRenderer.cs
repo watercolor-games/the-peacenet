@@ -160,25 +160,24 @@ namespace Plex.Engine
             if (string.IsNullOrEmpty(text))
                 return;
             string measured = (wrapMode == WrapMode.None) ? text : WrapText(font, text, maxwidth, wrapMode);
-            Vector2 size = font.MeasureString(measured);
-            var bounds = new Rectangle(x, y, maxwidth, (int)(size.Y));
-            Vector2 pos = bounds.Center.ToVector2();
-            Vector2 origin = size * 0.5f;
-
-            if (alignment.HasFlag(TextAlignment.Left))
-                origin.X += bounds.Width / 2 - size.X / 2;
-
-            if (alignment.HasFlag(TextAlignment.Right))
-                origin.X -= bounds.Width / 2 - size.X / 2;
-
-            if (alignment.HasFlag(TextAlignment.Top))
-                origin.Y += bounds.Height / 2 - size.Y / 2;
-
-            if (alignment.HasFlag(TextAlignment.Bottom))
-                origin.Y -= bounds.Height / 2 - size.Y / 2;
-
-            gfx.Batch.DrawString(font, measured, pos, color, 0, origin, 1, SpriteEffects.None, 0);
-
+            string[] lines = measured.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                var measure = font.MeasureString(line);
+                switch (alignment)
+                {
+                    case TextAlignment.Left:
+                        gfx.Batch.DrawString(font, line, new Vector2(x, y + (measure.Y * i)), color);
+                        break;
+                    case TextAlignment.Center:
+                        gfx.Batch.DrawString(font, line, new Vector2(x + ((maxwidth-measure.X)/2), y + (measure.Y * i)), color);
+                        break;
+                    case TextAlignment.Right:
+                        gfx.Batch.DrawString(font, line, new Vector2(x + (maxwidth - measure.X), y + (measure.Y * i)), color);
+                        break;
+                }
+            }
 
         }
 
@@ -188,7 +187,6 @@ namespace Plex.Engine
     /// <summary>
     /// Describes how text should be aligned when rendered.
     /// </summary>
-    [Flags]
     public enum TextAlignment
     {
         /// <summary>
@@ -203,14 +201,6 @@ namespace Plex.Engine
         /// Text should be rendered to the right.
         /// </summary>
         Right = 2,
-        /// <summary>
-        /// Text should be rendered to the top.
-        /// </summary>
-        Top = 4,
-        /// <summary>
-        /// Text should be rendered to the bottom.
-        /// </summary>
-        Bottom = 8
     }
 
     /// <summary>

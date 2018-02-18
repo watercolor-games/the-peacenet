@@ -88,18 +88,18 @@ namespace Peacenet.Cutscenes
             var _titleMinX = 0 - (int)cMeasure.X;
 
             var titleX = (int)MathHelper.Lerp(_titleMinX, startX, _componentSlide);
-            gfx.DrawString(c, titleX, startY, _peace * _componentSlide, _mondaBig, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(c, titleX, startY, _peace * _componentSlide, _mondaBig, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
             var _personYMax = startY + cMeasure.Y + 25;
             var _personYMin = _personYMax + (_ui.ScreenHeight * 0.1);
 
             var personY = (int)MathHelper.Lerp((float)_personYMin, _personYMax, _personSlide);
-            gfx.DrawString(p, startX, personY, _gray * _personSlide, _mondaMedium, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(p, startX, personY, _gray * _personSlide, _mondaMedium, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
             var roleYMax = _personYMax + pMeasure.Y + 10;
             var roleYMin = roleYMax + (_ui.ScreenHeight * 0.1);
             var roleY = (int)MathHelper.Lerp((float)roleYMin, roleYMax, _roleSlide);
-            gfx.DrawString(r, startX, roleY, _gray * _roleSlide, _mondaSmall, TextAlignment.Top | TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(r, startX, roleY, _gray * _roleSlide, _mondaSmall, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
 
 
             int pnWidth = _peacenet.Width * 2;

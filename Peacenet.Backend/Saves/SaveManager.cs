@@ -19,8 +19,13 @@ namespace Peacenet.Backend.Saves
 
         private LiteCollection<SaveValue> _values = null;
 
+        private LiteCollection<SaveSnapshot> _snapshots = null;
+
         [Dependency]
         private DatabaseHolder _db = null;
+
+        [Dependency]
+        private Backend _backend = null;
 
         /// <inheritdoc/>
         public void Initiate()
@@ -30,6 +35,8 @@ namespace Peacenet.Backend.Saves
             _saves.EnsureIndex(x => x.Id);
             _values = _db.Database.GetCollection<SaveValue>("usersavevalues");
             _values.EnsureIndex(x => x.Id);
+            _snapshots = _db.Database.GetCollection<SaveSnapshot>("usersavesnapshots");
+            _snapshots.EnsureIndex(x => x.Id);
             Logger.Log($"Done. {_saves.Count()} saves loaded. {_values.Count()} total values loaded.");
         }
 
@@ -42,6 +49,58 @@ namespace Peacenet.Backend.Saves
         {
             var save = _saves.FindOne(x => x.UserId == session);
             return (save != null);
+        }
+
+        /// <summary>
+        /// Take a snapshot of a save file.
+        /// </summary>
+        /// <param name="saveid">The ID of the save file</param>
+        /// <returns>The ID of the snapshot that was taken</returns>
+        public string TakeSnapshot(string saveid)
+        {
+            if (_backend.IsMultiplayer == true)
+                throw new InvalidOperationException("This feature cannot be used within a multiplayer server.");
+
+            if (_saves.FindOne(x => x.Id == saveid) == null)
+                throw new ArgumentException("Save file not found.");
+
+            List<SaveValue> values = new List<SaveValue>();
+
+            foreach (var value in _values.FindAll().Where(x => x.SaveId == saveid))
+            {
+                values.Add(value);
+            }
+
+            var snapshot = new SaveSnapshot
+            {
+                Id = Guid.NewGuid().ToString(),
+                SaveId = saveid,
+                RawJson = JsonConvert.SerializeObject(values)
+            };
+
+            _snapshots.Insert(snapshot);
+            return snapshot.Id;
+        }
+
+        public void RestoreSnapshot(string snapshotId)
+        {
+            if (_backend.IsMultiplayer == true)
+                throw new InvalidOperationException("This feature cannot be used within a multiplayer server.");
+
+            var snapshot = _snapshots.FindOne(x => x.Id == snapshotId);
+            if (snapshot == null)
+                throw new ArgumentException("Snapshot not found.");
+
+            var snapshotValues = JsonConvert.DeserializeObject<List<SaveValue>>(snapshot.RawJson);
+            
+            var deleted = _values.Delete(x => x.SaveId == snapshot.SaveId);
+            Logger.Log($"Deleted {deleted} save value(s).");
+            foreach(var value in snapshotValues)
+            {
+                _values.Insert(value);
+            }
+            Logger.Log("Snapshot restored.");
+            _snapshots.Delete(x => x.Id == snapshot.Id);
         }
 
         /// <summary>
@@ -164,6 +223,96 @@ namespace Peacenet.Backend.Saves
         /// Gets or sets the actual value contained in the save entry.
         /// </summary>
         public string Value { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a save snapshot.
+    /// </summary>
+    public class SaveSnapshot
+    {
+        /// <summary>
+        /// Gets or sets the ID of this snapshot.
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
+        /// Gets or sets the save ID assigned to this snapshot.
+        /// </summary>
+        public string SaveId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the JSON representing all the save values in this snapshot.
+        /// </summary>
+        public string RawJson { get; set; }
+    }
+
+    /// <summary>
+    /// Handler for incoming requests to restore a save snapshot.
+    /// </summary>
+    [RequiresSession]
+    public class RestoreSnapshotHandler : IMessageHandler
+    {
+        [Dependency]
+        private SaveManager _save = null;
+
+        /// <inheritdoc/>
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.SAVE_RESTORESNAPSHOT;
+            }
+        }
+
+        /// <inheritdoc/>
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            if (!_save.UserHasSave(session))
+                return ServerResponseType.REQ_ERROR;
+            if (backend.IsMultiplayer)
+                return ServerResponseType.REQ_ERROR;
+            string snapshotid = datareader.ReadString();
+            try
+            {
+                _save.RestoreSnapshot(snapshotid);
+                return ServerResponseType.REQ_SUCCESS;
+            }
+            catch
+            {
+                return ServerResponseType.REQ_ERROR;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handler for incoming requests to take a snapshot of a save file.
+    /// </summary>
+    [RequiresSession]
+    public class TakeSnapshotHandler : IMessageHandler
+    {
+        [Dependency]
+        private SaveManager _save = null;
+
+        /// <inheritdoc/>
+        public ServerMessageType HandledMessageType
+        {
+            get
+            {
+                return ServerMessageType.SAVE_TAKESNAPSHOT;
+            }
+        }
+
+        /// <inheritdoc/>
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            if (!_save.UserHasSave(session))
+                return ServerResponseType.REQ_ERROR;
+            if (backend.IsMultiplayer)
+                return ServerResponseType.REQ_ERROR;
+            string saveid = _save.GetSave(session).Id;
+            string snapshot = _save.TakeSnapshot(saveid);
+            datawriter.Write(snapshot);
+            return ServerResponseType.REQ_SUCCESS;
+        }
     }
 
     /// <summary>

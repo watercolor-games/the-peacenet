@@ -20,6 +20,20 @@ namespace Peacenet
         private AsyncServerManager _server = null;
 
         /// <inheritdoc/>
+        public string CreateSnapshot()
+        {
+            string result = "";
+            _server.SendMessage(Plex.Objects.ServerMessageType.SAVE_TAKESNAPSHOT, null, (res, reader) =>
+            {
+                if (res == Plex.Objects.ServerResponseType.REQ_SUCCESS)
+                    result = reader.ReadString();
+                else
+                    result = null;
+            }).Wait();
+            return result;
+        }
+
+        /// <inheritdoc/>
         public T GetValue<T>(string key, T defaultValue)
         {
             if (_server.Connected == false)
@@ -64,6 +78,25 @@ namespace Peacenet
                 throw err;
 
             return (T)result;
+        }
+
+        /// <inheritdoc/>
+        public void RestoreSnapshot(string id)
+        {
+            byte[] body = null;
+            using (var memstr = new MemoryStream())
+            {
+                using(var writer = new BinaryWriter(memstr))
+                {
+                    writer.Write(id);
+                    body = memstr.ToArray();
+                }
+            }
+
+            _server.SendMessage(Plex.Objects.ServerMessageType.SAVE_RESTORESNAPSHOT, body, (res, reader) =>
+            {
+
+            }).Wait();
         }
 
         /// <inheritdoc/>

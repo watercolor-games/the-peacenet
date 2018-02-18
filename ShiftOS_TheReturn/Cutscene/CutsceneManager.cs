@@ -22,8 +22,6 @@ namespace Plex.Engine.Cutscene
         [Dependency]
         private Plexgate _plexgate = null;
 
-        private Layer _cutsceneLayer = new Layer();
-
         private List<Cutscene> _cutscenes = null;
         private Cutscene _current = null;
 
@@ -52,7 +50,7 @@ namespace Plex.Engine.Cutscene
             {
                 _current.IsFinished = true;
                 _current.OnFinish();
-                _cutsceneLayer.RemoveEntity(_current);
+                _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(_current);
                 if (runCallback)
                     _callback?.Invoke();
                 _callback = null;
@@ -76,7 +74,7 @@ namespace Plex.Engine.Cutscene
             cs.IsFinished = false;
             _current = cs;
             _current.OnPlay();
-            _cutsceneLayer.AddEntity(_current);
+            _plexgate.GetLayer(LayerType.Foreground).AddEntity(_current);
             return true;
         }
 

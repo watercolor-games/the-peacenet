@@ -533,7 +533,7 @@ namespace Plex.Engine.GUI
                     _picture.Height = 48;
                     _label.AutoSize = true;
                     _label.MaxWidth = _picture.Width + 20;
-                    _label.Alignment = TextAlignment.Top;
+                    _label.Alignment = TextAlignment.Center;
                     _label.Update(time);
                     Width = Math.Max(_label.Width, _picture.Width) + 20;
                     _picture.X = (Width - _picture.Width) / 2;
@@ -566,7 +566,7 @@ namespace Plex.Engine.GUI
                         maxWidth -= _picture.Width + 5;
                     _label.AutoSize = true;
                     _label.MaxWidth = maxWidth;
-                    _label.Alignment = TextAlignment.Left | TextAlignment.Top;
+                    _label.Alignment = TextAlignment.Left;
                     _label.Update(time);
                     _picture.X = 7;
                     if (_picture.Texture != null)

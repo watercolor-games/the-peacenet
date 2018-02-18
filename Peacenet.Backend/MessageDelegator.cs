@@ -14,6 +14,9 @@ namespace Peacenet.Backend
     {
         private List<IMessageHandler> _handlers = null;
 
+        [Dependency]
+        private Backend _backend = null;
+
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -32,6 +35,7 @@ namespace Peacenet.Backend
                         continue;
                     }
                     _handlers.Add(handler);
+                    _backend.Inject(handler);
                 }
             }
             Logger.Log($"Done loading handlers. {_handlers.Count} found.");

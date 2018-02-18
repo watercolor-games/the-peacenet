@@ -19,7 +19,7 @@ namespace Plex.Engine.GUI
         private Color _color;
         private Themes.TextFontStyle _style = Themes.TextFontStyle.System;
         private string _text = "";
-        private TextAlignment _alignment = TextAlignment.Top | TextAlignment.Left;
+        private TextAlignment _alignment = TextAlignment.Left;
         private bool _remeasure = true;
 
         /// <summary>
@@ -180,35 +180,7 @@ namespace Plex.Engine.GUI
         {
             var font = getFont();
             var color = getColor();
-            var measure = TextRenderer.MeasureText(_text, font, Width, TextRenderers.WrapMode.Words);
-
-            int x = 0;
-            int y = 0;
-
-            if(_alignment.HasFlag( TextAlignment.Center))
-            {
-                x = (Width - (int)measure.X) / 2;
-                y = (Height - (int)measure.Y) / 2;
-            }
-
-            if (_alignment.HasFlag(TextAlignment.Left))
-            {
-                x = 0;
-            }
-            if(_alignment.HasFlag(TextAlignment.Right))
-            {
-                x = Width - (int)measure.X;
-            }
-            if(_alignment.HasFlag(TextAlignment.Top))
-            {
-                y = 0;
-            }
-            if(_alignment.HasFlag(TextAlignment.Bottom))
-            {
-                y = Height - (int)measure.Y;
-            }
-
-            gfx.DrawString(_text, x, y, color, font, _alignment, (int)measure.X, TextRenderers.WrapMode.Words);
+            gfx.DrawString(_text, 0, 0, color, font, _alignment, Width, TextRenderers.WrapMode.Words);
         }
     }
 }
