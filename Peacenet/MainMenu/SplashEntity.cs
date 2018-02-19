@@ -162,7 +162,6 @@ namespace Peacenet.MainMenu
         public void Draw(GameTime time, GraphicsContext ctx)
         {
             ctx.BeginDraw();
-            ctx.DrawRectangle(0, 0, _uimanager.ScreenWidth, _uimanager.ScreenHeight, _watercolor, Color.White * _wgFade, System.Windows.Forms.ImageLayout.Zoom, true);
 
             int peacenet_y = (_uimanager.ScreenHeight - _peacenet.Height) / 2;
             int peacenet_x_min = (0 - _peacenet.Width);
@@ -172,13 +171,8 @@ namespace Peacenet.MainMenu
             int welcome_y_max = peacenet_y - _welcome.Height;
             int welcome_y_min = welcome_y_max - (int)(_uimanager.ScreenHeight * 0.15);
 
-            int progressWidth = (_peacenet.Width - 50);
-            int progressX = (_uimanager.ScreenWidth - progressWidth) / 2;
-            int progressY = (peacenet_y + _peacenet.Height + 30);
-
-
-            ctx.DrawRectangle((int)MathHelper.Lerp(peacenet_x_min, peacenet_x_max, _peacenetSlideLeft), peacenet_y, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Zoom, true);
-            ctx.DrawRectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetSlideLeft), _welcome.Width, _welcome.Height, _welcome, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Zoom, false);
+            ctx.DrawRectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetOpacity), _welcome.Width, _welcome.Height, _welcome, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Stretch);
+            ctx.DrawRectangle((int)MathHelper.Lerp(peacenet_x_min, peacenet_x_max, _peacenetOpacity), peacenet_y, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Stretch);
 
             //"Press ENTER" prompt
             var fnt = _thememgr.Theme.GetFont(TextFontStyle.Header1);
@@ -188,9 +182,9 @@ namespace Peacenet.MainMenu
                 var measure = TextRenderer.MeasureText(_enter, fnt, (this._uimanager.ScreenWidth/2), Plex.Engine.TextRenderers.WrapMode.Words);
 
                 int textX = (int)(_uimanager.ScreenWidth - measure.X) / 2;
-                int textYMin = progressY + (int)(_uimanager.ScreenHeight * 0.1);
+                int textYMin = peacenet_y + _peacenet.Height + 15 + (int)(_uimanager.ScreenHeight * 0.1);
 
-                ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, progressY, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Center, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+                ctx.DrawString(_enter, textX, (int)MathHelper.Lerp(textYMin, peacenet_y + _peacenet.Height + 15, _progressFGPos), Color.White * _progressFGPos, fnt, TextAlignment.Center, (int)measure.X, Plex.Engine.TextRenderers.WrapMode.Words);
             }
 
             //Draw menu items.
@@ -225,6 +219,18 @@ namespace Peacenet.MainMenu
                 ctx.DrawRectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height, _multiplayer, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle) * _mpSlideUp);
             if (_seSlideUp > 0)
                 ctx.DrawRectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height, _settings, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle) * _seSlideUp);
+
+            //If we're waiting for connection to a server, draw the shroud.
+            if(_connecting)
+            {
+                ctx.Clear(Color.Black * 0.5F);
+                var cFont = _thememgr.Theme.GetFont(TextFontStyle.Header1);
+                var cColor = _thememgr.Theme.GetFontColor(TextFontStyle.Header1);
+
+                var cMeasure = cFont.MeasureString(_connectingText);
+                ctx.Batch.DrawString(cFont, _connectingText, new Vector2((ctx.Width - cMeasure.X) / 2, (ctx.Height - cMeasure.Y) / 2), cColor);
+            }
+
             ctx.EndDraw();
         }
 
@@ -297,10 +303,26 @@ namespace Peacenet.MainMenu
             };
             _hbSingleplayer.Click += (o, a) =>
             {
+                if (_connecting)
+                    return;
                 if (animState < 12)
                 {
-                    _saveManager.SetBackend(new ServerSideSaveBackend());
-                    animState = 12;
+                    Task.Run(() =>
+                    {
+                        _connecting = true;
+                        _connectingText = "Starting internal server...";
+                        try
+                        {
+                            _os.StartLocalServer();
+                            _saveManager.SetBackend(new ServerSideSaveBackend());
+                            animState = 12;
+                        }
+                        catch (Exception ex)
+                        {
+                            _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
+                        }
+                        _connecting = false;
+                    });
                 }
 
             };
@@ -377,6 +399,8 @@ namespace Peacenet.MainMenu
             }
         }
 
+        private string _connectingText = "";
+
         /// <inheritdoc/>
         public void OnKeyEvent(KeyboardEventArgs e)
         {
@@ -390,6 +414,8 @@ namespace Peacenet.MainMenu
             }
 
         }
+
+        private bool _connecting = false;
 
         [Dependency]
         private DiscordRPCModule _discord = null;

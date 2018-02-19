@@ -117,6 +117,30 @@ namespace Peacenet
 
         private EventWaitHandle _clientReady = new ManualResetEvent(false);
 
+        internal void StartLocalServer()
+        {
+            _localBackend = new Backend.Backend(3252, false, Path.Combine(_appdata.GamePath, "world"));
+            _localBackend.Listen();
+            _localBackend.ServerReady.WaitOne();
+            Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
+            _clientReady.Reset();
+            Exception err = null;
+            _server.Connect("localhost:3252", () =>
+            {
+                _clientReady.Set();
+            }, (error) =>
+            {
+                err = new Exception(error);
+                _clientReady.Set();
+            });
+            _clientReady.WaitOne();
+            if (err != null)
+            {
+                throw err;
+            }
+            EnsureProperEnvironment();
+        }
+
         internal void OnReady()
         {
             if(_osEntity != null)
@@ -124,38 +148,7 @@ namespace Peacenet
                 _osEntity.Dispose();
                 _osEntity = null;
             }
-            Task.Run(() =>
-            {
-                if (!_server.Connected)
-                {
-                    _localBackend = new Backend.Backend(3252, false, Path.Combine(_appdata.GamePath, "world"));
-                    _localBackend.Listen();
-                    _localBackend.ServerReady.WaitOne();
-                    Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
-                    _clientReady.Reset();
-                    Exception err = null;
-                    _server.Connect("localhost:3252", () =>
-                    {
-                        _clientReady.Set();
-                    }, (error) =>
-                    {
-                        err = new Exception(error);
-                        _clientReady.Set();
-                    });
-                    _clientReady.WaitOne();
-                    if (err != null)
-                    {
-                        _infobox.Show("Can't start campaign", "Failed to connect to local server. This is usually a sign of a major bug.\r\n\r\n" + err.Message);
-                        Shutdown();
-                        return;
-                    }
-                    _plexgate.Invoke(startBoot);
-                }
-                else
-                {
-                    _plexgate.Invoke(startBoot);
-                }
-            });
+            startBoot();
         }
         
         [Dependency]
@@ -199,34 +192,28 @@ namespace Peacenet
         /// </summary>
         public event Action SessionEnd;
 
+        internal void EnsureProperEnvironment()
+        {
+            try
+            {
+                _fs.SetBackend(new AsyncServerFSBackend());
+                foreach (var dir in requiredPaths)
+                {
+                    if (!_fs.DirectoryExists(dir))
+                        _fs.CreateDirectory(dir);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private void startBoot()
         {
             SessionStart?.Invoke();
             _osEntity = _plexgate.New<OSEntity>();
             _plexgate.GetLayer(LayerType.Main).AddEntity(_osEntity);
-            try
-            {
-                _fs.SetBackend(new AsyncServerFSBackend());
-            }
-            catch(Exception ex)
-            {
-                _infobox.Show("Startup error", $"Could not start game session due to an error initializing the filesystem backend.\r\n\r\n{ex.Message}");
-                Shutdown();
-                return;
-            }
-
-            foreach (var dir in requiredPaths)
-            {
-                try
-                {
-                    if (!_fs.DirectoryExists(dir))
-                        _fs.CreateDirectory(dir);
-                }
-                catch
-                {
-
-                }
-            }
         }
 
 
