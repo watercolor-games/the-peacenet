@@ -190,3 +190,7 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/.vs/ShiftOS_TheReturn/v15/Server/sqlite3/db.lock
+/.vs/ShiftOS_TheReturn/v15/Server/sqlite3/storage.ide
+/.vs/ShiftOS_TheReturn/v15/Server/sqlite3/storage.ide-shm
+/.vs/ShiftOS_TheReturn/v15/Server/sqlite3/storage.ide-wal
