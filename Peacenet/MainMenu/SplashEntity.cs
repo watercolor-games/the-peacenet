@@ -277,7 +277,7 @@ namespace Peacenet.MainMenu
             };
             _hbMultiplayer.Click += (o, a) =>
             {
-                if (animState < 17)
+                if (animState < 12)
                 {
                     _infobox.PromptText("Connect to server", "Please enter a hostname and port for a server to connect to.", (address) =>
                     {
@@ -286,7 +286,7 @@ namespace Peacenet.MainMenu
                         _server.Connect(address, () =>
                         {
                             _saveManager.SetBackend(new ServerSideSaveBackend());
-                            animState = 17;
+                            animState = 12;
                         }, (error) =>
                         {
                             _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
@@ -297,10 +297,10 @@ namespace Peacenet.MainMenu
             };
             _hbSingleplayer.Click += (o, a) =>
             {
-                if (animState < 17)
+                if (animState < 12)
                 {
                     _saveManager.SetBackend(new ServerSideSaveBackend());
-                    animState = 17;
+                    animState = 12;
                 }
 
             };
@@ -382,7 +382,7 @@ namespace Peacenet.MainMenu
         {
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
             {
-                if (animState == 7)
+                if (animState == 2)
                 {
                     _hasEnteredMenu = true;
                     animState++;
@@ -404,7 +404,7 @@ namespace Peacenet.MainMenu
         {
             switch (animState)
             {
-                case 0: //Start Watercolor splash
+                case -1:
                     _lbSingleplayer.Visible = false;
                     _lbMultiplayer.Visible = false;
                     _lbSettings.Visible = false;
@@ -416,29 +416,8 @@ namespace Peacenet.MainMenu
                     _wgButton.Visible = false;
                     _username.Visible = false;
                     _realname.Visible = false;
-                    if (_wgsInstance.State != SoundState.Playing)
-                        _wgsInstance.Play();
-                    _wgFade += (float)(time.ElapsedGameTime.TotalSeconds * 2.5);
-                    if (_wgFade >= 1)
-                    {
-                        animState++;
-                    }
                     break;
-                case 1:
-                    _wgRide += time.ElapsedGameTime.TotalSeconds;
-                    if (_wgRide >= 2.5F)
-                    {
-                        animState++;
-                    }
-                    break;
-                case 2:
-                    _wgFade -= (float)(time.ElapsedGameTime.TotalSeconds * 2.5);
-                    if (_wgFade <= 0)
-                    {
-                        animState++;
-                    }
-                    break;
-                case 3: //End Watercolor splash, start Peacenet splash
+                case 0: //Start Watercolor splash
                     _peacenetOpacity += (float)(time.ElapsedGameTime.TotalSeconds * 2.5);
                     _peacenetOpacity = MathHelper.Clamp(_peacenetOpacity, 0, 1);
                     _peacenetSlideLeft = _peacenetOpacity;
@@ -447,21 +426,7 @@ namespace Peacenet.MainMenu
                         animState++;
                     }
                     break;
-                case 4:
-                    /*
-                    _progressBGFade += (float)time.ElapsedGameTime.TotalSeconds * 4;
-                    if (_progressBGFade >= 1)
-                        animState++;*/
-                    animState = 6;
-                    break;
-                case 5:
-                    /*
-                    _progressFGAmount += (float)time.ElapsedGameTime.TotalSeconds / 2.5F;
-                    if (_progressFGAmount >= 1)
-                        animState++;*/
-                    animState = 6;
-                    break;
-                case 6: //End Peacenet splash, start Enter wait.
+                case 1: //End Peacenet splash, start Enter wait.
                     _progressBGFade -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     _progressFGPos += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos >= 1)
@@ -471,33 +436,33 @@ namespace Peacenet.MainMenu
                         _discord.GameDetails = "Welcome to The Peacenet.";
                     }
                     break;
-                case 8: //End Enter wait, start Peacenet splash -> Menu transition.
+                case 3: //End Enter wait, start Peacenet splash -> Menu transition.
                     _progressFGPos -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_progressFGPos <= 0)
                         animState++;
                     break;
-                case 9:
+                case 4:
                     _peacenetOpacity -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_peacenetOpacity <= 0)
                         animState++;
 
                     break;
-                case 10: //Start Menu animation.
+                case 5: //Start Menu animation.
                     _spSlideUp += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_spSlideUp >= 1)
                         animState++;
                     break;
-                case 11:
+                case 6:
                     _mpSlideUp += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_mpSlideUp >= 1)
                         animState++;
                     break;
-                case 12:
+                case 7:
                     _seSlideUp += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_seSlideUp >= 1)
                         animState++;
                     break;
-                case 13:
+                case 8:
                     _hbSettings.Visible = true;
                     _hbSingleplayer.Visible = true;
                     _hbMultiplayer.Visible = true;
@@ -511,7 +476,7 @@ namespace Peacenet.MainMenu
                     _discord.GameDetails = "Selecting game mode";
                     animState++;
                     break;
-                case 14: //End Menu animation.
+                case 9: //End Menu animation.
                     _menuLabelOpacity += (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_menuLabelOpacity >= 1)
                     {
@@ -519,21 +484,21 @@ namespace Peacenet.MainMenu
                         _credits.Visible = true;
                     }
                     break;
-                case 15:
+                case 10:
                     _wgUserFadeIn += (float)time.ElapsedGameTime.TotalSeconds * 8;
                     if (_wgUserFadeIn >= 1)
                     {
                         animState++;
                     }
                     break;
-                case 17:
+                case 12:
                     _wgUserFadeIn -= (float)time.ElapsedGameTime.TotalSeconds * 8;
                     if (_wgUserFadeIn <= 0)
                     {
                         animState++;
                     }
                     break;
-                case 18: //Start Menu Unload Animation.
+                case 13: //Start Menu Unload Animation.
                     _menuLabelOpacity -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_menuLabelOpacity <= 0)
                     {
@@ -552,28 +517,28 @@ namespace Peacenet.MainMenu
                     }
 
                     break;
-                case 19:
+                case 14:
                     _spSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_spSlideUp <= 0)
                         animState++;
 
                     break;
-                case 20:
+                case 15:
                     _mpSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_mpSlideUp <= 0)
                         animState++;
 
                     break;
-                case 21:
+                case 16:
                     _seSlideUp -= (float)time.ElapsedGameTime.TotalSeconds * 4;
                     if (_seSlideUp <= 0)
                         animState++;
 
                     break;
-                case 22:
+                case 17:
                     animState++;
                     break;
-                case 23:
+                case 18:
                     _os.OnReady();
                     animState++;
                     break;
