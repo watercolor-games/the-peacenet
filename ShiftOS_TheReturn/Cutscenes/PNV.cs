@@ -10,6 +10,7 @@ namespace Plex.Engine.Cutscenes
 {
     public class PNV : IVideoFormat, IDisposable
     {
+        private Texture2D _frameTexture = null;
         Stream fobj;
         BinaryReader read;
         Color[] frame;
@@ -36,10 +37,13 @@ namespace Plex.Engine.Cutscenes
             read?.Dispose();
             fobj?.Dispose();
             frame = null;
+            _frameTexture.Dispose();
         }
 
         public VideoFrame NextFrame(GraphicsContext gfx)
         {
+            if (_frameTexture == null)
+                _frameTexture = new Texture2D(gfx.Device, w, h);
             VideoFrame ret;
             int p = 0;
             while (p < frame.Length)
@@ -55,7 +59,7 @@ namespace Plex.Engine.Cutscenes
                 }
             }
             ret.sound = null;
-            ret.picture = new Texture2D(gfx.Device, w, h);
+            ret.picture = _frameTexture;
             ret.picture.SetData(frame);
             return ret;
         }

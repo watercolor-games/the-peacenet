@@ -1,11 +1,14 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.Cutscenes;
 using Plex.Engine.GraphicsSubsystem;
+using Plex.Engine.Interfaces;
 
-namespace Plex.Engine.GUI
+namespace Plex.Engine
 {
-    public class VideoPlayer : Control
+    public class VideoPlayer : IEntity
     {
         const int flicksPerMs = 705600;
         int timer = 0, i = 0;
@@ -14,17 +17,8 @@ namespace Plex.Engine.GUI
         bool fin = false;
         public event EventHandler Finished;
         int frames = 1;
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
-            if (!fin) while (frames > 0)
-            {
-                frame = vid.NextFrame(gfx);
-                i++;
-                frames--;
-            }
-            gfx.DrawRectangle(0, 0, Width, Height, ((VideoFrame)frame).picture, System.Windows.Forms.ImageLayout.Zoom);
-        }
-        protected override void OnUpdate(GameTime time)
+
+        public void Update(GameTime time)
         {
             if (fin)
                 return;
@@ -38,9 +32,30 @@ namespace Plex.Engine.GUI
                     fin = true;
                     return;
                 }
-                Invalidate(true);
             }
         }
+
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+            if (!fin) while (frames > 0)
+                {
+                    frame = vid.NextFrame(gfx);
+                    i++;
+                    frames--;
+                }
+            gfx.BeginDraw();
+            gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, ((VideoFrame)frame).picture, System.Windows.Forms.ImageLayout.Zoom);
+            gfx.EndDraw();
+        }
+
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void OnMouseUpdate(MouseState mouse)
+        {
+        }
+
         public VideoPlayer(IVideoFormat vid)
         {
             this.vid = vid;

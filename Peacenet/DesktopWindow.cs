@@ -519,44 +519,6 @@ namespace Peacenet
     /// </summary>
     public class DesktopPanel : Control
     {
-        private int _animState = -1;
-        private bool? _lastFocus = null;
-        private float _opacityAnim = 0;
-
-        /// <inheritdoc/>
-        protected override void OnUpdate(GameTime time)
-        {
-            bool focused = ContainsMouse;
-            if(focused != _lastFocus)
-            {
-                _animState = 0;
-                _lastFocus = focused;
-            }
-            switch (_animState)
-            {
-                case 0:
-                    if (_lastFocus == true)
-                    {
-                        _opacityAnim += (float)time.ElapsedGameTime.TotalSeconds * 8;
-                        if (_opacityAnim >= 1)
-                        {
-                            _animState++;
-                        }
-                    }
-                    else
-                    {
-                        _opacityAnim -= (float)time.ElapsedGameTime.TotalSeconds * 8;
-                        if (_opacityAnim <= 0)
-                        {
-                            _animState++;
-                        }
-
-                    }
-                    break;
-            }
-            Opacity = MathHelper.Lerp(0.75F, 1, _opacityAnim);
-        }
-
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {

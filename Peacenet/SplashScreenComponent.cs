@@ -27,8 +27,7 @@ namespace Peacenet
     {
         [Dependency]
         private Plexgate _plexgate = null;
-        private Layer layer = null;
-
+        
         /// <inheritdoc/>
         public void Initiate()
         {

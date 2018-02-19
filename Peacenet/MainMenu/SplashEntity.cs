@@ -366,9 +366,8 @@ namespace Peacenet.MainMenu
                 vidf = File.OpenRead("Content/Cutscenes/PeaceEngine1080p.pnv");
                 vid = new PNV(vidf);
                 vidp = new VideoPlayer(vid);
-                _uimanager.Add(vidp);
-                vidp.X = vidp.Y = 0;
-                vidp.Finished += (sender, e) => { _uimanager.Remove(vidp); vidp?.Dispose(); (vid as IDisposable)?.Dispose(); vidf?.Dispose(); animState = 0; };
+                _plexgate.GetLayer(LayerType.Foreground).AddEntity(vidp);
+                vidp.Finished += (sender, e) => { _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(vidp); (vid as IDisposable)?.Dispose(); vidf?.Dispose(); animState = 0; };
                 Logger.Log("Loaded intro video");
             }
             catch (FileNotFoundException)
@@ -405,10 +404,6 @@ namespace Peacenet.MainMenu
         {
             switch (animState)
             {
-                case -1: // Waiting for video to finish
-                    vidp.Width = _uimanager.ScreenWidth;
-                    vidp.Height = _uimanager.ScreenHeight;
-                    return;
                 case 0: //Start Watercolor splash
                     _lbSingleplayer.Visible = false;
                     _lbMultiplayer.Visible = false;
