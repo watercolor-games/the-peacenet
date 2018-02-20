@@ -10,6 +10,12 @@ namespace Plex.Engine
 {
     public class VideoPlayer : IEntity
     {
+        /// <inheritdoc/>
+        public void OnGameExit()
+        {
+
+        }
+
         const int flicksPerMs = 705600;
         int timer = 0, i = 0;
         IVideoFormat vid;

@@ -112,6 +112,21 @@ namespace Peacenet
 
     internal class MissionEntity : IEntity
     {
+        /// <inheritdoc/>
+        public void OnGameExit()
+        {
+            if(_current != null)
+            {
+                Logger.Log("Restoring pre-mission snapshot...");
+                if(!string.IsNullOrWhiteSpace(_preMissionSnapshotId))
+                {
+                    Logger.Log("Restoring pre-mission snapshot...");
+                    _save.RestoreSnapshot(_preMissionSnapshotId);
+                }
+            }
+        }
+
+
         private Mission _current = null;
         private int _state = -1;
         private Objective[] _objectives = null;
@@ -429,11 +444,18 @@ namespace Peacenet
                         }
                     }
                     break;
-                    
+                case 12:
+                    _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the 'Missions' program for new missions to play.");
+                    break;
 
             }
         }
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
     }
+
+    
 
     /// <summary>
     /// Represents a Peacenet Campaign mission.

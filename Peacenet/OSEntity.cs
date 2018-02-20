@@ -24,6 +24,12 @@ namespace Peacenet
     /// </summary>
     public class OSEntity : IEntity, ILoadable, IDisposable
     {
+        /// <inheritdoc/>
+        public void OnGameExit()
+        {
+            _os.Shutdown();
+        }
+
         #region Boot animation
 
         private int _osIntroState = 0;

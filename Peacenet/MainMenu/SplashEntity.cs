@@ -30,6 +30,9 @@ namespace Peacenet.MainMenu
     /// </summary>
     public class SplashEntity : IEntity, ILoadable, IDisposable
     {
+        /// <inheritdoc/>
+        public void OnGameExit() { }
+
         #region Animation state
 
         private IVideoFormat vid;
@@ -292,6 +295,7 @@ namespace Peacenet.MainMenu
                         _server.Connect(address, () =>
                         {
                             _saveManager.SetBackend(new ServerSideSaveBackend());
+                            
                             animState = 12;
                         }, (error) =>
                         {

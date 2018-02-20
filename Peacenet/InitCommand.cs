@@ -220,6 +220,13 @@ namespace Peacenet
                 _os.PreventStartup = true;
                 new Tutorial.PeacegateSetup(_winsys, tutorial).Show(0, 0);
             }
+            else
+            {
+                console.WriteLine("Loading GUI settings...");
+                var accent = _save.GetValue<PeacenetAccentColor>("theme.accent", PeacenetAccentColor.Blueberry);
+                ((PeacenetTheme)_theme.Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, accent);
+                _ui.InvalidateAll();
+            }
         }
     }
 
@@ -228,6 +235,9 @@ namespace Peacenet
     /// </summary>
     public class TutorialBgmEntity : IEntity, ILoadable
     {
+        /// <inheritdoc/>
+        public void OnGameExit() { }
+
         private SoundEffect _intro1 = null;
         private SoundEffect _intro2 = null;
         private SoundEffect _preparingInstall = null;
@@ -388,6 +398,9 @@ namespace Peacenet
     /// </summary>
     public class TutorialInstructionEntity : IEntity
     {
+        /// <inheritdoc/>
+        public void OnGameExit() { }
+
         [Dependency]
         private OS _os = null;
 

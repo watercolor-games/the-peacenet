@@ -384,6 +384,7 @@ namespace Plex.Engine
                 while(layer.Entities.Length > 0)
                 {
                     var entity = layer.Entities[0];
+                    entity.OnGameExit();
                     if (entity is IDisposable)
                         (entity as IDisposable).Dispose();
                     layer.RemoveEntity(entity);

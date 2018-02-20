@@ -341,8 +341,8 @@ namespace Peacenet
                     break;
                 case 5:
                     winsys.WindowListUpdated -= WindowSystemUpdated;
-                    Close();
                     _os.Shutdown();
+                    Close();
                     break;
             }
 

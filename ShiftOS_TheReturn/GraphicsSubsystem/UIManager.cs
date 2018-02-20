@@ -39,6 +39,12 @@ namespace Plex.Engine.GraphicsSubsystem
     {
         private class UIContainer : IEntity, ILoadable, IDisposable
         {
+            /// <inheritdoc/>
+            public void OnGameExit()
+            {
+
+            }
+
             [Dependency]
             private ThemeManager _thememgr = null;
 

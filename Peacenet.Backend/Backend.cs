@@ -284,40 +284,47 @@ namespace Peacenet.Backend
 
                         while (connection.Connected)
                         {
-                            var muid = reader.ReadString();
-                            Logger.Log("New message incoming.");
-                            var mtype = reader.ReadInt32();
-                            Logger.Log("Received message type.");
-                            string session = reader.ReadString();
-                            Logger.Log("Received itch.io OAuth2 token.");
-                            if (_isMultiplayer == false)
-                                session = "__SINGLEPLAYER";
-                            byte[] content = new byte[] { };
-                            Logger.Log("Reading body...");
-                            int len = reader.ReadInt32();
-                            if (len > 0)
-                                content = reader.ReadBytes(len);
-                            Logger.Log("Body received.");
-                            byte[] returncontent = new byte[] { };
-                            if (!_keys.ContainsKey(session))
+                            try
                             {
-                                Logger.Log("Downloading itch.io user profile data to cache...");
-                                var user = getItchUser(session);
-                                Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                var muid = reader.ReadString();
+                                Logger.Log("New message incoming.");
+                                var mtype = reader.ReadInt32();
+                                Logger.Log("Received message type.");
+                                string session = reader.ReadString();
+                                Logger.Log("Received itch.io OAuth2 token.");
+                                if (_isMultiplayer == false)
+                                    session = "__SINGLEPLAYER";
+                                byte[] content = new byte[] { };
+                                Logger.Log("Reading body...");
+                                int len = reader.ReadInt32();
+                                if (len > 0)
+                                    content = reader.ReadBytes(len);
+                                Logger.Log("Body received.");
+                                byte[] returncontent = new byte[] { };
+                                if (!_keys.ContainsKey(session))
+                                {
+                                    Logger.Log("Downloading itch.io user profile data to cache...");
+                                    var user = getItchUser(session);
+                                    Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                }
+                                var result = delegator.HandleMessage(this, (ServerMessageType)mtype, _keys[session], content, out returncontent);
+                                Logger.Log("Replying to message...");
+                                writer.Write(muid);
+                                Logger.Log("Writing message result");
+                                writer.Write((int)result);
+                                Logger.Log("Writing OAuth2 token");
+                                writer.Write(session);
+                                Logger.Log("Writing body length");
+                                writer.Write(returncontent.Length);
+                                Logger.Log("Writing body");
+                                if (returncontent.Length > 0)
+                                    writer.Write(returncontent);
+                                writer.Flush();
                             }
-                            var result = delegator.HandleMessage(this, (ServerMessageType)mtype, _keys[session], content, out returncontent);
-                            Logger.Log("Replying to message...");
-                            writer.Write(muid);
-                            Logger.Log("Writing message result");
-                            writer.Write((int)result);
-                            Logger.Log("Writing OAuth2 token");
-                            writer.Write(session);
-                            Logger.Log("Writing body length");
-                            writer.Write(returncontent.Length);
-                            Logger.Log("Writing body");
-                            if (returncontent.Length > 0)
-                                writer.Write(returncontent);
-                            writer.Flush();
+                            catch(EndOfStreamException)
+                            {
+                                break;
+                            }
 
                         }
                         reader.Close();
@@ -457,18 +464,21 @@ namespace Peacenet.Backend
         /// <param name="message">A message to broadcast to all clients as the server shuts down.</param>
         public void Shutdown(string message = "Server going down for maintenance.")
         {
-            using(var memstr = new MemoryStream())
+            if (!string.IsNullOrEmpty(message))
             {
-                using(var writer= new BinaryWriter(memstr, Encoding.UTF8))
+                using (var memstr = new MemoryStream())
                 {
-                    writer.Write(message);
-                    Broadcast(ServerBroadcastType.Shutdown, memstr.ToArray());
+                    using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
+                    {
+                        writer.Write(message);
+                        Broadcast(ServerBroadcastType.Shutdown, memstr.ToArray());
+                    }
                 }
             }
             Logger.Log("Commencing shutdown...");
             Logger.Log("Stopping TCP listener.");
-            _listener.Stop();
-            _tcpthread.Abort();
+            _listener?.Stop();
+            _tcpthread?.Abort();
             _listener = null;
             Logger.Log("Done.");
             Logger.Log("Stopping everything else...");

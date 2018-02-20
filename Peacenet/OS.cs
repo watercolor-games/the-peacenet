@@ -202,6 +202,8 @@ namespace Peacenet
                     if (!_fs.DirectoryExists(dir))
                         _fs.CreateDirectory(dir);
                 }
+
+                
             }
             catch (Exception ex)
             {
@@ -227,6 +229,12 @@ namespace Peacenet
                 _osEntity = null;
             }
             _splash.Reset();
+            if (_localBackend != null)
+            {
+                if (_server.Connected)
+                    _server.Disconnect();
+                _localBackend.Shutdown("");
+            }
         }
 
         /// <summary>

@@ -37,6 +37,7 @@ namespace Plex.Engine.Interfaces
         /// </summary>
         /// <param name="mouse">A <see cref="MouseState"/> containing information about the mouse's current state.</param>
         void OnMouseUpdate(MouseState mouse);
+        void OnGameExit();
     }
 
     /// <summary>
@@ -161,6 +162,13 @@ namespace Plex.Engine.Interfaces
                     (entity as IDisposable).Dispose();
                 _entities.Remove(entity);
             }
+        }
+
+        /// <inheritdoc/>
+        public void OnGameExit()
+        {
+            foreach (var entity in Entities)
+                entity.OnGameExit();
         }
     }
 }

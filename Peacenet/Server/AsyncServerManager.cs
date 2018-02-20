@@ -51,6 +51,8 @@ namespace Peacenet.Server
                 return;
             while (_tcpClient.Connected)
             {
+                try
+                {
                     Logger.Log("Receiving message from server...");
                     string muid = _reader.ReadString();
                     bool isBroadcast = (muid == "broadcast");
@@ -94,8 +96,14 @@ namespace Peacenet.Server
                         };
                         _messageReceived.Set();
                     }
-                if (_tcpClient == null)
-                    return;
+                    if (_tcpClient == null)
+                        return;
+                }
+                catch(IOException)
+                {
+                    Logger.Log("Breaking out of the listener loop - we can't read anymore.", LogType.Info, "client_listener");
+                    break;
+                }
             }
         }
 
@@ -273,6 +281,12 @@ namespace Peacenet.Server
 
         private class serverEntity : IEntity
         {
+            /// <inheritdoc/>
+            public void OnGameExit()
+            {
+
+            }
+
             [Dependency]
             private AsyncServerManager _server = null;
             public void Draw(GameTime time, GraphicsContext gfx)

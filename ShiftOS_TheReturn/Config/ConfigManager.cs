@@ -32,6 +32,12 @@ namespace Plex.Engine.Config
 
         private class configEntity : IEntity
         {
+            /// <inheritdoc/>
+            public void OnGameExit()
+            {
+                _config.SaveToDisk();
+            }
+
             [Dependency]
             private ConfigManager _config = null;
             public void Draw(GameTime time, GraphicsContext gfx)

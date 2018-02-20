@@ -25,6 +25,12 @@ namespace Peacenet.RichPresence
 
         private class DiscordRPCEntity : IEntity, ILoadable, IDisposable
         {
+            /// <inheritdoc/>
+            public void OnGameExit()
+            {
+
+            }
+
             private EventHandlers _handlers;
             private string _appID = "378307289502973963";
             private RichPresence _lastPresence;
