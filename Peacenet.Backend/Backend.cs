@@ -17,6 +17,7 @@ namespace Peacenet.Backend
     /// </summary>
     public class Backend : IDisposable
     {
+        private List<IMessageHandler> _handlers = null;
         private List<ComponentInfo> _components = null;
         private int _port = 0;
         private Thread _utilityThread = null;
@@ -209,7 +210,73 @@ namespace Peacenet.Backend
                     username = "player"
                 });
             }
+
+            Logger.Log("Message delegator is loading...");
+            _handlers = new List<IMessageHandler>();
+            Logger.Log("Finding all handler objects...");
+            foreach (var type in ReflectMan.Types)
+            {
+                if (type.GetInterfaces().Contains(typeof(IMessageHandler)))
+                {
+                    var handler = (IMessageHandler)Activator.CreateInstance(type, null);
+                    Logger.Log($"Found handler: {type.Name} (for protocol message type {handler.HandledMessageType})");
+                    if (_handlers.FirstOrDefault(x => x.HandledMessageType == handler.HandledMessageType) != null)
+                    {
+                        Logger.Log($"WARNING: Another handler handles the same message type as {handler.GetType().Name}! Ignoring it.");
+                        continue;
+                    }
+                    _handlers.Add(handler);
+                    Inject(handler);
+                }
+            }
+            Logger.Log($"Done loading handlers. {_handlers.Count} found.");
+
         }
+
+        /// <summary>
+        /// Handles an incoming server message.
+        /// </summary>
+        /// <param name="messagetype">The type of the message</param>
+        /// <param name="session_id">The caller user ID</param>
+        /// <param name="dgram">The message body</param>
+        /// <param name="returndgram">The returned message body</param>
+        /// <returns>The result of the handler.</returns>
+        public ServerResponseType HandleMessage(ServerMessageType messagetype, string session_id, byte[] dgram, out byte[] returndgram)
+        {
+#if HANG_DEBUG
+            Logger.Log("Attempting to handle a " + messagetype + "...");
+#endif
+            var handler = _handlers.FirstOrDefault(x => x.HandledMessageType == messagetype);
+            if (handler == null)
+            {
+                Logger.Log("WARNING: No handler for this message. Returning error.");
+                returndgram = new byte[] { };
+                return ServerResponseType.REQ_ERROR;
+            }
+            else
+            {
+                bool sessionRequired = handler.GetType().GetCustomAttributes(false).FirstOrDefault(x => x is RequiresSessionAttribute) != null;
+                if (sessionRequired)
+                {
+                    if (string.IsNullOrWhiteSpace(session_id))
+                    {
+                        returndgram = new byte[0];
+                        return ServerResponseType.REQ_LOGINREQUIRED;
+                    }
+                }
+                using (var memstr = new MemoryStream(dgram))
+                {
+                    using (var rms = new MemoryStream())
+                    {
+                        var result = handler.HandleMessage(this, messagetype, session_id, new BinaryReader(memstr), new BinaryWriter(rms));
+                        returndgram = rms.ToArray();
+                        return result;
+                    }
+                }
+            }
+
+        }
+
 
         private void RecursiveInit(IBackendComponent component)
         {
@@ -264,8 +331,7 @@ namespace Peacenet.Backend
 
         private void ListenThread()
         {
-            var delegator = GetBackendComponent<MessageDelegator>();
-                        Logger.Log("Starting TCP thread.");
+            Logger.Log("Starting TCP thread.");
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();
             _serverReady.Set();
@@ -307,7 +373,7 @@ namespace Peacenet.Backend
                                     var user = getItchUser(session);
                                     Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
                                 }
-                                var result = delegator.HandleMessage(this, (ServerMessageType)mtype, _keys[session], content, out returncontent);
+                                var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
                                 Logger.Log("Replying to message...");
                                 writer.Write(muid);
                                 Logger.Log("Writing message result");
