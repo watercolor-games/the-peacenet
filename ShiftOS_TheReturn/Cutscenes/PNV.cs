@@ -37,7 +37,7 @@ namespace Plex.Engine.Cutscenes
             read?.Dispose();
             fobj?.Dispose();
             frame = null;
-            _frameTexture.Dispose();
+            _frameTexture?.Dispose();
         }
 
         public VideoFrame NextFrame(GraphicsContext gfx)

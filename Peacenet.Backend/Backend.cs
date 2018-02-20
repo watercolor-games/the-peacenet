@@ -483,19 +483,20 @@ namespace Peacenet.Backend
             Logger.Log("Done.");
             Logger.Log("Stopping everything else...");
             _isRunning = false;
-            _workForUtility.Set();
+            _workForUtility?.Set();
             Logger.Log("Waiting for utility thread shutdown...");
-            _shutdownComplete.WaitOne();
+            if(_shutdownComplete!=null)
+                _shutdownComplete.WaitOne();
             Logger.Log("Everything's shut down. Cleaning up...");
             _utilityThread = null;
             _components = null;
             _utilityActions = null;
 
-            _shutdownComplete.Dispose();
+            _shutdownComplete?.Dispose();
             _shutdownComplete = null;
-            _workForUtility.Dispose();
+            _workForUtility?.Dispose();
             _workForUtility = null;
-            _safetyWatch.Dispose();
+            _safetyWatch?.Dispose();
             _safetyWatch = null;
         }
 

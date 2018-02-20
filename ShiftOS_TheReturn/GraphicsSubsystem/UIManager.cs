@@ -334,7 +334,10 @@ namespace Plex.Engine.GraphicsSubsystem
         /// </summary>
         public void InvalidateAll()
         {
-            this._container.InvalidateAll();
+            lock(_container)
+            {
+                this._container.InvalidateAll();
+            }
         }
 
         /// <summary>
@@ -356,7 +359,10 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="ctrl">The control to focus.</param>
         public void SetFocus(Control ctrl)
         {
-            _container.SetFocus(ctrl);
+            lock (_container)
+            {
+                _container.SetFocus(ctrl);
+            }
         }
 
         /// <summary>
@@ -366,9 +372,12 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <returns>Whether the control is in focus.</returns>
         public bool IsFocused(Control ctrl)
         {
-            if (ctrl == null)
-                return false;
-            return _container.IsFocused(ctrl);
+            lock (_container)
+            {
+                if (ctrl == null)
+                    return false;
+                return _container.IsFocused(ctrl);
+            }
         }
 
         /// <summary>
@@ -377,9 +386,12 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="ctrl">The control to add.</param>
         public void Add(Control ctrl)
         {
-            if (_container.Controls.Contains(ctrl))
+            lock (_container)
+            {
+                if (_container.Controls.Contains(ctrl))
                 return;
-            _container.AddControl(ctrl);
+                _container.AddControl(ctrl);
+            }
         }
 
         /// <summary>
@@ -389,9 +401,12 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="dispose">Whether the control should be disposed.</param>
         public void Remove(Control ctrl, bool dispose = true)
         {
-            if (!_container.Controls.Contains(ctrl))
+            lock (_container)
+            {
+                if (!_container.Controls.Contains(ctrl))
                 return;
-            _container.RemoveControl(ctrl, dispose);
+                _container.RemoveControl(ctrl, dispose);
+            }
         }
 
         /// <summary>
@@ -443,7 +458,10 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="_tutorialLabel">The control to move.</param>
         public void BringToFront(Control _tutorialLabel)
         {
-            _container.BringToFront(_tutorialLabel);
+            lock (_container)
+            {
+                _container.BringToFront(_tutorialLabel);
+            }
         }
     }
 }

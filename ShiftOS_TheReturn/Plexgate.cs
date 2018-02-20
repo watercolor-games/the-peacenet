@@ -180,17 +180,18 @@ namespace Plex.Engine
             GraphicsDevice.PresentationParameters.MultiSampleCount = 8; //8x MSAA, should be a configurable thing
             graphicsDevice.ApplyChanges();
 
+#if RELEASE
             AppDomain.CurrentDomain.UnhandledException += (o, a) =>
             {
+                
                 System.Windows.Forms.MessageBox.Show(caption: "Uncaught .NET exception", text: $@"An uncaught exception has occurred in the Peace engine.
 
 {a.ExceptionObject}", icon: System.Windows.Forms.MessageBoxIcon.Error, buttons: System.Windows.Forms.MessageBoxButtons.OK);
                 Logger.Log("FATAL EXCEPTION: " + a.ExceptionObject.ToString(), LogType.Fatal);
-#if RELEASE
                 this.UnloadContent();
                 Environment.Exit(0);
+        };
 #endif
-            };
             _instance = this;
             Logger.Log("Beginning engine initialization.");
             while (!_splashReady)
