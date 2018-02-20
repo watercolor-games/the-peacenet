@@ -24,7 +24,7 @@ namespace Plex.Engine.GUI
         private int _height = 1;
         private List<Control> _children = null;
         private bool _invalidated = true;
-        internal RenderTarget2D _rendertarget = null;
+        internal Texture2D _rendertarget = null;
         internal RenderTarget2D _userfacingtarget = null;
         private bool _resized = false;
         private Control _parent = null;
@@ -99,7 +99,7 @@ namespace Plex.Engine.GUI
         /// <summary>
         /// Retrieves the back buffer for the control.
         /// </summary>
-        public RenderTarget2D BackBuffer
+        public Texture2D BackBuffer
         {
             get
             {
@@ -939,26 +939,23 @@ namespace Plex.Engine.GUI
             }
             if (makeBack)
             {
-                _rendertarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+                _rendertarget = new Texture2D(gfx.Device, Width, Height);
             }
 
             if (_needsRerender)
             {
-                if (_invalidated)
+                if (_resized)
                 {
-                    if (_resized)
-                    {
-                        _userfacingtarget?.Dispose();
-                        _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-                        _resized = false;
-                    }
-                    gfx.Device.SetRenderTarget(_userfacingtarget);
-                    gfx.Device.Clear(Color.Transparent);
-                    gfx.BeginDraw();
-                    OnPaint(time, gfx);
-                    gfx.EndDraw();
-                    _invalidated = false;
+                    _userfacingtarget?.Dispose();
+                    _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+                    _resized = false;
                 }
+                gfx.Device.SetRenderTarget(_userfacingtarget);
+                gfx.Device.Clear(Color.Transparent);
+                gfx.BeginDraw();
+                OnPaint(time, gfx);
+                gfx.EndDraw();
+                _invalidated = false;
                 foreach (var child in Children)
                 {
                     if (!child.Visible)
@@ -966,39 +963,31 @@ namespace Plex.Engine.GUI
                     if (child.Opacity > 0)
                         child.Draw(time, gfx);
                 }
-                gfx.Device.SetRenderTarget(_rendertarget);
-                gfx.Device.Clear(Color.Transparent);
-                if (_userfacingtarget != null)
+                gfx.Device.SetRenderTarget(_userfacingtarget);
+                gfx.BeginDraw();
+                foreach (var child in Children)
                 {
-                    gfx.BeginDraw();
-                    gfx.Batch.Draw(_userfacingtarget, new Rectangle(0, 0, Width, Height), Color.White);
-                    foreach (var child in Children)
+                    if (!child.Visible)
+                        continue;
+                    if (child.Opacity > 0)
                     {
-                        if (!child.Visible)
-                            continue;
-                        if (child.Opacity > 0)
+                        var tint = (child.Enabled) ? Color.White : Color.Gray;
+                        if (Manager.IgnoreControlOpacity)
                         {
-                            var tint = (child.Enabled) ? Color.White : Color.Gray;
-                            if (Manager.IgnoreControlOpacity)
-                            {
-                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint);
-                            }
-                            else
-                            {
-                                gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint * child.Opacity);
-                            }
+                            gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint);
+                        }
+                        else
+                        {
+                            gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint * child.Opacity);
                         }
                     }
-                    gfx.EndDraw();
                 }
-                else
-                {
-                    Invalidate(true);
-                    _resized = true;
-
-                }
+                gfx.EndDraw();
                 _needsRerender = false;
-
+                gfx.Device.SetRenderTarget(null);
+                byte[] userdata = new byte[(_userfacingtarget.Width * 4) * _userfacingtarget.Height];
+                _userfacingtarget.GetData(userdata);
+                _rendertarget.SetData(userdata);
             }
         }
 
