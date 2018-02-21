@@ -14,6 +14,7 @@ using Plex.Objects;
 using Plex.Engine.GUI;
 using Plex.Engine.Themes;
 using Peacenet.Applications;
+using Peacenet.RichPresence;
 
 namespace Peacenet
 {
@@ -132,6 +133,9 @@ namespace Peacenet
         private Objective[] _objectives = null;
         private int _currentObjective = 0;
         private int _animState = -1;
+
+        [Dependency]
+        private DiscordRPCModule _discord = null;
 
         private float _shroudFade = 0.0f;
 
@@ -283,6 +287,12 @@ namespace Peacenet
 
         public void Update(GameTime time)
         {
+            if(_current == null)
+            {
+                _discord.GameState = "In Singleplayer";
+                _discord.GameDetails = "Roaming the Peacenet";
+            }
+
             switch(_state)
             {
                 case 0:
@@ -305,6 +315,8 @@ namespace Peacenet
                     }
                     break;
                 case 1:
+                    _discord.GameDetails = $"{_current.Name}";
+                    _discord.GameState = "In Mission";
                     var obj = _objectives[_currentObjective];
                     var objState = obj.Update(time);
                     if (objState == ObjectiveState.Failed)

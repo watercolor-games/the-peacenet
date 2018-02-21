@@ -24,7 +24,6 @@ namespace Plex.Engine.GUI
         private int _height = 1;
         private List<Control> _children = null;
         private bool _invalidated = true;
-        internal Texture2D _rendertarget = null;
         internal RenderTarget2D _userfacingtarget = null;
         private bool _resized = false;
         private Control _parent = null;
@@ -103,7 +102,7 @@ namespace Plex.Engine.GUI
         {
             get
             {
-                return _rendertarget;
+                return _userfacingtarget;
             }
         }
 
@@ -858,11 +857,6 @@ namespace Plex.Engine.GUI
                 _lastFocus = HasFocused;
                 HasFocusedChanged?.Invoke(this, EventArgs.Empty);
             }
-            if (_rendertarget == null)
-            {
-                Invalidate(true);
-                _resized = true;
-            }
             if (_userfacingtarget == null)
             {
                 Invalidate(true);
@@ -925,23 +919,6 @@ namespace Plex.Engine.GUI
         /// <param name="gfx">The graphics context to render the control to.</param>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            bool makeBack = false; //normally I'd let this be false but I thought I'd try making the backbuffer reset if the control's invalidated. This seemed to help, but right after restarting the game and doing the same thing, the bug was back. So this only works intermitently.
-            if (_rendertarget == null)
-                makeBack = true;
-            else
-            {
-                if (_rendertarget.Width != Width || _rendertarget.Height != Height)
-                {
-                    _rendertarget.Dispose();
-                    _rendertarget = null;
-                    makeBack = true;
-                }
-            }
-            if (makeBack)
-            {
-                _rendertarget = new Texture2D(gfx.Device, Width, Height);
-            }
-
             if (_needsRerender)
             {
                 if (_resized)
@@ -958,38 +935,39 @@ namespace Plex.Engine.GUI
                 _invalidated = false;
                 foreach (var child in Children)
                 {
+                    if (!child._needsRerender)
+                        continue;
                     if (!child.Visible)
                         continue;
                     if (child.Opacity > 0)
                         child.Draw(time, gfx);
                 }
-                gfx.Device.SetRenderTarget(_userfacingtarget);
+                if (gfx.Device.GetRenderTargets()[0].RenderTarget!=_userfacingtarget)
+                    gfx.Device.SetRenderTarget(_userfacingtarget);
                 gfx.BeginDraw();
-                foreach (var child in Children)
+                foreach(var control in Children)
                 {
-                    if (!child.Visible)
+                    if (!control.Visible)
                         continue;
-                    if (child.Opacity > 0)
+                    if(control.Opacity>0)
                     {
-                        var tint = (child.Enabled) ? Color.White : Color.Gray;
+                        var tint = (control.Enabled) ? Color.White : Color.Gray;
                         if (Manager.IgnoreControlOpacity)
                         {
-                            gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint);
+                            gfx.Batch.Draw(control.BackBuffer, new Rectangle(control.X, control.Y, control.Width, control.Height), tint);
                         }
                         else
                         {
-                            gfx.Batch.Draw(child.BackBuffer, new Rectangle(child.X, child.Y, child.Width, child.Height), tint * child.Opacity);
+                            gfx.Batch.Draw(control.BackBuffer, new Rectangle(control.X, control.Y, control.Width, control.Height), (tint * control.Opacity));
                         }
                     }
                 }
                 gfx.EndDraw();
                 _needsRerender = false;
-                gfx.Device.SetRenderTarget(null);
-                byte[] userdata = new byte[(_userfacingtarget.Width * 4) * _userfacingtarget.Height];
-                _userfacingtarget.GetData(userdata);
-                _rendertarget.SetData(userdata);
             }
         }
+
+        private byte[] _backbufferData = null;
 
         /// <summary>
         /// Retrieve the left mouse state.
@@ -1027,11 +1005,6 @@ namespace Plex.Engine.GUI
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (_rendertarget != null)
-            {
-                _rendertarget.Dispose();
-                _rendertarget = null;
-            }
             if (_userfacingtarget != null)
             {
                 _userfacingtarget.Dispose();

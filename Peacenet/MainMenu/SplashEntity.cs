@@ -240,6 +240,9 @@ namespace Peacenet.MainMenu
         /// <inheritdoc/>
         public void Load(ContentManager content)
         {
+            _discord.GameState = "Watercolor Games presents...";
+            _discord.GameDetails = "The Peacenet";
+
             ((PeacenetTheme)_thememgr.Theme).SetAccentColor(_plexgate.GraphicsDevice, content, PeacenetAccentColor.Blueberry);
             _uimanager.InvalidateAll();
 
