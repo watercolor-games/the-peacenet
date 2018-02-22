@@ -25,9 +25,17 @@ namespace Peacenet
                 return;
             }
 
-            using (var game = new Plexgate())
-                game.Run();
-            Environment.Exit(0);
+            try
+            {
+                using (var game = new Plexgate())
+                    game.Run();
+            }
+            catch(Exception ex)
+            {
+                Logger.Log(ex.Message, LogType.Fatal, "monogame");
+                Console.ReadKey(true);
+            }
+                Environment.Exit(0);
         }
     }
 }

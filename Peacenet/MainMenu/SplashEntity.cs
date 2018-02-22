@@ -308,31 +308,31 @@ namespace Peacenet.MainMenu
                     });
                 }
             };
-            _hbSingleplayer.Click += (o, a) =>
+_hbSingleplayer.Click += (o, a) =>
+{
+    if (_connecting)
+        return;
+    if (animState < 12)
+    {
+        Task.Run(() =>
+        {
+            _connecting = true;
+            _connectingText = "Starting internal server...";
+            try
             {
-                if (_connecting)
-                    return;
-                if (animState < 12)
-                {
-                    Task.Run(() =>
-                    {
-                        _connecting = true;
-                        _connectingText = "Starting internal server...";
-                        try
-                        {
-                            _os.StartLocalServer();
-                            _saveManager.SetBackend(new ServerSideSaveBackend());
-                            animState = 12;
-                        }
-                        catch (Exception ex)
-                        {
-                            _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
-                        }
-                        _connecting = false;
-                    });
-                }
+                _os.StartLocalServer();
+                _saveManager.SetBackend(new ServerSideSaveBackend());
+                animState = 12;
+            }
+            catch (Exception ex)
+            {
+                _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
+            }
+            _connecting = false;
+        });
+    }
 
-            };
+};
 
             _lbSingleplayer = new Label();
             _lbMultiplayer = new Label();
