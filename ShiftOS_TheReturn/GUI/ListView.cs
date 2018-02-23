@@ -506,9 +506,9 @@ namespace Plex.Engine.GUI
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            if (_lastContainedMouse != ContainsMouse)
+            if (_lastContainedMouse != (ContainsMouse&&Parent.ContainsMouse))
             {
-                _lastContainedMouse = ContainsMouse;
+                _lastContainedMouse = (ContainsMouse && Parent.ContainsMouse);
                 Invalidate(true);
             }
             if (!_requiresLayout)
@@ -591,7 +591,7 @@ namespace Plex.Engine.GUI
                 _picture.Tint = (_selected) ? accent : Color.White;
 
             var highlight = Color.Transparent;
-            if (ContainsMouse)
+            if (ContainsMouse && Parent.ContainsMouse)
                 highlight = accent * 0.5F;
             if (_selected)
                 highlight = accent;

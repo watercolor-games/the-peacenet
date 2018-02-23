@@ -7,7 +7,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D00E3C64-AD90-430C-87F7-A246BE4B84C2}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Peacenet</RootNamespace>
     <AssemblyName>Peacenet</AssemblyName>
@@ -60,6 +60,18 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Peacenet.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppLauncherManager.cs" />
@@ -198,6 +210,7 @@
     <Content Include="Content\credits.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Shaders\GaussianBlur.fx" />
     <None Include="packages.config" />
     <None Include="Content\Cutscenes\PeaceEngine1080p.pnv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

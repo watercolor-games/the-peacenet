@@ -12,6 +12,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Peacenet.Server;
+using Peacenet.Missions.Prologue;
 
 namespace Peacenet
 {
@@ -80,6 +81,59 @@ namespace Peacenet
                 Logger.Log("Done.");
             }
             Logger.Log("Successfully loaded all Terminal commands.", LogType.Info, "terminal");
+        }
+
+        internal void LoadCommand(ITerminalCommand command)
+        {
+            if (command == null)
+                return;
+            Logger.Log($"Found: {command.Name} (from {command.GetType().FullName})", LogType.Info, "terminal");
+            //Avoid commands with the same name!
+            if (_localCommands.FirstOrDefault(x => x.Name == command.Name) != null)
+            {
+                Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {command.GetType().FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", LogType.Error, "terminal");
+                throw new ArgumentException("A command with the same name already exists in the database.");
+
+            }
+
+            _localCommands.Add(command);
+            Logger.Log("Injecting dependencies for the command...");
+            _plexgate.Inject(command);
+            Logger.Log("Done.");
+            Logger.Log("Creating usage string...");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{command.Name}");
+            sb.AppendLine();
+            sb.AppendLine("Summary:");
+            sb.AppendLine($"  {command.Description}");
+            sb.AppendLine();
+            sb.AppendLine("Usage:");
+            //This is the tough part.
+            if (command.Usages == null || command.Usages.Count() == 0)
+            {
+                //No arguments for the command, just add the command name as a usage string so Docopt doesn't get confused.
+                sb.AppendLine($"  {command.Name}");
+            }
+            else
+            {
+                foreach (var usage in command.Usages)
+                {
+                    sb.AppendLine($"  {command.Name} {usage}");
+                }
+            }
+            //Add usage string to the database.
+            _usages.Add(command.Name, sb.ToString());
+            Logger.Log("Done.");
+        }
+
+        public void UnloadCommand(string name)
+        {
+            var command = _localCommands.FirstOrDefault(x => x.Name == name);
+            if (command == null)
+                throw new ArgumentException("A command with that name has not been found.");
+            _usages.Remove(name);
+            _localCommands.Remove(command);
+            Logger.Log("Unloaded command: " + name, LogType.Info, "terminal");
         }
 
         /// <summary>

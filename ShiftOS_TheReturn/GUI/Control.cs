@@ -35,7 +35,6 @@ namespace Plex.Engine.GUI
         private bool _isVisible = true;
         private bool _disposed = false;
         private float _opacity = 1;
-
         private bool _enabled = true;
 
         /// <summary>
@@ -623,6 +622,12 @@ namespace Plex.Engine.GUI
             _mousex = x;
             _mousey = y;
 
+            if (moved)
+            {
+                MouseMove?.Invoke(this, new Vector2(x, y));
+            }
+
+
             //Get the state of the three mouse buttons we care about.
             var leftState = state.LeftButton;
             var rightState = state.RightButton;
@@ -635,25 +640,13 @@ namespace Plex.Engine.GUI
                 //Propagate the mouse events to all children - returning true if a child does.
                 foreach(var child in Children.OrderByDescending(z=>Array.IndexOf(Children, z)))
                 {
-                    if(ret == false)
-                    {
                         bool res = child.PropagateMouseState(state);
                         if (res)
-
                             ret = true;
-                    }
-                    else
-                    {
-                        child.ResetMouseState();
-                    }
                 }
                 if (ret)
                     return true;
                 //If we moved, fire the MouseMove event.
-                if(moved)
-                {
-                    MouseMove?.Invoke(this, new Vector2(x, y));
-                }
                 //If the mouse has entered the control...
                 if(previouslyInControl == false)
                 {
@@ -942,12 +935,13 @@ namespace Plex.Engine.GUI
                     if (child.Opacity > 0)
                         child.Draw(time, gfx);
                 }
-                if (gfx.Device.GetRenderTargets()[0].RenderTarget!=_userfacingtarget)
-                    gfx.Device.SetRenderTarget(_userfacingtarget);
+                gfx.Device.SetRenderTarget(_userfacingtarget);
                 gfx.BeginDraw();
                 foreach(var control in Children)
                 {
                     if (!control.Visible)
+                        continue;
+                    if (control.BackBuffer == null)
                         continue;
                     if(control.Opacity>0)
                     {

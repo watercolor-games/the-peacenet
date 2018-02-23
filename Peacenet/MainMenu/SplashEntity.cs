@@ -140,7 +140,7 @@ namespace Peacenet.MainMenu
         #region Window entities
 
         private GameSettings _settingsApp = null;
-        
+
         #endregion
 
         /// <inheritdoc/>
@@ -174,8 +174,9 @@ namespace Peacenet.MainMenu
             int welcome_y_max = peacenet_y - _welcome.Height;
             int welcome_y_min = welcome_y_max - (int)(_uimanager.ScreenHeight * 0.15);
 
-            ctx.DrawRectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetOpacity), _welcome.Width, _welcome.Height, _welcome, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Stretch);
-            ctx.DrawRectangle((int)MathHelper.Lerp(peacenet_x_min, peacenet_x_max, _peacenetOpacity), peacenet_y, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity, System.Windows.Forms.ImageLayout.Stretch);
+            ctx.Batch.Draw(_welcome, new Rectangle(welcome_x, (int)MathHelper.Lerp(welcome_y_min, welcome_y_max, _peacenetOpacity), _welcome.Width, _welcome.Height), Color.White * _peacenetOpacity);
+            ctx.Batch.Draw(_peacenet, new Rectangle((int)MathHelper.Lerp(peacenet_x_min, peacenet_x_max, _peacenetOpacity), peacenet_y, _peacenet.Width, _peacenet.Height), Color.White * _peacenetOpacity);
+
 
             //"Press ENTER" prompt
             var fnt = _thememgr.Theme.GetFont(TextFontStyle.Header1);
@@ -217,11 +218,14 @@ namespace Peacenet.MainMenu
             var colorIdle = new Color(191, 191, 191, 255);
             var colorHover = Color.White;
             if (_spSlideUp > 0)
-                ctx.DrawRectangle(_hbSingleplayer.X, _hbSingleplayer.Y, _hbSingleplayer.Width, _hbSingleplayer.Height, _singleplayer, ((_hbSingleplayer.ContainsMouse) ? colorHover : colorIdle) * _spSlideUp);
+                ctx.Batch.Draw(_singleplayer, new Rectangle(_hbSingleplayer.X, _hbSingleplayer.Y, _hbSingleplayer.Width, _hbSingleplayer.Height), ((_hbSingleplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White)*_spSlideUp);
             if (_mpSlideUp > 0)
-                ctx.DrawRectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height, _multiplayer, ((_hbMultiplayer.ContainsMouse) ? colorHover : colorIdle) * _mpSlideUp);
+                ctx.Batch.Draw(_multiplayer, new Rectangle(_hbMultiplayer.X, _hbMultiplayer.Y, _hbMultiplayer.Width, _hbMultiplayer.Height), ((_hbMultiplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White)*_mpSlideUp);
             if (_seSlideUp > 0)
-                ctx.DrawRectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height, _settings, ((_hbSettings.ContainsMouse) ? colorHover : colorIdle) * _seSlideUp);
+                ctx.Batch.Draw(_settings, new Rectangle(_hbSettings.X, _hbSettings.Y, _hbSettings.Width, _hbSettings.Height), ((_hbSettings.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White)*_seSlideUp);
+            ctx.EndDraw();
+
+            ctx.BeginDraw();
 
             //If we're waiting for connection to a server, draw the shroud.
             if(_connecting)
@@ -314,21 +318,27 @@ namespace Peacenet.MainMenu
                     return;
                 if (animState < 12)
                 {
+                    _connecting = true;
                     Task.Run(() =>
                     {
-                        _connecting = true;
                         _connectingText = "Starting internal server...";
                         try
                         {
                             _os.StartLocalServer();
                             _saveManager.SetBackend(new ServerSideSaveBackend());
-                            animState = 12;
+                            _plexgate.Invoke(() =>
+                            {
+                                animState = 12;
+                            });
                         }
                         catch (Exception ex)
                         {
                             _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
                         }
-                        _connecting = false;
+                        _plexgate.Invoke(() =>
+                        {
+                            _connecting = false;
+                        });
                     });
                 }
 

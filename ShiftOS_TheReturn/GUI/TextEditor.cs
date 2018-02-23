@@ -244,9 +244,11 @@ namespace Plex.Engine.GUI
             }
             _currentLine = y;
             _currentChar = x;
+
+
             _lines = wrapped.Split('\n');
         }
-        
+
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {

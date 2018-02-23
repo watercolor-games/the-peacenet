@@ -323,7 +323,8 @@ namespace Peacenet
                         _state = 2;
                     else if(objState == ObjectiveState.Complete)
                     {
-                        if(_animState == 9)
+                        _current.OnObjectiveComplete(_currentObjective, _objectives[_currentObjective]);
+                        if (_animState == 9)
                         {
                             _animState = 10;
                         }
@@ -336,6 +337,7 @@ namespace Peacenet
                             {
                                 _lastCheckpointSnapshotId = _save.CreateSnapshot();
                                 _currentObjective++;
+                                _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
                             }
                             else
                             {
@@ -343,6 +345,20 @@ namespace Peacenet
                             }
 
                         }
+                    }
+                    else if(objState == ObjectiveState.Failed)
+                    {
+                        _current.OnObjectiveFail(_currentObjective, _objectives[_currentObjective]);
+                        _save.RestoreSnapshot(_preMissionSnapshotId);
+                        _currentObjective = 0;
+                        _current = null;
+                        _objectives = null;
+                        _preMissionSnapshotId = null;
+                        _lastCheckpointSnapshotId = null;
+                        _state = 0;
+                        _objectiveNameFade = 0;
+                        _objectiveDescFade = 0;
+                        _animState = -1;
                     }
                     break;
             }
@@ -405,6 +421,7 @@ namespace Peacenet
                         _shroudFade = 0;
                         _animState++;
                         _state = 1;
+                        _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
                     }
                     break;
                 case 7:
@@ -441,6 +458,7 @@ namespace Peacenet
                         {
                             _lastCheckpointSnapshotId = _save.CreateSnapshot();
                             _currentObjective++;
+                            _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
                             _animState = 7;
                         }
                         else
@@ -458,6 +476,7 @@ namespace Peacenet
                     break;
                 case 12:
                     _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the 'Missions' program for new missions to play.");
+                    _animState++;
                     break;
 
             }
@@ -476,6 +495,22 @@ namespace Peacenet
     {
         [Dependency]
         private SaveManager _save = null;
+
+        public virtual void OnObjectiveStart(int index, Objective data)
+        {
+
+        }
+
+        public virtual void OnObjectiveFail(int index, Objective data)
+        {
+
+        }
+
+        public virtual void OnObjectiveComplete(int index, Objective data)
+        {
+
+        }
+
 
         /// <summary>
         /// Retrieves the name of this mission.
@@ -557,9 +592,7 @@ namespace Peacenet
         /// <param name="name">The name of the objective.</param>
         /// <param name="desc">The description of the objective</param>
         /// <param name="onUpdate">A function to be run every frame to determine if the objective has been completed</param>
-        /// <param name="onComplete">What will happen when the objective is completed?</param>
-        /// <param name="onFail">What will happen when the objective is failed?</param>
-        public Objective(string name, string desc, Func<GameTime, ObjectiveState> onUpdate, Action onComplete = null, Action onFail = null)
+        public Objective(string name, string desc, Func<GameTime, ObjectiveState> onUpdate)
         {
             if (onUpdate == null)
                 throw new ArgumentNullException(nameof(onUpdate));

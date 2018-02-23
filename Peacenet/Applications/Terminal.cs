@@ -159,6 +159,16 @@ namespace Peacenet.Applications
         [Dependency]
         private FSManager _fs = null;
 
+        private List<CommandInstruction> _history = new List<CommandInstruction>();
+
+        public CommandInstruction[] History
+        {
+            get
+            {
+                return _history.ToArray();
+            }
+        }
+
         /// <summary>
         /// Processes and evaluates a command string with the specified <see cref="ConsoleContext"/>. 
         /// </summary>
@@ -244,9 +254,26 @@ namespace Peacenet.Applications
             console.WorkingDirectory = nconsole.WorkingDirectory;
         }
 
+        public Func<CommandInstruction, bool> CommandRun = null;
+
+        private bool _allowExit = true;
+
+        public bool AllowExit
+        {
+            get
+            {
+                return _allowExit;
+            }
+            set
+            {
+                _allowExit = value;
+            }
+        }
+
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
+            _history = new List<CommandInstruction>();
             string hostname = "127.0.0.1";
             if (_fs.FileExists("/etc/hostname"))
                 hostname = _fs.ReadAllText("/etc/hostname");
@@ -266,9 +293,13 @@ namespace Peacenet.Applications
                     string cmdstr = console.ReadLine();
                     if (string.IsNullOrWhiteSpace(cmdstr))
                         continue;
-                    if (cmdstr == "exit")
+                    if (cmdstr == "exit" && _allowExit == true)
                         return;
                     ProcessCommand(console, cmdstr);
+                    var instruction = Tokenizer.GetCommandList(cmdstr);
+                    _history.Add(instruction);
+                    if (CommandRun?.Invoke(instruction) == true)
+                        return;
                 }
                 catch (Exception ex)
                 {

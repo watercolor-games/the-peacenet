@@ -217,7 +217,7 @@ namespace Plex.Engine.GraphicsSubsystem
                 {
                     if (ctrl.Visible == false)
                         continue;
-                    if (hasBeenHandled)
+                     if (hasBeenHandled)
                     {
                         ctrl.ResetMouseState();
                     }
