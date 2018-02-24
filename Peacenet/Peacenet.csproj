@@ -106,6 +106,7 @@
     <Compile Include="Applications\RelayChat.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
     <Compile Include="TerminalCommands\NotificationTestCommand.cs" />
+    <Compile Include="TerminalCommands\TestCommand.cs" />
     <Compile Include="TerminalManager.cs" />
     <Compile Include="ThemeConfigurationCommand.cs" />
     <Compile Include="Tutorial\PeacegateSetup.cs" />
@@ -131,9 +132,8 @@
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
