@@ -269,13 +269,14 @@ namespace Peacenet.Applications
             }
         }
 
+        [Dependency]
+        private OS _os = null;
+
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             _history = new List<CommandInstruction>();
-            string hostname = "127.0.0.1";
-            if (_fs.FileExists("/etc/hostname"))
-                hostname = _fs.ReadAllText("/etc/hostname");
+            string hostname = _os.GetHostname();
             string user = "user";
             string workdir = "/home";
             console.WorkingDirectory = workdir;

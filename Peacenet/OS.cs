@@ -38,6 +38,16 @@ namespace Peacenet
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
 
+        public string GetHostname()
+        {
+            if (!_fs.FileExists("/etc/hostname"))
+                return "localhost";
+            string hostnameFile = _fs.ReadAllText("/etc/hostname");
+            if (hostnameFile.Contains("\n"))
+                return hostnameFile.Substring(0, hostnameFile.IndexOf("\n"));
+            return hostnameFile;
+        }
+
         /// <inheritdoc cref="OSEntity.AllowTerminalHotkey"/>
         public bool AllowTerminalHotkey
         {

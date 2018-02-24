@@ -43,7 +43,7 @@ namespace Peacenet.CoreUtils
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
-            console.Write(arguments["<text>"].ToString());
+            console.WriteLine(arguments["<text>"].ToString());
         }
     }
 }

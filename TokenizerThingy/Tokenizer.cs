@@ -24,7 +24,10 @@ namespace WatercolorGames.CommandLine
                 if (c == '\\')
                 {
                     if (!(inQuote || isFileName))
+                    {
+                        current += c;
                         continue;
+                    }
                     if (escaping == false)
                     {
                         escaping = true;
