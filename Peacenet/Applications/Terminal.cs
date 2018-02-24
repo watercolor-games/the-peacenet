@@ -49,7 +49,6 @@ namespace Peacenet.Applications
         {
             _emulator = new TerminalEmulator(_plexgate.Content.Load<SpriteFont>("Fonts/Monospace"));
             AddChild(_emulator);
-
             SetWindowStyle(WindowStyle.Default);
             Width = (80 * _emulator.CharacterWidth);
             Height = (25 * _emulator.CharacterHeight);
