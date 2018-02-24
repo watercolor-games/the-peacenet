@@ -1,143 +1,218 @@
-﻿{
-  "Components": [
-    {
-      "Name": "Gameplay",
-      "People": [
-        {
-          "Name": "phath0m",
-          "Role": "Realistic Internet simulation"
-        },
-      ]
-    },
-    {
-      "Name": "Audio",
-      "People": [
-        {
-          "Name": "Anders Enger Jensen",
-          "Role": "Soundtrack composer"
-        },
-        {
-          "Name": "Declan Hoare",
-          "Role": "Soundtrack processing and conversion"
-        },
-        {
-          "Name": "Philip Adams",
-          "Role": "User-interface sounds"
-        }
-      ]
-    },
-    {
-      "Name": "Graphics",
-      "People": [
-        {
-          "Name": "FontAwesome crew",
-          "Role": "User interface icons"
-        },
-        {
-          "Name": "TheEdge, astro",
-          "Role": "Peacegate Desktop background design"
-        },
-        {
-          "Name": "Canonical",
-          "Role": "Ubuntu Monospace font"
-        },
-        {
-          "Name": "astro",
-          "Role": "Watercolor Games logo design"
-        },
-        {
-          "Name": "Philip Adams",
-          "Role": "Temporary user-interface icons from ShiftOS"
-        }
-      ]
-    },
-    {
-      "Name": "The Watercolor Team",
-      "People": [
-        {
-          "Name": "Victor Tran",
-          "Role": "Community moderator and friendly smiley face :)"
-        },
-        {
-          "Name": "Logan Lowe",
-          "Role": "Community moderator"
-        },
-        {
-          "Name": "Richard Moch (FloppyDiskDrive)",
-          "Role": "Community moderator"
-        },
-        {
-          "Name": "Nebble",
-          "Role": "Mission and storyline writer"
-        },
-        {
-          "Name": "astro",
-          "Role": "Graphic designer"
-        },
-        {
-          "Name": "Declan Hoare",
-          "Role": "Programmer"
-        }
-      ]
-    },
-    {
-      "Name": "Programming",
-      "People": [
-        {
-          "Name": "Declan Hoare",
-          "Role": "Core engine development"
-        },
-        {
-          "Name": "phath0m",
-          "Role": "Terminal and Debug Console development"
-        }
-      ]
-    },
-    {
-      "Name": "Quality assurance",
-      "People": [
-        {
-          "Name": "Declan Hoare",
-          "Role": "Linux bugtesting"
-        },
-        {
-          "Name": "Everyone who's played an unstable build",
-          "Role": "Feature-testing and feedback"
-        },
-        {
-          "Name": "phath0m",
-          "Role": "Convincing me to use unit tests for the command parser."
-        },
-        {
-          "Name": "Jacob Misirian",
-          "Role": "Penetration testing and security auditing"
-        }
-      ]
-    },
-    {
-      "Name": "Special thanks to...",
-      "People": [
-        {
-          "Name": "Anders Enger Jensen",
-          "Role": "...for being extremely generous and providing soundtrack for the game."
-        },
-        {
-          "Name": "Matt Trobbiani",
-          "Role": "...for the insight on how to write a Terminal, and for being a huge inspiration."
-        },
-        {
-          "Name": "Sean Mann (aka the hackmud guy)",
-          "Role": "...for also being a huge inspiration."
-        },
-        {
-          "Name": "Victor Tran",
-          "Role": "...for critiquing my UI animation skills."
-        },
-        {
-          "Name": "Jacob Misirian",
-          "Role": "...for providing me with a real domain name for the Watercolor site"
-        }
-      ]
-    }
-  ]
-}
+﻿[
+  {
+    "Text": "The Peacenet - Audio",
+    "Entries": [
+      {
+        "Header": "Anders Enger Jensen",
+        "Text": "Official soundtrack and sound effects"
+      },
+      {
+        "Header": "Peter Katz",
+        "Text": "Official soundtrack"
+      },
+      {
+        "Header": "Philip Adams",
+        "Text": "Temporary user interface sounds"
+      }
+    ]
+  },
+  {
+    "Text": "User Interface",
+    "Entries": [
+      {
+        "Header": "Alkaline Thunder",
+        "Text": "Peacegate OS Desktop, Main Menu and Settings UI design"
+      },
+      {
+        "Header": "phath0m",
+        "Text": "Terminal backend development"
+      },
+      {
+        "Header": "astro",
+        "Text": "Peacegate user interface skin"
+      },
+      {
+        "Header": "Christian Robertson",
+        "Text": "Roboto Mono user interface font"
+      },
+      {
+        "Header": "Vernon Adams",
+        "Text": "Monda and Oxygen user interface fonts"
+      },
+      {
+        "Header": "Dalton Maag",
+        "Text": "Ubuntu Mono user interface font"
+      }
+    ]
+  },
+  {
+    "Text": "Artwork",
+    "Entries": [
+      {
+        "Header": "Samantha (a.k.a Nebble)",
+        "Text": "Peace Engine splash screen"
+      },
+      {
+        "Header": "astro",
+        "Text": "Watercolor Games logo and text, Peacegate OS secondary wallpaper"
+      },
+      {
+        "Header": "Trey (a.k.a TheEdge)",
+        "Text": "Peacegate OS default wallpaper"
+      },
+      {
+        "Header": "Alkaline Thunder",
+        "Text": "\"Welcome to the Peacenet\" splash screen animation"
+      },
+      {
+        "Header": "Fonticons, Inc.",
+        "Text": "Font Awesome Free user interface icons"
+      }
+    ]
+  },
+  {
+    "Text": "Gameplay",
+    "Entries": [
+      {
+        "Header": "Samantha (a.k.a Nebble)",
+        "Text": "Hacking mechanic brainstorming"
+      },
+      {
+        "Header": "Alkaline Thunder",
+        "Text": "Main storyline and tutorial"
+      }
+    ]
+  },
+  {
+    "text": "Programming",
+    "Entries": [
+      {
+        "Header": "Peace Engine - Entity System",
+        "Text": "Alkaline Thunder, Declan Hoare"
+      },
+      {
+        "Header": "Peace Engine - Dependency Injection Framework and Modding API",
+        "Text": "Alkaline Thunder, Declan Hoare"
+      },
+      {
+        "Header": "PNV Pre-rendered Cutscene support",
+        "Text": "Declan Hoare"
+      },
+      {
+        "Header": "Save System and Configuration Backend",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "User Interface",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "Peacenet Server and Multiplayer Support",
+        "Text": "Alkaline Thunder, Declan Hoare, phath0m"
+      },
+      {
+        "Header": "Mission and Objective System",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "PlexFAT Server-side Virtual File System",
+        "Text": "Declan Hoare"
+      },
+      {
+        "Header": "Peacegate Terminal Command Interpreter and Core Utilities",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "Peacegate Terminal Unix Piping and Console Redirection Support",
+        "Text": "phath0m, Alkaline Thunder"
+      },
+      {
+        "Header": "Peace Engine UI Theme Support",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "This Very Text and the code responsible for displaying it (a.k.a real-time cutscene system)",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "Discord Rich Presence Support",
+        "Text": "Alkaline Thunder"
+      },
+      {
+        "Header": "Peacenet Gameserver Protocol",
+        "Text": "Alkaline Thunder, phath0m"
+      },
+      {
+        "Header": "itch.io Authentication Support",
+        "Text": "Alkaline Thunder"
+      },
+    ]
+  },
+  {
+    "Text": "The Watercolor Team",
+    "Entries": [
+      {
+        "Header": "System administration",
+        "Text": "Alkaline Thunder, phath0m"
+      },
+      {
+        "Header": "Community administration",
+        "Text": "Alkaline Thunder, Richard Moch and Victor Tran"
+      },
+      {
+        "Header": "Community moderation",
+        "Text": "Logan Lowe, zeta"
+      },
+      {
+        "Header": "Programmers",
+        "Text": "Declan Hoare, Alkaline Thunder and Reflectron"
+      },
+      {
+        "Header": "Gameplay and Storyline Writers",
+        "Text": "Samantha (a.k.a Nebble), zeta and William Whitt"
+      },
+      {
+        "Header": "Graphic Design",
+        "Text": "astro, Trey (TheEdge) and Samantha (Nebble)",
+      }
+    ]
+  },
+  {
+    "Text": "Legal",
+    "Entries": [
+      {
+        "Header": "Peace Engine and Peacenet License",
+        "Text": "MIT License\n\nCopyright (c) 2018 Watercolor Games\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+      }
+    ]
+  },
+  {
+    "Text": "Special thanks",
+    "Entries": [
+      {
+        "Header": "Anders Enger Jensen and Peter Katz",
+        "Text": "Providing us with an excellent soundtrack all for the low price of free - making our goal possible."
+      },
+      {
+        "Header": "Every member of the community who's stuck around since day one",
+        "Text": "For motivating us to keep going, and sticking by us no matter what happens"
+      },
+      {
+        "Header": "InfoSec_Pom",
+        "Text": "For penetration-testing us and giving us very useful information about ways we can patch some major security holes in the Watercolor website and Peacenet multiplayer system"
+      },
+      {
+        "Header": "Discord",
+        "Text": "For being absolute champs and making sure that our game is automatically recognized by the Rich Presence API when you boot it"
+      },
+      {
+        "Header": "phath0m and Jacob Misirian",
+        "Text": "Providing us with free hosting and a domain name for our website and game server"
+      },
+      {
+        "Header": "You - yes, you. The player.",
+        "Text": "For giving our game a try. We hope you liked it :)"
+      }
+    ]
+  }
+]

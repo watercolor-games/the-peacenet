@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Plex.Engine.Themes;
 
 namespace Peacenet.Cutscenes
 {
@@ -23,32 +24,32 @@ namespace Peacenet.Cutscenes
         private SoundEffect _yesMyGrassIsGreen = null;
         private SoundEffectInstance _grassInstance = null;
 
-        private CreditsFile _creditsFile = null;
+        private CreditCategory[] _creditsFile = null;
         private int _csState = 0;
-        private float _componentSlide = 0F;
-        private float _personSlide = 0F;
-        private float _roleSlide = 0F;
 
-        private int _componentIndex = -1;
-        private int _personIndex = -1;
+        private const float _catHeadSpacingY = 15f;
+        private const float _entryHeadSpacingY = 5;
+        private const float _entryTextSpacingY = 7;
 
+        private float _totalHeight = 0f;
 
         [Dependency]
         private UIManager _ui = null;
-        
+
+        [Dependency]
+        private ThemeManager _theme = null;
+
         [Dependency]
         private SplashScreenComponent _splash = null;
 
-        private SpriteFont _mondaBig;
-        private SpriteFont _mondaMedium;
-        private SpriteFont _mondaSmall;
-        private Color _peace = new Color(64, 128, 255, 255);
-        private Color _gray = new Color(191, 191, 191, 255);
-        private double _personRide = 0;
         private Texture2D _peacenet = null;
 
-        private float _peacenetFade = 0;
-        private float _thanksFade = 0;
+
+        private float _creditOpacity = 1f;
+        private double _ride = 0f;
+        private float _youOpacity = 1f;
+        private float _peacenetOpacity = 0f;
+        private float _thanksOpacity = 0f;
 
         /// <inheritdoc/>
         public override string Name
@@ -63,63 +64,37 @@ namespace Peacenet.Cutscenes
         public override void Draw(GameTime time, GraphicsContext gfx)
         {
             gfx.BeginDraw();
-            string c = "No component";
-            string p = "No person";
-            string r = "No role";
-            //ha. CPR. Get it?
 
-            if(_componentIndex > -1 && _componentIndex < _creditsFile.Components.Length)
+            var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
+            var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
+            var sys = _theme.Theme.GetFont(TextFontStyle.System);
+
+            float _maxWidth = _ui.ScreenWidth / 3;
+
+            float h = MathHelper.Lerp(_ui.ScreenHeight, (_ui.ScreenHeight/2) - _totalHeight, _grassPercentage);
+            foreach (var cat in _creditsFile)
             {
-                c = _creditsFile.Components[_componentIndex].Name;
-                if(_personIndex > -1 && _personIndex < _creditsFile.Components[_componentIndex].People.Length)
+                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                gfx.DrawString(cat.Text, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header1) * _creditOpacity, head1, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                h += cmeasure.Y + _catHeadSpacingY;
+                foreach (var entry in cat.Entries)
                 {
-                    p = _creditsFile.Components[_componentIndex].People[_personIndex].Name;
-                    r = _creditsFile.Components[_componentIndex].People[_personIndex].Role;
+                    float opacity = (entry == cat.Entries.Last() && cat == _creditsFile.Last()) ? _youOpacity : _creditOpacity;
+
+                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    gfx.DrawString(entry.Header, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header2) * opacity, head2, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    h += hmeasure.Y + _entryHeadSpacingY;
+                    gfx.DrawString(entry.Text, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.System) * opacity, sys, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    h += tmeasure.Y + _entryTextSpacingY;
                 }
             }
 
-            var cMeasure = TextRenderer.MeasureText(c, _mondaBig, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
-            var pMeasure = TextRenderer.MeasureText(p, _mondaMedium, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
-            var rMeasure = TextRenderer.MeasureText(r, _mondaSmall, (_ui.ScreenWidth / 4), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawRectangle((_ui.ScreenWidth - (_peacenet.Width * 4)) / 2, (_ui.ScreenHeight - (_peacenet.Height * 4)) / 2, _peacenet.Width * 4, _peacenet.Height * 4, _peacenet, Color.White * _peacenetOpacity);
 
-            var startX = (_ui.ScreenWidth - (_ui.ScreenWidth / 3)) / 2;
-            var startY = (_ui.ScreenHeight - (_ui.ScreenHeight / 3)) / 2;
-
-            var _titleMinX = 0 - (int)cMeasure.X;
-
-            var titleX = (int)MathHelper.Lerp(_titleMinX, startX, _componentSlide);
-            gfx.DrawString(c, titleX, startY, _peace * _componentSlide, _mondaBig, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            var _personYMax = startY + cMeasure.Y + 25;
-            var _personYMin = _personYMax + (_ui.ScreenHeight * 0.1);
-
-            var personY = (int)MathHelper.Lerp((float)_personYMin, _personYMax, _personSlide);
-            gfx.DrawString(p, startX, personY, _gray * _personSlide, _mondaMedium, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            var roleYMax = _personYMax + pMeasure.Y + 10;
-            var roleYMin = roleYMax + (_ui.ScreenHeight * 0.1);
-            var roleY = (int)MathHelper.Lerp((float)roleYMin, roleYMax, _roleSlide);
-            gfx.DrawString(r, startX, roleY, _gray * _roleSlide, _mondaSmall, TextAlignment.Left, (_ui.ScreenWidth / 3), Plex.Engine.TextRenderers.WrapMode.Words);
-
-
-            int pnWidth = _peacenet.Width * 2;
-            int pnHeight = _peacenet.Height * 2;
-
-            int pnX = (_ui.ScreenWidth - pnWidth) / 2;
-            int pnYMax = (_ui.ScreenHeight - pnHeight) / 2;
-            int pnYMin = pnYMax + (int)(_ui.ScreenHeight * 0.1);
-
-            int pnY = (int)MathHelper.Lerp(pnYMin, pnYMax, _peacenetFade);
-            gfx.DrawRectangle(pnX, pnY, pnWidth, pnHeight, _peacenet, Color.White * _peacenetFade);
-
-            string thanks = "Thanks for playing.";
-            var thanksMeasure = TextRenderer.MeasureText(thanks, _mondaBig, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.Words);
-
-            int thanksX = (_ui.ScreenWidth - (int)thanksMeasure.X) / 2;
-            int thanksYMax = (pnY + pnHeight + 25);
-            int thanksYMin = thanksYMax + (int)(_ui.ScreenHeight * 0.1);
-            int thanksY = (int)MathHelper.Lerp(thanksYMin, thanksYMax, _thanksFade);
-            gfx.DrawString(thanks, thanksX, thanksY, _gray * _thanksFade, _mondaBig, TextAlignment.Center, (int)thanksMeasure.X, Plex.Engine.TextRenderers.WrapMode.Words);
+            string thanksText = "Thanks for playing.";
+            var thanksMeasure = head1.MeasureString(thanksText);
+            gfx.Batch.DrawString(head1, thanksText, new Vector2((_ui.ScreenWidth - thanksMeasure.X) / 2, (_ui.ScreenHeight - thanksMeasure.Y) / 2), _theme.Theme.GetFontColor(TextFontStyle.Header1) * _thanksOpacity);
 
             gfx.EndDraw();
         }
@@ -131,12 +106,30 @@ namespace Peacenet.Cutscenes
             _grassInstance = _yesMyGrassIsGreen.CreateInstance();
             string creditsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "credits.json");
             string json = File.ReadAllText(creditsPath);
-            _creditsFile = JsonConvert.DeserializeObject<CreditsFile>(json);
-            _mondaBig = Content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
-            _mondaMedium = Content.Load<SpriteFont>("ThemeAssets/Fonts/Head2");
-            _mondaSmall = Content.Load<SpriteFont>("ThemeAssets/Fonts/System");
+            _creditsFile = JsonConvert.DeserializeObject<CreditCategory[]>(json);
             _peacenet = Content.Load<Texture2D>("Splash/Peacenet");
+
+            var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
+            var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
+            var sys = _theme.Theme.GetFont(TextFontStyle.System);
+
+            float _maxWidth = _ui.ScreenWidth / 3;
+
+            float h = 0;
+            foreach(var cat in _creditsFile)
+            {
+                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                h += cmeasure.Y + _catHeadSpacingY;
+                foreach(var entry in cat.Entries)
+                {
+                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    h += hmeasure.Y + _entryHeadSpacingY + tmeasure.Y + _entryTextSpacingY;
+                }
+            }
+            _totalHeight = h;
         }
+
 
         /// <inheritdoc/>
         public override void OnFinish()
@@ -146,11 +139,15 @@ namespace Peacenet.Cutscenes
             _splash.MakeVisible();
         }
 
+        private float _grassPercentage = 0f;
+        private double _grassTime = 0f;
+
         /// <inheritdoc/>
         public override void OnPlay()
         {
             _ui.HideUI();
             _csState = 0;
+            _grassPercentage = 0f;
             _grassInstance.Play();
             _splash.MakeHidden();
         }
@@ -163,172 +160,114 @@ namespace Peacenet.Cutscenes
         }
 
         /// <inheritdoc/>
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime time)
         {
             switch (_csState)
             {
                 case 0:
-                    _componentIndex++;
-                    _csState++;
+                    _creditOpacity = 1f;
+                    _youOpacity = 1f;
+                    _peacenetOpacity = 0f;
+                    _thanksOpacity = 0f;
+                    _grassTime += time.ElapsedGameTime.TotalSeconds;
+                    _grassPercentage = (float)(_grassTime / _yesMyGrassIsGreen.Duration.TotalSeconds);
+                    if(_grassPercentage>=1f)
+                    {
+                        _grassPercentage = 1f;
+                        _csState++;
+                        
+                    }
                     break;
                 case 1:
-                    _componentSlide += (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_componentSlide >= 1)
+                    _creditOpacity -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if(_creditOpacity<=0)
                     {
-                        _personIndex = -1;
+                        _creditOpacity = 0;
+                        _ride = 0;
                         _csState++;
                     }
                     break;
                 case 2:
-                    _personIndex++;
-                    _csState++;
+                    _ride += time.ElapsedGameTime.TotalSeconds;
+                    if(_ride>=5)
+                    {
+                        _ride = 0;
+                        _csState++;
+                    }
                     break;
                 case 3:
-                    _personSlide += (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_personSlide >= 1)
+                    _youOpacity -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if(_youOpacity<=0f)
                     {
+                        _youOpacity = 0f;
                         _csState++;
                     }
-
                     break;
                 case 4:
-                    _roleSlide += (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_roleSlide >= 1)
+                    _peacenetOpacity += (float)time.ElapsedGameTime.TotalSeconds;
+                    if(_peacenetOpacity>=1f)
                     {
-                        _personRide=0;
+                        _peacenetOpacity = 1f;
                         _csState++;
+                        _ride = 0;
                     }
-
                     break;
                 case 5:
-                    _personRide += gameTime.ElapsedGameTime.TotalSeconds;
-                    if(_personRide >= 5)
+                    _ride += time.ElapsedGameTime.TotalSeconds;
+                    if(_ride>=5)
                     {
                         _csState++;
+                        _ride = 0;
                     }
                     break;
                 case 6:
-                    _personSlide -= (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_personSlide <= 0)
+                    _peacenetOpacity -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if (_peacenetOpacity <= 0f)
                     {
+                        _peacenetOpacity = 0f;
                         _csState++;
                     }
                     break;
                 case 7:
-                    _roleSlide -= (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_roleSlide <= 0)
+                    _thanksOpacity += (float)time.ElapsedGameTime.TotalSeconds;
+                    if (_thanksOpacity >= 1f)
                     {
-                        if (_personIndex < _creditsFile.Components[_componentIndex].People.Length - 1)
-                        {
-                            _csState = 2;
-                        }
-                        else
-                        {
-                            _csState++;
-                        }
+                        _thanksOpacity = 1f;
+                        _csState++;
+                        _ride = 0;
                     }
                     break;
                 case 8:
-                    _componentSlide -= (float)gameTime.ElapsedGameTime.TotalSeconds * 3;
-                    if (_componentSlide <= 0)
+                    _ride += time.ElapsedGameTime.TotalSeconds;
+                    if (_ride >= 5)
                     {
-                        if(_componentIndex < _creditsFile.Components.Length - 1)
-                        {
-                            _csState = 0;
-                        }
-                        else
-                        {
-                            _csState++;
-                            _personRide = 0;
-                        }
+                        _csState++;
+                        _ride = 0;
                     }
-
                     break;
                 case 9:
-                    _personRide += gameTime.ElapsedGameTime.TotalSeconds;
-                    if (_personRide > 2.5)
-                        _csState++;
-                    break;
-                case 10:
-                    _peacenetFade += (float)gameTime.ElapsedGameTime.TotalSeconds * 1.5f;
-                    if (_peacenetFade >= 1)
-                        _csState++;
-                    break;
-                case 11:
-                    _personRide = 0;
-                    _thanksFade += (float)gameTime.ElapsedGameTime.TotalSeconds * 1.5f;
-                    if (_thanksFade >= 1)
-                        _csState++;
-                    break;
-                case 12:
-                    _personRide += gameTime.ElapsedGameTime.TotalSeconds;
-                    if (_personRide > 5)
-                        _csState++;
-
-                    break;
-                case 13:
-                    _peacenetFade -= (float)gameTime.ElapsedGameTime.TotalSeconds * 1.5f;
-                    if (_peacenetFade <= 0)
-                        _csState++;
-
-                    break;
-                case 14:
-                    _thanksFade -= (float)gameTime.ElapsedGameTime.TotalSeconds * 1.5f;
-                    if (_thanksFade <= 0)
-                        _csState++;
-
-                    break;
-                case 15:
-                    float volume = _grassInstance.Volume;
-                    volume = MathHelper.Clamp(volume - (float)gameTime.ElapsedGameTime.TotalSeconds, 0, 1);
-                    _grassInstance.Volume = volume;
-                    if(volume <= 0)
+                    _thanksOpacity -= (float)time.ElapsedGameTime.TotalSeconds;
+                    if (_thanksOpacity <= 0f)
                     {
+                        _thanksOpacity = 0f;
+                        _csState++;
                         NotifyFinished();
                     }
                     break;
+
             }
         }
     }
 
-    /// <summary>
-    /// Represents a JSON-based credits list for the game.
-    /// </summary>
-    public class CreditsFile
+    public class CreditCategory
     {
-        /// <summary>
-        /// Gets or sets a list of major parts of the game.
-        /// </summary>
-        public Component[] Components { get; set; }
+        public string Text { get; set; }
+        public CreditEntry[] Entries { get; set; }
     }
 
-    /// <summary>
-    /// A major part of The Peacenet which people have worked on.
-    /// </summary>
-    public class Component
+    public class CreditEntry
     {
-        /// <summary>
-        /// The name of the component.
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// The people who helped work on it.
-        /// </summary>
-        public Person[] People { get; set; }
-    }
-
-    /// <summary>
-    /// Represents a person who has helped work on The Peacenet.
-    /// </summary>
-    public class Person
-    {
-        /// <summary>
-        /// The name of the person.
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// What they've done.
-        /// </summary>
-        public string Role { get; set; }
+        public string Header { get; set; }
+        public string Text { get; set; }
     }
 }
