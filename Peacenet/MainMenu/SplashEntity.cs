@@ -318,9 +318,9 @@ namespace Peacenet.MainMenu
                     return;
                 if (animState < 12)
                 {
-                    _connecting = true;
                     Task.Run(() =>
                     {
+                        _connecting = true;
                         _connectingText = "Starting internal server...";
                         try
                         {
@@ -341,8 +341,9 @@ namespace Peacenet.MainMenu
                         });
                     });
                 }
-
-            };
+            };       
+                
+            
 
             _lbSingleplayer = new Label();
             _lbMultiplayer = new Label();
