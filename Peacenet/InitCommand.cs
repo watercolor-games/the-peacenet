@@ -468,7 +468,7 @@ namespace Peacenet
         {
             bool isDesktopOpen = _os.IsDesktopOpen;
 
-            _tutorialLabel.MaxWidth = _ui.ScreenWidth / 4;
+            _tutorialLabel.MaxWidth = _ui.ScreenWidth / 2;
             _tutorialDescription.MaxWidth = _tutorialLabel.MaxWidth;
 
             if(isDesktopOpen)
@@ -699,6 +699,9 @@ namespace Peacenet
                         break;
 
                 }
+
+                _tutorialLabel.X = MathHelper.Clamp(_tutorialLabel.X, 45, (_ui.ScreenWidth - (Math.Max(_tutorialLabel.Width, _tutorialDescription.Width))) - 45);
+                _tutorialLabel.Y = MathHelper.Clamp(_tutorialLabel.Y, 45, (_ui.ScreenHeight - height) - 45);
 
                 _tutorialDescription.X = _tutorialLabel.X;
                 _tutorialDescription.Y = _tutorialLabel.Y + _tutorialLabel.Height + 10;

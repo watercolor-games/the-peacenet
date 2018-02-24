@@ -201,7 +201,6 @@
     <Content Include="Content\credits.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Shaders\GaussianBlur.fx" />
     <None Include="packages.config" />
     <None Include="Content\Cutscenes\PeaceEngine1080p.pnv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

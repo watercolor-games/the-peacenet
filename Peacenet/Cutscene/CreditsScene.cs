@@ -60,6 +60,8 @@ namespace Peacenet.Cutscenes
             }
         }
 
+        private float _maxWidth = 0;
+
         /// <inheritdoc/>
         public override void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -69,9 +71,9 @@ namespace Peacenet.Cutscenes
             var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
             var sys = _theme.Theme.GetFont(TextFontStyle.System);
 
-            float _maxWidth = _ui.ScreenWidth / 3;
 
-            float h = MathHelper.Lerp(_ui.ScreenHeight, (_ui.ScreenHeight/2) - _totalHeight, _grassPercentage);
+            float h = MathHelper.Lerp(_ui.ScreenHeight, (_ui.ScreenHeight / 2) - _totalHeight, _grassPercentage);
+
             foreach (var cat in _creditsFile)
             {
                 var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
@@ -90,7 +92,7 @@ namespace Peacenet.Cutscenes
                 }
             }
 
-            gfx.DrawRectangle((_ui.ScreenWidth - (_peacenet.Width * 4)) / 2, (_ui.ScreenHeight - (_peacenet.Height * 4)) / 2, _peacenet.Width * 4, _peacenet.Height * 4, _peacenet, Color.White * _peacenetOpacity);
+            gfx.DrawRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity);
 
             string thanksText = "Thanks for playing.";
             var thanksMeasure = head1.MeasureString(thanksText);
@@ -109,25 +111,7 @@ namespace Peacenet.Cutscenes
             _creditsFile = JsonConvert.DeserializeObject<CreditCategory[]>(json);
             _peacenet = Content.Load<Texture2D>("Splash/Peacenet");
 
-            var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
-            var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
-            var sys = _theme.Theme.GetFont(TextFontStyle.System);
 
-            float _maxWidth = _ui.ScreenWidth / 3;
-
-            float h = 0;
-            foreach(var cat in _creditsFile)
-            {
-                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
-                h += cmeasure.Y + _catHeadSpacingY;
-                foreach(var entry in cat.Entries)
-                {
-                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
-                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
-                    h += hmeasure.Y + _entryHeadSpacingY + tmeasure.Y + _entryTextSpacingY;
-                }
-            }
-            _totalHeight = h;
         }
 
 
@@ -150,6 +134,25 @@ namespace Peacenet.Cutscenes
             _grassPercentage = 0f;
             _grassInstance.Play();
             _splash.MakeHidden();
+            _maxWidth = _ui.ScreenWidth / 2;
+
+            var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
+            var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
+            var sys = _theme.Theme.GetFont(TextFontStyle.System);
+
+            float h = 0;
+            foreach (var cat in _creditsFile)
+            {
+                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                h += cmeasure.Y + _catHeadSpacingY;
+                foreach (var entry in cat.Entries)
+                {
+                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    h += hmeasure.Y + _entryHeadSpacingY + tmeasure.Y + _entryTextSpacingY;
+                }
+            }
+            _totalHeight = h;
         }
 
         /// <inheritdoc/>

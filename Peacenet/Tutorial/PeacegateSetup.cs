@@ -92,6 +92,8 @@ namespace Peacenet.Tutorial
                     break;
                 case 4:
                     _setupTitle.Text = "Thanks for choosing Peacegate OS as your Peacenet gateway.";
+                    _setupTitle.Alignment = TextAlignment.Center;
+                    _setupTitle.MaxWidth = Width / 2;
                     _animState = 7;
                     break;
             }
