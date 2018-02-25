@@ -201,12 +201,10 @@ namespace Peacenet
                 {
                     using(var writer = new BinaryWriter(memstr, Encoding.UTF8))
                     {
-                        writer.Write(JsonConvert.SerializeObject(new
-                        {
-                            cmd = query.Name,
-                            args = query.ArgumentTokens,
-                            sessionfwd = ""
-                        }));
+                        writer.Write(query.Name);
+                        writer.Write(query.ArgumentTokens.Length);
+                        foreach (var token in query.ArgumentTokens)
+                            writer.Write(token);
                         writer.Flush();
                         _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
                         {

@@ -90,9 +90,7 @@ namespace Peacenet.DesktopUI
             //Set text
             _shutdown.Text = "Exit Peacegate";
             _username.Text = (_itch.LoggedIn) ? _itch.User.display_name : "User";
-            string hn = (_fs.FileExists("/etc/hostname")) ? _fs.ReadAllText("/etc/hostname") : "127.0.0.1";
-            string un = (_itch.LoggedIn) ? _itch.User.username : "user";
-            _hostname.Text = $"{un}@{hn}";
+            _hostname.Text = _os.GetHostname();
 
             //Add all of our ui elements.
             AddChild(_appsView);

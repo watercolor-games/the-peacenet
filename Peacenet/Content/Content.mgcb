@@ -824,3 +824,9 @@
 /processorParam:TextureFormat=NoChange
 /build:Desktop/DesktopBackgroundImage3.png
 
+#begin Audio/SecuringTheSystem.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SecuringTheSystem.ogg
+

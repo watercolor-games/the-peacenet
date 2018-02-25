@@ -32,8 +32,9 @@ namespace Peacenet
             }
             catch(Exception ex)
             {
-                Logger.Log(ex.Message, LogType.Fatal, "monogame");
+                Logger.Log(ex.Message + "\n" + ex.StackTrace, LogType.Fatal, "monogame");
                 Console.ReadKey(true);
+
             }
                 Environment.Exit(0);
         }

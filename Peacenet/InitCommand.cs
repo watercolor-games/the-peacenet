@@ -129,11 +129,11 @@ namespace Peacenet
                 console.WriteLine("Error: Attempted to initiate kernel inside userland.");
                 return;
             }
-            bool hasDoneTutorial = false;
+            bool hasDoneTutorial = true;
             bool isSinglePlayer = !_server.IsMultiplayer;
             if (isSinglePlayer)
             {
-                hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", hasDoneTutorial);
+                hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", false);
             }
             if(hasDoneTutorial == false)
             {

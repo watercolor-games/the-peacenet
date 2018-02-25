@@ -31,6 +31,9 @@ namespace Peacenet.Backend
             }
         }
 
+        [Dependency]
+        private Backend _backend = null;
+
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -42,6 +45,7 @@ namespace Peacenet.Backend
                 if (type.GetInterfaces().Contains(typeof(ITerminalCommand)))
                 {
                     var command = (ITerminalCommand)Activator.CreateInstance(type, null);
+                    _backend.Inject(command);
                     if (_commands.FirstOrDefault(x => x.Name == command.Name) != null)
                     {
                         Logger.Log($"Duplicate: {command.Name} ({type.Name}). Skipping.");
@@ -66,7 +70,7 @@ namespace Peacenet.Backend
                 sb.AppendLine($"  {desc}");
                 sb.AppendLine();
                 sb.AppendLine("Usage:");
-                var usages = cmd.UsageStrings.ToArray();
+                var usages = (cmd.UsageStrings != null) ? cmd.UsageStrings.ToArray() : new string[0];
                 if (usages.Length == 0)
                 {
                     sb.AppendLine($"  {cmd.Name}");
@@ -139,6 +143,7 @@ namespace Peacenet.Backend
                 ctx.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
                 ctx.WriteLine($"{commandname}: Error");
                 ctx.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                ctx.WriteLine(ex.StackTrace);
                 ctx.WriteLine(ex.Message);
             }
             return true;
@@ -270,13 +275,16 @@ namespace Peacenet.Backend
                 stdout.AutoFlush = true;
                 var stdin = new StreamReader(std);
 
-                string datajson = datareader.ReadString();
-                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(datajson);
-                string sessionfwd = (string.IsNullOrWhiteSpace(data["sessionfwd"] as string)) ? session : data["sessionfwd"].ToString();
-                string cmdname = data["cmd"].ToString();
-                var args = JsonConvert.DeserializeObject<string[]>(JsonConvert.SerializeObject(data["args"]));
+                string commandname = datareader.ReadString();
+                int argCount = datareader.ReadInt32();
+                string[] argv = new string[argCount];
+                for(int i = 0; i < argCount;i++)
+                {
+                    argv[i] = datareader.ReadString();
+                }
+
                 var trmmgr = backend.GetBackendComponent<TerminalManager>();
-                bool result = trmmgr.RunCommand(backend, cmdname, args, session, stdin, stdout);
+                bool result = trmmgr.RunCommand(backend, commandname, argv, session, stdin, stdout);
                 if (result)
                 {
                     datawriter.Write(Encoding.UTF8.GetString(std.ToArray()));

@@ -30,7 +30,6 @@ namespace Peacenet.Backend
         private Dictionary<string, ItchUser> _users = new Dictionary<string, ItchUser>();
         private Dictionary<string, string> _keys = new Dictionary<string, string>();
 
-
         private List<TcpClient> _connected = new List<TcpClient>();
 
         /// <summary>
@@ -137,6 +136,8 @@ namespace Peacenet.Backend
                 return _users[id];
             return null;
         }
+
+        public event Action<string, ItchUser> PlayerJoined;
 
         /// <summary>
         /// Creates a new instance of the Peacenet server.
@@ -347,6 +348,7 @@ namespace Peacenet.Backend
                         var stream = connection.GetStream();
                         var reader = new BinaryReader(stream);
                         var writer = new BinaryWriter(stream);
+                        bool playerJoined = false;
 
                         while (connection.Connected)
                         {
@@ -367,11 +369,25 @@ namespace Peacenet.Backend
                                     content = reader.ReadBytes(len);
                                 Logger.Log("Body received.");
                                 byte[] returncontent = new byte[] { };
-                                if (!_keys.ContainsKey(session))
+                                if (_isMultiplayer)
                                 {
-                                    Logger.Log("Downloading itch.io user profile data to cache...");
-                                    var user = getItchUser(session);
-                                    Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                    if (!_keys.ContainsKey(session))
+                                    {
+                                        Logger.Log("Downloading itch.io user profile data to cache...");
+                                        var user = getItchUser(session);
+                                        Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                        PlayerJoined?.Invoke(_keys[session], user);
+                                    }
+                                }
+                                else
+                                {
+                                    if(playerJoined==false)
+                                    {
+                                        playerJoined = true;
+                                        var key = _keys[session];
+                                        var user = _users[key];
+                                        PlayerJoined?.Invoke(key, user);
+                                    }
                                 }
                                 var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
                                 Logger.Log("Replying to message...");
@@ -388,6 +404,10 @@ namespace Peacenet.Backend
                                 writer.Flush();
                             }
                             catch(EndOfStreamException)
+                            {
+                                break;
+                            }
+                            catch(IOException)
                             {
                                 break;
                             }
@@ -518,6 +538,10 @@ namespace Peacenet.Backend
             foreach (var component in _components)
             {
                 component.Component.SafetyCheck();
+            }
+            //we do this stuff separately so that each component can safety-check before any of their dependencies unload. Thus, fixing a FATAL CRASH.
+            foreach (var component in _components)
+            {
                 component.Component.Unload();
             }
             Logger.Log("Goodnight Australia.");

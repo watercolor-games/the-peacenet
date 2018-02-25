@@ -22,6 +22,7 @@ using Peacenet.Server;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Cutscenes;
 using System.IO;
+using System.Threading;
 
 namespace Peacenet.MainMenu
 {
@@ -293,21 +294,39 @@ namespace Peacenet.MainMenu
             };
             _hbMultiplayer.Click += (o, a) =>
             {
+                if (_connecting)
+                    return;
                 if (animState < 12)
                 {
                     _infobox.PromptText("Connect to server", "Please enter a hostname and port for a server to connect to.", (address) =>
                     {
                         if (address.Split(':').Length == 1)
                             address += ":3251";
-                        _server.Connect(address, () =>
+                        Task.Run(() =>
                         {
-                            _saveManager.SetBackend(new ServerSideSaveBackend());
-                            
+                            _connectingText = "Connecting to " + address + "...";
+                            bool error = false;
+                            _connecting = true;
+                            var waiter = new ManualResetEvent(false);
+                            _server.Connect(address, () =>
+                            {
+                                _saveManager.SetBackend(new ServerSideSaveBackend());
+                                waiter.Set();
+                            }, (err) =>
+                            {
+                                _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{err}");
+                                error = true;
+                                waiter.Set();
+                            });
+                            waiter.WaitOne();
+                            _connecting = false;
+                            if (error == true)
+                                return;
+                            _connecting = true;
+                            _connectingText = "Setting up environment...";
+                            _os.EnsureProperEnvironment();
+                            _connecting = false;
                             animState = 12;
-                        }, (error) =>
-                        {
-                            _infobox.Show("Connection error", $"Could not connect:{Environment.NewLine}{Environment.NewLine}{error}");
-                            _splash.Reset();
                         });
                     });
                 }
