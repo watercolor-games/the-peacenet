@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,9 +14,14 @@ namespace Peacenet.Backend
 
         private List<PeacenetIPConnection> _connections = new List<PeacenetIPConnection>();
 
+        [Dependency]
+        private Backend _backend = null;
 
         [Dependency]
         private DatabaseHolder _database = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
 
         public void BreakConnection(uint from, uint to)
         {
@@ -49,9 +55,32 @@ namespace Peacenet.Backend
                 To = to,
                 From = from
             });
+            string toEntity = GrabEntity(to);
+            if(toEntity != null)
+            {
+                var playerId = _entityBackend.GetPlayerId(toEntity);
+                _backend.BroadcastToPlayer(Plex.Objects.ServerBroadcastType.SYSTEM_CONNECTED, null, playerId);
+            }
         }
 
+        private Random _random = new Random();
 
+        public uint GetIPFromString(string iPAddress)
+        {
+            if (string.IsNullOrWhiteSpace(iPAddress))
+                throw new ArgumentException("IP string cannot be empty.");
+            if (!iPAddress.Contains("."))
+                throw new FormatException();
+            string[] segments = iPAddress.Split('.');
+            if (segments.Length != 4)
+                throw new FormatException();
+            byte seg1 = Convert.ToByte(segments[0]);
+            byte seg2 = Convert.ToByte(segments[1]);
+            byte seg3 = Convert.ToByte(segments[2]);
+            byte seg4 = Convert.ToByte(segments[3]);
+
+            return this.CombineToUint(new byte[] { seg1, seg2, seg3, seg4 });
+        }
 
         public void Initiate()
         {
@@ -59,6 +88,25 @@ namespace Peacenet.Backend
             _addresses = _database.Database.GetCollection<PeacenetIPAddress>("world_ips");
             _addresses.EnsureIndex(x => x.Id);
             Logger.Log($"IP address lookup complete. {_addresses.Count()} IPs found.");
+            _backend.PlayerJoined += (id, user) =>
+            {
+                var entity = _entityBackend.GetPlayerEntityId(id);
+                var ips = FetchAllIPs(entity);
+                if (ips.Length == 0)
+                {
+                    using (var random = RandomNumberGenerator.Create())
+                    {
+                        byte[] ipsegments = new byte[4];
+                        random.GetBytes(ipsegments);
+                        while (_addresses.FindOne(x => x.Address == this.CombineToUint(ipsegments)) != null)
+                        {
+                            random.GetBytes(ipsegments);
+                        }
+                        uint ip = CombineToUint(ipsegments);
+                        AllocateIPv4Address(ip, entity);
+                    }
+                }
+            };
         }
 
         public PeacenetIPAddress[] FetchAllIPs(string entityId)
@@ -95,7 +143,7 @@ namespace Peacenet.Backend
             if (values.Length != 4)
                 throw new ArgumentException($"You cannot convert a {values.Length} byte array to an unsigned integer.");
             int result = 0;
-            result = values[3] + (values[2] << 8) + (values[1] << 16) + (values[0] << 24);
+            result = values[0] + (values[1] << 8) + (values[2] << 16) + (values[3] << 24);
             return (uint)result;
         }
 

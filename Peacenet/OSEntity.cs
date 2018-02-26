@@ -16,6 +16,9 @@ using Plex.Engine.GUI;
 using doublefloaty = System.Double;
 using Microsoft.Xna.Framework.Content;
 using Peacenet.RichPresence;
+using Peacenet.Server;
+using Plex.Objects;
+using System.IO;
 
 namespace Peacenet
 {
@@ -24,6 +27,9 @@ namespace Peacenet
     /// </summary>
     public class OSEntity : IEntity, ILoadable, IDisposable
     {
+        [Dependency]
+        private AsyncServerManager _server = null;
+
         /// <inheritdoc/>
         public void OnGameExit()
         {
@@ -83,6 +89,7 @@ namespace Peacenet
                 _desktop.Dispose();
                 _desktop = null;
             }
+            _server.BroadcastReceived -= _server_BroadcastReceived;
         }
 
         /// <summary>
@@ -217,6 +224,101 @@ namespace Peacenet
             _bootFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
             _osIntroState = 0;
             _peacegate = content.Load<Texture2D>("Desktop/UIIcons/Peacegate");
+            _server.BroadcastReceived += _server_BroadcastReceived;
         }
+
+        private void _server_BroadcastReceived(Plex.Objects.ServerBroadcastType arg1, System.IO.BinaryReader arg2)
+        {
+            if(arg1 == Plex.Objects.ServerBroadcastType.SYSTEM_CONNECTED)
+            {
+                Desktop.ShowNotification("New connection.", "Someone has connected to your Peacenet node. Run the 'connections' Terminal Command for info.");
+            }
+        }
+    }
+
+    [HideInHelp]
+    public class simulate_connection : ITerminalCommand
+    {
+        [Dependency]
+        private AsyncServerManager _server = null;
+
+        public string Description
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "simulate_connection";
+            }
+        }
+
+        public IEnumerable<string> Usages
+        {
+            get
+            {
+                yield return "<ip>";
+            }
+        }
+
+        public void Run(ConsoleContext console, Dictionary<string, object> arguments)
+        {
+            string ip = arguments["<ip>"].ToString();
+            try
+            {
+                uint ipaddr = GetIPFromString(ip);
+                using (var memstr = new MemoryStream())
+                {
+                    using (var writer = new BinaryWriter(memstr, Encoding.UTF8, true))
+                    {
+                        writer.Write(ipaddr);
+                        writer.Flush();
+                        _server.SendMessage(ServerMessageType.SP_SIMULATE_CONNECTION_TO_PLAYER, memstr.ToArray(), (res, reader) =>
+                        {
+                            if (res == ServerResponseType.REQ_ERROR)
+                                console.WriteLine("An error has occurred.");
+                        }).Wait();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                console.WriteLine(ex.Message);
+            }
+        }
+
+        public uint CombineToUint(byte[] values)
+        {
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+            if (values.Length != 4)
+                throw new ArgumentException($"You cannot convert a {values.Length} byte array to an unsigned integer.");
+            int result = 0;
+            result = values[0] + (values[1] << 8) + (values[2] << 16) + (values[3] << 24);
+            return (uint)result;
+        }
+
+        public uint GetIPFromString(string iPAddress)
+        {
+            if (string.IsNullOrWhiteSpace(iPAddress))
+                throw new ArgumentException("IP string cannot be empty.");
+            if (!iPAddress.Contains("."))
+                throw new FormatException();
+            string[] segments = iPAddress.Split('.');
+            if (segments.Length != 4)
+                throw new FormatException();
+            byte seg1 = Convert.ToByte(segments[0]);
+            byte seg2 = Convert.ToByte(segments[1]);
+            byte seg3 = Convert.ToByte(segments[2]);
+            byte seg4 = Convert.ToByte(segments[3]);
+
+            return this.CombineToUint(new byte[] { seg1, seg2, seg3, seg4 });
+        }
+
     }
 }

@@ -18,6 +18,8 @@ namespace Peacenet.Backend
         private LiteCollection<Entity> _entities = null;
         private LiteCollection<PlayerEntityMap> _players = null;
 
+        public event Action<string, Entity> EntitySpawned;
+
         private const string _asciiArt = @"               :shmMMMMMMmy+-                                          -+ymMMMMMMmhs:               
             `oNMMMMMMMMMMMMMMm+                                      +mMMMMMMMMMMMMMMNo`            
            +NMMMMMMMMMMMMMMMMMMm:                                  :mMMMMMMMMMMMMMMMMMMN+           
@@ -97,6 +99,31 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
             };
         }
 
+        public string GetPlayerId(string entityid)
+        {
+            var player = _players.FindOne(x => x.EntityId == entityid);
+            if (player == null)
+                return null;
+            return player.ItchUserId;
+        }
+
+        public string SpawnNPCEntity(string name, string description)
+        {
+            var existing = _entities.FindOne(x => x.DisplayName == name && x.Description == description);
+            if (existing != null)
+                return existing.Id;
+            var entity = new Entity
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsNPC = true,
+                DisplayName = name,
+                Description = description
+            };
+            _entities.Insert(entity);
+            EntitySpawned?.Invoke(entity.Id, entity);
+            return entity.Id;
+        }
+
         public Entity GetEntity(string id)
         {
             return _entities.FindOne(x => x.Id == id);
@@ -130,6 +157,7 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
                 ItchUserId = playerid
             });
             Logger.Log("Spawned new player entity for " + playerid);
+            EntitySpawned?.Invoke(entity.Id, entity);
             return entity.Id;
         }
 

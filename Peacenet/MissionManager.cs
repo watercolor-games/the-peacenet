@@ -31,6 +31,15 @@ namespace Peacenet
 
         private MissionEntity _entity = null;
 
+        public void AbandonMission()
+        {
+            if (_entity == null)
+                return;
+            if (!_entity.IsPlayingMission)
+                return;
+            _entity.AbandonMission();
+        }
+
         /// <summary>
         /// Gets whether or not a mission is currently in progress.
         /// </summary>
@@ -79,6 +88,10 @@ namespace Peacenet
 
             _os.SessionEnd += () =>
             {
+                if(_entity.IsPlayingMission)
+                {
+                    _entity.AbandonMission();
+                }
                 _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(_entity);
             };
 
@@ -285,6 +298,24 @@ namespace Peacenet
         {
         }
 
+        public void AbandonMission()
+        {
+            if (!IsPlayingMission)
+                return;
+            _save.RestoreSnapshot(_preMissionSnapshotId);
+            _currentObjective = 0;
+            _current.OnEnd();
+            _current = null;
+            _objectives = null;
+            _preMissionSnapshotId = null;
+            _lastCheckpointSnapshotId = null;
+            _state = 0;
+            _objectiveNameFade = 0;
+            _objectiveDescFade = 0;
+            _animState = -1;
+
+        }
+
         public void Update(GameTime time)
         {
             if(_current == null)
@@ -319,9 +350,7 @@ namespace Peacenet
                     _discord.GameState = "In Mission";
                     var obj = _objectives[_currentObjective];
                     var objState = obj.Update(time);
-                    if (objState == ObjectiveState.Failed)
-                        _state = 2;
-                    else if(objState == ObjectiveState.Complete)
+                    if(objState == ObjectiveState.Complete)
                     {
                         _current.OnObjectiveComplete(_currentObjective, _objectives[_currentObjective]);
                         if (_animState == 9)
@@ -351,6 +380,7 @@ namespace Peacenet
                         _current.OnObjectiveFail(_currentObjective, _objectives[_currentObjective]);
                         _save.RestoreSnapshot(_preMissionSnapshotId);
                         _currentObjective = 0;
+                        _current.OnEnd();
                         _current = null;
                         _objectives = null;
                         _preMissionSnapshotId = null;

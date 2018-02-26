@@ -12,6 +12,9 @@ namespace Peacenet.Backend
         [Dependency]
         private IPBackend _ipbackend = null;
 
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         public string Description
         {
             get
@@ -38,7 +41,7 @@ namespace Peacenet.Backend
 
         public void Run(Backend backend, ConsoleContext console, string sessionid, Dictionary<string, object> args)
         {
-            var ips = _ipbackend.FetchAllIPs(sessionid);
+            var ips = _ipbackend.FetchAllIPs(_entityBackend.GetPlayerEntityId(sessionid));
             if(ips.Length == 0)
             {
                 console.WriteLine("Error: you are not connected to The Peacenet.");

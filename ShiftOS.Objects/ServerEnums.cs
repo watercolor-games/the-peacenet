@@ -117,7 +117,9 @@ namespace Plex.Objects
         /// <summary>
         /// Restore the current user's save file to an existing snapshot. Only works in Single-player.
         /// </summary>
-        SAVE_RESTORESNAPSHOT = 0xA3
+        SAVE_RESTORESNAPSHOT = 0xA3,
+
+        SP_SIMULATE_CONNECTION_TO_PLAYER = 0xA4
     }
     
     /// <summary>
@@ -145,7 +147,9 @@ namespace Plex.Objects
         /// <summary>
         /// A user has sent text to the chat.
         /// </summary>
-        Chat_Message = 0x13
+        Chat_Message = 0x13,
+
+        SYSTEM_CONNECTED = 0x20
     }
 
     /// <summary>

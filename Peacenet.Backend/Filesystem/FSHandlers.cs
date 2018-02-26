@@ -8,43 +8,17 @@ using Plex.Objects;
 namespace Peacenet.Backend
 {
     /// <summary>
-    /// Handler for creating user FS mounts.
-    /// </summary>
-    [RequiresSession]
-    public class DriveCreator : IMessageHandler
-    {
-        /// <inheritdoc/>
-        public ServerMessageType HandledMessageType
-        {
-            get
-            {
-                return ServerMessageType.FS_CREATEMOUNT;
-            }
-        }
-
-        /// <inheritdoc/>
-        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
-        {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
-            string content = datareader.ReadString();
-            var volumeinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-            int dnum = Convert.ToInt32(volumeinfo["volume"]);
-            string label = volumeinfo["label"].ToString();
-
-            drivemgr.CreateFS(session, dnum, label);
-
-            return 0x00;
-
-        }
-    }
-
-    /// <summary>
     /// Handler for checking if a directory exists
     /// </summary>
     [RequiresSession]
     public class DirectoryExistsHandler : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+        
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -57,11 +31,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             bool result = false;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount != null)
@@ -84,6 +56,13 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class FileExistsHandler : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -96,11 +75,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             bool result = false;
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount != null)
@@ -123,6 +100,13 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class DirectoryCreator : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -135,11 +119,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -170,6 +152,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class FileListRetriever : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -182,11 +170,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -220,6 +206,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class MountListRetriever : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -232,9 +224,7 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mounts = drivemgr.GetDrivesForUser(username);
             datawriter.Write(mounts.Count);
             foreach (var mount in mounts)
@@ -252,6 +242,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class DirListRetriever : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -264,11 +260,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -302,6 +296,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class FileRecordRetriever : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -314,11 +314,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -348,8 +346,14 @@ namespace Peacenet.Backend
     /// Handler for deleting a file or directory.
     /// </summary>
     [RequiresSession]
-    public class FileDeleter : IMessageHandler
+    public class FileDeletor : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -362,11 +366,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -394,6 +396,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class FileReader : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -406,11 +414,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {
@@ -435,6 +441,12 @@ namespace Peacenet.Backend
     [RequiresSession]
     public class FileWriter : IMessageHandler
     {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
         /// <inheritdoc/>
         public ServerMessageType HandledMessageType
         {
@@ -447,11 +459,9 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var drivemgr = backend.GetBackendComponent<FSManager>();
-
             string content = datareader.ReadString();
             string path;
-            var username = session;
+            var username = _entityBackend.GetPlayerEntityId(session);
             var mount = drivemgr.GetDriveFromPathData(username, content, out path);
             if (mount == null)
             {

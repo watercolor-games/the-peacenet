@@ -34,6 +34,9 @@ namespace Peacenet.Applications
         [Dependency]
         private MissionManager _missionManager = null;
 
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
         /// <summary>
         /// Creates a new instance of the <see cref="MissionMenu"/> window.
         /// </summary>
@@ -96,8 +99,22 @@ namespace Peacenet.Applications
 
             _startMission.Click += (o, a) =>
             {
-                _missionManager.StartMission(_selected);
-                Close();
+                if (_state == 1)
+                {
+                    _missionManager.StartMission(_selected);
+                    Close();
+                }
+                else if(_state==2)
+                {
+                    _infobox.ShowYesNo("Abandon mission", "Are you sure you'd like to abandon this mission? Anything you've said on your disk since the start of the mission will be lost!", (answer) =>
+                    {
+                        if(answer)
+                        {
+                            _missionManager.AbandonMission();
+                            Close();
+                        }
+                    });
+                }
             };
 
             ResetUI();
@@ -125,8 +142,8 @@ namespace Peacenet.Applications
                     _missionsView.AddChild(_currentView);
                     _currentHead.Text = _selected.Name;
                     _currentDesc.Text = _selected.Description;
-                    _startMission.Text = "Mission in progress";
-                    _startMission.Enabled = false;
+                    _startMission.Text = "Abandon Mission";
+                    _startMission.Enabled = true;
                     break;
             }
         }

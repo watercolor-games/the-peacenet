@@ -253,85 +253,10 @@ namespace Peacenet
 
             //Create the fstab dictionary, that maps client-side Unix-like mountpoints to server-side COSMOS-like drive numbers.
             fstab = new Dictionary<string, int>();
+            //Mount the system drive.
+            fstab.Add("/", 0);
 
-            //Because we're dealing with async shit in a non-async method, and I hate AggregateExceptions, let's create an Exception variable for async error reporting.
-            Exception err = null;
-            //Make a call to the server to grab all the user's mounts.
-            _server.SendMessage(Plex.Objects.ServerMessageType.FS_GETMOUNTS, null, (res, reader) =>
-            {
-                try
-                {
-                    //We should get back REQ_SUCCESS if we got a mountlist - even if it's empty. If we didn't get a success response, report an error.
-                    if (res != Plex.Objects.ServerResponseType.REQ_SUCCESS)
-                        err = new Exception($"Server returned error {res} while loading mountpoint information.");
-                    else
-                    {
-                        //Read an int32 from the response stream so we know how many mountpoints to read
-                        int mountCount = reader.ReadInt32();
-                        //Read that many mounts
-                        for (int i = 0; i < mountCount; i++)
-                        {
-                            //Each mount is stored as a string (drive label) and int (drive number) in sequence.
-                            //We'll use the drive label as the mountpoint's path.
-                            string mPath = reader.ReadString();
-                            int sNumber = reader.ReadInt32();
-                            //If two mounts share the same path, there's a serious problem.
-                            if (fstab.ContainsKey(mPath))
-                            {
-                                err = new InvalidOperationException("Two mountpoints share the same path. This is a serious bug. Tell a developer or server admin immediately. You should never ever see this.");
-                                break;
-                            }
-                            fstab.Add(mPath, sNumber);
-                        }
-                    }
-                }
-                catch(Exception ex)
-                {
-                    err = ex;
-                }
-            }).Wait();
-            //Check for errors.
-            if (err != null)
-                throw err;
-            //Now we check to make sure we have a mount at /. If not, create it.
-            if(!fstab.ContainsKey("/"))
-            {
-                byte[] body = null;
-                //Another server call, this time "FS_CREATEMOUNT", which has a body.
-                using(var memstr = new MemoryStream())
-                {
-                    //The memory stream stores the binary body data, this BinaryWriter allows us to write the JSON for this request.
-                    using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
-                    {
-                        writer.Write(JsonConvert.SerializeObject(new
-                        {
-                            //Volume is an integer and is the remote drive number
-                            volume = 0,
-                            //Label is a string, that's our mountpoint.
-                            label = "/"
-                        }));
-                        //Data written. Let's retrieve the body byte[]
-                        body = memstr.ToArray();
-                        //Done with that crap.
-                    }
-                }
-                //Now make the actual call.
-                _server.SendMessage(Plex.Objects.ServerMessageType.FS_CREATEMOUNT, body, (res, reader) =>
-                {
-                    //Same as above, if no "REQ_SUCCESS", we had an error.
-                    if(res != Plex.Objects.ServerResponseType.REQ_SUCCESS)
-                    {
-                        err = new Exception($"Server returned error code {res} while creating mountpoint at /.");
-                    }
-                    //If we got this far there was no error.
-                }).Wait();
-                //Check for error.
-                if (err != null)
-                    throw err;
-                //Add mountpoint.
-                fstab.Add("/", 0);
-                //And we're done.
-            }
+
         }
 
         /// <inheritdoc/>

@@ -95,6 +95,7 @@
     <Compile Include="MissionManager.cs" />
     <Compile Include="Missions\Prologue\SecuringTheSystem.cs" />
     <Compile Include="Missions\Prologue\TerminalTutorial.cs" />
+    <Compile Include="NPCSpawner.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="OSEntity.cs" />
     <Compile Include="PeacenetTheme.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="RichPresence\DiscordRPCModule.cs" />
     <Compile Include="ServerSideSaveBackend.cs" />
     <Compile Include="Server\AsyncServerManager.cs" />
+    <Compile Include="SimulateConnectionHandler.cs" />
     <Compile Include="SplashScreenComponent.cs" />
     <Compile Include="Applications\RelayChat.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
@@ -201,6 +203,9 @@
     <Content Include="Content\credits.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Hackables\SecuringTheSystem_TestHackable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Content\Cutscenes\PeaceEngine1080p.pnv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

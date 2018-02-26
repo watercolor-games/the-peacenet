@@ -32,6 +32,8 @@ namespace Peacenet.Backend
 
         private List<TcpClient> _connected = new List<TcpClient>();
 
+        private Dictionary<string, TcpClient> _playerIds = new Dictionary<string, TcpClient>();
+
         /// <summary>
         /// Broadcast a message to all clients.
         /// </summary>
@@ -58,6 +60,33 @@ namespace Peacenet.Backend
                         writer.Flush();
                     }
                 }
+            }
+        }
+
+        internal void BroadcastToPlayer(ServerBroadcastType message, byte[] body, string playerId)
+        {
+            if (playerId == null)
+                return;
+            lock (_connected)
+            {
+                if (body == null)
+                    body = new byte[0];
+                if (!_playerIds.ContainsKey(playerId))
+                    return;
+                var client = _playerIds[playerId];
+                var stream = client.GetStream();
+
+                using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
+                {
+                    writer.Write("broadcast");
+                    writer.Write((int)ServerResponseType.REQ_SUCCESS);
+                    writer.Write((int)message);
+                    writer.Write(body.Length);
+                    if (body.Length > 0)
+                        writer.Write(body);
+                    writer.Flush();
+                }
+
             }
         }
 
@@ -345,6 +374,7 @@ namespace Peacenet.Backend
                     Logger.Log($"New client connection.");
                     var t = new Thread(() =>
                     {
+                        string csession = "";
                         var stream = connection.GetStream();
                         var reader = new BinaryReader(stream);
                         var writer = new BinaryWriter(stream);
@@ -389,6 +419,10 @@ namespace Peacenet.Backend
                                         PlayerJoined?.Invoke(key, user);
                                     }
                                 }
+                                if (string.IsNullOrWhiteSpace(csession))
+                                    csession = _keys[session];
+                                if (!_playerIds.ContainsKey(csession))
+                                    _playerIds.Add(csession, connection);
                                 var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
                                 Logger.Log("Replying to message...");
                                 writer.Write(muid);
