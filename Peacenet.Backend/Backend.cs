@@ -362,7 +362,11 @@ namespace Peacenet.Backend
         private void ListenThread()
         {
             Logger.Log("Starting TCP thread.");
-            _listener = new TcpListener(IPAddress.Any, _port);
+            if(_isMultiplayer)
+                _listener = new TcpListener(IPAddress.Any, _port);
+            else
+                _listener = new TcpListener(IPAddress.Loopback, _port);
+
             _listener.Start();
             _serverReady.Set();
             while (_isRunning)

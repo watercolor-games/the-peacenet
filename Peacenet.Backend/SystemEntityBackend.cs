@@ -15,6 +15,7 @@ namespace Peacenet.Backend
         [Dependency]
         private Backend _backend = null;
 
+        private LiteCollection<ProtectedPort> _protectedPorts = null;
         private LiteCollection<Entity> _entities = null;
         private LiteCollection<PlayerEntityMap> _players = null;
 
@@ -77,6 +78,14 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
             {
                 Logger.Log(line.TrimEnd());
             }
+            Logger.Log("Looking up port/service info...");
+            _protectedPorts = _database.Database.GetCollection<ProtectedPort>("world_protected_ports");
+            _protectedPorts.EnsureIndex(x => x.Id);
+            var services = Enum.GetValues(typeof(Service)).Cast<int>().ToArray();
+            int deletedCount = _protectedPorts.Delete(x => !services.Contains(x.Port));
+            Logger.Log($"{deletedCount} open ports deleted from database due to no known services.");
+            Logger.Log($"{_protectedPorts.Count()} ports still in the database.");
+
             Logger.Log("Looking up entity information in the database...");
             _entities = _database.Database.GetCollection<Entity>("world_entities");
             Logger.Log("Now looking up playerid->entityid map...");
@@ -95,8 +104,44 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
                 var entity = GetEntity(entityid);
                 entity.DisplayName = user.display_name;
                 entity.Description = "";
+                _entities.Update(entity);
                 Logger.Log("Updating display data for " + user.display_name);
+                UpdatePorts(entityid);
             };
+
+            int deletedPortsNoEntity = _protectedPorts.Delete(x => GetEntity(x.EntityId) == null);
+            Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
+            foreach (var entity in _entities.FindAll())
+                UpdatePorts(entity.Id);
+        }
+
+        public ProtectedPort[] GetPorts(string entityid)
+        {
+            return _protectedPorts.Find(x => x.EntityId == entityid).ToArray();
+        }
+
+        public void UpdatePorts(string entityid)
+        {
+            var services = Enum.GetValues(typeof(Service)).Cast<int>().ToArray();
+            var entity = GetEntity(entityid);
+            if (entity == null)
+                return;
+            if (entity.IsNPC)
+                return;
+            foreach (var service in services)
+            {
+                if (_protectedPorts.FindOne(x => x.EntityId == entityid && x.Port == service) == null)
+                {
+                    _protectedPorts.Insert(new ProtectedPort
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        EntityId = entityid,
+                        Port = (ushort)service,
+                        SecurityLevel = 1
+                    });
+                    Logger.Log($"Enabled service {service} with security level 1 on {entityid}.");
+                }
+            }
         }
 
         public string GetPlayerId(string entityid)
@@ -105,6 +150,31 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
             if (player == null)
                 return null;
             return player.ItchUserId;
+        }
+
+        public void SetupPortForNPC(string entityid, Service service, int securityLevel)
+        {
+            var entity = GetEntity(entityid);
+            if (entity == null)
+                return;
+            if (!entity.IsNPC)
+                return;
+            var port = _protectedPorts.FindOne(x => x.EntityId == entityid && x.Port == (int)service);
+            if (port == null)
+            {
+                _protectedPorts.Insert(new ProtectedPort
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    EntityId = entityid,
+                    Port = (ushort)service,
+                    SecurityLevel = securityLevel
+                });
+            }
+            else
+            {
+                port.SecurityLevel = securityLevel;
+                _protectedPorts.Update(port);
+            }
         }
 
         public string SpawnNPCEntity(string name, string description)
@@ -166,6 +236,8 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
             _players.Delete(x => x == null);
             int count = _players.Delete(y => _entities.FindOne(x => x.Id == y.EntityId) == null);
             Logger.Log($"{count} row(s) deleted from player->entityid map due to non-existent entities.");
+            int deletedPortsNoEntity = _protectedPorts.Delete(x => GetEntity(x.EntityId) == null);
+            Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
         }
 
         public void Unload()
@@ -181,10 +253,31 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
         public string Description { get; set; }
     }
 
+    public class PublicPort
+    {
+        public string Id { get; set; }
+        public string EntityId { get; set; }
+        public ushort Port { get; set; }
+    }
+
+    public class ProtectedPort
+    {
+        public string Id { get; set; }
+        public string EntityId { get; set; }
+        public ushort Port { get; set; }
+        public int SecurityLevel { get; set; }
+    }
+
     public class PlayerEntityMap
     {
         public string Id { get; set; }
         public string EntityId { get; set; }
         public string ItchUserId { get; set; }
+    }
+
+    public enum Service
+    {
+        ftp = 21,
+        ssh = 22,
     }
 }

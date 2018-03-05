@@ -37,6 +37,62 @@ namespace Peacenet
         private bool _preventStartup = false;
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
+        
+        public bool IsPlayingNewConnectionAnimation
+        {
+            get
+            {
+                return _osEntity.IsReceivingConnection;
+            }
+        }
+
+        public void SimulateConnectionFromSystem(string ip)
+        {
+            if (_server.IsMultiplayer)
+                return;
+            var ipaddr = GetIPFromString(ip);
+            using (var memstr = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
+                {
+                    writer.Write(ipaddr);
+                    writer.Flush();
+                    _server.SendMessage(Plex.Objects.ServerMessageType.SP_SIMULATE_CONNECTION_TO_PLAYER, memstr.ToArray(), (res, reader) =>
+                    {
+
+                    }).Wait();
+                }
+            }
+        }
+
+        public uint CombineToUint(byte[] values)
+        {
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+            if (values.Length != 4)
+                throw new ArgumentException($"You cannot convert a {values.Length} byte array to an unsigned integer.");
+            int result = 0;
+            result = values[0] + (values[1] << 8) + (values[2] << 16) + (values[3] << 24);
+            return (uint)result;
+        }
+
+        public uint GetIPFromString(string iPAddress)
+        {
+            if (string.IsNullOrWhiteSpace(iPAddress))
+                throw new ArgumentException("IP string cannot be empty.");
+            if (!iPAddress.Contains("."))
+                throw new FormatException();
+            string[] segments = iPAddress.Split('.');
+            if (segments.Length != 4)
+                throw new FormatException();
+            byte seg1 = Convert.ToByte(segments[0]);
+            byte seg2 = Convert.ToByte(segments[1]);
+            byte seg3 = Convert.ToByte(segments[2]);
+            byte seg4 = Convert.ToByte(segments[3]);
+
+            return this.CombineToUint(new byte[] { seg1, seg2, seg3, seg4 });
+        }
+
 
         public string GetHostname()
         {

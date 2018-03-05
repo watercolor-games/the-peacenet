@@ -14,228 +14,129 @@ namespace Peacenet.Backend
     /// </summary>
     public class ChatBackend : IBackendComponent
     {
-        private LiteCollection<ChatMessage> _chatlog = null;
+        private LiteCollection<ChatMessage> _messages = null;
 
         [Dependency]
-        private DatabaseHolder _db = null;
+        private SystemEntityBackend _entityBackend = null;
 
-        /// <inheritdoc/>
-        public void Initiate()
-        {
-            Logger.Log("Chat system is starting...");
-            _chatlog = _db.Database.GetCollection<ChatMessage>("chatlog");
-            _chatlog.EnsureIndex(x => x.Id);
-            Logger.Log("Done.");
-        }
-
-        /// <inheritdoc/>
-        public void SafetyCheck()
-        {
-        }
-
-        /// <inheritdoc/>
-        public void Unload()
-        {
-        }
+        [Dependency]
+        private DatabaseHolder _database = null;
 
         [Dependency]
         private Backend _backend = null;
 
-        /// <summary>
-        /// Add a message to the log.
-        /// </summary>
-        /// <param name="author">The author's username</param>
-        /// <param name="uid">The Watercolor user ID of the author</param>
-        /// <param name="message">The message text</param>
-        /// <param name="type">The type of message</param>
-        public void AddMessage(string author, string uid, string message, ChatMessageType type = ChatMessageType.Regular)
+        public void Initiate()
         {
-            _chatlog.Insert(new ChatMessage
+            _messages = _database.Database.GetCollection<ChatMessage>("chat_messages");
+            _messages.EnsureIndex(x => x.Id);
+            int deletedNoAuthor = _messages.Delete(x => _entityBackend.GetEntity(x.AuthorEntityId) == null);
+            int deletedNoValidRecipient = _messages.Delete(x => x.RecipientEntityId != null && (_entityBackend.GetEntity(x.RecipientEntityId) == null));
+            Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
+        }
+
+        public void SafetyCheck()
+        {
+            int deletedNoAuthor = _messages.Delete(x => _entityBackend.GetEntity(x.AuthorEntityId) == null);
+            int deletedNoValidRecipient = _messages.Delete(x => x.RecipientEntityId != null && (_entityBackend.GetEntity(x.RecipientEntityId) == null));
+            Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
+        }
+
+        public void AddMessage(string authorEntity, string recipientEntity, string message)
+        {
+            if (authorEntity == null)
+                return;
+            if (_entityBackend.GetEntity(authorEntity) == null)
+                return;
+            if (recipientEntity != null)
+                if (_entityBackend.GetEntity(recipientEntity) == null)
+                    return;
+            _messages.Insert(new Peacenet.Backend.ChatMessage
             {
                 Id = Guid.NewGuid().ToString(),
-                MessageContents = message,
-                TimeUtc = DateTime.UtcNow,
-                Username = author,
-                WatercolorUid = uid,
-                Type = type
+                AuthorEntityId = authorEntity,
+                RecipientEntityId = recipientEntity,
+                Message = message,
+                Timestamp = DateTime.UtcNow
             });
 
-            byte[] data = null;
-            using(var ms = new MemoryStream())
+            string authorName = _entityBackend.GetEntity(authorEntity).DisplayName;
+            string recipientName = (recipientEntity == null) ? "group" : _entityBackend.GetEntity(recipientEntity).DisplayName;
+            Logger.Log($"[chat] <{authorName} -> {recipientName}> {message}");
+            using (var ms = new MemoryStream())
             {
-                using(var writer = new BinaryWriter(ms, Encoding.UTF8))
+                using (var writer = new BinaryWriter(ms, Encoding.UTF8))
                 {
-                    switch (type)
-                    {
-                        case ChatMessageType.Join:
-                        case ChatMessageType.Leave:
-                            //only write author
-                            writer.Write(author);
-                            break;
-                        case ChatMessageType.Action:
-                        case ChatMessageType.Regular:
-                            //write author and message
-                            writer.Write(author);
-                            writer.Write(message);
-                            break;
-                    }
-                    data = ms.ToArray();
+                    writer.Write(authorName);
+                    writer.Write(recipientName);
+                    writer.Write(message);
+                    writer.Flush();
+                    _backend.Broadcast(ServerBroadcastType.Chat_MessageReceived, ms.ToArray());
                 }
             }
-            switch (type)
-            {
-                case ChatMessageType.Regular:
-                    Logger.Log($"[chat] <{author}> {message}");
-                    _backend.Broadcast(ServerBroadcastType.Chat_Message, data);
-                    break;
-                case ChatMessageType.Action:
-                    Logger.Log($"[chat] *{author} {message}*");
-                    _backend.Broadcast(ServerBroadcastType.Chat_Action, data);
-                    break;
-                case ChatMessageType.Join:
-                    Logger.Log($"[chat] {author} has joined");
-                    _backend.Broadcast(ServerBroadcastType.Chat_UserJoin, data);
-                    break;
-                case ChatMessageType.Leave:
-                    Logger.Log($"[chat] {author} has left.");
-                    _backend.Broadcast(ServerBroadcastType.Chat_UserLeave, data);
-                    break;
-
-            }
         }
 
-        /// <summary>
-        /// Retrieve the last <paramref name="count"/> messages in the log.
-        /// </summary>
-        /// <param name="count">The amount of messages to retrieve.</param>
-        /// <returns>An <see cref="IEnumerable{ChatMessage}"/> containing the latest messages found.</returns>
-        public IEnumerable<ChatMessage> RetrieveLast(int count)
+        public ChatMessage[] GetAllTowardsEntity(string recipient)
         {
-            int sent = 0;
-            foreach(var msg in _chatlog.FindAll().OrderByDescending(x => x.TimeUtc))
-            {
-                if (sent >= count)
-                    break;
-                yield return msg;
-                sent++;
-            }
+            if (_entityBackend.GetEntity(recipient) == null)
+                return new ChatMessage[0];
+            return _messages.Find(x => x.RecipientEntityId == recipient).OrderByDescending(x => x.Timestamp).ToArray();
         }
 
+        public string[] GetContacts(string entityId)
+        {
+            if (_entityBackend.GetEntity(entityId) == null)
+                return new string[0];
+            List<string> entities = new List<string>();
+            foreach(var message in _messages.Find(x=>x.RecipientEntityId==entityId))
+            {
+                if (!entities.Contains(message.AuthorEntityId))
+                    entities.Add(message.AuthorEntityId);
+            }
+            return entities.ToArray();
+        }
 
+        public ChatMessage[] GetLatestGroupLog()
+        {
+            return _messages.Find(x => x.RecipientEntityId == null).OrderByDescending(x => x.Timestamp).Take(100).ToArray();
+        }
+
+        public void Unload()
+        {
+        }
     }
 
-    /// <summary>
-    /// Handler for chat join requests.
-    /// </summary>
-    [RequiresSession]
-    public class ChatJoinHandler : IMessageHandler
+    public class ChatMessage
     {
-        /// <inheritdoc/>
+        public string Id { get; set; }
+        public string AuthorEntityId { get; set; }
+        public string RecipientEntityId { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class ChatMessageReceiver : IMessageHandler
+    {
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
+        [Dependency]
+        private ChatBackend _chat = null;
+
         public ServerMessageType HandledMessageType
         {
             get
             {
-                return ServerMessageType.CHAT_JOIN;
+                return ServerMessageType.CHAT_SENDMESSAGE;
             }
         }
 
-        /// <inheritdoc/>
         public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
         {
-            var usr = backend.GetUserInfo(session);
-            if (usr == null)
-                return ServerResponseType.REQ_ERROR;
-            var chat = backend.GetBackendComponent<ChatBackend>();
-            chat.AddMessage(usr.username, session, "", ChatMessageType.Join);
-
-            return ServerResponseType.REQ_SUCCESS;
-        }
-    }
-
-    /// <summary>
-    /// Handler for chat leave requests.
-    /// </summary>
-    [RequiresSession]
-    public class ChatLeaveHandler : IMessageHandler
-    {
-        /// <inheritdoc/>
-        public ServerMessageType HandledMessageType
-        {
-            get
-            {
-                return ServerMessageType.CHAT_LEAVE;
-            }
-        }
-
-        /// <inheritdoc/>
-        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
-        {
-            var usr = backend.GetUserInfo(session);
-            if (usr == null)
-                return ServerResponseType.REQ_ERROR;
-            var chat = backend.GetBackendComponent<ChatBackend>();
-            chat.AddMessage(usr.username, session, "", ChatMessageType.Leave);
-
-            return ServerResponseType.REQ_SUCCESS;
-        }
-    }
-
-    /// <summary>
-    /// Handler for incoming chat messages.
-    /// </summary>
-    [RequiresSession]
-    public class ChatMessageHandler : IMessageHandler
-    {
-        /// <inheritdoc/>
-        public ServerMessageType HandledMessageType
-        {
-            get
-            {
-                return ServerMessageType.CHAT_SENDTEXT;
-            }
-        }
-
-        /// <inheritdoc/>
-        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
-        {
-            var usr = backend.GetUserInfo(session);
-            if (usr == null)
-                return ServerResponseType.REQ_ERROR;
+            string recipient = datareader.ReadString();
             string messagetext = datareader.ReadString();
-            var chat = backend.GetBackendComponent<ChatBackend>();
-            chat.AddMessage(usr.username, session, messagetext, ChatMessageType.Regular);
-
+            string sender = _entityBackend.GetPlayerEntityId(session);
+            _chat.AddMessage(sender, (recipient == "group") ? null : recipient, messagetext);
             return ServerResponseType.REQ_SUCCESS;
         }
     }
-
-    /// <summary>
-    /// A handler for chat actions.
-    /// </summary>
-    [RequiresSession]
-    public class ChatActionHandler : IMessageHandler
-    {
-        /// <inheritdoc/>
-        public ServerMessageType HandledMessageType
-        {
-            get
-            {
-                return ServerMessageType.CHAT_SENDACTION;
-            }
-        }
-
-        /// <inheritdoc/>
-        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
-        {
-            var usr = backend.GetUserInfo(session);
-            if (usr == null)
-                return ServerResponseType.REQ_ERROR;
-            string messagetext = datareader.ReadString();
-            var chat = backend.GetBackendComponent<ChatBackend>();
-            chat.AddMessage(usr.username, session, messagetext, ChatMessageType.Action);
-
-            return ServerResponseType.REQ_SUCCESS;
-        }
-    }
-
 }

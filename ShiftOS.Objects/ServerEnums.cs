@@ -74,26 +74,10 @@ namespace Plex.Objects
         /// </summary>
         TRM_MANPAGE = 0x22,
         
-        /// <summary>
-        /// Log into the server chat.
-        /// </summary>
-        CHAT_JOIN = 0x50,
-        /// <summary>
-        /// Log out of the server chat.
-        /// </summary>
-        CHAT_LEAVE = 0x51,
-        /// <summary>
-        /// Send text to the chat.
-        /// </summary>
-        CHAT_SENDTEXT = 0x52,
-        /// <summary>
-        /// Send a third-person action to the chat (example: "Alkaline loves coding").
-        /// </summary>
-        CHAT_SENDACTION = 0x53,
-        /// <summary>
-        /// Retrieve the usernames of all people in chat.
-        /// </summary>
-        CHAT_GETUSERS = 0x54,
+        CHAT_GETCoNTACTS = 0x50,
+        CHAT_GETALLDMS = 0x51,
+        CHAT_GETGROUPLOG = 0x52,
+        CHAT_SENDMESSAGE = 0x53,
 
         /// <summary>
         /// Perform a remote stream operation.
@@ -132,22 +116,7 @@ namespace Plex.Objects
         /// </summary>
         Shutdown = 0x00,
 
-        /// <summary>
-        /// A user has joined the chat.
-        /// </summary>
-        Chat_UserJoin = 0x10,
-        /// <summary>
-        /// A user has left the chat.
-        /// </summary>
-        Chat_UserLeave = 0x11,
-        /// <summary>
-        /// A user has sent a third-person action to the chat.
-        /// </summary>
-        Chat_Action = 0x12,
-        /// <summary>
-        /// A user has sent text to the chat.
-        /// </summary>
-        Chat_Message = 0x13,
+        Chat_MessageReceived=0x10,
 
         SYSTEM_CONNECTED = 0x20
     }

@@ -32,11 +32,25 @@ namespace Peacenet
                     var json = File.ReadAllText(file);
                     try
                     {
-                        var entityInfo = JsonConvert.DeserializeObject<ProcgenEntity>(json);
+                        var entityInfo = JsonConvert.DeserializeObject<ClientSideEntity>(json);
                         var entity = _entityBackend.SpawnNPCEntity(entityInfo.Name, entityInfo.Description);
+
+                        var ports = entityInfo.Ports;
+                        if (ports != null)
+                        {
+                            foreach (var port in ports)
+                                _entityBackend.SetupPortForNPC(entity, port.Key, port.Value);
+                        }
+
                         uint ipaddr = _ip.GetIPFromString(entityInfo.IPAddress);
-                        if (_ip.GrabEntity(ipaddr) == null)
+                        string allocatedEntity = _ip.GrabEntity(ipaddr);
+                        if (allocatedEntity == null)
                             _ip.AllocateIPv4Address(ipaddr, entity);
+                        else if(allocatedEntity != entity)
+                        {
+                            _ip.DeallocateIPv4Address(ipaddr);
+                            _ip.AllocateIPv4Address(ipaddr, entity);
+                        }
 
                     }
                     catch(Exception ex)
@@ -56,12 +70,12 @@ namespace Peacenet
         }
     }
 
-    public class ProcgenEntity
+    public class ClientSideEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string IPAddress { get; set; }
-
+        public Dictionary<Service, int> Ports { get; set; }
         public string[] LootableProgramIDs { get; set; }
     }
 }

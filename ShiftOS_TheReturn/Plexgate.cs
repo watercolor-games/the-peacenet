@@ -613,5 +613,10 @@ namespace Plex.Engine
             RemoveEntity(entity);
             AddEntity(entity);
         }
+
+        public bool HasEntity(IEntity entity)
+        {
+            return _entities.Contains(entity);
+        }
     }
 }

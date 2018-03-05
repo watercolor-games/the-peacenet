@@ -27,6 +27,8 @@ namespace Peacenet
         private Texture2D _wallpaper = null;
         private float _panelAnim = -1;
 
+        private SoundEffect _noteSound = null;
+
         private bool _showPanels = true;
 
         private float _notificationBannerFade = 0f;
@@ -106,6 +108,8 @@ namespace Peacenet
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
+
             _applauncher = new AppLauncherMenu(_winsys, this);
 
             _missionButton.Image = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flag");
@@ -181,6 +185,7 @@ namespace Peacenet
         /// <param name="description">The message for the notification.</param>
         public void ShowNotification(string title, string description)
         {
+            _noteSound.Play();
             _notificationTitle.Text = title;
             _notificationDescription.Text = description;
             _notificationAnimState = 0;

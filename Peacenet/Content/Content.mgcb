@@ -830,3 +830,39 @@
 /processorParam:Quality=Best
 /build:Audio/SecuringTheSystem.ogg
 
+#begin SFX/C_OldSynthLead_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/C_OldSynthLead_01.ogg
+
+#begin SFX/DesktopNotification.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/DesktopNotification.ogg
+
+#begin Audio/IncomingConnectionBgm.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/IncomingConnectionBgm.mp3
+
+#begin SFX/ClickFlam_SP_10_441.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/ClickFlam_SP_10_441.ogg
+
+#begin SFX/pcspkr.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/pcspkr.ogg
+
+#begin SFX/SniffClick_360_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/SniffClick_360_01.ogg
+

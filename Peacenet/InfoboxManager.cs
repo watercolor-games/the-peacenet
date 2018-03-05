@@ -10,15 +10,17 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 
 namespace Peacenet
 {
     /// <summary>
     /// Provides an engine component that allows the use of classic ShiftOS infoboxes in The Peacenet.
     /// </summary>
-    public class InfoboxManager : IEngineComponent
+    public class InfoboxManager : IEngineComponent, ILoadable
     {
-
+        private SoundEffect _oldSynthLead = null;
 
         [Dependency]
         private WindowSystem _winmgr = null;
@@ -28,6 +30,7 @@ namespace Peacenet
         {
             var ibox = new Infobox(_winmgr);
             ibox.Show(title, message, callback);
+            _oldSynthLead.Play();
         }
 
         /// <inheritdoc cref="Infobox.ShowYesNo(string, string, Action{Boolean})"/>
@@ -35,6 +38,7 @@ namespace Peacenet
         {
             var ibox = new Infobox(_winmgr);
             ibox.ShowYesNo(title, message, callback);
+            _oldSynthLead.Play();
         }
 
         /// <inheritdoc cref="Infobox.PromptText(string, string, Action{string}, Func{string, bool})"/>
@@ -42,11 +46,17 @@ namespace Peacenet
         {
             var ibox = new Infobox(_winmgr);
             ibox.PromptText(title, message, callback, validator);
+            _oldSynthLead.Play();
         }
 
         /// <inheritdoc/>
         public void Initiate()
         {
+        }
+
+        public void Load(ContentManager content)
+        {
+            _oldSynthLead = content.Load<SoundEffect>("SFX/C_OldSynthLead_01");
         }
     }
 

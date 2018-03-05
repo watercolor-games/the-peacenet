@@ -1,6 +1,10 @@
 ﻿{
-  "Name": "Peacenet Hacking Demo Server - Peanuts",
+  "Name": "Peacenet Hacking Demo Server",
   "Description": "This is a test server for the Peacenet hacking system.",
   "IPAddress": "142.68.67.3",
+  "Ports": {
+    "ssh": "1",
+    "ftp": "2"
+  }
 
 }

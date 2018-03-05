@@ -30,6 +30,7 @@ namespace Peacenet
             if (backend.IsMultiplayer)
                 return ServerResponseType.REQ_ERROR;
             uint ipaddr = datareader.ReadUInt32();
+            ushort port = datareader.ReadUInt16();
             if (_ip.GrabEntity(ipaddr) == null)
                 return ServerResponseType.REQ_ERROR;
             string entity = _entityManager.GetPlayerEntityId(session);
@@ -38,7 +39,7 @@ namespace Peacenet
                 return ServerResponseType.REQ_ERROR;
             try
             {
-                _ip.MakeConnection(ipaddr, playerIp[0].Address);
+                _ip.MakeConnection(ipaddr, playerIp[0].Address, port);
                 return ServerResponseType.REQ_SUCCESS;
             }
             catch

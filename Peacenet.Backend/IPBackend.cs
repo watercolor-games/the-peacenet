@@ -1,6 +1,8 @@
 ﻿using LiteDB;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -23,13 +25,13 @@ namespace Peacenet.Backend
         [Dependency]
         private SystemEntityBackend _entityBackend = null;
 
-        public void BreakConnection(uint from, uint to)
+        public void BreakConnection(uint from, uint to, ushort port)
         {
             if (from == to)
                 throw new InvalidOperationException("You cannot connect to yourself.");
-            var existing = _connections.FirstOrDefault(x => x.To == to && x.From == from);
+            var existing = _connections.FirstOrDefault(x => x.To == to && x.From == from && x.Port == port);
             if (existing == null)
-                throw new InvalidOperationException("These systems are not connected.");
+                throw new InvalidOperationException("These systems are not connected on this port.");
             _connections.Remove(existing);
         }
 
@@ -43,23 +45,33 @@ namespace Peacenet.Backend
             return _connections.Where(x => x.From == ipaddress).ToArray();
         }
 
-        public void MakeConnection(uint from, uint to)
+        public void MakeConnection(uint from, uint to, ushort port)
         {
             if (from == to)
                 throw new InvalidOperationException("You cannot connect to yourself.");
-            var existing = _connections.FirstOrDefault(x => x.To == to && x.From == from);
+            var existing = _connections.FirstOrDefault(x => x.To == to && x.From == from && x.Port == port);
             if (existing != null)
-                throw new InvalidOperationException("These systems are already connected.");
+                throw new InvalidOperationException("These systems are already connected on that port.");
             _connections.Add(new PeacenetIPConnection
             {
                 To = to,
-                From = from
+                From = from,
+                Port = port
             });
             string toEntity = GrabEntity(to);
-            if(toEntity != null)
+            if (toEntity != null)
             {
                 var playerId = _entityBackend.GetPlayerId(toEntity);
-                _backend.BroadcastToPlayer(Plex.Objects.ServerBroadcastType.SYSTEM_CONNECTED, null, playerId);
+                using (var memstr = new MemoryStream())
+                {
+                    using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
+                    {
+                        writer.Write(60000);
+                        writer.Write(JsonConvert.SerializeObject(DateTime.UtcNow));
+                        writer.Flush();
+                        _backend.BroadcastToPlayer(Plex.Objects.ServerBroadcastType.SYSTEM_CONNECTED, memstr.ToArray(), playerId);
+                    }
+                }
             }
         }
 
@@ -187,5 +199,6 @@ namespace Peacenet.Backend
     {
         public uint To { get; set; }
         public uint From { get; set; }
+        public ushort Port { get; set; }
     }
 }

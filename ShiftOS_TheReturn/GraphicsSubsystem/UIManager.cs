@@ -38,8 +38,40 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <seealso cref="IEntity"/>
     public class UIManager : IEngineComponent, IConfigurable
     {
+        public bool DoInput
+        {
+            get
+            {
+                lock(_container)
+                {
+                    return _container.DoInput;
+                }
+            }
+            set
+            {
+                lock(_container)
+                {
+                    _container.DoInput = value;
+                }
+            }
+        }
+
         private class UIContainer : IEntity, ILoadable, IDisposable
         {
+            private bool _doInput = true;
+
+            public bool DoInput
+            {
+                get
+                {
+                    return _doInput;
+                }
+                set
+                {
+                    _doInput = value;
+                }
+            }
+
             /// <inheritdoc/>
             public void OnGameExit()
             {
@@ -201,12 +233,16 @@ namespace Plex.Engine.GraphicsSubsystem
                     return;
                 }
 
+                if (!DoInput)
+                    return;
                 if (_focused != null)
                     _focused.ProcessKeyboardEvent(e);
             }
 
             public void OnMouseUpdate(MouseState mouse)
             {
+                if (!DoInput)
+                    return;
                 if (mouse == _lastMouseState)
                     return;
                 _lastMouseState = mouse;

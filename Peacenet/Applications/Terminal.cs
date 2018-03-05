@@ -128,6 +128,8 @@ namespace Peacenet.Applications
         [Dependency]
         private ItchOAuthClient _Api = null;
 
+        public static event Action<CommandInstruction> OnCommandRun;
+
         /// <inheritdoc/>
         public string Description
         {
@@ -298,6 +300,7 @@ namespace Peacenet.Applications
                     ProcessCommand(console, cmdstr);
                     var instruction = Tokenizer.GetCommandList(cmdstr);
                     _history.Add(instruction);
+                    OnCommandRun?.Invoke(instruction);
                     if (CommandRun?.Invoke(instruction) == true)
                         return;
                 }

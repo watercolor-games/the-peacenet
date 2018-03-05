@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Themes;
+using Microsoft.Xna.Framework.Content;
 
 namespace Peacenet.Missions.Prologue
 {
@@ -60,6 +61,12 @@ namespace Peacenet.Missions.Prologue
         
         private ObjectiveCountdownEntity _countdown = null;
 
+        private bool _hackStarted = false;
+
+        private bool _objConnectionsCmdRun = false;
+
+        private bool _countdownExpired = false;
+
         public override IEnumerable<Objective> ObjectiveList
         {
             get
@@ -84,7 +91,23 @@ namespace Peacenet.Missions.Prologue
                         {
                             string hostname = _os.GetHostname();
                             if (hostname != _hostname)
-                                return ObjectiveState.Complete;
+                            {
+                                this._themeInstance.Volume = MathHelper.Clamp(_themeInstance.Volume - ((float)time.ElapsedGameTime.TotalSeconds * 4), 0f, 1f);
+                                if (_themeInstance.Volume <= 0f)
+                                {
+                                    if(!_hackStarted)
+                                    {
+                                        _os.SimulateConnectionFromSystem("142.68.67.3");
+                                        _hackStarted = true;
+                                        ride += time.ElapsedGameTime.TotalSeconds;
+                                        return ObjectiveState.Active;
+                                    }
+                                    if (!_os.IsPlayingNewConnectionAnimation)
+                                        return ObjectiveState.Complete;
+                                }
+                                ride += time.ElapsedGameTime.TotalSeconds;
+                                return ObjectiveState.Active;
+                            }
                         }
                     }
                     ride += time.ElapsedGameTime.TotalSeconds;
@@ -94,22 +117,16 @@ namespace Peacenet.Missions.Prologue
                     }
                     return ObjectiveState.Active;
                 });
-                yield return new Objective("A system has just connected to you.", "That's not good. Another person within The Peacenet has just connected to you. You'll need to either change your IP address or hack them back to get them off your system. Since you cannot currently change your IP address, you'll need to counter-attack. Find this person's IP by typing the 'connections' command in your Terminal. HURRY, before this person does damage.", (time) =>
+                yield return new Objective("A system has just connected to you.", "Quick! Run 'connections' to find out the IP address of the system!", (time) =>
                 {
                     if(ride == 0)
                     {
-                        _countdown = _plexgate.New<ObjectiveCountdownEntity>();
-                        _plexgate.GetLayer(LayerType.Foreground).AddEntity(_countdown);
-                        _countdown.TimedOut += () =>
-                        {
-                            ride = 2;
-                        };
+                        _objConnectionsCmdRun = false;
                         ride += 1;
                     }
-                    if (ride == 2)
-                        return ObjectiveState.Failed;
-                    else
-                        return ObjectiveState.Active;
+                    if (_objConnectionsCmdRun)
+                        return ObjectiveState.Complete;
+                    return ObjectiveState.Active;
                 });
 
             }
@@ -122,22 +139,38 @@ namespace Peacenet.Missions.Prologue
             _themeInstance.IsLooped = true;
             _themeInstance.Play();
             base.OnStart();
+            Applications.ShellCommand.OnCommandRun += ShellCommand_OnCommandRun;
+        }
+
+        private void ShellCommand_OnCommandRun(WatercolorGames.CommandLine.CommandInstruction instruction)
+        {
+            if (instruction.OutputFile == null && instruction.Commands.First() == "connections")
+                _objConnectionsCmdRun = true;
+
         }
 
         public override void OnEnd()
         {
+            Applications.ShellCommand.OnCommandRun -= ShellCommand_OnCommandRun;
             _themeInstance.Stop();
             base.OnEnd();
         }
     }
 
-    public class ObjectiveCountdownEntity : IEntity
+    public class ObjectiveCountdownEntity : IEntity, ILoadable
     {
         [Dependency]
         private Plexgate _plexgate = null;
 
         [Dependency]
         private ThemeManager _theme = null;
+
+        private double _secondCounter = 1;
+        private int _tickTock = 0;
+
+        private SoundEffect _tick = null;
+        private SoundEffect _tock = null;
+        private SoundEffect _beep = null;
 
         private double _timeout = 60;
 
@@ -175,14 +208,68 @@ namespace Peacenet.Missions.Prologue
         {
         }
 
+        private int _warnCount = 0;
+        private double _warnTime = 0;
+
         public void Update(GameTime time)
         {
             _timeout -= time.ElapsedGameTime.TotalSeconds;
-            if(_timeout <= 0)
+            if(_timeout < 30)
+            {
+                if(_warnCount == 0)
+                {
+                    _warnCount++;
+                    _beep.Play();
+                }
+            }
+            if (_timeout < 15)
+            {
+                if (_warnCount == 1)
+                {
+                    _warnCount++;
+                    _beep.Play();
+                }
+            }
+            if (_timeout <= 11)
+            {
+                _warnTime += time.ElapsedGameTime.TotalSeconds;
+                if(_warnTime >= ((_timeout < 5) ? 0.5 : 1))
+                {
+                    _warnTime = 0;
+                    _beep.Play();
+                }
+            }
+
+            if(_secondCounter>=1)
+            {
+                _secondCounter = 0;
+                switch (_tickTock)
+                {
+                    case 0:
+                        _tick.Play();
+                        _tickTock = 1;
+                        break;
+                    case 1:
+                        _tock.Play();
+                        _tickTock = 0;
+                        break;
+                }
+
+            }
+            _secondCounter += time.ElapsedGameTime.TotalSeconds;
+
+            if (_timeout <= 0)
             {
                 _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
                 TimedOut?.Invoke();
             }
+        }
+
+        public void Load(ContentManager content)
+        {
+            _beep = content.Load<SoundEffect>("SFX/pcspkr");
+            _tick = content.Load<SoundEffect>("SFX/SniffClick_360_01");
+            _tock = content.Load<SoundEffect>("SFX/ClickFlam_SP_10_441");
         }
     }
 }

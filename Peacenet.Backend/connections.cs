@@ -52,11 +52,11 @@ namespace Peacenet.Backend
                 console.WriteLine($"Connections for {_ipbackend.GetIPString(ip.Address)}:\n\n");
                 foreach(var connection in _ipbackend.GetConnectionsTo(ip.Address))
                 {
-                    console.WriteLine($"From {_ipbackend.GetIPString(connection.From)} to you.");
+                    console.WriteLine($"From {_ipbackend.GetIPString(connection.From)} to you on port {connection.Port}.");
                 }
                 foreach (var connection in _ipbackend.GetConnectionsFrom(ip.Address))
                 {
-                    console.WriteLine($"From you to {_ipbackend.GetIPString(connection.To)}.");
+                    console.WriteLine($"From you to {_ipbackend.GetIPString(connection.To)} on port {connection.Port}.");
                 }
             }
         }
