@@ -58,7 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TokenizerThingy\WatercolorGames.CommandLine.csproj">
+    <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>
       <Name>WatercolorGames.CommandLine</Name>
     </ProjectReference>

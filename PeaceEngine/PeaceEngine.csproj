@@ -231,7 +231,7 @@
       <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
       <Name>Peacenet.Objects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TokenizerThingy\WatercolorGames.CommandLine.csproj">
+    <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
       <Project>{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}</Project>
       <Name>WatercolorGames.CommandLine</Name>
     </ProjectReference>

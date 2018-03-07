@@ -1,6 +1,0 @@
-{
-	Name: "Cowsay Banana Cowfile",
-	Description: "It's fun to play with food. Especially in the form of a cowfile. This install file adds a Banana to Cowsay's cowfile list. To use it, simply do \"cowsay --id Hello --file banana\".",
-	SourceType: "CowFile",
-	Source: "banana\t\"-..___     __.='>\r\n`.     \"\"\"\"\"   ,'\r\n  \"-..__   _.-\"\r\n        \"\"\""
-}
