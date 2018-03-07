@@ -77,6 +77,14 @@ namespace Plex.Engine.GUI
             }
         }
 
+        protected override bool CanBeScrolled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {

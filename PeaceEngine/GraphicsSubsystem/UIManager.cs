@@ -198,7 +198,7 @@ namespace Plex.Engine.GraphicsSubsystem
                 _debugUpdTimer += time.ElapsedGameTime.TotalSeconds;
                 if (_debugUpdTimer >= 1)
                 {
-                    _debug = $"{Math.Round(1 / time.ElapsedGameTime.TotalSeconds)} FPS | {GC.GetTotalMemory(false) / 1048576} MiB RAM | {Math.Round(_debugCpu.NextValue())}% CPU";
+                    _debug = $"{Math.Round(1 / time.ElapsedGameTime.TotalSeconds)} FPS | {GC.GetTotalMemory(false) / 1048576} MiB RAM | {Math.Round(_debugCpu.NextValue())}% CPU | Mouse scroll value: {_lastScrollValue}";
                     _debugUpdTimer %= 1;
                 }
                 ctx.Batch.DrawString(_monospace, _debug, Vector2.Zero, Color.White);

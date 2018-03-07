@@ -16,6 +16,7 @@ namespace Plex.Engine.GUI
         private bool _autosize = false;
         private bool _needsLayout = true;
 
+
         /// <summary>
         /// Gets or sets whether the panel should auto-size based on its contents.
         /// </summary>
