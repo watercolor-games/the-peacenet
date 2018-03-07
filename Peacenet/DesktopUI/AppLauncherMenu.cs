@@ -19,6 +19,7 @@ namespace Peacenet.DesktopUI
         //App Launcher is a two-column display.
         private ListView _applications = new ListView();
         private ListView _places = new ListView();
+        private Button _systemSettings = new Button();
 
         private bool _closeOnFocusLoss = true;
 
@@ -86,11 +87,13 @@ namespace Peacenet.DesktopUI
             _hostname = new Label();
             _username = new Label();
             _shutdown = new Button();
+            _systemSettings = new Button();
 
             //Set text
             _shutdown.Text = "Exit Peacegate";
             _username.Text = (_itch.LoggedIn) ? _itch.User.display_name : "User";
             _hostname.Text = _os.GetHostname();
+            _systemSettings.Text = "System settings";
 
             //Add all of our ui elements.
             AddChild(_appsView);
@@ -98,6 +101,7 @@ namespace Peacenet.DesktopUI
             AddChild(_username);
             AddChild(_hostname);
             AddChild(_shutdown);
+            AddChild(_systemSettings);
 
             //Add list views to their scrollviews.
             _appsView.AddChild(_applications);
@@ -185,6 +189,14 @@ namespace Peacenet.DesktopUI
                 });
 
             };
+
+            _systemSettings.Click += (o, a) =>
+            {
+                var settings = new GameSettings(this.WindowSystem);
+                settings.Show();
+                Close();
+            };
+
             base.Show(x, y);
         }
 
@@ -230,9 +242,13 @@ namespace Peacenet.DesktopUI
             _places.Width = _applications.Width;
             _placesView.Height = _appsView.Height;
 
-            _shutdown.Y = _placesView.Y + _placesView.Height + 3;
-            _shutdown.X = (Width - _shutdown.Width) - 3;
-            Height = _shutdown.Y + _shutdown.Height + 3;
+            _shutdown.Y = _placesView.Y + _placesView.Height + 5;
+            _shutdown.X = (Width - _shutdown.Width) - 5;
+
+            _systemSettings.Y = _shutdown.Y;
+            _systemSettings.X = (_shutdown.X - _systemSettings.Width) - 3;
+
+            Height = _shutdown.Y + _shutdown.Height + 5;
 
             base.OnUpdate(time);
         }

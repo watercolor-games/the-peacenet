@@ -15,7 +15,6 @@ namespace Peacenet.Applications
     /// <summary>
     /// Provides a GUI for managing Peace engine configuration values.
     /// </summary>
-    [AppLauncher("System settings", "System")]
     public class GameSettings : Window
     {
         [Dependency]
