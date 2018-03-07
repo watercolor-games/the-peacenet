@@ -37,6 +37,14 @@ namespace Plex.Engine.GUI
         private float _opacity = 1;
         private bool _enabled = true;
 
+        protected virtual bool CanBeScrolled
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Gets or sets whether this control is enabled. If not, the control will not receive mouse or keyboard events, and will be visually grayed out.
         /// </summary>
@@ -103,6 +111,22 @@ namespace Plex.Engine.GUI
             {
                 return _userfacingtarget;
             }
+        }
+
+        internal bool PropagateScrollDelta(int delta)
+        {
+            foreach (var control in Children.OrderBy(x => Array.IndexOf(Children, x)))
+                if (control.PropagateScrollDelta(delta))
+                    return true;
+            if(CanBeScrolled)
+            {
+                if (ContainsMouse)
+                {
+                    OnMouseScroll(delta);
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

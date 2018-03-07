@@ -59,6 +59,7 @@ namespace Plex.Engine.GraphicsSubsystem
         private class UIContainer : IEntity, ILoadable, IDisposable
         {
             private bool _doInput = true;
+            private int _lastScrollValue = 0;
 
             public bool DoInput
             {
@@ -262,6 +263,14 @@ namespace Plex.Engine.GraphicsSubsystem
                         if (ctrl.PropagateMouseState(mouse))
                             hasBeenHandled = true;
                     }
+                }
+
+                if(mouse.ScrollWheelValue != _lastScrollValue)
+                {
+                    foreach (var ctrl in controls)
+                        if (ctrl.PropagateScrollDelta(mouse.ScrollWheelValue - _lastScrollValue))
+                            break;
+                    _lastScrollValue = mouse.ScrollWheelValue;
                 }
             }
 
