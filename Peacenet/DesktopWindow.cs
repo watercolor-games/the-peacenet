@@ -10,10 +10,11 @@ using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Saves;
-using Plex.Engine.Filesystem;
+using Peacenet.Filesystem;
 using Peacenet.CoreUtils;
 using Peacenet.Server;
 using Peacenet.DesktopUI;
+using Peacenet.Filesystem;
 
 namespace Peacenet
 {
@@ -176,6 +177,12 @@ namespace Peacenet
             _notificationDescription.AutoSize = true;
             _notificationDescription.MaxWidth = 450;
             _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
+
+            _fs.WriteOperation += (path) =>
+            {
+                if (path.StartsWith("/home/Desktop"))
+                    _needsDesktopReset = true;
+            };
         }
 
         /// <summary>
@@ -247,8 +254,7 @@ namespace Peacenet
         }
 
         private bool _needsDesktopReset = true;
-        private double _desktopResetTimer = 0.0;
-
+        
         [Dependency]
         private FSManager _fs = null;
 
@@ -435,20 +441,8 @@ namespace Peacenet
             {
                 if (_needsDesktopReset)
                 {
-                    _desktopResetTimer = 0;
-                    Task.Run(() =>
-                    {
-                        SetupIcons();
-                    });
+                    SetupIcons();
                     _needsDesktopReset = false;
-                }
-                else
-                {
-                    _desktopResetTimer += time.ElapsedGameTime.TotalSeconds;
-                    if (_desktopResetTimer >= 10)
-                    {
-                        _needsDesktopReset = true;
-                    }
                 }
             }
             else

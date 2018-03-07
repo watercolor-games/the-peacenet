@@ -88,6 +88,7 @@
     <Compile Include="Cutscene\CreditsScene.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
+    <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="InfoboxManager.cs" />
     <Compile Include="InitCommand.cs" />
     <Compile Include="ItchOAuthClient.cs" />

@@ -11,8 +11,9 @@ using Plex.Engine.Config;
 using System.IO;
 using Plex.Objects.PlexFS;
 using Plex.Objects.ShiftFS;
+using Plex.Engine;
 
-namespace Plex.Engine.Filesystem
+namespace Peacenet.Filesystem
 {
     /// <summary>
     /// Provides a simple asynchronous API with alternative synchronous methods for interacting with a virtual file system.
@@ -23,6 +24,8 @@ namespace Plex.Engine.Filesystem
 
         [Dependency]
         private Plexgate _plexgate = null;
+
+        public event Action<string> WriteOperation;
 
         /// <summary>
         /// Read all text (in UTF8) of a file.
@@ -77,6 +80,7 @@ namespace Plex.Engine.Filesystem
         public void CreateDirectory(string path)
         {
             _backend.CreateDirectory(path);
+            WriteOperation?.Invoke(path);
         }
 
         /// <summary>
@@ -139,6 +143,7 @@ namespace Plex.Engine.Filesystem
             if (data == null)
                 data = new byte[0];
             _backend.WriteAllBytes(path, data);
+            WriteOperation?.Invoke(path);
         }
 
         /// <summary>
@@ -148,6 +153,7 @@ namespace Plex.Engine.Filesystem
         public void Delete(string path)
         {
             _backend.Delete(path);
+            WriteOperation?.Invoke(path);
         }
 
         /// <summary>
@@ -165,6 +171,7 @@ namespace Plex.Engine.Filesystem
             await Task.Run(() =>
             {
                 _backend.CreateDirectory(path);
+                WriteOperation?.Invoke(path);
             });
         }
 
@@ -229,6 +236,7 @@ namespace Plex.Engine.Filesystem
             await Task.Run(() =>
             {
                 _backend.WriteAllBytes(path, bytes);
+                WriteOperation?.Invoke(path);
             });
         }
 
@@ -238,6 +246,7 @@ namespace Plex.Engine.Filesystem
             await Task.Run(() =>
             {
                 _backend.Delete(path);
+                WriteOperation?.Invoke(path);
             });
         }
 

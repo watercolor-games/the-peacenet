@@ -152,7 +152,6 @@
     <Compile Include="Cutscene\Cutscene.cs" />
     <Compile Include="Cutscene\CutsceneManager.cs" />
     <Compile Include="DependencyAttribute.cs" />
-    <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="GraphicsSubsystem\GraphicsContext.cs" />
     <Compile Include="GraphicsSubsystem\UIManager.cs" />
     <Compile Include="GUI\Button.cs" />
