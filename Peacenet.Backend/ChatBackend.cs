@@ -70,7 +70,19 @@ namespace Peacenet.Backend
                     writer.Write(recipientName);
                     writer.Write(message);
                     writer.Flush();
-                    _backend.Broadcast(ServerBroadcastType.Chat_MessageReceived, ms.ToArray());
+                    if(recipientEntity==null)
+                        _backend.Broadcast(ServerBroadcastType.Chat_MessageReceived, ms.ToArray());
+                    else
+                    {
+                        if(_entityBackend.GetPlayerId(recipientEntity) != null)
+                        {
+                            _backend.BroadcastToPlayer(ServerBroadcastType.Chat_MessageReceived, ms.ToArray(), _entityBackend.GetPlayerId(recipientEntity));
+                        }
+                        if (_entityBackend.GetPlayerId(authorEntity) != null)
+                        {
+                            _backend.BroadcastToPlayer(ServerBroadcastType.Chat_MessageReceived, ms.ToArray(), _entityBackend.GetPlayerId(authorEntity));
+                        }
+                    }
                 }
             }
         }
