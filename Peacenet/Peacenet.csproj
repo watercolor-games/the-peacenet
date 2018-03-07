@@ -215,13 +215,13 @@
       <Project>{d0d04db3-08c9-4ea9-b64a-69596dbb9657}</Project>
       <Name>Peacenet.Backend</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShiftOS.Objects\Plex.Objects.csproj">
+    <ProjectReference Include="..\Peacenet.Objects\Peacenet.Objects.csproj">
       <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
-      <Name>Plex.Objects</Name>
+      <Name>Peacenet.Objects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShiftOS_TheReturn\Plex.Engine.csproj">
+    <ProjectReference Include="..\PeaceEngine\PeaceEngine.csproj">
       <Project>{7c979b07-0585-4033-a110-e5555b9d6651}</Project>
-      <Name>Plex.Engine</Name>
+      <Name>PeaceEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\TokenizerThingy\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>

@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Engine", "ShiftOS_TheReturn\Plex.Engine.csproj", "{7C979B07-0585-4033-A110-E5555B9D6651}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeaceEngine", "PeaceEngine\PeaceEngine.csproj", "{7C979B07-0585-4033-A110-E5555B9D6651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Objects", "ShiftOS.Objects\Plex.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.Objects", "Peacenet.Objects\Peacenet.Objects.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Server", "Plex.Server\Plex.Server.csproj", "{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.Server", "Peacenet.Server\Peacenet.Server.csproj", "{54B1A6BA-F465-4DF7-BA4C-56EA5D2B9326}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine", "TokenizerThingy\WatercolorGames.CommandLine.csproj", "{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine", "WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj", "{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine.Testing", "WatercolorGames.CommandLine.Testing\WatercolorGames.CommandLine.Testing.csproj", "{5DEC12B1-CA32-4480-942C-7AA06147BA3D}"
 EndProject
@@ -114,5 +114,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BBFE62BF-43A0-469A-8557-B9F2D1F2FF32}
 	EndGlobalSection
 EndGlobal
