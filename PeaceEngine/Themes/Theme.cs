@@ -17,6 +17,13 @@ namespace Plex.Engine.Themes
     public abstract class Theme
     {
         /// <summary>
+        /// Retrieves the width (in pixels) of a scroll bar.
+        /// </summary>
+        public abstract int ScrollbarSize { get; }
+
+        public abstract void DrawScrollbar(GraphicsContext gfx, Hitbox upArrow, Hitbox downArrow, Hitbox scrollNub);
+
+        /// <summary>
         /// Load theme resources into memory.
         /// </summary>
         /// <param name="device">A <see cref="GraphicsDevice"/> representing the game's primary graphics device - useful for creating textures at runtime for your theme.</param>

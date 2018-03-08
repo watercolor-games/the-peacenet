@@ -17,6 +17,8 @@ namespace Plex.Engine.GUI
         private Control _host = null;
         private int _scrollHeight = 0;
 
+        private ScrollBar _scrollBar = null;
+
         /// <inheritdoc/>
         public override void AddChild(Control child)
         {
@@ -28,6 +30,8 @@ namespace Plex.Engine.GUI
             _scrollOffset = 0;
             child.WidthChanged += Child_WidthChanged;
             child.MouseScroll += OnMouseScroll;
+            _scrollBar = new ScrollBar();
+            base.AddChild(_scrollBar);
             _needsLayout = true;
         }
 
@@ -42,6 +46,7 @@ namespace Plex.Engine.GUI
                 _host = null;
                 _needsLayout = true;
                 _scrollOffset = 0;
+                base.RemoveChild(_scrollBar);
             }
         }
 
@@ -72,6 +77,8 @@ namespace Plex.Engine.GUI
                 _host.Y = 0 - _scrollOffset;
                 Width = _host.Width;
                 _scrollHeight = _host.Height;
+                _scrollBar.PreferredScrollHeight = _scrollHeight;
+                _scrollBar.ScrollOffset = _scrollOffset;
                 base.OnUpdate(time);
                 _needsLayout = false;
             }

@@ -18,6 +18,27 @@ namespace Peacenet
     /// </summary>
     public class PeacenetTheme : Theme
     {
+        public override int ScrollbarSize
+        {
+            get
+            {
+                return 17;
+            }
+        }
+
+        public override void DrawScrollbar(GraphicsContext gfx, Hitbox upArrow, Hitbox downArrow, Hitbox scrollNub)
+        {
+            DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
+
+            var accent = GetAccentColor();
+
+            gfx.DrawRectangle(upArrow.X, upArrow.Y, upArrow.Width, upArrow.Height, _bgLight);
+            gfx.DrawRectangle(downArrow.X, downArrow.Y, downArrow.Width, downArrow.Height, _bgLight);
+
+            gfx.DrawRectangle(scrollNub.X, scrollNub.Y, scrollNub.Width, scrollNub.Height, accent);
+
+        }
+
         //New theme variables
         private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
 
