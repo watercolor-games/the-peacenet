@@ -30,6 +30,26 @@ namespace Peacenet.Applications
         [Dependency]
         private Plexgate _plexgate = null;
 
+        private int _scrollOffset = 0;
+
+        protected override bool CanBeScrolled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        protected override void OnMouseScroll(int delta)
+        {
+            if(_emulator.Height < Height)
+            {
+                _scrollOffset = 0;
+                return;
+            }
+            _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, _emulator.Height - Height);
+        }
+
         private ScrollBar _scrollbar = new ScrollBar();
 
         private TerminalEmulator _emulator = null;
@@ -91,17 +111,25 @@ namespace Peacenet.Applications
         }
 
         private int _lastEmulatorY = -1;
+        private int _lastEmulatorHeight = 0;
+
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
             _emulator.X = 0;
 
+            if(_lastEmulatorHeight!=_emulator.Height)
+            {
+                _lastEmulatorHeight = _emulator.Height;
+                _scrollOffset = 0;
+            }
+
             _scrollbar.PreferredScrollHeight = _emulator.Height;
 
             if (_emulator.Height > Height)
             {
-                int diff_y = _emulator.Height - Height;
+                int diff_y = (_emulator.Height - Height) - _scrollOffset;
                 _scrollbar.ScrollOffset = diff_y;
                 _emulator.Y = 0 - diff_y;
             }
