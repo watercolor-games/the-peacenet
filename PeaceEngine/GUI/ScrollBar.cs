@@ -109,9 +109,9 @@ namespace Plex.Engine.GUI
             _downArrow.Y = Height - _downArrow.Height;
 
             //Grab the percentage of space taken up by the viewport.
-            float viewportSpace = Height / _scrollHeight;
+            float viewportSpace = (float)Height / (float)_scrollHeight;
             //Grab the percentage at which the scroll offset is.
-            float offsetPercentage = _scrollOffset / _scrollHeight;
+            float offsetPercentage = (float)_scrollOffset / (float)_scrollHeight;
 
             //This is where the scroll display area starts (Y axis)
             int startY = _upArrow.Height;

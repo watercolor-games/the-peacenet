@@ -30,6 +30,8 @@ namespace Peacenet.Applications
         [Dependency]
         private Plexgate _plexgate = null;
 
+        private ScrollBar _scrollbar = new ScrollBar();
+
         private TerminalEmulator _emulator = null;
         private Task _shellJob = null;
 
@@ -57,6 +59,8 @@ namespace Peacenet.Applications
             {
                 Manager.SetFocus(_emulator);
             };
+
+            AddChild(_scrollbar);
         }
 
         /// <inheritdoc/>
@@ -92,14 +96,18 @@ namespace Peacenet.Applications
         protected override void OnUpdate(GameTime time)
         {
             _emulator.X = 0;
-            
+
+            _scrollbar.PreferredScrollHeight = _emulator.Height;
+
             if (_emulator.Height > Height)
             {
                 int diff_y = _emulator.Height - Height;
+                _scrollbar.ScrollOffset = diff_y;
                 _emulator.Y = 0 - diff_y;
             }
             else
             {
+                _scrollbar.ScrollOffset = 0;
                 _emulator.Y = 0;
             }
             if (_lastEmulatorY != _emulator.Y)
@@ -108,6 +116,8 @@ namespace Peacenet.Applications
                 Invalidate(true);
             }
             _emulator.Width = Width;
+
+
         }
 
         /// <inheritdoc/>
