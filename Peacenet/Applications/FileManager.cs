@@ -27,6 +27,8 @@ namespace Peacenet.Applications
         private Label _path = new Label();
         private TextBox _search = new TextBox();
         private Button _searchButton = new Button();
+        private Button _newFolder = new Button();
+
 
         [Dependency]
         private Plexgate _plexgate = null;
@@ -132,6 +134,7 @@ namespace Peacenet.Applications
             AddChild(_path);
             AddChild(_search);
             AddChild(_searchButton);
+            AddChild(_newFolder);
             _places.AddChild(_placesView);
             _files.AddChild(_filesView);
             Width = 800;
@@ -140,6 +143,44 @@ namespace Peacenet.Applications
 
             AddChild(_open);
             AddChild(_openField);
+
+            _newFolder.Text = "New folder";
+            _newFolder.Click += (o, a) =>
+            {
+                string folderPath = _currentDirectory;
+                _infobox.PromptText("New folder", "Please enter a name for your new folder.", (name) =>
+                {
+                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + name : folderPath + "/" + name;
+                    _fs.CreateDirectory(fullPath);
+                    _needsReset = true;
+                }, (proposedName)=>
+                {
+                    if(string.IsNullOrWhiteSpace(proposedName))
+                    {
+                        _infobox.Show("New folder", "Your folder's name must not be blank.");
+                        return false;
+                    }
+
+                    foreach(char c in proposedName)
+                    {
+                        if (char.IsLetterOrDigit(c))
+                            continue;
+                        if (c == '_' || c == ' ' || c == '-' || c == '.')
+                            continue;
+                        _infobox.Show("Invalid path character", "Your new folder's name contains an invalid character. Valid characters include any letter or number as well as '.', '_', '-' or a space.");
+                        return false;
+                    }
+
+                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + proposedName : folderPath + "/" + proposedName;
+                    if(_fs.DirectoryExists(fullPath) || _fs.FileExists(fullPath))
+                    {
+                        _infobox.Show("New folder", "A folder or file already exists with that name.");
+                        return false;
+                    }
+
+                    return true;
+                });
+            };
 
             _placesView.ItemClicked += (item) =>
             {
@@ -389,12 +430,14 @@ namespace Peacenet.Applications
             base.OnUpdate(time);
             _back.X = 5;
             _forward.X = _back.X + _back.Width + 2;
+            _newFolder.X = _forward.X + _forward.Width + 2;
+
             
             _searchButton.X = (Width - _searchButton.Width) - 5;
             _search.X = _searchButton.X - _search.Width - 2;
             _search.Y = 5;
 
-            _path.X = _forward.X + _forward.Width + 5;
+            _path.X = _newFolder.X + _newFolder.Width + 5;
             _path.AutoSize = true;
             _path.MaxWidth = (_search.X) - (_path.X) - 5;
             _path.Text = "This is your current path...";
@@ -403,6 +446,7 @@ namespace Peacenet.Applications
             _searchButton.Y = (_search.Y) + ((_search.Height - _searchButton.Height) / 2);
             _back.Y = (_search.Y) + ((_search.Height - _back.Height) / 2);
             _forward.Y = (_search.Y) + ((_search.Height - _forward.Height) / 2);
+            _newFolder.Y = _forward.Y;
 
             _open.Visible = _isDialog;
             _openField.Visible = _isDialog;
