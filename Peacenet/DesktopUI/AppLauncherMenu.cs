@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 using Plex.Engine;
 using Peacenet.Filesystem;
 using Peacenet.Applications;
+using Microsoft.Xna.Framework.Graphics;
+using Peacenet.Server;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Peacenet.DesktopUI
 {
@@ -16,10 +19,18 @@ namespace Peacenet.DesktopUI
     /// </summary>
     public class AppLauncherMenu : Window
     {
-        //App Launcher is a two-column display.
-        private ListView _applications = new ListView();
-        private ListView _places = new ListView();
-        private Button _systemSettings = new Button();
+        private PictureBox _userIcon = null;
+        private Label _userFullName = null;
+        private Label _userHostname = null;
+
+        private Stacker _appsCategoryStacker = null;
+        private Stacker _appsStacker = null;
+
+        private Control _currentPage = null;
+
+        private ScrollView _scroller = null;
+
+        private int _page = 0;
 
         private bool _closeOnFocusLoss = true;
 
@@ -38,18 +49,6 @@ namespace Peacenet.DesktopUI
             }
         }
 
-        //...These two columns are scrollable.
-        private ScrollView _appsView = new ScrollView();
-        private ScrollView _placesView = new ScrollView();
-
-        //There's also a label at the top that shows the username.
-        private Label _username = new Label();
-        //The top bar also shows the hostname.
-        private Label _hostname = new Label();
-
-        //We also have a shutdown button at the bottom.
-        private Button _shutdown = new Button();
-
         //Here are some engine dependencies.
         [Dependency]
         private ItchOAuthClient _itch = null;
@@ -61,6 +60,17 @@ namespace Peacenet.DesktopUI
         private AppLauncherManager _al = null;
         [Dependency]
         private InfoboxManager _infobox = null;
+        [Dependency]
+        private Plexgate _plexgate = null;
+        [Dependency]
+        private AsyncServerManager _server = null;
+
+        private AppLauncherSectionButton _apps = new AppLauncherSectionButton();
+        private AppLauncherSectionButton _computer = new AppLauncherSectionButton();
+        private AppLauncherSectionButton _settings = new AppLauncherSectionButton();
+        private AppLauncherSectionButton _history = new AppLauncherSectionButton();
+        private AppLauncherSectionButton _leave = new AppLauncherSectionButton();
+
 
         private DesktopWindow _desktop = null;
 
@@ -69,8 +79,9 @@ namespace Peacenet.DesktopUI
         {
             _desktop = desktop;
 
-            //Set our width - height can be dealt with later.
-            Width = 475;
+            //Set the width and height
+            Width = 484;
+            Height = 628;
 
             //Also, we want to be border-less.
             SetWindowStyle(WindowStyle.NoBorder);
@@ -79,125 +90,135 @@ namespace Peacenet.DesktopUI
         /// <inheritdoc/>
         public override void Show(int x = -1, int y = -1)
         {
-            //Instantiate all ui elements
-            _appsView = new ScrollView();
-            _placesView = new ScrollView();
-            _applications = new ListView();
-            _places = new ListView();
-            _hostname = new Label();
-            _username = new Label();
-            _shutdown = new Button();
-            _systemSettings = new Button();
+            _userIcon = new PictureBox();
+            _userFullName = new Label();
+            _userHostname = new Label();
 
-            //Set text
-            _shutdown.Text = "Exit Peacegate";
-            _username.Text = (_itch.LoggedIn) ? _itch.User.display_name : "User";
-            _hostname.Text = _os.GetHostname();
-            _systemSettings.Text = "System settings";
+            AddChild(_userIcon);
+            AddChild(_userFullName);
+            AddChild(_userHostname);
 
-            //Add all of our ui elements.
-            AddChild(_appsView);
-            AddChild(_placesView);
-            AddChild(_username);
-            AddChild(_hostname);
-            AddChild(_shutdown);
-            AddChild(_systemSettings);
+            _userFullName.AutoSize = true;
+            _userHostname.AutoSize = true;
+            _userFullName.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
 
-            //Add list views to their scrollviews.
-            _appsView.AddChild(_applications);
-            _placesView.AddChild(_places);
+            _userIcon.Width = 72;
+            _userIcon.Height = 72;
 
-            //Now, make the list views show List mode
-            _applications.Layout = ListViewLayout.List;
-            _places.Layout = ListViewLayout.List;
+            _userIcon.Texture = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/SinglePlayer");
 
-            //Add shell directories
-            foreach(var shelldir in _os.GetShellDirs())
+            _userFullName.Text = (_itch.LoggedIn) ? _itch.User.display_name : "Peacegate OS User";
+            if (string.IsNullOrWhiteSpace(_userFullName.Text))
+                _userFullName.Text = "Peacegate OS User";
+            string itchUsername = (_itch.LoggedIn) ? _itch.User.username : "user";
+            string hostname = _os.GetHostname();
+            string osEdition = _server.IsMultiplayer ? "Peacegate OS for Sentient Programs" : "Peacegate OS for Peacenet Uplink Kiosks - Pre-deployment Mode";
+
+            _userHostname.Text = $"{itchUsername}@{hostname} ({osEdition})";
+
+            _apps = new AppLauncherSectionButton();
+            _computer = new AppLauncherSectionButton();
+            _settings = new AppLauncherSectionButton();
+            _history = new AppLauncherSectionButton();
+            _leave = new AppLauncherSectionButton();
+
+            AddChild(_apps);
+            AddChild(_computer);
+            AddChild(_settings);
+            AddChild(_history);
+            AddChild(_leave);
+
+            _apps.Name = "Apps";
+            _computer.Name = "Computer";
+            _settings.Name = "Settings";
+            _history.Name = "History";
+            _leave.Name = "Leave";
+
+            _apps.Activated += () =>
             {
-                _places.SetImage(shelldir.FriendlyName, shelldir.Texture);
-                var lvitem = new ListViewItem(_places);
-                lvitem.Value = shelldir.FriendlyName;
-                lvitem.ImageKey = shelldir.FriendlyName;
-                lvitem.Tag = shelldir.Path;
+                _page = 0;
+            };
+            _computer.Activated += () =>
+            {
+                _page = 2;
+            };
+            _settings.Activated += () =>
+            {
+                _page = 3;
+            };
+            _history.Activated += () =>
+            {
+                _page = 4;
+            };
+            _leave.Activated += () =>
+            {
+                _page = 5;
+            };
+
+            _scroller = new ScrollView();
+
+            AddChild(_scroller);
+
+            _appsStacker = new Stacker();
+            _appsCategoryStacker = new Stacker();
+
+            _appsStacker.AutoSize = true;
+            _appsCategoryStacker.AutoSize = true;
+            
+            foreach(var cat in _al.GetAllCategories())
+            {
+                var item = new AppLauncherItem();
+                item.Name = cat;
+                item.Description = cat;
+                item.Activated += () =>
+                {
+                    _page = 1;
+                    SetupCategory(cat);
+                    ResetUI();
+                };
+                _appsStacker.AddChild(item);
             }
 
-            //Populate the main event.
-            List<AppLauncherItem> items = new List<AppLauncherItem>();
-            foreach (var cat in _al.GetAllCategories())
-                foreach (var item in _al.GetAllInCategory(cat))
-                    items.Add(item);
-            foreach(var item in items.OrderBy(z=>z.Attribute.Name))
-            {
-                var lvitem = new ListViewItem(_applications);
-                lvitem.ImageKey = item.Attribute.Name;
-                lvitem.Value = item.Attribute.Name;
-                lvitem.Tag = item.WindowType;
-            }
-
-            //When a place is selected, open it.
-            _places.SelectedIndexChanged += (o, a) =>
-            {
-                var item = _places.SelectedItem;
-                if (item != null)
-                {
-                    Task.Run(() =>
-                    {
-                        var fb = new FileManager(WindowSystem);
-                        fb.SetCurrentDirectory(item.Tag.ToString());
-                        fb.Show();
-                    });
-                    Close();
-                }
-            };
-            //When an app is selected, open it.
-            _applications.SelectedIndexChanged += (o, a) =>
-            {
-                var item = _applications.SelectedItem;
-                if (item != null)
-                {
-                    var wintype = (item.Tag as Type);
-                    var window = Activator.CreateInstance(wintype, new[] { WindowSystem });
-                    (window as Window).Show();
-                    Close();
-                }
-            };
-
-            _shutdown.Click += (o, a) =>
-            {
-                foreach(var win in WindowSystem.WindowList)
-                {
-                    win.Border.Enabled = false;
-                }
-                _infobox.ShowYesNo("Exit Peacegate OS", "Are you sure you want to exit Peacegate OS and shut down your computer?", (answer) =>
-                {
-                    if (answer)
-                    {
-                        foreach(var window in WindowSystem.WindowList)
-                        {
-                            if (window.Border != _desktop.Parent)
-                                WindowSystem.Close(window.WindowID);
-                        }
-                        _desktop.Shutdown();
-                    }
-                    else
-                    {
-                        foreach (var win in WindowSystem.WindowList)
-                        {
-                            win.Border.Enabled = true;
-                        }
-                    }
-                });
-
-            };
-
-            _systemSettings.Click += (o, a) =>
-            {
-                var settings = new GameSettings(this.WindowSystem);
-                settings.Show();
-                Close();
-            };
+            ResetUI();
 
             base.Show(x, y);
+        }
+
+        private void SetupCategory(string category)
+        {
+            _appsCategoryStacker.Clear();
+            foreach(var item in _al.GetAllInCategory(category))
+            {
+                var albutton = new AppLauncherItem();
+                albutton.Name = item.Attribute.Name;
+                albutton.Description = item.Attribute.Category;
+                albutton.Activated += () =>
+                {
+                    var win = (Window)Activator.CreateInstance(item.WindowType, new[] { WindowSystem });
+                    win.Show();
+                };
+                _appsCategoryStacker.AddChild(albutton);
+            }
+        }
+
+        private void ResetUI()
+        {
+            _scroller.Clear();
+            _currentPage = null;
+            switch(_page)
+            {
+                case 0:
+                    _currentPage = _appsStacker;
+                    break;
+                case 1:
+                    _currentPage = _appsCategoryStacker;
+                    break;
+            }
+            if (_currentPage != null)
+                _scroller.AddChild(_currentPage);
+
+            if(Manager != null)
+                Manager.SetFocus(this);
         }
 
         private bool _allowShutdowns = true;
@@ -223,34 +244,333 @@ namespace Peacenet.DesktopUI
             if (!HasFocused)
                 if(_closeOnFocusLoss)
                     Close();
-            _shutdown.Enabled = _allowShutdowns;
-            _username.X = 3;
-            _username.Y = 3;
-            _username.AutoSize = true;
-            _username.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
-            _hostname.X = 3;
-            _hostname.Y = _username.Y + _username.Height + 3;
-            _hostname.AutoSize = true;
-            _hostname.FontStyle = Plex.Engine.Themes.TextFontStyle.System;
 
-            _appsView.X = 0;
-            _appsView.Y = _hostname.Y + _hostname.Height + 3;
-            _applications.Width = (Width / 2);
-            _appsView.Height = 450;
-            _placesView.X = _applications.Width;
-            _placesView.Y = _appsView.Y;
-            _places.Width = _applications.Width;
-            _placesView.Height = _appsView.Height;
+            int widthWithPadding = Width - 30;
+            int widthAvailableForUserInfo = (widthWithPadding - _userIcon.Width) - 15;
 
-            _shutdown.Y = _placesView.Y + _placesView.Height + 5;
-            _shutdown.X = (Width - _shutdown.Width) - 5;
+            _userFullName.MaxWidth = widthAvailableForUserInfo;
+            _userHostname.MaxWidth = widthAvailableForUserInfo;
 
-            _systemSettings.Y = _shutdown.Y;
-            _systemSettings.X = (_shutdown.X - _systemSettings.Width) - 3;
+            _userIcon.X = 15;
+            _userFullName.X = _userIcon.X + _userIcon.Width + 7;
+            _userHostname.X = _userFullName.X;
 
-            Height = _shutdown.Y + _shutdown.Height + 5;
+            int userInfoHeight = _userFullName.Height + 5 + _userHostname.Height;
+
+            if(Math.Max(userInfoHeight, _userIcon.Height) == _userIcon.Height)
+            {
+                _userIcon.Y = (Height - _userIcon.Height) - 15;
+            }
+            else
+            {
+                _userIcon.Y = (Height - userInfoHeight) - 15;
+            }
+
+            _userFullName.Y = _userIcon.Y;
+            _userHostname.Y = _userFullName.Y + _userFullName.Height + 5;
+
+            _apps.X = 2;
+            _apps.Y = 2;
+
+            _computer.X = _apps.X + _apps.Width;
+            _computer.Y = 2;
+
+            _settings.X = _computer.X + _computer.Width;
+            _settings.Y = 2;
+
+            _history.X = _settings.X + _settings.Width;
+            _history.Y = 2;
+
+            _leave.X = _history.X + _history.Width;
+            _leave.Y = 2;
+
+            _leave.Enabled = _allowShutdowns;
+
+            _apps.Active = (_page == 0 || _page == 1);
+            _computer.Active = _page == 2;
+            _settings.Active = _page == 3;
+            _history.Active = _page == 4;
+            _leave.Active = _page == 5;
+
+            _scroller.X = 0;
+            _scroller.Y = _apps.Y + _apps.Height;
+            if(_currentPage!=null)
+                _currentPage.Width = Width;
+            _scroller.Height = ((_userFullName.Y - 15) - _scroller.Y);
 
             base.OnUpdate(time);
+        }
+    }
+
+    public class AppLauncherSectionButton : Control
+    {
+        private PictureBox _icon = new PictureBox();
+        private Label _name = new Label();
+
+        private bool _active = false;
+
+        public bool Active
+        {
+            get
+            {
+                return _active;
+            }
+            set
+            {
+                if (_active == value)
+                    return;
+                _active = value;
+                Invalidate();
+            }
+        }
+
+        public AppLauncherSectionButton()
+        {
+            AddChild(_icon);
+            AddChild(_name);
+            Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+            _name.Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+
+            _icon.Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+        }
+
+        public Texture2D Icon
+        {
+            get
+            {
+                return _icon.Texture;
+            }
+            set
+            {
+                _icon.Texture = value;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name.Text;
+            }
+            set
+            {
+                _name.Text = value;
+            }
+        }
+
+        public event Action Activated;
+
+        protected override void OnUpdate(GameTime time)
+        {
+            Width = 96;
+            _icon.Width = 64;
+            _icon.Height = 64;
+            _icon.X = (Width - _icon.Width) / 2;
+
+            _name.AutoSize = true;
+            _name.MaxWidth = Width - 8;
+            _name.X = (Width - _name.Width) / 2;
+            _name.Alignment = TextAlignment.Center;
+
+            int totalHeight = _icon.Height + 5 + _name.Height;
+
+            Height = totalHeight + 16;
+
+            _icon.Y = (Height - totalHeight) / 2;
+            _name.Y = _icon.Y + _icon.Height + 5;
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            if(_active)
+            {
+                Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+                gfx.DrawRectangle(0, Height - 2, Width, 2, Theme.GetAccentColor());
+            }
+            else
+            {
+                if(LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                {
+                    Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+                }
+                else if(ContainsMouse)
+                {
+                    Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
+                }
+                else
+                {
+                    Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+
+                }
+            }
+        }
+    }
+
+    public class AppLauncherItem : Control
+    {
+        private PictureBox _icon = new PictureBox();
+        private Label _name = new Label();
+        private Label _description = new Label();
+
+        public event Action Activated;
+
+        public AppLauncherItem()
+        {
+            AddChild(_name);
+            AddChild(_description);
+            AddChild(_icon);
+
+            Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+            _icon.Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+            _name.Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+            _description.Click += (o, a) =>
+            {
+                Activated?.Invoke();
+            };
+
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name.Text;
+            }
+            set
+            {
+                _name.Text = value;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return _description.Text;
+            }
+            set
+            {
+                _description.Text = value;
+            }
+        }
+
+        public Texture2D Icon
+        {
+            get
+            {
+                return _icon.Texture;
+            }
+            set
+            {
+                _icon.Texture = value;
+            }
+        }
+
+        protected override void OnUpdate(GameTime time)
+        {
+            if (Parent == null)
+            {
+                Visible = false;
+                return;
+            }
+            else
+            {
+                if (Visible != true)
+                    Visible = true;
+            }
+            Width = Parent.Width;
+
+            _icon.Width = 64;
+            _icon.Height = 64;
+            _icon.X = 4;
+
+            _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+
+            _name.AutoSize = true;
+            _description.AutoSize = true;
+
+            int widthWithPadding = Width - 8;
+
+            int textWidth = (widthWithPadding - _icon.Width) - 3;
+
+            _name.MaxWidth = textWidth;
+            _description.MaxWidth = textWidth;
+
+            _name.X = _icon.X + _icon.Width + 3;
+            _description.X = _name.X;
+
+            int textHeight = _name.Height + 3 + _description.Height;
+
+            if(Math.Max(textHeight, _icon.Height) == textHeight)
+            {
+                Height = textHeight + 8;
+            }
+            else
+            {
+                Height = _icon.Height + 8;
+            }
+
+            _icon.Y = (Height - _icon.Height) / 2;
+
+            _name.Y = (Height - textHeight) / 2;
+            _description.Y = _name.Y + _name.Height + 3;
+
+            base.OnUpdate(time);
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            var accent = Theme.GetAccentColor();
+            var down = accent.Darken(0.5f);
+            var hover = accent.Darken(0.25F);
+            if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _description.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                gfx.DrawRectangle(0, 0, Width, Height, down);
+            }
+            else if (ContainsMouse)
+            {
+                gfx.DrawRectangle(0, 0, Width, Height, hover);
+            }
+            else
+            {
+                Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+            }
+        }
+    }
+
+    public class Stacker : Panel
+    {
+        protected override void OnUpdate(GameTime time)
+        {
+            int y = 0;
+            foreach(var child in Children)
+            {
+                child.Y = y;
+                child.X = 0;
+                y += child.Height;
+            }
+            if(AutoSize)
+            {
+                Height = y;
+            }
         }
     }
 }
