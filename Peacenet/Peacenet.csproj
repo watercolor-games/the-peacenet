@@ -112,6 +112,8 @@
     <Compile Include="TerminalManager.cs" />
     <Compile Include="ThemeConfigurationCommand.cs" />
     <Compile Include="Tutorial\PeacegateSetup.cs" />
+    <Compile Include="RemoteStreams.cs" />
+    <Compile Include="TerminalCommands\RemoteStreamsTestCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DocoptNet, Version=0.6.1.4, Culture=neutral, PublicKeyToken=7a38c71da49a547e, processorArchitecture=MSIL">

@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.Server", "Peacenet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine", "WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj", "{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.CommandLine.Testing", "WatercolorGames.CommandLine.Testing\WatercolorGames.CommandLine.Testing.csproj", "{5DEC12B1-CA32-4480-942C-7AA06147BA3D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.Backend", "Peacenet.Backend\Peacenet.Backend.csproj", "{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet", "Peacenet\Peacenet.csproj", "{D00E3C64-AD90-430C-87F7-A246BE4B84C2}"
@@ -75,18 +73,6 @@ Global
 		{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}.Release|x64.Build.0 = Release|Any CPU
 		{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}.Release|x86.ActiveCfg = Release|Any CPU
 		{583EDB9B-F51C-4BC9-87AD-8BC203DA5F92}.Release|x86.Build.0 = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|x64.Build.0 = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Debug|x86.Build.0 = Debug|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|x64.ActiveCfg = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|x64.Build.0 = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|x86.ActiveCfg = Release|Any CPU
-		{5DEC12B1-CA32-4480-942C-7AA06147BA3D}.Release|x86.Build.0 = Release|Any CPU
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}.Debug|x64.ActiveCfg = Debug|Any CPU

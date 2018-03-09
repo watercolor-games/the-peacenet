@@ -41,6 +41,7 @@
     <Reference Include="DocoptNet">
       <HintPath>..\packages\docopt.net.0.6.1.9\lib\net40\DocoptNet.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="SystemEntityBackend.cs" />
     <Compile Include="Terminal\TerminalManager.cs" />
     <Compile Include="World\WorldBackend.cs" />
+    <Compile Include="RemoteStreams.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Peacenet.Objects\Peacenet.Objects.csproj">

@@ -80,6 +80,11 @@ namespace Plex.Objects
         CHAT_SENDMESSAGE = 0x53,
 
         /// <summary>
+        /// Opens a memory stream with some wicked cool stuff inside it then sends you back the ID.
+        /// </summary>
+        STREAM_TEST = 0x69,
+
+        /// <summary>
         /// Perform a remote stream operation.
         /// </summary>
         STREAM_OP = 0x90,
