@@ -27,6 +27,7 @@ namespace Peacenet.DesktopUI
         private Stacker _appsStacker = null;
         private Stacker _leaveStacker = null;
         private Stacker _computerStacker = null;
+        private Stacker _settingsStacker = null;
 
         private Control _currentPage = null;
 
@@ -169,14 +170,26 @@ namespace Peacenet.DesktopUI
             _appsStacker = new Stacker();
             _appsCategoryStacker = new Stacker();
             _computerStacker = new Stacker();
+            _settingsStacker = new Stacker();
 
             _leaveStacker = new Stacker();
 
             _appsStacker.AutoSize = true;
             _appsCategoryStacker.AutoSize = true;
             _computerStacker.AutoSize = true;
+            _settingsStacker.AutoSize = true;
 
             _leaveStacker.AutoSize = true;
+
+            var systemSettings = new AppLauncherItem();
+            systemSettings.Name = "System Settings";
+            systemSettings.Description = "Adjust core settings of the Peacegate OS, such as screen resolution, audio volume, and user interface effects.";
+            systemSettings.Activated += () =>
+            {
+                var gameSettings = new GameSettings(WindowSystem);
+                gameSettings.Show();
+            };
+            _settingsStacker.AddChild(systemSettings);
 
             var leavePeacegate = new AppLauncherItem();
             leavePeacegate.Name = "Exit Peacegate";
@@ -278,6 +291,9 @@ namespace Peacenet.DesktopUI
                     break;
                 case 2:
                     _currentPage = _computerStacker;
+                    break;
+                case 3:
+                    _currentPage = _settingsStacker;
                     break;
                 case 5:
                     _currentPage = _leaveStacker;
