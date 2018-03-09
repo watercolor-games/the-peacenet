@@ -25,6 +25,8 @@ namespace Peacenet.DesktopUI
 
         private Stacker _appsCategoryStacker = null;
         private Stacker _appsStacker = null;
+        private Stacker _leaveStacker = null;
+
 
         private Control _currentPage = null;
 
@@ -137,22 +139,27 @@ namespace Peacenet.DesktopUI
             _apps.Activated += () =>
             {
                 _page = 0;
+                ResetUI();
             };
             _computer.Activated += () =>
             {
                 _page = 2;
+                ResetUI();
             };
             _settings.Activated += () =>
             {
                 _page = 3;
+                ResetUI();
             };
             _history.Activated += () =>
             {
                 _page = 4;
+                ResetUI();
             };
             _leave.Activated += () =>
             {
                 _page = 5;
+                ResetUI();
             };
 
             _scroller = new ScrollView();
@@ -162,9 +169,35 @@ namespace Peacenet.DesktopUI
             _appsStacker = new Stacker();
             _appsCategoryStacker = new Stacker();
 
+            _leaveStacker = new Stacker();
+
             _appsStacker.AutoSize = true;
             _appsCategoryStacker.AutoSize = true;
-            
+
+            _leaveStacker.AutoSize = true;
+
+            var leavePeacegate = new AppLauncherItem();
+            leavePeacegate.Name = "Exit Peacegate";
+            leavePeacegate.Description = "Exit your Peacegate OS session, closing all your open programs and terminating your connection to The Peacenet.";
+            leavePeacegate.Activated += () =>
+            {
+                foreach (var window in WindowSystem.WindowList)
+                    window.Border.Enabled = false;
+                _infobox.ShowYesNo("Exit Peacegate", "Are you sure you want to exit Peacegate OS?", (answer) =>
+                {
+                    foreach (var window in WindowSystem.WindowList)
+                        window.Border.Enabled = true;
+                    if(answer)
+                    {
+                        foreach (var window in WindowSystem.WindowList)
+                            if (window.Border != _desktop.Parent)
+                                WindowSystem.Close(window.WindowID);
+                        _desktop.Shutdown();
+                    }
+                });
+            };
+            _leaveStacker.AddChild(leavePeacegate);
+
             foreach(var cat in _al.GetAllCategories())
             {
                 var item = new AppLauncherItem();
@@ -212,6 +245,9 @@ namespace Peacenet.DesktopUI
                     break;
                 case 1:
                     _currentPage = _appsCategoryStacker;
+                    break;
+                case 5:
+                    _currentPage = _leaveStacker;
                     break;
             }
             if (_currentPage != null)
