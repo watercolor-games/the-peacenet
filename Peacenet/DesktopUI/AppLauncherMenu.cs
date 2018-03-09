@@ -26,7 +26,7 @@ namespace Peacenet.DesktopUI
         private Stacker _appsCategoryStacker = null;
         private Stacker _appsStacker = null;
         private Stacker _leaveStacker = null;
-
+        private Stacker _computerStacker = null;
 
         private Control _currentPage = null;
 
@@ -168,11 +168,13 @@ namespace Peacenet.DesktopUI
 
             _appsStacker = new Stacker();
             _appsCategoryStacker = new Stacker();
+            _computerStacker = new Stacker();
 
             _leaveStacker = new Stacker();
 
             _appsStacker.AutoSize = true;
             _appsCategoryStacker.AutoSize = true;
+            _computerStacker.AutoSize = true;
 
             _leaveStacker.AutoSize = true;
 
@@ -212,6 +214,34 @@ namespace Peacenet.DesktopUI
                 _appsStacker.AddChild(item);
             }
 
+            var runCommand = new AppLauncherItem();
+            runCommand.Name = "Run command...";
+            runCommand.Description = "Run a Terminal Command.";
+            runCommand.Activated += () =>
+            {
+                _infobox.PromptText("Run Command", "Enter a command to run.", (command) =>
+                {
+                    var terminal = new RunCommandTerminal(WindowSystem, command);
+                    terminal.Show();
+                });
+            };
+            _computerStacker.AddChild(runCommand);
+
+            foreach(var dir in _os.GetShellDirs())
+            {
+                var shellItem = new AppLauncherItem();
+                shellItem.Icon = dir.Texture;
+                shellItem.Name = dir.FriendlyName;
+                shellItem.Description = dir.Path;
+                shellItem.Activated += () =>
+                {
+                    var fm = new FileManager(WindowSystem);
+                    fm.SetCurrentDirectory(dir.Path);
+                    fm.Show();
+                };
+                _computerStacker.AddChild(shellItem);
+            }
+
             ResetUI();
 
             base.Show(x, y);
@@ -245,6 +275,9 @@ namespace Peacenet.DesktopUI
                     break;
                 case 1:
                     _currentPage = _appsCategoryStacker;
+                    break;
+                case 2:
+                    _currentPage = _computerStacker;
                     break;
                 case 5:
                     _currentPage = _leaveStacker;
@@ -607,6 +640,24 @@ namespace Peacenet.DesktopUI
             {
                 Height = y;
             }
+        }
+    }
+
+    public class RunCommandTerminal : Terminal
+    {
+        private string cmd = "";
+
+        protected override string Shell
+        {
+            get
+            {
+                return cmd;
+            }
+        }
+
+        public RunCommandTerminal(WindowSystem _winsys, string command) : base(_winsys)
+        {
+            cmd = command;
         }
     }
 }
