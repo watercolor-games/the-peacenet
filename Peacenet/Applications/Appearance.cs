@@ -36,6 +36,9 @@ namespace Peacenet.Applications
         private Label _wallpaperHeader = new Label();
         private ScrollView _wallpaperViewer = new ScrollView();
 
+        private Label _accentHeader = new Label();
+        private ListView _accentColors = new ListView();
+
         [Dependency]
         private SaveManager _save = null;
 
@@ -169,6 +172,24 @@ namespace Peacenet.Applications
                     _os.FireWallpaperChanged();
                 }
             };
+
+            foreach (var accent in Enum.GetNames(typeof(PeacenetAccentColor)))
+            {
+                var lvitem = new ListViewItem(_accentColors);
+                lvitem.Value = accent;
+                lvitem.Tag = (PeacenetAccentColor)Enum.Parse(typeof(PeacenetAccentColor), accent);
+            }
+            _accentColors.SelectedIndex = (int)_save.GetValue("theme.accent", PeacenetAccentColor.Blueberry);
+            _accentColors.SelectedIndexChanged += (o, a) =>
+            {
+                if (_accentColors.SelectedItem == null)
+                    return;
+                _save.SetValue("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                Manager.InvalidateAll();
+            };
+            AddChild(_accentColors);
+            AddChild(_accentHeader);
         }
 
         /// <inheritdoc/>
@@ -194,10 +215,22 @@ namespace Peacenet.Applications
             _wallpaperHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
             _wallpaperHeader.Text = "Wallpaper";
 
+            _accentHeader.X = 15;
+            _accentHeader.AutoSize = true;
+            _accentHeader.MaxWidth = Width - 30;
+            _accentHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _accentHeader.Text = "Accent colour";
+
             _wallpaperGrid.Width = Width - 30;
             _wallpaperViewer.X = 15;
             _wallpaperViewer.Y = _wallpaperHeader.Y + _wallpaperHeader.Height + 5;
-            _wallpaperViewer.Height = (Height - _wallpaperViewer.Y) - 15;
+            _wallpaperViewer.Height = Height - _wallpaperViewer.Y - _accentHeader.Height - _accentColors.Height - 25;
+
+            _accentHeader.Y = _wallpaperViewer.Y + _wallpaperViewer.Height + 10;
+
+            _accentColors.X = 15;
+            _accentColors.Y = _accentHeader.Y + _accentHeader.Height + 5;
+            _accentColors.Width = _accentHeader.MaxWidth;
         }
     }
 }
