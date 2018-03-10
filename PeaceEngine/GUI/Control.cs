@@ -102,6 +102,18 @@ namespace Plex.Engine.GUI
             }
         }
         
+        private float _computeOpacity()
+        {
+            var ctrl = this;
+            float opac = 1f;
+            while(ctrl!=null)
+            {
+                opac *= ctrl.Opacity;
+                ctrl = ctrl.Parent;
+            }
+            return opac;
+        }
+
         /// <summary>
         /// Retrieves the back buffer for the control.
         /// </summary>
@@ -953,7 +965,7 @@ namespace Plex.Engine.GUI
             //If we're disabled, set the Grayout property.
             gfx.Grayout = !Enabled;
             //Set the Opacity property to ours.
-            gfx.Opacity *= Opacity;
+            gfx.Opacity = _computeOpacity();
 
             float opac = gfx.Opacity;
 
@@ -974,7 +986,6 @@ namespace Plex.Engine.GUI
             foreach(var child in Children)
             {
                 child.Draw(time, gfx);
-                gfx.Opacity = opac;
             }
         }
 

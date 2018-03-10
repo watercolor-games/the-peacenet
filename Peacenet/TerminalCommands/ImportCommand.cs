@@ -28,7 +28,7 @@ namespace Peacenet.TerminalCommands
         {
             var path = arguments["<path>"] as string;
             using (var ifobj = File.OpenRead(path))
-            using (var ofobj = fs.OpenWrite(console.WorkingDirectory + path.Substring(path.LastIndexOf('/'))))
+            using (var ofobj = fs.OpenWrite(console.WorkingDirectory + path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar))))
                 ifobj.CopyTo(ofobj);
         }
     }
