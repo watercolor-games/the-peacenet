@@ -216,6 +216,7 @@
     <Compile Include="Cutscenes\VideoFrame.cs" />
     <Compile Include="Cutscenes\PNV.cs" />
     <Compile Include="GUI\VideoPlayer.cs" />
+    <Compile Include="PlexContentManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

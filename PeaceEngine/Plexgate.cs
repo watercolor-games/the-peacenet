@@ -111,6 +111,7 @@ namespace Plex.Engine
                 throw new InvalidOperationException("Plexgate is already running! You cannot create multiple instances of Plexgate at the same time in one process. Instead, please let the already-running instance shut down fully.");
             graphicsDevice = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            Content = new PlexContentManager(Content, graphicsDevice);
             graphicsDevice.PreferMultiSampling = false;
             //Make window borderless
             Window.IsBorderless = false;
