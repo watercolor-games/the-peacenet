@@ -184,6 +184,11 @@ namespace Peacenet
                     var term = new Applications.Terminal(_winmgr);
                     term.Show();
                 }
+                if (e.Key == Keys.F6)
+                {
+                    var missionMenu = new MissionMenu(_winmgr);
+                    missionMenu.Show();
+                }
             }
         }
 

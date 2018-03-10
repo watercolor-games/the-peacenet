@@ -280,18 +280,6 @@ namespace Peacenet
 
         public void OnKeyEvent(KeyboardEventArgs e)
         {
-            if(e.Key == Keys.F6)
-            {
-                if(_current!=null)
-                {
-                    if (_animState < 7)
-                        return;
-                    if (_animState != 9)
-                        return;
-                    var missionMenu = new MissionMenu(_winsys);
-                    missionMenu.Show();
-                }
-            }
         }
 
         public void OnMouseUpdate(MouseState mouse)
@@ -338,9 +326,9 @@ namespace Peacenet
                         if(count>0)
                         {
                             if (count == 1)
-                                desk.ShowNotification("New mission available", "A new mission has been added to your Missions list for you to play.");
+                                desk.ShowNotification("New mission available", "A new mission has been added to your Missions list for you to play.  Press [F6] to see it.");
                             else
-                                desk.ShowNotification("New missions available", $"There are {count} new missions in your Missions list available for you to play.");
+                                desk.ShowNotification("New missions available", $"There are {count} new missions in your Missions list available for you to play.  Press [F6] to see them.");
                         }
                         _state=-1;
                     }
@@ -505,7 +493,7 @@ namespace Peacenet
                     }
                     break;
                 case 12:
-                    _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the 'Missions' program for new missions to play.");
+                    _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the Missions list for new missions to play.");
                     _animState++;
                     break;
 
