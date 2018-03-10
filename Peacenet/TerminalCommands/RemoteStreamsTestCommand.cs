@@ -6,6 +6,7 @@ using Peacenet.Server;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace Peacenet
 {
@@ -34,10 +35,15 @@ namespace Peacenet
                 console.WriteLine("Remote Stream opened.");
                 console.WriteLine($"CanRead = {fobj.CanRead}");
                 console.WriteLine($"CanWrite = {fobj.CanWrite}");
-                Console.WriteLine($"Buffered = {fobj is BufferedStream}");
+                console.WriteLine($"CanSeek = {fobj.CanSeek}");
+                console.WriteLine($"Buffered = {fobj is BufferedStream}");
                 console.WriteLine($"Length = {fobj.Length}");
                 using (var read = new BinaryReader(fobj))
+                {
                     console.WriteLine(Encoding.UTF8.GetString(read.ReadBytes((int)fobj.Length)));
+                    fobj.Seek(0, SeekOrigin.Begin);
+                    console.WriteLine(Encoding.UTF8.GetString(read.ReadBytes((int)fobj.Length).Reverse().ToArray()));
+                }
             }
         }
     }
