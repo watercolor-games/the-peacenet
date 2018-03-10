@@ -217,7 +217,6 @@ namespace Peacenet.DesktopUI
             {
                 var item = new AppLauncherItem();
                 item.Name = cat;
-                item.Description = cat;
                 item.Activated += () =>
                 {
                     _page = 1;
@@ -267,7 +266,7 @@ namespace Peacenet.DesktopUI
             {
                 var albutton = new AppLauncherItem();
                 albutton.Name = item.Attribute.Name;
-                albutton.Description = item.Attribute.Category;
+                albutton.Description = item.Attribute.Description;
                 albutton.Activated += () =>
                 {
                     var win = (Window)Activator.CreateInstance(item.WindowType, new[] { WindowSystem });

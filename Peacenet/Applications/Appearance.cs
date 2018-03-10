@@ -22,7 +22,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// A program that allows the player to customize various parameters of the <see cref="Plex.Engine.Themes.Theme"/> and <see cref="DesktopWindow"/> allowing the player to customize the look of the game's user interface.  
     /// </summary>
-    [AppLauncher("Appearance settings", "System")]
+    [AppLauncher("Appearance settings", "System", "Customise the Peacegate")]
     public class Appearance : Window
     {
         [Dependency]

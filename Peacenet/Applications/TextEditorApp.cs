@@ -14,7 +14,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// Provides a simple GUI-based text editor for the Peacenet.
     /// </summary>
-    [AppLauncher("Text Editor", "Accessories")]
+    [AppLauncher("Text Editor", "Accessories", "Write, save, and open a text document")]
     public class TextEditorApp : Window
     {
         [Dependency]

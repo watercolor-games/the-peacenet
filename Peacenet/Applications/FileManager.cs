@@ -15,7 +15,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// Provides a graphical user interface allowing the player to browse and manage files and folders in their in-game hard drive.
     /// </summary>
-    [AppLauncher("File browser", "Accessories")]
+    [AppLauncher("File browser", "Accessories", "Manage your computer's files")]
     public class FileManager : Window
     {
         private ScrollView _places = new ScrollView();

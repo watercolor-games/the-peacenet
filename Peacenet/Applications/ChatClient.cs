@@ -10,7 +10,7 @@ using Plex.Engine;
 
 namespace Peacenet.Applications
 {
-    [AppLauncher("Peacenet Communicator", "Networking")]
+    [AppLauncher("Peacenet Communicator", "Networking", "Chat with friends")]
     public class ChatClient : Window
     {
         private ScrollView _sideView = new ScrollView();

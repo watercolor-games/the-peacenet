@@ -73,10 +73,11 @@ namespace Peacenet
         /// </summary>
         /// <param name="name">The name of the app launcher item for this window.</param>
         /// <param name="cat">The category where this window's app launcher item should reside.</param>
-        public AppLauncherAttribute(string name, string cat)
+        public AppLauncherAttribute(string name, string cat, string desc = "")
         {
             Name = name;
             Category = cat;
+            Description = desc;
         }
 
         /// <summary>
@@ -88,6 +89,11 @@ namespace Peacenet
         /// Retrieves the category where this app launcher attribute should reside.
         /// </summary>
         public string Category { get; set; }
+
+        /// <summary>
+        /// Displayed under the entry in the launcher.
+        /// </summary>
+        public string Description { get; private set; }
     }
 
     /// <summary>

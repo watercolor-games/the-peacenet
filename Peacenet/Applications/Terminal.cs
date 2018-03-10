@@ -21,7 +21,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// Provides a terminal emulator and command-line interpreter for running in-game programs in a Bash-like environment.
     /// </summary>
-    [AppLauncher("Terminal", "System")]
+    [AppLauncher("Terminal", "System", "Interact with the Peacegate Bash shell")]
     public class Terminal : Window
     {
         [Dependency]

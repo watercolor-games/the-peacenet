@@ -12,7 +12,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// Provides a user interface for starting missions.
     /// </summary>
-    [AppLauncher("Missions", "Single-player")]
+    [AppLauncher("Missions", "Single-player", "Your purpose")]
     public class MissionMenu : Window
     {
         private Label _missionsHead = new Label();
