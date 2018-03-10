@@ -552,6 +552,8 @@ namespace Plex.Engine.GUI
                 _child.Close();
             };
 
+            _minimizeHitbox.Click += (o, a) => Visible = false;
+
             _titleHitbox.MouseLeftDown += (o, a) =>
             {
                 if (_windowStyle == WindowStyle.DialogNoDrag)
