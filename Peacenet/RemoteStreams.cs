@@ -17,8 +17,6 @@ namespace Plex.Engine
             var s = plexgate.New<RemoteStream>();
             s.id = id;
             Logger.Log($"Remote Stream {id} Instantiated");
-            if (s.CanRead && s.CanWrite) // unbufferable
-                return s;
             return new BufferedStream(s);
         }
 
@@ -73,9 +71,8 @@ namespace Plex.Engine
 
             void sendCmd(StreamOp op, Action<BinaryWriter> mkbody = null)
             {
-                sendMsg(op, mkbody).Dispose();
+                sendMsg(op, mkbody)?.Dispose();
             }
-
             public override bool CanRead => getbool(StreamOp.get_CanRead);
             public override bool CanSeek => getbool(StreamOp.get_CanSeek);
             public override bool CanWrite => getbool(StreamOp.get_CanWrite);
@@ -125,6 +122,11 @@ namespace Plex.Engine
                 if (offset + count > buffer.Length)
                     throw new ArgumentException("The sum of offset and count is greater than the buffer length.");
                 sendCmd(StreamOp.Write, (write) => { write.Write(count); write.Write(buffer.Skip(offset).Take(count).ToArray()); });
+            }
+
+            public override void Close()
+            {
+                sendCmd(StreamOp.Close);
             }
         }
     }

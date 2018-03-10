@@ -9,6 +9,8 @@ using System.IO;
 using Newtonsoft.Json;
 using Plex.Engine;
 using Peacenet.Server;
+using Plex.Objects.PlexFS;
+using Plex.Objects;
 
 namespace Peacenet
 {
@@ -21,6 +23,9 @@ namespace Peacenet
 
         [Dependency]
         private AsyncServerManager _server = null;
+
+        [Dependency]
+        private RemoteStreams _rstreams = null;
 
         private string unresolve(string path)
         {
@@ -331,6 +336,28 @@ namespace Peacenet
             if (err != null)
                 throw err;
 
+        }
+
+        public Stream Open(string path, OpenMode mode)
+        {
+            var err = new Exception("Unknown error.");
+            var ret = -1;
+            _server.SendMessage(ServerMessageType.FS_OPENSTREAM, writePathData(path, null).Concat(BitConverter.GetBytes((int)mode)).ToArray(), (res, reader) =>
+            {
+                if (res == ServerResponseType.REQ_SUCCESS)
+                {
+                    ret = reader.ReadInt32();
+                    return;
+                }
+                if (res == ServerResponseType.REQ_ERROR && reader.BaseStream.Length > 0)
+                {
+                    err = new Exception(reader.ReadString());
+                    return;
+                }
+            }).Wait();
+            if (ret < 0)
+                throw err;
+            return _rstreams.Open(ret);
         }
     }
 }

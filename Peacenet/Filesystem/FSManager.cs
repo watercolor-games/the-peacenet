@@ -12,6 +12,7 @@ using System.IO;
 using Plex.Objects.PlexFS;
 using Plex.Objects.ShiftFS;
 using Plex.Engine;
+using Plex.Objects.Streams;
 
 namespace Peacenet.Filesystem
 {
@@ -26,6 +27,25 @@ namespace Peacenet.Filesystem
         private Plexgate _plexgate = null;
 
         public event Action<string> WriteOperation;
+
+        public Stream OpenRead(string file)
+        {
+            return new ReadOnlyStream(_backend.Open(file, OpenMode.Open));
+        }
+
+        public Stream OpenWrite(string file)
+        {
+            var ret = new WriteOnlyStream(_backend.Open(file, OpenMode.OpenOrCreate));
+            WriteOperation?.Invoke(file); // Won't fire if the stream is written to afterwards... FIXME?
+            return ret;
+        }
+
+        public Stream Open(string file, OpenMode mode)
+        {
+            var ret = _backend.Open(file, mode);
+            WriteOperation?.Invoke(file);
+            return ret;
+        }
 
         /// <summary>
         /// Read all text (in UTF8) of a file.
@@ -344,5 +364,13 @@ namespace Peacenet.Filesystem
         /// <param name="path">The path to a file to check.</param>
         /// <returns>A <see cref="FileRecord"/> containing information about the file.</returns>
         FileRecord GetFileRecord(string path);
+
+        /// <summary>
+        /// Open a file for streaming.
+        /// </summary>
+        /// <returns>An open stream.</returns>
+        /// <param name="path">The path to a file.</param>
+        /// <param name="mode">The open mode.</param>
+        Stream Open(string path, OpenMode mode);
     }
 }

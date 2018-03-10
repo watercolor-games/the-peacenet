@@ -24,8 +24,9 @@ namespace Peacenet.Backend
 
         public void Unload()
         {
-            foreach (var s in info)
-                s.Item1.Dispose();
+            if (info != null)
+                foreach (var s in info)
+                    s?.Item1?.Dispose();
             info = null;
         }
 
@@ -87,7 +88,6 @@ namespace Peacenet.Backend
                     return ServerResponseType.REQ_ERROR;
                 }
                 var op = (StreamOp)opi; // We know it's valid now, so get the enum entry
-                Logger.Log($"Doing Stream Op: {op}");
                 MethodInfo fun;
                 dynamic ret;
                 try
@@ -103,17 +103,14 @@ namespace Peacenet.Backend
                             datawriter.Write(s.Item1.Read(r, 0, r.Length));
                             datawriter.Write(r.Length);
                             datawriter.Write(r);
-                            Logger.Log("Finished read");
                             return ServerResponseType.REQ_SUCCESS;
                         case StreamOp.Write:
                             var w = datareader.ReadBytes(datareader.ReadInt32());
                             s.Item1.Write(w, 0, w.Length);
-                            Logger.Log("Finished write");
                             return ServerResponseType.REQ_SUCCESS;
                     }
                     // Look up the method from its enum entry.
                     fun = typeof(Stream).GetMethod(op.ToString());
-                    Logger.Log($"Calling {fun}");
 
                     // Call it and get the result.
                     // The Select finds a BinaryReader method that reads each argument type.

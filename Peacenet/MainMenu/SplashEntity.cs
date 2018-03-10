@@ -354,6 +354,7 @@ namespace Peacenet.MainMenu
                         catch (Exception ex)
                         {
                             _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
+                            Logger.Log(ex.ToString(), LogType.Error);
                         }
                         _plexgate.Invoke(() =>
                         {

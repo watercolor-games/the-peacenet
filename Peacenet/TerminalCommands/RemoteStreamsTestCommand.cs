@@ -38,7 +38,7 @@ namespace Peacenet
                 console.WriteLine($"CanSeek = {fobj.CanSeek}");
                 console.WriteLine($"Buffered = {fobj is BufferedStream}");
                 console.WriteLine($"Length = {fobj.Length}");
-                using (var read = new BinaryReader(fobj))
+                using (var read = new BinaryReader(fobj, Encoding.UTF8, true))
                 {
                     console.WriteLine(Encoding.UTF8.GetString(read.ReadBytes((int)fobj.Length)));
                     fobj.Seek(0, SeekOrigin.Begin);

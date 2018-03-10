@@ -60,6 +60,10 @@ namespace Plex.Objects
         /// Retrieve whether a specified file exists on a user FS.
         /// </summary>
         FS_FILEEXISTS = 0x1A,
+        /// <summary>
+        /// Opens a specified file as a remote stream.
+        /// </summary>
+        FS_OPENSTREAM = 0x1F,
 
         /// <summary>
         /// Invoke a server-side Terminal Command and retrieve the command's output.

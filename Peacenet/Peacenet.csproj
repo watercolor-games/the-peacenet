@@ -114,6 +114,8 @@
     <Compile Include="Tutorial\PeacegateSetup.cs" />
     <Compile Include="RemoteStreams.cs" />
     <Compile Include="TerminalCommands\RemoteStreamsTestCommand.cs" />
+    <Compile Include="Applications\ImageViewer.cs" />
+    <Compile Include="TerminalCommands\ImportCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DocoptNet, Version=0.6.1.4, Culture=neutral, PublicKeyToken=7a38c71da49a547e, processorArchitecture=MSIL">

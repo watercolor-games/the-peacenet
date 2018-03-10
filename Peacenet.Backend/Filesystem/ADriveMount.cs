@@ -163,6 +163,14 @@ namespace Peacenet.Backend.Filesystem
         /// <returns>A list of all found subdirectories.</returns>
         public abstract string[] GetDirectories(string path);
 
+        /// <summary>
+        /// Open a file as a stream.
+        /// </summary>
+        /// <returns>An open stream.</returns>
+        /// <param name="path">The path of the file to open.</param>
+        /// <param name="mode">The open mode.</param>
+        public abstract Stream Open(string path, OpenMode mode);
+
         /// <inheritdoc/>
         public abstract void Dispose();
     }
@@ -377,6 +385,14 @@ namespace Peacenet.Backend.Filesystem
         {
             // ... and this.
             WriteAllBytes(path, Encoding.UTF8.GetBytes(text));
+        }
+
+        public override Stream Open(string path, OpenMode mode)
+        {
+            PlexFAT.Directory parent;
+            string fname;
+            getParent(path, out parent, out fname);
+            return parent.OpenFile(fname, mode);
         }
     }
 

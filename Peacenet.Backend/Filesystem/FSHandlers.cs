@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Peacenet.Backend.Filesystem;
 using Plex.Objects;
+using Plex.Objects.PlexFS;
 
 namespace Peacenet.Backend
 {
@@ -478,6 +479,47 @@ namespace Peacenet.Backend
                 int len = datareader.ReadInt32();
                 byte[] bytes = datareader.ReadBytes(len);
                 mount.WriteAllBytes(path, bytes);
+                return ServerResponseType.REQ_SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                datawriter.Write(ex.Message);
+                return ServerResponseType.REQ_ERROR;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handler for opening a file as a stream.
+    /// </summary>
+    [RequiresSession]
+    public class FileOpener : IMessageHandler
+    {
+        [Dependency]
+        private FSManager drivemgr = null;
+
+        [Dependency]
+        private SystemEntityBackend _entityBackend = null;
+
+        [Dependency]
+        private RemoteStreams _rstreams = null;
+
+        public ServerMessageType HandledMessageType => ServerMessageType.FS_OPENSTREAM;
+        public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
+        {
+            var content = datareader.ReadString();
+            string path;
+            var username = _entityBackend.GetPlayerEntityId(session);
+            var mount = drivemgr.GetDriveFromPathData(username, content, out path);
+            if (mount == null)
+            {
+                datawriter.Write("Mountpoint not found.");
+                return ServerResponseType.REQ_ERROR;
+            }
+            try
+            {
+                var mode = (OpenMode)datareader.ReadInt32();
+                datawriter.Write(_rstreams.Create(mount.Open(path, mode), session));
                 return ServerResponseType.REQ_SUCCESS;
             }
             catch (Exception ex)

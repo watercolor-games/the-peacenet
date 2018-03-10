@@ -249,6 +249,7 @@ namespace Peacenet
                 catch (Exception ex)
                 {
                     console.WriteLine($"Command error: {ex.Message}");
+                    Logger.Log(ex.ToString(), LogType.Error, "terminal");
                 }
                 return true;
             }
