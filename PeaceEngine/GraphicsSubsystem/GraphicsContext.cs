@@ -25,6 +25,45 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <threadsafety static="true" instance="false"/>
     public sealed class GraphicsContext
     {
+        private Effect _guiShader = null;
+
+        private bool _grayOut = false;
+        private float _opacity = 1f;
+
+
+        internal bool Grayout
+        {
+            get
+            {
+                return _grayOut;
+            }
+            set
+            {
+                _grayOut = value;
+            }
+        }
+
+        internal float Opacity
+        {
+            get
+            {
+                return _opacity;
+            }
+            set
+            {
+                _opacity = value;
+            }
+        }
+
+
+        public Effect GUIShader
+        {
+            get
+            {
+                return _guiShader;
+            }
+        }
+
         private static Texture2D white = null;
 
         /// <summary>
@@ -171,7 +210,7 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="c">The color to render</param>
         public void Clear(Color c)
         {
-            DrawRectangle(0, 0, Width, Height, c);
+            DrawRectangle(0,0,Width,Height,((_grayOut) ? c.Darken(0.5F) : c) * _opacity);
         }
 
         /// <summary>
@@ -200,6 +239,10 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="tint">The tint of the texture</param>
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Texture2D tex2, Color tint)
         {
+            if (_grayOut)
+                tint = tint.Darken(0.5F);
+            tint = tint * _opacity;
+
             if (tint.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
@@ -222,6 +265,9 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="color">The color of the line</param>
         public void DrawLine(int x, int y, int x1, int y1, int thickness, Color color)
         {
+            if (_grayOut)
+                color = color.Darken(0.5F);
+            color = color * _opacity;
             if (color.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
@@ -243,6 +289,9 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="color">The color of the rectangle</param>
         public void DrawRectangle(int x, int y, int width, int height, Color color)
         {
+            if (_grayOut)
+                color = color.Darken(0.5F);
+            color = color * _opacity;
             if (color.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
@@ -278,6 +327,9 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="color">The color of the circle</param>
         public void DrawCircle(int x, int y, int radius, Color color)
         {
+            if (_grayOut)
+                color = color.Darken(0.5F);
+            color = color * _opacity;
             if (color.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             float step = (float) Math.PI / (radius * 4);
@@ -319,6 +371,9 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="premultiplied">Whether the texture data is already pre-multiplied.</param>
         public void DrawRectangle(int x, int y, int width, int height, Texture2D tex2, Color tint, ImageLayout layout = ImageLayout.Stretch, bool opaque = false, bool premultiplied=true)
         {
+            if (_grayOut)
+                tint = tint.Darken(0.5F);
+            tint = tint * _opacity;
             if (tint.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             if (tex2 == null)
@@ -406,6 +461,11 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="wrapMode">The wrap mode of the text</param>
         public void DrawString(string text, int x, int y, Color color, SpriteFont font, TextAlignment alignment, int wrapWidth = int.MaxValue, WrapMode wrapMode = WrapMode.Words)
         {
+            x += X;
+            y += Y;
+            if (_grayOut)
+                color = color.Darken(0.5F);
+            color = color * _opacity;
             if (color.A == 0)
                 return; //no sense rendering if you CAN'T SEE IT
             if (string.IsNullOrEmpty(text))

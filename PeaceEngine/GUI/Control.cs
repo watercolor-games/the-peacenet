@@ -929,6 +929,20 @@ namespace Plex.Engine.GUI
             Parent?.Invalidate();
         }
 
+        public Vector2 ToScreen(int x, int y)
+        {
+            x += X;
+            y += Y;
+            var parent = Parent;
+            while(parent!=null)
+            {
+                x += parent.X;
+                y += parent.Y;
+                parent = parent.Parent;
+            }
+            return new Vector2(x, y);
+        }
+
         /// <summary>
         /// Fire a render event.
         /// </summary>
@@ -936,52 +950,31 @@ namespace Plex.Engine.GUI
         /// <param name="gfx">The graphics context to render the control to.</param>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            if (_needsRerender)
+            //If we're disabled, set the Grayout property.
+            gfx.Grayout = !Enabled;
+            //Set the Opacity property to ours.
+            gfx.Opacity *= Opacity;
+
+            float opac = gfx.Opacity;
+
+            var screenPos = ToScreen(0, 0);
+
+            //scissortesting
+            gfx.X = (int)screenPos.X;
+            gfx.Y = (int)screenPos.Y;
+            gfx.Width = Width;
+            gfx.Height = Height;
+
+            gfx.BeginDraw();
+
+            OnPaint(time, gfx);
+
+            gfx.EndDraw();
+
+            foreach(var child in Children)
             {
-                if (_resized)
-                {
-                    _userfacingtarget?.Dispose();
-                    _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height, false, gfx.Device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-                    _resized = false;
-                }
-                gfx.Device.SetRenderTarget(_userfacingtarget);
-                gfx.Device.Clear(Color.Transparent);
-                gfx.BeginDraw();
-                OnPaint(time, gfx);
-                gfx.EndDraw();
-                _invalidated = false;
-                foreach (var child in Children)
-                {
-                    if (!child._needsRerender)
-                        continue;
-                    if (!child.Visible)
-                        continue;
-                    if (child.Opacity > 0)
-                        child.Draw(time, gfx);
-                }
-                gfx.Device.SetRenderTarget(_userfacingtarget);
-                gfx.BeginDraw();
-                foreach(var control in Children)
-                {
-                    if (!control.Visible)
-                        continue;
-                    if (control.BackBuffer == null)
-                        continue;
-                    if(control.Opacity>0)
-                    {
-                        var tint = (control.Enabled) ? Color.White : Color.Gray;
-                        if (Manager.IgnoreControlOpacity)
-                        {
-                            gfx.Batch.Draw(control.BackBuffer, new Rectangle(control.X, control.Y, control.Width, control.Height), tint);
-                        }
-                        else
-                        {
-                            gfx.Batch.Draw(control.BackBuffer, new Rectangle(control.X, control.Y, control.Width, control.Height), (tint * control.Opacity));
-                        }
-                    }
-                }
-                gfx.EndDraw();
-                _needsRerender = false;
+                child.Draw(time, gfx);
+                gfx.Opacity = opac;
             }
         }
 

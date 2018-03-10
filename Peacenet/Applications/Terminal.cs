@@ -575,7 +575,7 @@ namespace Peacenet.Applications
                         _charY += 1;
                         break;
                     default:
-                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(_charX * _charWidth, (_charY) * _charHeight), Color.White);
+                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2((_charX * _charWidth)+gfx.X, (_charY * _charHeight)+gfx.Y), Color.White);
                         if ((_charX + 1) * _charWidth >= Width)
                         {
                             _charX = 0;

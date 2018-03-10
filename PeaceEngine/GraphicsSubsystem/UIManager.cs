@@ -157,6 +157,8 @@ namespace Plex.Engine.GraphicsSubsystem
 
             public void Draw(GameTime time, GraphicsContext ctx)
             {
+                ctx.Opacity = 1f;
+                ctx.Grayout = false;
                 foreach (var ctrl in Controls)
                 {
                     if (!ctrl.Visible)
@@ -165,32 +167,13 @@ namespace Plex.Engine.GraphicsSubsystem
                         ctrl.Draw(time, ctx);
                 }
 
-                ctx.Device.SetRenderTarget(_plexgate.GameRenderTarget);
-                ctx.BeginDraw();
-                foreach (var ctrl in Controls)
-                {
-                    if (!ctrl.Visible)
-                        continue;
-                    if (ctrl.BackBuffer != null && ctrl.Opacity > 0)
-                    {
-                        var tint = (ctrl.Enabled) ? Color.White : Color.Gray;
-                        if (_ui.IgnoreControlOpacity)
-                        {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), tint);
-                        }
-                        else
-                        {
-                            ctx.Batch.Draw(ctrl.BackBuffer, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), (tint * ctrl.Opacity));
-                        }
-                    }
-                    else
-                    {
-                        ctrl.Invalidate();
-                    }
-                }
-                ctx.EndDraw();
+                ctx.Opacity = 1f;
+                ctx.Grayout = false;
 
-                
+                ctx.X = 0;
+                ctx.Y = 0;
+                ctx.Width = _ui.ScreenWidth;
+                ctx.Height = _ui.ScreenHeight;
 
                 if (ShowPerfCounters == false)
                     return;
