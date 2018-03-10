@@ -14,7 +14,7 @@ namespace Peacenet
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             var prc = Process.GetCurrentProcess();
             var other = Process.GetProcesses().FirstOrDefault(x => x.ProcessName == prc.ProcessName && x.Id != prc.Id);
@@ -27,7 +27,7 @@ namespace Peacenet
 
             try
             {
-                using (var game = new Plexgate())
+                using (var game = new Plexgate(args))
                     game.Run();
             }
             catch(Exception ex)

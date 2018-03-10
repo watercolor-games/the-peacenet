@@ -7,7 +7,7 @@ namespace Peacenet.Backend
         {
             lock (Console.Out)
             {
-                Console.WriteLine("[{0}] {1}", DateTime.Now, message);
+                Console.WriteLine("[{0}] <server> {1}", DateTime.Now, message);
             }
         }
     }

@@ -331,7 +331,8 @@ namespace Peacenet.MainMenu
                     });
                 }
             };
-            _hbSingleplayer.Click += (o, a) =>
+            EventHandler spstart;
+            _hbSingleplayer.Click += spstart = (o, a) =>
             {
                 if (_connecting)
                     return;
@@ -420,19 +421,26 @@ namespace Peacenet.MainMenu
                 });
             };
 
-            try
+            if (_plexgate.GameStarted)
+                animState = 3;
+            else if (_plexgate.QuietMode)
+                spstart.Invoke(this, EventArgs.Empty);
+            else
             {
-                vidf = File.OpenRead("Content/Cutscenes/PeaceEngine1080p.pnv");
-                vid = new PNV(vidf);
-                vidp = new VideoPlayer(vid);
-                _plexgate.GetLayer(LayerType.Foreground).AddEntity(vidp);
-                vidp.Finished += (sender, e) => { _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(vidp); (vid as IDisposable)?.Dispose(); vidf?.Dispose(); animState = 0; };
-                Logger.Log("Loaded intro video");
-            }
-            catch (FileNotFoundException)
-            {
-                animState = 0;
-                Logger.Log("Intro video not found, skipping", LogType.Warning);
+                try
+                {
+                    vidf = File.OpenRead("Content/Cutscenes/PeaceEngine1080p.pnv");
+                    vid = new PNV(vidf);
+                    vidp = new VideoPlayer(vid);
+                    _plexgate.GetLayer(LayerType.Foreground).AddEntity(vidp);
+                    vidp.Finished += (sender, e) => { _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(vidp); (vid as IDisposable)?.Dispose(); vidf?.Dispose(); animState = 0; };
+                    Logger.Log("Loaded intro video");
+                }
+                catch (FileNotFoundException)
+                {
+                    animState = 0;
+                    Logger.Log("Intro video not found, skipping", LogType.Warning);
+                }
             }
         }
 
@@ -602,6 +610,7 @@ namespace Peacenet.MainMenu
                     animState++;
                     break;
                 case 18:
+                    _plexgate.GameStarted = true;
                     _os.OnReady();
                     animState++;
                     break;

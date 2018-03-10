@@ -16,6 +16,7 @@ namespace Plex.Engine
         {
             var s = plexgate.New<RemoteStream>();
             s.id = id;
+            Logger.Log($"Remote Stream {id} Instantiated");
             if (s.CanRead && s.CanWrite) // unbufferable
                 return s;
             return new BufferedStream(s);

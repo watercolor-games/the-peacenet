@@ -28,9 +28,17 @@ namespace Peacenet
         {
             int id = -1;
             Task.WaitAll(man.SendMessage(ServerMessageType.STREAM_TEST, new byte[] { }, (resp, read) => id = read.ReadInt32()));
+            console.WriteLine("That's the message that I sent.  (DAVID BOWIE IS NOT MC RIDE)");
             using (var fobj = rstreams.Open(id))
-            using (var read = new BinaryReader(fobj))
-                console.WriteLine(Encoding.UTF8.GetString(read.ReadBytes((int)fobj.Length)));
+            {
+                console.WriteLine("Remote Stream opened.");
+                console.WriteLine($"CanRead = {fobj.CanRead}");
+                console.WriteLine($"CanWrite = {fobj.CanWrite}");
+                Console.WriteLine($"Buffered = {fobj is BufferedStream}");
+                console.WriteLine($"Length = {fobj.Length}");
+                using (var read = new BinaryReader(fobj))
+                    console.WriteLine(Encoding.UTF8.GetString(read.ReadBytes((int)fobj.Length)));
+            }
         }
     }
 }

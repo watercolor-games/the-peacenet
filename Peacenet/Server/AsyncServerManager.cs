@@ -99,9 +99,10 @@ namespace Peacenet.Server
                     if (_tcpClient == null)
                         return;
                 }
-                catch(IOException)
+                catch(IOException ex)
                 {
                     Logger.Log("Breaking out of the listener loop - we can't read anymore.", LogType.Info, "client_listener");
+                    Logger.Log(ex.ToString(), LogType.Error, "client_listener");
                     break;
                 }
             }

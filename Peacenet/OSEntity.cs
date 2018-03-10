@@ -89,6 +89,9 @@ namespace Peacenet
         [Dependency]
         private OS _os = null;
 
+        [Dependency]
+        private TerminalManager _term = null;
+
         #endregion
 
         #region Textures
@@ -302,6 +305,11 @@ namespace Peacenet
 
             _bootFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
             _osIntroState = 0;
+            if (_plexgate.QuietMode)
+            {
+                _osIntroState = 5;
+                _term.RunCommand("init", _term.CreateContext(StreamWriter.Null, StreamReader.Null));
+            }
             _peacegate = content.Load<Texture2D>("Desktop/UIIcons/Peacegate");
             _server.BroadcastReceived += _server_BroadcastReceived;
         }

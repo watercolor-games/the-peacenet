@@ -72,6 +72,7 @@ namespace Peacenet.Backend
                     fail = s.Item2 != session; // Stream doesn't belong to accessing user
                 if (fail)
                 {
+                    Logger.Log("failed");
                     // We give the same error in all cases so the user can't figure anything out
                     // by making deliberately dodgy requests
                     datawriter.Write($"Could not get a handle on stream {id} - nonexistent or not authorised.");
@@ -80,10 +81,12 @@ namespace Peacenet.Backend
                 var opi = datareader.ReadByte();
                 if (!Enum.IsDefined(typeof(StreamOp), opi)) // Make sure the byte is in range of the enum
                 {
+                    Logger.Log("invalid stream operation");
                     datawriter.Write($"Invalid stream operation {opi}.");
                     return ServerResponseType.REQ_ERROR;
                 }
                 var op = (StreamOp)opi; // We know it's valid now, so get the enum entry
+                Logger.Log($"Doing Stream Op: {op}");
                 MethodInfo fun;
                 object ret;
                 try
@@ -99,14 +102,17 @@ namespace Peacenet.Backend
                             datawriter.Write(s.Item1.Read(r, 0, r.Length));
                             datawriter.Write(r.Length);
                             datawriter.Write(r);
+                            Logger.Log("Finished read");
                             return ServerResponseType.REQ_SUCCESS;
                         case StreamOp.Write:
                             var w = datareader.ReadBytes(datareader.ReadInt32());
                             s.Item1.Write(w, 0, w.Length);
+                            Logger.Log("Finished write");
                             return ServerResponseType.REQ_SUCCESS;
                     }
                     // Look up the method from its enum entry.
                     fun = typeof(Stream).GetMethod(op.ToString());
+                    Logger.Log($"Calling {fun}");
 
                     // Call it and get the result.
                     // The Select finds a BinaryReader method that reads each argument type.

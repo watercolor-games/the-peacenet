@@ -73,6 +73,20 @@ namespace Plex.Engine
 
         private Layer[] _layers = null;
 
+        /// <summary>
+        /// The command-line arguments passed to the game executable.
+        /// </summary>
+        public string[] Args { get; private set; }
+
+        /// <summary>
+        /// The game will load the single-player desktop as quickly as possible.
+        /// </summary>
+        public bool QuietMode { get; private set; }
+
+        /// <summary>
+        /// The main menu has been shut down once.
+        /// </summary>
+        public bool GameStarted { get; set; } = false;
 
         internal GraphicsDeviceManager graphicsDevice;
         SpriteBatch spriteBatch;
@@ -84,7 +98,7 @@ namespace Plex.Engine
         /// <summary>
         /// Creates a new instance of the <see cref="Plexgate"/> game loop. 
         /// </summary>
-        public Plexgate()
+        public Plexgate(string[] args)
         {
             _splashJob = Task.Run(() =>
             {
@@ -123,6 +137,9 @@ namespace Plex.Engine
             {
                 _layers[i] = new Engine.Layer();
             }
+
+            Args = args;
+            QuietMode = args.Contains("-q");
         }
 
         /// <summary>
