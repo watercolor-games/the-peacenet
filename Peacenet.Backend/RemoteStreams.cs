@@ -49,6 +49,7 @@ namespace Peacenet.Backend
             return ret;
         }
 
+        [RequiresSession]
         public class RemoteStreamHandler : IMessageHandler
         {
             [Dependency]
@@ -88,7 +89,7 @@ namespace Peacenet.Backend
                 var op = (StreamOp)opi; // We know it's valid now, so get the enum entry
                 Logger.Log($"Doing Stream Op: {op}");
                 MethodInfo fun;
-                object ret;
+                dynamic ret;
                 try
                 {
                     switch (op) // special cases
@@ -134,6 +135,7 @@ namespace Peacenet.Backend
         /// <summary>
         /// Server side part of the remote streams test
         /// </summary>
+        [RequiresSession]
         public class RemoteStreamsTestHandler : IMessageHandler
         {
             [Dependency]

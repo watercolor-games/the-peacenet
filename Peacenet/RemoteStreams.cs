@@ -39,13 +39,14 @@ namespace Plex.Engine
                 using (var ms = new MemoryStream())
                 using (var write = new BinaryWriter(ms))
                 {
+                    write.Write(id);
                     write.Write((byte)op);
                     mkbody?.Invoke(write);
                     body = ms.ToArray();
                 }
                 ServerResponseType resp = ServerResponseType.REQ_SUCCESS;
                 BinaryReader ret = null;
-                Task.WaitAll(man.SendMessage(ServerMessageType.STREAM_OP, body, (aresp, aret) => { resp = aresp; ret = aret; }));
+                Task.WaitAll(man.SendMessage(ServerMessageType.STREAM_OP, body, (aresp, aret) => { resp = aresp; ret = aret == null ? null : new BinaryReader(new MemoryStream(aret.ReadBytes((int)aret.BaseStream.Length))); }));
                 switch (resp) // TODO: Improve error handling
                 {
                     case ServerResponseType.REQ_SUCCESS:

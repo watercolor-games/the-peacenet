@@ -441,12 +441,14 @@ namespace Peacenet.Backend
                                     writer.Write(returncontent);
                                 writer.Flush();
                             }
-                            catch(EndOfStreamException)
+                            catch(EndOfStreamException ex)
                             {
+                                Logger.Log(ex.ToString());
                                 break;
                             }
-                            catch(IOException)
+                            catch(IOException ex)
                             {
+                                Logger.Log(ex.ToString());
                                 break;
                             }
 
