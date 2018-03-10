@@ -40,6 +40,11 @@ namespace Plex.Engine.GUI
         /// </summary>
         public event EventHandler WindowListUpdated;
 
+        /// <summary>
+        /// Occurs when a windows is shown, hidden, opened, or closed.
+        /// </summary>
+        public event EventHandler WindowStateChanged;
+
         private List<WindowInfo> _windows = new List<WindowInfo>();
 
         private bool _allowFadingWindowsWhileDragging = true;
@@ -157,6 +162,7 @@ namespace Plex.Engine.GUI
             _windows.Add(info);
             _uiman.Add(info.Border);
             WindowListUpdated?.Invoke(this, EventArgs.Empty);
+            WindowStateChanged?.Invoke(this, EventArgs.Empty);
             return info.WindowID;
         }
 
@@ -170,6 +176,7 @@ namespace Plex.Engine.GUI
             if (win != null)
             {
                 win.Border.Visible = true;
+                WindowStateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -183,6 +190,7 @@ namespace Plex.Engine.GUI
             if (win != null)
             {
                 win.Border.Visible = false;
+                WindowStateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -198,6 +206,7 @@ namespace Plex.Engine.GUI
                 _uiman.Remove(win.Border);
                 _windows.Remove(win);
                 WindowListUpdated?.Invoke(this, EventArgs.Empty);
+                WindowStateChanged?.Invoke(this, EventArgs.Empty);
             }
 
         }

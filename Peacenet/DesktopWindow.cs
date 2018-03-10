@@ -89,6 +89,8 @@ namespace Peacenet
 
         private AppLauncherMenu _applauncher = null;
 
+        IEnumerable<int> hiddenWindows = null;
+
         private void ResetWallpaper()
         {
             string wallpaperId = _save.GetValue("desktop.wallpaper", "DesktopBackgroundImage2");
@@ -136,7 +138,7 @@ namespace Peacenet
             _topPanel.AddChild(_appLauncherText);
             _appLauncherText.AutoSize = true;
             _appLauncherText.FontStyle = Plex.Engine.Themes.TextFontStyle.Custom;
-            
+
             _bottomPanel.AddChild(_windowList);
 
             ResetWindowList(_winsys);
@@ -156,7 +158,7 @@ namespace Peacenet
 
             _appLauncherText.Click += (o, a) =>
             {
-                if(_winsys.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null)
+                if (_winsys.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null)
                 {
                     _applauncher.Close();
                 }
@@ -165,6 +167,26 @@ namespace Peacenet
                     if (_applauncher.Disposed)
                         _applauncher = new AppLauncherMenu(_winsys, this);
                     _applauncher.Show(0, _topPanel.Height);
+                }
+            };
+
+            EventHandler wscallback = null;
+            wscallback = (o, a) => { hiddenWindows = null; winsys.WindowStateChanged -= wscallback; };
+            _showDesktopIcon.Click += (o, a) =>
+            {
+                if (hiddenWindows == null) // show desktop
+                {
+                    hiddenWindows = winsys.WindowList.Where(w => w.Border.Visible && !(w.Border.Window is DesktopWindow)).Select(w => w.WindowID).ToList();
+                    foreach (var id in hiddenWindows)
+                        winsys.Hide(id);
+                    winsys.WindowStateChanged += wscallback;
+                }
+                else // restore windows
+                {
+                    winsys.WindowStateChanged -= wscallback;
+                    foreach (var id in hiddenWindows)
+                        winsys.Show(id);
+                    hiddenWindows = null;
                 }
             };
 
@@ -420,7 +442,7 @@ namespace Peacenet
 
             _showDesktopIcon.X = 2;
             _showDesktopIcon.Y = 2;
-            _showDesktopIcon.Tint = (_showDesktopIcon.ContainsMouse) ? Color.White : new Color(191, 191, 191, 255);
+            _showDesktopIcon.Tint = (_showDesktopIcon.ContainsMouse ^ (hiddenWindows != null)) ? Color.White : new Color(191, 191, 191, 255);
 
             _appLauncherText.X = 2;
             _appLauncherText.CustomFont = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
