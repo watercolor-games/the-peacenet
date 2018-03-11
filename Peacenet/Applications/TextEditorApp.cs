@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Peacenet.CoreUtils;
 using Microsoft.Xna.Framework;
 using Peacenet.Filesystem;
+using System.IO;
 
 namespace Peacenet.Applications
 {
@@ -25,6 +26,9 @@ namespace Peacenet.Applications
 
         [Dependency]
         private FSManager _fs = null;
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
 
         private Button _open = new Button();
         private Button _save = new Button();
@@ -54,8 +58,15 @@ namespace Peacenet.Applications
             {
                 _guiutils.AskForFile(false, (file) =>
                 {
-                    _editor.Text = _fs.ReadAllText(file);
-                    Title = $"{_futils.GetNameFromPath(file)} - Text Editor";
+                    try
+                    {
+                        _editor.Text = _fs.ReadAllText(file);
+                        Title = $"{_futils.GetNameFromPath(file)} - Text Editor";
+                    }
+                    catch (InvalidDataException)
+                    {
+                        _infobox.Show("Text Editor", $"'{file}' contains invalid characters and could not be opened.  Are you sure it's a text document?");
+                    }
                 });
             };
             _save.Click += (o, a) =>

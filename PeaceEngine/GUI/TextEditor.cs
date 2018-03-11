@@ -8,6 +8,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace Plex.Engine.GUI
 {
@@ -37,15 +38,25 @@ namespace Plex.Engine.GUI
             }
             set
             {
-                if (value == null)
-                    value = "";
-                value = value.Replace("\r", "");
-                if (_textRaw == value)
-                    return;
-                _textRaw = value;
-                _currentIndex = 0;
-                recalculateLines();
-                Invalidate(true);
+                var old = Text;
+                try
+                {
+                    if (value == null)
+                        value = "";
+                    value = value.Replace("\r", "");
+                    if (_textRaw == value)
+                        return;
+                    _textRaw = value;
+                    _currentIndex = 0;
+                    recalculateLines();
+                    Invalidate(true);
+                }
+                catch (Exception ex)
+                {
+                    Text = old;
+                    Logger.Log(ex.ToString(), Engine.LogType.Error, "texteditor");
+                    throw new InvalidDataException("This text is invalid data for a TextEditor.");
+                }
             }
         }
 
