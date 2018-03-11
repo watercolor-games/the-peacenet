@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Plex.Engine.GUI
 {
@@ -946,7 +947,7 @@ namespace Plex.Engine.GUI
             x += X;
             y += Y;
             var parent = Parent;
-            while(parent!=null)
+            while (parent != null && parent.BackBuffer == null)
             {
                 x += parent.X;
                 y += parent.Y;
@@ -962,30 +963,44 @@ namespace Plex.Engine.GUI
         /// <param name="gfx">The graphics context to render the control to.</param>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            //If we're disabled, set the Grayout property.
-            gfx.Grayout = !Enabled;
-            //Set the Opacity property to ours.
-            gfx.Opacity = _computeOpacity();
-
-            float opac = gfx.Opacity;
+            if (Opacity <= 0)
+                return;
 
             var screenPos = ToScreen(0, 0);
 
-            //scissortesting
-            gfx.X = (int)screenPos.X;
-            gfx.Y = (int)screenPos.Y;
-            gfx.Width = Width;
-            gfx.Height = Height;
+            GraphicsContext bgfx = gfx.Clip((int)screenPos.X, (int)screenPos.Y, Width, Height), cgfx;
+            //If we're disabled, set the Grayout property.
+            bgfx.Grayout = !Enabled;
+            //Set the Opacity property to ours.
+            bgfx.Opacity = Opacity;
+            if (Opacity < 1)
+            {
+                if (_userfacingtarget == null)
+                    _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height);
+                cgfx = new GraphicsContext(gfx.Device, gfx.Batch, 0, 0, Width, Height);
+                cgfx.RenderTarget = _userfacingtarget;
+            }
+            else
+            {
+                cgfx = bgfx;
+            }
 
-            gfx.BeginDraw();
+            cgfx.BeginDraw();
 
-            OnPaint(time, gfx);
+            OnPaint(time, cgfx);
 
-            gfx.EndDraw();
+            cgfx.EndDraw();
 
             foreach(var child in Children)
             {
-                child.Draw(time, gfx);
+                child.Draw(time, cgfx);
+            }
+
+            if (_userfacingtarget != null)
+            {
+                bgfx.BeginDraw();
+                bgfx.DrawRectangle(X, Y, Width, Height, _userfacingtarget, Color.White * Opacity, System.Windows.Forms.ImageLayout.None, false, false);
+                bgfx.EndDraw();
             }
         }
 

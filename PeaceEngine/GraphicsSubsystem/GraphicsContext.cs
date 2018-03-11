@@ -66,6 +66,9 @@ namespace Plex.Engine.GraphicsSubsystem
 
         private static Texture2D white = null;
 
+
+        public RenderTarget2D RenderTarget { get; set; }
+
         /// <summary>
         /// Retrieves the sprite batch associated with this graphics context.
         /// </summary>
@@ -177,6 +180,23 @@ namespace Plex.Engine.GraphicsSubsystem
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spritebatch;
 
+        private GraphicsContext _parent;
+
+        RenderTarget2D _parentRenderTarget
+        {
+            get
+            {
+                var parent = _parent;
+                while (parent != null)
+                {
+                    if (parent.RenderTarget != null)
+                        return parent.RenderTarget;
+                    parent = parent._parent;
+                }
+                return Plexgate.GetInstance().GameRenderTarget;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance of the <see cref="GraphicsContext"/> class. 
         /// </summary>
@@ -202,6 +222,16 @@ namespace Plex.Engine.GraphicsSubsystem
             Height = height;
             X = x;
             Y = y;
+        }
+
+        public GraphicsContext Clip(int x, int y, int width, int height)
+        {
+            return new GraphicsContext(_graphicsDevice, _spritebatch, x, y, width, height)
+            {
+                Grayout = Grayout,
+                Opacity = Opacity,
+                _guiShader = GUIShader
+            };
         }
 
         /// <summary>
@@ -304,6 +334,8 @@ namespace Plex.Engine.GraphicsSubsystem
         /// </summary>
         public void BeginDraw()
         {
+            if (RenderTarget != null)
+                Device.SetRenderTarget(RenderTarget);
             _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                         SamplerState.LinearClamp, Device.DepthStencilState,
                         RasterizerState);
@@ -316,6 +348,8 @@ namespace Plex.Engine.GraphicsSubsystem
         public void EndDraw()
         {
             _spritebatch.End();
+            if (RenderTarget != null)
+                Device.SetRenderTarget(_parentRenderTarget);
         }
 
         /// <summary>
@@ -431,7 +465,9 @@ namespace Plex.Engine.GraphicsSubsystem
                     ;
             }
             _spritebatch.End();
-            BeginDraw();
+            _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                SamplerState.LinearClamp, Device.DepthStencilState,
+                RasterizerState);
         }
 
         /// <summary>
