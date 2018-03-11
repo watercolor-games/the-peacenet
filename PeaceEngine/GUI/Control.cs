@@ -117,11 +117,11 @@ namespace Plex.Engine.GUI
         /// <summary>
         /// Retrieves the back buffer for the control.
         /// </summary>
-        public Texture2D BackBuffer
+        public RenderTarget2D BackBuffer
         {
             get
             {
-                return _userfacingtarget;
+                return _userfacingtarget ?? Parent?.BackBuffer ?? Plexgate.GetInstance().GameRenderTarget;
             }
         }
 
@@ -311,6 +311,8 @@ namespace Plex.Engine.GUI
             set
             {
                 value = MathHelper.Clamp(value, 0, 1);
+                if (value >= 1)
+                    _userfacingtarget = null;
                 if (value == _opacity)
                     return;
                 _opacity = value;
@@ -943,10 +945,8 @@ namespace Plex.Engine.GUI
 
         public Vector2 ToScreen(int x, int y)
         {
-            x += X;
-            y += Y;
-            var parent = Parent;
-            while(parent!=null)
+            var parent = this;
+            while (parent != null && parent._userfacingtarget == null)
             {
                 x += parent.X;
                 y += parent.Y;
@@ -962,12 +962,13 @@ namespace Plex.Engine.GUI
         /// <param name="gfx">The graphics context to render the control to.</param>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
+            if (Opacity <= 0)
+                return;
             //If we're disabled, set the Grayout property.
             gfx.Grayout = !Enabled;
-            //Set the Opacity property to ours.
-            gfx.Opacity = _computeOpacity();
 
-            float opac = gfx.Opacity;
+            if (Opacity < 1 && !Manager.IgnoreControlOpacity && _userfacingtarget == null)
+                _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height);
 
             var screenPos = ToScreen(0, 0);
 
@@ -977,6 +978,8 @@ namespace Plex.Engine.GUI
             gfx.Width = Width;
             gfx.Height = Height;
 
+            if (_userfacingtarget != null)
+                gfx.Device.SetRenderTarget(BackBuffer);
             gfx.BeginDraw();
 
             OnPaint(time, gfx);
@@ -986,7 +989,15 @@ namespace Plex.Engine.GUI
             foreach(var child in Children)
             {
                 child.Draw(time, gfx);
+                if (child._userfacingtarget != null)
+                {
+                    gfx.BeginDraw();
+                    gfx.Batch.Draw(child._userfacingtarget, ToScreen(child.X, child.Y), Color.White * child.Opacity);
+                    gfx.EndDraw();
+                }
             }
+            if (_userfacingtarget != null)
+                gfx.Device.SetRenderTarget(Parent?.BackBuffer ?? Plexgate.GetInstance().GameRenderTarget);
         }
 
         private byte[] _backbufferData = null;
