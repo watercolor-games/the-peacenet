@@ -46,6 +46,7 @@ namespace Plex.Engine.PlexContentManager
                         using (var fobj = File.OpenRead(fname))
                             ret = loader.Load(fobj);
                         cache[assetName] = new WeakReference<object>(ret);
+                        typeof(T).GetProperty("Name")?.SetValue(ret, assetName);
                         return ret;
                     }
                 }
