@@ -1,10 +1,9 @@
 ﻿using System;
-using Plex.Engine.PlexContentManager;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Plex.Engine
+namespace Plex.Engine.PlexContentManager
 {
     public class Texture2DLoader : ILoader<Texture2D>
     {
