@@ -129,6 +129,8 @@ namespace Peacenet
                             return;
                         }
                         _user = responseObject.user;
+                        if (_user.display_name == null)
+                            _user.display_name = _user.username;
                     }
                 }
             }
