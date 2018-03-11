@@ -111,7 +111,7 @@ namespace Plex.Engine
                 throw new InvalidOperationException("Plexgate is already running! You cannot create multiple instances of Plexgate at the same time in one process. Instead, please let the already-running instance shut down fully.");
             graphicsDevice = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            Content = new PlexContentManager(Content, graphicsDevice);
+            Content = new PlexContentManager.PlexContentManager(this);
             graphicsDevice.PreferMultiSampling = false;
             //Make window borderless
             Window.IsBorderless = false;
@@ -498,7 +498,20 @@ namespace Plex.Engine
                 (obj as ILoadable).Load(Content);
             return obj;
         }
-
+        /// <summary>
+        /// Creates a new instance of the specified type and injects all dependencies.
+        /// </summary>
+        /// <param name="t">The type of the object to create.</param>
+        /// <returns>The newly created object with all dependencies injected.</returns>
+        /// <exception cref="ArgumentException">The specified type doesn't define a public parameterless constructor.</exception> 
+        public object New(Type t)
+        {
+            if (t.GetConstructor(Type.EmptyTypes) == null)
+                throw new ArgumentException($"{t.Name} does not provide a parameterless constructor.");
+            var obj = Inject(Activator.CreateInstance(t, null));
+            (obj as ILoadable)?.Load(Content);
+            return obj;
+        }
 
         /// <summary>
         /// This is called when the game should draw itself.

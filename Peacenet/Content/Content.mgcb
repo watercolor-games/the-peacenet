@@ -14,72 +14,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Audio/MainMenu/DreamsInc.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/DreamsInc.mp3
-
-#begin Audio/MainMenu/PressEnter2.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/PressEnter2.mp3
-
-#begin Audio/MainMenu/MainSong.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/MainSong.mp3
-
 #begin Fonts/Monospace.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Monospace.spritefont
-
-#begin Audio/Cutscene/Intro/Serenity.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Cutscene/Intro/Serenity.mp3
-
-#begin Audio/Cutscene/Credits.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Cutscene/Credits.mp3
-
-#begin Audio/MainMenu/PressEnter1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/PressEnter1.wav
-
-#begin Music/Ambient/A04 - Anders Enger Jensen - Roland CM32L Song.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Music/Ambient/A04 - Anders Enger Jensen - Roland CM32L Song.wav
-
-#begin Music/Ambient/A07 - Anders Enger Jensen - Ode to Hanna Remix.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Music/Ambient/A07 - Anders Enger Jensen - Ode to Hanna Remix.wav
-
-#begin Music/Ambient/B11 - Anders Enger Jensen - Wave Journey.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Music/Ambient/B11 - Anders Enger Jensen - Wave Journey.wav
-
-#begin Audio/PeacegateStartup/Jingle.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/PeacegateStartup/Jingle.ogg
 
 #begin ThemeAssets/Fonts/Titlebar.spritefont
 /importer:FontDescriptionImporter
@@ -115,93 +55,3 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:ThemeAssets/Fonts/System.spritefont
-
-#begin Audio/Tutorial/Installing Peacegate.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Installing Peacegate.ogg
-
-#begin Audio/Tutorial/Intro Loop 1.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Intro Loop 1.ogg
-
-#begin Audio/Tutorial/Intro Loop 2.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Intro Loop 2.ogg
-
-#begin Audio/Tutorial/Main Loop.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Main Loop.ogg
-
-#begin Audio/Tutorial/Mission Complete.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Mission Complete.ogg
-
-#begin Audio/Tutorial/Preparing Installation.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Tutorial/Preparing Installation.ogg
-
-#begin Audio/MainMenu/WatercolorSplash.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/MainMenu/WatercolorSplash.ogg
-
-#begin Audio/Mission1.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Mission1.ogg
-
-#begin Audio/SecuringTheSystem.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/SecuringTheSystem.ogg
-
-#begin SFX/C_OldSynthLead_01.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SFX/C_OldSynthLead_01.ogg
-
-#begin SFX/DesktopNotification.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SFX/DesktopNotification.ogg
-
-#begin Audio/IncomingConnectionBgm.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/IncomingConnectionBgm.mp3
-
-#begin SFX/ClickFlam_SP_10_441.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SFX/ClickFlam_SP_10_441.ogg
-
-#begin SFX/pcspkr.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SFX/pcspkr.ogg
-
-#begin SFX/SniffClick_360_01.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SFX/SniffClick_360_01.ogg
