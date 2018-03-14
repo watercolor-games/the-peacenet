@@ -967,10 +967,12 @@ namespace Plex.Engine.GUI
         private Rectangle GetScissorRectangle()
         {
             Rectangle bounds = Bounds;
-            var parent = this.Parent;
+            var parent = this;
             while(parent != null)
             {
                 bounds = Rectangle.Intersect(bounds, parent.Bounds);
+                if (parent._userfacingtarget != null)
+                    break;
                 parent = parent.Parent;
             }
             return bounds;
