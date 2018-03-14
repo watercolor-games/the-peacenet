@@ -6,6 +6,9 @@
 *.user
 *.sln.docstates
 
+# visual studio shit
+.vs/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

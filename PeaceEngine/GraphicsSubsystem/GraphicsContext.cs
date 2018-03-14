@@ -25,11 +25,10 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <threadsafety static="true" instance="false"/>
     public sealed class GraphicsContext
     {
-        private Effect _guiShader = null;
+        private BlendState _multiplicative = null;
 
-        private bool _grayOut = false;
         private float _opacity = 1f;
-
+        private bool _grayOut = false;
 
         internal bool Grayout
         {
@@ -55,14 +54,6 @@ namespace Plex.Engine.GraphicsSubsystem
             }
         }
 
-
-        public Effect GUIShader
-        {
-            get
-            {
-                return _guiShader;
-            }
-        }
 
         private static Texture2D white = null;
 
@@ -202,6 +193,8 @@ namespace Plex.Engine.GraphicsSubsystem
             Height = height;
             X = x;
             Y = y;
+
+            
         }
 
         /// <summary>

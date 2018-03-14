@@ -53,7 +53,7 @@ namespace Plex.Engine.GUI
         /// <inheritdoc/>
         protected override void OnMouseScroll(int delta)
         {
-            int offset = MathHelper.Clamp(_scrollOffset + delta, 0, _scrollHeight - Height);
+            int offset = MathHelper.Clamp(_scrollOffset - delta, 0, _scrollHeight - Height);
             if(offset != _scrollOffset)
             {
                 _scrollOffset = offset;
@@ -71,7 +71,24 @@ namespace Plex.Engine.GUI
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            if (_needsLayout && _host != null)
+            if (_host == null)
+                return;
+
+            if (_scrollHeight != _host.Height)
+            {
+                _scrollHeight = _host.Height;
+                if(_scrollHeight < Height)
+                {
+                    _scrollOffset = 0;
+                }
+                else
+                {
+                    _scrollOffset = MathHelper.Clamp(_scrollOffset, 0, _scrollHeight - Height);
+                }
+                _needsLayout = true;
+            }
+
+            if (_needsLayout)
             {
                 _host.X = 0;
                 _host.Y = 0 - _scrollOffset;

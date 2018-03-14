@@ -955,6 +955,27 @@ namespace Plex.Engine.GUI
             return new Vector2(x, y);
         }
 
+        public Rectangle Bounds
+        {
+            get
+            {
+                var screenPos = ToScreen(0, 0);
+                return new Rectangle((int)screenPos.X, (int)screenPos.Y, Width, Height);
+            }
+        }
+
+        private Rectangle GetScissorRectangle()
+        {
+            Rectangle bounds = Bounds;
+            var parent = this.Parent;
+            while(parent != null)
+            {
+                bounds = Rectangle.Intersect(bounds, parent.Bounds);
+                parent = parent.Parent;
+            }
+            return bounds;
+        }
+
         /// <summary>
         /// Fire a render event.
         /// </summary>
@@ -970,13 +991,12 @@ namespace Plex.Engine.GUI
             if (Opacity < 1 && !Manager.IgnoreControlOpacity && _userfacingtarget == null)
                 _userfacingtarget = new RenderTarget2D(gfx.Device, Width, Height);
 
-            var screenPos = ToScreen(0, 0);
+            var scissor = GetScissorRectangle();
+            gfx.X = scissor.X;
+            gfx.Y = scissor.Y;
+            gfx.Width = scissor.Width;
+            gfx.Height = scissor.Height;
 
-            //scissortesting
-            gfx.X = (int)screenPos.X;
-            gfx.Y = (int)screenPos.Y;
-            gfx.Width = Width;
-            gfx.Height = Height;
 
             if (_userfacingtarget != null)
                 gfx.Device.SetRenderTarget(BackBuffer);

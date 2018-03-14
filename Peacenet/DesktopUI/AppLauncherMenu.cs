@@ -93,6 +93,10 @@ namespace Peacenet.DesktopUI
         /// <inheritdoc/>
         public override void Show(int x = -1, int y = -1)
         {
+            _scroller = new ScrollView();
+
+            AddChild(_scroller);
+
             _userIcon = new PictureBox();
             _userFullName = new Label();
             _userHostname = new Label();
@@ -163,9 +167,6 @@ namespace Peacenet.DesktopUI
                 ResetUI();
             };
 
-            _scroller = new ScrollView();
-
-            AddChild(_scroller);
 
             _appsStacker = new Stacker();
             _appsCategoryStacker = new Stacker();

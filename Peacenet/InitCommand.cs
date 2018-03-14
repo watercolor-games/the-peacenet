@@ -659,6 +659,10 @@ namespace Peacenet
                             _music.FadeToNextTrack();
                             _tutorialStage++;
                         }
+                        else
+                        {
+                            desk.CloseALOnFocusLoss = true;
+                        }
 
                         break;
                     case 10:
