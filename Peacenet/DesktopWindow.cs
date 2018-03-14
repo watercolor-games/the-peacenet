@@ -271,9 +271,15 @@ namespace Peacenet
             }
             else
             {
-                _infobox.Show("Not yet implemented", "Files cannot yet be opened from the Desktop.");
+                if (!_utils.OpenFile(obj.Tag.ToString()))
+                {
+                    _infobox.Show("Can't open file", "File Manager couldn't find a program that can open that file!");
+                }
             }
         }
+
+        [Dependency]
+        private FileUtilities _utils = null;
 
         private bool _needsDesktopReset = true;
         
