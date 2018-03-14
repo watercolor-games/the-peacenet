@@ -55,7 +55,6 @@ namespace Plex.Engine.GUI
                 {
                     Text = old;
                     Logger.Log(ex.ToString(), Engine.LogType.Error, "texteditor");
-                    throw new InvalidDataException("This text is invalid data for a TextEditor.");
                 }
             }
         }
@@ -225,6 +224,8 @@ namespace Plex.Engine.GUI
 
         private void recalculateLines()
         {
+            if (_font == null)
+                return;
             int x = 0;
             int y = 0;
             int i = 0;
@@ -266,6 +267,7 @@ namespace Plex.Engine.GUI
             if(_font == null)
             {
                 _font = Theme.GetFont(Themes.TextFontStyle.Mono);
+                recalculateLines();
             }
             if(_lastWidth != Width)
             {

@@ -250,7 +250,10 @@ namespace Peacenet.Applications
                         open(item.Tag.ToString());
                         return;
                     }
-                    _infobox.Show("Not yet implemented", "You cannot yet open files from the File Browser.");
+                    if(!_utils.OpenFile(item.Tag.ToString()))
+                    {
+                        _infobox.Show("Can't open file", "File Manager couldn't find a program that can open that file!");
+                    }
                     return;
                 }
             };
@@ -300,6 +303,9 @@ namespace Peacenet.Applications
             AddChild(_statusHead);
             AddChild(_statusDescription);
         }
+
+        [Dependency]
+        private FileUtilities _utils = null;
 
         private void _search_KeyEvent(object sender, MonoGame.Extended.Input.InputListeners.KeyboardEventArgs e)
         {

@@ -18,25 +18,29 @@ namespace Peacenet
         {
             var prc = Process.GetCurrentProcess();
             var other = Process.GetProcesses().FirstOrDefault(x => x.ProcessName == prc.ProcessName && x.Id != prc.Id);
-            if(other != null)
+            if (other != null)
             {
                 System.Windows.Forms.Application.EnableVisualStyles();
                 System.Windows.Forms.MessageBox.Show(caption: "The Peacenet", text: "The Peacenet is already running on your system.", icon: System.Windows.Forms.MessageBoxIcon.Error, buttons: System.Windows.Forms.MessageBoxButtons.OK);
                 return;
             }
 
+#if DEBUG
             try
             {
-                using (var game = new Plexgate(args))
-                    game.Run();
-            }
+#endif
+            using (var game = new Plexgate(args))
+                game.Run();
+#if DEBUG
+        }
             catch(Exception ex)
             {
                 Logger.Log(ex.ToString(), LogType.Fatal, "monogame");
                 Console.ReadKey(true);
 
             }
-                Environment.Exit(0);
+#endif
+            Environment.Exit(0);
         }
     }
 }

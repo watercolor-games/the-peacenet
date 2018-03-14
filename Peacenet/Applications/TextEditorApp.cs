@@ -35,7 +35,17 @@ namespace Peacenet.Applications
         private Button _new = new Button();
         private TextEditor _editor = new TextEditor();
 
-        private string _filetext = null;
+        public string Text
+        {
+            get
+            {
+                return _editor.Text;
+            }
+            set
+            {
+                _editor.Text = value;
+            }
+        }
 
         /// <inheritdoc/>
         public TextEditorApp(WindowSystem _winsys) : base(_winsys)
@@ -95,6 +105,32 @@ namespace Peacenet.Applications
             _editor.Y = _save.Y + _save.Height + 3;
             _editor.Width = Width;
             _editor.Height = Height - _editor.Y;
+        }
+    }
+
+    public class TextHandler : IFileHandler
+    {
+        public string Name => "Text Editor";
+
+        public IEnumerable<string> MimeTypes
+        {
+            get
+            {
+                yield return "text/plain";
+            }
+        }
+
+        [Dependency]
+        private WindowSystem _winsys = null;
+
+        [Dependency]
+        private FSManager _fs = null;
+
+        public void OpenFile(string path)
+        {
+            var editor = new TextEditorApp(_winsys);
+            editor.Show();
+            editor.Text = _fs.ReadAllText(path);
         }
     }
 }
