@@ -294,23 +294,24 @@ namespace Peacenet
         /// </summary>
         public void SetupIcons()
         {
-            _desktopIconsView.Clear();
+            _desktopIconsView.ClearItems();
             if (!_fs.DirectoryExists("/home/Desktop"))
                 _fs.CreateDirectory("/home/Desktop");
             foreach(var dir in _fs.GetDirectories("/home/Desktop"))
             {
                 if (_futils.GetNameFromPath(dir).StartsWith("."))
                     continue;
-                var diritem = new ListViewItem(_desktopIconsView);
+                var diritem = new ListViewItem();
                 diritem.Tag = dir;
                 diritem.Value = _futils.GetNameFromPath(dir);
                 diritem.ImageKey = "folder";
+                _desktopIconsView.AddItem(diritem);
             }
             foreach (var dir in _fs.GetFiles("/home/Desktop"))
             {
                 if (_futils.GetNameFromPath(dir).StartsWith("."))
                     continue;
-                var diritem = new ListViewItem(_desktopIconsView);
+                var diritem = new ListViewItem();
                 diritem.Tag = dir;
                 diritem.Value = _futils.GetNameFromPath(dir);
                 diritem.ImageKey = _futils.GetMimeType(dir);
@@ -318,6 +319,7 @@ namespace Peacenet
                 {
                     _desktopIconsView.SetImage(diritem.ImageKey, _futils.GetMimeIcon(diritem.ImageKey));
                 }
+                _desktopIconsView.AddItem(diritem);
             }
         }
 

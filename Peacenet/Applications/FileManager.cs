@@ -217,12 +217,13 @@ namespace Peacenet.Applications
 
             foreach(var shelldir in _os.GetShellDirs())
             {
-                var lvitem = new ListViewItem(_placesView);
+                var lvitem = new ListViewItem();
                 lvitem.Value = shelldir.FriendlyName;
                 lvitem.Tag = shelldir.Path;
                 lvitem.ImageKey = lvitem.Tag.ToString();
                 if (shelldir.Texture != null)
                     _placesView.SetImage(lvitem.ImageKey, shelldir.Texture);
+                _placesView.AddItem(lvitem);
             }
 
             _filesView.SetImage("directory", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
@@ -284,8 +285,8 @@ namespace Peacenet.Applications
             };
             _searchButton.Click += (o, a) =>
             {
-                _filesView.SetFilter(_search.Text);
-                if (_filesView.VisibleItems == 0)
+                _filesView.Filter = _search.Text;
+                if (_filesView.VisibleItems.Length == 0)
                 {
                     _statusHead.Text = "No results found";
                     _statusDescription.Text = $"Your search \"{_search.Text}\" did not return any results.";
@@ -311,8 +312,8 @@ namespace Peacenet.Applications
         {
             if (e.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
             {
-                _filesView.SetFilter(_search.Text);
-                if (_filesView.VisibleItems == 0)
+                _filesView.Filter = _search.Text;
+                if (_filesView.VisibleItems.Length == 0)
                 {
                     _statusHead.Text = "No results found";
                     _statusDescription.Text = $"Your search \"{_search.Text}\" did not return any results.";
@@ -339,7 +340,7 @@ namespace Peacenet.Applications
         public void ResetUI()
         {
             _search.Text = "";
-            _filesView.SetFilter(null);
+            _filesView.Filter = null;
             _back.Image = _plexgate.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-left");
             _forward.Image = _plexgate.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-right");
             _searchButton.Image = _plexgate.Content.Load<Texture2D>("UIIcons/search");
@@ -347,14 +348,14 @@ namespace Peacenet.Applications
             _back.ShowImage = true;
             _searchButton.ShowImage = true;
 
-            var placesItems = _placesView.GetItems();
+            var placesItems = _placesView.Items;
             var currentWork = placesItems.OrderByDescending(x => x.Tag.ToString().Length).FirstOrDefault(x => _currentDirectory.StartsWith(x.Tag.ToString()));
             if (currentWork != null)
                 _placesView.SelectedIndex = Array.IndexOf(placesItems, currentWork);
             else
                 _placesView.SelectedIndex = -1;
 
-            _filesView.Clear();
+            _filesView.ClearItems();
             if (!_fs.DirectoryExists(_currentDirectory))
             {
                 Enabled = false;
@@ -376,10 +377,11 @@ namespace Peacenet.Applications
                 if (shorthand.StartsWith("."))
                     if (!_showHidden)
                         continue;
-                var lvitem = new ListViewItem(_filesView);
+                var lvitem = new ListViewItem();
                 lvitem.Value = shorthand;
                 lvitem.Tag = dir;
                 lvitem.ImageKey = "directory";
+                _filesView.AddItem(lvitem);
                 noFiles = false;
             }
             foreach(var dir in _fs.GetFiles(_currentDirectory))
@@ -390,7 +392,7 @@ namespace Peacenet.Applications
                 if (shorthand.StartsWith("."))
                     if (!_showHidden)
                         continue;
-                var lvitem = new ListViewItem(_filesView);
+                var lvitem = new ListViewItem();
                 lvitem.Value = shorthand;
                 lvitem.Tag = dir;
                 lvitem.ImageKey = _futils.GetMimeType(shorthand);
@@ -398,6 +400,7 @@ namespace Peacenet.Applications
                 {
                     _filesView.SetImage(lvitem.ImageKey, _futils.GetMimeIcon(lvitem.ImageKey));
                 }
+                _filesView.AddItem(lvitem);
 
                 noFiles = false;
             }

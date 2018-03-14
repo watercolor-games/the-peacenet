@@ -190,16 +190,14 @@ Click 'Next' to get started.";
             _accentColors.Layout = ListViewLayout.List;
 
             var currentAccent = _save.GetValue("theme.accent", PeacenetAccentColor.Blueberry);
-            int index = 0;
             foreach (var accent in Enum.GetNames(typeof(PeacenetAccentColor)))
             {
-                if(accent != currentAccent.ToString())
-                    index++;
-                var lvitem = new ListViewItem(_accentColors);
+                var lvitem = new ListViewItem();
                 lvitem.Value = accent.ToString();
                 lvitem.Tag = (PeacenetAccentColor)Enum.Parse(typeof(PeacenetAccentColor), accent);
+                _accentColors.AddItem(lvitem);
             }
-            _accentColors.SelectedIndex = index;
+            _accentColors.SelectedIndex = Array.IndexOf(_accentColors.Items, _accentColors.Items.FirstOrDefault(x => (PeacenetAccentColor)x.Tag == currentAccent));
             _accentColors.SelectedIndexChanged += (o, a) =>
             {
                 if (_accentColors.SelectedItem == null)

@@ -106,20 +106,17 @@ namespace Peacenet.Applications
         /// </summary>
         public void PopulateResolutions()
         {
-            _resolutions.Clear();
+            _resolutions.ClearItems();
             string[] resolutions = _plexgate.GetAvailableResolutions();
             string defres = _plexgate.GetSystemResolution();
             string setres = _config.GetValue("screenResolution", defres);
             foreach (var res in resolutions)
             {
-                var lvitem = new ListViewItem(_resolutions);
+                var lvitem = new ListViewItem();
                 lvitem.Value = res;
-                if (setres == res)
-                {
-                    _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Children, lvitem);
-                    lvitem.Selected = true;
-                }
+                _resolutions.AddItem(lvitem);
             }
+            _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Items, _resolutions.Items.FirstOrDefault(x => x.Value == setres));
 
             _gfxFullscreen.Checked = _config.GetValue("uiFullscreen", true);
             _audioVolumeSlider.Value = _config.GetValue("audioSfxVolume", 1f);

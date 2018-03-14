@@ -175,9 +175,10 @@ namespace Peacenet.Applications
 
             foreach (var accent in Enum.GetNames(typeof(PeacenetAccentColor)))
             {
-                var lvitem = new ListViewItem(_accentColors);
+                var lvitem = new ListViewItem();
                 lvitem.Value = accent;
                 lvitem.Tag = (PeacenetAccentColor)Enum.Parse(typeof(PeacenetAccentColor), accent);
+                _accentColors.AddItem(lvitem);
             }
             _accentColors.SelectedIndex = (int)_save.GetValue("theme.accent", PeacenetAccentColor.Blueberry);
             _accentColors.SelectedIndexChanged += (o, a) =>

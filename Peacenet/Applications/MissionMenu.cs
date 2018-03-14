@@ -75,10 +75,12 @@ namespace Peacenet.Applications
 
             foreach(var mission in _missionManager.Missions)
             {
-                var lvitem = new ListViewItem(_availableView);
+                var lvitem = new ListViewItem();
                 lvitem.Value = mission.Name;
                 lvitem.Tag = mission;
+                _availableView.AddItem(lvitem);
             }
+            
 
             _availableView.SelectedIndexChanged += (o, a) =>
             {
