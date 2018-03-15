@@ -551,7 +551,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            gfx.Clear(Theme.GetAccentColor().Darken(0.35F));
+            Theme.DrawControlBG(gfx, 0, 0, Width, Height);
         }
     }
 
@@ -626,7 +626,7 @@ namespace Peacenet
                 control.X = x;
                 control.Y = y;
                 lineheight = Math.Max(lineheight, control.Height);
-                x += control.Width;
+                x += control.Width+3;
             }
             base.OnUpdate(time);
         }
@@ -640,7 +640,7 @@ namespace Peacenet
     /// <summary>
     /// A special <see cref="Button"/> capable of sticking in the "Pressed" state while an associated <see cref="Window"/> is active.  
     /// </summary>
-    public class WindowListButton : Button
+    public class WindowListButton : Control
     {
         private WindowInfo _win = null;
         private bool _lastFocused = false;
@@ -684,25 +684,34 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            Text = _win.Border?.Title;
-            ShowImage = false;
-            if(_lastFocused != _win.Border?.HasFocused)
-            {
-                _lastFocused = (bool)_win.Border?.HasFocused;
-                Invalidate();
-            }
-            base.OnUpdate(time);
+            Width = 175;
+            Height = 24;
+
         }
 
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             var state = Plex.Engine.Themes.UIButtonState.Idle;
-            if (_lastFocused)
-                state = Plex.Engine.Themes.UIButtonState.Pressed;
             if (ContainsMouse)
                 state = Plex.Engine.Themes.UIButtonState.Hover;
-            Theme.DrawButton(gfx, Text, Image, state, ShowImage, ImageRect, TextRect);
+            if (_win.Border.HasFocused || LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                state = Plex.Engine.Themes.UIButtonState.Pressed;
+            switch(state)
+            {
+                case Plex.Engine.Themes.UIButtonState.Idle:
+                    Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
+                    break;
+                case Plex.Engine.Themes.UIButtonState.Hover:
+                    gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor());
+                    break;
+                case Plex.Engine.Themes.UIButtonState.Pressed:
+                    Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+                    break;
+            }
+            var font = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
+            var measure = font.MeasureString(_win.Border.Title);
+            gfx.DrawString(_win.Border.Title, 5, (Height - (int)measure.Y) / 2, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), font, TextAlignment.Left);
         }
     }
 }
