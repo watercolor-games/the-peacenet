@@ -32,7 +32,7 @@ namespace Peacenet
 
             Console.ForegroundColor = ConsoleColor.White;
             var prc = Process.GetCurrentProcess();
-            var other = Process.GetProcesses().FirstOrDefault(x => x.ProcessName == prc.ProcessName && x.Id != prc.Id);
+            var other = Process.GetProcesses().FirstOrDefault(x => { try { return x.ProcessName == prc.ProcessName && x.Id != prc.Id; } catch (InvalidOperationException) { return false; } });
             if (other != null)
             {
                 System.Windows.Forms.Application.EnableVisualStyles();
