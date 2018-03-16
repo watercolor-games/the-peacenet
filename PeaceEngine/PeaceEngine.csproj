@@ -144,6 +144,7 @@
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\CheckBox.cs" />
     <Compile Include="GUI\CheckLabel.cs" />
+    <Compile Include="GUI\ContextMenu.cs" />
     <Compile Include="GUI\Control.cs" />
     <Compile Include="GUI\Hitbox.cs" />
     <Compile Include="GUI\Label.cs" />
@@ -303,9 +304,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="PlexContentManager\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

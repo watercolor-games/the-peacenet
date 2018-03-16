@@ -28,6 +28,8 @@ namespace Peacenet
         private Texture2D _wallpaper = null;
         private float _panelAnim = -1;
 
+        private ContextMenu _desktopRightClick = null;
+
         private SoundEffect _noteSound = null;
 
         private bool _showPanels = true;
@@ -111,6 +113,8 @@ namespace Peacenet
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _desktopRightClick = new ContextMenu(_winsys);
+
             _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
 
             _applauncher = new AppLauncherMenu(_winsys, this);
@@ -149,12 +153,16 @@ namespace Peacenet
 
             _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
             _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
-
             _topPanel.AddChild(_missionButton);
 
             _missionButton.Click += (o, a) =>
             {
             };
+
+            RightClick += Desktop_RightClick;
+            _desktopIconsView.RightClick += Desktop_RightClick;
+
+
 
             _appLauncherText.Click += (o, a) =>
             {
@@ -205,6 +213,85 @@ namespace Peacenet
                 if (path.StartsWith("/home/Desktop"))
                     _needsDesktopReset = true;
             };
+        }
+
+        private void Desktop_RightClick(object sender, EventArgs e)
+        {
+            _desktopRightClick.ClearItems();
+            var newFolder = new MenuItem
+            {
+                Text = "New Folder..."
+            };
+            newFolder.Activated += () =>
+            {
+                string folderPath = "/home/Desktop";
+                _infobox.PromptText("New folder", "Please enter a name for your new folder.", (name) =>
+                {
+                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + name : folderPath + "/" + name;
+                    _fs.CreateDirectory(fullPath);
+                }, (proposedName) =>
+                {
+                    if (string.IsNullOrWhiteSpace(proposedName))
+                    {
+                        _infobox.Show("New folder", "Your folder's name must not be blank.");
+                        return false;
+                    }
+
+                    foreach (char c in proposedName)
+                    {
+                        if (char.IsLetterOrDigit(c))
+                            continue;
+                        if (c == '_' || c == ' ' || c == '-' || c == '.')
+                            continue;
+                        _infobox.Show("Invalid path character", "Your new folder's name contains an invalid character. Valid characters include any letter or number as well as '.', '_', '-' or a space.");
+                        return false;
+                    }
+
+                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + proposedName : folderPath + "/" + proposedName;
+                    if (_fs.DirectoryExists(fullPath) || _fs.FileExists(fullPath))
+                    {
+                        _infobox.Show("New folder", "A folder or file already exists with that name.");
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            };
+            var changeDesktopBackground = new MenuItem
+            {
+                Text = "Change Desktop Background..."
+            };
+            changeDesktopBackground.Activated += () =>
+            {
+                var appearance = new Applications.Appearance(WindowSystem);
+                appearance.Show();
+            };
+            _desktopRightClick.AddItem(newFolder);
+            if(_desktopIconsView.SelectedItem!=null)
+            {
+                var path = _desktopIconsView.SelectedItem.Tag.ToString();
+                var name = _desktopIconsView.SelectedItem.Value;
+
+                var delete = new MenuItem
+                {
+                    Text = (_fs.DirectoryExists(path)) ? "Delete folder" : "Delete file"
+                };
+                delete.Activated += () =>
+                {
+                    _infobox.ShowYesNo(delete.Text, "Are you sure you want to delete \"" + path + "\"?", (answer) =>
+                    {
+                        if(answer)
+                        {
+                            _fs.Delete(path);
+                        }
+                    });
+                };
+                _desktopRightClick.AddItem(delete);
+            }
+            _desktopRightClick.AddItem(changeDesktopBackground);
+
+            _desktopRightClick.Show(MouseX, MouseY);
         }
 
         /// <summary>
@@ -684,7 +771,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            Width = 175;
+            Width = 192;
             Height = 24;
 
         }

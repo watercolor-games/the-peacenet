@@ -725,6 +725,13 @@ namespace Plex.Engine.GUI
                 }
                 //update the left state
                 _left = leftState;
+
+                //right-clicking
+                if(_right == ButtonState.Pressed && rightState == ButtonState.Released)
+                {
+                    RightClick?.Invoke(this, EventArgs.Empty);
+                }
+                _right = rightState;
             }
             else
             {
