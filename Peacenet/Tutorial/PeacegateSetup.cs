@@ -292,8 +292,7 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
                     _animState++;
                     break;
                 case 9:
-                    if (_tutorial.WaitingForNextTrack == false)
-                        _animState++;
+                    _animState++;
                     break;
                 case 10:
                     _welcomeAnim -= (float)time.ElapsedGameTime.TotalSeconds * 2;

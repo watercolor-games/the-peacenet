@@ -173,8 +173,6 @@ namespace Peacenet
                 console.SlowWrite($"    You don't seem like the other sentiences. You show far more collectiveness and intellect. That'll help you.");
                 Thread.Sleep(500);
                 tutorial.MoveToNextSection();
-                while (tutorial.WaitingForNextTrack)
-                    Thread.Sleep(700);
                 console.SlowWrite($"    Long ago, this world was created as a place to host the memories and personality information of dead humans.");
                 Thread.Sleep(500);
                 console.SlowWrite($"    It was a peaceful world where everyone had a second life in a digital land.");
@@ -191,8 +189,6 @@ namespace Peacenet
                 Thread.Sleep(500);
                 tutorial.MoveToNextSection();
                 tutorial.Looping = false;
-                while (tutorial.WaitingForNextTrack)
-                    Thread.Sleep(700);
                 console.SlowWrite("    There are some things I need to do for you first. Specifically, setting up a Peacegate environment for you - and teaching you how to use it. For now, pay attention to the console and follow the on-screen instructions.");
                 Thread.Sleep(500);
                 console.SlowWrite("   Let's begin.");
@@ -215,8 +211,6 @@ namespace Peacenet
                 tutorial.MoveToNextSection();
                 tutorial.Looping = true;
                 console.WriteLine("Waiting for setup environment...");
-                while (tutorial.WaitingForNextTrack)
-                    Thread.Sleep(700);
                 _os.PreventStartup = true;
                 new Tutorial.PeacegateSetup(_winsys, tutorial).Show(0, 0);
             }
@@ -669,11 +663,8 @@ namespace Peacenet
                         _tutorialLabel.Visible = false;
                         _tutorialDescription.Visible = false;
 
-                        if(!_music.WaitingForNextTrack)
-                        {
-                            _music.Looping = false;
-                            _tutorialStage++;
-                        }
+                        _music.Looping = false;
+                        _tutorialStage++;
                         break;
                     case 11:
                         _tutorialLabel.Visible = true;
