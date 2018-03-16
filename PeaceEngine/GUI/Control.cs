@@ -1006,6 +1006,10 @@ namespace Plex.Engine.GUI
             gfx.Width = scissor.Width;
             gfx.Height = scissor.Height;
 
+            var screenPos = ToScreen(0, 0);
+            gfx.RenderOffsetX = -(gfx.X - (int)screenPos.X);
+            gfx.RenderOffsetY = -(gfx.Y - (int)screenPos.Y);
+
 
             if (_userfacingtarget != null)
                 gfx.Device.SetRenderTarget(BackBuffer);
@@ -1027,6 +1031,8 @@ namespace Plex.Engine.GUI
             }
             if (_userfacingtarget != null)
                 gfx.Device.SetRenderTarget(Parent?.BackBuffer ?? Plexgate.GetInstance().GameRenderTarget);
+            //gfx.RenderOffsetX = 0;
+            //gfx.RenderOffsetY = 0;
         }
 
         private byte[] _backbufferData = null;

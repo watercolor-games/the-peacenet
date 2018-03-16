@@ -261,19 +261,22 @@ namespace Plex.Engine.GUI
                             foreach (var item in VisibleItems)
                             {
                                 var textMeasure = TextRenderer.MeasureText(item.Value, font, _largeIconTextWidth, TextRenderers.WrapMode.Words);
-                                if(x >= h && x <= h + (_horizontalIconPad*2) + _largeIconTextWidth)
+
+                                if (h + (_horizontalIconPad * 2) + _largeIconTextWidth > Width - (_margin * 2))
+                                {
+                                    h = 0;
+                                    v += line1;
+                                    line1 = 0;
+                                }
+
+                                if (x >= h && x <= h + (_horizontalIconPad*2) + _largeIconTextWidth)
                                 {
                                     if (y >= v && y <= v + _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize)
                                         return item;
                                 }
                                 h += (_horizontalIconPad * 2) + _largeIconTextWidth;
                                 line1 = Math.Max(line1, _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize);
-                                if (h > Width - (_margin * 2))
-                                {
-                                    h = 0;
-                                    v += line1;
-                                    line1 = 0;
-                                }
+                                
                             }
                             break;
                         case IconFlowDirection.TopDown:
@@ -281,6 +284,14 @@ namespace Plex.Engine.GUI
                             foreach (var item in VisibleItems)
                             {
                                 var textMeasure = TextRenderer.MeasureText(item.Value, font, _largeIconTextWidth, TextRenderers.WrapMode.Words);
+
+                                if (v + (_verticalIconPad) + _largeIconSize + 5 + (int)textMeasure.Y > Height - (_margin * 2))
+                                {
+                                    v = 0;
+                                    h += col1;
+                                    col1 = 0;
+                                }
+
                                 if (x >= h && x <= h + (_horizontalIconPad * 2) + _largeIconTextWidth)
                                 {
                                     if (y >= v && y <= v + _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize)
@@ -289,12 +300,7 @@ namespace Plex.Engine.GUI
 
                                 v += (_verticalIconPad) + _largeIconSize + 5 + (int)textMeasure.Y;
                                 col1 = Math.Max(col1, _largeIconTextWidth + (_horizontalIconPad * 2));
-                                if (v > Height - (_margin*2))
-                                {
-                                    v = 0;
-                                    h += col1;
-                                    col1 = 0;
-                                }
+                                
                             }
                             break;
                     }
@@ -350,12 +356,19 @@ namespace Plex.Engine.GUI
                                 var image = GetImage(item.ImageKey);
                                 int width = Math.Max((int)textMeasure.X, _largeIconSize);
 
+                                if (x + (_horizontalIconPad * 2) + _largeIconTextWidth > Width - (_margin * 2))
+                                {
+                                    x = _margin;
+                                    y += ln;
+                                    ln = 0;
+                                }
+
                                 if (image != null)
                                 {
                                     gfx.DrawRectangle(x + _horizontalIconPad + ((_largeIconTextWidth - _largeIconSize) / 2), y + _verticalIconPad, _largeIconSize, _largeIconSize, image, (item == SelectedItem) ? Theme.GetAccentColor() : Color.White);
                                 }
 
-                                if(item == SelectedItem)
+                                if (item == SelectedItem)
                                 {
                                     gfx.DrawRectangle(x + (_horizontalIconPad / 2), y + (_verticalIconPad + _largeIconSize + 5), _largeIconTextWidth + _horizontalIconPad, (int)textMeasure.Y, Theme.GetAccentColor());
                                 }
@@ -364,12 +377,6 @@ namespace Plex.Engine.GUI
 
                                 x += (_horizontalIconPad * 2) + _largeIconTextWidth;
                                 ln = Math.Max(ln, _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize);
-                                if (x > Width - (_margin * 2))
-                                {
-                                    x = _margin;
-                                    y += ln;
-                                    ln = 0;
-                                }
                             }
                             break;
                         case IconFlowDirection.TopDown:
@@ -378,6 +385,14 @@ namespace Plex.Engine.GUI
                             {
                                 var textMeasure = TextRenderer.MeasureText(item.Value, font, _largeIconTextWidth, TextRenderers.WrapMode.Words);
                                 var image = GetImage(item.ImageKey);
+
+                                if (y + _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize > Height - (_margin * 2))
+                                {
+                                    y = _margin;
+                                    x += col;
+                                    col = 0;
+                                }
+
                                 if (image != null)
                                 {
                                     gfx.DrawRectangle(x + _horizontalIconPad + ((_largeIconTextWidth - _largeIconSize) / 2), y + _verticalIconPad, _largeIconSize, _largeIconSize, image, (item == SelectedItem) ? Theme.GetAccentColor() : Color.White);
@@ -392,12 +407,7 @@ namespace Plex.Engine.GUI
 
                                 y += _verticalIconPad + (int)textMeasure.Y + 5 + _largeIconSize;
                                 col = Math.Max(col, (_horizontalIconPad * 2) + _largeIconTextWidth);
-                                if(y > Height - (_margin*2))
-                                {
-                                    y = _margin;
-                                    x += col;
-                                    col = 0;
-                                }
+                                
                             }
                             break;
                     }

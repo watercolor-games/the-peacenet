@@ -448,6 +448,9 @@ namespace Plex.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (!IsActive)
+                return;
+
             if (GameRenderTarget == null)
                 //Setup the game's rendertarget so it matches the desired resolution.
                 GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
@@ -521,19 +524,22 @@ namespace Plex.Engine
         {
             if (GameRenderTarget == null)
                 return;
-            GraphicsDevice.SetRenderTarget(GameRenderTarget);
-            GraphicsDevice.Clear(Color.Black);
-            foreach (var layer in _layers.ToArray())
-                foreach (var entity in layer.Entities)
-                    entity.Draw(gameTime, this._ctx);
+            if (IsActive)
+            {
+                GraphicsDevice.SetRenderTarget(GameRenderTarget);
+                GraphicsDevice.Clear(Color.Black);
+                foreach (var layer in _layers.ToArray())
+                    foreach (var entity in layer.Entities)
+                        entity.Draw(gameTime, this._ctx);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.LinearWrap, DepthStencilState.Default,
-                            RasterizerState.CullNone);
-            spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                                SamplerState.LinearWrap, DepthStencilState.Default,
+                                RasterizerState.CullNone);
+                spriteBatch.Draw(MouseTexture, new Rectangle(LastMouseState.X, LastMouseState.Y, MouseTexture.Width, MouseTexture.Height), Color.White);
 
-            spriteBatch.End();
-            GraphicsDevice.SetRenderTarget(null);
+                spriteBatch.End();
+                GraphicsDevice.SetRenderTarget(null);
+            }
             var rstate = new RasterizerState
             {
                 MultiSampleAntiAlias = true

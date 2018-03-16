@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
 using Plex.Engine.Config;
+using System.Reflection;
 
 namespace Peacenet.Applications
 {
@@ -45,7 +46,14 @@ namespace Peacenet.Applications
         private Label _audioVolume = new Label();
         private SliderBar _audioVolumeSlider = new SliderBar();
 
+        private Label _aboutHeader = new Label();
+
         private Label _ux = new Label();
+
+        private Label _aboutText = new Label();
+
+        private Button _warranty = new Button();
+        private Button _license = new Button();
 
         /// <inheritdoc/>
         public GameSettings(WindowSystem _winsys) : base(_winsys)
@@ -82,6 +90,7 @@ namespace Peacenet.Applications
 
             _configPanel.AddChild(_graphics);
             _configPanel.AddChild(_audio);
+            _configPanel.AddChild(_aboutHeader);
 
             _configPanel.AddChild(_audioVolumeSlider);
             _configPanel.AddChild(_audioVolume);
@@ -96,7 +105,30 @@ namespace Peacenet.Applications
                 PopulateResolutions();
                 _needsPopulate = false;
             }
+            _configPanel.AddChild(_aboutText);
 
+            var peacenetVersion = this.GetType().Assembly.GetName().Version;
+            var engineVersion = typeof(Plexgate).Assembly.GetName().Version;
+
+            if(peacenetVersion != null)
+            {
+                _aboutText.Text += $"Peacenet - Version {peacenetVersion.Major}.{peacenetVersion.Minor} - Milestone {peacenetVersion.Build} build {peacenetVersion.Revision}.";
+            }
+            if (engineVersion != null)
+            {
+                _aboutText.Text += $"\nPeace Engine - Version {engineVersion.Major}.{engineVersion.Minor} - Milestone {engineVersion.Build} build {engineVersion.Revision}.";
+            }
+            _warranty.Text = "Warranty Info";
+            _license.Text = "License";
+
+            _configPanel.AddChild(_warranty);
+            _configPanel.AddChild(_license);
+
+            _license.Click += (o, a) =>
+            {
+                var gpl = new GPLInfo(WindowSystem);
+                gpl.Show();
+            };
         }
 
         private bool _needsPopulate = true;
@@ -192,6 +224,22 @@ Disabling transparency effects can help gain performance on low-end GPUs but can
             _fadingWindows.Text = @"Fade windows while dragging?
 
 If enabled, windows will fade out as you are dragging them, much like they do in the KWin Window Manager. Requires transparent UI elements.";
+
+            _aboutHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
+            _aboutHeader.Text = "About";
+            _aboutHeader.X = 15;
+            _aboutHeader.Y = _fadingWindows.Y + _fadingWindows.Height + 10;
+            _aboutHeader.AutoSize = true;
+
+            _aboutText.X = 15;
+            _aboutText.MaxWidth = _ignoreOpacity.MaxWidth;
+            _aboutText.AutoSize = true;
+            _aboutText.Y = _aboutHeader.Y + _aboutHeader.Height + 10;
+
+            _warranty.X = (_configPanel.Width - _warranty.Width) - 15;
+            _license.X = (_warranty.X - _license.Width) - 5;
+            _warranty.Y = _aboutText.Y + _aboutText.Height + 15;
+            _license.Y = _warranty.Y;
         }
     }
 }

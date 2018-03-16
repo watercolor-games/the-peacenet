@@ -16,6 +16,21 @@ namespace Peacenet
         [STAThread]
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("    the");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("peacenet");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(@"  Copyright (C) 2018  Watercolor Games
+    This program comes with ABSOLUTELY NO WARRANTY; for details see 'Warranty Info' in Settings.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; see the 'License' section in Settings for details.");
+
+            Console.WriteLine();
+            Console.WriteLine("--------------------");
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.White;
             var prc = Process.GetCurrentProcess();
             var other = Process.GetProcesses().FirstOrDefault(x => x.ProcessName == prc.ProcessName && x.Id != prc.Id);
             if (other != null)

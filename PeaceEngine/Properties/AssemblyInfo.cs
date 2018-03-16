@@ -36,5 +36,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 
     //Devs: Increase the assembly version by one minor every release. If the minor hits over 9, set it to 0 and increment the major. Starting version is 1.0.
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.5.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

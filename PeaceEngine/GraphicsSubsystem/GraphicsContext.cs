@@ -25,6 +25,34 @@ namespace Plex.Engine.GraphicsSubsystem
     /// <threadsafety static="true" instance="false"/>
     public sealed class GraphicsContext
     {
+        private int _offsetX = 0;
+        private int _offsetY = 0;
+
+        public int RenderOffsetX
+        {
+            get
+            {
+                return _offsetX;
+            }
+            set
+            {
+                _offsetX = value;
+            }
+        }
+
+        public int RenderOffsetY
+        {
+            get
+            {
+                return _offsetY;
+            }
+            set
+            {
+                _offsetY = value;
+            }
+        }
+
+
         private BlendState _multiplicative = null;
 
         private float _opacity = 1f;
@@ -240,8 +268,12 @@ namespace Plex.Engine.GraphicsSubsystem
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
+            x += _offsetX;
+            y += _offsetY;
             x1 += X;
             y1 += Y;
+            x1 += _offsetX;
+            y1 += _offsetY;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(tex2, new Rectangle(x, y, distance, thickness), null, tint, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -265,8 +297,12 @@ namespace Plex.Engine.GraphicsSubsystem
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
+            x += _offsetX;
+            y += _offsetY;
             x1 += X;
             y1 += Y;
+            x1 += _offsetX;
+            y1 += _offsetY;
             int distance = (int)Vector2.Distance(new Vector2(x, y), new Vector2(x1, y1));
             float rotation = getRotation(x, y, x1, y1);
             _spritebatch.Draw(white, new Rectangle(x, y, distance, thickness), null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
@@ -289,6 +325,8 @@ namespace Plex.Engine.GraphicsSubsystem
                 return; //no sense rendering if you CAN'T SEE IT
             x += X;
             y += Y;
+            x += _offsetX;
+            y += _offsetY;
             _spritebatch.Draw(white, new Rectangle(x, y, width, height), color);
         }
 
@@ -320,6 +358,8 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <param name="color">The color of the circle</param>
         public void DrawCircle(int x, int y, int radius, Color color)
         {
+            x += _offsetX;
+            y += _offsetY;
             if (_grayOut)
                 color = color.Darken(0.5F);
             color = color * _opacity;
@@ -373,6 +413,8 @@ namespace Plex.Engine.GraphicsSubsystem
                 return;
             x += X;
             y += Y;
+            x += _offsetX;
+            y += _offsetY;
             _spritebatch.End();
             var state = SamplerState.LinearClamp;
             if (layout == ImageLayout.Tile)
@@ -456,6 +498,8 @@ namespace Plex.Engine.GraphicsSubsystem
         {
             x += X;
             y += Y;
+            x += _offsetX;
+            y += _offsetY;
             if (_grayOut)
                 color = color.Darken(0.5F);
             color = color * _opacity;
