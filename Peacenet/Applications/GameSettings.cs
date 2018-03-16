@@ -52,7 +52,6 @@ namespace Peacenet.Applications
 
         private Label _aboutText = new Label();
 
-        private Button _warranty = new Button();
         private Button _license = new Button();
 
         /// <inheritdoc/>
@@ -118,10 +117,8 @@ namespace Peacenet.Applications
             {
                 _aboutText.Text += $"\nPeace Engine - Version {engineVersion.Major}.{engineVersion.Minor} - Milestone {engineVersion.Build} build {engineVersion.Revision}.";
             }
-            _warranty.Text = "Warranty Info";
             _license.Text = "License";
 
-            _configPanel.AddChild(_warranty);
             _configPanel.AddChild(_license);
 
             _license.Click += (o, a) =>
@@ -197,7 +194,7 @@ namespace Peacenet.Applications
 
             _audioVolume.X = 20;
             _audioVolume.Y = _audio.Y + _audio.Height + 10;
-            _audioVolume.Text = $"Audio volume: {_audioVolumeSlider.Value * 100 : 0.0}%";
+            _audioVolume.Text = $"Audio volume: {_audioVolumeSlider.Value * 100: 0.0}%";
             _audioVolume.AutoSize = true;
 
             _audioVolumeSlider.X = 350;
@@ -236,10 +233,9 @@ If enabled, windows will fade out as you are dragging them, much like they do in
             _aboutText.AutoSize = true;
             _aboutText.Y = _aboutHeader.Y + _aboutHeader.Height + 10;
 
-            _warranty.X = (_configPanel.Width - _warranty.Width) - 15;
-            _license.X = (_warranty.X - _license.Width) - 5;
-            _warranty.Y = _aboutText.Y + _aboutText.Height + 15;
-            _license.Y = _warranty.Y;
+            _license.X = (_configPanel.Width - _license.Width) - 15;
+            _license.Y = _aboutText.Y + _aboutText.Height + 15;
         }
+        
     }
 }

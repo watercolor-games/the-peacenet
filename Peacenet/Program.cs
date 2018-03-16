@@ -22,7 +22,7 @@ namespace Peacenet
             Console.Write("peacenet");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(@"  Copyright (C) 2018  Watercolor Games
-    This program comes with ABSOLUTELY NO WARRANTY; for details see 'Warranty Info' in Settings.
+    This program comes with ABSOLUTELY NO WARRANTY; for details see 'License' in Settings.
     This is free software, and you are welcome to redistribute it
     under certain conditions; see the 'License' section in Settings for details.");
 
