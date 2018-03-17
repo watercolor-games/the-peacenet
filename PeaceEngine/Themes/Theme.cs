@@ -246,7 +246,15 @@ namespace Plex.Engine.Themes
         /// <summary>
         /// No themed or preset font style is present for this text.
         /// </summary>
-        Custom
+        Custom,
+        /// <summary>
+        /// Text that's smaller than the system font.
+        /// </summary>
+        Muted,
+        /// <summary>
+        /// Text that stands out from the system font, but isn't used for titles or headings.
+        /// </summary>
+        Highlight
     }
 
     /// <summary>

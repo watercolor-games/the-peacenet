@@ -135,7 +135,7 @@ namespace Plex.Engine.GUI
                 }
                 int realMax = MaxWidth == 0 ? int.MaxValue : MaxWidth;
 
-                var font = Theme.GetFont(Themes.TextFontStyle.System);
+                var font = Theme.GetFont(Themes.TextFontStyle.Highlight);
                 var measure = TextRenderer.MeasureText(_text, font, realMax - _minimumHorizontal, TextRenderers.WrapMode.Words);
 
                 _lW = (int)measure.X;

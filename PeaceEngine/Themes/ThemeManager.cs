@@ -8,13 +8,15 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Objects;
+using Microsoft.Xna.Framework.Content;
+using Plex.Engine.Config;
 
 namespace Plex.Engine.Themes
 {
     /// <summary>
     /// Provides simple user interface theming.
     /// </summary>
-    public class ThemeManager : IEngineComponent, IDisposable
+    public class ThemeManager : IEngineComponent, IDisposable, IConfigurable
     {
 
         [Dependency]
@@ -34,7 +36,7 @@ namespace Plex.Engine.Themes
                 }
                 else
                 {
-                    _theme = (Theme)Activator.CreateInstance(type, null);
+                    _theme = (Theme)_plexgate.New(type);
                 }
             }
             if (_theme == null)
@@ -42,7 +44,7 @@ namespace Plex.Engine.Themes
                 Logger.Log("Couldn't find a non-dummy theme.", LogType.Warning, "themer");
                 try
                 {
-                    _theme = (Theme)Activator.CreateInstance(dummy, null);
+                    _theme = (Theme)_plexgate.New(dummy);
                 }
                 catch
                 {
@@ -71,6 +73,13 @@ namespace Plex.Engine.Themes
         public void Dispose()
         {
             _theme?.UnloadThemeData();
+        }
+
+        public void ApplyConfig()
+        {
+            if (_theme == null)
+                return;
+            _theme.LoadThemeData(_plexgate.GraphicsDevice, _plexgate.Content);
         }
     }
 }

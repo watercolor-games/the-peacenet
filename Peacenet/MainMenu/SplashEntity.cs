@@ -180,7 +180,7 @@ namespace Peacenet.MainMenu
 
 
             //"Press ENTER" prompt
-            var fnt = _thememgr.Theme.GetFont(TextFontStyle.Header1);
+            var fnt = _thememgr.Theme.GetFont(TextFontStyle.Highlight);
             if (_progressFGPos > 0)
             {
                 string _enter = "Press ENTER to continue";

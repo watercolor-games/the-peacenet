@@ -465,6 +465,7 @@ namespace Peacenet.DesktopUI
             _name.MaxWidth = Width - 8;
             _name.X = (Width - _name.Width) / 2;
             _name.Alignment = TextAlignment.Center;
+            _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
             int totalHeight = _icon.Height + 5 + _name.Height;
 
@@ -587,7 +588,7 @@ namespace Peacenet.DesktopUI
             _icon.Height = 64;
             _icon.X = 4;
 
-            _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
             _name.AutoSize = true;
             _description.AutoSize = true;

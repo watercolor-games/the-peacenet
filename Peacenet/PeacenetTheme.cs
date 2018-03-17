@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
+using Plex.Engine.Config;
 
 namespace Peacenet
 {
@@ -18,6 +19,9 @@ namespace Peacenet
     /// </summary>
     public class PeacenetTheme : Theme
     {
+        [Dependency]
+        private ConfigManager _config = null;
+
         public override int ScrollbarSize
         {
             get
@@ -125,6 +129,8 @@ namespace Peacenet
         private SpriteFont _head3;
         private SpriteFont _mono;
         private SpriteFont _system;
+        private SpriteFont _highlight;
+        private SpriteFont _muted;
 
         private Texture2D _check = null;
         private Texture2D _times = null;
@@ -162,6 +168,10 @@ namespace Peacenet
                     return _head3;
                 case TextFontStyle.Mono:
                     return _mono;
+                case TextFontStyle.Muted:
+                    return _muted;
+                case TextFontStyle.Highlight:
+                    return _highlight;
                 default:
                     return _system;
             }
@@ -240,7 +250,7 @@ namespace Peacenet
             {
                 gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
-            gfx.DrawString(text, textRect.X, textRect.Y, fg, _system, TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, textRect.X, textRect.Y, fg, _highlight, TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
         }
 
 
@@ -383,6 +393,8 @@ namespace Peacenet
         /// <inheritdoc/>
         public override void LoadThemeData(GraphicsDevice device, ContentManager content)
         {
+            var fontSize = _config.GetValue<PeacenetFontSize>("theme.fontsize", PeacenetFontSize.Small);
+
             _arrowup = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-up");
             _arrowdown = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-down");
             _arrowleft = content.Load<Texture2D>("ThemeAssets/Arrows/chevron-left");
@@ -439,11 +451,14 @@ namespace Peacenet
 
             _titleFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Titlebar");
 
-            _head1 = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
-            _head2 = content.Load < SpriteFont>("ThemeAssets/Fonts/Head2"); ;
-            _head3 = content.Load < SpriteFont>("ThemeAssets/Fonts/Head3");
-            _mono = content.Load < SpriteFont>("Fonts/Monospace");
-            _system = content.Load < SpriteFont>("ThemeAssets/Fonts/System");
+            _head1 = content.Load<SpriteFont>($"ThemeAssets/Fonts/Header1/{fontSize}");
+            _head2 = content.Load < SpriteFont>($"ThemeAssets/Fonts/Header2/{fontSize}"); ;
+            _head3 = content.Load < SpriteFont>($"ThemeAssets/Fonts/Header3/{fontSize}");
+            _mono = content.Load < SpriteFont>($"ThemeAssets/Fonts/Mono/{fontSize}");
+            _system = content.Load < SpriteFont>($"ThemeAssets/Fonts/System/{fontSize}");
+            _muted = content.Load<SpriteFont>($"ThemeAssets/Fonts/Muted/{fontSize}");
+            _highlight = content.Load<SpriteFont>($"ThemeAssets/Fonts/Highlight/{fontSize}");
+
 
             _peace = new Color(64, 128, 255,255);
             _gray = new Color(191, 191, 191, 255);
@@ -564,5 +579,12 @@ namespace Peacenet
         /// Represents a red accent color.
         /// </summary>
         Raspberry
+    }
+
+    public enum PeacenetFontSize
+    {
+        Small,
+        Medium,
+        Large
     }
 }

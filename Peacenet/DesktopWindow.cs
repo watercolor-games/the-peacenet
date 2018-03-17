@@ -133,6 +133,7 @@ namespace Peacenet
             AddChild(_bottomPanel);
             _timeLabel = new Label();
             _timeLabel.AutoSize = true;
+            _timeLabel.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
             _topPanel.AddChild(_timeLabel);
 
             _showDesktopIcon.Texture = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/ShowDesktop");
@@ -141,7 +142,7 @@ namespace Peacenet
 
             _topPanel.AddChild(_appLauncherText);
             _appLauncherText.AutoSize = true;
-            _appLauncherText.FontStyle = Plex.Engine.Themes.TextFontStyle.Custom;
+            _appLauncherText.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
             _bottomPanel.AddChild(_windowList);
 
@@ -522,9 +523,9 @@ namespace Peacenet
             _notificationTitle.X = Width - noteWidthMax - 15;
             _notificationDescription.X = _notificationTitle.X;
 
-            _topPanel.Height = 24;
+            _topPanel.Height = _timeLabel.Height + 6;
             _topPanel.Width = Width;
-            _bottomPanel.Height = 24;
+            _bottomPanel.Height = _timeLabel.Height + 6;
             _bottomPanel.Width = Width;
             _topPanel.X = 0;
             _bottomPanel.X = 0;

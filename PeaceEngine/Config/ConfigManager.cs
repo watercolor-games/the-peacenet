@@ -95,7 +95,13 @@ namespace Plex.Engine.Config
         public T GetValue<T>(string name, T defaultValue)
         {
             if (_config.ContainsKey(name))
+            {
+                if (typeof(T).IsEnum)
+                {
+                    return (T)Enum.Parse(typeof(T), _config[name].ToString());
+                }
                 return (T)Convert.ChangeType(_config[name], typeof(T));
+            }
             else
                 _config.Add(name, defaultValue);
             return defaultValue;
@@ -131,17 +137,13 @@ namespace Plex.Engine.Config
             }
             _plexgate.ApplyResolution(resolution);
 
-            foreach(var component in _plexgate.GetAllComponents())
+            foreach (var component in _plexgate.GetAllComponents())
             {
-                if(_plexgate.DependsOn(component, this))
+                if (component.GetType().GetInterfaces().Contains(typeof(IConfigurable)))
                 {
-                    if (component.GetType().GetInterfaces().Contains(typeof(IConfigurable)))
-                    {
-                        (component as IConfigurable).ApplyConfig();
-                    }
+                    (component as IConfigurable).ApplyConfig();
                 }
             }
-
             Logger.Log("Done.");
         }
 

@@ -92,6 +92,9 @@ namespace Peacenet
         [Dependency]
         private TerminalManager _term = null;
 
+        [Dependency]
+        private ThemeManager _theme = null;
+
         #endregion
 
         #region Textures
@@ -308,7 +311,7 @@ namespace Peacenet
             _hackedBgmInstance = _hackedBgm.CreateInstance();
             _hackedBgmInstance.IsLooped = true;
 
-            _bootFont = content.Load<SpriteFont>("ThemeAssets/Fonts/Head1");
+            _bootFont = _theme.Theme.GetFont(TextFontStyle.Header3);
             _osIntroState = 0;
             if (_plexgate.QuietMode)
             {

@@ -15,6 +15,9 @@ using Plex.Objects;
 using Peacenet.Filesystem;
 using WatercolorGames.CommandLine;
 using Peacenet.CoreUtils;
+using Plex.Engine.Interfaces;
+using Microsoft.Xna.Framework.Content;
+using Plex.Engine.Themes;
 
 namespace Peacenet.Applications
 {
@@ -69,7 +72,7 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         public Terminal(WindowSystem _winsys) : base(_winsys)
         {
-            _emulator = new TerminalEmulator(_plexgate.Content.Load<SpriteFont>("Fonts/Monospace"));
+            _emulator = _plexgate.New<TerminalEmulator>();
             AddChild(_emulator);
             SetWindowStyle(WindowStyle.Default);
             Width = (80 * _emulator.CharacterWidth);
@@ -356,7 +359,7 @@ namespace Peacenet.Applications
     /// <summary>
     /// Implements a basic terminal emulator as a Peacenet UI element.
     /// </summary>
-    public class TerminalEmulator : Control
+    public class TerminalEmulator : Control, ILoadable
     {
         private PseudoTerminal _master = null;
         private PseudoTerminal _slave = null;
@@ -419,17 +422,9 @@ namespace Peacenet.Applications
         /// <summary>
         /// Initializes a new instance of a <see cref="TerminalEmulator"/> using the specified font to display text.
         /// </summary>
-        /// <param name="font">A MonoGame <see cref="SpriteFont"/> object used for displaying text. While theoretically any font may be used, monospace fonts are preferred as the layout and rendering code is optimized for monospace fonts.</param>
-        public TerminalEmulator(SpriteFont font)
+        public TerminalEmulator()
         {
-            if (font == null)
-                throw new ArgumentNullException("Console font can't be null.");
-            _font = font;
-            
-            var csize = _font.MeasureString("#");
-            _charWidth = (int)csize.X;
-            _charHeight = (int)csize.Y;
-
+ 
             var options = new TerminalOptions();
 
             options.LFlag = PtyConstants.ICANON | PtyConstants.ECHO;
@@ -575,7 +570,7 @@ namespace Peacenet.Applications
                         _charY += 1;
                         break;
                     default:
-                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2((_charX * _charWidth)+gfx.X, (_charY * _charHeight)+gfx.Y), Color.White);
+                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * _charWidth)+gfx.X)+gfx.RenderOffsetX, ((_charY * _charHeight)+gfx.Y)+gfx.RenderOffsetY), Color.White);
                         if ((_charX + 1) * _charWidth >= Width)
                         {
                             _charX = 0;
@@ -595,6 +590,14 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            if(_font != Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Mono))
+            {
+                _font = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Mono);
+                var csize = _font.MeasureString("#");
+                _charWidth = (int)csize.X;
+                _charHeight = (int)csize.Y;
+            }
+
             var ch = _slave.ReadByte();
             if (ch != -1)
             {
@@ -621,5 +624,16 @@ namespace Peacenet.Applications
             }
         }
 
+        [Dependency]
+        private ThemeManager _theme = null;
+
+        public void Load(ContentManager content)
+        {
+            _font = _theme.Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Mono);
+            var csize = _font.MeasureString("#");
+            _charWidth = (int)csize.X;
+            _charHeight = (int)csize.Y;
+
+        }
     }
 }

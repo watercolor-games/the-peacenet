@@ -28,30 +28,150 @@
 /processorParam:TextureFormat=Compressed
 /build:ThemeAssets/Fonts/Titlebar.spritefont
 
-#begin ThemeAssets/Fonts/Head1.spritefont
+#begin ThemeAssets/Fonts/Header1/Small.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:ThemeAssets/Fonts/Head1.spritefont
+/build:ThemeAssets/Fonts/Header1/Small.spritefont
 
-#begin ThemeAssets/Fonts/Head2.spritefont
+#begin ThemeAssets/Fonts/Header1/Medium.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:ThemeAssets/Fonts/Head2.spritefont
+/build:ThemeAssets/Fonts/Header1/Medium.spritefont
 
-#begin ThemeAssets/Fonts/Head3.spritefont
+#begin ThemeAssets/Fonts/Header1/Large.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:ThemeAssets/Fonts/Head3.spritefont
+/build:ThemeAssets/Fonts/Header1/Large.spritefont
 
-#begin ThemeAssets/Fonts/System.spritefont
+#begin ThemeAssets/Fonts/Header2/Small.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:ThemeAssets/Fonts/System.spritefont
+/build:ThemeAssets/Fonts/Header2/Small.spritefont
+
+#begin ThemeAssets/Fonts/Header2/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Header2/Medium.spritefont
+
+#begin ThemeAssets/Fonts/Header2/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Header2/Large.spritefont
+
+#begin ThemeAssets/Fonts/Header3/Small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Header3/Small.spritefont
+
+#begin ThemeAssets/Fonts/Header3/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Header3/Medium.spritefont
+
+#begin ThemeAssets/Fonts/Header3/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Header3/Large.spritefont
+
+#begin ThemeAssets/Fonts/Highlight/Small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Highlight/Small.spritefont
+
+#begin ThemeAssets/Fonts/Highlight/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Highlight/Medium.spritefont
+
+#begin ThemeAssets/Fonts/Highlight/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Highlight/Large.spritefont
+
+#begin ThemeAssets/Fonts/Mono/Small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Mono/Small.spritefont
+
+#begin ThemeAssets/Fonts/Mono/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Mono/Medium.spritefont
+
+#begin ThemeAssets/Fonts/Mono/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Mono/Large.spritefont
+
+#begin ThemeAssets/Fonts/System/Small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/System/Small.spritefont
+
+#begin ThemeAssets/Fonts/System/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/System/Medium.spritefont
+
+#begin ThemeAssets/Fonts/System/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/System/Large.spritefont
+
+#begin ThemeAssets/Fonts/Muted/Small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Muted/Small.spritefont
+
+#begin ThemeAssets/Fonts/Muted/Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Muted/Medium.spritefont
+
+#begin ThemeAssets/Fonts/Muted/Large.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/Muted/Large.spritefont
+
