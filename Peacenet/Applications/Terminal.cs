@@ -316,7 +316,6 @@ namespace Peacenet.Applications
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             _history = new List<CommandInstruction>();
-            string hostname = _os.GetHostname();
             string user = "user";
             string workdir = "/home";
             console.WorkingDirectory = workdir;
@@ -327,7 +326,7 @@ namespace Peacenet.Applications
                 else
                     user = "user";
                 console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                console.Write($"{user}@{hostname}:{console.WorkingDirectory.Replace("/home","~")}$ ");
+                console.Write($"{user}@{_os.Hostname}:{console.WorkingDirectory.Replace("/home","~")}$ ");
                 try
                 {
                     string cmdstr = console.ReadLine();
