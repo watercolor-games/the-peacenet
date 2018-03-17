@@ -26,7 +26,7 @@ namespace Peacenet
     /// <summary>
     /// Provides the Peacegate OS engine component.
     /// </summary>
-    public class OS : IEngineComponent
+    public class OS : IEngineComponent, IDisposable
     {
         [Dependency]
         private SplashScreenComponent _splash = null;
@@ -37,6 +37,8 @@ namespace Peacenet
         private bool _preventStartup = false;
         private Layer _osLayer = new Layer();
         private OSEntity _osEntity = null;
+
+        public string Hostname { get; private set; } = "localhost";
         
         public bool IsPlayingNewConnectionAnimation
         {
@@ -94,7 +96,7 @@ namespace Peacenet
         }
 
 
-        public string GetHostname()
+        string getHostname()
         {
             if (!_fs.FileExists("/etc/hostname"))
                 return "localhost";
@@ -102,6 +104,17 @@ namespace Peacenet
             if (hostnameFile.Contains("\n"))
                 return hostnameFile.Substring(0, hostnameFile.IndexOf("\n"));
             return hostnameFile;
+        }
+
+        void updHostname()
+        {
+            Hostname = getHostname();
+        }
+
+        void wcallback(string fname)
+        {
+            if (fname == "/etc/hostname")
+                updHostname();
         }
 
         /// <inheritdoc cref="OSEntity.AllowTerminalHotkey"/>
@@ -148,6 +161,7 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
+            _fs.WriteOperation += wcallback;
         }
 
         [Dependency]
@@ -279,6 +293,7 @@ namespace Peacenet
 
         private void startBoot()
         {
+            updHostname();
             SessionStart?.Invoke();
             _osEntity = _plexgate.New<OSEntity>();
             _plexgate.GetLayer(LayerType.Main).AddEntity(_osEntity);
@@ -301,6 +316,11 @@ namespace Peacenet
                     _server.Disconnect();
                 _localBackend.Shutdown("");
             }
+        }
+
+        public void Dispose()
+        {
+            _fs.WriteOperation -= wcallback;
         }
 
         /// <summary>

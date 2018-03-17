@@ -118,10 +118,9 @@ namespace Peacenet.DesktopUI
             if (string.IsNullOrWhiteSpace(_userFullName.Text))
                 _userFullName.Text = "Peacegate OS User";
             string itchUsername = (_itch.LoggedIn) ? _itch.User.username : "user";
-            string hostname = _os.GetHostname();
             string osEdition = _server.IsMultiplayer ? "Peacegate OS for Sentient Programs" : "Peacegate OS for Peacenet Uplink Kiosks - Pre-deployment Mode";
 
-            _userHostname.Text = $"{itchUsername}@{hostname} ({osEdition})";
+            _userHostname.Text = $"{itchUsername}@{_os.Hostname} ({osEdition})";
 
             _apps = new AppLauncherSectionButton();
             _computer = new AppLauncherSectionButton();

@@ -13,6 +13,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Themes;
 using Microsoft.Xna.Framework.Content;
+using Peacenet.Filesystem;
 
 namespace Peacenet.Missions.Prologue
 {
@@ -29,6 +30,9 @@ namespace Peacenet.Missions.Prologue
 
         [Dependency]
         private SaveManager _save = null;
+
+        [Dependency]
+        private FSManager _fs = null;
 
         public override bool Available
         {
@@ -56,7 +60,7 @@ namespace Peacenet.Missions.Prologue
 
         private double ride = 0;
 
-        private string _hostname = "";
+        private bool _hnChanged = true;
 
         
         private ObjectiveCountdownEntity _countdown = null;
@@ -83,51 +87,34 @@ namespace Peacenet.Missions.Prologue
                 });
                 yield return new Objective("Set a hostname.", "A hostname may not be important for security, but it'll be better if you have something other than 'localhost'. Set a hostname by editing the \"/etc/hostname\" file in your Terminal.", (time) =>
                 {
-                    if(ride == 0)
+                    if (_os.Hostname != "localhost")
                     {
-                        if (string.IsNullOrWhiteSpace(_hostname))
-                            _hostname = _os.GetHostname();
-                        else
+                        this._themeInstance.Volume = MathHelper.Clamp(_themeInstance.Volume - ((float)time.ElapsedGameTime.TotalSeconds * 4), 0f, 1f);
+                        if (_themeInstance.Volume <= 0f)
                         {
-                            string hostname = _os.GetHostname();
-                            if (hostname != _hostname)
+                            if(!_hackStarted)
                             {
-                                this._themeInstance.Volume = MathHelper.Clamp(_themeInstance.Volume - ((float)time.ElapsedGameTime.TotalSeconds * 4), 0f, 1f);
-                                if (_themeInstance.Volume <= 0f)
-                                {
-                                    if(!_hackStarted)
-                                    {
-                                        _os.SimulateConnectionFromSystem("142.68.67.3");
-                                        _hackStarted = true;
-                                        ride += time.ElapsedGameTime.TotalSeconds;
-                                        return ObjectiveState.Active;
-                                    }
-                                    if (!_os.IsPlayingNewConnectionAnimation)
-                                        return ObjectiveState.Complete;
-                                }
+                                _os.SimulateConnectionFromSystem("142.68.67.3");
+                                _hackStarted = true;
                                 ride += time.ElapsedGameTime.TotalSeconds;
                                 return ObjectiveState.Active;
                             }
+                            if (!_os.IsPlayingNewConnectionAnimation)
+                                return ObjectiveState.Complete;
                         }
+                        ride += time.ElapsedGameTime.TotalSeconds;
+                        return ObjectiveState.Active;
                     }
+                    _hnChanged = false;
                     ride += time.ElapsedGameTime.TotalSeconds;
                     if (ride >= 5)
                     {
                         ride = 0;
                     }
+                    _objConnectionsCmdRun = false;
                     return ObjectiveState.Active;
                 });
-                yield return new Objective("A system has just connected to you.", "Quick! Run 'connections' to find out the IP address of the system!", (time) =>
-                {
-                    if(ride == 0)
-                    {
-                        _objConnectionsCmdRun = false;
-                        ride += 1;
-                    }
-                    if (_objConnectionsCmdRun)
-                        return ObjectiveState.Complete;
-                    return ObjectiveState.Active;
-                });
+                yield return new Objective("A system has just connected to you.", "Quick! Run 'connections' to find out the IP address of the system!", (time) => _objConnectionsCmdRun ? ObjectiveState.Complete : ObjectiveState.Active);
 
             }
         }

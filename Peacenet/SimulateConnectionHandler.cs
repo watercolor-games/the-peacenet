@@ -29,11 +29,13 @@ namespace Peacenet
         {
             if (backend.IsMultiplayer)
                 return ServerResponseType.REQ_ERROR;
-            uint ipaddr = datareader.ReadUInt32();
-            ushort port = datareader.ReadUInt16();
+            var ipaddr = datareader.ReadUInt32();
+            ushort port = 80;
+            if (datareader.BaseStream.Length - datareader.BaseStream.Position >= 2)
+                port = datareader.ReadUInt16();
             if (_ip.GrabEntity(ipaddr) == null)
                 return ServerResponseType.REQ_ERROR;
-            string entity = _entityManager.GetPlayerEntityId(session);
+            var entity = _entityManager.GetPlayerEntityId(session);
             var playerIp = _ip.FetchAllIPs(entity);
             if(playerIp.Length==0)
                 return ServerResponseType.REQ_ERROR;
