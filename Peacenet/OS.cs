@@ -192,6 +192,14 @@ namespace Peacenet
 
         private Texture2D _peacegate = null;
 
+        public string SinglePlayerSaveDirectory
+        {
+            get
+            {
+                return Path.Combine(_appdata.GamePath, "world");
+            }
+        }
+
         [Dependency]
         private InfoboxManager _infobox = null;
 
@@ -203,21 +211,14 @@ namespace Peacenet
             _localBackend.Listen();
             _localBackend.ServerReady.WaitOne();
             Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
-            _clientReady.Reset();
-            Exception err = null;
-            _server.Connect("localhost:3252", () =>
-            {
-                _clientReady.Set();
-            }, (error) =>
-            {
-                err = new Exception(error);
-                _clientReady.Set();
-            });
-            _clientReady.WaitOne();
-            if (err != null)
-            {
-                throw err;
-            }
+
+            var result = _server.Connect("localhost:3252");
+
+            result.Wait();
+
+            if (result.Result.Result != ConnectionResultType.Success)
+                throw new Exception("An error has occurred starting the internal server.");
+
             EnsureProperEnvironment();
         }
 

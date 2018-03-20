@@ -992,6 +992,8 @@ namespace Plex.Engine.GUI
         /// <param name="gfx">The graphics context to render the control to.</param>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
+            if (Visible == false)
+                return;
             if (Opacity <= 0)
                 return;
             //If we're disabled, set the Grayout property.

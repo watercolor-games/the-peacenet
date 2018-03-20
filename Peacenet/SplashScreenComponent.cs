@@ -57,7 +57,7 @@ namespace Peacenet
         /// </summary>
         public void MakeVisible()
         {
-            _plexgate.GetLayer(LayerType.Main).AddEntity(splash);
+            _plexgate.GetLayer(LayerType.UserInterface).AddEntity(splash);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Peacenet
         /// </summary>
         public void MakeHidden()
         {
-            _plexgate.GetLayer(LayerType.Main).RemoveEntity(splash);
+            _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(splash);
         }
 
     }

@@ -175,3 +175,12 @@
 /processorParam:TextureFormat=Compressed
 /build:ThemeAssets/Fonts/Muted/Large.spritefont
 
+#begin Shaders/PostProcessor.fx
+/importer:EffectImporter
+/processor:RemoteEffectProcessor
+/processorParam:RemoteAddress=pipeline.infinitespace-studios.co.uk
+/processorParam:RemotePort=443
+/processorParam:Protocol=https
+/processorParam:DebugMode=Auto
+/build:Shaders/PostProcessor.fx
+

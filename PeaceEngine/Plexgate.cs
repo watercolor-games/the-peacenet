@@ -448,23 +448,23 @@ namespace Plex.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (!IsActive)
-                return;
+            if (IsActive)
+            {
+                if (GameRenderTarget == null)
+                    //Setup the game's rendertarget so it matches the desired resolution.
+                    GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+                if (_ctx == null)
+                    _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
 
-            if (GameRenderTarget == null)
-                //Setup the game's rendertarget so it matches the desired resolution.
-                GameRenderTarget = new RenderTarget2D(GraphicsDevice, _width, _height, false, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-            if (_ctx == null)
-                _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
+                if (GameRenderTarget.Width != _width || GameRenderTarget.Height != _height)
+                    _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
 
-            if (GameRenderTarget.Width != _width || GameRenderTarget.Height != _height)
-                _ctx = new GraphicsContext(GraphicsDevice, spriteBatch, 0, 0, GameRenderTarget.Width, GameRenderTarget.Height);
-
-            if (_ctx.Width != GameRenderTarget.Width)
-                _ctx.Width = GameRenderTarget.Width;
-            if (_ctx.Height != GameRenderTarget.Height)
-                _ctx.Height = GameRenderTarget.Height;
-            keyboardListener.Update(gameTime);
+                if (_ctx.Width != GameRenderTarget.Width)
+                    _ctx.Width = GameRenderTarget.Width;
+                if (_ctx.Height != GameRenderTarget.Height)
+                    _ctx.Height = GameRenderTarget.Height;
+                keyboardListener.Update(gameTime);
+            }
             //Let's get the mouse state
             var mouseState = Mouse.GetState(this.Window);
             bool doMouse = LastMouseState != mouseState;

@@ -39,9 +39,6 @@ namespace Peacenet.Cutscenes
         [Dependency]
         private ThemeManager _theme = null;
 
-        [Dependency]
-        private SplashScreenComponent _splash = null;
-
         private Texture2D _peacenet = null;
 
 
@@ -120,20 +117,26 @@ namespace Peacenet.Cutscenes
         {
             _ui.ShowUI();
             _grassInstance.Stop();
-            _splash.MakeVisible();
         }
 
         private float _grassPercentage = 0f;
         private double _grassTime = 0f;
 
+        [Dependency]
+        private Plexgate _plexgate = null;
+
         /// <inheritdoc/>
         public override void OnPlay()
         {
+            if(_doAlternateCreditsMusic)
+                _yesMyGrassIsGreen = _plexgate.Content.Load<SoundEffect>("Audio/Cutscene/CreditsAlt");
+            else
+                _yesMyGrassIsGreen = _plexgate.Content.Load<SoundEffect>("Audio/Cutscene/Credits");
+            _grassInstance = _yesMyGrassIsGreen.CreateInstance();
             _ui.HideUI();
             _csState = 0;
             _grassPercentage = 0f;
             _grassInstance.Play();
-            _splash.MakeHidden();
             _maxWidth = _ui.ScreenWidth / 2;
 
             var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
@@ -153,6 +156,20 @@ namespace Peacenet.Cutscenes
                 }
             }
             _totalHeight = h;
+        }
+
+        private static bool _doAlternateCreditsMusic = true;
+
+        public static bool DoAltCreditsTheme
+        {
+            get
+            {
+                return _doAlternateCreditsMusic;
+            }
+            set
+            {
+                _doAlternateCreditsMusic = value;
+            }
         }
 
         /// <inheritdoc/>

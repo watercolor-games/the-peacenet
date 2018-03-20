@@ -333,11 +333,11 @@ namespace Plex.Engine.GraphicsSubsystem
         /// <summary>
         /// Begin a draw call.
         /// </summary>
-        public void BeginDraw()
+        public void BeginDraw(Effect spriteEffect = null)
         {
             _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                         SamplerState.LinearClamp, Device.DepthStencilState,
-                        RasterizerState);
+                        RasterizerState, spriteEffect);
 
         }
 
