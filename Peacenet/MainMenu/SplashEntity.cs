@@ -153,9 +153,9 @@ namespace Peacenet.MainMenu
 
         #region Hitboxes
 
-        private Hitbox _hbSingleplayer = null;
-        private Hitbox _hbMultiplayer = null;
-        private Hitbox _hbSettings = null;
+        private PictureBox _hbSingleplayer = null;
+        private PictureBox _hbMultiplayer = null;
+        private PictureBox _hbSettings = null;
 
         #endregion
 
@@ -444,13 +444,18 @@ namespace Peacenet.MainMenu
             _multiplayer = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/MultiPlayer");
             _settings = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/Settings");
 
-            _hbSingleplayer = new Hitbox();
-            _hbMultiplayer = new Hitbox();
-            _hbSettings = new Hitbox();
+            _hbSingleplayer = new PictureBox();
+            _hbMultiplayer = new PictureBox();
+            _hbSettings = new PictureBox();
 
             _uimanager.Add(_hbSettings);
             _uimanager.Add(_hbSingleplayer);
             _uimanager.Add(_hbMultiplayer);
+
+            _hbSettings.Texture = _settings;
+            _hbSingleplayer.Texture = _singleplayer;
+            _hbMultiplayer.Texture = _multiplayer;
+
 
             _username = new Label();
             _realname = new Label();
@@ -796,6 +801,7 @@ namespace Peacenet.MainMenu
                     }
                     break;
                 case 13:
+                    _hbSingleplayer.Visible = true;
                     _spFade = MathHelper.Clamp(_spFade + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
                     _spPosition = _spFade / 2;
                     if (_spFade>=1F)
@@ -804,6 +810,7 @@ namespace Peacenet.MainMenu
                     }
                     break;
                 case 14:
+                    _hbMultiplayer.Visible = true;
                     _mpFade = MathHelper.Clamp(_mpFade + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
                     _mpPosition = _mpFade / 2;
                     if (_mpFade >= 1F)
@@ -812,6 +819,7 @@ namespace Peacenet.MainMenu
                     }
                     break;
                 case 15:
+                    _hbSettings.Visible = true;
                     _seFade = MathHelper.Clamp(_seFade + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
                     _sePosition = _seFade / 2;
                     if (_seFade >= 1F)
@@ -990,7 +998,12 @@ namespace Peacenet.MainMenu
                     break;
             }
 
-            switch(_spUIState)
+            _hbSettings.Tint = (_hbSettings.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White;
+            _hbSingleplayer.Tint = (_hbSingleplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White;
+            _hbMultiplayer.Tint = (_hbMultiplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White;
+
+
+            switch (_spUIState)
             {
                 case -1:
                     _continue.Visible = false;
@@ -1151,6 +1164,10 @@ namespace Peacenet.MainMenu
             _hbMultiplayer.Y = (int)hbMpY;
             _hbSettings.Y = (int)hbSeY;
 
+            _hbSettings.Opacity = _seFade;
+            _hbMultiplayer.Opacity = _mpFade;
+            _hbSingleplayer.Opacity = _spFade;
+
             _realname.MaxWidth = 550;
 
             if (_hbSingleplayer.ContainsMouse)
@@ -1277,6 +1294,18 @@ namespace Peacenet.MainMenu
             
         }
 
+        private bool IsSettingsOpen
+        {
+            get
+            {
+                if (_settingsApp == null)
+                    return false;
+                if (_settingsApp.Disposed)
+                    return false;
+                return _windowManager.WindowList.Length > 0;
+            }
+        }
+
         /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -1322,14 +1351,6 @@ namespace Peacenet.MainMenu
             gfx.Batch.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);
             gfx.Batch.DrawString(highlightFont, greetText, new Vector2(greetX, greetY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _greetFade);
             gfx.Batch.DrawString(headerFont, serverSelect, new Vector2(serverSelectX, serverSelectY), _thememgr.Theme.GetFontColor(TextFontStyle.Header1) * _mpUIFade);
-
-            if (_isFadingOut == false)
-            {
-                //Draw the big-ass buttons.
-                gfx.Batch.Draw(_singleplayer, _hbSingleplayer.Bounds, ((_hbSingleplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White) * _spFade);
-                gfx.Batch.Draw(_multiplayer, _hbMultiplayer.Bounds, ((_hbMultiplayer.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White) * _mpFade);
-                gfx.Batch.Draw(_settings, _hbSettings.Bounds, ((_hbSettings.ContainsMouse) ? _thememgr.Theme.GetAccentColor() : Color.White) * _seFade);
-            }
 
             if(_connecting)
             {

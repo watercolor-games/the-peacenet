@@ -165,6 +165,12 @@ namespace Plex.Engine.GraphicsSubsystem
                         continue;
                     if (ctrl.Opacity > 0)
                         ctrl.Draw(time, ctx);
+                    if(ctrl._userfacingtarget != null)
+                    {
+                        ctx.BeginDraw();
+                        ctx.Batch.Draw(ctrl._userfacingtarget, new Rectangle(ctrl.X, ctrl.Y, ctrl.Width, ctrl.Height), Color.White * ctrl.Opacity);
+                        ctx.EndDraw();
+                    }
                 }
 
                 ctx.Opacity = 1f;
