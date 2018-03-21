@@ -1346,8 +1346,11 @@ namespace Peacenet.MainMenu
             gfx.BeginDraw();
 
             //gfx.Batch.Draw(_wall, new Rectangle((gfx.Width - (int)wallWidth) / 2, (gfx.Height - (int)wallHeight) / 2, (int)wallWidth, (int)wallHeight), Color.White * _wallFade);
-            gfx.Batch.Draw(_peacenet, new Vector2(peacenetX, peacenetY), Color.White * _peacenetFade);
-            gfx.Batch.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
+            if (!IsSettingsOpen)
+            {
+                gfx.Batch.Draw(_peacenet, new Vector2(peacenetX, peacenetY), Color.White * _peacenetFade);
+                gfx.Batch.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
+            }
             gfx.Batch.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);
             gfx.Batch.DrawString(highlightFont, greetText, new Vector2(greetX, greetY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _greetFade);
             gfx.Batch.DrawString(headerFont, serverSelect, new Vector2(serverSelectX, serverSelectY), _thememgr.Theme.GetFontColor(TextFontStyle.Header1) * _mpUIFade);
