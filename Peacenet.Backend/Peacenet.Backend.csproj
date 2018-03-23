@@ -47,6 +47,7 @@
     <Compile Include="ChatBackend.cs" />
     <Compile Include="connections.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="ReputationManager.cs" />
     <Compile Include="IPBackend.cs" />
     <Compile Include="nmap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

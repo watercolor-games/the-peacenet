@@ -127,7 +127,9 @@ namespace Plex.Objects
 
         Chat_MessageReceived=0x10,
 
-        SYSTEM_CONNECTED = 0x20
+        SYSTEM_CONNECTED = 0x20,
+
+        GovernmentAlert = 0x30,
     }
 
     /// <summary>
