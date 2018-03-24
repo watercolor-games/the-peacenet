@@ -26,36 +26,7 @@ namespace Plex.Engine.Themes
         /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("Searching for a Plexgate theme object...", LogType.Info, "themer");
-            Type dummy = null;
-            foreach (var type in ReflectMan.Types.Where(x=>x.BaseType == typeof(Theme)))
-            {
-                if(type.GetCustomAttributes(false).Any(x=>x is DummyThemeAttribute))
-                {
-                    dummy = type;
-                }
-                else
-                {
-                    _theme = (Theme)_plexgate.New(type);
-                }
-            }
-            if (_theme == null)
-            {
-                Logger.Log("Couldn't find a non-dummy theme.", LogType.Warning, "themer");
-                try
-                {
-                    _theme = (Theme)_plexgate.New(dummy);
-                }
-                catch
-                {
-                    Logger.Log("AHH! Couldn't load the dummy theme. The UI system won't work.", LogType.Fatal, "themer");
-                }
-            }
-            if (_theme != null)
-            {
-                Logger.Log("Theme loaded: " + _theme?.GetType().Name, LogType.Info, "themer");
-                _theme.LoadThemeData(_plexgate.GraphicsDevice, _plexgate.Content);
-            }
+
         }
 
         /// <summary>
@@ -65,7 +36,19 @@ namespace Plex.Engine.Themes
         {
             get
             {
+                if (_theme == null) //We're not Windows. Let's throw a valuable error when the theme is null.
+                    throw new InvalidOperationException("No UI theme has been initiated. Please be sure to set ThemeManager.Theme to a valid Theme object before utilizing theme features!");
+
                 return _theme;
+            }
+            set
+            {
+                if (value == null)
+                    throw new InvalidOperationException("You cannot operate Peace Engine without a theme object.");
+                if (_theme != null)
+                    _theme.UnloadThemeData();
+                _theme = value;
+                _theme.LoadThemeData(_plexgate.GraphicsDevice, _plexgate.Content);
             }
         }
 

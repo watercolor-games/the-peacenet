@@ -9,6 +9,8 @@ using MonoGame.Extended.Input.InputListeners;
 using Plex.Engine.GraphicsSubsystem;
 using System.IO;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Content;
+using Plex.Engine.Config;
 
 namespace Plex.Engine.Saves
 {
@@ -17,7 +19,6 @@ namespace Plex.Engine.Saves
     /// </summary>
     public class SaveManager : IEngineComponent
     {
-
         private ISaveBackend _backend = null;
 
         [Dependency]
@@ -26,6 +27,7 @@ namespace Plex.Engine.Saves
         /// <inheritdoc/>
         public void Initiate()
         {
+            _backend = _plexgate.New<DefaultSaveBackend>();
         }
 
         /// <summary>
@@ -172,5 +174,111 @@ namespace Plex.Engine.Saves
         /// </summary>
         /// <param name="id">The ID of the snapshot to restore to.</param>
         void RestoreSnapshot(string id);
+    }
+
+    public class DefaultSaveBackend : ISaveBackend,ILoadable, IDisposable
+    {
+        private class Snapshot
+        {
+            public string Id { get; set; }
+            public DateTime Timestamp { get; set; }
+            public string Data { get; set; }
+        }
+
+        [Dependency]
+        private AppDataManager _appdata = null;
+
+        private string _filepath = null;
+
+        private Dictionary<string, object> _values = null;
+
+        private List<Snapshot> _snapshots = new List<Snapshot>();
+
+        public string CreateSnapshot()
+        {
+            var snapshot = new Snapshot
+            {
+                Id = _snapshots.Count.ToString(),
+                Data = JsonConvert.SerializeObject(_values),
+                Timestamp = DateTime.UtcNow
+            };
+            _snapshots.Add(snapshot);
+            return snapshot.Id;
+        }
+
+        public void Dispose()
+        {
+            string json = null;
+            if(_snapshots.Count > 0)
+            {
+                json = _snapshots.OrderBy(x => x.Timestamp).First().Data;
+            }
+            else
+            {
+                json = JsonConvert.SerializeObject(_values);
+            }
+            File.WriteAllText(_filepath, json);
+            _snapshots = null;
+            _values = null;
+        }
+
+        public T GetValue<T>(string key, T defaultValue)
+        {
+            //"Borrowed" from the ConfigManager.GetValue<T> method.
+            if (_values.ContainsKey(key))
+            {
+                if (typeof(T).IsEnum)
+                {
+                    return (T)Enum.Parse(typeof(T), _values[key].ToString());
+                }
+                return (T)Convert.ChangeType(_values[key], typeof(T));
+            }
+            else
+                SetValue(key, defaultValue);
+            return defaultValue;
+
+        }
+
+        public void Load(ContentManager content)
+        {
+            //Set up file path
+            _filepath = Path.Combine(_appdata.GamePath, "save.json");
+
+            //Load save if file exists
+            if (File.Exists(_filepath))
+                _values = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(_filepath));
+            else //just create an empty dictionary.
+            {
+                _values = new Dictionary<string, object>();
+            }
+
+            //Create snapshots list
+            _snapshots = new List<Snapshot>();
+        }
+
+        public void RestoreSnapshot(string id)
+        {
+            var snapshot = _snapshots.FirstOrDefault(x => x.Id == id);
+            if (snapshot == null)
+                return;
+            _values = JsonConvert.DeserializeObject<Dictionary<string, object>>(snapshot.Data);
+            _snapshots.Remove(snapshot);
+            Save();
+        }
+
+        private void Save()
+        {
+            string json = JsonConvert.SerializeObject(_values);
+            File.WriteAllText(_filepath, json);
+        }
+
+    public void SetValue<T>(string key, T value)
+        {
+            if (_values.ContainsKey(key))
+                _values[key] = value;
+            else
+                _values.Add(key, value);
+            Save();
+        }
     }
 }
