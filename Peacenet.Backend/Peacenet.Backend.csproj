@@ -66,8 +66,8 @@
     <Compile Include="RemoteStreams.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Peacenet.Objects\WatercolorGames.Utilities.csproj">
-      <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
+    <ProjectReference Include="..\peace-engine\WatercolorGames.Utilities\WatercolorGames.Utilities.csproj">
+      <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
       <Name>WatercolorGames.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
