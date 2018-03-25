@@ -1,4 +1,4 @@
-# Contributing to ShiftOS
+# Contributing to The Peacenet
 
 ## Reporting Bugs / Suggesting Enhancements
 
