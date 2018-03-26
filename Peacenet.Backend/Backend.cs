@@ -402,6 +402,11 @@ namespace Peacenet.Backend
                                 if (len > 0)
                                     content = reader.ReadBytes(len);
                                 Logger.Log("Body received.");
+                                if (string.IsNullOrWhiteSpace(csession))
+                                    csession = _keys[session];
+                                if (!_playerIds.ContainsKey(csession))
+                                    _playerIds.Add(csession, connection);
+
                                 byte[] returncontent = new byte[] { };
                                 if (_isMultiplayer)
                                 {
@@ -423,10 +428,6 @@ namespace Peacenet.Backend
                                         PlayerJoined?.Invoke(key, user);
                                     }
                                 }
-                                if (string.IsNullOrWhiteSpace(csession))
-                                    csession = _keys[session];
-                                if (!_playerIds.ContainsKey(csession))
-                                    _playerIds.Add(csession, connection);
                                 var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
                                 Logger.Log("Replying to message...");
                                 writer.Write(muid);

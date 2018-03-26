@@ -47,6 +47,9 @@
     <Compile Include="ChatBackend.cs" />
     <Compile Include="connections.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Email\Email.cs" />
+    <Compile Include="Email\EmailAddress.cs" />
+    <Compile Include="Email\EmailProvider.cs" />
     <Compile Include="ReputationManager.cs" />
     <Compile Include="IPBackend.cs" />
     <Compile Include="nmap.cs" />

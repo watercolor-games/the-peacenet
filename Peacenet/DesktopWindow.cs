@@ -15,6 +15,7 @@ using Peacenet.CoreUtils;
 using Peacenet.Server;
 using Peacenet.DesktopUI;
 using Peacenet.Filesystem;
+using Peacenet.Email;
 
 namespace Peacenet
 {
@@ -23,10 +24,23 @@ namespace Peacenet
     /// </summary>
     public class DesktopWindow : Window
     {
+        #region Notification buttons.
+
+        private Button _emailButton = new Button();
+
+        #endregion
+
         private int _animState = 0;
         private float _scaleAnim = 0;
         private Texture2D _wallpaper = null;
         private float _panelAnim = -1;
+
+        private HorizontalStacker _notificationTray = new HorizontalStacker();
+
+        [Dependency]
+        private GovernmentAlert.AlertService _notoriety = null;
+
+        private Label _gvtAlertStatus = new Label();
 
         private ContextMenu _desktopRightClick = null;
 
@@ -85,8 +99,6 @@ namespace Peacenet
         [Dependency]
         private AsyncServerManager _server = null;
 
-        private Button _missionButton = new Button();
-
         private ListView _desktopIconsView = null;
 
         private AppLauncherMenu _applauncher = null;
@@ -113,15 +125,17 @@ namespace Peacenet
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _iconEmail = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/Email");
+            _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
+
+
+            _notificationTray.AddChild(_emailButton);
+
             _desktopRightClick = new ContextMenu(_winsys);
 
             _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
 
             _applauncher = new AppLauncherMenu(_winsys, this);
-
-            _missionButton.Image = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flag");
-            _missionButton.ShowImage = true;
-            _missionButton.Text = "NYI";
 
             winsys = _winsys;
             SetWindowStyle(WindowStyle.NoBorder);
@@ -154,11 +168,8 @@ namespace Peacenet
 
             _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
             _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
-            _topPanel.AddChild(_missionButton);
 
-            _missionButton.Click += (o, a) =>
-            {
-            };
+            _topPanel.AddChild(_notificationTray);
 
             RightClick += Desktop_RightClick;
             _desktopIconsView.RightClick += Desktop_RightClick;
@@ -214,6 +225,12 @@ namespace Peacenet
                 if (path.StartsWith("/home/Desktop"))
                     _needsDesktopReset = true;
             };
+
+            _gvtAlertStatus = new Label();
+            _gvtAlertStatus.AutoSize = true;
+            _gvtAlertStatus.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
+            _topPanel.AddChild(_gvtAlertStatus);
+
         }
 
         private void Desktop_RightClick(object sender, EventArgs e)
@@ -293,6 +310,7 @@ namespace Peacenet
             _desktopRightClick.AddItem(changeDesktopBackground);
 
             _desktopRightClick.Show(MouseX, MouseY);
+
         }
 
         /// <summary>
@@ -427,11 +445,29 @@ namespace Peacenet
             }
         }
 
+        [Dependency]
+        private EmailClient _email = null;
+
+        private Texture2D _iconEmail = null;
+        private Texture2D _iconEmailUnread = null;
+
+
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            _emailButton.Text = _email.UnreadMessages.ToString();
+            _emailButton.ShowImage = true;
+            _emailButton.Image = (_email.UnreadMessages == 0) ? _iconEmail : _iconEmailUnread;
+
             _topPanel.Visible = _showPanels;
             _bottomPanel.Visible = _showPanels;
+
+            _gvtAlertStatus.Visible = _notoriety.AlertLevel > 0;
+            _gvtAlertStatus.Text = $"Government Alert Level: {_notoriety.AlertLevel}";
+            if (_notoriety.Dissipating)
+                _gvtAlertStatus.Text += " (Dissipating...)";
+            _gvtAlertStatus.Y = (_topPanel.Height - _gvtAlertStatus.Height) / 2;
+            _gvtAlertStatus.X = (_notificationTray.X - _gvtAlertStatus.Width) - 5;
 
             if (IsAppLauncherOpen)
                 _applauncher.CloseOnFocusLoss = _appLauncherClosesWhenFocusLost;
@@ -577,8 +613,8 @@ namespace Peacenet
                 }
             }
 
-            _missionButton.Y = (_topPanel.Height - _missionButton.Height) / 2;
-            _missionButton.X = _timeLabel.X - _missionButton.Width - 3;
+            _notificationTray.Y = (_topPanel.Height - _notificationTray.Height) / 2;
+            _notificationTray.X = _timeLabel.X - _notificationTray.Width - 3;
 
             base.OnUpdate(time);
         }
@@ -723,6 +759,31 @@ namespace Peacenet
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
         }
+    }
+
+    public class HorizontalStacker : Control
+    {
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+        }
+
+        protected override void OnUpdate(GameTime time)
+        {
+            if (Parent == null)
+                return;
+            Height = Parent.Height;
+            int maxWidth = MaxWidth == 0 ? int.MaxValue : MaxWidth;
+            int width = 2;
+            foreach(var ctrl in Children)
+            {
+                ctrl.X = width;
+                ctrl.Y = (Height - ctrl.Height) / 2;
+                width += ctrl.Width + 5;
+            }
+
+            Width = width - 3;
+        }
+
     }
 
     /// <summary>
