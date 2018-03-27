@@ -174,6 +174,11 @@ namespace Peacenet
             RightClick += Desktop_RightClick;
             _desktopIconsView.RightClick += Desktop_RightClick;
 
+            _emailButton.Click += (o, a) =>
+            {
+                var email = new Applications.EmailViewer(WindowSystem);
+                email.Show();
+            };
 
 
             _appLauncherText.Click += (o, a) =>
