@@ -68,6 +68,7 @@
     <Compile Include="AppLauncherManager.cs" />
     <Compile Include="Applications\Appearance.cs" />
     <Compile Include="Applications\ChatClient.cs" />
+    <Compile Include="Applications\EmailViewer.cs" />
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />

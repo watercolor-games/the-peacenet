@@ -28,6 +28,24 @@ namespace Peacenet.Backend.Email
 
         private string _postmasterId = null;
 
+        public Email[] GetEmails(string entity)
+        {
+            return _emails.Find(x => x.ToEntity == entity || x.FromEntity == entity).ToArray();
+        }
+
+        public string GetAddress(string entity)
+        {
+            var address = _addresses.FindOne(x => x.Entity == entity);
+            if (address != null)
+                return address.Name + "@serenitymail.net";
+            return null;
+        }
+
+        public bool GetUnread(string email, string entity)
+        {
+            return _readEmails.FindOne(x => x.Entity == entity && x.EmailId == email) == null;
+        }
+
         public void Initiate()
         {
             //Set up email addresses.
@@ -64,7 +82,7 @@ namespace Peacenet.Backend.Email
 
             //Determine if we have a "postmaster" email address.
             var address = _addresses.FindOne(x => x.Entity == _postmasterId);
-            if(address != null)
+            if(address == null)
             {
                 //Allocate it.
                 address = new EmailAddress
@@ -99,7 +117,7 @@ namespace Peacenet.Backend.Email
                         _addresses.Insert(pAddress);
                         AddEmail(_postmasterId, entity, "Welcome to SerenityMail!", $@"Welcome to your new SerenityMail mailbox!
 
-SerenityMail is the leading email commubications service of The Peacenet. In fact, we're pretty sure we're the only one out there. We thank you for using us to power your mailbox!
+SerenityMail is the leading email communications service of The Peacenet. In fact, we're pretty sure we're the only one out there. We thank you for using us to power your mailbox!
 
 Your email address is: {player.username}@serenitymail.net
 
@@ -113,7 +131,30 @@ SerenityMail Postmaster");
             };
         }
 
+        public void SendMessage(string entity, string to, string subject, string message)
+        {
+            var toAddress = _addresses.FindOne(x => x.Name == to.Replace("@serenitymail.net", ""));
+            if(toAddress == null)
+            {
+                AddEmail(_postmasterId, entity, "Couldn't deliver message", $@"Hello.
 
+We're sorry, but we could not deliver your message because a recipient with the correct address was not found. Your message was as follows:
+
+To: {to}
+Subject: {subject}
+Contents:
+
+{message}
+
+
+We're sorry for the inconvenience.
+
+Kind regards,
+SerenityMail Postmaster");
+                return;
+            }
+            AddEmail(entity, toAddress.Entity, subject, message);
+        }
 
         private void PurgeInvalidEmails()
         {
@@ -149,6 +190,11 @@ SerenityMail Postmaster");
             {
                 DispatchEmailReceived(player, from, subject);
                 DispatchUnreadCount(player, _emails.Find(x => x.ToEntity == to && (_readEmails.FindOne(y => y.EmailId == x.Id) == null)).Count());
+            }
+            var playerFrom = _entity.GetPlayerId(from);
+            if(playerFrom!=null)
+            {
+                DispatchUnreadCount(playerFrom, _emails.Find(x => x.ToEntity == from && (_readEmails.FindOne(y => y.EmailId == x.Id) == null)).Count());
             }
         }
 
