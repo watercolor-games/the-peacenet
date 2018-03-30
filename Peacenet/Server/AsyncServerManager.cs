@@ -18,6 +18,7 @@ using Plex.Objects;
 using System.Threading;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine;
+using System.Collections.Concurrent;
 
 namespace Peacenet.Server
 {
@@ -43,9 +44,10 @@ namespace Peacenet.Server
         private string _session = "";
         private Action<string> _onConnectionError;
         private bool _isMultiplayer = false;
-        private PlexServerHeader _receivedHeader = null;
         private Queue<PlexBroadcast> _broadcasts = new Queue<PlexBroadcast>();
-        private EventWaitHandle _messageReceived = new ManualResetEvent(false);
+        private EventWaitHandle _messageReceived = new AutoResetEvent(false);
+
+        ConcurrentDictionary<string, PlexServerHeader> _responses = null;
 
 
         private void _listen()
@@ -77,7 +79,7 @@ namespace Peacenet.Server
                     }
                     else
                     {
-                        if (muid != _wantedMuid)
+                        if (!_responses.ContainsKey(muid))
                         {
                             Logger.Log("Skipping read of direct reply. It's not for us.");
                             continue;
@@ -90,7 +92,7 @@ namespace Peacenet.Server
                         {
                             remoteBody = _reader.ReadBytes(remoteLen);
                         }
-                        _receivedHeader = new PlexServerHeader
+                        _responses[muid] = new PlexServerHeader
                         {
                             Content = remoteBody,
                             Message = (byte)remoteResponse,
@@ -146,6 +148,7 @@ namespace Peacenet.Server
             _writer.Close();
             _broadcasts.Clear();
             _tcpClient = null;
+            _responses = null;
             if(!string.IsNullOrWhiteSpace(error))
             {
                 Logger.Log("Disconnected from server: " + error, LogType.Warning, "peacenetserver");
@@ -161,6 +164,7 @@ namespace Peacenet.Server
         /// <inheritdoc/>
         public void Initiate()
         {
+            _responses = new ConcurrentDictionary<string, PlexServerHeader>();
             var entity = _plexgate.New<serverEntity>();
             _plexgate.GetLayer(LayerType.NoDraw).AddEntity(entity);
             _savedServers = new List<SavedServer>();
@@ -209,8 +213,6 @@ namespace Peacenet.Server
             _writeServers();
         }
 
-        private string _wantedMuid = null;
-
         private EventWaitHandle _messageHandled = new ManualResetEvent(true);
 
         /// <summary>
@@ -228,8 +230,7 @@ namespace Peacenet.Server
                 _messageHandled.Reset();
                 Logger.Log($"Sending message to server: {type} (body is {body?.Length} bytes long)");
                 string muid = Guid.NewGuid().ToString();
-                _messageReceived.Reset();
-                _wantedMuid = muid;
+                _responses[muid] = null;
                 lock (_writer)
                 {
                     _writer.Write(muid);
@@ -245,17 +246,24 @@ namespace Peacenet.Server
                         _writer.Write(body);
                     _writer.Flush();
                 }
-                _messageReceived.WaitOne();
-                ServerResponseType response = (ServerResponseType)_receivedHeader.Message;
+                _messageHandled.Set();
+                PlexServerHeader hdr;
+                do
+                {
+                    _messageReceived.WaitOne();
+                    hdr = _responses[muid];
+                }
+                while (hdr == null);
+                var response = (ServerResponseType)hdr.Message;
                 if (response == ServerResponseType.REQ_LOGINREQUIRED)
                 {
                     Disconnect("You must be signed into an itch.io account to play Multiplayer.");
                 }
                 else
                 {
-                    if (_receivedHeader.Content.Length > 0)
+                    if (hdr.Content.Length > 0)
                     {
-                        using (var memstr = new MemoryStream(_receivedHeader.Content))
+                        using (var memstr = new MemoryStream(hdr.Content))
                         {
                             using (var memreader = new BinaryReader(memstr, Encoding.UTF8))
                             {
@@ -265,10 +273,10 @@ namespace Peacenet.Server
                     }
                     else
                     {
-                        onResponse?.Invoke(response, null);
+                        onResponse?.Invoke(response, null); // what?
                     }
                 }
-                _messageHandled.Set();
+                
             });
         }
 
