@@ -68,6 +68,7 @@
     <Compile Include="AppLauncherManager.cs" />
     <Compile Include="Applications\Appearance.cs" />
     <Compile Include="Applications\ChatClient.cs" />
+    <Compile Include="Applications\EmailViewer.cs" />
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
@@ -89,9 +90,13 @@
     <Compile Include="Cutscene\CreditsScene.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
+    <Compile Include="Email\EmailClient.cs" />
     <Compile Include="Filesystem\FileUtilities.cs" />
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\IFileHandler.cs" />
+    <Compile Include="GovernmentAlert\AlertBgmEntity.cs" />
+    <Compile Include="GovernmentAlert\AlertService.cs" />
+    <Compile Include="HideInHelpAttribute.cs" />
     <Compile Include="InfoboxManager.cs" />
     <Compile Include="InitCommand.cs" />
     <Compile Include="ItchOAuthClient.cs" />
@@ -157,47 +162,53 @@
     <Content Include="Content\License.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\UIIcons\NotificationTray\Email.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\NotificationTray\EmailUnread.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="discord-rpc.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <MonoGameContentReference Include="Content\Content.mgcb" />
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
       <Link>x86\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\SDL2.dll">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\SDL2.dll">
       <Link>x64\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\soft_oal.dll">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\soft_oal.dll">
       <Link>x86\soft_oal.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\soft_oal.dll">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\soft_oal.dll">
       <Link>x64\soft_oal.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libSDL2-2.0.so.0">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libSDL2-2.0.so.0">
       <Link>x86\libSDL2-2.0.so.0</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libSDL2-2.0.so.0">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libSDL2-2.0.so.0">
       <Link>x64\libSDL2-2.0.so.0</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libopenal.so.1">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libopenal.so.1">
       <Link>x86\libopenal.so.1</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libopenal.so.1">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libopenal.so.1">
       <Link>x64\libopenal.so.1</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\libSDL2-2.0.0.dylib">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\libSDL2-2.0.0.dylib">
       <Link>libSDL2-2.0.0.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\libopenal.1.dylib">
+    <None Include="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\libopenal.1.dylib">
       <Link>libopenal.1.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -216,6 +227,15 @@
     <Content Include="Content\Audio\Cutscene\CreditsAlt.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Audio\GovernmentAlert\Bgm1.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\GovernmentAlert\Bgm2.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\GovernmentAlert\Bgm3.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Audio\MainMenu\GameSelect.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -462,17 +482,17 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\peace-engine\PeaceEngine\PeaceEngine.csproj">
+      <Project>{7c979b07-0585-4033-a110-e5555b9d6651}</Project>
+      <Name>PeaceEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\peace-engine\WatercolorGames.Utilities\WatercolorGames.Utilities.csproj">
+      <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
+      <Name>WatercolorGames.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Peacenet.Backend\Peacenet.Backend.csproj">
       <Project>{d0d04db3-08c9-4ea9-b64a-69596dbb9657}</Project>
       <Name>Peacenet.Backend</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Peacenet.Objects\Peacenet.Objects.csproj">
-      <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
-      <Name>Peacenet.Objects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PeaceEngine\PeaceEngine.csproj">
-      <Project>{7c979b07-0585-4033-a110-e5555b9d6651}</Project>
-      <Name>PeaceEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>
@@ -482,7 +502,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Themes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

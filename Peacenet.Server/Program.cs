@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using Plex.Objects;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.IO;

@@ -75,6 +75,20 @@ namespace Peacenet.Backend
             }
         }
 
+        internal uint NextIP()
+        {
+            using (var random = RandomNumberGenerator.Create())
+            {
+                byte[] ipsegments = new byte[4];
+                random.GetBytes(ipsegments);
+                while (_addresses.FindOne(x => x.Address == this.CombineToUint(ipsegments)) != null)
+                {
+                    random.GetBytes(ipsegments);
+                }
+                return CombineToUint(ipsegments);
+            }
+            }
+
         private Random _random = new Random();
 
         public uint GetIPFromString(string iPAddress)
@@ -106,17 +120,7 @@ namespace Peacenet.Backend
                 var ips = FetchAllIPs(entity);
                 if (ips.Length == 0)
                 {
-                    using (var random = RandomNumberGenerator.Create())
-                    {
-                        byte[] ipsegments = new byte[4];
-                        random.GetBytes(ipsegments);
-                        while (_addresses.FindOne(x => x.Address == this.CombineToUint(ipsegments)) != null)
-                        {
-                            random.GetBytes(ipsegments);
-                        }
-                        uint ip = CombineToUint(ipsegments);
-                        AllocateIPv4Address(ip, entity);
-                    }
+                    AllocateIPv4Address(NextIP(), entity);
                 }
             };
         }

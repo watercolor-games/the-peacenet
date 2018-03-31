@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Plex.Engine;
 using Peacenet.Server;
 using Peacenet.Missions.Prologue;
+using Plex.Objects.Pty;
 
 namespace Peacenet
 {
@@ -246,10 +247,10 @@ namespace Peacenet
                 {
                     local.Run(console, argumentStore);
                 }
-                catch (Exception ex)
+                catch (TerminationRequestException)
                 {
-                    console.WriteLine($"Command error: {ex.Message}");
-                    Logger.Log(ex.ToString(), LogType.Error, "terminal");
+                    console.WriteLine("Killed.");
+                    return true;
                 }
                 return true;
             }

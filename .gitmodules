@@ -1,0 +1,3 @@
+[submodule "peace-engine"]
+	path = peace-engine
+	url = https://github.com/watercolor-games/peace-engine

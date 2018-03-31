@@ -324,14 +324,14 @@ namespace Peacenet.Applications
             console.WorkingDirectory = workdir;
             while (true)
             {
-                if (_Api.LoggedIn)
-                    user = _Api.User.username;
-                else
-                    user = "user";
-                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                console.Write($"{user}@{_os.Hostname}:{console.WorkingDirectory.Replace("/home","~")}$ ");
                 try
                 {
+                    if (_Api.LoggedIn)
+                        user = _Api.User.username;
+                    else
+                        user = "user";
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                    console.Write($"{user}@{_os.Hostname}:{console.WorkingDirectory.Replace("/home", "~")}$ ");
                     string cmdstr = console.ReadLine();
                     if (string.IsNullOrWhiteSpace(cmdstr))
                         continue;
@@ -344,9 +344,17 @@ namespace Peacenet.Applications
                     if (CommandRun?.Invoke(instruction) == true)
                         return;
                 }
-                catch (Exception ex)
+                catch(TerminationRequestException)
                 {
-                    console.WriteLine(ex.Message);
+                    if(_allowExit)
+                        return;
+                }
+                catch(Exception ex)
+                {
+                    console.WriteLine("bash: error: " + ex.Message);
+#if DEBUG
+                    console.WriteLine(ex.StackTrace);
+#endif
                 }
             }
         }
@@ -461,7 +469,7 @@ namespace Peacenet.Applications
         public void Terminate()
         {
             _slave.WriteByte(0x02);
-            _master.WriteByte(0x02);
+            _slave.WriteByte((byte)'\n');
 
         }
 
@@ -482,6 +490,11 @@ namespace Peacenet.Applications
                         _slave.WriteByte((byte)c);
                     }
                 }
+                return;
+            }
+            if(e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Microsoft.Xna.Framework.Input.Keys.C)
+            {
+                Terminate();
                 return;
             }
 
@@ -567,6 +580,29 @@ namespace Peacenet.Applications
                     case '\n':
                         _charX = 0;
                         _charY += 1;
+                        break;
+                    case (char)0x02:
+                        gfx.Batch.DrawString(_font, "^", new Vector2(((_charX * _charWidth) + gfx.X) + gfx.RenderOffsetX, ((_charY * _charHeight) + gfx.Y) + gfx.RenderOffsetY), Color.White);
+                        if ((_charX + 1) * _charWidth >= Width)
+                        {
+                            _charX = 0;
+                            _charY++;
+                        }
+                        else
+                        {
+                            _charX++;
+                        }
+                        gfx.Batch.DrawString(_font, "C", new Vector2(((_charX * _charWidth) + gfx.X) + gfx.RenderOffsetX, ((_charY * _charHeight) + gfx.Y) + gfx.RenderOffsetY), Color.White);
+                        if ((_charX + 1) * _charWidth >= Width)
+                        {
+                            _charX = 0;
+                            _charY++;
+                        }
+                        else
+                        {
+                            _charX++;
+                        }
+
                         break;
                     default:
                         gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * _charWidth)+gfx.X)+gfx.RenderOffsetX, ((_charY * _charHeight)+gfx.Y)+gfx.RenderOffsetY), Color.White);

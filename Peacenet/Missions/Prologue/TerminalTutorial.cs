@@ -72,6 +72,13 @@ namespace Peacenet.Missions.Prologue
         /// <inheritdoc/>
         public override void OnEnd()
         {
+            if(_tutorialTerminal != null)
+            {
+                _tutorialTerminal.CanClose = true;
+                _tutorialTerminal.Close();
+                _tutorialTerminal = null;
+            }
+            _shell = null;
             _bgmInstance.Stop();
             base.OnEnd();
         }
@@ -87,6 +94,8 @@ namespace Peacenet.Missions.Prologue
         private WindowSystem _Winsys = null;
 
         private TutorialShell _shell = null;
+
+        
 
         public override void OnObjectiveStart(int index, Objective data)
         {

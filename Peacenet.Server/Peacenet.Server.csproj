@@ -77,10 +77,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Peacenet.Objects\Peacenet.Objects.csproj">
-      <Project>{A069089A-8962-4607-B2B2-4CF4A371066E}</Project>
-      <Name>Peacenet.Objects</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>
       <Name>WatercolorGames.CommandLine</Name>
