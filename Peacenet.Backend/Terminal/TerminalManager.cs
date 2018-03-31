@@ -286,11 +286,10 @@ namespace Peacenet.Backend
 
                 
 
-                int masterRemoteId = _remoteStreams.Create(_master, session);
-                int slaveRemoteId = _remoteStreams.Create(new BlockingSlavePseudoTerminal(_slave), session);
+                int slaveRemoteId = _remoteStreams.Create(_slave, session);
 
 
-                var stdout = new StreamWriter(_master);
+                var stdout = new StreamWriter(new BroadcastingStream(backend, session));
                 stdout.AutoFlush = true;
                 var stdin = new StreamReader(_master);
 
@@ -315,10 +314,9 @@ namespace Peacenet.Backend
                     }
                     finally
                     {
-                        _master.WriteByte(0x02);
+                        stdout.Write((char)0x02);
                     }
                 });
-                datawriter.Write(masterRemoteId);
                 datawriter.Write(slaveRemoteId);
 
                 return ServerResponseType.REQ_SUCCESS;
@@ -345,60 +343,60 @@ namespace Peacenet.Backend
         }
     }
 
-    public class BlockingSlavePseudoTerminal : Stream
+    public class BroadcastingStream : Stream
     {
-        private PseudoTerminal _slave = null;
+        private Backend _backend = null;
+        private string _player = null;
 
-        public override bool CanRead => _slave.CanRead;
-
-        public override bool CanSeek => _slave.CanSeek;
-
-        public override bool CanWrite => _slave.CanWrite;
-
-        public override long Length => _slave.Length;
-
-        public override long Position { get => _slave.Position; set => _slave.Position = value; }
-
-        public BlockingSlavePseudoTerminal(PseudoTerminal slave)
+        public BroadcastingStream(Backend backend, string player)
         {
-            _slave = slave;
+            _backend = backend;
+            _player = player;
         }
 
+        public override bool CanRead => false;
+
+        public override bool CanSeek => false;
+
+        public override bool CanWrite => true;
+
+        public override long Length => -1;
+
+        public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public override void Flush()
         {
-            _slave.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return _slave.Read(buffer, offset, count);
+            throw new NotImplementedException();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return _slave.Seek(offset, origin);
+            throw new NotImplementedException();
         }
 
         public override void SetLength(long value)
         {
-            _slave.SetLength(value);
-        }
-
-        public override int ReadByte()
-        {
-            int b = _slave.ReadByte();
-            if(b == -1)
-            {
-                while (b == -1)
-                    b = _slave.ReadByte();
-            }
-            return b;
+            throw new NotImplementedException();
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            _slave.Write(buffer, offset, count);
+            if (offset + count > buffer.Length || offset < 0)
+                throw new ArgumentOutOfRangeException("Offset and count must be within the array.");
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(ms, Encoding.UTF8))
+                {
+                    writer.Write(count);
+                    writer.Write(buffer.Skip(offset).Take(count).ToArray());
+                    writer.Flush();
+                    _backend.BroadcastToPlayer(ServerBroadcastType.TerminalOutput, ms.ToArray(), _player);
+                }
+            }
         }
     }
 }
