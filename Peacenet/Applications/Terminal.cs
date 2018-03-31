@@ -445,13 +445,7 @@ namespace Peacenet.Applications
             _stdin = new StreamReader(_master);
             _stdout.AutoFlush = true;
 
-                    var ch = _slave.ReadByte();
-                    if (ch != -1)
-                    {
-                        _textBuffer += (char)ch;
-                        Invalidate(true);
-                    }
-
+                    
             HasFocusedChanged += (o, a) =>
             {
                 if (IsFocused)
@@ -528,6 +522,7 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
+            _font.DefaultCharacter = '?';
             gfx.Clear(Color.Black);
             _charX = 0;
             _charY = 0;

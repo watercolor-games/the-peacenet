@@ -17,7 +17,7 @@ namespace Plex.Engine
             var s = plexgate.New<RemoteStream>();
             s.id = id;
             Logger.Log($"Remote Stream {id} Instantiated");
-            return new BufferedStream(s);
+            return s;
         }
 
         public void Initiate()
@@ -103,6 +103,14 @@ namespace Plex.Engine
                     var ret = read.ReadInt32();
                     read.Read(buffer, offset, read.ReadInt32());
                     return ret;
+                }
+            }
+
+            public override int ReadByte()
+            {
+                using (var read = sendMsg(StreamOp.ReadByte, null))
+                {
+                    return read.ReadInt32();
                 }
             }
 

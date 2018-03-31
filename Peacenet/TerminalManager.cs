@@ -14,6 +14,8 @@ using Plex.Engine;
 using Peacenet.Server;
 using Peacenet.Missions.Prologue;
 using Plex.Objects.Pty;
+using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace Peacenet
 {
@@ -178,6 +180,9 @@ namespace Peacenet
             }
         }
 
+        [Dependency]
+        private RemoteStreams _remoteStreams = null;
+
         /// <summary>
         /// Runs a command with the given console context.
         /// </summary>
@@ -207,15 +212,58 @@ namespace Peacenet
                         foreach (var token in query.ArgumentTokens)
                             writer.Write(token);
                         writer.Flush();
+                        ManualResetEvent commandDone = new ManualResetEvent(false);
                         _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
                         {
-                            string output;
-                            while((output = reader.ReadString()) != "\u0013\u0014")
+                            if(res != ServerResponseType.REQ_SUCCESS)
                             {
-                                console.Write(output);
+                                console.WriteLine("Unexpected, unknown error.");
+                                return;
                             }
-                            console.WriteLine("");
+                            int remoteMasterId = reader.ReadInt32();
+                            int remoteSlaveId = reader.ReadInt32();
+
+                            var remoteMaster = _remoteStreams.Open(remoteMasterId);
+                            var remoteSlave = _remoteStreams.Open(remoteSlaveId);
+
+                            var t = new Thread(() =>
+                            {
+                                while (true)
+                                {
+                                    try
+                                    {
+                                        char input = console.Read();
+                                        remoteSlave.WriteByte((byte)input);
+                                    }
+                                    catch (TerminationRequestException)
+                                    {
+                                        remoteSlave.WriteByte(0x02);
+                                        remoteSlave.WriteByte((byte)'\n');
+                                    }
+                                }
+                            });
+
+                            t.Start();
+
+                            Task.Run(() =>
+                            {
+                                while (true)
+                                {
+                                    var ch = (char)remoteSlave.ReadByte();
+                                    if (ch == 0x02)
+                                    {
+                                        break;
+                                    }
+                                    console.StandardOutput.Write((char)ch);
+                                }
+
+                                t.Abort();
+
+                                commandDone.Set();
+                            });
+                            
                         }).Wait();
+                        commandDone.WaitOne();
                     }
                 }
                 return true;
@@ -407,5 +455,41 @@ namespace Peacenet
     public class TerminalSkipAutoloadAttribute : Attribute
     {
 
+    }
+
+    class RemotePtyEntity : IEntity
+    {
+        private ConsoleContext _localContext = null;
+        private Stream _remoteMaster = null;
+        private Stream _remoteSlave = null;
+
+        public RemotePtyEntity(ConsoleContext localContext, Stream remoteMaster, Stream remoteSlave)
+        {
+            _localContext = localContext;
+            _remoteMaster = remoteMaster;
+            _remoteSlave = remoteSlave;
+        }
+
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+        }
+
+        public void OnGameExit()
+        {
+            _remoteMaster.Close();
+            _remoteSlave.Close();
+        }
+
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void OnMouseUpdate(MouseState mouse)
+        {
+        }
+
+        public void Update(GameTime time)
+        {
+        }
     }
 }

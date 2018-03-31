@@ -8,6 +8,8 @@ using System.IO;
 using WatercolorGames.CommandLine;
 using DocoptNet;
 using Newtonsoft.Json;
+using Plex.Objects.Pty;
+using System.Threading.Tasks;
 
 namespace Peacenet.Backend
 {
@@ -264,16 +266,33 @@ namespace Peacenet.Backend
                 }
             }
 
+            [Dependency]
+            private RemoteStreams _remoteStreams = null;
+
             /// <inheritdoc/>
             public ServerResponseType HandleMessage(Backend backend, ServerMessageType message, string session, BinaryReader datareader, BinaryWriter datawriter)
             {
-                //TODO: Persistent connection to client so that stdin reads from client and stdout sends to client.
-                //This will allow server-side commands to ask the in-game user for input while the command is running.
-                //For now, we'll pipe stdout and stdin to a MemoryStream.
-                MemoryStream std = new MemoryStream();
-                var stdout = new StreamWriter(std);
+                PseudoTerminal _master = null;
+                PseudoTerminal _slave = null;
+
+                var options = new TerminalOptions();
+
+                options.LFlag = PtyConstants.ICANON;
+                options.C_cc[PtyConstants.VERASE] = (byte)'\b';
+                options.C_cc[PtyConstants.VEOL] = (byte)'\r';
+                options.C_cc[PtyConstants.VEOL2] = (byte)'\n';
+
+                PseudoTerminal.CreatePair(out _master, out _slave, options);
+
+                
+
+                int masterRemoteId = _remoteStreams.Create(_master, session);
+                int slaveRemoteId = _remoteStreams.Create(new BlockingSlavePseudoTerminal(_slave), session);
+
+
+                var stdout = new StreamWriter(_master);
                 stdout.AutoFlush = true;
-                var stdin = new StreamReader(std);
+                var stdin = new StreamReader(_master);
 
                 string commandname = datareader.ReadString();
                 int argCount = datareader.ReadInt32();
@@ -284,22 +303,102 @@ namespace Peacenet.Backend
                 }
 
                 var trmmgr = backend.GetBackendComponent<TerminalManager>();
-                bool result = trmmgr.RunCommand(backend, commandname, argv, session, stdin, stdout);
-                if (result)
+                Task.Run(() =>
                 {
-                    datawriter.Write(Encoding.UTF8.GetString(std.ToArray()));
-                }
-                else
-                {
-                    datawriter.Write("Command not found.");
-                }
-                stdout.Close();
-                stdin.Close();
-                std.Close();
-                datawriter.Write("\u0013\u0014");
+                    try
+                    {
+                        trmmgr.RunCommand(backend, commandname, argv, session, stdin, stdout);
+                    }
+                    catch (TerminationRequestException)
+                    {
+                        Logger.Log("Terminated command.");
+                    }
+                    finally
+                    {
+                        _master.WriteByte(0x02);
+                    }
+                });
+                datawriter.Write(masterRemoteId);
+                datawriter.Write(slaveRemoteId);
+
                 return ServerResponseType.REQ_SUCCESS;
 
             }
+        }
+    }
+
+    public class RemoteReadTestCommand : ITerminalCommand
+    {
+        public string Name => "remoteread";
+
+        public string Description => "Test command that does server-side stdin reads, previously impossible in older builds of the game and server.";
+
+        public IEnumerable<string> UsageStrings => null;
+
+
+        public void Run(Backend backend, ConsoleContext console, string sessionid, Dictionary<string, object> args)
+        {
+            console.WriteLine("Enter a line of text.");
+            console.Write("> ");
+            string text = console.ReadLine();
+            console.WriteLine("You wrote:\n" + text);
+        }
+    }
+
+    public class BlockingSlavePseudoTerminal : Stream
+    {
+        private PseudoTerminal _slave = null;
+
+        public override bool CanRead => _slave.CanRead;
+
+        public override bool CanSeek => _slave.CanSeek;
+
+        public override bool CanWrite => _slave.CanWrite;
+
+        public override long Length => _slave.Length;
+
+        public override long Position { get => _slave.Position; set => _slave.Position = value; }
+
+        public BlockingSlavePseudoTerminal(PseudoTerminal slave)
+        {
+            _slave = slave;
+        }
+
+
+        public override void Flush()
+        {
+            _slave.Flush();
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return _slave.Read(buffer, offset, count);
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            return _slave.Seek(offset, origin);
+        }
+
+        public override void SetLength(long value)
+        {
+            _slave.SetLength(value);
+        }
+
+        public override int ReadByte()
+        {
+            int b = _slave.ReadByte();
+            if(b == -1)
+            {
+                while (b == -1)
+                    b = _slave.ReadByte();
+            }
+            return b;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            _slave.Write(buffer, offset, count);
         }
     }
 }
