@@ -30,8 +30,22 @@ namespace Peacenet
                 var attrib = type.GetCustomAttributes(false).FirstOrDefault(x => x is AppLauncherAttribute) as AppLauncherAttribute;
                 if(attrib != null)
                 {
-                    Logger.Log($"Found: {type.Name} - {attrib.Category}: {attrib.Name}");
-                    _items.Add(new AppLauncherItem(attrib, type));
+                    bool allow = true;
+                    foreach (var sattrib in type.GetCustomAttributes(false).Where(x => x is SpecialEventAppLauncherAttribute).Select(x => x as SpecialEventAppLauncherAttribute))
+                    {
+                        var time = DateTime.Now;
+                        allow = false;
+                        if ((sattrib.Year == -1 || sattrib.Year == time.Year) && (sattrib.Month == -1 || sattrib.Month == time.Month) && (sattrib.Day == -1 || sattrib.Day == time.Day))
+                        {
+                            allow = true;
+                            break;
+                        }
+                    }
+                    if (allow)
+                    {
+                        Logger.Log($"Found: {type.Name} - {attrib.Category}: {attrib.Name}");
+                        _items.Add(new AppLauncherItem(attrib, type));
+                    }
                 }
             }
         }
@@ -94,6 +108,25 @@ namespace Peacenet
         /// Displayed under the entry in the launcher.
         /// </summary>
         public string Description { get; private set; }
+    }
+
+    /// <summary>
+    /// App launchers with this attribute only show up on the date referenced in the constructor.
+    /// You can add more than one to allow multiple dates.  You can use -1 to ignore day, month,
+    /// or year.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class SpecialEventAppLauncherAttribute : Attribute
+    {
+        public SpecialEventAppLauncherAttribute(int day = -1, int month = -1, int year = -1)
+        {
+            Year = year;
+            Month = month;
+            Day = day;
+        }
+        public int Year { get; private set; }
+        public int Month { get; private set; }
+        public int Day { get; private set; }
     }
 
     /// <summary>
