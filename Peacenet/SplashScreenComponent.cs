@@ -39,7 +39,7 @@ namespace Peacenet
         public void Initiate()
         {
             Logger.Log("Peacenet is loading its theme now!", LogType.Info, "peacenet");
-            _theme.Theme = _plexgate.New<ShiftOSIndustrial>();
+            _theme.Theme = _plexgate.New<PeacenetTheme>();
             Logger.Log("And now for the save backend.", LogType.Info, "peacenet");
             _save.SetBackend(_plexgate.New<ServerSideSaveBackend>());
         }
