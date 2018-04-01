@@ -132,6 +132,12 @@ namespace Plex.Engine
                 sendCmd(StreamOp.Write, (write) => { write.Write(count); write.Write(buffer.Skip(offset).Take(count).ToArray()); });
             }
 
+            public override void WriteByte(byte value)
+            {
+                sendCmd(StreamOp.WriteByte, (write) => { write.Write((int)value); });
+            }
+
+
             public override void Close()
             {
                 sendCmd(StreamOp.Close);

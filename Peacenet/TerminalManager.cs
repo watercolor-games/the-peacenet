@@ -213,6 +213,25 @@ namespace Peacenet
                             writer.Write(token);
                         writer.Flush();
                         ManualResetEvent commandDone = new ManualResetEvent(false);
+
+                        Action<ServerBroadcastType, BinaryReader> terminalOutput = (req, r) =>
+                        {
+                            if (req != ServerBroadcastType.TerminalOutput)
+                                return;
+                            int count = r.ReadInt32();
+                            byte[] data = r.ReadBytes(count);
+                            string str = Encoding.UTF8.GetString(data);
+                            console.Write(str);
+                            if(str.ToCharArray().Contains((char)0x02))
+                            {
+                                commandDone.Set();
+                            }
+                        };
+                        _server.BroadcastReceived += terminalOutput;
+
+                        Stream remoteSlave = null;
+                        Thread t = null;
+
                         _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
                         {
                             if(res != ServerResponseType.REQ_SUCCESS)
@@ -220,19 +239,17 @@ namespace Peacenet
                                 console.WriteLine("Unexpected, unknown error.");
                                 return;
                             }
-                            int remoteMasterId = reader.ReadInt32();
                             int remoteSlaveId = reader.ReadInt32();
 
-                            var remoteMaster = _remoteStreams.Open(remoteMasterId);
-                            var remoteSlave = _remoteStreams.Open(remoteSlaveId);
+                            remoteSlave = _remoteStreams.Open(remoteSlaveId);
 
-                            var t = new Thread(() =>
+                            t = new Thread(() =>
                             {
                                 while (true)
                                 {
                                     try
                                     {
-                                        char input = console.Read();
+                                        char input = (char)console.StandardInput.BaseStream.ReadByte();
                                         remoteSlave.WriteByte((byte)input);
                                     }
                                     catch (TerminationRequestException)
@@ -245,25 +262,15 @@ namespace Peacenet
 
                             t.Start();
 
-                            Task.Run(() =>
-                            {
-                                while (true)
-                                {
-                                    var ch = (char)remoteSlave.ReadByte();
-                                    if (ch == 0x02)
-                                    {
-                                        break;
-                                    }
-                                    console.StandardOutput.Write((char)ch);
-                                }
-
-                                t.Abort();
-
-                                commandDone.Set();
-                            });
                             
                         }).Wait();
+
                         commandDone.WaitOne();
+
+                        _server.BroadcastReceived -= terminalOutput;
+
+                        t.Abort();
+                        remoteSlave.Close();
                     }
                 }
                 return true;

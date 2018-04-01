@@ -43,24 +43,6 @@ namespace Peacenet
 
         }
 
-        //New theme variables
-        private PeacenetAccentColor _pnAccent = PeacenetAccentColor.Blueberry;
-
-        //Are we a light theme?
-        private bool _isLight = false;
-
-        /// <summary>
-        /// Set the accent color for this theme.
-        /// </summary>
-        /// <param name="color">The new accent color of the theme.</param>
-        /// <param name="gfx">The graphics device used for creating assets with the new color..</param>
-        /// <param name="content">The content manager for loading new assets with the new color.</param>
-        public void SetAccentColor(GraphicsDevice gfx, ContentManager content, PeacenetAccentColor color)
-        {
-            _pnAccent = color;
-            this.LoadThemeData(gfx, content);
-        }
-
         //Lime assets
         private Texture2D bleftlime;
         private Texture2D leftlime;
@@ -110,10 +92,6 @@ namespace Peacenet
         private Color _bStateTextIdle;
         private Color _bStateTextHover;
         private Color _bStateTextPressed;
-
-
-        //Accent
-        private Color _accent;
 
 
         //Control BGs
@@ -185,11 +163,8 @@ namespace Peacenet
                 case TextFontStyle.Header1:
                 case TextFontStyle.Header2:
                 case TextFontStyle.Header3:
-                    if (_isLight) return GetAccentColor();
                     return GetAccentColor().Lighten(0.75F).Lighten(0.75F);
                 default:
-                    if (_isLight)
-                        return Color.Black;
                     return Color.White;
             }
         }
@@ -309,10 +284,13 @@ namespace Peacenet
             throw new NotImplementedException();
         }
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         /// <inheritdoc/>
         public override Color GetAccentColor()
         {
-            switch(_pnAccent)
+            switch(_pn.AccentColor)
             {
                 case PeacenetAccentColor.Blueberry:
                     return _accentBlueberry;
@@ -355,7 +333,7 @@ namespace Peacenet
 
         private Texture2D _getLeftAsset()
         {
-            switch (_pnAccent)
+            switch (_pn.AccentColor)
             {
                 case PeacenetAccentColor.Blueberry:
                     return leftblueberry;
@@ -373,7 +351,7 @@ namespace Peacenet
 
         private Texture2D _getCloseAsset()
         {
-            switch (_pnAccent)
+            switch (_pn.AccentColor)
             {
                 case PeacenetAccentColor.Blueberry:
                     return _closeblueberry;
@@ -428,24 +406,13 @@ namespace Peacenet
             leftinactive = content.Load<Texture2D>("ThemeAssets/New/leftinactive");
 
 
-            _accent = new Color(64, 128, 255, 255);
-
             _bStateTextIdle = new Color(191, 191, 191, 255);
             _bStateTextHover = Color.White;
             _bStateTextPressed = Color.Gray;
 
-            if (_isLight)
-            {
-                _bgRegular = Color.White;
-                _bgDark = Color.WhiteSmoke;
-                _bgLight = Color.LightGray;
-            }
-            else
-            {
-                _bgRegular = new Color(64, 64, 64, 255);
-                _bgDark = new Color(32, 32, 32, 255);
-                _bgLight = new Color(127, 127, 127, 255);
-            }
+            _bgRegular = new Color(64, 64, 64, 255);
+            _bgDark = new Color(32, 32, 32, 255);
+            _bgLight = new Color(127, 127, 127, 255);
 
             _buttonIdleBG = new Color(90, 90, 90, 255);
 

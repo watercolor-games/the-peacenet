@@ -117,6 +117,9 @@ namespace Peacenet.MainMenu
         #region Engine dependencies
 
         [Dependency]
+        private PeacenetThemeManager _pn = null;
+
+        [Dependency]
         private UIManager _uimanager = null;
 
         [Dependency]
@@ -437,8 +440,7 @@ namespace Peacenet.MainMenu
             _discord.GameState = "Watercolor Games presents...";
             _discord.GameDetails = "The Peacenet";
 
-            ((PeacenetTheme)_thememgr.Theme).SetAccentColor(_plexgate.GraphicsDevice, content, PeacenetAccentColor.Blueberry);
-            _uimanager.InvalidateAll();
+            _pn.AccentColor = PeacenetAccentColor.Blueberry;
 
             _singleplayer = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/SinglePlayer");
             _multiplayer = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/MultiPlayer");

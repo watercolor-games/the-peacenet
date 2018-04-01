@@ -26,6 +26,9 @@ namespace Peacenet.Applications
     public class Appearance : Window
     {
         [Dependency]
+        private PeacenetThemeManager _pn = null;
+
+        [Dependency]
         private Plexgate _plexgate = null;
 
         private Texture2D[] _wallpapers = null;
@@ -186,7 +189,7 @@ namespace Peacenet.Applications
                 if (_accentColors.SelectedItem == null)
                     return;
                 _save.SetValue("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                _pn.AccentColor = (PeacenetAccentColor)_accentColors.SelectedItem.Tag;
                 Manager.InvalidateAll();
             };
             AddChild(_accentColors);

@@ -53,6 +53,9 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             if((bool)arguments["listaccents"])
@@ -67,8 +70,7 @@ namespace Peacenet
                 string name = arguments["<accent>"].ToString();
                 var accent = (PeacenetAccentColor)Enum.Parse(typeof(PeacenetAccentColor), name);
                 this._save.SetValue<PeacenetAccentColor>("theme.accent", accent);
-                ((PeacenetTheme)_theme.Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, accent);
-                _ui.InvalidateAll();
+                _pn.AccentColor = accent;
             }
         }
     }
