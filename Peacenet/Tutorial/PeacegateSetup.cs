@@ -105,6 +105,9 @@ namespace Peacenet.Tutorial
         [Dependency]
         private SaveManager _save = null;
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         /// <inheritdoc/>
         public PeacegateSetup(WindowSystem _winsys, TutorialBgmEntity tutorial) : base(_winsys)
         {
@@ -203,8 +206,7 @@ Click 'Next' to get started.";
                 if (_accentColors.SelectedItem == null)
                     return;
                 _save.SetValue<PeacenetAccentColor>("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                Manager.InvalidateAll();
+                _pn.AccentColor = (PeacenetAccentColor)_accentColors.SelectedItem.Tag;
             };
             _accentPanel.AddChild(_accentColors);
             _accentPanel.AddChild(_accentHeader);

@@ -91,6 +91,9 @@ namespace Peacenet
         [Dependency]
         private WindowSystem _winsys = null;
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         private IEnumerable<string> getDirs(string path = "/")
         {
             foreach(var dir in _fs.GetDirectories(path))
@@ -218,8 +221,7 @@ namespace Peacenet
             {
                 console.WriteLine("Loading GUI settings...");
                 var accent = _save.GetValue<PeacenetAccentColor>("theme.accent", PeacenetAccentColor.Blueberry);
-                ((PeacenetTheme)_theme.Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, accent);
-                _ui.InvalidateAll();
+                _pn.AccentColor = accent;
             }
         }
     }

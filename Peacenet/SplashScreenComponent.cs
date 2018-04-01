@@ -17,6 +17,7 @@ using Plex.Engine.Cutscene;
 using Plex.Engine.Saves;
 using Peacenet.MainMenu;
 using Microsoft.Xna.Framework.Content;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet
 {
@@ -38,7 +39,7 @@ namespace Peacenet
         public void Initiate()
         {
             Logger.Log("Peacenet is loading its theme now!", LogType.Info, "peacenet");
-            _theme.Theme = _plexgate.New<PeacenetTheme>();
+            _theme.Theme = _plexgate.New<ShiftOSIndustrial>();
             Logger.Log("And now for the save backend.", LogType.Info, "peacenet");
             _save.SetBackend(_plexgate.New<ServerSideSaveBackend>());
         }
