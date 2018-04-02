@@ -71,7 +71,7 @@ namespace Peacenet
             }
             catch
             {
-                Logger.Log("Connection to itch.io failed.", LogType.Warning, "itch");
+                Logger.Log("Connection to itch.io failed.", System.ConsoleColor.Yellow);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Peacenet
                         {
                             foreach(var error in responseObject.errors)
                             {
-                                Logger.Log(error, LogType.Error, "itchio");
+                                Logger.Log(error, System.ConsoleColor.DarkYellow);
                             }
                             _token = null;
                             _user = null;

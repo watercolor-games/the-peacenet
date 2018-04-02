@@ -110,10 +110,10 @@ namespace Peacenet.Backend
 
         public void Initiate()
         {
-            Logger.Log("Loading IP addresses from database...");
+            Plex.Objects.Logger.Log("Loading IP addresses from database...");
             _addresses = _database.Database.GetCollection<PeacenetIPAddress>("world_ips");
             _addresses.EnsureIndex(x => x.Id);
-            Logger.Log($"IP address lookup complete. {_addresses.Count()} IPs found.");
+            Plex.Objects.Logger.Log($"IP address lookup complete. {_addresses.Count()} IPs found.");
             _backend.PlayerJoined += (id, user) =>
             {
                 var entity = _entityBackend.GetPlayerEntityId(id);
@@ -174,7 +174,7 @@ namespace Peacenet.Backend
             var existing = _addresses.FindOne(x => x.Address == ipaddress);
             if (existing != null)
                 throw new ArgumentException("The IP address you have specified is already allocated.");
-            Logger.Log($"Allocating IP {GetIPString(ipaddress)} for {entityId}");
+            Plex.Objects.Logger.Log($"Allocating IP {GetIPString(ipaddress)} for {entityId}");
             _addresses.Insert(new PeacenetIPAddress
             {
                 Id = Guid.NewGuid().ToString(),

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiteDB;
+using Plex.Objects;
 
 namespace Peacenet.Backend
 {
@@ -64,16 +65,16 @@ namespace Peacenet.Backend
         public void Initiate()
         {
             _dbPath = Path.Combine(_backend.RootDirectory, "server.db");
-            Logger.Log("LITEDB DATABASE BACKEND FOR PEACENET SERVER");
-            Logger.Log("-------------------------------------------");
-            Logger.Log("");
+            Plex.Objects.Logger.Log("LITEDB DATABASE BACKEND FOR PEACENET SERVER");
+            Plex.Objects.Logger.Log("-------------------------------------------");
+            Plex.Objects.Logger.Log("");
             foreach(var line in _asciidb)
             {
-                Logger.Log(line);
+                Plex.Objects.Logger.Log(line);
             }
-            Logger.Log("");
-            Logger.Log("Provides a single storage area for all your data. No SQL whatsoever.");
-            Logger.Log("Starting database...");
+            Plex.Objects.Logger.Log("");
+            Plex.Objects.Logger.Log("Provides a single storage area for all your data. No SQL whatsoever.");
+            Plex.Objects.Logger.Log("Starting database...");
             _db = new LiteDatabase(_dbPath);
         }
 
@@ -85,7 +86,7 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public void Unload()
         {
-            Logger.Log("Database says bye bye.");
+            Plex.Objects.Logger.Log("Database says bye bye.");
             _db.Dispose();
         }
     }

@@ -106,8 +106,8 @@ namespace Peacenet.Server
                 }
                 catch(Exception ex)
                 {
-                    Logger.Log("Breaking out of the listener loop - we can't read anymore.", LogType.Warning, "peacenetserver");
-                    Logger.Log(ex.ToString(), LogType.Error, "peacenetserver");
+                    Logger.Log("Breaking out of the listener loop - we can't read anymore.", System.ConsoleColor.Yellow);
+                    Logger.Log(ex.ToString(), System.ConsoleColor.DarkYellow);
                     if(_tcpClient!=null)
                     {
                         if(Connected)
@@ -151,7 +151,7 @@ namespace Peacenet.Server
             _responses = null;
             if(!string.IsNullOrWhiteSpace(error))
             {
-                Logger.Log("Disconnected from server: " + error, LogType.Warning, "peacenetserver");
+                Logger.Log("Disconnected from server: " + error, System.ConsoleColor.Yellow);
                 _infobox.Show("Disconnected from server.", error);
             }
         }
@@ -301,7 +301,7 @@ namespace Peacenet.Server
 
                 _session = _api.Token;
 
-                Logger.Log("Attempting connection to " + address + "...", LogType.Info, "peacenetserver");
+                Logger.Log("Attempting connection to " + address + "...");
 
                 IPEndPoint endpoint = null;
                 var endpointResult = GetEndPoint(address, 3251, out endpoint);
@@ -311,13 +311,13 @@ namespace Peacenet.Server
                     switch (endpointResult)
                     {
                         case EndPointResult.BadPort:
-                            Logger.Log("Invalid port.", LogType.Error, "peacenetserver");
+                            Logger.Log("Invalid port.", System.ConsoleColor.DarkYellow);
                             return new PeacenetConnectionResult(ConnectionResultType.Other, new ArgumentOutOfRangeException($"The requested port is outside the range of valid ports ({IPEndPoint.MinPort} - {IPEndPoint.MaxPort})."));
                         case EndPointResult.DNSLookupError:
-                            Logger.Log("DNS lookup error.", LogType.Error, "peacenetserver");
+                            Logger.Log("DNS lookup error.", System.ConsoleColor.DarkYellow);
                             return new PeacenetConnectionResult(ConnectionResultType.Other, new Exception("A connection couldn't be established because the specified hostname does not point to a valid IP address."));
                         case EndPointResult.InvalidIPAddress:
-                            Logger.Log("Invalid IP address.", LogType.Error, "peacenetserver");
+                            Logger.Log("Invalid IP address.", System.ConsoleColor.DarkYellow);
                             return new PeacenetConnectionResult(ConnectionResultType.Other, new Exception("A connection couldn't be established because the specified IP address is not valid."));
 
                     }
@@ -331,12 +331,12 @@ namespace Peacenet.Server
 
                 if (!success)
                 {
-                    Logger.Log("Connection timed out.", LogType.Error, "peacenetserver");
+                    Logger.Log("Connection timed out.", System.ConsoleColor.DarkYellow);
                     return new PeacenetConnectionResult(ConnectionResultType.ConnectionTimeout);
                 }
                 _tcpClient.EndConnect(result);
 
-                Logger.Log("Sending handshake message to retrieve server type...", LogType.Info, "peacenetserver");
+                Logger.Log("Sending handshake message to retrieve server type...");
 
                 var stream = _tcpClient.GetStream();
                 _reader = new BinaryReader(stream, Encoding.UTF8, true);
@@ -346,17 +346,17 @@ namespace Peacenet.Server
                 listener.Start();
                 await SendMessage(ServerMessageType.U_CONF, null, (res, reader) =>
                 {
-                    Logger.Log("Handshake received.", LogType.Info, "peacenetserver");
+                    Logger.Log("Handshake received.");
                     _isMultiplayer = reader.ReadBoolean();
                 });
 
-                Logger.Log("Is Multiplayer: " + _isMultiplayer, LogType.Info, "peacenetserver");
+                Logger.Log("Is Multiplayer: " + _isMultiplayer);
 
                 if (_isMultiplayer)
                 {
                     if (!_api.LoggedIn)
                     {
-                        Logger.Log("Not signed into itch.io - disconnecting from server...", LogType.Error, "peacenetserver");
+                        Logger.Log("Not signed into itch.io - disconnecting from server...", System.ConsoleColor.DarkYellow);
                         Disconnect();
                         return new PeacenetConnectionResult(ConnectionResultType.BadItchAuth);
                     }
@@ -383,17 +383,17 @@ namespace Peacenet.Server
             {
                 try
                 {
-                    Logger.Log($"Attempting connection to {address}...", LogType.Info, "peacenetserver");
+                    Logger.Log($"Attempting connection to {address}...");
                     _onConnectionError = onError;
                     if (_tcpClient != null)
                         if (_tcpClient.Connected)
                             throw new InvalidOperationException("Cannot connect to server while an active connection is open!");
-                    Logger.Log("Retrieving itch.io API key...", LogType.Info, "peacenetserver");
+                    Logger.Log("Retrieving itch.io API key...");
                     _session = _api.Token;
-                    Logger.Log("Parsing server address: " + address, LogType.Info, "peacenetserver");
+                    Logger.Log("Parsing server address: " + address);
                     string[] sp = address.Split(':');
                     if (sp.Length != 2) throw new FormatException("The address string was not in the correct format (host:port)");
-                    Logger.Log("Performing DNS resolution for " + sp[0] + "...", LogType.Info, "peacenetserver");
+                    Logger.Log("Performing DNS resolution for " + sp[0] + "...");
                     var lookup = Dns.GetHostEntry(sp[0]);
                     var first = lookup.AddressList.Last(); //irony
                     Logger.Log($"DNS lookup complete. Connecting to {first.MapToIPv4().ToString()}...");
@@ -429,18 +429,18 @@ namespace Peacenet.Server
                         if (_api.LoggedIn == false)
                             if (_isMultiplayer)
                             {
-                                Logger.Log("Attempted to connect to remote server without itch.io authentication, not possible.", LogType.Error, "peacenetserver");
+                                Logger.Log("Attempted to connect to remote server without itch.io authentication, not possible.", System.ConsoleColor.DarkYellow);
                                 Disconnect();
                                 onError?.Invoke("Cannot connect to a multiplayer server without an itch.io account.");
                                 return;
                             }
-                        Logger.Log("Connection successful", LogType.Info, "peacenetserver");
+                        Logger.Log("Connection successful");
                         onConnected?.Invoke();
                     });
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log($"Connection error: {ex}", LogType.Error, "peacenetserver");
+                    Logger.Log($"Connection error: {ex}", System.ConsoleColor.DarkYellow);
                     Disconnect();
                     onError?.Invoke(ex.Message);
                 }
@@ -564,17 +564,17 @@ namespace Peacenet.Server
 
         private IPAddress DNSLookup(string hostname)
         {
-            Logger.Log("Performing DNS lookup for " + hostname + "...", LogType.Info, "peacenetserver");
+            Logger.Log("Performing DNS lookup for " + hostname + "...");
 
             var hosts = Dns.GetHostAddresses(hostname);
 
             if(hosts == null || hosts.Length==0)
             {
-                Logger.Log("DNS lookup failed.", LogType.Error, "peacenetserver");
+                Logger.Log("DNS lookup failed.", System.ConsoleColor.DarkYellow);
                 return null;
             }
 
-            Logger.Log($"Connecting to {hosts.Last().ToString()}...", LogType.Info, "peacenetserver");
+            Logger.Log($"Connecting to {hosts.Last().ToString()}...");
             return hosts.Last();
         }
 
@@ -583,7 +583,7 @@ namespace Peacenet.Server
             int port = -1;
             if(!int.TryParse(portString, out port) || (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort))
             {
-                Logger.Log("Invalid port: " + portString, LogType.Error, "peacenetserver");
+                Logger.Log("Invalid port: " + portString, System.ConsoleColor.DarkYellow);
                 return -1;
             }
             return port;

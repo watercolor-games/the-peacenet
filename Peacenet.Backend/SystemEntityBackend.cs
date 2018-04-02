@@ -71,31 +71,31 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
 
         public void Initiate()
         {
-            Logger.Log("PEACENET WORLD ENTITY SYSTEM");
-            Logger.Log("-------------------------------------");
-            Logger.Log("");
+            Plex.Objects.Logger.Log("PEACENET WORLD ENTITY SYSTEM");
+            Plex.Objects.Logger.Log("-------------------------------------");
+            Plex.Objects.Logger.Log("");
             foreach(var line in _asciiArt.Replace("\r", "").Split('\n'))
             {
-                Logger.Log(line.TrimEnd());
+                Plex.Objects.Logger.Log(line.TrimEnd());
             }
-            Logger.Log("Looking up port/service info...");
+            Plex.Objects.Logger.Log("Looking up port/service info...");
             _protectedPorts = _database.Database.GetCollection<ProtectedPort>("world_protected_ports");
             _protectedPorts.EnsureIndex(x => x.Id);
             var services = Enum.GetValues(typeof(Service)).Cast<int>().ToArray();
             int deletedCount = _protectedPorts.Delete(x => !services.Contains(x.Port));
-            Logger.Log($"{deletedCount} open ports deleted from database due to no known services.");
-            Logger.Log($"{_protectedPorts.Count()} ports still in the database.");
+            Plex.Objects.Logger.Log($"{deletedCount} open ports deleted from database due to no known services.");
+            Plex.Objects.Logger.Log($"{_protectedPorts.Count()} ports still in the database.");
 
-            Logger.Log("Looking up entity information in the database...");
+            Plex.Objects.Logger.Log("Looking up entity information in the database...");
             _entities = _database.Database.GetCollection<Entity>("world_entities");
-            Logger.Log("Now looking up playerid->entityid map...");
+            Plex.Objects.Logger.Log("Now looking up playerid->entityid map...");
             _players = _database.Database.GetCollection<PlayerEntityMap>("world_player_entity_map");
             _entities.EnsureIndex(x => x.Id);
             _players.EnsureIndex(x => x.Id);
-            Logger.Log("Looking for non-existent player entities...");
+            Plex.Objects.Logger.Log("Looking for non-existent player entities...");
             int count = _players.Delete(y => _entities.FindOne(x => x.Id == y.EntityId) == null);
-            Logger.Log($"{count} row(s) deleted from player->entityid map due to non-existent entities.");
-            Logger.Log($"{_entities.Find(x => x.IsNPC == true).Count()} NPC(s) loaded. {_entities.Find(x => x.IsNPC == false).Count()} player(s) loaded.");
+            Plex.Objects.Logger.Log($"{count} row(s) deleted from player->entityid map due to non-existent entities.");
+            Plex.Objects.Logger.Log($"{_entities.Find(x => x.IsNPC == true).Count()} NPC(s) loaded. {_entities.Find(x => x.IsNPC == false).Count()} player(s) loaded.");
             _backend.PlayerJoined += (playerid, user) =>
             {
                 string entityid = GetPlayerEntityId(playerid);
@@ -105,12 +105,12 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
                 entity.DisplayName = user.display_name;
                 entity.Description = "";
                 _entities.Update(entity);
-                Logger.Log("Updating display data for " + user.display_name);
+                Plex.Objects.Logger.Log("Updating display data for " + user.display_name);
                 UpdatePorts(entityid);
             };
 
             int deletedPortsNoEntity = _protectedPorts.Delete(x => GetEntity(x.EntityId) == null);
-            Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
+            Plex.Objects.Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
             foreach (var entity in _entities.FindAll())
                 UpdatePorts(entity.Id);
         }
@@ -139,7 +139,7 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
                         Port = (ushort)service,
                         SecurityLevel = 1
                     });
-                    Logger.Log($"Enabled service {service} with security level 1 on {entityid}.");
+                    Plex.Objects.Logger.Log($"Enabled service {service} with security level 1 on {entityid}.");
                 }
             }
         }
@@ -226,7 +226,7 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
                 EntityId = entity.Id,
                 ItchUserId = playerid
             });
-            Logger.Log("Spawned new player entity for " + playerid);
+            Plex.Objects.Logger.Log("Spawned new player entity for " + playerid);
             EntitySpawned?.Invoke(entity.Id, entity);
             return entity.Id;
         }
@@ -235,9 +235,9 @@ Bringing you perfectly awesome co-existing NPCs and players to Peacenet multipla
         {
             _players.Delete(x => x == null);
             int count = _players.Delete(y => _entities.FindOne(x => x.Id == y.EntityId) == null);
-            Logger.Log($"{count} row(s) deleted from player->entityid map due to non-existent entities.");
+            Plex.Objects.Logger.Log($"{count} row(s) deleted from player->entityid map due to non-existent entities.");
             int deletedPortsNoEntity = _protectedPorts.Delete(x => GetEntity(x.EntityId) == null);
-            Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
+            Plex.Objects.Logger.Log($"Deleted {deletedPortsNoEntity} ports from database because they're orphaned and have no entities.");
         }
 
         public void Unload()

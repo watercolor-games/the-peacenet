@@ -20,6 +20,7 @@ using Peacenet.Filesystem;
 using System.Threading;
 using Plex.Engine.Config;
 using Peacenet.Server;
+using Plex.Objects;
 
 namespace Peacenet
 {
@@ -210,11 +211,13 @@ namespace Peacenet
             _localBackend = new Backend.Backend(3252, false, Path.Combine(_appdata.GamePath, "world"));
             _localBackend.Listen();
             _localBackend.ServerReady.WaitOne();
-            Logger.Log("Starting internal single-player server.", LogType.Info, "peacegate");
+            Logger.Log("Starting internal single-player server.");
 
             var result = _server.Connect("localhost:3252");
 
             result.Wait();
+
+            Logger.Log("*** Connected To Internal Server ***", System.ConsoleColor.Green);
 
             if (result.Result.Result != ConnectionResultType.Success)
                 throw new Exception("An error has occurred starting the internal server.");

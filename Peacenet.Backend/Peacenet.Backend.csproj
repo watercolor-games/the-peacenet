@@ -42,6 +42,7 @@
       <HintPath>..\packages\docopt.net.0.6.1.9\lib\net40\DocoptNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="nmap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Saves\SaveManager.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="IBackendComponent.cs" />
     <Compile Include="Backend.cs" />
     <Compile Include="IMessageHandler.cs" />

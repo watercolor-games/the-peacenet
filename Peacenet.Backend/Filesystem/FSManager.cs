@@ -105,28 +105,28 @@ namespace Peacenet.Backend.Filesystem
             _drivePath = Path.Combine(_backend.RootDirectory, "drives");
             if (!System.IO.Directory.Exists(_drivePath))
             {
-                Logger.Log("Creating drive directory...");
+                Plex.Objects.Logger.Log("Creating drive directory...");
                 System.IO.Directory.CreateDirectory(_drivePath);
-                Logger.Log("Done.");
+                Plex.Objects.Logger.Log("Done.");
             }
-            Logger.Log("Loading and mounting entity drives...");
+            Plex.Objects.Logger.Log("Loading and mounting entity drives...");
             this._drives = _database.Database.GetCollection<EntityMount>("entity_drives");
             _drives.EnsureIndex(x => x.Id);
             var noFSCount = _drives.Delete(x => !File.Exists(Path.Combine(_drivePath, x.ImagePath)));
             var noEntityDrives = _drives.Find(x => _entityBackend.GetEntity(x.EntityId) == null);
             foreach(var drive in noEntityDrives)
             {
-                Logger.Log($"Removing drive: //{drive.EntityId}/{drive.Mountpoint}. Entity not found.");
+                Plex.Objects.Logger.Log($"Removing drive: //{drive.EntityId}/{drive.Mountpoint}. Entity not found.");
                 File.Delete(Path.Combine(_drivePath, drive.ImagePath));
                 _drives.Delete(x => x.Id == drive.Id);
             }
-            Logger.Log($"{noFSCount} drives deleted from database due to missing PlexFAT images.");
-            Logger.Log($"{noEntityDrives.Count()} drives deleted from database due to missing NPC or player entities.");
-            Logger.Log($"{_drives.Count()} drives loaded from database. Mounting...");
+            Plex.Objects.Logger.Log($"{noFSCount} drives deleted from database due to missing PlexFAT images.");
+            Plex.Objects.Logger.Log($"{noEntityDrives.Count()} drives deleted from database due to missing NPC or player entities.");
+            Plex.Objects.Logger.Log($"{_drives.Count()} drives loaded from database. Mounting...");
 
             foreach (var drive in _drives.FindAll())
             {
-                Logger.Log($"Mounting {drive.ImagePath} to //{drive.EntityId}/{drive.Mountpoint}...");
+                Plex.Objects.Logger.Log($"Mounting {drive.ImagePath} to //{drive.EntityId}/{drive.Mountpoint}...");
                 var fat = new PlexFATDriveMount(new MountInformation
                 {
                     DriveNumber = drive.Mountpoint,
@@ -137,29 +137,29 @@ namespace Peacenet.Backend.Filesystem
                 fat.EnsureDriveExistence();
                 _mounts.Add(fat);
             }
-            Logger.Log("Done loading filesystems...");
+            Plex.Objects.Logger.Log("Done loading filesystems...");
 
             _entityBackend.EntitySpawned += (id, entity) =>
             {
                 //Create a drive for the entity if they don't have one.
                 if (CreateFS(id, 0, "Peacegate OS"))
-                    Logger.Log($"Created new 'Peacegate OS' drive at //{id}/0.");
+                    Plex.Objects.Logger.Log($"Created new 'Peacegate OS' drive at //{id}/0.");
             };
             _backend.PlayerJoined += (id, player) =>
             {
                 if (CreateFS(_entityBackend.GetPlayerEntityId(id), 0, "Peacegate OS"))
-                    Logger.Log($"Created new 'Peacegate OS' drive at //{id}/0.");
+                    Plex.Objects.Logger.Log($"Created new 'Peacegate OS' drive at //{id}/0.");
             };
         }
 
         /// <inheritdoc/>
         public void SafetyCheck()
         {
-            Logger.Log("Updating drive database...");
+            Plex.Objects.Logger.Log("Updating drive database...");
             var noEntityDrives = _drives.Find(x => _entityBackend.GetEntity(x.EntityId) == null);
             foreach (var drive in noEntityDrives)
             {
-                Logger.Log($"Removing drive: //{drive.EntityId}/{drive.Mountpoint}. Entity not found.");
+                Plex.Objects.Logger.Log($"Removing drive: //{drive.EntityId}/{drive.Mountpoint}. Entity not found.");
                 var mount = _mounts.FirstOrDefault(x => x.DriveNumber == drive.Mountpoint && x.VolumeLabel == drive.VolumeLabel && x.SessionID == drive.EntityId);
                 if(mount != null)
                 {
@@ -169,10 +169,10 @@ namespace Peacenet.Backend.Filesystem
                 File.Delete(Path.Combine(_drivePath, drive.ImagePath));
                 _drives.Delete(x => x.Id == drive.Id);
             }
-            Logger.Log("Mounting newly-created drives...");
+            Plex.Objects.Logger.Log("Mounting newly-created drives...");
             foreach(var drive in _drives.Find(x=>_mounts.FirstOrDefault(y=>y.DriveNumber == x.Mountpoint && y.SessionID == x.EntityId && y.VolumeLabel == x.VolumeLabel) == null))
             {
-                Logger.Log($"Mounting {drive.ImagePath} to //{drive.EntityId}/{drive.Mountpoint}...");
+                Plex.Objects.Logger.Log($"Mounting {drive.ImagePath} to //{drive.EntityId}/{drive.Mountpoint}...");
                 var fat = new PlexFATDriveMount(new MountInformation
                 {
                     DriveNumber = drive.Mountpoint,
@@ -189,7 +189,7 @@ namespace Peacenet.Backend.Filesystem
         /// <inheritdoc/>
         public void Unload()
         {
-            Logger.Log("Unmounting filesystems...");
+            Plex.Objects.Logger.Log("Unmounting filesystems...");
             while (_mounts.Count > 0)
             {
                 _mounts[0].Dispose();
@@ -197,7 +197,7 @@ namespace Peacenet.Backend.Filesystem
             }
             _mounts.Clear();
             _mounts = null;
-            Logger.Log("Done.");
+            Plex.Objects.Logger.Log("Done.");
         }
     }
 

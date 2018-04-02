@@ -40,17 +40,17 @@ namespace Peacenet
         {
             _localCommands = new List<ITerminalCommand>();
             _usages = new Dictionary<string, string>();
-            Logger.Log("Looking for terminal commands...", LogType.Info, "terminal");
+            Logger.Log("Looking for terminal commands...");
             foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(ITerminalCommand))))
             {
                 if (type.GetCustomAttributes(true).Any(x => x is TerminalSkipAutoloadAttribute))
                     continue;
                 var command = (ITerminalCommand)Activator.CreateInstance(type, null);
-                Logger.Log($"Found: {command.Name} (from {type.FullName})", LogType.Info, "terminal");
+                Logger.Log($"Found: {command.Name} (from {type.FullName})");
                 //Avoid commands with the same name!
                 if(_localCommands.FirstOrDefault(x=>x.Name == command.Name) != null)
                 {
-                    Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {type.FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", LogType.Error, "terminal");
+                    Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {type.FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", System.ConsoleColor.DarkYellow);
                     continue;
                 }
 
@@ -83,18 +83,18 @@ namespace Peacenet
                 _usages.Add(command.Name, sb.ToString());
                 Logger.Log("Done.");
             }
-            Logger.Log("Successfully loaded all Terminal commands.", LogType.Info, "terminal");
+            Logger.Log("Successfully loaded all Terminal commands.");
         }
 
         internal void LoadCommand(ITerminalCommand command)
         {
             if (command == null)
                 return;
-            Logger.Log($"Found: {command.Name} (from {command.GetType().FullName})", LogType.Info, "terminal");
+            Logger.Log($"Found: {command.Name} (from {command.GetType().FullName})");
             //Avoid commands with the same name!
             if (_localCommands.FirstOrDefault(x => x.Name == command.Name) != null)
             {
-                Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {command.GetType().FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", LogType.Error, "terminal");
+                Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {command.GetType().FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", System.ConsoleColor.DarkYellow);
                 throw new ArgumentException("A command with the same name already exists in the database.");
 
             }
@@ -136,7 +136,7 @@ namespace Peacenet
                 throw new ArgumentException("A command with that name has not been found.");
             _usages.Remove(name);
             _localCommands.Remove(command);
-            Logger.Log("Unloaded command: " + name, LogType.Info, "terminal");
+            Logger.Log("Unloaded command: " + name);
         }
 
         /// <summary>

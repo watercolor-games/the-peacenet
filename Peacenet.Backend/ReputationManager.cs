@@ -28,7 +28,7 @@ namespace Peacenet.Backend
 
         public void Initiate()
         {
-            Logger.Log("The Government is reviewing its database on targeted sentiences...");
+            Plex.Objects.Logger.Log("The Government is reviewing its database on targeted sentiences...");
             _gvtAlertStates = _database.Database.GetCollection<GovernmentAlertState>("world_gvtalert");
             _gvtAlertStates.EnsureIndex(x => x.Id);
             _entityBackend.EntitySpawned += (id, entity) =>
@@ -93,7 +93,7 @@ namespace Peacenet.Backend
                 {
                     state.AlertLevel = 0;
                     state.IsDissipating = false;
-                    Logger.Log($"Entity {state.EntityId} has left Government Alert.");
+                    Plex.Objects.Logger.Log($"Entity {state.EntityId} has left Government Alert.");
                 }
                 _gvtAlertStates.Update(state);
                 var playerId = _entityBackend.GetPlayerId(state.EntityId);

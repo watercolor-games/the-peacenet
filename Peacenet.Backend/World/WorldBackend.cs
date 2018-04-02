@@ -25,22 +25,22 @@ namespace Peacenet.Backend
         /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("World generator is now reading ISP table...");
+            Plex.Objects.Logger.Log("World generator is now reading ISP table...");
             _isps = _db.Database.GetCollection<InternetServiceProvider>("worldIsps");
             _isps.EnsureIndex(x => x.Id);
-            Logger.Log($"{_isps.Count()} found.");
+            Plex.Objects.Logger.Log($"{_isps.Count()} found.");
             if (_backend.IsMultiplayer)
             {
                 if (_isps.Count() != _ispNames.Length)
                 {
-                    Logger.Log("ISP database out of sync with server's internal namebank. Updating...");
+                    Plex.Objects.Logger.Log("ISP database out of sync with server's internal namebank. Updating...");
                     foreach (var ispName in _ispNames)
                     {
-                        Logger.Log($"Looking for \"{ispName.ToUpper()}\"...");
+                        Plex.Objects.Logger.Log($"Looking for \"{ispName.ToUpper()}\"...");
                         var existing = _isps.FindOne(x => x.Name == ispName);
                         if (existing == null)
                         {
-                            Logger.Log("Not found. Creating new ISP...");
+                            Plex.Objects.Logger.Log("Not found. Creating new ISP...");
                             existing = new InternetServiceProvider
                             {
                                 Id = Guid.NewGuid().ToString(),

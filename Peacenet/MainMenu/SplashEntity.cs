@@ -24,6 +24,7 @@ using Plex.Engine.Cutscenes;
 using System.IO;
 using System.Threading;
 using Peacenet.DesktopUI;
+using Plex.Objects;
 
 namespace Peacenet.MainMenu
 {
@@ -255,7 +256,7 @@ namespace Peacenet.MainMenu
                 catch (Exception ex)
                 {
                     _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
-                    Logger.Log(ex.ToString(), LogType.Error);
+                    Logger.Log(ex.ToString(), System.ConsoleColor.DarkYellow);
                 }
                 _plexgate.Invoke(() =>
                 {
@@ -607,7 +608,7 @@ namespace Peacenet.MainMenu
                 catch (FileNotFoundException)
                 {
                     animState = 0;
-                    Logger.Log("Intro video not found, skipping", LogType.Warning);
+                    Logger.Log("Intro video not found, skipping", System.ConsoleColor.Yellow);
                 }
             }
         }

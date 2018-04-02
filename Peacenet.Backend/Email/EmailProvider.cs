@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Plex.Objects;
 namespace Peacenet.Backend.Email
 {
     public class EmailProvider : IBackendComponent
@@ -64,18 +64,18 @@ namespace Peacenet.Backend.Email
             PurgeInvalidEmails();
 
             //Spawn (or retrieve) the postmaster server's entity. This allows the service to be hacked, and also allows us to map an IP address and domain name to it so we can get "postmaster@serenitymail.net" as its email address, for example, and have all automated postmaster messages sent by that address.
-            Logger.Log("Setting up email entity...");
+            Plex.Objects.Logger.Log("Setting up email entity...");
             _postmasterId = _entity.SpawnNPCEntity("SerenityMail Communications Postmaster", "The postmaster of SerenityMail Communications' email system. This server handles sending and receiving of email messages for SerenityMail email accounts and contains the mailbox of all email accounts on the service.");
-            Logger.Log("SerenityMail postmaster entity ID: " + _postmasterId);
+            Plex.Objects.Logger.Log("SerenityMail postmaster entity ID: " + _postmasterId);
 
             //Figure out if we already have an IP address.
             var ips = _ip.FetchAllIPs(_postmasterId);
             if (ips.Length == 0)
             {
-                Logger.Log("Allocating IP address for the postmaster.");
+                Plex.Objects.Logger.Log("Allocating IP address for the postmaster.");
                 var ip = _ip.NextIP();
                 _ip.AllocateIPv4Address(ip, _postmasterId);
-                Logger.Log($"Postmaster IP address is {_ip.GetIPString(ip)}.");
+                Plex.Objects.Logger.Log($"Postmaster IP address is {_ip.GetIPString(ip)}.");
             }
 
             //TODO: In-game DNS for that IP.
@@ -158,12 +158,12 @@ SerenityMail Postmaster");
 
         private void PurgeInvalidEmails()
         {
-            Logger.Log("Purging emails with invalid entity IDs...");
+            Plex.Objects.Logger.Log("Purging emails with invalid entity IDs...");
             int purged = _emails.Delete(x => _entity.GetEntity(x.FromEntity) == null || _entity.GetEntity(x.ToEntity) == null);
-            Logger.Log($"{purged} emails purged from database.");
-            Logger.Log($"{_readEmails.Delete(x => _entity.GetEntity(x.Entity) == null)} \"read email\" entries purged for missing entities.");
-            Logger.Log("Purging invalid email addresses.");
-            Logger.Log($"{_addresses.Delete(x => _entity.GetEntity(x.Entity) == null)} address(es) removed.");
+            Plex.Objects.Logger.Log($"{purged} emails purged from database.");
+            Plex.Objects.Logger.Log($"{_readEmails.Delete(x => _entity.GetEntity(x.Entity) == null)} \"read email\" entries purged for missing entities.");
+            Plex.Objects.Logger.Log("Purging invalid email addresses.");
+            Plex.Objects.Logger.Log($"{_addresses.Delete(x => _entity.GetEntity(x.Entity) == null)} address(es) removed.");
             
         }
 

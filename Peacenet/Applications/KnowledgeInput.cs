@@ -4,6 +4,7 @@ using Plex.Engine;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using Plex.Engine.Saves;
+using Plex.Engine.Themes;
 
 namespace Peacenet
 {
@@ -54,6 +55,7 @@ namespace Peacenet
             ListBox1.Y = 49;
             ListBox1.Width = 175;
             ListBox1.Height = 216;
+            ListBox1.Layout = ListViewLayout.List;
 
             pnlintro.AddChild(pnlcategorydisplay);
             pnlintro.AddChild(Label4);
@@ -110,6 +112,7 @@ namespace Peacenet
             listblistedstuff.Y = 41;
             listblistedstuff.Width = 129;
             listblistedstuff.Height = 221;
+            listblistedstuff.Layout = ListViewLayout.List;
 
             lbltillnextlevel.AutoSize = true;
             lbltillnextlevel.X = 8;
