@@ -44,11 +44,11 @@ namespace Peacenet.Server
         private string _session = "";
         private Action<string> _onConnectionError;
         private bool _isMultiplayer = false;
-        private Queue<PlexBroadcast> _broadcasts = new Queue<PlexBroadcast>();
+        private ConcurrentQueue<PlexBroadcast> _broadcasts = new ConcurrentQueue<PlexBroadcast>();
         private EventWaitHandle _messageReceived = new AutoResetEvent(false);
+        private EventWaitHandle _responseHandled = new AutoResetEvent(false);
 
         ConcurrentDictionary<string, PlexServerHeader> _responses = null;
-
 
         private void _listen()
         {
@@ -58,10 +58,11 @@ namespace Peacenet.Server
             {
                 try
                 {
-                    Logger.Log("Receiving message from server...");
+                    Logger.Log(string.Join("\n", _responses.Select(p => $"{p.Key} Available: {p.Key != null}")));
+                    Logger.Log("Ready to receive messages.");
                     string muid = _reader.ReadString();
                     bool isBroadcast = (muid == "broadcast");
-                    Logger.Log("Got message ID");
+                    Logger.Log($"Receiving message ID {muid}");
                     if (isBroadcast)
                     {
                         int restype = _reader.ReadInt32();
@@ -100,6 +101,7 @@ namespace Peacenet.Server
                             TransactionKey = null,
                         };
                         _messageReceived.Set();
+                        Logger.Log($"Message {muid} Received.");
                     }
                     if (_tcpClient == null)
                         return;
@@ -143,10 +145,11 @@ namespace Peacenet.Server
         /// </summary>
         public void Disconnect(string error = null)
         {
+            PlexBroadcast tmp;
             _tcpClient?.Close();
             _reader.Close();
             _writer.Close();
-            _broadcasts.Clear();
+            while (_broadcasts.TryDequeue(out tmp));
             _tcpClient = null;
             _responses = null;
             if(!string.IsNullOrWhiteSpace(error))
@@ -216,6 +219,17 @@ namespace Peacenet.Server
         private EventWaitHandle _messageHandled = new ManualResetEvent(true);
 
         /// <summary>
+        /// Get the number of bytes to store an int in BinaryWriter 7-bit encoding
+        /// </summary>
+        int lenInt(int n)
+        {
+            int ret = 1;
+            while ((n >>= 7) != 0)
+                ret++;
+            return ret;
+        }
+
+        /// <summary>
         /// Send a message to a server.
         /// </summary>
         /// <param name="type">The type of message to send.</param>
@@ -228,32 +242,26 @@ namespace Peacenet.Server
             {
                 _messageHandled.WaitOne();
                 _messageHandled.Reset();
-                Logger.Log($"Sending message to server: {type} (body is {body?.Length} bytes long)");
                 string muid = Guid.NewGuid().ToString();
+                Logger.Log($"Sending message to server: {type} {muid} (body is {body?.Length} bytes long)");
                 _responses[muid] = null;
                 lock (_writer)
                 {
+                    _writer.Write(lenInt(muid.Length) + muid.Length + lenInt(_session.Length) + _session.Length + 8 + (body?.Length ?? 0));
                     _writer.Write(muid);
                     _writer.Write((int)type);
                     _writer.Write(_session);
-                    int len = 0;
-                    if (body == null)
-                        len = 0;
-                    else
-                        len = body.Length;
-                    _writer.Write(len);
-                    if (len > 0)
+                    _writer.Write(body?.Length ?? 0);
+                    if (body != null)
                         _writer.Write(body);
                     _writer.Flush();
                 }
                 _messageHandled.Set();
                 PlexServerHeader hdr;
-                do
-                {
+                while (_responses[muid] == null)
                     _messageReceived.WaitOne();
-                    hdr = _responses[muid];
-                }
-                while (hdr == null);
+                if (!_responses.TryRemove(muid, out hdr))
+                    throw new IOException("TryRemove() returned false");
                 var response = (ServerResponseType)hdr.Message;
                 if (response == ServerResponseType.REQ_LOGINREQUIRED)
                 {
@@ -474,16 +482,15 @@ namespace Peacenet.Server
             {
                 if (_server.Connected)
                 {
-                    while (_server._broadcasts.Count > 0)
+                    PlexBroadcast broadcast;
+                    while (_server._broadcasts.TryDequeue(out broadcast))
                     {
-                        var broadcast = _server._broadcasts.Dequeue();
                         if (broadcast.Type == ServerBroadcastType.Shutdown)
                         {
                             using (var reader = broadcast.OpenStream())
                             {
                                 string msg = reader.ReadString();
                                 _server.Disconnect("The server has been shut down by an administrator.\n\n" + msg);
-                                _server._broadcasts.Clear();
                             }
                         }
                         else
