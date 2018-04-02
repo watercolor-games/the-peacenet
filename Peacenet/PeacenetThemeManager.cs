@@ -82,7 +82,7 @@ namespace Peacenet
 
                     if(!string.IsNullOrWhiteSpace(attribute.PreviewTexture))
                     {
-                        Logger.Log("Loading preview texture for theme " + attribute.Name);
+                        Logger.Log($"Loading preview texture for theme {attribute.Name} ({attribute.PreviewTexture})");
                         preview = _plexgate.Content.Load<Texture2D>(attribute.PreviewTexture);
                     }
 
