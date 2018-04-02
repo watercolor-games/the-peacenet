@@ -7,6 +7,7 @@ using Plex.Objects;
 using Plex.Engine;
 using Plex.Engine.Themes;
 using Plex.Engine.Saves;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet
 {

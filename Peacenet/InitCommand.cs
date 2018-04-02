@@ -22,6 +22,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.GUI;
 using Peacenet.Applications;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet
 {

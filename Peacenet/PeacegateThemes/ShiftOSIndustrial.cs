@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Peacenet.PeacegateThemes
 {
+    [PeacegateTheme("ShiftOS - Industrial", "The light ShiftOS UI color scheme with the Industrial window borders.", "ThemePreviews/Industrial")]
     public class ShiftOSIndustrial : PeacenetTheme
     {
         private Texture2D _check = null;

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Plex.Engine.Saves;
 using Peacenet.CoreUtils;
 using Plex.Engine.GraphicsSubsystem;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.Applications
 {

@@ -12,11 +12,12 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using Plex.Engine.Config;
 
-namespace Peacenet
+namespace Peacenet.PeacegateThemes
 {
     /// <summary>
     /// A <see cref="Theme"/> object which renders the UI with a sleek dark user interface with a light blue accent color. 
     /// </summary>
+    [PeacegateTheme("Default Dark", "The default dark theme for Peacegate OS.", "ThemePreviews/DefaultDark")]
     public class PeacenetTheme : Theme
     {
         [Dependency]
@@ -444,14 +445,6 @@ namespace Peacenet
         /// <inheritdoc/>
         public override void UnloadThemeData()
         {
-            _arrowup.Dispose();
-            _arrowdown.Dispose();
-            _arrowleft.Dispose();
-            _arrowright.Dispose();
-            _close.Dispose();
-            _minimize.Dispose();
-            _maximize.Dispose();
-            _restore.Dispose();
         }
 
         private Texture2D bar;

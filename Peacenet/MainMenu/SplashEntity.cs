@@ -25,6 +25,7 @@ using System.IO;
 using System.Threading;
 using Peacenet.DesktopUI;
 using Plex.Objects;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.MainMenu
 {
