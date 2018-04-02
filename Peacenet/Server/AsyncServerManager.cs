@@ -46,7 +46,6 @@ namespace Peacenet.Server
         private bool _isMultiplayer = false;
         private ConcurrentQueue<PlexBroadcast> _broadcasts = new ConcurrentQueue<PlexBroadcast>();
         private EventWaitHandle _messageReceived = new AutoResetEvent(false);
-        private EventWaitHandle _responseHandled = new AutoResetEvent(false);
 
         ConcurrentDictionary<string, PlexServerHeader> _responses = null;
 
@@ -58,23 +57,20 @@ namespace Peacenet.Server
             {
                 try
                 {
-                    Logger.Log(string.Join("\n", _responses.Select(p => $"{p.Key} Available: {p.Key != null}")));
-                    Logger.Log("Ready to receive messages.");
+                    // Wake any threads that missed the first event
+                    if (_responses.Any(p => p.Value != null))
+                    {
+                        _messageReceived.Set();
+                    }
+                    Logger.Log($"Ready to receive messages.  Waiting for {string.Join(", ", _responses.Where(p => p.Value == null).Select(p => p.Key).ToArray())}");
                     string muid = _reader.ReadString();
                     bool isBroadcast = (muid == "broadcast");
                     Logger.Log($"Receiving message ID {muid}");
                     if (isBroadcast)
                     {
-                        int restype = _reader.ReadInt32();
-                        Logger.Log("Got message result type");
                         int btype = _reader.ReadInt32();
                         Logger.Log("Got broadcast code");
-                        int len = _reader.ReadInt32();
-                        byte[] data = new byte[len];
-                        if (len > 0)
-                        {
-                            data = _reader.ReadBytes(len);
-                        }
+                        byte[] data = _reader.ReadBytes(_reader.ReadInt32());
                         Logger.Log("Broadcast body read.");
                         _broadcasts.Enqueue(new PlexBroadcast((ServerBroadcastType)btype, data));
                     }

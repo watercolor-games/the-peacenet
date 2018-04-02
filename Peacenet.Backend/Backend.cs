@@ -45,7 +45,14 @@ namespace Peacenet.Backend
             {
                 q.Enqueue(item);
                 if (sem.CurrentCount == 0)
-                    sem.Release();
+                    try
+                    {
+                        sem.Release();
+                    }
+                    catch (SemaphoreFullException ex)
+                    {
+                        Logger.Log(ex.ToString());
+                    }
             }
             public IEnumerator<T> GetEnumerator()
             {
@@ -88,10 +95,10 @@ namespace Peacenet.Backend
                 using (var writer = new BinaryWriter(ms, Encoding.UTF8, true))
                 {
                     writer.Write("broadcast");
-                    writer.Write((int)ServerResponseType.REQ_SUCCESS);
                     writer.Write((int)type);
-                    writer.Write(body.Length);
-                    writer.Write(body);
+                    writer.Write(body?.Length ?? 0);
+                    if (body != null)
+                        writer.Write(body);
                     writer.Flush();
                 }
                 dat = ms.ToArray();
@@ -106,8 +113,6 @@ namespace Peacenet.Backend
         /// <param name="body">The body of the message.</param>
         public void Broadcast(ServerBroadcastType type, byte[] body)
         {
-            if (body == null)
-                body = new byte[0];
             var dat = getBcBytes(type, body);
             foreach (var q in _connected)
                 q.Enqueue(dat);
@@ -117,8 +122,6 @@ namespace Peacenet.Backend
         {
             if (playerId == null)
                 return;
-            if (body == null)
-                body = new byte[0];
             AwaitableQueue<byte[]> q;
             if (!_playerIds.TryGetValue(playerId, out q))
                 return;
