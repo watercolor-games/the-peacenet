@@ -24,6 +24,7 @@ using Plex.Engine.Cutscenes;
 using System.IO;
 using System.Threading;
 using Peacenet.DesktopUI;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.MainMenu
 {

@@ -40,14 +40,14 @@ namespace Peacenet
                 return;
             }
 
-#if DEBUG
+#if !DEBUG
             try
             {
 
 #endif
             using (var game = new Plexgate(args))
                 game.Run();
-#if DEBUG
+#if !DEBUG
         }
             catch(Exception ex)
             {

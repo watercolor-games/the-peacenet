@@ -16,6 +16,9 @@ using Peacenet.Server;
 using Peacenet.DesktopUI;
 using Peacenet.Filesystem;
 using Peacenet.Email;
+using Peacenet.PeacegateThemes.PanelThemes;
+using Plex.Engine.Themes;
+using Plex.Engine.TextRenderers;
 
 namespace Peacenet
 {
@@ -30,29 +33,144 @@ namespace Peacenet
 
         #endregion
 
+        #region Animation and state
+
         private int _animState = 0;
         private float _scaleAnim = 0;
-        private Texture2D _wallpaper = null;
         private float _panelAnim = -1;
+        private bool _showPanels = true;
+        private float _notificationBannerFade = 0f;
+        private double _notificationRide = 0;
+        private int _notificationAnimState = 0;
+        private IEnumerable<int> hiddenWindows = null;
+        private bool _appLauncherClosesWhenFocusLost = true;
+        private bool _needsDesktopReset = true;
+        private bool _appLauncherButtonVisible = true;
+
+        #endregion
+
+        #region Textures
+
+        private Texture2D _wallpaper = null;
+        private Texture2D _iconEmail = null;
+        private Texture2D _iconEmailUnread = null;
+
+        #endregion
+
+        #region UI elements
 
         private HorizontalStacker _notificationTray = new HorizontalStacker();
+        private ContextMenu _desktopRightClick = null;
+        private Label _notificationTitle = new Label();
+        private Label _notificationDescription = new Label();
+        private PictureBox _showDesktopIcon = new PictureBox();
+        private DesktopPanelItemGroup _windowList = new DesktopPanelItemGroup();
+        private ListView _desktopIconsView = null;
+        private AppLauncherMenu _applauncher = null;
+
+        private Hitbox _topPanel = new Hitbox();
+        private Hitbox _bottomPanel = new Hitbox();
+        private Hitbox _applauncherHitbox = new Hitbox();
+
+
+        #endregion
+
+        #region Engine dependencies
 
         [Dependency]
         private GovernmentAlert.AlertService _notoriety = null;
 
-        private Label _gvtAlertStatus = new Label();
+        [Dependency]
+        private Plexgate _plexgate = null;
 
-        private ContextMenu _desktopRightClick = null;
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
+        [Dependency]
+        private InfoboxManager _infobox = null;
+
+        [Dependency]
+        private SaveManager _save = null;
+
+        [Dependency]
+        private AsyncServerManager _server = null;
+
+        [Dependency]
+        private OS _os = null;
+
+        [Dependency]
+        private FSManager _fs = null;
+
+        [Dependency]
+        private FileUtils _futils = null;
+
+        [Dependency]
+        private FileUtilities _utils = null;
+
+        [Dependency]
+        private EmailClient _email = null;
+
+        #endregion
+
+        #region Audio
 
         private SoundEffect _noteSound = null;
 
-        private bool _showPanels = true;
+        #endregion
 
-        private float _notificationBannerFade = 0f;
-        private double _notificationRide = 0;
-        private int _notificationAnimState = 0;
-        private Label _notificationTitle = new Label();
-        private Label _notificationDescription = new Label();
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets whether the App Launcher should close when its focus is lost.
+        /// </summary>
+        public bool CloseALOnFocusLoss
+        {
+            get
+            {
+                return _appLauncherClosesWhenFocusLost;
+            }
+            set
+            {
+                _appLauncherClosesWhenFocusLost = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the App Launcher Menu for this desktop.
+        /// </summary>
+        public AppLauncherMenu AppLauncher
+        {
+            get
+            {
+                return _applauncher;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the App Launcher button is visible.
+        /// </summary>
+        public bool ShowAppLauncherButton
+        {
+            get
+            {
+                return _appLauncherButtonVisible;
+            }
+            set
+            {
+                _appLauncherButtonVisible = value;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves whether the App Launcher menu is open.
+        /// </summary>
+        public bool IsAppLauncherOpen
+        {
+            get
+            {
+                return WindowSystem.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null;
+            }
+        }
 
 
         public bool ShowPanels
@@ -74,36 +192,63 @@ namespace Peacenet
             }
         }
 
-        private DesktopPanel _topPanel = null;
-        private DesktopPanel _bottomPanel = null;
+        #endregion
 
-        private Label _timeLabel = new Label();
+        #region Private functions
 
-        private PictureBox _showDesktopIcon = new PictureBox();
+        private void ResetWindowList(WindowSystem winsys)
+        {
+            while (_windowList.Children.Length > 0)
+                _windowList.RemoveChild(_windowList.Children[0]);
+            foreach (var win in winsys.WindowList)
+            {
+                if (win.Border.WindowStyle == WindowStyle.Default)
+                {
+                    var btn = new WindowListButton(WindowSystem, win, _pn);
+                    _windowList.AddChild(btn);
+                }
+            }
+        }
 
-        private Label _appLauncherText = new Label();
 
-        private DesktopPanelItemGroup _windowList = new DesktopPanelItemGroup();
+        /// <summary>
+        /// Repopulates the desktop icon list view.
+        /// </summary>
+        private void SetupIcons()
+        {
+            _desktopIconsView.ClearItems();
+            if (!_fs.DirectoryExists("/home/Desktop"))
+                _fs.CreateDirectory("/home/Desktop");
+            foreach (var dir in _fs.GetDirectories("/home/Desktop"))
+            {
+                if (_futils.GetNameFromPath(dir).StartsWith("."))
+                    continue;
+                var diritem = new ListViewItem();
+                diritem.Tag = dir;
+                diritem.Value = _futils.GetNameFromPath(dir);
+                diritem.ImageKey = "folder";
+                _desktopIconsView.AddItem(diritem);
+            }
+            foreach (var dir in _fs.GetFiles("/home/Desktop"))
+            {
+                if (_futils.GetNameFromPath(dir).StartsWith("."))
+                    continue;
+                var diritem = new ListViewItem();
+                diritem.Tag = dir;
+                diritem.Value = _futils.GetNameFromPath(dir);
+                diritem.ImageKey = _futils.GetMimeType(dir);
+                if (_desktopIconsView.GetImage(diritem.ImageKey) == null)
+                {
+                    _desktopIconsView.SetImage(diritem.ImageKey, _futils.GetMimeIcon(diritem.ImageKey));
+                }
+                _desktopIconsView.AddItem(diritem);
+            }
+        }
 
-        [Dependency]
-        private Plexgate _plexgate = null;
-
-        [Dependency]
-        private InfoboxManager _infobox = null;
-
-        private WindowSystem winsys = null; //why isn't the current winmgr a property of all Window objects
-
-        [Dependency]
-        private SaveManager _save = null;
-
-        [Dependency]
-        private AsyncServerManager _server = null;
-
-        private ListView _desktopIconsView = null;
-
-        private AppLauncherMenu _applauncher = null;
-
-        IEnumerable<int> hiddenWindows = null;
+        private void WindowSystemUpdated(object o, EventArgs a)
+        {
+            ResetWindowList((WindowSystem)o);
+        }
 
         private void ResetWallpaper()
         {
@@ -122,121 +267,23 @@ namespace Peacenet
             Invalidate(true);
         }
 
-        /// <inheritdoc/>
-        public DesktopWindow(WindowSystem _winsys) : base(_winsys)
+        private void _desktopIconsView_ItemClicked(ListViewItem obj)
         {
-            _iconEmail = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/Email");
-            _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
-
-
-            _notificationTray.AddChild(_emailButton);
-
-            _desktopRightClick = new ContextMenu(_winsys);
-
-            _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
-
-            _applauncher = new AppLauncherMenu(_winsys, this);
-
-            winsys = _winsys;
-            SetWindowStyle(WindowStyle.NoBorder);
-            ResetWallpaper();
-            _os.WallpaperChanged += ResetWallpaper;
-            _topPanel = new DesktopPanel();
-            _bottomPanel = new DesktopPanel();
-            AddChild(_topPanel);
-            AddChild(_bottomPanel);
-            _timeLabel = new Label();
-            _timeLabel.AutoSize = true;
-            _timeLabel.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
-            _topPanel.AddChild(_timeLabel);
-
-            _showDesktopIcon.Texture = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/ShowDesktop");
-            _showDesktopIcon.AutoSize = true;
-            _bottomPanel.AddChild(_showDesktopIcon);
-
-            _topPanel.AddChild(_appLauncherText);
-            _appLauncherText.AutoSize = true;
-            _appLauncherText.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
-
-            _bottomPanel.AddChild(_windowList);
-
-            ResetWindowList(_winsys);
-            _winsys.WindowListUpdated += WindowSystemUpdated;
-            _desktopIconsView = new ListView();
-            AddChild(_desktopIconsView);
-            _desktopIconsView.IconFlow = IconFlowDirection.TopDown;
-
-            _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
-            _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
-
-            _topPanel.AddChild(_notificationTray);
-
-            RightClick += Desktop_RightClick;
-            _desktopIconsView.RightClick += Desktop_RightClick;
-
-            _emailButton.Click += (o, a) =>
+            if (_fs.DirectoryExists(obj.Tag.ToString()))
             {
-                var email = new Applications.EmailViewer(WindowSystem);
-                email.Show();
-            };
-
-
-            _appLauncherText.Click += (o, a) =>
+                var browser = new Applications.FileManager(WindowSystem);
+                browser.SetCurrentDirectory(obj.Tag.ToString());
+                browser.Show();
+            }
+            else
             {
-                if (_winsys.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null)
+                if (!_utils.OpenFile(obj.Tag.ToString()))
                 {
-                    _applauncher.Close();
+                    _infobox.Show("Can't open file", "File Manager couldn't find a program that can open that file!");
                 }
-                else
-                {
-                    if (_applauncher.Disposed)
-                        _applauncher = new AppLauncherMenu(_winsys, this);
-                    _applauncher.Show(0, _topPanel.Height);
-                }
-            };
-
-            EventHandler wscallback = null;
-            wscallback = (o, a) => { hiddenWindows = null; winsys.WindowStateChanged -= wscallback; };
-            _showDesktopIcon.Click += (o, a) =>
-            {
-                if (hiddenWindows == null) // show desktop
-                {
-                    hiddenWindows = winsys.WindowList.Where(w => w.Border.Visible && !(w.Border.Window is DesktopWindow)).Select(w => w.WindowID).ToList();
-                    foreach (var id in hiddenWindows)
-                        winsys.Hide(id);
-                    winsys.WindowStateChanged += wscallback;
-                }
-                else // restore windows
-                {
-                    winsys.WindowStateChanged -= wscallback;
-                    foreach (var id in hiddenWindows)
-                        winsys.Show(id);
-                    hiddenWindows = null;
-                }
-            };
-
-            AddChild(_notificationTitle);
-            AddChild(_notificationDescription);
-
-            _notificationTitle.AutoSize = true;
-            _notificationDescription.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
-            
-            _notificationDescription.AutoSize = true;
-            _notificationDescription.MaxWidth = 450;
-            _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
-
-            _fs.WriteOperation += (path) =>
-            {
-                if (path.StartsWith("/home/Desktop"))
-                    _needsDesktopReset = true;
-            };
-
-            _gvtAlertStatus = new Label();
-            _gvtAlertStatus.AutoSize = true;
-            _gvtAlertStatus.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
-            _topPanel.AddChild(_gvtAlertStatus);
-
+            }
         }
+
 
         private void Desktop_RightClick(object sender, EventArgs e)
         {
@@ -291,7 +338,7 @@ namespace Peacenet
                 appearance.Show();
             };
             _desktopRightClick.AddItem(newFolder);
-            if(_desktopIconsView.SelectedItem!=null)
+            if (_desktopIconsView.SelectedItem != null)
             {
                 var path = _desktopIconsView.SelectedItem.Tag.ToString();
                 var name = _desktopIconsView.SelectedItem.Value;
@@ -304,7 +351,7 @@ namespace Peacenet
                 {
                     _infobox.ShowYesNo(delete.Text, "Are you sure you want to delete \"" + path + "\"?", (answer) =>
                     {
-                        if(answer)
+                        if (answer)
                         {
                             _fs.Delete(path);
                         }
@@ -317,6 +364,116 @@ namespace Peacenet
             _desktopRightClick.Show(MouseX, MouseY);
 
         }
+
+
+        #endregion
+
+        #region Constructors
+
+        /// <inheritdoc/>
+        public DesktopWindow(WindowSystem _winsys) : base(_winsys)
+        {
+            AddChild(_applauncherHitbox);
+
+            _iconEmail = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/Email");
+            _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
+
+
+            _notificationTray.AddChild(_emailButton);
+
+            _desktopRightClick = new ContextMenu(_winsys);
+
+            _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
+
+            _applauncher = new AppLauncherMenu(_winsys, this);
+
+            SetWindowStyle(WindowStyle.NoBorder);
+            ResetWallpaper();
+            _os.WallpaperChanged += ResetWallpaper;
+            
+            _showDesktopIcon.Texture = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/ShowDesktop");
+            _showDesktopIcon.AutoSize = true;
+            
+            ResetWindowList(_winsys);
+            _winsys.WindowListUpdated += WindowSystemUpdated;
+            _desktopIconsView = new ListView();
+            AddChild(_desktopIconsView);
+            _desktopIconsView.IconFlow = IconFlowDirection.TopDown;
+
+            _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
+            _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
+            
+            RightClick += Desktop_RightClick;
+            _desktopIconsView.RightClick += Desktop_RightClick;
+
+            _emailButton.Click += (o, a) =>
+            {
+                var email = new Applications.EmailViewer(WindowSystem);
+                email.Show();
+            };
+
+
+            _applauncherHitbox.Click += (o, a) =>
+            {
+                if (_winsys.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null)
+                {
+                    _applauncher.Close();
+                }
+                else
+                {
+                    if (_applauncher.Disposed)
+                        _applauncher = new AppLauncherMenu(_winsys, this);
+                    _applauncher.Show(0, _topPanel.Height);
+                    Manager.SetFocus(_applauncher);
+                }
+            };
+
+            EventHandler wscallback = null;
+            wscallback = (o, a) => { hiddenWindows = null; WindowSystem.WindowStateChanged -= wscallback; };
+            _showDesktopIcon.Click += (o, a) =>
+            {
+                if (hiddenWindows == null) // show desktop
+                {
+                    hiddenWindows = WindowSystem.WindowList.Where(w => w.Border.Visible && !(w.Border.Window is DesktopWindow)).Select(w => w.WindowID).ToList();
+                    foreach (var id in hiddenWindows)
+                        WindowSystem.Hide(id);
+                    WindowSystem.WindowStateChanged += wscallback;
+                }
+                else // restore windows
+                {
+                    WindowSystem.WindowStateChanged -= wscallback;
+                    foreach (var id in hiddenWindows)
+                        WindowSystem.Show(id);
+                    hiddenWindows = null;
+                }
+            };
+
+            AddChild(_notificationTitle);
+            AddChild(_notificationDescription);
+
+            _notificationTitle.AutoSize = true;
+            _notificationDescription.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            
+            _notificationDescription.AutoSize = true;
+            _notificationDescription.MaxWidth = 450;
+            _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
+
+            _fs.WriteOperation += (path) =>
+            {
+                if (path.StartsWith("/home/Desktop"))
+                    _needsDesktopReset = true;
+            };
+
+            AddChild(this._showDesktopIcon);
+            AddChild(_notificationTray);
+            _notificationTray.AddChild(_emailButton);
+
+            AddChild(_windowList);
+        }
+
+        #endregion
+
+        #region Public functions
 
         /// <summary>
         /// Show a notification banner on the desktop.
@@ -332,130 +489,17 @@ namespace Peacenet
             _notificationBannerFade = 0;
         }
 
-
-        private bool _appLauncherClosesWhenFocusLost = true;
-
         /// <summary>
-        /// Gets or sets whether the App Launcher should close when its focus is lost.
+        /// Plays the Desktop Close animation and shuts down the session, returning to main menu.
         /// </summary>
-        public bool CloseALOnFocusLoss
+        public void Shutdown()
         {
-            get
-            {
-                return _appLauncherClosesWhenFocusLost;
-            }
-            set
-            {
-                _appLauncherClosesWhenFocusLost = value;
-            }
+            _animState = 3;
         }
 
-        /// <summary>
-        /// Retrieves whether the App Launcher menu is open.
-        /// </summary>
-        public bool IsAppLauncherOpen
-        {
-            get
-            {
-                return WindowSystem.WindowList.FirstOrDefault(x => x.Border == _applauncher.Parent) != null;
-            }
-        }
-
-        /// <summary>
-        /// Retrieves whether the tutorial overlay is showing.
-        /// </summary>
-        public bool IsTutorialOpen
-        {
-            get
-            {
-                return false;
-            }
-        }
-   
-        private void _desktopIconsView_ItemClicked(ListViewItem obj)
-        {
-            if (_fs.DirectoryExists(obj.Tag.ToString()))
-            {
-                var browser = new Applications.FileManager(WindowSystem);
-                browser.SetCurrentDirectory(obj.Tag.ToString());
-                browser.Show();
-            }
-            else
-            {
-                if (!_utils.OpenFile(obj.Tag.ToString()))
-                {
-                    _infobox.Show("Can't open file", "File Manager couldn't find a program that can open that file!");
-                }
-            }
-        }
-
-        [Dependency]
-        private FileUtilities _utils = null;
-
-        private bool _needsDesktopReset = true;
+        #endregion
         
-        [Dependency]
-        private FSManager _fs = null;
-
-        [Dependency]
-        private FileUtils _futils = null;
-
-        /// <summary>
-        /// Repopulates the desktop icon list view.
-        /// </summary>
-        public void SetupIcons()
-        {
-            _desktopIconsView.ClearItems();
-            if (!_fs.DirectoryExists("/home/Desktop"))
-                _fs.CreateDirectory("/home/Desktop");
-            foreach(var dir in _fs.GetDirectories("/home/Desktop"))
-            {
-                if (_futils.GetNameFromPath(dir).StartsWith("."))
-                    continue;
-                var diritem = new ListViewItem();
-                diritem.Tag = dir;
-                diritem.Value = _futils.GetNameFromPath(dir);
-                diritem.ImageKey = "folder";
-                _desktopIconsView.AddItem(diritem);
-            }
-            foreach (var dir in _fs.GetFiles("/home/Desktop"))
-            {
-                if (_futils.GetNameFromPath(dir).StartsWith("."))
-                    continue;
-                var diritem = new ListViewItem();
-                diritem.Tag = dir;
-                diritem.Value = _futils.GetNameFromPath(dir);
-                diritem.ImageKey = _futils.GetMimeType(dir);
-                if(_desktopIconsView.GetImage(diritem.ImageKey) == null)
-                {
-                    _desktopIconsView.SetImage(diritem.ImageKey, _futils.GetMimeIcon(diritem.ImageKey));
-                }
-                _desktopIconsView.AddItem(diritem);
-            }
-        }
-
-        private void WindowSystemUpdated (object o, EventArgs a)
-        {
-            ResetWindowList((WindowSystem)o);
-        }
-
-        /// <summary>
-        /// Gets the App Launcher Menu for this desktop.
-        /// </summary>
-        public AppLauncherMenu AppLauncher
-        {
-            get
-            {
-                return _applauncher;
-            }
-        }
-
-        [Dependency]
-        private EmailClient _email = null;
-
-        private Texture2D _iconEmail = null;
-        private Texture2D _iconEmailUnread = null;
-
+        #region Update and Draw methods
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
@@ -464,15 +508,7 @@ namespace Peacenet
             _emailButton.ShowImage = true;
             _emailButton.Image = (_email.UnreadMessages == 0) ? _iconEmail : _iconEmailUnread;
 
-            _topPanel.Visible = _showPanels;
-            _bottomPanel.Visible = _showPanels;
-
-            _gvtAlertStatus.Visible = _notoriety.AlertLevel > 0;
-            _gvtAlertStatus.Text = $"Government Alert Level: {_notoriety.AlertLevel}";
-            if (_notoriety.Dissipating)
-                _gvtAlertStatus.Text += " (Dissipating...)";
-            _gvtAlertStatus.Y = (_topPanel.Height - _gvtAlertStatus.Height) / 2;
-            _gvtAlertStatus.X = (_notificationTray.X - _gvtAlertStatus.Width) - 5;
+            
 
             if (IsAppLauncherOpen)
                 _applauncher.CloseOnFocusLoss = _appLauncherClosesWhenFocusLost;
@@ -510,7 +546,7 @@ namespace Peacenet
 
                     break;
                 case 5:
-                    winsys.WindowListUpdated -= WindowSystemUpdated;
+                    WindowSystem.WindowListUpdated -= WindowSystemUpdated;
                     _os.Shutdown();
                     Close();
                     break;
@@ -553,6 +589,23 @@ namespace Peacenet
             Parent.Y = (Manager.ScreenHeight - Height) / 2;
             Parent.Opacity = _scaleAnim;
 
+            _topPanel.X = 0;
+            _topPanel.Width = Width;
+            _topPanel.Height = _pn.PanelTheme.DesktopPanelHeight;
+            _topPanel.Y = (int)MathHelper.Lerp(0 - _topPanel.Height, 0, _panelAnim);
+
+            _bottomPanel.X = 0;
+            _bottomPanel.Width = Width;
+            _bottomPanel.Height = _topPanel.Height;
+            _bottomPanel.Y = (int)MathHelper.Lerp(Height, Height - _bottomPanel.Height, _panelAnim);
+
+            _applauncherHitbox.Visible = (_showPanels && _appLauncherButtonVisible);
+
+            _applauncherHitbox.X = _topPanel.X + _pn.PanelTheme.AppLauncherRectangle.X;
+            _applauncherHitbox.Y = _topPanel.Y + _pn.PanelTheme.AppLauncherRectangle.Y;
+            _applauncherHitbox.Width = _pn.PanelTheme.AppLauncherRectangle.Width;
+            _applauncherHitbox.Height = _pn.PanelTheme.AppLauncherRectangle.Height;
+            
             int noteYMin = 0;
             int noteYMax = _topPanel.Y + _topPanel.Height + 15;
             int noteY = (int)MathHelper.Lerp(noteYMin, noteYMax, _notificationBannerFade);
@@ -564,28 +617,9 @@ namespace Peacenet
             _notificationTitle.X = Width - noteWidthMax - 15;
             _notificationDescription.X = _notificationTitle.X;
 
-            _topPanel.Height = _timeLabel.Height + 6;
-            _topPanel.Width = Width;
-            _bottomPanel.Height = _timeLabel.Height + 6;
-            _bottomPanel.Width = Width;
-            _topPanel.X = 0;
-            _bottomPanel.X = 0;
-            _topPanel.Y = (int)MathHelper.Lerp(0 - _topPanel.Height, 0, _panelAnim);
-            _bottomPanel.Y = (int)MathHelper.Lerp(Height, Height - _bottomPanel.Height, _panelAnim);
-
-            _timeLabel.Y = (_topPanel.Height - _timeLabel.Height) / 2;
-            _timeLabel.X = (_topPanel.Width - _timeLabel.Width) - 2;
-            _timeLabel.Text = DateTime.Now.TimeOfDay.ToPresentableString();
-
             _showDesktopIcon.X = 2;
-            _showDesktopIcon.Y = 2;
+            _showDesktopIcon.Y = _bottomPanel.Y + ((_bottomPanel.Height - _showDesktopIcon.Height)/2);
             _showDesktopIcon.Tint = (_showDesktopIcon.ContainsMouse ^ (hiddenWindows != null)) ? Color.White : new Color(191, 191, 191, 255);
-
-            _appLauncherText.X = 2;
-            _appLauncherText.CustomFont = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
-            _appLauncherText.CustomColor = (_appLauncherText.ContainsMouse) ? Color.White : new Color(191, 191, 191, 255);
-            _appLauncherText.Text = "Peacegate";
-            _appLauncherText.Y = (_topPanel.Height - _appLauncherText.Height) / 2;
 
             _windowList.Y = 0;
             _windowList.Height = _bottomPanel.Height;
@@ -608,60 +642,29 @@ namespace Peacenet
             {
                 if (_animState < 3)
                 {
-                    foreach (var win in winsys.WindowList.ToArray())
+                    foreach (var win in WindowSystem.WindowList.ToArray())
                     {
                         if (win.Border != this.Parent)
-                            winsys.Close(win.WindowID);
+                            WindowSystem.Close(win.WindowID);
                     }
                     _animState = 3;
 
                 }
             }
 
-            _notificationTray.Y = (_topPanel.Height - _notificationTray.Height) / 2;
-            _notificationTray.X = _timeLabel.X - _notificationTray.Width - 3;
+            string rtime = DateTime.Now.ToShortTimeString();
+            var rtmeasure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
+
+            int timePos = _topPanel.Width - ((int)rtmeasure.X + 5);
+
+            _notificationTray.X = (timePos - _notificationTray.Width) - 7;
+            _notificationTray.Y = _topPanel.Y + ((_topPanel.Height - _notificationTray.Height) / 2);
+
+            _windowList.X = _showDesktopIcon.X + _showDesktopIcon.Width + 5;
+            _windowList.Y = _bottomPanel.Y + ((_bottomPanel.Height - (int)_pn.PanelTheme.PanelButtonSize.Y) / 2);
+            _windowList.Width = (_bottomPanel.Width - _windowList.X) - 5;
 
             base.OnUpdate(time);
-        }
-
-        /// <summary>
-        /// Plays the Desktop Close animation and shuts down the session, returning to main menu.
-        /// </summary>
-        public void Shutdown()
-        {
-            _animState = 3;
-        }
-
-        [Dependency]
-        private OS _os = null;
-
-        /// <summary>
-        /// Gets or sets whether the App Launcher button is visible.
-        /// </summary>
-        public bool ShowAppLauncherButton
-        {
-            get
-            {
-                return _appLauncherText.Visible;
-            }
-            set
-            {
-                _appLauncherText.Visible = value;
-            }
-        }
-
-        private void ResetWindowList(WindowSystem winsys)
-        {
-            while (_windowList.Children.Length > 0)
-                _windowList.RemoveChild(_windowList.Children[0]);
-            foreach(var win in winsys.WindowList)
-            {
-                if(win.Border.WindowStyle == WindowStyle.Default)
-                {
-                    var btn = new WindowListButton(winsys, win);
-                    _windowList.AddChild(btn);
-                }
-            }
         }
 
         /// <inheritdoc/>
@@ -669,19 +672,34 @@ namespace Peacenet
         {
             gfx.DrawRectangle(0, 0, Width, Height, _wallpaper);
             gfx.DrawRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
-        }
-    }
+            if(_showPanels)
+            {
+                if(_topPanel.Visible)
+                {
+                    _pn.PanelTheme.DrawPanel(gfx, _topPanel.Bounds);
+                }
+                if (_bottomPanel.Visible)
+                {
+                    _pn.PanelTheme.DrawPanel(gfx, _bottomPanel.Bounds);
+                }
+                if(_applauncherHitbox.Visible)
+                {
+                    var alState = UIButtonState.Idle;
+                    if (_applauncherHitbox.ContainsMouse)
+                        alState = UIButtonState.Hover;
+                    if (_applauncherHitbox.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                        alState = UIButtonState.Pressed;
+                    _pn.PanelTheme.DrawAppLauncher(gfx, _applauncherHitbox.Bounds, alState);
+                }
 
-    /// <summary>
-    /// A panel that is skinned for use in the desktop UI.
-    /// </summary>
-    public class DesktopPanel : Control
-    {
-        /// <inheritdoc/>
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
-            Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+                string rtime = DateTime.Now.ToShortTimeString();
+                var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
+
+                gfx.DrawString(rtime, new Vector2(_topPanel.Width - (measure.X + 5), _topPanel.Y + ((_topPanel.Height - measure.Y) / 2)), _pn.PanelTheme.StatusTextColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+            }
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -800,13 +818,18 @@ namespace Peacenet
         private bool _lastFocused = false;
         private WindowSystem _winmgr = null;
 
+        private PeacenetThemeManager _pn = null;
+
         /// <summary>
         /// Creates a new instance of the <see cref="WindowListButton"/>. 
         /// </summary>
         /// <param name="winmgr">A <see cref="WindowSystem"/> component for modifying the window state.</param>
         /// <param name="win">The window associated with this control.</param>
-        public WindowListButton(WindowSystem winmgr, WindowInfo win)
+        public WindowListButton(WindowSystem winmgr, WindowInfo win, PeacenetThemeManager themeManager)
         {
+            //dependency injection won't work here. FUCK.
+            _pn = themeManager;
+
             if (winmgr == null)
                 throw new ArgumentNullException();
             if (win == null)
@@ -838,9 +861,8 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            Width = 192;
-            Height = 24;
-
+            Width = (int)_pn.PanelTheme.PanelButtonSize.X;
+            Height = (int)_pn.PanelTheme.PanelButtonSize.Y;
         }
 
         /// <inheritdoc/>
@@ -849,23 +871,15 @@ namespace Peacenet
             var state = Plex.Engine.Themes.UIButtonState.Idle;
             if (ContainsMouse)
                 state = Plex.Engine.Themes.UIButtonState.Hover;
-            if (_win.Border.HasFocused || LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                 state = Plex.Engine.Themes.UIButtonState.Pressed;
-            switch(state)
-            {
-                case Plex.Engine.Themes.UIButtonState.Idle:
-                    Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
-                    break;
-                case Plex.Engine.Themes.UIButtonState.Hover:
-                    gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor());
-                    break;
-                case Plex.Engine.Themes.UIButtonState.Pressed:
-                    Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
-                    break;
-            }
-            var font = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
-            var measure = font.MeasureString(_win.Border.Title);
-            gfx.DrawString(_win.Border.Title, 5, (Height - (int)measure.Y) / 2, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), font, TextAlignment.Left);
+
+            var winState = PanelButtonState.Default;
+            if (_win.Border.HasFocused)
+                winState = PanelButtonState.Active;
+            if (_win.Border.Visible == false)
+                winState = PanelButtonState.Minimized;
+            _pn.PanelTheme.DrawPanelButton(gfx, new Rectangle(0, 0, Width, Height), winState, state, _win.Border.Title);
         }
     }
 }
