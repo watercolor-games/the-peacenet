@@ -39,7 +39,7 @@ namespace Peacenet.Tutorial
 
         private double _animRide = 0;
 
-        private TutorialBgmEntity _tutorial = null;
+        private AdvancedAudioPlayer _tutorial = null;
         private Label _introHeader = new Label();
         private Label _introText = new Label();
 
@@ -110,7 +110,7 @@ namespace Peacenet.Tutorial
         private PeacenetThemeManager _pn = null;
 
         /// <inheritdoc/>
-        public PeacegateSetup(WindowSystem _winsys, TutorialBgmEntity tutorial) : base(_winsys)
+        public PeacegateSetup(WindowSystem _winsys, AdvancedAudioPlayer tutorial) : base(_winsys)
         {
             _tutorial = tutorial;
             SetWindowStyle(WindowStyle.NoBorder);
@@ -291,7 +291,7 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
                     }
                     break;
                 case 8:
-                    _tutorial.MoveToNextSection();
+                    _tutorial.Next++;
                     _animState++;
                     break;
                 case 9:

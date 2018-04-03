@@ -51,7 +51,10 @@ namespace Peacenet.MainMenu
             "Welcome, ",
             "Hey, ",
             "Hi, ",
-            "Howdy, "
+            "Howdy, ",
+            "G'day, ",
+            "Yo, ",
+            "What it is, "
         };
 
         private Random _rnd = new Random();
