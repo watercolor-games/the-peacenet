@@ -20,7 +20,7 @@ namespace Peacenet.Cutscenes
     /// <summary>
     /// The cutscene that displays the game's credits.
     /// </summary>
-    public class CreditsScene : Cutscene
+    public class CreditsScene : Plex.Engine.Cutscene.Cutscene
     {
         private AdvancedAudioPlayer _music = null;
         private CreditCategory[] _creditsFile = null;

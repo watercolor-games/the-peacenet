@@ -19,6 +19,7 @@ using Peacenet.MainMenu;
 using Microsoft.Xna.Framework.Content;
 using Peacenet.PeacegateThemes;
 using Plex.Objects;
+using Microsoft.Xna.Framework.Input;
 
 namespace Peacenet
 {
@@ -43,6 +44,9 @@ namespace Peacenet
             _theme.Theme = _plexgate.New<PeacenetTheme>();
             Logger.Log("And now for the save backend.");
             _save.SetBackend(_plexgate.New<ServerSideSaveBackend>());
+#if DEBUG
+            _plexgate.GetLayer(LayerType.NoDraw).AddEntity(_plexgate.New<DebugEntity>());
+#endif
         }
 
         private SplashEntity splash = null;
@@ -80,4 +84,37 @@ namespace Peacenet
         }
 
     }
+
+#if DEBUG
+    public class DebugEntity : IEntity
+    {
+        [Dependency]
+        private WindowSystem _winsys = null;
+
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+        }
+
+        public void OnGameExit()
+        {
+        }
+
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+            if(e.Key == Keys.F7)
+            {
+                var player = new Applications.CutscenePlayer(_winsys);
+                player.Show();
+            }
+        }
+
+        public void OnMouseUpdate(MouseState mouse)
+        {
+        }
+
+        public void Update(GameTime time)
+        {
+        }
+    }
+#endif
 }

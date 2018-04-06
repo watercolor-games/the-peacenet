@@ -68,6 +68,7 @@
     <Compile Include="AppLauncherManager.cs" />
     <Compile Include="Applications\Appearance.cs" />
     <Compile Include="Applications\ChatClient.cs" />
+    <Compile Include="Applications\CutscenePlayer.cs" />
     <Compile Include="Applications\DesktopPanelSettings.cs" />
     <Compile Include="Applications\EmailViewer.cs" />
     <Compile Include="Applications\FileManager.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="CoreUtils\PathUtils.cs" />
     <Compile Include="CoreUtils\rm.cs" />
     <Compile Include="Cutscene\CreditsScene.cs" />
+    <Compile Include="Cutscene\OSFTPeacegateIntro.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="Email\EmailClient.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="MainMenu\SplashEntity.cs" />
     <Compile Include="MissionManager.cs" />
     <Compile Include="Missions\Prologue\SecuringTheSystem.cs" />
+    <Compile Include="Missions\Prologue\SideMissions\SentienceTriesOut.cs" />
     <Compile Include="Missions\Prologue\TerminalTutorial.cs" />
     <Compile Include="NPCSpawner.cs" />
     <Compile Include="OS.cs" />
@@ -281,6 +284,33 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Audio\MainMenu\WelcomeToThePeacenet.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\1.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\10.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\11.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\2.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\3.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\4.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\6.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\7.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\SentienceTriesOut\9.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Hackables\SecuringTheSystem_TestHackable.json">
