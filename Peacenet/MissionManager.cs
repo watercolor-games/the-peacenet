@@ -15,6 +15,7 @@ using Plex.Engine.GUI;
 using Plex.Engine.Themes;
 using Peacenet.Applications;
 using Peacenet.RichPresence;
+using Plex.Engine.Cutscene;
 
 namespace Peacenet
 {
@@ -249,6 +250,13 @@ namespace Peacenet
 
             gfx.DrawString(nameString, (_winsys.Width - (int)nameMeasure.X) / 2, (int)MathHelper.Lerp(nameYMin, nameYMax, _missionNameFade), nameColor * _missionNameFade, nameFont, TextAlignment.Left);
 
+            gfx.EndDraw();
+
+            if (_objectives == null)
+                return;
+
+            gfx.BeginDraw();
+
             string objectiveName = _objectives[_currentObjective].Name;
             string objectiveDesc = _objectives[_currentObjective].Description;
             string pressF6 = "Press [F6] to view objective info";
@@ -304,6 +312,9 @@ namespace Peacenet
 
         }
 
+        [Dependency]
+        private CutsceneManager _cutscene = null;
+
         public void Update(GameTime time)
         {
             if(_current == null)
@@ -341,11 +352,11 @@ namespace Peacenet
                     if(objState == ObjectiveState.Complete)
                     {
                         _current.OnObjectiveComplete(_currentObjective, _objectives[_currentObjective]);
-                        if (_animState == 9)
+                        if (_animState == 10)
                         {
-                            _animState = 10;
+                            _animState = 11;
                         }
-                        else if(_animState < 9)
+                        else if(_animState < 10)
                         {
                             _animState = 7;
                             _objectiveNameFade = 0;
@@ -384,6 +395,20 @@ namespace Peacenet
             switch(_animState)
             {
                 case 0:
+                    if(!string.IsNullOrWhiteSpace(_current.PrerollCutscene))
+                    {
+                        _cutscene.Play(_current.PrerollCutscene, ()=>
+                        {
+                            _animState = 1;
+                        });
+                        _animState--;
+                    }
+                    else
+                    {
+                        _animState++;
+                    }
+                    break;
+                case 1:
                     _shroudFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if(_shroudFade>=1)
                     {
@@ -391,7 +416,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 1:
+                case 2:
                     _missionStartFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_missionStartFade >= 1)
                     {
@@ -399,7 +424,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 2:
+                case 3:
                     _missionNameFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_missionNameFade >= 1)
                     {
@@ -408,7 +433,7 @@ namespace Peacenet
                         _missionStartRide = 0;
                     }
                     break;
-                case 3:
+                case 4:
                     _missionStartRide += time.ElapsedGameTime.TotalSeconds;
                     if(_missionStartRide>=5)
                     {
@@ -416,7 +441,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 4:
+                case 5:
                     _missionStartFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_missionStartFade <= 0)
                     {
@@ -424,7 +449,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 5:
+                case 6:
                     _missionNameFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_missionNameFade <= 0)
                     {
@@ -432,7 +457,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 6:
+                case 7:
                     _shroudFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_shroudFade <= 0)
                     {
@@ -442,7 +467,7 @@ namespace Peacenet
                         _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
                     }
                     break;
-                case 7:
+                case 8:
                     _objectiveNameFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_objectiveNameFade >= 1)
                     {
@@ -450,7 +475,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 8:
+                case 9:
                     _objectiveDescFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_objectiveDescFade >= 1)
                     {
@@ -459,7 +484,7 @@ namespace Peacenet
                         _objectiveRide = 0;
                     }
                     break;
-                case 10:
+                case 11:
                     _objectiveDescFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_objectiveDescFade <= 0)
                     {
@@ -467,7 +492,7 @@ namespace Peacenet
                         _animState++;
                     }
                     break;
-                case 11:
+                case 12:
                     _objectiveNameFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
                     if (_objectiveNameFade <= 0)
                     {
@@ -477,7 +502,7 @@ namespace Peacenet
                             _lastCheckpointSnapshotId = _save.CreateSnapshot();
                             _currentObjective++;
                             _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
-                            _animState = 7;
+                            _animState = 8;
                         }
                         else
                         {
@@ -486,15 +511,28 @@ namespace Peacenet
                             _current.OnEnd();
                             _objectives = null;
                             _currentObjective = 0;
-                            _current = null;
                             _animState++;
                             NotifyOfNewMissions();
                         }
                     }
                     break;
-                case 12:
+                case 13:
+                    if (!string.IsNullOrWhiteSpace(_current.AfterCompleteCutscene))
+                    {
+                        _cutscene.Play(_current.AfterCompleteCutscene, () =>
+                        {
+                            _animState = 15;
+                        });
+                        _animState++;
+                    }
+                    else
+                    {
+                        _animState = 15;
+                    }
+                    break;
+                case 15:
                     _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the Missions list for new missions to play.");
-                    _animState++;
+                    _animState = -1;
                     break;
 
             }
@@ -529,6 +567,22 @@ namespace Peacenet
 
         }
 
+
+        public virtual string PrerollCutscene
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public virtual string AfterCompleteCutscene
+        {
+            get
+            {
+                return null;
+            }
+        }
 
         /// <summary>
         /// Retrieves the name of this mission.

@@ -91,6 +91,7 @@
     <Compile Include="CoreUtils\PathUtils.cs" />
     <Compile Include="CoreUtils\rm.cs" />
     <Compile Include="Cutscene\CreditsScene.cs" />
+    <Compile Include="Cutscene\OSFTOutro.cs" />
     <Compile Include="Cutscene\OSFTPeacegateIntro.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
