@@ -303,6 +303,12 @@ namespace Peacenet.Server
                     if (_tcpClient.Connected)
                         return new PeacenetConnectionResult(ConnectionResultType.AlreadyConnected);
 
+                Logger.Log("Allocating resources for connection...", System.ConsoleColor.Blue);
+
+                _responses = new ConcurrentDictionary<string, PlexServerHeader>();
+
+                Logger.Log("Done.", System.ConsoleColor.Blue);
+
                 _session = _api.Token;
 
                 Logger.Log("Attempting connection to " + address + "...");
