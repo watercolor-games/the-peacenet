@@ -21,6 +21,8 @@ namespace Peacenet
     {
         private Dictionary<string, int> fstab = null;
 
+        private List<IClientMount> _clientMounts = new List<IClientMount>();
+
         [Dependency]
         private AsyncServerManager _server = null;
 
@@ -91,6 +93,9 @@ namespace Peacenet
         /// <inheritdoc/>
         public void CreateDirectory(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+                throw new IOException("Read-only filesystem.");
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_CREATEDIR, writePathData(path, null), (res, reader) =>
             {
@@ -111,6 +116,9 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Delete(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+                throw new IOException("Read-only filesystem.");
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_DELETE, writePathData(path, null), (res, reader) =>
             {
@@ -131,6 +139,12 @@ namespace Peacenet
         /// <inheritdoc/>
         public bool DirectoryExists(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => x.Path == path);
+            if (cMount != null)
+                return true;
+            cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+                return false;
             Exception err = null;
             bool result = false;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_DIREXISTS, writePathData(path, null), (res, reader) =>
@@ -150,6 +164,17 @@ namespace Peacenet
         /// <inheritdoc/>
         public bool FileExists(string path)
         {
+            
+            var cMount = _clientMounts.FirstOrDefault(x => x.Path == path);
+            if (cMount != null)
+                return false;
+            string name = path.Split('/').Last();
+            string dir = path.Substring(0, path.LastIndexOf('/'));
+            cMount = _clientMounts.FirstOrDefault(x => x.Path == dir);
+            if (cMount != null)
+                return cMount.GetFiles().Contains(name);
+
+
             Exception err = null;
             bool result = false;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_FILEEXISTS, writePathData(path, null), (res, reader) =>
@@ -169,6 +194,10 @@ namespace Peacenet
         /// <inheritdoc/>
         public string[] GetDirectories(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => x.Path == path);
+            if (cMount != null)
+                return new[] { ".", ".." };
+
             List<string> result = new List<string>();
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_GETDIRS, writePathData(path, null), (res, reader) =>
@@ -199,6 +228,19 @@ namespace Peacenet
         /// <inheritdoc/>
         public FileRecord GetFileRecord(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+            {
+                string mPath = path.Substring(path.LastIndexOf('/') + 1);
+                if (!cMount.GetFiles().Contains(mPath))
+                    throw new IOException("File not found.");
+                return new FileRecord
+                {
+                    IsDirectory = false,
+                    Name = mPath,
+                    SizeBytes = cMount.GetFileContents(mPath).Length
+                };
+            }
             FileRecord result = null;
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_RECORDINFO, writePathData(path, null), (res, reader) =>
@@ -225,6 +267,9 @@ namespace Peacenet
         /// <inheritdoc/>
         public string[] GetFiles(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => x.Path == path);
+            if (cMount != null)
+                return cMount.GetFiles();
             List<string> result = new List<string>();
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_GETFILES, writePathData(path, null), (res, reader) =>
@@ -251,9 +296,22 @@ namespace Peacenet
             return result.ToArray();
         }
 
+        [Dependency]
+        private Plexgate _plexgate = null;
+
         /// <inheritdoc/>
         public void Initialize()
         {
+            _clientMounts.Clear();
+
+            foreach(var t in ReflectMan.Types.Where(x=>x.GetInterfaces().Contains(typeof(IClientMount))))
+            {
+                var m = (IClientMount)_plexgate.New(t);
+                if (_clientMounts.FirstOrDefault(x => x.Path == m.Path) != null)
+                    throw new IOException($"Cannot mount {m.Path} - directory already mounted.");
+                _clientMounts.Add(m);
+            }
+
             //What we want to do is we want to first get a list of all mounts (partitions) from the server.
 
             //Create the fstab dictionary, that maps client-side Unix-like mountpoints to server-side COSMOS-like drive numbers.
@@ -267,6 +325,14 @@ namespace Peacenet
         /// <inheritdoc/>
         public byte[] ReadAllBytes(string path)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+            {
+                string mPath = path.Substring(path.LastIndexOf('/') + 1);
+                if (!cMount.GetFiles().Contains(mPath))
+                    throw new IOException("File not found.");
+                return cMount.GetFileContents(mPath);
+            }
             byte[] result = new byte[0];
             Exception err = null;
             _server.SendMessage(Plex.Objects.ServerMessageType.FS_READFROMFILE, writePathData(path, null), (res, reader) =>
@@ -301,6 +367,11 @@ namespace Peacenet
         /// <inheritdoc/>
         public void WriteAllBytes(string path, byte[] data)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => path.StartsWith(x.Path));
+            if (cMount != null)
+            {
+                throw new IOException("Read-only filesystem.");
+            }
             byte[] bdata = null;
             string localpath;
             int dnum = getNumberFromPath(path, out localpath);
@@ -340,6 +411,18 @@ namespace Peacenet
 
         public Stream Open(string path, OpenMode mode)
         {
+            var cMount = _clientMounts.FirstOrDefault(x => x.Path.StartsWith(path));
+            if (cMount != null)
+            {
+                string mPath = path.Remove(0, cMount.Path.Length);
+                if (!cMount.GetFiles().Contains(mPath))
+                    if (mode == OpenMode.OpenOrCreate)
+                        throw new IOException("Read-only filesystem.");
+                    else
+                        throw new IOException("File not found.");
+                return new MemoryStream(cMount.GetFileContents(mPath));
+                
+            }
             var err = new Exception("Unknown error.");
             var ret = -1;
             _server.SendMessage(ServerMessageType.FS_OPENSTREAM, writePathData(path, null).Concat(BitConverter.GetBytes((int)mode)).ToArray(), (res, reader) =>
