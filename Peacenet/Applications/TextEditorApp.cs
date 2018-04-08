@@ -16,7 +16,7 @@ namespace Peacenet.Applications
     /// Provides a simple GUI-based text editor for the Peacenet.
     /// </summary>
     [AppLauncher("Text Editor", "Accessories", "Write, save, and open a text document")]
-    public class TextEditorApp : Window
+    public class TextEditorApp : Window, IFileViewer
     {
         [Dependency]
         private GUIUtils _guiutils = null;
@@ -29,6 +29,8 @@ namespace Peacenet.Applications
 
         [Dependency]
         private InfoboxManager _infobox = null;
+
+        private string _path = null;
 
         private Button _open = new Button();
         private Button _save = new Button();
@@ -47,6 +49,8 @@ namespace Peacenet.Applications
             }
         }
 
+        public string FilePath => _path;
+
         /// <inheritdoc/>
         public TextEditorApp(WindowSystem _winsys) : base(_winsys)
         {
@@ -63,6 +67,7 @@ namespace Peacenet.Applications
             {
                 _editor.Text = "";
                 Title = "New document - Text Editor";
+                _path = null;
             };
             _open.Click += (o, a) =>
             {
@@ -72,6 +77,7 @@ namespace Peacenet.Applications
                     {
                         _editor.Text = _fs.ReadAllText(file);
                         Title = $"{_futils.GetNameFromPath(file)} - Text Editor";
+                        _path = file;
                     }
                     catch (InvalidDataException)
                     {
@@ -85,6 +91,7 @@ namespace Peacenet.Applications
                 {
                     _fs.WriteAllText(file, _editor.Text);
                     Title = $"{_futils.GetNameFromPath(file)} - Text Editor";
+                    _path = file;
                 });
             };
         }
@@ -105,6 +112,12 @@ namespace Peacenet.Applications
             _editor.Y = _save.Y + _save.Height + 3;
             _editor.Width = Width;
             _editor.Height = Height - _editor.Y;
+        }
+
+        public void View(string path)
+        {
+            _editor.Text = _fs.ReadAllText(path);
+            _path = path;
         }
     }
 
@@ -129,8 +142,8 @@ namespace Peacenet.Applications
         public void OpenFile(string path)
         {
             var editor = new TextEditorApp(_winsys);
+            editor.View(path);
             editor.Show();
-            editor.Text = _fs.ReadAllText(path);
         }
     }
 }

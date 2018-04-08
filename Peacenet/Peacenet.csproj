@@ -67,7 +67,9 @@
   <ItemGroup>
     <Compile Include="AppLauncherManager.cs" />
     <Compile Include="Applications\Appearance.cs" />
+    <Compile Include="Applications\Calculator.cs" />
     <Compile Include="Applications\ChatClient.cs" />
+    <Compile Include="Applications\Clock.cs" />
     <Compile Include="Applications\CutscenePlayer.cs" />
     <Compile Include="Applications\DesktopPanelSettings.cs" />
     <Compile Include="Applications\EmailViewer.cs" />
@@ -143,6 +145,10 @@
       <HintPath>..\packages\docopt.net.0.6.1.9\lib\net40\DocoptNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DynamicLua, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicLua.1.1.2.0\lib\net40-Client\DynamicLua.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MimeTypeMap.List, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MimeTypeMap.List.1.1.0\lib\MimeTypeMap.List.dll</HintPath>

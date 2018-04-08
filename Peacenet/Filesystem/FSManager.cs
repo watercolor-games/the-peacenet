@@ -13,6 +13,7 @@ using Plex.Objects.PlexFS;
 using Plex.Objects.ShiftFS;
 using Plex.Engine;
 using Plex.Objects.Streams;
+using Plex.Engine.GUI;
 
 namespace Peacenet.Filesystem
 {
@@ -31,6 +32,15 @@ namespace Peacenet.Filesystem
         public Stream OpenRead(string file)
         {
             return new ReadOnlyStream(_backend.Open(file, OpenMode.Open));
+        }
+
+        [Dependency]
+        private WindowSystem _winsys = null;
+
+        public bool IsOpenInProgram(string path)
+        {
+            var viewers = _winsys.WindowList.Where(x => x.Border.Window is IFileViewer).Select(x => x.Border.Window as IFileViewer);
+            return viewers.FirstOrDefault(x => x.FilePath == path) != null;
         }
 
         public Stream OpenWrite(string file)
@@ -172,6 +182,8 @@ namespace Peacenet.Filesystem
         /// <param name="path">A path to the file or directory to delete</param>
         public void Delete(string path)
         {
+            if (IsOpenInProgram(path))
+                throw new IOException("The process cannot access the file because it is currently opened in another process.");
             _backend.Delete(path);
             WriteOperation?.Invoke(path);
         }
@@ -263,6 +275,8 @@ namespace Peacenet.Filesystem
         /// <inheritdoc cref="Delete(string)"/>
         public async Task DeleteAsync(string path)
         {
+            if (IsOpenInProgram(path))
+                throw new IOException("The process cannot access the file because it is currently opened in another process.");
             await Task.Run(() =>
             {
                 _backend.Delete(path);

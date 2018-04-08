@@ -13,4 +13,10 @@ namespace Peacenet.Filesystem
 
         void OpenFile(string path);
     }
+
+    public interface IFileViewer
+    {
+        string FilePath { get; }
+        void View(string path);
+    }
 }

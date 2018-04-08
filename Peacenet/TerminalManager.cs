@@ -180,6 +180,8 @@ namespace Peacenet
             }
         }
 
+        public event Action<string> CommandSucceeded;
+
         [Dependency]
         private RemoteStreams _remoteStreams = null;
 
@@ -267,6 +269,8 @@ namespace Peacenet
 
                         commandDone.WaitOne();
 
+                        CommandSucceeded?.Invoke(query.Name);
+
                         _server.BroadcastReceived -= terminalOutput;
 
                         t.Abort();
@@ -301,6 +305,7 @@ namespace Peacenet
                 try
                 {
                     local.Run(console, argumentStore);
+                    CommandSucceeded?.Invoke(query.Name);
                 }
                 catch (TerminationRequestException)
                 {

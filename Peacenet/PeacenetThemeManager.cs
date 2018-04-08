@@ -45,11 +45,16 @@ namespace Peacenet
             }
             set
             {
+                if (value == _panelTheme)
+                    return;
                 if (value == null)
                     return;
                 _panelTheme = value;
+                PanelThemeChanged?.Invoke();
             }
         }
+
+        public event Action PanelThemeChanged;
 
         private List<ThemeInfo> _themes = new List<ThemeInfo>();
 

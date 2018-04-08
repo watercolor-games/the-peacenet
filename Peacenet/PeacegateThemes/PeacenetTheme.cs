@@ -20,6 +20,8 @@ namespace Peacenet.PeacegateThemes
     [PeacegateTheme("Default Dark", "The default dark theme for Peacegate OS.", "ThemePreviews/DefaultDark")]
     public class PeacenetTheme : Theme
     {
+        public override Color ControlBG => _bgRegular;
+
         [Dependency]
         private ConfigManager _config = null;
 
