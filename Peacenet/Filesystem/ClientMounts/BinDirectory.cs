@@ -1,4 +1,5 @@
 ﻿using Plex.Engine;
+using Plex.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,36 +18,66 @@ namespace Peacenet.Filesystem.ClientMounts
 
         private Random _random = new Random();
 
+        [Dependency]
+        private AppLauncherManager _al = null;
+
         public byte[] GetFileContents(string filename)
         {
             if (!GetFiles().Contains(filename))
                 throw new IOException("File not found.");
 
-            byte[] nameBytes = Encoding.UTF32.GetBytes(filename);
-            byte[] real = new byte[nameBytes.Length * 32];
-
-            //We're generating random binary based off the program's name.
-
-            //We'll use a random number generator to grab a random byte from the original array.
-            //Then we use it to choose a number between 0 and 4. This will be the number of bits we shift the byte.
-            //Every second number will be shifted left, others shifted right.
-            for(int i = 0; i < real.Length; i++)
+            //Grab the command.
+            var cmd = _terminalManager.GetCommandList().FirstOrDefault(x => x.Name == filename);
+            if (cmd == null)
             {
-                var b = nameBytes[_random.Next(nameBytes.Length)];
-                var s = _random.Next(4);
-                if (i % 2 == 0)
-                    b = (byte)(b << s);
-                else
-                    b = (byte)(b >> s);
-                real[i] = b;
-            }
+                foreach(var cat in _al.GetAllCategories())
+                {
+                    var item = _al.GetAllInCategory(cat).FirstOrDefault(x => x.WindowType.Name.ToLower() == filename);
+                    if (item != null)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            using (var writer = new BinaryWriter(ms, Encoding.UTF32, true))
+                            {
+                                writer.Write(item.GetHashCode());
+                                writer.Write(item.WindowType.ToBytes());
+                                writer.Write(item.GetType().ToBytes());
+                            }
+                            return ms.ToArray();
+                        }
+                    }
 
-            return real;
+                }
+            }
+            else
+            {
+                using (var ms = new MemoryStream())
+                {
+                    using (var writer = new BinaryWriter(ms, Encoding.UTF32, true))
+                    {
+                        writer.Write(cmd.GetHashCode());
+                        writer.Write(cmd.GetType().ToBytes());
+                        writer.Write(typeof(ITerminalCommand).ToBytes());
+                    }
+                    return ms.ToArray();
+                }
+            }
+            throw new IOException("File not found.");
         }
 
         public string[] GetFiles()
         {
-            return _terminalManager.GetCommandList().Select(x => x.Name).ToArray();
+            List<string> names = new List<string>();
+            var cmds = _terminalManager.GetCommandList().Select(x => x.Name).ToArray();
+            names.AddRange(cmds);
+            foreach(var cat in _al.GetAllCategories())
+            {
+                foreach(var item in _al.GetAllInCategory(cat))
+                {
+                    names.Add(item.WindowType.Name.ToLower());
+                }
+            }
+            return names.ToArray();
         }
     }
 }
