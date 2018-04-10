@@ -319,6 +319,10 @@ namespace Peacenet
             //Mount the system drive.
             fstab.Add("/", 0);
 
+            //Create any client-side mountpoints as directories on the VFS
+            foreach (var cfs in _clientMounts)
+                if (!DirectoryExists(cfs.Path))
+                    CreateDirectory(cfs.Path);
 
         }
 
