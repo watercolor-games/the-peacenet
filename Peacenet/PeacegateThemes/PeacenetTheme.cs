@@ -29,7 +29,7 @@ namespace Peacenet.PeacegateThemes
         {
             get
             {
-                return 34;
+                return 17;
             }
         }
 
@@ -123,7 +123,7 @@ namespace Peacenet.PeacegateThemes
         {
             get
             {
-                return 2;
+                return 1;
             }
         }
 
@@ -132,7 +132,7 @@ namespace Peacenet.PeacegateThemes
         {
             get
             {
-                return 48;
+                return 24;
             }
         }
 
@@ -312,8 +312,8 @@ namespace Peacenet.PeacegateThemes
         /// <inheritdoc/>
         public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
         {
-            const int _buttonWidth = 32;
-            const int _spacing = 4;
+            const int _buttonWidth = 16;
+            const int _spacing = 2;
 
             int _closeX = (windowWidth - _spacing) - _buttonWidth;
             int _maximizeX = (_closeX - _spacing) - _buttonWidth;
@@ -469,8 +469,8 @@ namespace Peacenet.PeacegateThemes
             if (title.Visible)
             {
                 //The background.
-                graphics.DrawRectangle(title.X, title.Y, leftlime.Width*2, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
-                graphics.DrawRectangle(title.X + (leftlime.Width*2), title.Y, title.Width - (leftlime.Width*2), title.Height, bar);
+                graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
+                graphics.DrawRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
                 //Now the text.
                 var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, Plex.Engine.TextRenderers.WrapMode.None);
                 int _textX = 50;
