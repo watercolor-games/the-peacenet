@@ -100,6 +100,7 @@
     <Compile Include="Email\EmailClient.cs" />
     <Compile Include="Filesystem\ClientMount.cs" />
     <Compile Include="Filesystem\ClientMounts\BinDirectory.cs" />
+    <Compile Include="Filesystem\ClientMounts\MenuDirectory.cs" />
     <Compile Include="Filesystem\FileUtilities.cs" />
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\IFileHandler.cs" />
