@@ -22,6 +22,8 @@ namespace Peacenet.PeacegateThemes.PanelThemes
 
         public override string Name => "Default";
 
+        public override Color StatusTextHoverColor => _theme.Theme.GetAccentColor();
+
         public override string Description => "Desktop panels are rendered using the system's window/UI theme.";
 
         public override Rectangle AppLauncherRectangle

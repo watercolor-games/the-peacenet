@@ -71,7 +71,7 @@ namespace Peacenet
         private Hitbox _topPanel = new Hitbox();
         private Hitbox _bottomPanel = new Hitbox();
         private Hitbox _applauncherHitbox = new Hitbox();
-
+        private Hitbox _hbTime = new Hitbox();
 
         #endregion
 
@@ -374,6 +374,7 @@ namespace Peacenet
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
             AddChild(_applauncherHitbox);
+            AddChild(_hbTime);
 
             _iconEmail = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/Email");
             _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
@@ -412,6 +413,12 @@ namespace Peacenet
                 email.Show();
             };
 
+
+            _hbTime.Click += (o, a) =>
+            {
+                var clock = new Applications.Clock(WindowSystem);
+                clock.Show();
+            };
 
             _applauncherHitbox.Click += (o, a) =>
             {
@@ -664,6 +671,13 @@ namespace Peacenet
             _windowList.Y = _bottomPanel.Y + ((_bottomPanel.Height - (int)_pn.PanelTheme.PanelButtonSize.Y) / 2);
             _windowList.Width = (_bottomPanel.Width - _windowList.X) - 5;
 
+            var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
+
+            _hbTime.Y = _topPanel.Y;
+            _hbTime.X = _topPanel.Width - ((int)measure.X + 10);
+            _hbTime.Width = (int)measure.X + 10;
+            _hbTime.Height = _topPanel.Height;
+
             base.OnUpdate(time);
         }
 
@@ -695,7 +709,8 @@ namespace Peacenet
                 string rtime = DateTime.Now.ToShortTimeString();
                 var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
-                gfx.DrawString(rtime, new Vector2(_topPanel.Width - (measure.X + 5), _topPanel.Y + ((_topPanel.Height - measure.Y) / 2)), _pn.PanelTheme.StatusTextColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+                gfx.DrawString(rtime, new Vector2(_topPanel.Width - (measure.X + 5), _topPanel.Y + ((_topPanel.Height - measure.Y) / 2)), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 
+                    _pn.PanelTheme.StatusTextColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
             }
         }
 

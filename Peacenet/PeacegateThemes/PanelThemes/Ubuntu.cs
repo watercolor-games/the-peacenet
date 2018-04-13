@@ -33,6 +33,8 @@ namespace Peacenet.PeacegateThemes.PanelThemes
 
         public override Color StatusTextColor => Color.White;
 
+        public override Color StatusTextHoverColor => StatusTextColor.Darken(0.15F);
+            
         public override Vector2 PanelButtonSize => new Vector2(239, 24);
 
         public override void DrawAppLauncher(GraphicsContext gfx, Rectangle rect, UIButtonState state)

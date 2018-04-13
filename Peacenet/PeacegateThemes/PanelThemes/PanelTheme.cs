@@ -27,7 +27,8 @@ namespace Peacenet.PeacegateThemes.PanelThemes
 
         public abstract SpriteFont StatusTextFont { get; }
         public abstract Color StatusTextColor { get; }
-        
+        public abstract Color StatusTextHoverColor { get; }
+
         public abstract Vector2 PanelButtonSize { get; }
 
         public abstract void DrawAppLauncher(GraphicsContext gfx, Rectangle rect, UIButtonState state);
