@@ -48,15 +48,26 @@ namespace Peacenet.TerminalCommands
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
+            console.SetBold(true);
             console.WriteLine("Command help");
             console.WriteLine("------------------");
             console.WriteLine("");
+            console.SetBold(false);
             foreach(var command in _terminal.GetCommandList().OrderBy(x=>x.Name))
             {
-                console.Write($" - {command.Name}");
+                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                console.Write(" - ");
+                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Yellow);
+                console.SetBold(true);
+                console.Write(command.Name);
+                console.SetBold(false);
                 if(!string.IsNullOrWhiteSpace(command.Description))
                 {
-                    console.WriteLine(": " + command.Description);
+                    console.Write(": ");
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                    console.SetItalic(true);
+                    console.WriteLine(command.Description);
+                    console.SetItalic(false);
                 }
                 else
                 {

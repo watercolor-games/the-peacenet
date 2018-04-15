@@ -327,11 +327,27 @@ namespace Peacenet.Applications
                 try
                 {
                     if (_Api.LoggedIn)
+                    {
                         user = _Api.User.username;
+                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Orange);
+                    }
                     else
+                    {
                         user = "user";
+                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+                    }
+                    console.Write(user);
                     console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                    console.Write($"{user}@{_os.Hostname}:{console.WorkingDirectory.Replace("/home", "~")}$ ");
+                    console.Write("@");
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+                    console.Write(_os.Hostname);
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                    console.Write(":");
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+                    console.Write(console.WorkingDirectory.Replace("/home", "~"));
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                    console.Write("$ ");
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
                     string cmdstr = console.ReadLine();
                     if (string.IsNullOrWhiteSpace(cmdstr))
                         continue;
@@ -378,6 +394,8 @@ namespace Peacenet.Applications
         private int _charY = 0;
         private int _charWidth = 0;
         private int _charHeight = 0;
+        private Color _background = Color.Black;
+        private Color _foreground = Color.White;
 
         private double _cursorAnim = 0;
         private bool _cursorOn = true;
@@ -507,12 +525,49 @@ namespace Peacenet.Applications
             base.OnKeyEvent(e);
         }
 
+        private Color GetColor(Plex.Objects.ConsoleColor color)
+        {
+            switch(color)
+            {
+                case Plex.Objects.ConsoleColor.Black:
+                    return Color.Black;
+                case Plex.Objects.ConsoleColor.Blue:
+                    return Color.Blue;
+                case Plex.Objects.ConsoleColor.Gray:
+                    return Color.Gray;
+                case Plex.Objects.ConsoleColor.Green:
+                    return Color.Green;
+                case Plex.Objects.ConsoleColor.Orange:
+                    return Color.Orange;
+                case Plex.Objects.ConsoleColor.Pink:
+                    return Color.Pink;
+                case Plex.Objects.ConsoleColor.Purple:
+                    return Color.Purple;
+                case Plex.Objects.ConsoleColor.Red:
+                    return Color.Red;
+                case Plex.Objects.ConsoleColor.White:
+                    return Color.White;
+                case Plex.Objects.ConsoleColor.Yellow:
+                    return Color.Yellow;
+            }
+            return Color.Black;
+        }
+
         private void parseEscape(string seq, GraphicsContext gfx)
         {
+            int test = -1;
+            if(seq.Length == 2 && int.TryParse(seq, out test))
+            {
+                int bg = Convert.ToInt32(seq[0].ToString());
+                int fg = Convert.ToInt32(seq[1].ToString());
+                this._background = GetColor((Plex.Objects.ConsoleColor)bg);
+                this._foreground = GetColor((Plex.Objects.ConsoleColor)fg);
+
+            }
             switch (seq)
             {
                 case "c":
-                    gfx.Clear(Color.Black);
+                    gfx.Clear(_background);
                     _charX = 0;
                     _charY = 0;
                     break;
@@ -524,6 +579,8 @@ namespace Peacenet.Applications
         {
             _font.DefaultCharacter = '?';
             gfx.Clear(Color.Black);
+            _background = Color.Black;
+            _foreground = Color.White;
             _charX = 0;
             _charY = 0;
             bool escaped = false;
@@ -569,38 +626,19 @@ namespace Peacenet.Applications
                         }
 
 
-                        gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.Black);
+                        gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _background);
 
                         continue;
                     case '\n':
+                        gfx.DrawRectangle(new Vector2((_charX+1) * _charWidth, _charY * _charHeight), new Vector2(Width - ((_charX+1)*_charWidth), _charHeight), _background);
                         _charX = 0;
                         _charY += 1;
                         break;
                     case (char)0x02:
-                        gfx.Batch.DrawString(_font, "^", new Vector2(((_charX * _charWidth) + gfx.X) + gfx.RenderOffsetX, ((_charY * _charHeight) + gfx.Y) + gfx.RenderOffsetY), Color.White);
-                        if ((_charX + 1) * _charWidth >= Width)
-                        {
-                            _charX = 0;
-                            _charY++;
-                        }
-                        else
-                        {
-                            _charX++;
-                        }
-                        gfx.Batch.DrawString(_font, "C", new Vector2(((_charX * _charWidth) + gfx.X) + gfx.RenderOffsetX, ((_charY * _charHeight) + gfx.Y) + gfx.RenderOffsetY), Color.White);
-                        if ((_charX + 1) * _charWidth >= Width)
-                        {
-                            _charX = 0;
-                            _charY++;
-                        }
-                        else
-                        {
-                            _charX++;
-                        }
-
-                        break;
+                        continue;
                     default:
-                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * _charWidth)+gfx.X)+gfx.RenderOffsetX, ((_charY * _charHeight)+gfx.Y)+gfx.RenderOffsetY), Color.White);
+                        gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight), new Vector2(_charWidth, _charHeight), _background);
+                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * _charWidth)+gfx.X)+gfx.RenderOffsetX, ((_charY * _charHeight)+gfx.Y)+gfx.RenderOffsetY), _foreground);
                         if ((_charX + 1) * _charWidth >= Width)
                         {
                             _charX = 0;
@@ -614,7 +652,7 @@ namespace Peacenet.Applications
                 }
             }
            if(IsFocused && _cursorOn)
-                gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, Color.White);
+                gfx.DrawRectangle(_charX * _charWidth, _charY * _charHeight, _charWidth, _charHeight, _foreground);
         }
 
         /// <inheritdoc/>
