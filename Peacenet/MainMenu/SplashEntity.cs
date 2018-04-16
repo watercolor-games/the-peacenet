@@ -1105,7 +1105,7 @@ namespace Peacenet.MainMenu
             _singlePlayerDesc.MaxWidth = _uimanager.ScreenWidth / 2;
             _singlePlayerDesc.X = (_uimanager.ScreenWidth - _singlePlayerDesc.Width) / 2;
             _singlePlayerDesc.Alignment = TextAlignment.Center;
-            int spUICenter = (_uimanager.ScreenHeight - _singlePlayerDesc.Height) / 2;
+            float spUICenter = (_uimanager.ScreenHeight - _singlePlayerDesc.Height) / 2;
             _singlePlayerDesc.Y = (int)MathHelper.Lerp(spUICenter - 25, spUICenter + 25, _spUIPosition);
             _singlePlayerDesc.Opacity = _spUIFade;
 
@@ -1113,7 +1113,7 @@ namespace Peacenet.MainMenu
             _singlePlayerHead.Y = (_singlePlayerDesc.Y - _singlePlayerHead.Height) - 5;
             _singlePlayerHead.Opacity = _spUIFade;
 
-            int spButtonWidth = _newGame.Width + _continue.Width + 3;
+            float spButtonWidth = _newGame.Width + _continue.Width + 3;
             _newGame.X = (_uimanager.ScreenWidth - spButtonWidth) / 2;
             _continue.X = _newGame.X + _newGame.Width + 3;
             _newGame.Y = _singlePlayerDesc.Y + _singlePlayerDesc.Height + 10;
@@ -1132,7 +1132,7 @@ namespace Peacenet.MainMenu
             _serverList.X = 0;
             _serverList.Y = 0;
             _mpServerScroller.X = (_uimanager.ScreenWidth - _mpServerScroller.Width) / 2;
-            int mpCenter = (_uimanager.ScreenHeight - _mpServerScroller.Height) / 2;
+            float mpCenter = (_uimanager.ScreenHeight - _mpServerScroller.Height) / 2;
             _mpServerScroller.Y = (int)MathHelper.Lerp(mpCenter + 200, mpCenter - 200, _mpUIPosition);
             _mpServerScroller.Opacity = _mpUIFade;
             _addServer.X = _mpServerScroller.X;
@@ -1215,11 +1215,11 @@ namespace Peacenet.MainMenu
             _realname.X = (_uimanager.ScreenWidth - _realname.Width) / 2;
 
             //misnomer
-            int threeQuartersOfHeight = (int)hbCenterY + _hbMultiplayer.Height + 30;
-            int usernameYCenter = threeQuartersOfHeight + _username.Height + 5;
+            float threeQuartersOfHeight = (int)hbCenterY + _hbMultiplayer.Height + 30;
+            float usernameYCenter = threeQuartersOfHeight + _username.Height + 5;
 
-            _username.Y = (int)MathHelper.Lerp(threeQuartersOfHeight + (_username.Height / 2), threeQuartersOfHeight - (_username.Height / 2), _signinPosition);
-            _realname.Y = (int)MathHelper.Lerp(usernameYCenter + (_realname.Height / 2), usernameYCenter - (_realname.Height / 2), _usernamePosition);
+            _username.Y = MathHelper.Lerp(threeQuartersOfHeight + (_username.Height / 2), threeQuartersOfHeight - (_username.Height / 2), _signinPosition);
+            _realname.Y = MathHelper.Lerp(usernameYCenter + (_realname.Height / 2), usernameYCenter - (_realname.Height / 2), _usernamePosition);
 
             _username.Opacity = _signinFade;
             _realname.Opacity = _usernameFade;

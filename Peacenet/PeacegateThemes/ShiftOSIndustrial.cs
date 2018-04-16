@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
-using Plex.Engine.TextRenderers;
+
 using Plex.Engine.Themes;
 using System;
 using System.Collections.Generic;
@@ -133,25 +133,25 @@ namespace Peacenet.PeacegateThemes
 
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
-            graphics.DrawRectangle(title.X, title.Y, _titlebarleft.Width, title.Height, _titlebarleft);
-            graphics.DrawRectangle(title.X + (title.Width - _titlebarright.Width), title.Y, _titlebarright.Width, title.Height, _titlebarright);
-            graphics.DrawRectangle(title.X + _titlebarleft.Width, title.Y, (title.Width - _titlebarleft.Width) - _titlebarright.Width, title.Height, _titlebar);
+            graphics.DrawRectangle(title.RenderBounds.X, title.RenderBounds.Y, _titlebarleft.Width, title.RenderBounds.Height, _titlebarleft);
+            graphics.DrawRectangle(title.RenderBounds.X + (title.RenderBounds.Width - _titlebarright.Width), title.RenderBounds.Y, _titlebarright.Width, title.RenderBounds.Height, _titlebarright);
+            graphics.DrawRectangle(title.RenderBounds.X + _titlebarleft.Width, title.RenderBounds.Y, (title.RenderBounds.Width - _titlebarleft.Width) - _titlebarright.Width, title.RenderBounds.Height, _titlebar);
 
-            graphics.DrawRectangle(leftBorder.X, leftBorder.Y, 5, leftBorder.Height, _borderleft);
-            graphics.DrawRectangle(rightBorder.X, rightBorder.Y, 5, rightBorder.Height, _borderright);
-            graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, 5, _borderbottom);
+            graphics.DrawRectangle(leftBorder.RenderBounds.X, leftBorder.RenderBounds.Y, 5, leftBorder.RenderBounds.Height, _borderleft);
+            graphics.DrawRectangle(rightBorder.RenderBounds.X, rightBorder.RenderBounds.Y, 5, rightBorder.RenderBounds.Height, _borderright);
+            graphics.DrawRectangle(bottomBorder.RenderBounds.X, bottomBorder.RenderBounds.Y, bottomBorder.RenderBounds.Width, 5, _borderbottom);
 
-            graphics.DrawRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, _cornerleft);
-            graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, _cornerright);
+            graphics.DrawRectangle(leftCorner.RenderBounds.X, leftCorner.RenderBounds.Y, leftCorner.RenderBounds.Width, leftCorner.RenderBounds.Height, _cornerleft);
+            graphics.DrawRectangle(rightCorner.RenderBounds.X, rightCorner.RenderBounds.Y, rightCorner.RenderBounds.Width, rightCorner.RenderBounds.Height, _cornerright);
 
             graphics.DrawString(titletext, new Vector2(26, 3), Color.White, GetFont(TextFontStyle.Highlight), TextAlignment.Left);
 
             if(close.Visible)
-                graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, _close);
+                graphics.DrawRectangle(close.RenderBounds.X, close.RenderBounds.Y, close.RenderBounds.Width, close.RenderBounds.Height, _close);
             if(minimize.Visible)
-                graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize);
+                graphics.DrawRectangle(maximize.RenderBounds.X, maximize.RenderBounds.Y, maximize.RenderBounds.Width, maximize.RenderBounds.Height, _maximize);
             if(maximize.Visible)
-                graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize);
+                graphics.DrawRectangle(minimize.RenderBounds.X, minimize.RenderBounds.Y, minimize.RenderBounds.Width, minimize.RenderBounds.Height, _minimize);
 
 
         }
@@ -166,16 +166,16 @@ namespace Peacenet.PeacegateThemes
             return Color.Black;
         }
 
-        public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
+        public override Rectangle GetTitleButtonRectangle(TitleButton button, float windowWidth, float windowHeight)
         {
             switch(button)
             {
                 case TitleButton.Close:
-                    return new Rectangle(windowWidth - 21, 3, 17, 17);
+                    return new Rectangle((int)windowWidth - 21, 3, 17, 17);
                 case TitleButton.Maximize:
-                    return new Rectangle(windowWidth - 40, 3, 17, 17);
+                    return new Rectangle((int)windowWidth - 40, 3, 17, 17);
                 case TitleButton.Minimize:
-                    return new Rectangle(windowWidth - 59, 3, 17, 17);
+                    return new Rectangle((int)windowWidth - 59, 3, 17, 17);
             }
             return Rectangle.Empty;
         }

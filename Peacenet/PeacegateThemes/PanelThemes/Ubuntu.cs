@@ -10,7 +10,6 @@ using Plex.Engine.Themes;
 using Plex.Engine;
 using Plex.Engine.Interfaces;
 using Microsoft.Xna.Framework.Content;
-using Plex.Engine.TextRenderers;
 
 namespace Peacenet.PeacegateThemes.PanelThemes
 {

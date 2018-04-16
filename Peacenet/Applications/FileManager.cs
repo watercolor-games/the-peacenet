@@ -491,8 +491,8 @@ namespace Peacenet.Applications
                 _open.Text = (_isSaving) ? "Save" : "Open";
                 _openField.Label = "File name or file path";
 
-                int _larger = Math.Max(_open.Height, _openField.Height);
-                int _starty = (Height - _larger) - 6;
+                float _larger = Math.Max(_open.Height, _openField.Height);
+                float _starty = (Height - _larger) - 6;
                 _open.Y = _starty + ((_larger - _open.Height) / 2)+3;
                 _openField.Y = _starty + ((_larger - _openField.Height) / 2)+3;
 

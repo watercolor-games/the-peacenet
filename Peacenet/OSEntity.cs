@@ -134,22 +134,22 @@ namespace Peacenet
         }
 
         /// <inheritdoc/>
-        public void Draw(GameTime time, GraphicsContext ctx)
+        public void Draw(GameTime time, GraphicsContext gfx)
         {
-            int peacegateX = (_ui.ScreenWidth - _peacegate.Width) / 2;
-            int peacegateYMax = (_ui.ScreenHeight - _peacegate.Height) / 2;
-            int peacegateYMin = peacegateYMax + (int)(_ui.ScreenHeight * 0.15);
+            int peacegateX = (gfx.Width - _peacegate.Width) / 2;
+            int peacegateYMax = (gfx.Height - _peacegate.Height) / 2;
+            int peacegateYMin = peacegateYMax + (int)(gfx.Height * 0.15);
             int peacegateY = (int)MathHelper.Lerp(peacegateYMin, peacegateYMax, _peacegateIconOpacity);
-            ctx.BeginDraw();
-            ctx.DrawRectangle(peacegateX, peacegateY, _peacegate.Width, _peacegate.Height, _peacegate, Color.White * _peacegateIconOpacity);
+            gfx.BeginDraw();
+            gfx.DrawRectangle(peacegateX, peacegateY, _peacegate.Width, _peacegate.Height, _peacegate, Color.White * _peacegateIconOpacity);
 
             int _textY = peacegateY + _peacegate.Height + 25;
             string text = "Welcome to Peacegate.";
-            var measure = TextRenderer.MeasureText(text, _bootFont, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
-            int _textX = ((_ui.ScreenWidth - (int)measure.X) / 2);
-            ctx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.Left, int.MaxValue, Plex.Engine.TextRenderers.WrapMode.None);
+            var measure = gfx.TextRenderer.MeasureText(text, _bootFont, int.MaxValue, WrapMode.None);
+            int _textX = ((gfx.Width - (int)measure.X) / 2);
+            gfx.DrawString(text, _textX, _textY, Color.White * _peacegateIconOpacity, _bootFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
 
-            ctx.EndDraw();
+            gfx.EndDraw();
         }
 
         private bool _allowControlT = true;
@@ -513,8 +513,8 @@ Press ENTER to dismiss.";
 
             int screenRealEstate = (gfx.Width / 2);
 
-            var textMeasure = TextRenderer.MeasureText(_text, textFont, screenRealEstate, Plex.Engine.TextRenderers.WrapMode.Words);
-            var descMeasure = TextRenderer.MeasureText(_desc, descFont, screenRealEstate, Plex.Engine.TextRenderers.WrapMode.Words);
+            var textMeasure = gfx.TextRenderer.MeasureText(_text, textFont, screenRealEstate, WrapMode.Words);
+            var descMeasure = gfx.TextRenderer.MeasureText(_desc, descFont, screenRealEstate, WrapMode.Words);
 
             int totalHeight = warnHeight + 30 + (int)textMeasure.Y + 10 + (int)descMeasure.Y;
 
@@ -522,17 +522,17 @@ Press ENTER to dismiss.";
 
             int initialY = (gfx.Height - totalHeight) / 2;
 
-            gfx.DrawString(_text, (gfx.Width - screenRealEstate) / 2, initialY + warnHeight + 30, textColor * _textOpacity, textFont, TextAlignment.Center, screenRealEstate, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(_text, (gfx.Width - screenRealEstate) / 2, initialY + warnHeight + 30, textColor * _textOpacity, textFont, TextAlignment.Center, screenRealEstate, WrapMode.Words);
 
-            gfx.DrawString(_desc, (gfx.Width - screenRealEstate) / 2, initialY + warnHeight + 30 + (int)textMeasure.Y + 10, descColor * _descOpacity, descFont, TextAlignment.Center, screenRealEstate, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(_desc, (gfx.Width - screenRealEstate) / 2, initialY + warnHeight + 30 + (int)textMeasure.Y + 10, descColor * _descOpacity, descFont, TextAlignment.Center, screenRealEstate, WrapMode.Words);
 
             gfx.Clear((Color.Black * 0.95F) * _tutorialShroudOpacity);
 
-            var tutTextMeasure = TextRenderer.MeasureText(_tutorialHead, textFont, (gfx.Width - 30), Plex.Engine.TextRenderers.WrapMode.Words);
-            var tutBodyMeasure = TextRenderer.MeasureText(_tutorialBody, descFont, (gfx.Width - 30), Plex.Engine.TextRenderers.WrapMode.Words);
+            var tutTextMeasure = gfx.TextRenderer.MeasureText(_tutorialHead, textFont, (gfx.Width - 30), WrapMode.Words);
+            var tutBodyMeasure = gfx.TextRenderer.MeasureText(_tutorialBody, descFont, (gfx.Width - 30), WrapMode.Words);
 
-            gfx.DrawString(_tutorialHead, 15, 15, textColor * _tutorialTextOpacity, textFont, TextAlignment.Left, (gfx.Width - 30), Plex.Engine.TextRenderers.WrapMode.Words);
-            gfx.DrawString(_tutorialBody, 15, 15 + (int)tutTextMeasure.Y + 10, descColor * _tutorialTextOpacity, descFont, TextAlignment.Left, (gfx.Width - 30), Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(_tutorialHead, 15, 15, textColor * _tutorialTextOpacity, textFont, TextAlignment.Left, (gfx.Width - 30), WrapMode.Words);
+            gfx.DrawString(_tutorialBody, 15, 15 + (int)tutTextMeasure.Y + 10, descColor * _tutorialTextOpacity, descFont, TextAlignment.Left, (gfx.Width - 30), WrapMode.Words);
 
 
             gfx.EndDraw();
@@ -686,7 +686,7 @@ Any unsaved work has been lost. We apologize for that. However, we will reboot y
             gfx.DrawRectangle(0, 0, gfx.Width, (int)MathHelper.Lerp(1, gfx.Height, _bgWipeAnim), bg);
             if(_isTextShowing)
             {
-                gfx.DrawString(_peacegateError, 0, 0, Color.White, _theme.Theme.GetFont(TextFontStyle.Mono), TextAlignment.Left, gfx.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+                gfx.DrawString(_peacegateError, 0, 0, Color.White, _theme.Theme.GetFont(TextFontStyle.Mono), TextAlignment.Left, gfx.Width, WrapMode.Words);
             }
 
             gfx.EndDraw();

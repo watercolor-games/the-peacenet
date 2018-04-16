@@ -237,7 +237,7 @@ namespace Peacenet.Applications
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+            Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
         }
 
         protected override void OnUpdate(GameTime time)
@@ -349,29 +349,29 @@ namespace Peacenet.Applications
             var highlight = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Highlight);
             var body = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
 
-            var headMeasure = TextRenderer.MeasureText(_subject, header, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            var fromMeasure = TextRenderer.MeasureText(_from, highlight, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            var bodyMeasure = TextRenderer.MeasureText(_message, body, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
+            var headMeasure = TextRenderer.MeasureText(_subject, header, Width - 30, WrapMode.Words);
+            var fromMeasure = TextRenderer.MeasureText(_from, highlight, Width - 30, WrapMode.Words);
+            var bodyMeasure = TextRenderer.MeasureText(_message, body, Width - 30, WrapMode.Words);
 
             Height = 15 + (int)headMeasure.Y + 5 + (int)fromMeasure.Y + 10 + (int)bodyMeasure.Y + 30;
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
-            Theme.DrawControlBG(gfx, 0, 0, Width, Height - 15);
+            Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
+            Theme.DrawControlBG(gfx, 0, 0, gfx.Width, gfx.Height - 15);
 
             var header = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Header3);
             var highlight = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Highlight);
             var body = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
 
-            var headMeasure = TextRenderer.MeasureText(_subject, header, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            var fromMeasure = TextRenderer.MeasureText(_from, highlight, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            var bodyMeasure = TextRenderer.MeasureText(_message, body, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
+            var headMeasure = TextRenderer.MeasureText(_subject, header, Width - 30, WrapMode.Words);
+            var fromMeasure = TextRenderer.MeasureText(_from, highlight, Width - 30, WrapMode.Words);
+            var bodyMeasure = TextRenderer.MeasureText(_message, body, Width - 30, WrapMode.Words);
 
-            gfx.DrawString(_subject, 15, 15, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.Header3), header, TextAlignment.Left, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            gfx.DrawString(_from, 15, 15 + (int)headMeasure.Y + 5, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.Highlight), highlight, TextAlignment.Left, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
-            gfx.DrawString(_message, 15, 15 + (int)headMeasure.Y + 5 + (int)fromMeasure.Y + 10, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), body, TextAlignment.Left, Width - 30, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(_subject, 15, 15, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.Header3), header, TextAlignment.Left, gfx.Width - 30, WrapMode.Words);
+            gfx.DrawString(_from, 15, 15 + (int)headMeasure.Y + 5, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.Highlight), highlight, TextAlignment.Left, gfx.Width - 30, WrapMode.Words);
+            gfx.DrawString(_message, 15, 15 + (int)headMeasure.Y + 5 + (int)fromMeasure.Y + 10, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), body, TextAlignment.Left, gfx.Width - 30, WrapMode.Words);
 
         }
     }

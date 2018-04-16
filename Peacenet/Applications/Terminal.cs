@@ -33,7 +33,7 @@ namespace Peacenet.Applications
         [Dependency]
         private Plexgate _plexgate = null;
 
-        private int _scrollOffset = 0;
+        private float _scrollOffset = 0;
 
         protected override bool CanBeScrolled
         {
@@ -87,7 +87,7 @@ namespace Peacenet.Applications
         }
 
         /// <inheritdoc/>
-        public override void Show(int x = -1, int y = -1)
+        public override void Show(float x = -1, float y = -1)
         {
             if(_shellJob == null)
             {
@@ -113,8 +113,8 @@ namespace Peacenet.Applications
             base.Close();
         }
 
-        private int _lastEmulatorY = -1;
-        private int _lastEmulatorHeight = 0;
+        private float _lastEmulatorY = -1;
+        private float _lastEmulatorHeight = 0;
 
 
         /// <inheritdoc/>
@@ -132,7 +132,7 @@ namespace Peacenet.Applications
 
             if (_emulator.Height > Height)
             {
-                int diff_y = (_emulator.Height - Height) - _scrollOffset;
+                float diff_y = (_emulator.Height - Height) - _scrollOffset;
                 _scrollbar.ScrollOffset = diff_y;
                 _emulator.Y = 0 - diff_y;
             }
@@ -622,7 +622,7 @@ namespace Peacenet.Applications
                         else
                         {
                             _charY--;
-                            _charX = (Width / _charWidth) - 1;
+                            _charX = (RenderBounds.Width / _charWidth) - 1;
                         }
 
 

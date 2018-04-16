@@ -39,10 +39,10 @@ namespace Peacenet.PeacegateThemes
 
             var accent = GetAccentColor();
 
-            gfx.DrawRectangle(upArrow.X, upArrow.Y, upArrow.Width, upArrow.Height, _bgLight);
-            gfx.DrawRectangle(downArrow.X, downArrow.Y, downArrow.Width, downArrow.Height, _bgLight);
+            gfx.DrawRectangle(upArrow.RenderBounds.X, upArrow.RenderBounds.Y, upArrow.RenderBounds.Width, upArrow.RenderBounds.Height, _bgLight);
+            gfx.DrawRectangle(downArrow.RenderBounds.X, downArrow.RenderBounds.Y, downArrow.RenderBounds.Width, downArrow.RenderBounds.Height, _bgLight);
 
-            gfx.DrawRectangle(scrollNub.X, scrollNub.Y, scrollNub.Width, scrollNub.Height, accent);
+            gfx.DrawRectangle(scrollNub.RenderBounds.X, scrollNub.RenderBounds.Y, scrollNub.RenderBounds.Width, scrollNub.RenderBounds.Height, accent);
 
         }
 
@@ -123,7 +123,7 @@ namespace Peacenet.PeacegateThemes
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
 
@@ -132,7 +132,7 @@ namespace Peacenet.PeacegateThemes
         {
             get
             {
-                return 24;
+                return 48;
             }
         }
 
@@ -228,7 +228,7 @@ namespace Peacenet.PeacegateThemes
             {
                 gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
-            gfx.DrawString(text, textRect.X, textRect.Y, fg, _highlight, TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(text, textRect.X, textRect.Y, fg, _highlight, TextAlignment.Left, textRect.Width, WrapMode.Words);
         }
 
 
@@ -246,43 +246,43 @@ namespace Peacenet.PeacegateThemes
         }
 
         /// <inheritdoc/>
-        public override void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height)
+        public override void DrawControlBG(GraphicsContext gfx, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, _bgRegular);
+            gfx.DrawRectangle(x, y, width, height, _bgRegular);
         }
 
         /// <inheritdoc/>
-        public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
+        public override void DrawControlDarkBG(GraphicsContext gfx, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, _bgDark);
+            gfx.DrawRectangle(x, y, width, height, _bgDark);
         }
 
         /// <inheritdoc/>
-        public override void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height)
+        public override void DrawControlLightBG(GraphicsContext gfx, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, _bgLight);
+            gfx.DrawRectangle(x, y, width, height, _bgLight);
         }
 
         /// <inheritdoc/>
-        public override void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public override void DrawStatedString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style, UIButtonState state)
+        public override void DrawDisabledString(GraphicsContext gfx, string text, int x, int y, int width, int height, TextFontStyle style)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public override void DrawString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style)
+        public override void DrawStatedString(GraphicsContext gfx, string text, int x, int y, int width, int height, TextFontStyle style, UIButtonState state)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)
+        public override void DrawString(GraphicsContext gfx, string text, int x, int y, int width, int height, TextFontStyle style)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public override void DrawTextCaret(GraphicsContext gfx, int x, int y, int width, int height)
         {
             throw new NotImplementedException();
         }
@@ -310,26 +310,26 @@ namespace Peacenet.PeacegateThemes
         }
 
         /// <inheritdoc/>
-        public override Rectangle GetTitleButtonRectangle(TitleButton button, int windowWidth, int windowHeight)
+        public override Rectangle GetTitleButtonRectangle(TitleButton button, float windowWidth, float windowHeight)
         {
-            const int _buttonWidth = 16;
-            const int _spacing = 2;
+            const int _buttonWidth = 32;
+            const int _spacing = 4;
 
-            int _closeX = (windowWidth - _spacing) - _buttonWidth;
-            int _maximizeX = (_closeX - _spacing) - _buttonWidth;
-            int _minimizeX = (_maximizeX - _spacing) - _buttonWidth;
+            float _closeX = (windowWidth - _spacing) - _buttonWidth;
+            float _maximizeX = (_closeX - _spacing) - _buttonWidth;
+            float _minimizeX = (_maximizeX - _spacing) - _buttonWidth;
 
             int _buttonY = (WindowTitleHeight - _buttonWidth) / 2;
 
             switch(button)
             {
                 case TitleButton.Close:
-                    return new Rectangle(_closeX, _buttonY, _buttonWidth, _buttonWidth);
+                    return new Rectangle((int)_closeX, (int)_buttonY, (int)_buttonWidth, (int)_buttonWidth);
                 case TitleButton.Minimize:
-                    return new Rectangle(_minimizeX, _buttonY, _buttonWidth, _buttonWidth);
+                    return new Rectangle((int)_minimizeX, _buttonY, _buttonWidth, _buttonWidth);
 
                 case TitleButton.Maximize:
-                    return new Rectangle(_maximizeX, _buttonY, _buttonWidth, _buttonWidth);
+                    return new Rectangle((int)_maximizeX, _buttonY, _buttonWidth, _buttonWidth);
             }
             return Rectangle.Empty;
         }
@@ -460,7 +460,7 @@ namespace Peacenet.PeacegateThemes
         private Color _accentInactive;
 
         /// <inheritdoc/>
-        public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
+        public override void DrawWindowBorder(GraphicsContext gfx, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
             var accent = GetAccentColor();
             if (isFocused == false)
@@ -469,48 +469,48 @@ namespace Peacenet.PeacegateThemes
             if (title.Visible)
             {
                 //The background.
-                graphics.DrawRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
-                graphics.DrawRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
+                gfx.DrawRectangle(gfx.X - title.RenderBounds.X, gfx.Y - title.RenderBounds.Y, leftlime.Width, title.RenderBounds.Height, (isFocused) ? _getLeftAsset() : leftinactive, System.Windows.Forms.ImageLayout.Stretch);
+                gfx.DrawRectangle(gfx.X - title.RenderBounds.X + leftlime.Width, gfx.Y - title.RenderBounds.Y, title.RenderBounds.Width - leftlime.Width, title.RenderBounds.Height, bar);
                 //Now the text.
-                var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, Plex.Engine.TextRenderers.WrapMode.None);
+                var titleTextMeasure = gfx.TextRenderer.MeasureText(titletext, _titleFont, title.RenderBounds.Width, WrapMode.None);
                 int _textX = 50;
-                int _textY = (int)((title.Height - titleTextMeasure.Y) / 2);
+                int _textY = (int)((title.RenderBounds.Height - titleTextMeasure.Y) / 2);
 
-                graphics.DrawString(titletext, _textX, _textY, Color.White, _titleFont, TextAlignment.Left, (int)titleTextMeasure.X, Plex.Engine.TextRenderers.WrapMode.None);
+                gfx.DrawString(titletext, _textX, _textY, Color.White, _titleFont, TextAlignment.Left, (int)titleTextMeasure.X, WrapMode.None);
 
                 if (close.Visible)
                 {
                     if(close.ContainsMouse)
-                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, (isFocused) ? this._getCloseAsset() : _closeinactive); //todo: dynamic accent textures
+                        gfx.DrawRectangle(gfx.X - close.RenderBounds.X, gfx.Y - close.RenderBounds.Y, close.RenderBounds.Width, close.RenderBounds.Height, (isFocused) ? this._getCloseAsset() : _closeinactive); //todo: dynamic accent textures
                     else
-                        graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, this._close);
+                        gfx.DrawRectangle(gfx.X - close.RenderBounds.X, gfx.Y - close.RenderBounds.Y, close.RenderBounds.Width, close.RenderBounds.Height, this._close);
                 }
                 if (minimize.Visible)
                 {
                     if (minimize.ContainsMouse)
-                        graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._minimize, this._bStateTextHover);
+                        gfx.DrawRectangle(gfx.X - minimize.RenderBounds.X, gfx.Y - minimize.RenderBounds.Y, minimize.RenderBounds.Width, minimize.RenderBounds.Height, this._minimize, this._bStateTextHover);
                     else
-                        graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._minimize, this._bStateTextIdle);
+                        gfx.DrawRectangle(gfx.X - minimize.RenderBounds.X, gfx.Y - minimize.RenderBounds.Y, minimize.RenderBounds.Width, minimize.RenderBounds.Height, this._minimize, this._bStateTextIdle);
 
                 }
                 if (maximize.Visible)
                 {
                     if (maximize.ContainsMouse)
-                        graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._maximize, this._bStateTextHover);
+                        gfx.DrawRectangle(gfx.X - maximize.RenderBounds.X, gfx.Y - maximize.RenderBounds.Y, maximize.RenderBounds.Width, maximize.RenderBounds.Height, this._maximize, this._bStateTextHover);
                     else
-                        graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._maximize, this._bStateTextIdle);
+                        gfx.DrawRectangle(gfx.X - maximize.RenderBounds.X, gfx.Y - maximize.RenderBounds.Y, maximize.RenderBounds.Width, maximize.RenderBounds.Height, this._maximize, this._bStateTextIdle);
                 }
             }
 
             //We only need to draw the other borders if ONE of them is visible.
             if (leftBorder.Visible)
             {
-                graphics.DrawRectangle(leftBorder.X, leftBorder.Y, leftBorder.Width, leftBorder.Height, accent);
-                graphics.DrawRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, bar);
-                graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, _getLeftAsset().Width, bottomBorder.Height, (isFocused) ? _getLeftAsset() : leftinactive);
-                graphics.DrawRectangle(bottomBorder.X+_getLeftAsset().Width, bottomBorder.Y, bottomBorder.Width-_getLeftAsset().Width, bottomBorder.Height, bar);
-                graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, bar);
-                graphics.DrawRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, accent);
+                gfx.DrawRectangle(gfx.X - leftBorder.RenderBounds.X, gfx.Y - leftBorder.RenderBounds.Y, leftBorder.RenderBounds.Width, leftBorder.RenderBounds.Height, accent);
+                gfx.DrawRectangle(gfx.X - rightBorder.RenderBounds.X, gfx.Y - rightBorder.RenderBounds.Y, rightBorder.RenderBounds.Width, rightBorder.RenderBounds.Height, bar);
+                gfx.DrawRectangle(gfx.X - bottomBorder.RenderBounds.X, gfx.Y - bottomBorder.RenderBounds.Y, _getLeftAsset().Width, bottomBorder.RenderBounds.Height, (isFocused) ? _getLeftAsset() : leftinactive);
+                gfx.DrawRectangle(gfx.X - bottomBorder.RenderBounds.X +_getLeftAsset().Width, gfx.Y - bottomBorder.RenderBounds.Y, bottomBorder.RenderBounds.Width -_getLeftAsset().Width, bottomBorder.RenderBounds.Height, bar);
+                gfx.DrawRectangle(gfx.X - rightCorner.RenderBounds.X, gfx.Y - rightCorner.RenderBounds.Y, rightCorner.RenderBounds.Width, rightCorner.RenderBounds.Height, bar);
+                gfx.DrawRectangle(gfx.X - leftCorner.RenderBounds.X, gfx.Y - leftCorner.RenderBounds.Y, leftCorner.RenderBounds.Width, leftCorner.RenderBounds.Height, accent);
 
             }
         }

@@ -332,12 +332,12 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
 
             //Align the setup category title.
             _setupMode.X = _setupMode.X;
-            int setupModeYMax = _setupTitle.Y + _setupTitle.Height + 5;
+            float setupModeYMax = _setupTitle.Y + _setupTitle.Height + 5;
             _setupMode.X = _setupTitle.X;
             _setupMode.Y = (int)MathHelper.Lerp(setupModeYMax + (WindowSystem.Height * 0.25f), setupModeYMax, _uiAnim);
             _setupMode.Opacity = _uiAnim;
 
-            int buttonY = (Height - _next.Height) - 15;
+            float buttonY = (Height - _next.Height) - 15;
             _next.Y = (int)MathHelper.Lerp(buttonY + (WindowSystem.Height * 0.25F), buttonY, _uiAnim);
             _back.Y = _next.Y;
             _next.Opacity = _uiAnim;
@@ -414,11 +414,11 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
             if(_loadedWallpaper != null)
             {
                 gfx.Clear(Color.Black);
-                gfx.DrawRectangle(0, 0, Width, Height, _loadedWallpaper, Color.White * (MathHelper.Lerp(1, 0.5F, _uiAnim)));
+                gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, _loadedWallpaper, Color.White * (MathHelper.Lerp(1, 0.5F, _uiAnim)));
             }
             else
             {
-                Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+                Theme.DrawControlBG(gfx, 0, 0, gfx.Width, gfx.Height);
             }
         }
     }

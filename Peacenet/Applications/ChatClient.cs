@@ -126,7 +126,7 @@ namespace Peacenet.Applications
             _messageInput.X = _sidePanel.Width + 10;
             _messageInput.Width = ((Width - _messageInput.X) - _sendMessage.Width) - 15;
 
-            int maxInputHeight = Math.Max(_messageInput.Height, _sendMessage.Height);
+            float maxInputHeight = Math.Max(_messageInput.Height, _sendMessage.Height);
             if(maxInputHeight==_sendMessage.Height)
             {
                 _sendMessage.Y = (Height - _sendMessage.Height) - 10;
@@ -142,7 +142,7 @@ namespace Peacenet.Applications
             _surface.Y = _sideView.Y;
             _surface.Width = Width - _surface.X;
 
-            int bottomHeight = Height - (Math.Min(_sendMessage.Y, _messageInput.Y));
+            float bottomHeight = Height - (Math.Min(_sendMessage.Y, _messageInput.Y));
             _surface.Height = ((Height - _surface.Y) - bottomHeight) - 5;
 
             _contactsHeader.X = 5;
@@ -159,7 +159,7 @@ namespace Peacenet.Applications
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+            Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
         }
 
         public class ChatSurface : Control
@@ -194,7 +194,7 @@ namespace Peacenet.Applications
 
             protected override void OnPaint(GameTime time, GraphicsContext gfx)
             {
-                Theme.DrawControlBG(gfx, 0, 0, Width, Height);
+                Theme.DrawControlBG(gfx, 0, 0, gfx.Width, gfx.Height);
                 if (_messages.Count == 0)
                     return;
                 var font = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
@@ -202,18 +202,18 @@ namespace Peacenet.Applications
 
                 var messageNameSpace = font.MeasureString(messageWithLongestName.Author).X + 30;
 
-                gfx.DrawRectangle((int)messageNameSpace, 0, 1, Height, Theme.GetAccentColor());
+                gfx.DrawRectangle((int)messageNameSpace, 0, 1, gfx.Height, Theme.GetAccentColor());
 
                 var orderedByDate = _messages.OrderByDescending(x => x.Timestamp).ToArray();
 
-                int textY = Height;
+                int textY = RenderBounds.Height;
                 for(int i = _scrollBack; i < orderedByDate.Length; i++)
                 {
                     if (textY <= 0)
                         break;
                     var nameMeasure = font.MeasureString(orderedByDate[i].Author);
-                    var messageMeasure = TextRenderer.MeasureText(orderedByDate[i].Message, font, (Width - (int)messageNameSpace) - 10, Plex.Engine.TextRenderers.WrapMode.Words);
-                    gfx.DrawString(orderedByDate[i].Message, (int)messageNameSpace + 5, textY - (int)messageMeasure.Y, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), font, TextAlignment.Left, (Width - (int)messageNameSpace) - 10, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var messageMeasure = TextRenderer.MeasureText(orderedByDate[i].Message, font, (Width - (int)messageNameSpace) - 10, WrapMode.Words);
+                    gfx.DrawString(orderedByDate[i].Message, (int)messageNameSpace + 5, textY - (int)messageMeasure.Y, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System), font, TextAlignment.Left, (gfx.Width - (int)messageNameSpace) - 10, WrapMode.Words);
                     gfx.Batch.DrawString(font, orderedByDate[i].Author, new Vector2((messageNameSpace - 15) - nameMeasure.X, textY - messageMeasure.Y), Theme.GetAccentColor());
                     textY -= (int)messageMeasure.Y;
                 }

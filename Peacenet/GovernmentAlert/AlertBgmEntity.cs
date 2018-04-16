@@ -38,15 +38,15 @@ namespace Peacenet.GovernmentAlert
             string header = "Government Alert";
             string highlight = "Your system has alerted the Government due to frequent notorious actions.";
 
-            var headerMeasure = TextRenderer.MeasureText(header, headerFont, gfx.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-            var highlightMeasure = TextRenderer.MeasureText(highlight, highlightFont, gfx.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
+            var headerMeasure = gfx.TextRenderer.MeasureText(header, headerFont, gfx.Width / 2, WrapMode.Words);
+            var highlightMeasure = gfx.TextRenderer.MeasureText(highlight, highlightFont, gfx.Width / 2, WrapMode.Words);
 
             float y = (gfx.Height - (headerMeasure.Y + highlightMeasure.Y + 5)) / 2;
 
 
             gfx.BeginDraw();
-            gfx.DrawString(header, (gfx.Width - (gfx.Width / 2)) / 2, (int)y, _theme.Theme.GetFontColor(TextFontStyle.Header1) * _screenShroudOpacity, headerFont, TextAlignment.Center, gfx.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-            gfx.DrawString(highlight, (gfx.Width - (gfx.Width / 2)) / 2, (int)(y+headerMeasure.Y+5), _theme.Theme.GetFontColor(TextFontStyle.Highlight) * _screenShroudOpacity, highlightFont, TextAlignment.Center, gfx.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
+            gfx.DrawString(header, (gfx.Width - (gfx.Width / 2)) / 2, (int)y, _theme.Theme.GetFontColor(TextFontStyle.Header1) * _screenShroudOpacity, headerFont, TextAlignment.Center, gfx.Width / 2, WrapMode.Words);
+            gfx.DrawString(highlight, (gfx.Width - (gfx.Width / 2)) / 2, (int)(y+headerMeasure.Y+5), _theme.Theme.GetFontColor(TextFontStyle.Highlight) * _screenShroudOpacity, highlightFont, TextAlignment.Center, gfx.Width / 2, WrapMode.Words);
             gfx.EndDraw();
         }
 

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plex.Engine;
-using Plex.Engine.TextRenderers;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Peacenet.PeacegateThemes.PanelThemes
@@ -53,7 +52,7 @@ namespace Peacenet.PeacegateThemes.PanelThemes
             var font = _theme.Theme.GetFont(TextFontStyle.Highlight);
             var measure = font.MeasureString(_appMenuTitle);
 
-            gfx.DrawString(_appMenuTitle, rect.X + ((rect.Width - (int)measure.X) / 2), rect.Y + ((rect.Height - (int)measure.Y) / 2), (state != UIButtonState.Idle) ? _theme.Theme.GetAccentColor() : _theme.Theme.GetFontColor(TextFontStyle.Highlight), font, TextAlignment.Left, rect.Width, Plex.Engine.TextRenderers.WrapMode.None);
+            gfx.DrawString(_appMenuTitle, rect.X + ((rect.Width - (int)measure.X) / 2), rect.Y + ((rect.Height - (int)measure.Y) / 2), (state != UIButtonState.Idle) ? _theme.Theme.GetAccentColor() : _theme.Theme.GetFontColor(TextFontStyle.Highlight), font, TextAlignment.Left, rect.Width, WrapMode.None);
         }
 
         public override void DrawPanel(GraphicsContext gfx, Rectangle rect)
