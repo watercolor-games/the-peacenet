@@ -43,7 +43,7 @@ namespace Peacenet.PeacegateThemes.PanelThemes
             get
             {
                 var appLauncherSize = AppLauncherRectangle.Height;
-                return new Vector2(175, appLauncherSize - 4);
+                return new Vector2(250, appLauncherSize - 4);
             }
         }
 
