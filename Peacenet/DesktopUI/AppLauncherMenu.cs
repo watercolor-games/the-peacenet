@@ -466,11 +466,7 @@ namespace Peacenet.DesktopUI
             _name.Alignment = TextAlignment.Center;
             _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
-<<<<<<< HEAD
-            float totalHeight = _icon.Height + 10 + _name.Height;
-=======
             int totalHeight = _icon.Height + 5 + _name.Height;
->>>>>>> parent of b43c1ab... 4k support on its way
 
             Height = totalHeight + 32;
 
@@ -596,15 +592,9 @@ namespace Peacenet.DesktopUI
             _name.AutoSize = true;
             _description.AutoSize = true;
 
-<<<<<<< HEAD
-            float widthWithPadding = Width - 16;
-
-            float textWidth = (widthWithPadding - _icon.Width) - 6;
-=======
             int widthWithPadding = Width - 8;
 
             int textWidth = (widthWithPadding - _icon.Width) - 3;
->>>>>>> parent of b43c1ab... 4k support on its way
 
             _name.MaxWidth = textWidth;
             _description.MaxWidth = textWidth;
@@ -612,11 +602,7 @@ namespace Peacenet.DesktopUI
             _name.X = _icon.X + _icon.Width + 6;
             _description.X = _name.X;
 
-<<<<<<< HEAD
-            float textHeight = _name.Height + 6 + _description.Height;
-=======
             int textHeight = _name.Height + 3 + _description.Height;
->>>>>>> parent of b43c1ab... 4k support on its way
 
             if(Math.Max(textHeight, _icon.Height) == textHeight)
             {

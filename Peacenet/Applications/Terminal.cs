@@ -626,19 +626,19 @@ namespace Peacenet.Applications
                         }
 
 
-                        gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight) * Manager.GUIScale, new Vector2(_charWidth, _charHeight) * Manager.GUIScale, _background);
+                        gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight), new Vector2(_charWidth, _charHeight), _background);
 
                         continue;
                     case '\n':
-                        gfx.DrawRectangle(new Vector2((_charX+1) * _charWidth, _charY * _charHeight) * Manager.GUIScale, new Vector2(Width - ((_charX+1)*_charWidth), _charHeight) * Manager.GUIScale, _background);
+                        gfx.DrawRectangle(new Vector2((_charX+1) * _charWidth, _charY * _charHeight), new Vector2(Width - ((_charX+1)*_charWidth), _charHeight), _background);
                         _charX = 0;
                         _charY += 1;
                         break;
                     case (char)0x02:
                         continue;
                     default:
-                        gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight) * Manager.GUIScale, new Vector2(_charWidth, _charHeight) * Manager.GUIScale, _background);
-                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * (_charWidth*Manager.GUIScale)) + gfx.X) + gfx.RenderOffsetX, ((_charY * (_charHeight*Manager.GUIScale)) + gfx.Y) + gfx.RenderOffsetY), _foreground, 0, Vector2.Zero, Manager.GUIScale, SpriteEffects.None, 0);
+                        gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight), new Vector2(_charWidth, _charHeight), _background);
+                        gfx.Batch.DrawString(_font, c.ToString(), new Vector2(((_charX * (_charWidth)) + gfx.X) + gfx.RenderOffsetX, ((_charY * (_charHeight)) + gfx.Y) + gfx.RenderOffsetY), _foreground, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                         if ((_charX + 1) * _charWidth >= Width)
                         {
                             _charX = 0;
@@ -652,7 +652,7 @@ namespace Peacenet.Applications
                 }
             }
            if(IsFocused && _cursorOn)
-                gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight) * Manager.GUIScale, new Vector2(_charWidth, _charHeight) * Manager.GUIScale, _foreground);
+                gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight), new Vector2(_charWidth, _charHeight), _foreground);
         }
 
         /// <inheritdoc/>

@@ -80,19 +80,19 @@ namespace Peacenet.Applications
 
             var accent = Theme.GetAccentColor();
 
-            gfx.DrawCircle(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), (_clockRectangle.Width / 2) * Manager.GUIScale, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
-            gfx.DrawCircle(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), ((_clockRectangle.Width / 2) - 4) * Manager.GUIScale, Theme.ControlBG);
-            gfx.DrawCircle(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), ((_clockRectangle.Width / 2)/10) * Manager.GUIScale, accent);
+            gfx.DrawCircle(_clockRectangle.Center.ToVector2(), (_clockRectangle.Width / 2), Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
+            gfx.DrawCircle(_clockRectangle.Center.ToVector2(), ((_clockRectangle.Width / 2) - 4), Theme.ControlBG);
+            gfx.DrawCircle(_clockRectangle.Center.ToVector2(), ((_clockRectangle.Width / 2)/10), accent);
 
             var secondEnd = getPointOnCircle(_clockRectangle.Center.ToVector2(), (_clockRectangle.Width / 2) - 16, _secondsDegrees-90);
             var hourEnd = getPointOnCircle(_clockRectangle.Center.ToVector2(), (_clockRectangle.Width / 2) / 4, _hoursDegrees-90);
             var minuteEnd = getPointOnCircle(_clockRectangle.Center.ToVector2(), (_clockRectangle.Width / 2) - 8, _minutesDegrees-90);
 
-            gfx.DrawLine(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), Manager.VirtualToScreen(secondEnd), 1, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
-            gfx.DrawLine(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), Manager.VirtualToScreen(hourEnd), 2, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
-            gfx.DrawLine(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), Manager.VirtualToScreen(minuteEnd), 2, accent);
+            gfx.DrawLine(_clockRectangle.Center.ToVector2(), secondEnd, 1, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
+            gfx.DrawLine(_clockRectangle.Center.ToVector2(), hourEnd, 2, Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System));
+            gfx.DrawLine(_clockRectangle.Center.ToVector2(), minuteEnd, 2, accent);
 
-            gfx.DrawCircle(Manager.VirtualToScreen(_clockRectangle.Center.ToVector2()), ((_clockRectangle.Width / 2) / 10) * Manager.GUIScale, accent);
+            gfx.DrawCircle(_clockRectangle.Center.ToVector2(), ((_clockRectangle.Width / 2) / 10), accent);
         }
     }
 }

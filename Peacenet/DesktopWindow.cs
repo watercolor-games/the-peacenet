@@ -690,11 +690,11 @@ namespace Peacenet
             {
                 if(_topPanel.Visible)
                 {
-                    _pn.PanelTheme.DrawPanel(gfx, _topPanel.RenderBounds);
+                    _pn.PanelTheme.DrawPanel(gfx, _topPanel.Bounds);
                 }
                 if (_bottomPanel.Visible)
                 {
-                    _pn.PanelTheme.DrawPanel(gfx, _bottomPanel.RenderBounds);
+                    _pn.PanelTheme.DrawPanel(gfx, _bottomPanel.Bounds);
                 }
                 if(_applauncherHitbox.Visible)
                 {
@@ -709,7 +709,7 @@ namespace Peacenet
                 string rtime = DateTime.Now.ToShortTimeString();
                 var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
-                gfx.DrawString(rtime, new Vector2(_topPanel.RenderBounds.Width - ((measure.X + 5)*Manager.GUIScale), _topPanel.RenderBounds.Y + (((_topPanel.RenderBounds.Height - (measure.Y*Manager.GUIScale)) / 2))), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 
+                gfx.DrawString(rtime, new Vector2(_topPanel.Bounds.Width - ((measure.X + 5)), _topPanel.Y + (((_topPanel.Height - (measure.Y)) / 2))), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 
                     _pn.PanelTheme.StatusTextColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
             }
         }
