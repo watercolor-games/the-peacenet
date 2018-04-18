@@ -107,9 +107,9 @@ namespace Peacenet.Applications
             /// <inheritdoc/>
             protected override void OnUpdate(GameTime time)
             {
-                float x = 5;
-                float y = 5;
-                float h = 0;
+                int x = 5;
+                int y = 5;
+                int h = 0;
                 foreach(var child in Children)
                 {
                     ((PictureBox)child).AutoSize = false;

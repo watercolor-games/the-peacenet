@@ -72,23 +72,23 @@ namespace Peacenet.Cutscenes
 
             foreach (var cat in _creditsFile)
             {
-                var cmeasure = gfx.TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, WrapMode.Words);
-                gfx.DrawString(cat.Text, (gfx.Width - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header1) * _creditOpacity, head1, TextAlignment.Center, (int)_maxWidth, WrapMode.Words);
+                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                gfx.DrawString(cat.Text, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header1) * _creditOpacity, head1, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
                 h += cmeasure.Y + _catHeadSpacingY;
                 foreach (var entry in cat.Entries)
                 {
                     float opacity = (entry == cat.Entries.Last() && cat == _creditsFile.Last()) ? _youOpacity : _creditOpacity;
 
-                    var hmeasure = gfx.TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, WrapMode.Words);
-                    var tmeasure = gfx.TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, WrapMode.Words);
-                    gfx.DrawString(entry.Header, (gfx.Width - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header2) * opacity, head2, TextAlignment.Center, (int)_maxWidth, WrapMode.Words);
+                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    gfx.DrawString(entry.Header, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.Header2) * opacity, head2, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
                     h += hmeasure.Y + _entryHeadSpacingY;
-                    gfx.DrawString(entry.Text, (gfx.Width - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.System) * opacity, sys, TextAlignment.Center, (int)_maxWidth, WrapMode.Words);
+                    gfx.DrawString(entry.Text, (_ui.ScreenWidth - (int)_maxWidth) / 2, (int)h, _theme.Theme.GetFontColor(TextFontStyle.System) * opacity, sys, TextAlignment.Center, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
                     h += tmeasure.Y + _entryTextSpacingY;
                 }
             }
 
-            gfx.DrawRectangle((gfx.Width - _peacenet.Width) / 2, (gfx.Height - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity);
+            gfx.DrawRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity);
 
             string thanksText = "Thanks for playing.";
             var thanksMeasure = head1.MeasureString(thanksText);
@@ -142,12 +142,12 @@ namespace Peacenet.Cutscenes
             float h = 0;
             foreach (var cat in _creditsFile)
             {
-                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, WrapMode.Words);
+                var cmeasure = TextRenderer.MeasureText(cat.Text, head1, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
                 h += cmeasure.Y + _catHeadSpacingY;
                 foreach (var entry in cat.Entries)
                 {
-                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, WrapMode.Words);
-                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, WrapMode.Words);
+                    var hmeasure = TextRenderer.MeasureText(entry.Header, head2, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+                    var tmeasure = TextRenderer.MeasureText(entry.Text, sys, (int)_maxWidth, Plex.Engine.TextRenderers.WrapMode.Words);
                     h += hmeasure.Y + _entryHeadSpacingY + tmeasure.Y + _entryTextSpacingY;
                 }
             }

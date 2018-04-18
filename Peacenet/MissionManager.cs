@@ -236,19 +236,19 @@ namespace Peacenet
             string headString = "Mission Start";
             string nameString = _current.Name;
 
-            var headMeasure = gfx.TextRenderer.MeasureText(headString, headFont, _winsys.Width / 2, WrapMode.Words);
-            var nameMeasure = gfx.TextRenderer.MeasureText(nameString, nameFont, (_winsys.Width / 2), WrapMode.Words);
+            var headMeasure = TextRenderer.MeasureText(headString, headFont, _winsys.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
+            var nameMeasure = TextRenderer.MeasureText(nameString, nameFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
 
             float totalHeight = headMeasure.Y + 5 + nameMeasure.Y;
             float totalCenterY = (_winsys.Height - totalHeight) / 2;
             float headYMin = (totalCenterY + (_winsys.Height * 0.10f));
 
-            gfx.DrawString(headString, (gfx.Width - (int)headMeasure.X) / 2, (int)MathHelper.Lerp(headYMin, totalCenterY, _missionStartFade), headColor * _missionStartFade, headFont, TextAlignment.Left);
+            gfx.DrawString(headString, (_winsys.Width - (int)headMeasure.X) / 2, (int)MathHelper.Lerp(headYMin, totalCenterY, _missionStartFade), headColor * _missionStartFade, headFont, TextAlignment.Left);
 
             float nameYMax = totalCenterY + headMeasure.Y + 5;
             float nameYMin = nameYMax + (_winsys.Height * 0.10f);
 
-            gfx.DrawString(nameString, (gfx.Width - (int)nameMeasure.X) / 2, (int)MathHelper.Lerp(nameYMin, nameYMax, _missionNameFade), nameColor * _missionNameFade, nameFont, TextAlignment.Left);
+            gfx.DrawString(nameString, (_winsys.Width - (int)nameMeasure.X) / 2, (int)MathHelper.Lerp(nameYMin, nameYMax, _missionNameFade), nameColor * _missionNameFade, nameFont, TextAlignment.Left);
 
             gfx.EndDraw();
 
@@ -264,23 +264,23 @@ namespace Peacenet
             var objDescFont = _theme.Theme.GetFont(TextFontStyle.System);
             var objDescColor = _theme.Theme.GetFontColor(TextFontStyle.System);
 
-            var f6measure = gfx.TextRenderer.MeasureText(pressF6, objDescFont, (_winsys.Width / 2), WrapMode.Words);
+            var f6measure = TextRenderer.MeasureText(pressF6, objDescFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
 
             float f6max = (_winsys.Height - f6measure.Y) - 45;
             float f6min = f6max + (_winsys.Height * 0.1f);
-            gfx.DrawString(pressF6, 45, (int)MathHelper.Lerp(f6min, f6max, _objectiveDescFade), (objDescColor * 0.45F) * _objectiveDescFade, objDescFont, TextAlignment.Left, (gfx.Width) / 2, WrapMode.Words);
+            gfx.DrawString(pressF6, 45, (int)MathHelper.Lerp(f6min, f6max, _objectiveDescFade), (objDescColor * 0.45F) * _objectiveDescFade, objDescFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
 
-            var odescmeasure = gfx.TextRenderer.MeasureText(objectiveDesc, objDescFont, (_winsys.Width / 2), WrapMode.Words);
+            var odescmeasure = TextRenderer.MeasureText(objectiveDesc, objDescFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
 
             float odescMax = (f6max - odescmeasure.Y) - 15;
             float odescMin = odescMax + (_winsys.Height * 0.1f);
-            gfx.DrawString(objectiveDesc, 45, (int)MathHelper.Lerp(odescMin, odescMax, _objectiveDescFade), objDescColor * _objectiveDescFade, objDescFont, TextAlignment.Left, (gfx.Width) / 2, WrapMode.Words);
+            gfx.DrawString(objectiveDesc, 45, (int)MathHelper.Lerp(odescMin, odescMax, _objectiveDescFade), objDescColor * _objectiveDescFade, objDescFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
 
-            var onamemeasure = gfx.TextRenderer.MeasureText(objectiveName, nameFont, (_winsys.Width / 2), WrapMode.Words);
+            var onamemeasure = TextRenderer.MeasureText(objectiveName, nameFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
 
             float onameMax = (((((_winsys.Height - 45) - f6measure.Y) - 15) - odescmeasure.Y) - 5) - onamemeasure.Y;
             float onameMin = onameMax + (_winsys.Height * 0.1f);
-            gfx.DrawString(objectiveName, 45, (int)MathHelper.Lerp(onameMin, onameMax, _objectiveNameFade), nameColor * _objectiveNameFade, nameFont, TextAlignment.Left, (gfx.Width) / 2, WrapMode.Words);
+            gfx.DrawString(objectiveName, 45, (int)MathHelper.Lerp(onameMin, onameMax, _objectiveNameFade), nameColor * _objectiveNameFade, nameFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
 
 
             gfx.EndDraw();

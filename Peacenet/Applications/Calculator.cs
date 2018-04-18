@@ -44,12 +44,12 @@ namespace Peacenet.Applications
             _display.Y = 15;
             _display.Width = Width - 30;
 
-            float buttonY = _display.Y + _display.Height + 10;
-            float buttonWidth = _buttonList[0].Width;
-            float buttonHeight = _buttonList[0].Height;
-            float maxWidth = (buttonWidth * 5) + (_buttonHSpacing * 4);
-            float buttonX = (Width - maxWidth) / 2;
-            float w = 0;
+            int buttonY = _display.Y + _display.Height + 10;
+            int buttonWidth = _buttonList[0].Width;
+            int buttonHeight = _buttonList[0].Height;
+            int maxWidth = (buttonWidth * 5) + (_buttonHSpacing * 4);
+            int buttonX = (Width - maxWidth) / 2;
+            int w = 0;
             foreach(var button in _buttonList)
             {
                 button.X = buttonX + w;

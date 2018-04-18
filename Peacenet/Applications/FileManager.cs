@@ -491,6 +491,7 @@ namespace Peacenet.Applications
                 _open.Text = (_isSaving) ? "Save" : "Open";
                 _openField.Label = "File name or file path";
 
+<<<<<<< HEAD
                 float _larger = Math.Max(_open.Height, _openField.Height);
                 float _starty = (Height - _larger) - 12;
                 _open.Y = _starty + ((_larger - _open.Height) / 2)+6;
@@ -500,6 +501,17 @@ namespace Peacenet.Applications
                 _openField.X = 6;
                 _openField.Width = (_open.X - _openField.X) - 12;
                 _places.Height = (Height - _places.Y) - (_larger+6);
+=======
+                int _larger = Math.Max(_open.Height, _openField.Height);
+                int _starty = (Height - _larger) - 6;
+                _open.Y = _starty + ((_larger - _open.Height) / 2)+3;
+                _openField.Y = _starty + ((_larger - _openField.Height) / 2)+3;
+
+                _open.X = (Width - _open.Width) - 3;
+                _openField.X = 3;
+                _openField.Width = (_open.X - _openField.X) - 6;
+                _places.Height = (Height - _places.Y) - (_larger+3);
+>>>>>>> parent of b43c1ab... 4k support on its way
                 _open.Enabled = !string.IsNullOrWhiteSpace(_openField.Text);
             }
             else

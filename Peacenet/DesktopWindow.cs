@@ -18,6 +18,7 @@ using Peacenet.Filesystem;
 using Peacenet.Email;
 using Peacenet.PeacegateThemes.PanelThemes;
 using Plex.Engine.Themes;
+using Plex.Engine.TextRenderers;
 
 namespace Peacenet
 {
@@ -612,14 +613,14 @@ namespace Peacenet
             _applauncherHitbox.Width = _pn.PanelTheme.AppLauncherRectangle.Width;
             _applauncherHitbox.Height = _pn.PanelTheme.AppLauncherRectangle.Height;
             
-            float noteYMin = 0;
-            float noteYMax = _topPanel.Y + _topPanel.Height + 15;
-            float noteY = MathHelper.Lerp(noteYMin, noteYMax, _notificationBannerFade);
+            int noteYMin = 0;
+            int noteYMax = _topPanel.Y + _topPanel.Height + 15;
+            int noteY = (int)MathHelper.Lerp(noteYMin, noteYMax, _notificationBannerFade);
             _notificationTitle.Opacity = _notificationBannerFade;
             _notificationDescription.Opacity = _notificationTitle.Opacity;
             _notificationTitle.Y = noteY;
             _notificationDescription.Y = _notificationTitle.Y + _notificationTitle.Height + 10;
-            float noteWidthMax = Math.Max(_notificationTitle.Width, _notificationDescription.Width);
+            int noteWidthMax = Math.Max(_notificationTitle.Width, _notificationDescription.Width);
             _notificationTitle.X = Width - noteWidthMax - 15;
             _notificationDescription.X = _notificationTitle.X;
 
@@ -661,7 +662,7 @@ namespace Peacenet
             string rtime = DateTime.Now.ToShortTimeString();
             var rtmeasure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
-            float timePos = _topPanel.Width - (rtmeasure.X + 5);
+            int timePos = _topPanel.Width - ((int)rtmeasure.X + 5);
 
             _notificationTray.X = (timePos - _notificationTray.Width) - 7;
             _notificationTray.Y = _topPanel.Y + ((_topPanel.Height - _notificationTray.Height) / 2);
@@ -683,8 +684,8 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, _wallpaper);
-            gfx.DrawRectangle(_notificationTitle.RenderBounds.X - 15, _notificationTitle.RenderBounds.Y - 15, (Math.Max(_notificationTitle.RenderBounds.Width, _notificationDescription.RenderBounds.Width) + 30), _notificationTitle.RenderBounds.Height + 10 + _notificationDescription.RenderBounds.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade / 2));
+            gfx.DrawRectangle(0, 0, Width, Height, _wallpaper);
+            gfx.DrawRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
             if(_showPanels)
             {
                 if(_topPanel.Visible)
@@ -773,9 +774,9 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            float x = 2;
-            float y = 0;
-            float lineheight = 0;
+            int x = 2;
+            int y = 0;
+            int lineheight = 0;
             foreach(var control in Children)
             {
                 if(x + control.Width + 2 > Width)
@@ -809,8 +810,8 @@ namespace Peacenet
             if (Parent == null)
                 return;
             Height = Parent.Height;
-            float maxWidth = MaxWidth == 0 ? int.MaxValue : MaxWidth;
-            float width = 2;
+            int maxWidth = MaxWidth == 0 ? int.MaxValue : MaxWidth;
+            int width = 2;
             foreach(var ctrl in Children)
             {
                 ctrl.X = width;
@@ -893,7 +894,7 @@ namespace Peacenet
                 winState = PanelButtonState.Active;
             if (_win.Border.Visible == false)
                 winState = PanelButtonState.Minimized;
-            _pn.PanelTheme.DrawPanelButton(gfx, new Rectangle(0, 0, gfx.Width, gfx.Height), winState, state, _win.Border.Title);
+            _pn.PanelTheme.DrawPanelButton(gfx, new Rectangle(0, 0, Width, Height), winState, state, _win.Border.Title);
         }
     }
 }

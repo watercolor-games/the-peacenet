@@ -40,7 +40,7 @@ namespace Peacenet.Applications
 
         protected override void OnUpdate(GameTime time)
         {
-            _clockRectangle = new Rectangle(60, 60, (int)(Width / 2) - 120, (int)Height - 120);
+            _clockRectangle = new Rectangle(60, 60, (Width / 2) - 120, Height - 120);
 
             _head.AutoSize = true;
             _currentTime.AutoSize = true;

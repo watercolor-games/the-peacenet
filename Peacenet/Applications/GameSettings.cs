@@ -61,8 +61,8 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
-            Width = 1600;
-            Height = 1200;
+            Width = 800;
+            Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
             Title = "System settings";
             _resolutions = new ListView();

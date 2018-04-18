@@ -47,9 +47,9 @@ namespace Peacenet
         protected override void OnPaint(Microsoft.Xna.Framework.GameTime time, Plex.Engine.GraphicsSubsystem.GraphicsContext gfx)
         {
             base.OnPaint(time, gfx);
-            var drawy = open.RenderBounds.Y + open.RenderBounds.Height + 3;
+            var drawy = open.Y + open.Height + 3;
             if (img != null)   
-                gfx.DrawRectangle(0, drawy, gfx.Width, gfx.Height - drawy, img, System.Windows.Forms.ImageLayout.Zoom);
+                gfx.DrawRectangle(0, drawy, Width, Height - drawy, img, System.Windows.Forms.ImageLayout.Zoom);
         }
     }
 }

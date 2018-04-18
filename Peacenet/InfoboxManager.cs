@@ -202,7 +202,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            float contentHeight = Math.Max(_picture.Height, _messageLabel.Height);
+            int contentHeight = Math.Max(_picture.Height, _messageLabel.Height);
 
             _picture.X = 15;
             _picture.Y = 15;
@@ -210,7 +210,7 @@ namespace Peacenet
             _messageLabel.Y = _picture.Y;
             _messageLabel.X = _picture.X + _picture.Width + 15;
 
-            float width = _messageLabel.X + _messageLabel.Width + 15;
+            int width = _messageLabel.X + _messageLabel.Width + 15;
 
             Width = width;
             if (_inputBox.Visible)
@@ -226,8 +226,8 @@ namespace Peacenet
             _ok.Y = this.Height - Math.Max(_ok.Height, _yes.Height) - 10;
             _ok.X = (Width - _ok.Width) / 2;
 
-            float yesNoWidth = _yes.Width + _no.Width + 5;
-            float yesX = (Width - yesNoWidth) / 2;
+            int yesNoWidth = _yes.Width + _no.Width + 5;
+            int yesX = (Width - yesNoWidth) / 2;
 
             _yes.X = yesX;
             _yes.Y = _ok.Y;

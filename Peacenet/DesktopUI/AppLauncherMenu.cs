@@ -91,7 +91,7 @@ namespace Peacenet.DesktopUI
         }
 
         /// <inheritdoc/>
-        public override void Show(float x = -1, float y = -1)
+        public override void Show(int x = -1, int y = -1)
         {
             _scroller = new ScrollView();
 
@@ -329,8 +329,8 @@ namespace Peacenet.DesktopUI
                 if(_closeOnFocusLoss)
                     Close();
 
-            float widthWithPadding = Width - 30;
-            float widthAvailableForUserInfo = (widthWithPadding - _userIcon.Width) - 15;
+            int widthWithPadding = Width - 30;
+            int widthAvailableForUserInfo = (widthWithPadding - _userIcon.Width) - 15;
 
             _userFullName.MaxWidth = widthAvailableForUserInfo;
             _userHostname.MaxWidth = widthAvailableForUserInfo;
@@ -339,7 +339,7 @@ namespace Peacenet.DesktopUI
             _userFullName.X = _userIcon.X + _userIcon.Width + 7;
             _userHostname.X = _userFullName.X;
 
-            float userInfoHeight = _userFullName.Height + 5 + _userHostname.Height;
+            int userInfoHeight = _userFullName.Height + 5 + _userHostname.Height;
 
             if(Math.Max(userInfoHeight, _userIcon.Height) == _userIcon.Height)
             {
@@ -466,7 +466,11 @@ namespace Peacenet.DesktopUI
             _name.Alignment = TextAlignment.Center;
             _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
+<<<<<<< HEAD
             float totalHeight = _icon.Height + 10 + _name.Height;
+=======
+            int totalHeight = _icon.Height + 5 + _name.Height;
+>>>>>>> parent of b43c1ab... 4k support on its way
 
             Height = totalHeight + 32;
 
@@ -478,22 +482,22 @@ namespace Peacenet.DesktopUI
         {
             if(_active)
             {
-                Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
-                gfx.DrawRectangle(0, gfx.Height - 2, gfx.Width, 2, Theme.GetAccentColor());
+                Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
+                gfx.DrawRectangle(0, Height - 2, Width, 2, Theme.GetAccentColor());
             }
             else
             {
                 if(LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                 {
-                    Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
+                    Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
                 }
                 else if(ContainsMouse)
                 {
-                    Theme.DrawControlLightBG(gfx, 0, 0, gfx.Width, gfx.Height);
+                    Theme.DrawControlLightBG(gfx, 0, 0, Width, Height);
                 }
                 else
                 {
-                    Theme.DrawControlBG(gfx, 0, 0, gfx.Width, gfx.Height);
+                    Theme.DrawControlBG(gfx, 0, 0, Width, Height);
 
                 }
             }
@@ -592,9 +596,15 @@ namespace Peacenet.DesktopUI
             _name.AutoSize = true;
             _description.AutoSize = true;
 
+<<<<<<< HEAD
             float widthWithPadding = Width - 16;
 
             float textWidth = (widthWithPadding - _icon.Width) - 6;
+=======
+            int widthWithPadding = Width - 8;
+
+            int textWidth = (widthWithPadding - _icon.Width) - 3;
+>>>>>>> parent of b43c1ab... 4k support on its way
 
             _name.MaxWidth = textWidth;
             _description.MaxWidth = textWidth;
@@ -602,7 +612,11 @@ namespace Peacenet.DesktopUI
             _name.X = _icon.X + _icon.Width + 6;
             _description.X = _name.X;
 
+<<<<<<< HEAD
             float textHeight = _name.Height + 6 + _description.Height;
+=======
+            int textHeight = _name.Height + 3 + _description.Height;
+>>>>>>> parent of b43c1ab... 4k support on its way
 
             if(Math.Max(textHeight, _icon.Height) == textHeight)
             {
@@ -628,15 +642,15 @@ namespace Peacenet.DesktopUI
             var hover = accent.Darken(0.25F);
             if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _description.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, down);
+                gfx.DrawRectangle(0, 0, Width, Height, down);
             }
             else if (ContainsMouse)
             {
-                gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, hover);
+                gfx.DrawRectangle(0, 0, Width, Height, hover);
             }
             else
             {
-                Theme.DrawControlDarkBG(gfx, 0, 0, gfx.Width, gfx.Height);
+                Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
             }
         }
     }
@@ -645,7 +659,7 @@ namespace Peacenet.DesktopUI
     {
         protected override void OnUpdate(GameTime time)
         {
-            float y = 0;
+            int y = 0;
             foreach(var child in Children)
             {
                 child.Y = y;

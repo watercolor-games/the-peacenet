@@ -490,7 +490,7 @@ namespace Peacenet
                 _ui.BringToFront(_tutorialDescription);
                 _ui.BringToFront(_tutorialButton);
 
-                float height = 0;
+                int height = 0;
                 if (_tutorialLabel.Visible)
                     height += _tutorialLabel.Height;
                 if (_tutorialDescription.Visible)
@@ -502,8 +502,8 @@ namespace Peacenet
                 _tutorialLabel.X = (_ui.ScreenWidth - _tutorialLabel.Width) / 2;
 
                 //Get the window Y.
-                float winY = (_terminal == null) ? 0 : _terminal.Parent.Y;
-                float winX = (_terminal == null) ? 0 : _terminal.Parent.X;
+                int winY = (_terminal == null) ? 0 : _terminal.Parent.Y;
+                int winX = (_terminal == null) ? 0 : _terminal.Parent.X;
 
                 bool canFitAbove = (winY - height) - 30 >= height + 30;
 
@@ -766,7 +766,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, Theme.GetAccentColor() * _colorFade);
+            gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor() * _colorFade);
         }
     }
 }
