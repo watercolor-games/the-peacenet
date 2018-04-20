@@ -18,6 +18,7 @@ using Peacenet.CoreUtils;
 using Plex.Engine.Interfaces;
 using Microsoft.Xna.Framework.Content;
 using Plex.Engine.Themes;
+using System.Dynamic;
 
 namespace Peacenet.Applications
 {
@@ -655,6 +656,7 @@ namespace Peacenet.Applications
                 gfx.DrawRectangle(new Vector2(_charX * _charWidth, _charY * _charHeight), new Vector2(_charWidth, _charHeight), _foreground);
         }
 
+
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
@@ -671,7 +673,20 @@ namespace Peacenet.Applications
             {
                 while (ch != -1)
                 {
-                    _textBuffer += (char)ch;
+                    if ((char)ch == '\b')
+                    {
+                        if (_textBuffer.Length > 0)
+                        {
+                            char last = _textBuffer[_textBuffer.Length - 1];
+                            _textBuffer = _textBuffer.Remove(_textBuffer.Length - 1, 1);
+                            if (last == (char)0x1B)
+                                _textBuffer = _textBuffer.Remove(_textBuffer.LastIndexOf((char)0x02), _textBuffer.Length - _textBuffer.LastIndexOf((char)0x02));
+                        }
+                    }
+                    else
+                    {
+                        _textBuffer += (char)ch;
+                    }
                     ch = _slave.ReadByte();
                 }
                 Invalidate(true);
