@@ -1192,7 +1192,7 @@ namespace Peacenet.MainMenu
             else if (_hbSettings.ContainsMouse)
             {
                 _username.Text = "Settings";
-                _realname.Text = "Modify various settings for the game to configure yuor experience.";
+                _realname.Text = "Modify various settings for the game to configure your experience.";
                 _wgButton.Opacity = 0;
             }
             else
