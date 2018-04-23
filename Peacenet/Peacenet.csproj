@@ -96,6 +96,7 @@
     <Compile Include="Cutscene\CreditsScene.cs" />
     <Compile Include="Cutscene\OSFTOutro.cs" />
     <Compile Include="Cutscene\OSFTPeacegateIntro.cs" />
+    <Compile Include="Cutscene\PrologueCutscene.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="Email\EmailClient.cs" />
@@ -264,6 +265,9 @@
     <Content Include="Content\Audio\Cutscene\CreditsAlt.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Audio\Cutscene\Intro\Predeath.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Audio\GovernmentAlert\Bgm1.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
