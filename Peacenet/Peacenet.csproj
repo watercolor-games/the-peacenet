@@ -82,10 +82,14 @@
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\TextEditorApp.cs" />
     <Compile Include="Applications\ThemeChooser.cs" />
+    <Compile Include="Applications\WorldMap.cs" />
     <Compile Include="AsyncServerFSBackend.cs" />
     <Compile Include="ChatBackend.cs" />
     <Compile Include="CoreUtils\date.cs" />
     <Compile Include="CoreUtils\echo.cs" />
+    <Compile Include="CountryChallenges\ChallengeManager.cs" />
+    <Compile Include="CountryChallenges\ICountryChallenge.cs" />
+    <Compile Include="CountryManager.cs" />
     <Compile Include="cowsay.cs" />
     <Compile Include="CoreUtils\cat.cs" />
     <Compile Include="CoreUtils\cd.cs" />
@@ -244,6 +248,27 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIIcons\NotificationTray\EmailUnread.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WorldMap\7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="discord-rpc.dll">
