@@ -148,6 +148,7 @@
     <Compile Include="Applications\ImageViewer.cs" />
     <Compile Include="TerminalCommands\ImportCommand.cs" />
     <Compile Include="Applications\KnowledgeInput.cs" />
+    <Compile Include="Applications\FrameWatchTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DocoptNet, Version=0.6.1.4, Culture=neutral, PublicKeyToken=7a38c71da49a547e, processorArchitecture=MSIL">
