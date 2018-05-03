@@ -13,17 +13,16 @@ using Plex.Engine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Plex.Engine.Themes;
+using Plex.Objects;
 
 namespace Peacenet.Cutscenes
 {
     /// <summary>
     /// The cutscene that displays the game's credits.
     /// </summary>
-    public class CreditsScene : Cutscene
+    public class CreditsScene : Plex.Engine.Cutscene.Cutscene
     {
-        private SoundEffect _yesMyGrassIsGreen = null;
-        private SoundEffectInstance _grassInstance = null;
-
+        private AdvancedAudioPlayer _music = null;
         private CreditCategory[] _creditsFile = null;
         private int _csState = 0;
 
@@ -101,8 +100,8 @@ namespace Peacenet.Cutscenes
         /// <inheritdoc/>
         public override void Load(ContentManager Content)
         {
-            _yesMyGrassIsGreen = Content.Load<SoundEffect>("Audio/Cutscene/Credits");
-            _grassInstance = _yesMyGrassIsGreen.CreateInstance();
+            Logger.Log("Credits Loading NOW");
+            _music = new AdvancedAudioPlayer(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "Audio", "Cutscene", "Credits" + (_doAlternateCreditsMusic ? "Alt" : "") + ".ogg"), false);
             string creditsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "credits.json");
             string json = File.ReadAllText(creditsPath);
             _creditsFile = JsonConvert.DeserializeObject<CreditCategory[]>(json);
@@ -116,7 +115,7 @@ namespace Peacenet.Cutscenes
         public override void OnFinish()
         {
             _ui.ShowUI();
-            _grassInstance.Stop();
+            _music.Stop();
         }
 
         private float _grassPercentage = 0f;
@@ -128,15 +127,12 @@ namespace Peacenet.Cutscenes
         /// <inheritdoc/>
         public override void OnPlay()
         {
-            if(_doAlternateCreditsMusic)
-                _yesMyGrassIsGreen = _plexgate.Content.Load<SoundEffect>("Audio/Cutscene/CreditsAlt");
-            else
-                _yesMyGrassIsGreen = _plexgate.Content.Load<SoundEffect>("Audio/Cutscene/Credits");
-            _grassInstance = _yesMyGrassIsGreen.CreateInstance();
             _ui.HideUI();
             _csState = 0;
             _grassPercentage = 0f;
-            _grassInstance.Play();
+            Logger.Log("Get ready get ready get ready get ready", System.ConsoleColor.DarkGreen);
+            _music.Play();
+            Logger.Log("You're listening to Greener Grass", System.ConsoleColor.Green);
             _maxWidth = _ui.ScreenWidth / 2;
 
             var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
@@ -175,7 +171,7 @@ namespace Peacenet.Cutscenes
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _yesMyGrassIsGreen.Dispose();
+            _music.Dispose();
             _peacenet.Dispose();
         }
 
@@ -190,7 +186,7 @@ namespace Peacenet.Cutscenes
                     _peacenetOpacity = 0f;
                     _thanksOpacity = 0f;
                     _grassTime += time.ElapsedGameTime.TotalSeconds;
-                    _grassPercentage = (float)(_grassTime / _yesMyGrassIsGreen.Duration.TotalSeconds);
+                    _grassPercentage = (float)(_grassTime / _music.Duration.TotalSeconds);
                     if(_grassPercentage>=1f)
                     {
                         _grassPercentage = 1f;

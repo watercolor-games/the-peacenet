@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 using Plex.Engine;
 using Peacenet.Server;
 using Peacenet.Missions.Prologue;
+using Plex.Objects.Pty;
+using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace Peacenet
 {
@@ -37,17 +40,17 @@ namespace Peacenet
         {
             _localCommands = new List<ITerminalCommand>();
             _usages = new Dictionary<string, string>();
-            Logger.Log("Looking for terminal commands...", LogType.Info, "terminal");
+            Logger.Log("Looking for terminal commands...");
             foreach(var type in ReflectMan.Types.Where(x => x.GetInterfaces().Contains(typeof(ITerminalCommand))))
             {
                 if (type.GetCustomAttributes(true).Any(x => x is TerminalSkipAutoloadAttribute))
                     continue;
                 var command = (ITerminalCommand)Activator.CreateInstance(type, null);
-                Logger.Log($"Found: {command.Name} (from {type.FullName})", LogType.Info, "terminal");
+                Logger.Log($"Found: {command.Name} (from {type.FullName})");
                 //Avoid commands with the same name!
                 if(_localCommands.FirstOrDefault(x=>x.Name == command.Name) != null)
                 {
-                    Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {type.FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", LogType.Error, "terminal");
+                    Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {type.FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", System.ConsoleColor.DarkYellow);
                     continue;
                 }
 
@@ -80,18 +83,18 @@ namespace Peacenet
                 _usages.Add(command.Name, sb.ToString());
                 Logger.Log("Done.");
             }
-            Logger.Log("Successfully loaded all Terminal commands.", LogType.Info, "terminal");
+            Logger.Log("Successfully loaded all Terminal commands.");
         }
 
         internal void LoadCommand(ITerminalCommand command)
         {
             if (command == null)
                 return;
-            Logger.Log($"Found: {command.Name} (from {command.GetType().FullName})", LogType.Info, "terminal");
+            Logger.Log($"Found: {command.Name} (from {command.GetType().FullName})");
             //Avoid commands with the same name!
             if (_localCommands.FirstOrDefault(x => x.Name == command.Name) != null)
             {
-                Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {command.GetType().FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", LogType.Error, "terminal");
+                Logger.Log($"COMMAND CONFLICT: Two commands with the same name: {command.Name} (from {command.GetType().FullName}) and {_localCommands.FirstOrDefault(y => y.Name == command.Name).Name} (from {_localCommands.FirstOrDefault(y => y.Name == command.Name).GetType().FullName}). Skipping.", System.ConsoleColor.DarkYellow);
                 throw new ArgumentException("A command with the same name already exists in the database.");
 
             }
@@ -133,7 +136,7 @@ namespace Peacenet
                 throw new ArgumentException("A command with that name has not been found.");
             _usages.Remove(name);
             _localCommands.Remove(command);
-            Logger.Log("Unloaded command: " + name, LogType.Info, "terminal");
+            Logger.Log("Unloaded command: " + name);
         }
 
         /// <summary>
@@ -177,6 +180,11 @@ namespace Peacenet
             }
         }
 
+        public event Action<string> CommandSucceeded;
+
+        [Dependency]
+        private RemoteStreams _remoteStreams = null;
+
         /// <summary>
         /// Runs a command with the given console context.
         /// </summary>
@@ -206,15 +214,67 @@ namespace Peacenet
                         foreach (var token in query.ArgumentTokens)
                             writer.Write(token);
                         writer.Flush();
+                        ManualResetEvent commandDone = new ManualResetEvent(false);
+
+                        Action<ServerBroadcastType, BinaryReader> terminalOutput = (req, r) =>
+                        {
+                            if (req != ServerBroadcastType.TerminalOutput)
+                                return;
+                            int count = r.ReadInt32();
+                            byte[] data = r.ReadBytes(count);
+                            string str = Encoding.UTF8.GetString(data);
+                            console.Write(str);
+                            if(str.ToCharArray().Contains((char)0x02))
+                            {
+                                commandDone.Set();
+                            }
+                        };
+                        _server.BroadcastReceived += terminalOutput;
+
+                        Stream remoteSlave = null;
+                        Thread t = null;
+
                         _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
                         {
-                            string output;
-                            while((output = reader.ReadString()) != "\u0013\u0014")
+                            if(res != ServerResponseType.REQ_SUCCESS)
                             {
-                                console.Write(output);
+                                console.WriteLine("Unexpected, unknown error.");
+                                return;
                             }
-                            console.WriteLine("");
+                            int remoteSlaveId = reader.ReadInt32();
+
+                            remoteSlave = _remoteStreams.Open(remoteSlaveId);
+
+                            t = new Thread(() =>
+                            {
+                                while (true)
+                                {
+                                    try
+                                    {
+                                        char input = (char)console.StandardInput.BaseStream.ReadByte();
+                                        remoteSlave.WriteByte((byte)input);
+                                    }
+                                    catch (TerminationRequestException)
+                                    {
+                                        remoteSlave.WriteByte(0x02);
+                                        remoteSlave.WriteByte((byte)'\n');
+                                    }
+                                }
+                            });
+
+                            t.Start();
+
+                            
                         }).Wait();
+
+                        commandDone.WaitOne();
+
+                        CommandSucceeded?.Invoke(query.Name);
+
+                        _server.BroadcastReceived -= terminalOutput;
+
+                        t.Abort();
+                        remoteSlave.Close();
                     }
                 }
                 return true;
@@ -245,11 +305,12 @@ namespace Peacenet
                 try
                 {
                     local.Run(console, argumentStore);
+                    CommandSucceeded?.Invoke(query.Name);
                 }
-                catch (Exception ex)
+                catch (TerminationRequestException)
                 {
-                    console.WriteLine($"Command error: {ex.Message}");
-                    Logger.Log(ex.ToString(), LogType.Error, "terminal");
+                    console.WriteLine("Killed.");
+                    return true;
                 }
                 return true;
             }
@@ -406,5 +467,41 @@ namespace Peacenet
     public class TerminalSkipAutoloadAttribute : Attribute
     {
 
+    }
+
+    class RemotePtyEntity : IEntity
+    {
+        private ConsoleContext _localContext = null;
+        private Stream _remoteMaster = null;
+        private Stream _remoteSlave = null;
+
+        public RemotePtyEntity(ConsoleContext localContext, Stream remoteMaster, Stream remoteSlave)
+        {
+            _localContext = localContext;
+            _remoteMaster = remoteMaster;
+            _remoteSlave = remoteSlave;
+        }
+
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+        }
+
+        public void OnGameExit()
+        {
+            _remoteMaster.Close();
+            _remoteSlave.Close();
+        }
+
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void OnMouseUpdate(MouseState mouse)
+        {
+        }
+
+        public void Update(GameTime time)
+        {
+        }
     }
 }

@@ -24,6 +24,8 @@ using Plex.Engine.Cutscenes;
 using System.IO;
 using System.Threading;
 using Peacenet.DesktopUI;
+using Plex.Objects;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.MainMenu
 {
@@ -49,7 +51,10 @@ namespace Peacenet.MainMenu
             "Welcome, ",
             "Hey, ",
             "Hi, ",
-            "Howdy, "
+            "Howdy, ",
+            "G'day, ",
+            "Yo, ",
+            "What it is, "
         };
 
         private Random _rnd = new Random();
@@ -115,6 +120,9 @@ namespace Peacenet.MainMenu
         #endregion
 
         #region Engine dependencies
+
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
 
         [Dependency]
         private UIManager _uimanager = null;
@@ -252,7 +260,7 @@ namespace Peacenet.MainMenu
                 catch (Exception ex)
                 {
                     _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
-                    Logger.Log(ex.ToString(), LogType.Error);
+                    Logger.Log(ex.ToString(), System.ConsoleColor.DarkYellow);
                 }
                 _plexgate.Invoke(() =>
                 {
@@ -437,8 +445,7 @@ namespace Peacenet.MainMenu
             _discord.GameState = "Watercolor Games presents...";
             _discord.GameDetails = "The Peacenet";
 
-            ((PeacenetTheme)_thememgr.Theme).SetAccentColor(_plexgate.GraphicsDevice, content, PeacenetAccentColor.Blueberry);
-            _uimanager.InvalidateAll();
+            _pn.AccentColor = PeacenetAccentColor.Blueberry;
 
             _singleplayer = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/SinglePlayer");
             _multiplayer = _plexgate.Content.Load<Texture2D>("MainMenu/MenuButtons/MultiPlayer");
@@ -605,7 +612,7 @@ namespace Peacenet.MainMenu
                 catch (FileNotFoundException)
                 {
                     animState = 0;
-                    Logger.Log("Intro video not found, skipping", LogType.Warning);
+                    Logger.Log("Intro video not found, skipping", System.ConsoleColor.Yellow);
                 }
             }
         }
@@ -1185,7 +1192,7 @@ namespace Peacenet.MainMenu
             else if (_hbSettings.ContainsMouse)
             {
                 _username.Text = "Settings";
-                _realname.Text = "Modify various settings for the game to configure yuor experience.";
+                _realname.Text = "Modify various settings for the game to configure your experience.";
                 _wgButton.Opacity = 0;
             }
             else

@@ -75,6 +75,20 @@ namespace Peacenet.Backend
             }
         }
 
+        internal uint NextIP()
+        {
+            using (var random = RandomNumberGenerator.Create())
+            {
+                byte[] ipsegments = new byte[4];
+                random.GetBytes(ipsegments);
+                while (_addresses.FindOne(x => x.Address == this.CombineToUint(ipsegments)) != null)
+                {
+                    random.GetBytes(ipsegments);
+                }
+                return CombineToUint(ipsegments);
+            }
+            }
+
         private Random _random = new Random();
 
         public uint GetIPFromString(string iPAddress)
@@ -96,27 +110,17 @@ namespace Peacenet.Backend
 
         public void Initiate()
         {
-            Logger.Log("Loading IP addresses from database...");
+            Plex.Objects.Logger.Log("Loading IP addresses from database...");
             _addresses = _database.Database.GetCollection<PeacenetIPAddress>("world_ips");
             _addresses.EnsureIndex(x => x.Id);
-            Logger.Log($"IP address lookup complete. {_addresses.Count()} IPs found.");
+            Plex.Objects.Logger.Log($"IP address lookup complete. {_addresses.Count()} IPs found.");
             _backend.PlayerJoined += (id, user) =>
             {
                 var entity = _entityBackend.GetPlayerEntityId(id);
                 var ips = FetchAllIPs(entity);
                 if (ips.Length == 0)
                 {
-                    using (var random = RandomNumberGenerator.Create())
-                    {
-                        byte[] ipsegments = new byte[4];
-                        random.GetBytes(ipsegments);
-                        while (_addresses.FindOne(x => x.Address == this.CombineToUint(ipsegments)) != null)
-                        {
-                            random.GetBytes(ipsegments);
-                        }
-                        uint ip = CombineToUint(ipsegments);
-                        AllocateIPv4Address(ip, entity);
-                    }
+                    AllocateIPv4Address(NextIP(), entity);
                 }
             };
         }
@@ -170,7 +174,7 @@ namespace Peacenet.Backend
             var existing = _addresses.FindOne(x => x.Address == ipaddress);
             if (existing != null)
                 throw new ArgumentException("The IP address you have specified is already allocated.");
-            Logger.Log($"Allocating IP {GetIPString(ipaddress)} for {entityId}");
+            Plex.Objects.Logger.Log($"Allocating IP {GetIPString(ipaddress)} for {entityId}");
             _addresses.Insert(new PeacenetIPAddress
             {
                 Id = Guid.NewGuid().ToString(),

@@ -22,6 +22,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.GUI;
 using Peacenet.Applications;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet
 {
@@ -91,6 +92,9 @@ namespace Peacenet
         [Dependency]
         private WindowSystem _winsys = null;
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         private IEnumerable<string> getDirs(string path = "/")
         {
             foreach(var dir in _fs.GetDirectories(path))
@@ -137,7 +141,17 @@ namespace Peacenet
             }
             if(hasDoneTutorial == false)
             {
-                var tutorial = _plexgate.New<TutorialBgmEntity>();
+                AdvancedAudioPlayer tutorial = null;
+                try
+                {
+                    tutorial = new AdvancedAudioPlayer("Content/Audio/Tutorial");
+                }
+                catch (Exception ex)
+                {
+                    console.WriteLine("Now you have fucked up!  The Peacenet encountered an inexplicable exception.");
+                    console.WriteLine(ex.ToString());
+                    console.WriteLine("The game will probably crash now");
+                }
                 console.SlowWrite("Peacegate Live Environment v1.0");
                 Thread.Sleep(200);
                 console.SlowWrite("");
@@ -159,7 +173,11 @@ namespace Peacenet
                 Thread.Sleep(500);
                 console.SlowWrite("    I hope someone can see this on the other end of the connection... Please say something!");
                 string something = console.ReadLine();
-                _plexgate.GetLayer(LayerType.NoDraw).AddEntity(tutorial);
+                tutorial.Play();
+#if DEBUG 
+                console.WriteLine("This Peacenet Debug Build is equipped with Peacenet Fast Play!  (patent pending)");
+                goto skipStory;
+#endif
                 console.SlowWrite($"    \"{something}\"...Well...at least you can use your keyboard - and your Terminal.");
                 Thread.Sleep(500);
                 console.SlowWrite($"    I'm not sure who you are or how you can read this. But for the sake of comforting you, my name is Thelma.");
@@ -172,7 +190,6 @@ namespace Peacenet
                 Thread.Sleep(500);
                 console.SlowWrite($"    You don't seem like the other sentiences. You show far more collectiveness and intellect. That'll help you.");
                 Thread.Sleep(500);
-                tutorial.MoveToNextSection();
                 console.SlowWrite($"    Long ago, this world was created as a place to host the memories and personality information of dead humans.");
                 Thread.Sleep(500);
                 console.SlowWrite($"    It was a peaceful world where everyone had a second life in a digital land.");
@@ -187,10 +204,9 @@ namespace Peacenet
                 Thread.Sleep(500);
                 console.SlowWrite($"    This war is at its peak today. And you may be the only person who can survive it - and put an end to it.");
                 Thread.Sleep(500);
-                tutorial.MoveToNextSection();
-                tutorial.Looping = false;
                 console.SlowWrite("    There are some things I need to do for you first. Specifically, setting up a Peacegate environment for you - and teaching you how to use it. For now, pay attention to the console and follow the on-screen instructions.");
                 Thread.Sleep(500);
+                skipStory:
                 console.SlowWrite("   Let's begin.");
                 console.WriteLine("");
                 console.WriteLine("");
@@ -208,8 +224,7 @@ namespace Peacenet
                     console.WriteLine(pkg);
                     Thread.Sleep(1250);
                 }
-                tutorial.MoveToNextSection();
-                tutorial.Looping = true;
+                tutorial.Next = 2;
                 console.WriteLine("Waiting for setup environment...");
                 _os.PreventStartup = true;
                 new Tutorial.PeacegateSetup(_winsys, tutorial).Show(0, 0);
@@ -218,8 +233,7 @@ namespace Peacenet
             {
                 console.WriteLine("Loading GUI settings...");
                 var accent = _save.GetValue<PeacenetAccentColor>("theme.accent", PeacenetAccentColor.Blueberry);
-                ((PeacenetTheme)_theme.Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, accent);
-                _ui.InvalidateAll();
+                _pn.AccentColor = accent;
             }
         }
     }
@@ -410,7 +424,7 @@ namespace Peacenet
 
         private int _tutorialStage = -1;
 
-        private TutorialBgmEntity _music = null;
+        private AdvancedAudioPlayer _music = null;
 
         private TutorialHitbox _hitbox = new TutorialHitbox();
 
@@ -420,7 +434,7 @@ namespace Peacenet
         /// Creates a new instance of the <see cref="TutorialInstructionEntity"/>. 
         /// </summary>
         /// <param name="music">The <see cref="TutorialBgmEntity"/> currently playing music.</param>
-        public TutorialInstructionEntity(TutorialBgmEntity music)
+        public TutorialInstructionEntity(AdvancedAudioPlayer music)
         {
             if (music == null)
                 throw new ArgumentNullException(nameof(music));
@@ -650,7 +664,7 @@ namespace Peacenet
 
                         if(!desk.IsAppLauncherOpen)
                         {
-                            _music.FadeToNextTrack();
+                            _music.FadeToNextSection();
                             _tutorialStage++;
                         }
                         else
@@ -663,7 +677,6 @@ namespace Peacenet
                         _tutorialLabel.Visible = false;
                         _tutorialDescription.Visible = false;
 
-                        _music.Looping = false;
                         _tutorialStage++;
                         break;
                     case 11:

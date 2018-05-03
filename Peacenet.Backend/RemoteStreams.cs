@@ -98,6 +98,12 @@ namespace Peacenet.Backend
                             s.Item1.Dispose();
                             holder.info[id] = null;
                             return ServerResponseType.REQ_SUCCESS;
+                        case StreamOp.ReadByte:
+                            datawriter.Write(s.Item1.ReadByte());
+                            return ServerResponseType.REQ_SUCCESS;
+                        case StreamOp.WriteByte:
+                            s.Item1.WriteByte((byte)datareader.ReadInt32());
+                            return ServerResponseType.REQ_SUCCESS;
                         case StreamOp.Read:
                             var r = new byte[datareader.ReadInt32()];
                             datawriter.Write(s.Item1.Read(r, 0, r.Length));

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Plex.Engine.Saves;
 using Peacenet.CoreUtils;
 using Plex.Engine.GraphicsSubsystem;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.Applications
 {
@@ -25,6 +26,9 @@ namespace Peacenet.Applications
     [AppLauncher("Appearance settings", "System", "Customise the Peacegate")]
     public class Appearance : Window
     {
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         [Dependency]
         private Plexgate _plexgate = null;
 
@@ -186,7 +190,7 @@ namespace Peacenet.Applications
                 if (_accentColors.SelectedItem == null)
                     return;
                 _save.SetValue("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
+                _pn.AccentColor = (PeacenetAccentColor)_accentColors.SelectedItem.Tag;
                 Manager.InvalidateAll();
             };
             AddChild(_accentColors);

@@ -184,3 +184,12 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/PostProcessor.fx
 
+#begin Shaders/WorldMapShader.fx
+/importer:EffectImporter
+/processor:RemoteEffectProcessor
+/processorParam:RemoteAddress=pipeline.infinitespace-studios.co.uk
+/processorParam:RemotePort=443
+/processorParam:Protocol=https
+/processorParam:DebugMode=Auto
+/build:Shaders/WorldMapShader.fx
+

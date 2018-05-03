@@ -10,6 +10,7 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
 using Plex.Engine.Config;
 using System.Reflection;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.Applications
 {

@@ -31,6 +31,10 @@ namespace Peacenet.Applications
 
         private Mission _selected = null;
 
+
+
+
+
         [Dependency]
         private MissionManager _missionManager = null;
 
@@ -80,7 +84,8 @@ namespace Peacenet.Applications
                 lvitem.Tag = mission;
                 _availableView.AddItem(lvitem);
             }
-            
+
+            _availableView.Layout = ListViewLayout.List;
 
             _availableView.SelectedIndexChanged += (o, a) =>
             {
@@ -88,6 +93,7 @@ namespace Peacenet.Applications
                 {
                     _state = 1;
                     _selected = _availableView.SelectedItem.Tag as Mission;
+                    ResetUI();
                 }
             };
 

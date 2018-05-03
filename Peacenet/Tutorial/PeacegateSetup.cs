@@ -11,6 +11,7 @@ using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine;
 using Plex.Engine.Saves;
 using Plex.Engine.Interfaces;
+using Peacenet.PeacegateThemes;
 
 namespace Peacenet.Tutorial
 {
@@ -38,7 +39,7 @@ namespace Peacenet.Tutorial
 
         private double _animRide = 0;
 
-        private TutorialBgmEntity _tutorial = null;
+        private AdvancedAudioPlayer _tutorial = null;
         private Label _introHeader = new Label();
         private Label _introText = new Label();
 
@@ -105,8 +106,11 @@ namespace Peacenet.Tutorial
         [Dependency]
         private SaveManager _save = null;
 
+        [Dependency]
+        private PeacenetThemeManager _pn = null;
+
         /// <inheritdoc/>
-        public PeacegateSetup(WindowSystem _winsys, TutorialBgmEntity tutorial) : base(_winsys)
+        public PeacegateSetup(WindowSystem _winsys, AdvancedAudioPlayer tutorial) : base(_winsys)
         {
             _tutorial = tutorial;
             SetWindowStyle(WindowStyle.NoBorder);
@@ -203,8 +207,7 @@ Click 'Next' to get started.";
                 if (_accentColors.SelectedItem == null)
                     return;
                 _save.SetValue<PeacenetAccentColor>("theme.accent", (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                ((PeacenetTheme)Theme).SetAccentColor(_plexgate.GraphicsDevice, _plexgate.Content, (PeacenetAccentColor)_accentColors.SelectedItem.Tag);
-                Manager.InvalidateAll();
+                _pn.AccentColor = (PeacenetAccentColor)_accentColors.SelectedItem.Tag;
             };
             _accentPanel.AddChild(_accentColors);
             _accentPanel.AddChild(_accentHeader);
@@ -288,7 +291,7 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
                     }
                     break;
                 case 8:
-                    _tutorial.MoveToNextSection();
+                    _tutorial.Next++;
                     _animState++;
                     break;
                 case 9:

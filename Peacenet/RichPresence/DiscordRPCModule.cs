@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Plex.Engine.GUI;
 using Peacenet.CoreUtils;
+using Plex.Objects;
 
 namespace Peacenet.RichPresence
 {
@@ -85,7 +86,7 @@ namespace Peacenet.RichPresence
 
             public void Load(ContentManager content)
             {
-                Logger.Log("Registering Discord events...", LogType.Info, "rpcEntity");
+                Logger.Log("Registering Discord events...");
                 _handlers = new EventHandlers();
                 _handlers.readyCallback = DiscordReady;
                 _handlers.disconnectedCallback = DiscordDisconnected;
@@ -93,9 +94,9 @@ namespace Peacenet.RichPresence
                 _handlers.joinCallback = this.DiscordJoin;
                 _handlers.requestCallback = this.DiscordRequest;
                 _handlers.spectateCallback = this.DiscordSpectate;
-                Logger.Log("Initializing RPC...", LogType.Info, "rpcEntity");
+                Logger.Log("Initializing RPC...");
                 Initialize(_appID, ref _handlers, true, null);
-                Logger.Log("Creating rich presence object...", LogType.Info, "rpcEntity");
+                Logger.Log("Creating rich presence object...");
                 _rpcMod._presence = new RichPresence
                 {
                     instance = true,
@@ -131,14 +132,14 @@ namespace Peacenet.RichPresence
         {
             try
             {
-                Logger.Log("Starting Rich Presence integration module", LogType.Info, "discord");
+                Logger.Log("Starting Rich Presence integration module");
                 _plebgate.GetLayer(LayerType.NoDraw).AddEntity(_plebgate.New<DiscordRPCEntity>());
                 _presence.startTimestamp = DateTime.UtcNow.Epoch();
             }
             catch (Exception ex)
             {
-                Logger.Log("Rich Presence has been disabled due to an error.", LogType.Error, "discord");
-                Logger.Log(ex.Message, LogType.Error, "discord");
+                Logger.Log("Rich Presence has been disabled due to an error.", System.ConsoleColor.DarkYellow);
+                Logger.Log(ex.Message, System.ConsoleColor.DarkYellow);
             }
         }
 

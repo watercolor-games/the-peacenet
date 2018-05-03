@@ -30,14 +30,14 @@ namespace Peacenet.Backend.Saves
         /// <inheritdoc/>
         public void Initiate()
         {
-            Logger.Log("Save manager is starting...");
+            Plex.Objects.Logger.Log("Save manager is starting...");
             _saves = _db.Database.GetCollection<SaveFile>("usersaves");
             _saves.EnsureIndex(x => x.Id);
             _values = _db.Database.GetCollection<SaveValue>("usersavevalues");
             _values.EnsureIndex(x => x.Id);
             _snapshots = _db.Database.GetCollection<SaveSnapshot>("usersavesnapshots");
             _snapshots.EnsureIndex(x => x.Id);
-            Logger.Log($"Done. {_saves.Count()} saves loaded. {_values.Count()} total values loaded.");
+            Plex.Objects.Logger.Log($"Done. {_saves.Count()} saves loaded. {_values.Count()} total values loaded.");
         }
 
         /// <summary>
@@ -94,12 +94,12 @@ namespace Peacenet.Backend.Saves
             var snapshotValues = JsonConvert.DeserializeObject<List<SaveValue>>(snapshot.RawJson);
             
             var deleted = _values.Delete(x => x.SaveId == snapshot.SaveId);
-            Logger.Log($"Deleted {deleted} save value(s).");
+            Plex.Objects.Logger.Log($"Deleted {deleted} save value(s).");
             foreach(var value in snapshotValues)
             {
                 _values.Insert(value);
             }
-            Logger.Log("Snapshot restored.");
+            Plex.Objects.Logger.Log("Snapshot restored.");
             _snapshots.Delete(x => x.Id == snapshot.Id);
         }
 

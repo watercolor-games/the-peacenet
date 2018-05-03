@@ -2,6 +2,7 @@
 using Plex.Engine;
 using System.Diagnostics;
 using System.Linq;
+using Plex.Objects;
 
 namespace Peacenet
 {
@@ -16,11 +17,11 @@ namespace Peacenet
         [STAThread]
         static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = System.ConsoleColor.White;
             Console.Write("    the");
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = System.ConsoleColor.Green;
             Console.Write("peacenet");
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = System.ConsoleColor.White;
             Console.WriteLine(@"  Copyright (C) 2018  Watercolor Games
     This program comes with ABSOLUTELY NO WARRANTY; for details see 'License' in Settings.
     This is free software, and you are welcome to redistribute it
@@ -30,7 +31,7 @@ namespace Peacenet
             Console.WriteLine("--------------------");
             Console.WriteLine();
 
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = System.ConsoleColor.White;
             var prc = Process.GetCurrentProcess();
             var other = Process.GetProcesses().FirstOrDefault(x => { try { return x.ProcessName == prc.ProcessName && x.Id != prc.Id; } catch (InvalidOperationException) { return false; } });
             if (other != null)
@@ -40,17 +41,18 @@ namespace Peacenet
                 return;
             }
 
-#if DEBUG
+#if !DEBUG
             try
             {
+
 #endif
             using (var game = new Plexgate(args))
                 game.Run();
-#if DEBUG
+#if !DEBUG
         }
             catch(Exception ex)
             {
-                Logger.Log(ex.ToString(), LogType.Fatal, "monogame");
+                Logger.Log(ex.ToString(), System.ConsoleColor.Red);
                 Console.ReadKey(true);
 
             }

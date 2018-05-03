@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Plex.Engine;
 using Newtonsoft.Json;
+using Plex.Objects;
 
 namespace Peacenet
 {

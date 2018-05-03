@@ -137,8 +137,8 @@ namespace Peacenet.Applications
             AddChild(_newFolder);
             _places.AddChild(_placesView);
             _files.AddChild(_filesView);
-            Width = 800;
-            Height = 600;
+            Width = 1600;
+            Height = 1200;
             Title = "File browser";
 
             AddChild(_open);
@@ -437,18 +437,18 @@ namespace Peacenet.Applications
             _search.Width = 350;
             _search.Label = "Search...";
             base.OnUpdate(time);
-            _back.X = 5;
-            _forward.X = _back.X + _back.Width + 2;
-            _newFolder.X = _forward.X + _forward.Width + 2;
+            _back.X = 10;
+            _forward.X = _back.X + _back.Width + 4;
+            _newFolder.X = _forward.X + _forward.Width + 4;
 
             
-            _searchButton.X = (Width - _searchButton.Width) - 5;
-            _search.X = _searchButton.X - _search.Width - 2;
-            _search.Y = 5;
+            _searchButton.X = (Width - _searchButton.Width) - 10;
+            _search.X = _searchButton.X - _search.Width - 4;
+            _search.Y = 10;
 
-            _path.X = _newFolder.X + _newFolder.Width + 5;
+            _path.X = _newFolder.X + _newFolder.Width + 10;
             _path.AutoSize = true;
-            _path.MaxWidth = (_search.X) - (_path.X) - 5;
+            _path.MaxWidth = (_search.X) - (_path.X) - 10;
             _path.Text = "This is your current path...";
             _path.Y = (_search.Y) + ((_search.Height - _path.Height) / 2);
 
@@ -462,9 +462,9 @@ namespace Peacenet.Applications
 
             
             _places.X = 0;
-            _places.Y = _search.Y + _search.Height + 5;
+            _places.Y = _newFolder.Y + _newFolder.Height + 10;
             _placesView.Width = Width / 3;
-            _files.X = _places.Width + 2;
+            _files.X = _places.Width + 4;
             _files.Y = _places.Y;
             _filesView.Width = Width - _files.X;
             _placesView.Layout = ListViewLayout.List;
@@ -483,8 +483,8 @@ namespace Peacenet.Applications
             _statusHead.X = (_files.X) + ((_filesView.Width - _statusHead.Width) / 2);
             _statusDescription.X = (_files.X) + ((_filesView.Width - _statusDescription.Width) / 2);
 
-            _statusHead.Y = _files.Y + 25;
-            _statusDescription.Y = _statusHead.Y + _statusHead.Height + 5;
+            _statusHead.Y = _files.Y + 50;
+            _statusDescription.Y = _statusHead.Y + _statusHead.Height + 10;
 
             if (_open.Visible)
             {

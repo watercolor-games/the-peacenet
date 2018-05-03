@@ -31,14 +31,14 @@ namespace Peacenet.Backend
             _messages.EnsureIndex(x => x.Id);
             int deletedNoAuthor = _messages.Delete(x => _entityBackend.GetEntity(x.AuthorEntityId) == null);
             int deletedNoValidRecipient = _messages.Delete(x => x.RecipientEntityId != null && (_entityBackend.GetEntity(x.RecipientEntityId) == null));
-            Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
+            Plex.Objects.Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
         }
 
         public void SafetyCheck()
         {
             int deletedNoAuthor = _messages.Delete(x => _entityBackend.GetEntity(x.AuthorEntityId) == null);
             int deletedNoValidRecipient = _messages.Delete(x => x.RecipientEntityId != null && (_entityBackend.GetEntity(x.RecipientEntityId) == null));
-            Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
+            Plex.Objects.Logger.Log($"{deletedNoAuthor} chat messages deleted from database because of no valid author entity. {deletedNoValidRecipient} deleted because of no valid recipient entity. {_messages.Count()} still remain.");
         }
 
         public void AddMessage(string authorEntity, string recipientEntity, string message)
@@ -61,7 +61,7 @@ namespace Peacenet.Backend
 
             string authorName = _entityBackend.GetEntity(authorEntity).DisplayName;
             string recipientName = (recipientEntity == null) ? "group" : _entityBackend.GetEntity(recipientEntity).DisplayName;
-            Logger.Log($"[chat] <{authorName} -> {recipientName}> {message}");
+            Plex.Objects.Logger.Log($"[chat] <{authorName} -> {recipientName}> {message}");
             using (var ms = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(ms, Encoding.UTF8))

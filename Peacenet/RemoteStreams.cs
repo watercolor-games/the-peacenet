@@ -17,7 +17,7 @@ namespace Plex.Engine
             var s = plexgate.New<RemoteStream>();
             s.id = id;
             Logger.Log($"Remote Stream {id} Instantiated");
-            return new BufferedStream(s);
+            return s;
         }
 
         public void Initiate()
@@ -106,6 +106,14 @@ namespace Plex.Engine
                 }
             }
 
+            public override int ReadByte()
+            {
+                using (var read = sendMsg(StreamOp.ReadByte, null))
+                {
+                    return read.ReadInt32();
+                }
+            }
+
             public override long Seek(long offset, SeekOrigin origin)
             {
                 using (var read = sendMsg(StreamOp.Seek, (write) => { write.Write(offset); write.Write((int)origin); }))
@@ -123,6 +131,12 @@ namespace Plex.Engine
                     throw new ArgumentException("The sum of offset and count is greater than the buffer length.");
                 sendCmd(StreamOp.Write, (write) => { write.Write(count); write.Write(buffer.Skip(offset).Take(count).ToArray()); });
             }
+
+            public override void WriteByte(byte value)
+            {
+                sendCmd(StreamOp.WriteByte, (write) => { write.Write((int)value); });
+            }
+
 
             public override void Close()
             {

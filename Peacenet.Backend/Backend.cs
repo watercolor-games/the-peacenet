@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Peacenet.Backend
 {
@@ -30,9 +32,79 @@ namespace Peacenet.Backend
         private Dictionary<string, ItchUser> _users = new Dictionary<string, ItchUser>();
         private Dictionary<string, string> _keys = new Dictionary<string, string>();
 
-        private List<TcpClient> _connected = new List<TcpClient>();
+        class AwaitableQueue<T> : IDisposable
+        {
+            ConcurrentQueue<T> q = new ConcurrentQueue<T>();
+            SemaphoreSlim sem = new SemaphoreSlim(0, 1);
+            public void CopyTo(T[] array, int index)
+            {
+                q.CopyTo(array, index);
+            }
+            public int Count => q.Count;
+            public void Enqueue(T item)
+            {
+                q.Enqueue(item);
+                if (sem.CurrentCount == 0)
+                    try
+                    {
+                        sem.Release();
+                    }
+                    catch (SemaphoreFullException ex)
+                    {
+                        Logger.Log(ex.ToString());
+                    }
+            }
+            public IEnumerator<T> GetEnumerator()
+            {
+                return q.GetEnumerator();
+            }
+            public bool IsEmpty => q.IsEmpty;
+            public T[] ToArray()
+            {
+                return q.ToArray();
+            }
+            public bool TryDequeue(out T result)
+            {
+                return q.TryDequeue(out result);
+            }
+            public bool TryPeek(out T result)
+            {
+                return q.TryPeek(out result);
+            }
+            public async Task WaitAsync()
+            {
+                while (q.IsEmpty)
+                    await sem.WaitAsync();
+            }
 
-        private Dictionary<string, TcpClient> _playerIds = new Dictionary<string, TcpClient>();
+            public void Dispose()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private SynchronizedCollection<AwaitableQueue<byte[]>> _connected = new SynchronizedCollection<AwaitableQueue<byte[]>>();
+
+        private ConcurrentDictionary<string, AwaitableQueue<byte[]>> _playerIds = new ConcurrentDictionary<string, AwaitableQueue<byte[]>>();
+
+        byte[] getBcBytes(ServerBroadcastType type, byte[] body)
+        {
+            byte[] dat;
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(ms, Encoding.UTF8, true))
+                {
+                    writer.Write("broadcast");
+                    writer.Write((int)type);
+                    writer.Write(body?.Length ?? 0);
+                    if (body != null)
+                        writer.Write(body);
+                    writer.Flush();
+                }
+                dat = ms.ToArray();
+            }
+            return dat;
+        }
 
         /// <summary>
         /// Broadcast a message to all clients.
@@ -41,53 +113,19 @@ namespace Peacenet.Backend
         /// <param name="body">The body of the message.</param>
         public void Broadcast(ServerBroadcastType type, byte[] body)
         {
-            if (body == null)
-                body = new byte[0];
-            lock (_connected)
-            {
-                foreach(var client in _connected)
-                {
-                    var stream = client.GetStream();
-
-                    using(var writer = new BinaryWriter(stream, Encoding.UTF8, true))
-                    {
-                        writer.Write("broadcast");
-                        writer.Write((int)ServerResponseType.REQ_SUCCESS);
-                        writer.Write((int)type);
-                        writer.Write(body.Length);
-                        if (body.Length > 0)
-                            writer.Write(body);
-                        writer.Flush();
-                    }
-                }
-            }
+            var dat = getBcBytes(type, body);
+            foreach (var q in _connected)
+                q.Enqueue(dat);
         }
 
         internal void BroadcastToPlayer(ServerBroadcastType message, byte[] body, string playerId)
         {
             if (playerId == null)
                 return;
-            lock (_connected)
-            {
-                if (body == null)
-                    body = new byte[0];
-                if (!_playerIds.ContainsKey(playerId))
-                    return;
-                var client = _playerIds[playerId];
-                var stream = client.GetStream();
-
-                using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
-                {
-                    writer.Write("broadcast");
-                    writer.Write((int)ServerResponseType.REQ_SUCCESS);
-                    writer.Write((int)message);
-                    writer.Write(body.Length);
-                    if (body.Length > 0)
-                        writer.Write(body);
-                    writer.Flush();
-                }
-
-            }
+            AwaitableQueue<byte[]> q;
+            if (!_playerIds.TryGetValue(playerId, out q))
+                return;
+            q.Enqueue(getBcBytes(message, body));
         }
 
         private string _rootDirectory = null;
@@ -366,7 +404,6 @@ namespace Peacenet.Backend
                 _listener = new TcpListener(IPAddress.Any, _port);
             else
                 _listener = new TcpListener(IPAddress.Loopback, _port);
-
             _listener.Start();
             _serverReady.Set();
             while (_isRunning)
@@ -374,92 +411,102 @@ namespace Peacenet.Backend
                 try
                 {
                     var connection = _listener.AcceptTcpClient();
-                    _connected.Add(connection);
+                    var q = new AwaitableQueue<byte[]>();
+                    _connected.Add(q);
                     Logger.Log($"New client connection.");
                     var t = new Thread(() =>
                     {
                         string csession = "";
                         var stream = connection.GetStream();
-                        var reader = new BinaryReader(stream);
-                        var writer = new BinaryWriter(stream);
                         bool playerJoined = false;
 
-                        while (connection.Connected)
+                        Task.WaitAll(new Task[]
                         {
-                            try
+                            ((Func<Task>)(async () =>
                             {
-                                var muid = reader.ReadString();
-                                Logger.Log("New message incoming.");
-                                var mtype = reader.ReadInt32();
-                                Logger.Log("Received message type.");
-                                string session = reader.ReadString();
-                                Logger.Log("Received itch.io OAuth2 token.");
-                                if (_isMultiplayer == false)
-                                    session = "__SINGLEPLAYER";
-                                byte[] content = new byte[] { };
-                                Logger.Log("Reading body...");
-                                int len = reader.ReadInt32();
-                                if (len > 0)
-                                    content = reader.ReadBytes(len);
-                                Logger.Log("Body received.");
-                                byte[] returncontent = new byte[] { };
-                                if (_isMultiplayer)
+                                var lenb = new byte[4];
+                                int leni;
+                                byte[] dat = null;
+                                while (connection.Connected)
                                 {
-                                    if (!_keys.ContainsKey(session))
+                                    try
                                     {
-                                        Logger.Log("Downloading itch.io user profile data to cache...");
-                                        var user = getItchUser(session);
-                                        Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
-                                        PlayerJoined?.Invoke(_keys[session], user);
-                                    }
-                                }
-                                else
-                                {
-                                    if(playerJoined==false)
-                                    {
-                                        playerJoined = true;
-                                        var key = _keys[session];
-                                        var user = _users[key];
-                                        PlayerJoined?.Invoke(key, user);
-                                    }
-                                }
-                                if (string.IsNullOrWhiteSpace(csession))
-                                    csession = _keys[session];
-                                if (!_playerIds.ContainsKey(csession))
-                                    _playerIds.Add(csession, connection);
-                                var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
-                                Logger.Log("Replying to message...");
-                                writer.Write(muid);
-                                Logger.Log("Writing message result");
-                                writer.Write((int)result);
-                                Logger.Log("Writing OAuth2 token");
-                                writer.Write(session);
-                                Logger.Log("Writing body length");
-                                writer.Write(returncontent.Length);
-                                Logger.Log("Writing body");
-                                if (returncontent.Length > 0)
-                                    writer.Write(returncontent);
-                                writer.Flush();
-                            }
-                            catch(EndOfStreamException ex)
-                            {
-                                Logger.Log(ex.ToString());
-                                break;
-                            }
-                            catch(IOException ex)
-                            {
-                                Logger.Log(ex.ToString());
-                                break;
-                            }
+                                        await stream.ReadAsync(lenb, 0, 4);
+                                        leni = BitConverter.ToInt32(lenb, 0);
+                                        Logger.Log($"New message incoming. {leni} bytes long");
+                                        if (dat?.Length != leni)
+                                            dat = new byte[leni];
+                                        await stream.ReadAsync(dat, 0, leni);
+                                        Logger.Log("Message received");
+                                        using (var ms = new MemoryStream(dat))
+                                        using (var reader = new BinaryReader(ms))
+                                        {
+                                            var muid = reader.ReadString();
+                                            var mtype = reader.ReadInt32();
+                                            var session = reader.ReadString();
+                                            if (_isMultiplayer == false)
+                                                session = "__SINGLEPLAYER";
+                                            byte[] content = reader.ReadBytes(reader.ReadInt32());
+                                            if (string.IsNullOrWhiteSpace(csession))
+                                                csession = _keys[session];
+                                            _playerIds.TryAdd(csession, q);
 
-                        }
-                        reader.Close();
-                        writer.Close();
-                        stream.Close();
-                        reader.Dispose();
-                        writer.Dispose();
+                                            if (_isMultiplayer)
+                                            {
+                                                if (!_keys.ContainsKey(session))
+                                                {
+                                                    Logger.Log("Downloading itch.io user profile data to cache...");
+                                                    var user = getItchUser(session);
+                                                    Logger.Log($"{user.display_name} ({user.username}) has connected to the server.");
+                                                    PlayerJoined?.Invoke(_keys[session], user);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (playerJoined == false)
+                                                {
+                                                    playerJoined = true;
+                                                    var key = _keys[session];
+                                                    var user = _users[key];
+                                                    PlayerJoined?.Invoke(key, user);
+                                                }
+                                            }
+                                            startRespThread(mtype, muid, session, content, q);
+                                        }
+                                    }
+                                    catch (IOException ex)
+                                    {
+                                        Logger.Log(ex.ToString());
+                                        break;
+                                    }
+                                }
+                            }))(),
+                            ((Func<Task>)(async () =>
+                            {
+                                byte[] dat;
+                                while (connection.Connected)
+                                {
+                                    try
+                                    {
+                                        await q.WaitAsync();
+                                        Logger.Log($"Writer thread awakened");
+                                        while (q.TryDequeue(out dat))
+                                        {
+                                            await stream.WriteAsync(dat, 0, dat.Length);
+                                            Logger.Log($"Wrote {dat.Length} bytes");
+                                        }
+                                    }
+                                    catch (IOException ex)
+                                    {
+                                        Logger.Log(ex.ToString());
+                                        break;
+                                    }
+                                }
+                            }))()
+                        });
+
                         stream.Dispose();
-                        _connected.Remove(connection);
+                        _connected.Remove(q);
                     });
                     t.IsBackground = true;
                     t.Start();
@@ -467,8 +514,29 @@ namespace Peacenet.Backend
                 catch (SocketException sex)
                 {
                     Logger.Log("Socket exception: " + sex.ToString());
-                } 
+                }
             }
+        }
+
+        void startRespThread(int mtype, string muid, string session, byte[] content, AwaitableQueue<byte[]> q)
+        {
+            new Thread(() =>
+            {
+                byte[] returncontent;
+                var result = HandleMessage((ServerMessageType)mtype, _keys[session], content, out returncontent);
+
+                using (var wms = new MemoryStream())
+                using (var writer = new BinaryWriter(wms))
+                {
+                    writer.Write(muid);
+                    writer.Write((int)result);
+                    writer.Write(session);
+                    writer.Write(returncontent.Length);
+                    writer.Write(returncontent);
+                    q.Enqueue(wms.ToArray());
+                    Logger.Log($"Enqueued response to {(ServerMessageType)mtype} {muid}");
+                }
+            }).Start();
         }
 
         /// <summary>
