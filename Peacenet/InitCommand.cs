@@ -703,6 +703,7 @@ namespace Peacenet
                         _tutorialButton.Dispose();
                         _save.SetValue("boot.hasDoneCmdTutorial", true);
                         _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(this);
+                        this._music.StopNext();
                         _tutorialStage++;
                         break;
 

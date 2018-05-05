@@ -38,6 +38,9 @@ namespace Peacenet.Applications
         private Label _graphics = new Label();
 
         private CheckLabel _gfxFullscreen = new CheckLabel();
+        private Label _gfxGuiScale = new Label();
+        private Button _gfxSetGuiScale = new Button();
+
 
         private Label _audio = new Label();
 
@@ -104,6 +107,17 @@ namespace Peacenet.Applications
             _configPanel.AddChild(_fadingWindows);
 
             _configPanel.AddChild(_gfxFullscreen);
+            _configPanel.AddChild(_gfxSetGuiScale);
+            _configPanel.AddChild(_gfxGuiScale);
+
+            _gfxGuiScale.AutoSize = true;
+            _gfxSetGuiScale.Text = "Change GUI Scale";
+            _gfxSetGuiScale.Click += (o, a) =>
+            {
+                var scalesettings = new ScreenScaleSetter(WindowSystem);
+                scalesettings.Show();
+            };
+            
             if (_needsPopulate)
             {
                 PopulateResolutions();
@@ -181,6 +195,8 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            _gfxGuiScale.Text = $"GUI Scale: {Math.Round((float)_plexgate.BaseRenderHeight / _plexgate.GetRenderScreenSize().Y, 2)}x";
+
             _resolutionScroller.X = 15;
             _resolutionScroller.Y = 15;
             _resolutions.Width = (Width - 30) / 3;
@@ -209,8 +225,25 @@ namespace Peacenet.Applications
             _gfxFullscreen.MaxWidth = (_configPanel.Width - 35);
             _gfxFullscreen.Text = "Fullscreen";
 
+            _gfxSetGuiScale.X = (_configPanel.Width - _gfxSetGuiScale.Width) - 15;
+
+            _gfxGuiScale.MaxWidth = _gfxSetGuiScale.X - 30;
+            _gfxGuiScale.X = 15;
+
+            int guiScaleMax = Math.Max(_gfxGuiScale.Height, _gfxSetGuiScale.Height);
+            if (guiScaleMax == _gfxGuiScale.Height)
+            {
+                _gfxGuiScale.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 7;
+                _gfxSetGuiScale.Y = _gfxGuiScale.Y + ((_gfxGuiScale.Height - _gfxSetGuiScale.Height) / 2);
+            }
+            else
+            {
+                _gfxSetGuiScale.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 7;
+                _gfxGuiScale.Y = _gfxSetGuiScale.Y + ((_gfxSetGuiScale.Height - _gfxGuiScale.Height) / 2);
+            }
+
             _audio.X = 15;
-            _audio.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 10;
+            _audio.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + guiScaleMax + 17;
             _audio.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
             _audio.AutoSize = true;
             _audio.Text = "Audio";

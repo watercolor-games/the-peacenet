@@ -20,6 +20,7 @@ using Microsoft.Xna.Framework.Content;
 using Peacenet.PeacegateThemes;
 using Plex.Objects;
 using Microsoft.Xna.Framework.Input;
+using Plex.Engine.Config;
 
 namespace Peacenet
 {
@@ -37,6 +38,12 @@ namespace Peacenet
         [Dependency]
         private SaveManager _save = null;
 
+        [Dependency]
+        private ConfigManager _config = null;
+
+        [Dependency]
+        private WindowSystem _winsys = null;
+
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -44,9 +51,12 @@ namespace Peacenet
             _theme.Theme = _plexgate.New<PeacenetTheme>();
             Logger.Log("And now for the save backend.");
             _save.SetBackend(_plexgate.New<ServerSideSaveBackend>());
+
 #if DEBUG
             _plexgate.GetLayer(LayerType.NoDraw).AddEntity(_plexgate.New<DebugEntity>());
 #endif
+
+
         }
 
         private SplashEntity splash = null;
@@ -54,8 +64,32 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Load(ContentManager content)
         {
-            splash = (_plexgate.New<SplashEntity>());
-            MakeVisible();
+            Logger.Log("Applying GUI scale...");
+
+            float renderScale = _config.GetValue<float>("renderScale", 0);
+            if (renderScale == 0)
+            {
+                renderScale = (_plexgate.GetRenderScreenSize().Y / _plexgate.BackBufferHeight);
+                _config.SetValue("renderScale", renderScale);
+                _plexgate.RenderScale = renderScale;
+
+                var screenScaleSetter = new Applications.ScreenScaleSetter(_winsys, (scale) =>
+                {
+                    _config.SetValue("renderScale", scale);
+                    _config.SaveToDisk();
+                    _plexgate.RenderScale = scale;
+                    splash = (_plexgate.New<SplashEntity>());
+                    MakeVisible();
+                });
+                screenScaleSetter.Show();
+
+            }
+            else
+            {
+                _plexgate.RenderScale = renderScale;
+                splash = (_plexgate.New<SplashEntity>());
+                MakeVisible();
+            }
         }
         
         /// <summary>

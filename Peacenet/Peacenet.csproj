@@ -78,6 +78,7 @@
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
     <Compile Include="Applications\MissionMenu.cs" />
+    <Compile Include="Applications\ScreenScaleSetter.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\TextEditorApp.cs" />
