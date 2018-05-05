@@ -83,8 +83,8 @@ namespace Peacenet.DesktopUI
             _desktop = desktop;
 
             //Set the width and height
-            Width = 968;
-            Height = 1256;
+            Width = 484;
+            Height = 628;
 
             //Also, we want to be border-less.
             SetWindowStyle(WindowStyle.NoBorder);
@@ -455,22 +455,22 @@ namespace Peacenet.DesktopUI
 
         protected override void OnUpdate(GameTime time)
         {
-            Width = 192;
-            _icon.Width = 128;
-            _icon.Height = 128;
+            Width = 96;
+            _icon.Width = 64;
+            _icon.Height = 64;
             _icon.X = (Width - _icon.Width) / 2;
 
             _name.AutoSize = true;
-            _name.MaxWidth = Width - 8;
+            _name.MaxWidth = Width - 4;
             _name.X = (Width - _name.Width) / 2;
             _name.Alignment = TextAlignment.Center;
             _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
             int totalHeight = _icon.Height + 5 + _name.Height;
 
-            Height = totalHeight + 32;
+            Height = totalHeight + 16;
 
-            _name.Y = (Height - _name.Height) - 10;
+            _name.Y = (Height - _name.Height) - 5;
             _icon.Y = (_name.Y - _icon.Height) / 2;
         }
 
@@ -583,9 +583,9 @@ namespace Peacenet.DesktopUI
             }
             Width = Parent.Width;
 
-            _icon.Width = 128;
-            _icon.Height = 128;
-            _icon.X = 8;
+            _icon.Width = 64;
+            _icon.Height = 64;
+            _icon.X = 4;
 
             _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
 
@@ -599,24 +599,24 @@ namespace Peacenet.DesktopUI
             _name.MaxWidth = textWidth;
             _description.MaxWidth = textWidth;
 
-            _name.X = _icon.X + _icon.Width + 6;
+            _name.X = _icon.X + _icon.Width + 3;
             _description.X = _name.X;
 
             int textHeight = _name.Height + 3 + _description.Height;
 
             if(Math.Max(textHeight, _icon.Height) == textHeight)
             {
-                Height = textHeight + 16;
+                Height = textHeight + 8;
             }
             else
             {
-                Height = _icon.Height + 16;
+                Height = _icon.Height + 8;
             }
 
             _icon.Y = (Height - _icon.Height) / 2;
 
             _name.Y = (Height - textHeight) / 2;
-            _description.Y = _name.Y + _name.Height + 6;
+            _description.Y = _name.Y + _name.Height + 3;
 
             base.OnUpdate(time);
         }

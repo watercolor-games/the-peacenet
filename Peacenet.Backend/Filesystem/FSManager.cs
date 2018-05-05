@@ -41,6 +41,11 @@ namespace Peacenet.Backend.Filesystem
         public ADriveMount GetDriveFromPathData(string entityid, string pathdata, out string path)
         {
             var pdata = JsonConvert.DeserializeObject<PathData>(pathdata);
+            if(pdata==null)
+            {
+                path = null;
+                return null;
+            }
             path = pdata.Path;
             return _mounts.FirstOrDefault(x => x.SessionID == entityid && x.DriveNumber == pdata.DriveNumber);
         }

@@ -499,7 +499,7 @@ namespace Peacenet
                     height += 5 + _tutorialButton.Height;
 
                 _tutorialLabel.Y = (_ui.ScreenHeight - height) / 2;
-                _tutorialLabel.X = (_ui.ScreenWidth - _tutorialLabel.Width) / 2;
+                _tutorialLabel.X = (_ui.ScreenWidth - Math.Max(_tutorialLabel.Width, _tutorialDescription.Width)) / 2;
 
                 //Get the window Y.
                 int winY = (_terminal == null) ? 0 : _terminal.Parent.Y;
