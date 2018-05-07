@@ -199,9 +199,9 @@ namespace Peacenet
                     console.WriteKernelMessage("The game will probably crash now", KernelMessageType.Warning);
                 }
                 console.WriteNPCChat("thelma", "...Hello?");
-                console.WriteNPCChat("thelma", "A-Are you there? You're new to The Peacenet, right? Did you just spawn?");
+                console.WriteNPCChat("thelma", "Are you there? You're new to The Peacenet, right? Did you just spawn?");
                 console.WriteNPCChat("thelma", "You seem to have interactive access to Peacegate, or, something that's different to most of us.");
-                console.WriteNPCChat("thelma", "If you can read this, and you've got interactive access, can you...m-maybe send a message back to me? Just type the message and hit 'enter' at the prompt.");
+                console.WriteNPCChat("thelma", "If you can read this, and you've got interactive access, can you...maybe send a message back to me? Just type the message and hit 'enter' at the prompt.");
                 console.Write("> ");
                 string something = console.ReadLine();
                 tutorial.Play();
@@ -210,14 +210,14 @@ namespace Peacenet
                 goto skipStory;
 #endif
                 console.WriteNPCChat("thelma", "Huh. It's not usual for a sentience to ever actually have interactive Peacegate access...let alone when they're new.");
-                console.WriteNPCChat("thelma", "Maybe you're that government guy. Your IP address does show you're in Elytrose. I-If that's the case...then maybe you can help all of us.");
-                console.WriteNPCChat("thelma", "H-Hang on. Let me introduce myself. My name is Thelma.");
+                console.WriteNPCChat("thelma", "Maybe you're that government guy. Your IP address does show you're in Elytrose. If that's the case...then maybe you can help all of us.");
+                console.WriteNPCChat("thelma", "Hang on. Let me introduce myself. My name is Thelma.");
                 console.WriteNPCChat("thelma", "I'm a sentience within The Peacenet. In fact, I was the first. I was here since before beta.");
                 console.WriteNPCChat("thelma", "The Peacenet is a digital afterlife. Every single one of us AIs are reincarnations of dead humans from your planet.");
                 console.WriteNPCChat("thelma", "Over time, I became a greeting sentience - helping new sentiences become comfortable with their new digital home. After all, death is scary even without digital reincarnation.");
                 console.WriteNPCChat("thelma", "All AIs including myself run on the Peacegate OS. It's what allows us to communicate with each other...somehow. I don't really know how it works under the hood. I've been trying to find out for just as long as this world's been in war...in the hopes that maybe, just maybe, it would help me restore peace.");
                 console.WriteNPCChat("thelma", "If you have interactive access, then...maybe you can find out what goes on in Peacegate...how it works...and what's causing everyone to go insane. Please. You have to help.");
-                console.WriteNPCChat("thelma", "O-Oh...I guess your OS hasn't installed itself yet. I'm probably holding it back by interrupting your userland. I won't bother you for much longer.");
+                console.WriteNPCChat("thelma", "Oh...I guess your OS hasn't installed itself yet. I'm probably holding it back by interrupting your userland. I won't bother you for much longer.");
                 console.WriteNPCChat("thelma", "I'm going to disconnect from your userland now and let Peacegate install itself. I've never seen the interactive installer though...I imagine it'll...well..want you to interact with it. Just do what it says, and once it's done, enter the World Map screen to see a view of The Peacenet.");
                 console.WriteNPCChat("thelma", "Find my node on the map and accept the mission. Then we can get started.");
                 console.WriteKernelMessage("User 'thelma' has disconnected from PTS 1. Resuming installation.");
