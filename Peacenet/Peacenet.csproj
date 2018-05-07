@@ -295,6 +295,9 @@
     <None Include="Content\Audio\Cutscene\Intro\Predeath.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Audio\Cutscene\Prologue\Briefing.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Audio\GovernmentAlert\Bgm1.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

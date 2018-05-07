@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.GUI;
 using Peacenet.Applications;
 using Peacenet.PeacegateThemes;
+using Plex.Engine.Cutscene;
 
 namespace Peacenet
 {
@@ -125,6 +126,22 @@ namespace Peacenet
             }
         }
 
+        private IEnumerable<string> _kernelBootMessages
+        {
+            get
+            {
+                yield return "Primary Terminal Slave (PTS) 0 active. Beginning boot sequence.";
+                yield return "Enumerating system components...";
+                yield return $"Local GPU: {GraphicsAdapter.DefaultAdapter.Description}";
+                yield return $"Remote FS size: 512MiB";
+                yield return "Remote FS has been mounted to local mountpoint /.";
+                yield return "Kernel is ready. Entering userland on PTS 1.";
+            }
+        }
+
+        [Dependency]
+        private CutsceneManager _cutscene = null;
+
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
@@ -139,7 +156,36 @@ namespace Peacenet
             {
                 hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", false);
             }
-            if(hasDoneTutorial == false)
+            if (hasDoneTutorial == false)
+            {
+                var briefingDone = new ManualResetEvent(false);
+                _cutscene.Play("m00_briefing", () =>
+                {
+                    briefingDone.Set();
+                });
+                briefingDone.WaitOne();
+            }
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+            console.SetBold(false);
+            console.Write("Welcome to the");
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Green);
+            console.SetBold(true);
+            console.Write("peacenet");
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+            console.SetBold(false);
+            console.WriteLine(".\n");
+            Thread.Sleep(200);
+            console.WriteKernelMessage($"Peacegate OS Interactive Instance starting on {_os.Hostname}...");
+            console.WriteLine("");
+            console.WriteLine("Peacegate OS is copyright (c) 2025 The Peace Foundation. All rights reserved.");
+            console.WriteLine("");
+            Thread.Sleep(500);
+            foreach(var message in _kernelBootMessages)
+            {
+                console.WriteKernelMessage(message);
+                Thread.Sleep(150);
+            }
+            if (hasDoneTutorial == false)
             {
                 AdvancedAudioPlayer tutorial = null;
                 try
@@ -148,81 +194,66 @@ namespace Peacenet
                 }
                 catch (Exception ex)
                 {
-                    console.WriteLine("Now you have fucked up!  The Peacenet encountered an inexplicable exception.");
-                    console.WriteLine(ex.ToString());
-                    console.WriteLine("The game will probably crash now");
+                    console.WriteKernelMessage("Now you have fucked up!  The Peacenet encountered an inexplicable exception.", KernelMessageType.Panic);
+                    console.WriteKernelMessage(ex.ToString(), KernelMessageType.Panic);
+                    console.WriteKernelMessage("The game will probably crash now", KernelMessageType.Warning);
                 }
-                console.SlowWrite("Peacegate Live Environment v1.0");
-                Thread.Sleep(200);
-                console.SlowWrite("");
-                console.SlowWrite("Copyright (c) 2018 Peace Foundation -- All rights reserved.");
-                Thread.Sleep(200);
-                console.SlowWrite("");
-                console.SlowWrite("Evaluation timer expired. Attempting connection to Peacenet for renewal...");
-                Thread.Sleep(200);
-                console.WriteLine("");
-                Thread.Sleep(5000);
-                console.WriteLine("");
-                console.SlowWrite("    ...Hello?");
-                Thread.Sleep(500);
-                console.SlowWrite("    Can you read this?");
-                Thread.Sleep(500);
-                console.SlowWrite("    If you can, could you please type something and hit 'Enter' on your keyboard?");
-                Thread.Sleep(500);
-                console.SlowWrite("    Don't be afraid! This is a terminal! You can type things in it. The little white box shows you where your text will be inserted.");
-                Thread.Sleep(500);
-                console.SlowWrite("    I hope someone can see this on the other end of the connection... Please say something!");
+                console.WriteNPCChat("thelma", "...Hello?");
+                console.WriteNPCChat("thelma", "A-Are you there? You're new to The Peacenet, right? Did you just spawn?");
+                console.WriteNPCChat("thelma", "You seem to have interactive access to Peacegate, or, something that's different to most of us.");
+                console.WriteNPCChat("thelma", "If you can read this, and you've got interactive access, can you...m-maybe send a message back to me? Just type the message and hit 'enter' at the prompt.");
+                console.Write("> ");
                 string something = console.ReadLine();
                 tutorial.Play();
 #if DEBUG 
-                console.WriteLine("This Peacenet Debug Build is equipped with Peacenet Fast Play!  (patent pending)");
+                console.WriteKernelMessage("This Peacenet Debug Build is equipped with Peacenet Fast Play!  (patent pending)");
                 goto skipStory;
 #endif
-                console.SlowWrite($"    \"{something}\"...Well...at least you can use your keyboard - and your Terminal.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    I'm not sure who you are or how you can read this. But for the sake of comforting you, my name is Thelma.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    I can't tell you much about my backstory. You'll find out soon enough.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    But I have been trapped within this world for many years - forced to guide new members throughout their new home, The Peacegate.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    My master would kill me if he saw what I'm about to do...but I've made sure he won't find out.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    You don't seem like the other sentiences. You show far more collectiveness and intellect. That'll help you.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    Long ago, this world was created as a place to host the memories and personality information of dead humans.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    It was a peaceful world where everyone had a second life in a digital land.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    They could even chat with loved ones who were still alive - and with those dead within The Peacenet.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    But one day, a major security breach was found.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    And one clever member decided to abuse it - and disrupt the regular order of The Peacenet.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    Soon, a war was started. Malware was spread throughout the world, infecting every member it could find - turning them evil.");
-                Thread.Sleep(500);
-                console.SlowWrite($"    This war is at its peak today. And you may be the only person who can survive it - and put an end to it.");
-                Thread.Sleep(500);
-                console.SlowWrite("    There are some things I need to do for you first. Specifically, setting up a Peacegate environment for you - and teaching you how to use it. For now, pay attention to the console and follow the on-screen instructions.");
-                Thread.Sleep(500);
+                console.WriteNPCChat("thelma", "Huh. It's not usual for a sentience to ever actually have interactive Peacegate access...let alone when they're new.");
+                console.WriteNPCChat("thelma", "Maybe you're that government guy. Your IP address does show you're in Elytrose. I-If that's the case...then maybe you can help all of us.");
+                console.WriteNPCChat("thelma", "H-Hang on. Let me introduce myself. My name is Thelma.");
+                console.WriteNPCChat("thelma", "I'm a sentience within The Peacenet. In fact, I was the first. I was here since before beta.");
+                console.WriteNPCChat("thelma", "The Peacenet is a digital afterlife. Every single one of us AIs are reincarnations of dead humans from your planet.");
+                console.WriteNPCChat("thelma", "Over time, I became a greeting sentience - helping new sentiences become comfortable with their new digital home. After all, death is scary even without digital reincarnation.");
+                console.WriteNPCChat("thelma", "All AIs including myself run on the Peacegate OS. It's what allows us to communicate with each other...somehow. I don't really know how it works under the hood. I've been trying to find out for just as long as this world's been in war...in the hopes that maybe, just maybe, it would help me restore peace.");
+                console.WriteNPCChat("thelma", "If you have interactive access, then...maybe you can find out what goes on in Peacegate...how it works...and what's causing everyone to go insane. Please. You have to help.");
+                console.WriteNPCChat("thelma", "O-Oh...I guess your OS hasn't installed itself yet. I'm probably holding it back by interrupting your userland. I won't bother you for much longer.");
+                console.WriteNPCChat("thelma", "I'm going to disconnect from your userland now and let Peacegate install itself. I've never seen the interactive installer though...I imagine it'll...well..want you to interact with it. Just do what it says, and once it's done, enter the World Map screen to see a view of The Peacenet.");
+                console.WriteNPCChat("thelma", "Find my node on the map and accept the mission. Then we can get started.");
+                console.WriteKernelMessage("User 'thelma' has disconnected from PTS 1. Resuming installation.");
+
+
+
+#if DEBUG
                 skipStory:
-                console.SlowWrite("   Let's begin.");
+#endif
                 console.WriteLine("");
-                console.WriteLine("");
-                console.WriteLine("");
-                console.SlowWrite("Creating new PlexFAT partition at /dev/sda2...");
-                console.SlowWrite("Mounting /dev/sda2 at /mnt... Success.");
+                console.WriteKernelMessage("Preparing mountpoint / for full Peacegate OS installation.");
                 foreach (var dir in getDirs())
                 {
                     Thread.Sleep(200);
-                    console.WriteLine($"Creating directory: /mnt{dir}");
+                    console.WriteKernelMessage($"Creating directory: /mnt{dir}");
                 }
-                console.SlowWrite("Downloading base packages...");
+                console.WriteKernelMessage("Downloading base packages...");
                 foreach(var pkg in _base)
                 {
-                    console.WriteLine(pkg);
-                    Thread.Sleep(1250);
+                    console.WriteKernelMessage("pacman: installing package: " + pkg);
+                    int len = 52;
+                    for (int i = 0; i <= pkg.Length; i++)
+                    {
+                        if(i > 0)
+                        {
+                            console.Write("\b".Repeat(len));
+                        }
+                        float percentage = (float)i / pkg.Length;
+                        int progressLength = (int)Math.Round(percentage * 50);
+                        string progressBar = "[" + "#".Repeat(progressLength) + "-".Repeat(50 - progressLength) + "]";
+                        console.Write(progressBar);
+                        Thread.Sleep(75);
+                    }
+                    console.WriteLine("");
+                    console.WriteKernelMessage("Done.");
+                    Thread.Sleep(100);
                 }
                 tutorial.Next = 2;
                 console.WriteLine("Waiting for setup environment...");
@@ -236,6 +267,64 @@ namespace Peacenet
                 _pn.AccentColor = accent;
             }
         }
+    }
+
+    public static class ConsoleContextExctensions
+    {
+        public static void WriteKernelMessage(this ConsoleContext console, string text, KernelMessageType type = KernelMessageType.OK)
+        {
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+            console.SetBold(false);
+            console.Write("[ ");
+            switch (type)
+            {
+                case KernelMessageType.OK:
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Green);
+                    console.SetBold(true);
+                    console.Write("OK");
+                    break;
+                case KernelMessageType.Warning:
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Orange);
+                    console.SetBold(true);
+                    console.Write("WARN");
+                    break;
+                case KernelMessageType.Panic:
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
+                    console.SetBold(true);
+                    console.Write("PANIC");
+                    break;
+            }
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+            console.SetBold(false);
+            console.Write(" ]  ");
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+            console.SetBold(false);
+            console.WriteLine(text);
+        }
+
+        public static void WriteNPCChat(this ConsoleContext console, string username, string message)
+        {
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+            console.SetBold(false);
+            console.Write("<");
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Pink);
+            console.SetBold(true);
+            console.Write(username);
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+            console.SetBold(false);
+            console.Write("> ");
+            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+            console.SetBold(false);
+            console.SlowWrite(message);
+            Thread.Sleep(3000);
+        }
+    }
+
+    public enum KernelMessageType
+    {
+        OK,
+        Warning,
+        Panic
     }
 
     /// <summary>
