@@ -687,6 +687,8 @@ namespace Peacenet.Applications
                     {
                         _textBuffer += (char)ch;
                     }
+                    _cursorOn = true;
+                    _cursorAnim = 0;
                     ch = _slave.ReadByte();
                 }
                 Invalidate(true);
@@ -698,7 +700,7 @@ namespace Peacenet.Applications
             }
 
             _cursorAnim += time.ElapsedGameTime.TotalMilliseconds;
-            if(_cursorAnim >= 500)
+            if(_cursorAnim >= 250)
             {
                 _cursorAnim = 0;
                 _cursorOn = !_cursorOn;
