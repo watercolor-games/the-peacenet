@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Themes;
@@ -14,11 +15,15 @@ namespace Peacenet.Cutscene
 {
     public class PrologueCutscene : cutscene.Cutscene
     {
+        private SpriteFont _font = null;
         private int _state = 0;
         private double _ride = 0;
         private int _charIndex = 0;
         private int _lineIndex = 0;
         private double _cursorTime = 0;
+
+        private double _installTime = 5;
+        private bool _showInstallCounter = false;
 
         private SoundEffectInstance _bgm = null;
 
@@ -34,25 +39,9 @@ namespace Peacenet.Cutscene
             "An Alkaline Thunder game",
             "Powered by Peace Engine",
             "",
-            "[Starting Mission Briefing]",
-            @"Greetings.
-
-You have been selected to participate in a special work-release program.
-
-From this day forward, you work for the Elytrose Federal Government.",
-            @"Your mission is simple.
-
-You will be placed within The Peacenet, a digital afterlife. This afterlife is under war.",
-            @"This world and all its inhabitants run on the Peacenet Gateway Operating System, or, Peacegate OS for short.
-
-You will enter this world posing as a sentient AI, and unlike most real inhabitants of the Peacenet, you will be given interactive access to the operating system to complete your mission.",
-            @"And your mission is simple.
-
-End the war.",
-            "NOTE. This mission is NOT an excuse to be exempt from Elytrose federal law. As such, any misconduct within The Peacenet on your part will result in termination of your connection. We're watching you.",
-            "After Peacegate OS boots up and finishes preliminary setup, you will enter an interactive tutorial.",
-            "Complete the tutorial, then enter the World Map to find out your next objective.",
-            "Starting Peacegate OS. Good luck."
+            "Greetings, prisoner.\n\nYou have been selected to participate in a special work-release program.",
+            "Very shortly, you will be placed within a digital afterlife on an important mission.\n\nYour mission will become apparent shortly.",
+            "You will use this world's gateway operating system, \"Peacegate OS,\" to interact with this world.\n\nYou will be contacted after setup is complete with the mission details. Good luck."
 #endif
         };
 
@@ -61,10 +50,12 @@ End the war.",
         public override void Load(ContentManager content)
         {
             _bgm = content.Load<SoundEffect>("Audio/Cutscene/Prologue/Briefing").CreateInstance();
+            _font = content.Load<SpriteFont>("ThemeAssets/Fonts/PrologueFont");
         }
 
         public override void OnPlay()
         {
+            _showInstallCounter = false;
             _bgm.Volume = 1;
             _bgm.Play();
             _bgm.IsLooped = true;
@@ -96,7 +87,7 @@ End the war.",
                     if (_cursorTime > 0.5)
                         _cursorTime = 0;
                     _ride += time.ElapsedGameTime.TotalSeconds;
-                    if(_ride>=5)
+                    if(_ride >= ((_lineIndex>3) ? 3.5 : 5))
                     {
                         _charIndex = 0;
                         if(_lineIndex < _lines.Length-1)
@@ -109,6 +100,8 @@ End the war.",
                         else
                         {
                             _state=3;
+                            _installTime = 10;
+                            _showInstallCounter = true;
                         }
                     }
                     break;
@@ -121,10 +114,13 @@ End the war.",
                     }
                     break;
                 case 3:
-                    _bgm.Volume = MathHelper.Clamp(_bgm.Volume - (float)time.ElapsedGameTime.TotalSeconds, 0, 1);
-                    if (_bgm.Volume == 0)
+                    _cursorTime = 0;
+                    _installTime -= time.ElapsedGameTime.TotalSeconds;
+                    _bgm.Volume = MathHelper.Clamp((float)_installTime / 10, 0, 1);
+                    if(_installTime<=0)
                     {
                         _bgm.Stop();
+                        _showInstallCounter = false;
                         NotifyFinished();
                     }
                     break;
@@ -133,14 +129,13 @@ End the war.",
 
         public override void Draw(GameTime time, GraphicsContext gfx)
         {
-            var mono = _theme.Theme.GetFont(TextFontStyle.Mono);
+            var mono = _font;
 
-            string introText = TextRenderer.WrapText(mono, _lines[_lineIndex].Substring(0, _charIndex), gfx.Width / 3, Plex.Engine.TextRenderers.WrapMode.Words);
+            string introText = TextRenderer.WrapText(mono, _lines[_lineIndex].Substring(0, _charIndex), (int)(gfx.Width * 0.75), Plex.Engine.TextRenderers.WrapMode.Words);
             var introTextMeasure = mono.MeasureString(introText);
             var cursorMeasure = mono.MeasureString("#");
 
             gfx.BeginDraw();
-            gfx.Clear(Color.Black);
 
             var textLocation = new Vector2((gfx.Width - introTextMeasure.X) / 2, (gfx.Height - introTextMeasure.Y) / 2);
             var lines = introText.Split('\n');
@@ -154,6 +149,22 @@ End the war.",
                 {
                     gfx.DrawRectangle(new Vector2(loc.X + measure.X, loc.Y), cursorMeasure, Color.White);
                 }
+            }
+
+            if(_showInstallCounter)
+            {
+                var installText = "Commensing installation in ";
+                var timeText = string.Format("{0:N2}s", _installTime);
+                var measure = mono.MeasureString(installText + timeText);
+                var installWidth = mono.MeasureString(installText).X;
+                var textLoc = new Vector2((gfx.Width - measure.X) / 2, (gfx.Height - measure.Y) / 2);
+
+                gfx.DrawRectangle(new Vector2(textLoc.X - 30, textLoc.Y - 7), new Vector2(MathHelper.Lerp(0, measure.X + 60, ((float)_installTime / 10)), measure.Y + 14), Color.Red.Darken(0.5F));
+
+                gfx.Batch.DrawString(mono, installText, textLoc, _theme.Theme.GetAccentColor().Lighten(0.5f));
+                gfx.Batch.DrawString(mono, timeText, new Vector2(textLoc.X + installWidth, textLoc.Y), Color.Red);
+
+
             }
 
             gfx.EndDraw();

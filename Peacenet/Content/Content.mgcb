@@ -193,3 +193,10 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/WorldMapShader.fx
 
+#begin ThemeAssets/Fonts/PrologueFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ThemeAssets/Fonts/PrologueFont.spritefont
+

@@ -235,7 +235,8 @@ namespace Peacenet
                     console.WriteKernelMessage($"Creating directory: /mnt{dir}");
                 }
                 console.WriteKernelMessage("Downloading base packages...");
-                foreach(var pkg in _base)
+                tutorial.Next = 2;
+                foreach (var pkg in _base)
                 {
                     console.WriteKernelMessage("pacman: installing package: " + pkg);
                     int len = 52;
@@ -255,7 +256,6 @@ namespace Peacenet
                     console.WriteKernelMessage("Done.");
                     Thread.Sleep(100);
                 }
-                tutorial.Next = 2;
                 console.WriteLine("Waiting for setup environment...");
                 _os.PreventStartup = true;
                 new Tutorial.PeacegateSetup(_winsys, tutorial).Show(0, 0);
