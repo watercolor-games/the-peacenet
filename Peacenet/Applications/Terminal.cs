@@ -148,7 +148,7 @@ namespace Peacenet.Applications
                 Invalidate(true);
             }
             _emulator.Width = Width;
-
+            _scrollbar.Visible = WindowSystem.WindowList.FirstOrDefault(x => x.Border == this.Parent).Border.WindowStyle != WindowStyle.NoBorder;
 
         }
 

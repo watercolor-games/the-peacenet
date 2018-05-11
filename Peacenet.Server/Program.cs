@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define MILESTONE4
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +28,12 @@ namespace Plex.Server
 
         static void Main(string[] args)
         {
+#if MILESTONE4
+            using(var server = new Peacenet.Backend.Server(3251, 10))
+            {
+                server.Listen();
+            }
+#else
             _backend = new Backend(_port, IsMultiplayerServer);
             _backend.Listen();
             if (IsMultiplayerServer)
@@ -33,6 +41,7 @@ namespace Plex.Server
                 Console.ReadKey();
                 _backend.Shutdown();
             }
+#endif
         }
     }
 }

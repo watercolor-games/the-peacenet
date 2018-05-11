@@ -66,6 +66,7 @@
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\ADriveMount.cs" />
     <Compile Include="Filesystem\FSHandlers.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="SystemEntityBackend.cs" />
     <Compile Include="Terminal\TerminalManager.cs" />
     <Compile Include="World\WorldBackend.cs" />

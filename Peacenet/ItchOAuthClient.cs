@@ -1,8 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
+using Newtonsoft.Json;
 using Plex.Engine;
 using Plex.Engine.Config;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Interfaces;
+using Plex.Engine.TextRenderers;
+using Plex.Engine.Themes;
 using Plex.Objects;
 using System;
 using System.Collections;
@@ -35,6 +40,8 @@ namespace Peacenet
         [Dependency]
         private UIManager _ui = null;
 
+        private ItchEntity _entity = null;
+
         private ItchUser _user = null;
 
         /// <summary>
@@ -62,7 +69,7 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
-            
+            _entity = _plebgate.New<ItchEntity>();
             _token = _config.GetValue<string>("itch.apikey", _token);
             _callbackSrv = _plebgate.New<ItchOAuthCallbackServer>();
             try
@@ -87,19 +94,26 @@ namespace Peacenet
                 return;
             Logger.Log("Starting internal server for callback...");
             Logger.Log("Starting oauth2 request...");
-            string uri = Uri.EscapeDataString("http://localhost:3254/itch_callback");
-            Process.Start("https://itch.io/user/oauth?client_id=17a4b2de3caf06c14a524936d88402c1&scope=profile%3Ame&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3254%2Fitch_callback");
+            _entity.Spawn();
             Task.Run(() =>
             {
-                _ui.HideUI();
-                onWaitBegin?.Invoke();
+                string uri = Uri.EscapeDataString("http://localhost:3254/itch_callback");
+                Process.Start("https://itch.io/user/oauth?client_id=17a4b2de3caf06c14a524936d88402c1&scope=profile%3Ame&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3254%2Fitch_callback");
                 string token = (_callbackSrv as ItchOAuthCallbackServer).WaitForToken();
-                _token = token;
-                _config.SetValue("itch.apikey", _token);
-                _config.SaveToDisk(); fetchUserData();
-                onComplete?.Invoke();
-                _ui.ShowUI();
+                if (_token != null)
+                {
+                    _token = token;
+                    _config.SetValue("itch.apikey", _token);
+                    _config.SaveToDisk(); fetchUserData();
+                    fetchUserData();
+                }
+                _plebgate.Invoke(_entity.Despawn);
             });
+        }
+
+        public void KillServer()
+        {
+            (_callbackSrv as ItchOAuthCallbackServer).CancelTokenWait();
         }
 
         private void fetchUserData()
@@ -533,6 +547,12 @@ namespace Peacenet
             return _token;
         }
 
+        public void CancelTokenWait()
+        {
+            base.stop();
+            _token = null;
+            _receivedToken.Set();
+        }
 
         public ItchOAuthCallbackServer() : base(3254)
         {
@@ -563,6 +583,225 @@ namespace Peacenet
             }
             p.writeFailure();
             p.outputStream.WriteLine("<h1>404 Not Found</h1><br/><p>An attempt was made to talk to The Peacenet through the OAuth2 callback webserver and the request wasn't an OAuth2 callback.</p>");
+        }
+    }
+
+    public class ItchEntity : IEntity
+    {
+        [Dependency]
+        private UIManager _ui = null;
+
+        [Dependency]
+        private ItchOAuthClient _oauth = null;
+
+        [Dependency]
+        private Plexgate _plexgate = null;
+
+        private string _head = "Waiting for itch.io login";
+        private string _desc = @"You should see a browser window asking you to log in to itch.io or to authorize The Peacenet to access your account. Log in and authorize The Peacenet to sign in.
+
+If you don't see a browser window, you may need to press F11 to exit Fullscreen mode. Click the button below to cancel the login process and return to the game.";
+        private string _paused = "Note: Game updating is currently paused.";
+        private string _buttonText = "Cancel";
+
+        private float _textHeadAnim = 0f;
+        private float _textDescAnim = 0f;
+        private float _buttonAnim = 0f;
+        private bool _animReversed = false;
+
+        private const int _headDescPadV = 10;
+        private const int _descMutePadV = 5;
+        private const int _muteButtonPadV = 7;
+        private const int _buttonMarginH = 28;
+        private const int _buttonMarginV = 7;
+
+        private int _headHeight = 0;
+        private int _descHeight = 0;
+        private int _pausedHeight = 0;
+
+        private int _uiHeight = 0;
+
+        private Rectangle _button = Rectangle.Empty;
+        private bool _buttonHovered = false;
+        private ButtonState _buttonState = ButtonState.Released;
+
+        private int _textStartY = 0;
+
+        [Dependency]
+        private ThemeManager _theme = null;
+
+        public void Draw(GameTime time, GraphicsContext gfx)
+        {
+            gfx.BeginDraw();
+
+            gfx.Clear(Color.Black * MathHelper.Lerp(0, 0.75F, _textHeadAnim));
+
+            int _half = (gfx.Width - (gfx.Width / 2)) / 2;
+
+            int headYBase = (!_animReversed) ? _textStartY : _textStartY - (gfx.Height / 10);
+            int headYUnder = (_animReversed) ? _textStartY : _textStartY + (gfx.Height / 10);
+            int headYAnim = (int)MathHelper.Lerp(headYUnder, headYBase, _textHeadAnim);
+            gfx.DrawString(_head, new Vector2(_half, headYAnim), _theme.Theme.GetFontColor(TextFontStyle.Header1) * _textHeadAnim, _theme.Theme.GetFont(TextFontStyle.Header1), TextAlignment.Center, gfx.Width / 2, WrapMode.Words);
+
+            int descYBase = _textStartY + _headHeight + _headDescPadV;
+            int descYUpper = (!_animReversed) ? descYBase : descYBase - (gfx.Height / 10);
+            int descYLower = (_animReversed) ? descYBase + (gfx.Height / 10) : descYBase;
+            int descYAnim = (int)MathHelper.Lerp(descYLower, descYUpper, _textDescAnim);
+            gfx.DrawString(_desc, new Vector2(_half, descYAnim), _theme.Theme.GetFontColor(TextFontStyle.System) * _textDescAnim, _theme.Theme.GetFont(TextFontStyle.System), TextAlignment.Center, gfx.Width / 2, WrapMode.Words);
+
+            int mutedY = descYAnim + _descMutePadV + _descHeight;
+            gfx.DrawString(_paused, new Vector2(_half, mutedY), _theme.Theme.GetFontColor(TextFontStyle.Muted) * _textDescAnim, _theme.Theme.GetFont(TextFontStyle.Muted), TextAlignment.Center, gfx.Width / 2, WrapMode.Words);
+
+            int x = gfx.X;
+            int y = gfx.Y;
+            int w = gfx.Width;
+            int h = gfx.Height;
+            gfx.X = _button.X;
+            gfx.Y = _button.Y;
+            gfx.Width = _button.Width;
+            gfx.Height = _button.Height;
+            _theme.Theme.DrawButton(gfx, _buttonText, null, GetButtonState(), false, Rectangle.Empty, new Rectangle(_buttonMarginH, _buttonMarginV, _button.Width - (_buttonMarginH * 2), _button.Height - (_buttonMarginV * 2)));
+            gfx.X = x;
+            gfx.Y = y;
+            gfx.Width = w;
+            gfx.Height = h;
+
+            gfx.EndDraw();
+        }
+
+        private UIButtonState GetButtonState()
+        {
+            if (!_buttonHovered)
+                return UIButtonState.Idle;
+            return _buttonState == ButtonState.Pressed ? UIButtonState.Pressed : UIButtonState.Hover;
+        }
+
+        public void Spawn()
+        {
+            _animReversed = false;
+            _buttonState = ButtonState.Released;
+            _buttonHovered = false;
+            _textHeadAnim = 0;
+            _textDescAnim = 0;
+            _buttonAnim = 0;
+            _plexgate.GetLayer(LayerType.Foreground).AddEntity(this);
+        }
+
+        public void OnGameExit()
+        {
+
+        }
+
+        public void OnKeyEvent(KeyboardEventArgs e)
+        {
+        }
+
+        public void OnMouseUpdate(MouseState mouse)
+        {
+            _buttonHovered = mouse.X >= _button.X && mouse.Y >= _button.Y && mouse.X <= _button.X + _button.Width && mouse.Y <= _button.Y + _button.Height;
+            if(_buttonHovered)
+            {
+                if(_buttonState == ButtonState.Pressed && mouse.LeftButton == ButtonState.Released)
+                {
+                    CancelLogin();
+                }
+                _buttonState = mouse.LeftButton;
+            }
+            else
+            {
+                _buttonState = ButtonState.Released;
+            }
+        }
+
+        private void CancelLogin()
+        {
+            _oauth.KillServer();
+        }
+
+        public void Despawn()
+        {
+            _animReversed = true;
+        }
+
+        public void Update(GameTime time)
+        {
+            var headFont = _theme.Theme.GetFont(TextFontStyle.Header1);
+            var descFont = _theme.Theme.GetFont(TextFontStyle.System);
+            var mutedFont = _theme.Theme.GetFont(TextFontStyle.Muted);
+            var buttonFont = _theme.Theme.GetFont(TextFontStyle.Highlight);
+
+            int halfWidth = _ui.ScreenWidth / 2;
+            var headMeasure = TextRenderer.MeasureText(_head, headFont, halfWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+            var descMeasure = TextRenderer.MeasureText(_desc, descFont, halfWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+            var muteMeasure = TextRenderer.MeasureText(_paused, mutedFont, halfWidth, Plex.Engine.TextRenderers.WrapMode.Words);
+            var buttonMeasure = TextRenderer.MeasureText(_buttonText, buttonFont, halfWidth, Plex.Engine.TextRenderers.WrapMode.None);
+
+            _headHeight = (int)headMeasure.Y;
+            _descHeight = (int)descMeasure.Y;
+            _pausedHeight = (int)muteMeasure.Y;
+
+
+            float uiHeight = headMeasure.Y + _headDescPadV + descMeasure.Y + _descMutePadV + muteMeasure.Y + _muteButtonPadV + (_buttonMarginV * 2) + buttonMeasure.Y;
+            _uiHeight = (int)uiHeight;
+            _textStartY = (_ui.ScreenHeight - (int)uiHeight) / 2;
+
+            _ui.DoInput = false;
+
+            if(_animReversed)
+            {
+                if (_textHeadAnim > 0F)
+                {
+                    _textHeadAnim = MathHelper.Clamp(_textHeadAnim - (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                }
+                else
+                {
+                    if (_textDescAnim >0)
+                    {
+                        _textDescAnim = MathHelper.Clamp(_textDescAnim - (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                    }
+                    else
+                    {
+                        if (_buttonAnim >0)
+                        {
+                            _buttonAnim = MathHelper.Clamp(_buttonAnim - (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                        }
+                        else
+                        {
+                            _ui.DoInput = true;
+                            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                if(_textHeadAnim<1F)
+                {
+                    _textHeadAnim = MathHelper.Clamp(_textHeadAnim + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                }
+                else
+                {
+                    if (_textDescAnim < 1)
+                    {
+                        _textDescAnim = MathHelper.Clamp(_textDescAnim + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                    }
+                    else
+                    {
+                        if (_buttonAnim < 1)
+                        {
+                            _buttonAnim = MathHelper.Clamp(_buttonAnim + (float)time.ElapsedGameTime.TotalSeconds * 3, 0, 1);
+                        }
+                    }
+                }
+            }
+
+            int buttonYBase = ((_textStartY + _uiHeight) - ((_buttonMarginV * 2) + (int)buttonMeasure.Y)) - ((_animReversed) ? (_ui.ScreenHeight / 10) : 0);
+            int buttonYUnder = buttonYBase + ((!_animReversed) ? (_ui.ScreenHeight / 10) : 0);
+            int buttonYAnim = (int)MathHelper.Lerp(buttonYUnder, buttonYBase, _buttonAnim);
+            int buttonWidth = (_buttonMarginH * 2) + (int)buttonMeasure.X;
+            int buttonHeight = (_buttonMarginV * 2) + (int)buttonMeasure.Y;
+            _button = new Rectangle((_ui.ScreenWidth - buttonWidth) / 2, buttonYAnim, buttonWidth, buttonHeight);
         }
     }
 }
