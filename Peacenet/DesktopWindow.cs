@@ -678,6 +678,8 @@ namespace Peacenet
             _hbTime.Width = (int)measure.X + 10;
             _hbTime.Height = _topPanel.Height;
 
+            WindowSystem.Workspace = new Rectangle(Parent.X, Parent.Y + ((_showPanels) ? _topPanel.Height : 0), Width, Height - ((_showPanels) ? _topPanel.Height + _bottomPanel.Height : 0));
+
             base.OnUpdate(time);
         }
 
