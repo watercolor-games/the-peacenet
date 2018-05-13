@@ -113,12 +113,23 @@ namespace Peacenet.GameState
         private LiteCollection<DirectoryEntry> _dirs = null;
         private LiteCollection<FileEntry> _files = null;
 
+        private string[] getComponents(string path)
+        {
+            while (path.StartsWith("/"))
+                path = path.Remove(0, 1);
+            while (path.EndsWith("/"))
+                path = path.Remove(path.LastIndexOf("/"), 1);
+            return path.Split('/');
+        }
+
         private string getParent(string path)
         {
             if (path == "/")
                 return null;
             while (path.EndsWith("/"))
                 path = path.Remove(path.LastIndexOf("/"), 1);
+            if (path.LastIndexOf("/") == 0)
+                return "/";
             return path.Substring(0, path.LastIndexOf("/"));
         }
 
@@ -126,7 +137,7 @@ namespace Peacenet.GameState
         {
             if (path == "/")
                 return _root;
-            string[] components = path.Split('/');
+            string[] components = getComponents(path);
             string parent = null;
             DirectoryEntry entry = null;
             foreach(var component in components)
@@ -155,12 +166,12 @@ namespace Peacenet.GameState
                 return;
             if (path == "/")
                 return;
-            while (path.EndsWith("/"))
-                path = path.Remove(path.LastIndexOf("/"), 1);
-            string[] components = path.Split('/');
+            string[] components = getComponents(path);
             string parent = null;
             foreach (var c in components)
             {
+                if (c == ".." || c == ".")
+                    throw new IOException("A directory cannot be named '.' or '..'.");
                 var dir = _dirs.FindOne(x => x.Name == c && x.ParentID == parent);
                 if(dir == null)
                 {
@@ -247,6 +258,8 @@ namespace Peacenet.GameState
                 return null;
             foreach (var child in _dirs.Find(x => x.ParentID == entry.ID))
             {
+                if (string.IsNullOrWhiteSpace(child.Name))
+                    continue;
                 dirs.Add(combine(path, child.Name));
             }
             return dirs.ToArray();
@@ -295,11 +308,19 @@ namespace Peacenet.GameState
         {
             Plex.Objects.Logger.Log("Loading client-side filesystem database");
             _db = new LiteDatabase(Path.Combine(_os.SinglePlayerSaveDirectory, "filesystem.db"));
+            Plex.Objects.Logger.Log("Gatekeeper is shrinking the database...");
             _db.Shrink();
             _dirs = _db.GetCollection<DirectoryEntry>("directories");
             _files = _db.GetCollection<FileEntry>("fileEntries");
             _dirs.EnsureIndex(x => x.ID);
             _files.EnsureIndex(x => x.ID);
+            Plex.Objects.Logger.Log("Gatekeeper is now removing invalid file directory entries...");
+            var deletedDirs = _dirs.Delete(x => string.IsNullOrEmpty(x.Name));
+            var deletedFiles = _files.Delete(x => string.IsNullOrEmpty(x.Name));
+            Plex.Objects.Logger.Log($"Gatekeeper has removed {deletedDirs} directory entries and {deletedFiles} file entries with no names.");
+            Plex.Objects.Logger.Log($"Gatekeeper has removed {_dirs.Delete(x => (x.ParentID != null) && (_dirs.FindOne(y => y.ID == x.ParentID) == null))} orphaned directory entries.");
+            Plex.Objects.Logger.Log($"Gatekeeper has removed {_files.Delete(x => (x.ParentDirectory != null) && (_dirs.FindOne(y => y.ID == x.ParentDirectory) == null))} orphaned file entries.");
+
         }
 
         public Stream Open(string path, FileOpenMode mode)
@@ -313,6 +334,8 @@ namespace Peacenet.GameState
                         return null;
                     case FileOpenMode.Write:
                         var parentDir = getParent(path);
+                        if (string.IsNullOrWhiteSpace(parentDir))
+                            parentDir = "/";
                         if (!DirectoryExists(parentDir))
                             CreateDirectory(parentDir);
                         var direntry = findDirectory(parentDir);

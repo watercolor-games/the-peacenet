@@ -160,7 +160,15 @@ namespace Peacenet.Filesystem
         /// <returns>All directories within the directory</returns>
         public string[] GetDirectories(string path)
         {
-            return _backend.GetDirectories(path).OrderBy(x=>x).ToArray();
+            var initial = _backend.GetDirectories(path).OrderBy(x=>x).ToArray();
+            List<string> dirs = new List<string>();
+            dirs.AddRange(initial);
+            if (!dirs.Contains("."))
+                dirs.Add(".");
+            if (!dirs.Contains(".."))
+                dirs.Add("..");
+            return dirs.ToArray();
+
         }
 
         /// <summary>
@@ -257,7 +265,13 @@ namespace Peacenet.Filesystem
             string[] result = null;
             await Task.Run(() =>
             {
-                result = _backend.GetDirectories(path);
+                List<string> dirs = new List<string>();
+                dirs.AddRange(_backend.GetDirectories(path));
+                if (!dirs.Contains(".."))
+                    dirs.Add("..");
+                if (!dirs.Contains("."))
+                    dirs.Add(".");
+                result = dirs.ToArray();
             });
             return result;
         }
