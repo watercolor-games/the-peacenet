@@ -201,6 +201,18 @@ namespace Peacenet.GameState
             return JsonConvert.DeserializeObject<T>(val.Value);
         }
 
+        public bool TutorialCompleted
+        {
+            get
+            {
+                return GetValue<bool>("peacegate.tutorialCompleted", false);
+            }
+            set
+            {
+                SetValue("peacegate.tutorialCompleted", true);
+            }
+        }
+
         public void SetValue<T>(string key, T value)
         {
             var val = _values.FindOne(x => x.ID == key);

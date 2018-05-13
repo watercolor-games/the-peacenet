@@ -138,6 +138,9 @@ namespace Peacenet
         [Dependency]
         private CutsceneManager _cutscene = null;
 
+        [Dependency]
+        private GameManager _game = null;
+
         /// <inheritdoc/>
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
@@ -146,12 +149,7 @@ namespace Peacenet
                 console.WriteLine("Error: Attempted to initiate kernel inside userland.");
                 return;
             }
-            bool hasDoneTutorial = true;
-            bool isSinglePlayer = false;
-            if (isSinglePlayer)
-            {
-                hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", false);
-            }
+            bool hasDoneTutorial = _game.State.TutorialCompleted;
             if (hasDoneTutorial == false)
             {
                 var briefingDone = new ManualResetEvent(false);
@@ -556,6 +554,9 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private GameManager _game = null;
+
         /// <inheritdoc/>
         public void Update(GameTime time)
         {
@@ -786,7 +787,7 @@ namespace Peacenet
                         _tutorialDescription.Dispose();
                         _hitbox.Dispose();
                         _tutorialButton.Dispose();
-                        _save.SetValue("boot.hasDoneCmdTutorial", true);
+                        _game.State.TutorialCompleted = true;
                         _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(this);
                         this._music.StopNext();
                         _tutorialStage++;

@@ -17,6 +17,8 @@ namespace Peacenet.GameState
 
         bool AlertFalling { get; }
 
+        bool TutorialCompleted { get; set; }
+
         bool IsMissionComplete(string missionID);
         bool IsCountryUnlocked(Country country);
         bool IsPackageInstalled(string packageID);
