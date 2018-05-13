@@ -96,11 +96,17 @@ namespace Peacenet.Filesystem
         /// <param name="backend">An <see cref="IAsyncFSBackend"/> object implementing the necessary methods for interacting with a VFS.</param>
         public void SetBackend(IAsyncFSBackend backend)
         {
-            if (backend == null)
-                throw new ArgumentNullException("Backend cannot be null.");
-            _plexgate.Inject(backend);
-            _backend = backend;
-            _backend.Initialize();
+            if(_backend != null)
+            {
+                _backend.Unload();
+                _backend = null;
+            }
+            if (backend != null)
+            {
+                _plexgate.Inject(backend);
+                _backend = backend;
+                _backend.Initialize();
+            }
         }
 
         /// <summary>

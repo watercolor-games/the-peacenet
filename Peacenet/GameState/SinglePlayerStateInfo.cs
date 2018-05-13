@@ -59,6 +59,7 @@ namespace Peacenet.GameState
         public void EndGame()
         {
             _plexgate.GetLayer(LayerType.NoDraw).RemoveEntity(this);
+            _fs.SetBackend(null);
         }
 
         public void OnGameExit()
@@ -99,7 +100,7 @@ namespace Peacenet.GameState
                 Directory.CreateDirectory(_os.SinglePlayerSaveDirectory);
             _plexgate.GetLayer(LayerType.NoDraw).AddEntity(this);
             _fs.SetBackend(_plexgate.New<SinglePlayerFilesystem>());
-            _os.OnReady();
+            _os.EnsureProperEnvironment();
         }
 
         public void Update(GameTime time)

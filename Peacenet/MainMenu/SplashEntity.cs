@@ -234,6 +234,10 @@ namespace Peacenet.MainMenu
         private void startSinglePlayer()
         {
             _game.BeginGame<SinglePlayerStateInfo>();
+            _isFadingOut = true;
+            _gameStarting = true;
+            animState = 30;
+            
         }
 
         private bool _gameStarting = false;
@@ -246,6 +250,8 @@ namespace Peacenet.MainMenu
         /// <inheritdoc/>
         public void Load(ContentManager content)
         {
+            if (_game.State != null)
+                _game.EndGame();
             _newGame.Text = "New game";
             _continue.Text = "Continue";
             _uimanager.Add(_newGame);

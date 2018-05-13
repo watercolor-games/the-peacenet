@@ -239,7 +239,11 @@ namespace Peacenet
 
         internal void EnsureProperEnvironment()
         {
-            throw new NotImplementedException();
+            foreach(var shellDir in GetShellDirs())
+            {
+                if (!_fs.DirectoryExists(shellDir.Path))
+                    _fs.CreateDirectory(shellDir.Path);
+            }
         }
 
         private void startBoot()

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Peacenet
 {
-    public class GameManager : IEngineComponent
+    public class GameManager : IEngineComponent, IDisposable
     {
         [Dependency]
         private Plexgate _plexgate = null;
@@ -46,6 +46,13 @@ namespace Peacenet
             if (State == null)
                 throw new InvalidOperationException("A game is not currently running.");
             State.EndGame();
+            State = null;
+        }
+
+        public void Dispose()
+        {
+            if (State != null)
+                EndGame();
         }
     }
 }
