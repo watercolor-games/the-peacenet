@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
+using Newtonsoft.Json;
 using Peacenet.CoreUtils;
 using Peacenet.Filesystem;
 using Plex.Engine;
 using Plex.Engine.Config;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Interfaces;
+using Plex.Engine.Saves;
 using Plex.Objects.PlexFS;
 using Plex.Objects.ShiftFS;
 using System;
@@ -19,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Peacenet.GameState
 {
-    public class SinglePlayerStateInfo : IGameStateInfo, IEntity
+    public class SinglePlayerStateInfo : IGameStateInfo, IEntity, ISaveBackend
     {
         private float _alertLevel = 0f;
         private bool _alertFalling = false;
@@ -27,9 +29,15 @@ namespace Peacenet.GameState
         public float AlertLevel => _alertLevel;
         public bool AlertFalling => _alertFalling;
 
+        private double _timeInAlert = 0;
+        private float _lastAlert = 0f;
+
         public float GameCompletion => 0f;
 
         public float Reputation => 0f;
+
+        [Dependency]
+        private SaveManager _save = null;
 
         [Dependency]
         private Plexgate _plexgate = null;
@@ -46,6 +54,11 @@ namespace Peacenet.GameState
         [Dependency]
         private GUIUtils _gui = null;
 
+        private LiteDatabase _saveDB = null;
+
+        private LiteCollection<Snapshot> _snapshots = null;
+        private LiteCollection<SaveValue> _values = null;
+
         public SinglePlayerStateInfo()
         {
         }
@@ -60,6 +73,12 @@ namespace Peacenet.GameState
         {
             _plexgate.GetLayer(LayerType.NoDraw).RemoveEntity(this);
             _fs.SetBackend(null);
+            _save.SetBackend(null);
+            _saveDB.Shrink();
+            _saveDB.Dispose();
+            _saveDB = null;
+            _values = null;
+            _snapshots = null;
         }
 
         public void OnGameExit()
@@ -100,11 +119,55 @@ namespace Peacenet.GameState
                 Directory.CreateDirectory(_os.SinglePlayerSaveDirectory);
             _plexgate.GetLayer(LayerType.NoDraw).AddEntity(this);
             _fs.SetBackend(_plexgate.New<SinglePlayerFilesystem>());
+
+            _saveDB = new LiteDatabase(Path.Combine(_os.SinglePlayerSaveDirectory, "savefile.db"));
+
+            _values = _saveDB.GetCollection<SaveValue>("values");
+            _snapshots = _saveDB.GetCollection<Snapshot>("snapshots");
+            _values.EnsureIndex(x => x.ID);
+            _snapshots.EnsureIndex(x => x.ID);
+
+            _save.SetBackend(this);
             _os.EnsureProperEnvironment();
         }
 
         public void Update(GameTime time)
         {
+            if(_alertLevel > 0 && _alertLevel < 0.8F)
+            {
+                if(_alertFalling)
+                {
+                    if(_alertLevel>_lastAlert)
+                    {
+                        _timeInAlert = 0;
+                        _alertFalling = false;
+                        _lastAlert = _alertLevel;
+                        return;
+                    }
+                    _alertLevel = MathHelper.Clamp(_alertLevel - ((float)time.ElapsedGameTime.TotalSeconds / 20), 0, 1);
+                    _lastAlert = _alertLevel;
+                }
+                else
+                {
+                    if (_lastAlert != _alertLevel)
+                    {
+                        _lastAlert = _alertLevel;
+                        _timeInAlert = 0;
+                    }
+                    _timeInAlert += time.ElapsedGameTime.TotalSeconds;
+                    if(_timeInAlert>=30)
+                    {
+                        _alertFalling = true;
+                        _timeInAlert = 0;
+                    }
+                }
+            }
+            else
+            {
+                _alertFalling = false;
+                _timeInAlert = 0;
+                _lastAlert = 0;
+            }
         }
 
         public bool IsMissionComplete(string missionID)
@@ -120,6 +183,80 @@ namespace Peacenet.GameState
         public bool IsPackageInstalled(string packageID)
         {
             return false;
+        }
+
+        public T GetValue<T>(string key, T defaultValue)
+        {
+            var val = _values.FindOne(x => x.ID == key);
+            if(val == null)
+            {
+                val = new SaveValue
+                {
+                    ID = key,
+                    Value = JsonConvert.SerializeObject(defaultValue)
+                };
+                _values.Insert(val);
+                return defaultValue;
+            }
+            return JsonConvert.DeserializeObject<T>(val.Value);
+        }
+
+        public void SetValue<T>(string key, T value)
+        {
+            var val = _values.FindOne(x => x.ID == key);
+            if (val == null)
+            {
+                val = new SaveValue
+                {
+                    ID = key,
+                    Value = JsonConvert.SerializeObject(value)
+                };
+                _values.Insert(val);
+                return;
+            }
+            val.Value = JsonConvert.SerializeObject(value);
+            _values.Update(val);
+        }
+
+        public string CreateSnapshot()
+        {
+            var snapshotJSON = JsonConvert.SerializeObject(_values.FindAll());
+            var snapshot = new Snapshot { ID = Guid.NewGuid().ToString() };
+            using (var stream = _saveDB.FileStorage.OpenWrite(snapshot.ID, snapshot.ID))
+            {
+                byte[] unicode = Encoding.UTF8.GetBytes(snapshotJSON);
+                stream.Write(unicode, 0, unicode.Length);
+            }
+            _snapshots.Insert(snapshot);
+            return snapshot.ID;
+        }
+
+        public void RestoreSnapshot(string id)
+        {
+            var snapshot = _snapshots.FindOne(x => x.ID == id);
+            if (snapshot == null)
+                throw new InvalidOperationException("Snapshot not found.");
+            using (var stream = _saveDB.FileStorage.OpenRead(snapshot.ID))
+            {
+                byte[] unicode = new byte[stream.Length];
+                stream.Read(unicode, 0, unicode.Length);
+                var data = JsonConvert.DeserializeObject<List<SaveValue>>(Encoding.UTF8.GetString(unicode));
+                _values.Delete(x => true);
+                _values.InsertBulk(data);
+            }
+            _saveDB.FileStorage.Delete(snapshot.ID);
+            _snapshots.Delete(x => x.ID == id);
+        }
+
+        private class SaveValue
+        {
+            public string ID { get; set; }
+            public string Value { get; set; }
+        }
+
+        public class Snapshot
+        {
+            public string ID { get; set; }
         }
     }
 
