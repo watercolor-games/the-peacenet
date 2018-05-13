@@ -11,7 +11,6 @@ using Plex.Engine.GraphicsSubsystem;
 using System.IO;
 using Newtonsoft.Json;
 using Plex.Engine;
-using Peacenet.Server;
 using Peacenet.Missions.Prologue;
 using Plex.Objects.Pty;
 using Microsoft.Xna.Framework.Input;
@@ -31,9 +30,6 @@ namespace Peacenet
 
         [Dependency]
         private Plexgate _plexgate = null;
-
-        [Dependency]
-        private AsyncServerManager _server = null;
 
         /// <inheritdoc/>
         public void Initiate()
@@ -156,22 +152,6 @@ namespace Peacenet
         /// <returns>An <see cref="IEnumerable{CommandDescriptor}"/> containing a list of command manual entries.</returns>
         public IEnumerable<CommandDescriptor> GetCommandList()
         {
-            CommandDescriptor[] cmds = null;
-            if (_server.Connected)
-            {
-                _server.SendMessage(ServerMessageType.TRM_GETCMDS, null, (res, reader) =>
-                {
-                    int len = reader.ReadInt32();
-
-                    cmds = new CommandDescriptor[len];
-                    for(int i = 0; i < len; i++)
-                    {
-                        cmds[i] = new CommandDescriptor(reader.ReadString(), reader.ReadString(), null);
-                    }
-                }).Wait();
-                foreach (var cmd in cmds)
-                    yield return cmd;
-            }
             foreach (var cmd in _localCommands)
             {
                 if (cmd.GetType().GetCustomAttributes(true).Any(x => x is HideInHelpAttribute))
@@ -181,9 +161,6 @@ namespace Peacenet
         }
 
         public event Action<string> CommandSucceeded;
-
-        [Dependency]
-        private RemoteStreams _remoteStreams = null;
 
         /// <summary>
         /// Runs a command with the given console context.
@@ -203,81 +180,7 @@ namespace Peacenet
             //If this is null we'll send it off to the server. Well, I haven't implemented the server yet so we'll just return false.
             if(local == null)
             {
-                if (!_server.Connected)
-                    return false;
-                using(var memstr = new MemoryStream())
-                {
-                    using(var writer = new BinaryWriter(memstr, Encoding.UTF8))
-                    {
-                        writer.Write(query.Name);
-                        writer.Write(query.ArgumentTokens.Length);
-                        foreach (var token in query.ArgumentTokens)
-                            writer.Write(token);
-                        writer.Flush();
-                        ManualResetEvent commandDone = new ManualResetEvent(false);
-
-                        Action<ServerBroadcastType, BinaryReader> terminalOutput = (req, r) =>
-                        {
-                            if (req != ServerBroadcastType.TerminalOutput)
-                                return;
-                            int count = r.ReadInt32();
-                            byte[] data = r.ReadBytes(count);
-                            string str = Encoding.UTF8.GetString(data);
-                            console.Write(str);
-                            if(str.ToCharArray().Contains((char)0x02))
-                            {
-                                commandDone.Set();
-                            }
-                        };
-                        _server.BroadcastReceived += terminalOutput;
-
-                        Stream remoteSlave = null;
-                        Thread t = null;
-
-                        _server.SendMessage(ServerMessageType.TRM_INVOKE, memstr.ToArray(), (res, reader) =>
-                        {
-                            if(res != ServerResponseType.REQ_SUCCESS)
-                            {
-                                console.WriteLine("Unexpected, unknown error.");
-                                return;
-                            }
-                            int remoteSlaveId = reader.ReadInt32();
-
-                            remoteSlave = _remoteStreams.Open(remoteSlaveId);
-
-                            t = new Thread(() =>
-                            {
-                                while (true)
-                                {
-                                    try
-                                    {
-                                        char input = (char)console.StandardInput.BaseStream.ReadByte();
-                                        remoteSlave.WriteByte((byte)input);
-                                    }
-                                    catch (TerminationRequestException)
-                                    {
-                                        remoteSlave.WriteByte(0x02);
-                                        remoteSlave.WriteByte((byte)'\n');
-                                    }
-                                }
-                            });
-
-                            t.Start();
-
-                            
-                        }).Wait();
-
-                        commandDone.WaitOne();
-
-                        CommandSucceeded?.Invoke(query.Name);
-
-                        _server.BroadcastReceived -= terminalOutput;
-
-                        t.Abort();
-                        remoteSlave.Close();
-                    }
-                }
-                return true;
+                return false;
             }
             else
             {

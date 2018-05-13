@@ -9,7 +9,6 @@ using Plex.Engine;
 using Peacenet.Filesystem;
 using Peacenet.Applications;
 using Microsoft.Xna.Framework.Graphics;
-using Peacenet.Server;
 using Plex.Engine.GraphicsSubsystem;
 
 namespace Peacenet.DesktopUI
@@ -65,9 +64,7 @@ namespace Peacenet.DesktopUI
         private InfoboxManager _infobox = null;
         [Dependency]
         private Plexgate _plexgate = null;
-        [Dependency]
-        private AsyncServerManager _server = null;
-
+        
         private AppLauncherSectionButton _apps = new AppLauncherSectionButton();
         private AppLauncherSectionButton _computer = new AppLauncherSectionButton();
         private AppLauncherSectionButton _settings = new AppLauncherSectionButton();
@@ -118,7 +115,7 @@ namespace Peacenet.DesktopUI
             if (string.IsNullOrWhiteSpace(_userFullName.Text))
                 _userFullName.Text = "Peacegate OS User";
             string itchUsername = (_itch.LoggedIn) ? _itch.User.username : "user";
-            string osEdition = _server.IsMultiplayer ? "Peacegate OS for Sentient Programs" : "Peacegate OS for Peacenet Uplink Kiosks - Pre-deployment Mode";
+            string osEdition = "Peacegate OS for Sentient Programs";
 
             _userHostname.Text = $"{itchUsername}@{_os.Hostname} ({osEdition})";
 

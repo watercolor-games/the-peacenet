@@ -75,10 +75,6 @@
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>
       <Name>WatercolorGames.CommandLine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Peacenet.Backend\Peacenet.Backend.csproj">
-      <Project>{D0D04DB3-08C9-4EA9-B64A-69596DBB9657}</Project>
-      <Name>Peacenet.Backend</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\server_lang.txt" />

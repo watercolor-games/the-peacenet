@@ -50,8 +50,7 @@ namespace Peacenet
             Logger.Log("Peacenet is loading its theme now!");
             _theme.Theme = _plexgate.New<PeacenetTheme>();
             Logger.Log("And now for the save backend.");
-            _save.SetBackend(_plexgate.New<ServerSideSaveBackend>());
-
+            
 #if DEBUG
             _plexgate.GetLayer(LayerType.NoDraw).AddEntity(_plexgate.New<DebugEntity>());
 #endif

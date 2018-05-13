@@ -18,7 +18,6 @@ using Peacenet.Applications;
 using Plex.Engine.Saves;
 using Plex.Engine.Cutscene;
 using Peacenet.RichPresence;
-using Peacenet.Server;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Cutscenes;
 using System.IO;
@@ -26,6 +25,7 @@ using System.Threading;
 using Peacenet.DesktopUI;
 using Plex.Objects;
 using Peacenet.PeacegateThemes;
+using Peacenet.GameState;
 
 namespace Peacenet.MainMenu
 {
@@ -143,9 +143,6 @@ namespace Peacenet.MainMenu
         private SaveManager _saveManager = null;
 
         [Dependency]
-        private AsyncServerManager _server = null;
-
-        [Dependency]
         private SplashScreenComponent _splash = null;
 
         [Dependency]
@@ -212,18 +209,11 @@ namespace Peacenet.MainMenu
 
         #endregion
 
+        [Dependency]
+        private GameManager _game = null;
+
         private void addServers()
         {
-            _serverList.ClearItems();
-            foreach(var server in _server.SavedServers)
-            {
-                var item = new ListViewItem
-                {
-                    Value = server.Name,
-                    Tag = server.Address
-                };
-                _serverList.AddItem(item);
-            }
         }
 
         /// <inheritdoc/>
@@ -243,83 +233,14 @@ namespace Peacenet.MainMenu
 
         private void startSinglePlayer()
         {
-            Task.Run(() =>
-            {
-                _connecting = true;
-                _connectingText = "Starting internal server...";
-                try
-                {
-                    _os.StartLocalServer();
-                    _saveManager.SetBackend(new ServerSideSaveBackend());
-                    _plexgate.Invoke(() =>
-                    {
-                        animState = 30;
-                        _gameStarting = true;
-                    });
-                }
-                catch (Exception ex)
-                {
-                    _infobox.Show("Error starting internal server", "An error has occurred while starting the internal Peacenet single-player server.\n\n" + ex.Message);
-                    Logger.Log(ex.ToString(), System.ConsoleColor.DarkYellow);
-                }
-                _plexgate.Invoke(() =>
-                {
-                    _connecting = false;
-                });
-            });
-
+            _game.BeginGame<SinglePlayerStateInfo>();
         }
 
         private bool _gameStarting = false;
 
         private void connectToMultiplayerServer(string address)
         {
-            Task.Run(() =>
-            {
-                _connectingText = "Connecting to " + address + "...";
-                bool error = false;
-                _connecting = true;
-
-                var result = _server.Connect(address);
-
-                result.Wait();
-
-                var cResult = result.Result;
-
-                if (cResult.Result == ConnectionResultType.Success)
-                {
-                    _saveManager.SetBackend(new ServerSideSaveBackend());
-                }
-                else
-                {
-                    switch(cResult.Result)
-                    {
-                        case ConnectionResultType.AlreadyConnected:
-                            _infobox.Show("Already connected.", "You are already connected to a server.");
-                            break;
-                        case ConnectionResultType.BadItchAuth:
-                            _infobox.Show("Not signed in", "You must be signed in to an itch.io account to play Multiplayer.");
-                            break;
-                        case ConnectionResultType.ConnectionTimeout:
-                            _infobox.Show("Connection timeout", "Connection to the server failed because the connection has timed out.");
-                            break;
-                        case ConnectionResultType.Other:
-                            _infobox.Show(cResult.Exception.GetType().FullName, cResult.Exception.ToString());
-                            break;
-                    }
-                    error = true;
-                }
-                _connecting = false;
-                if (error == true)
-                    return;
-                _connecting = true;
-                _connectingText = "Setting up environment...";
-                _os.EnsureProperEnvironment();
-                _connecting = false;
-                animState = 30;
-                _gameStarting = true;
-            });
-
+            throw new InvalidOperationException();
         }
 
         /// <inheritdoc/>
@@ -361,69 +282,6 @@ namespace Peacenet.MainMenu
             {
                 connectToMultiplayerServer(_serverList.SelectedItem.Tag.ToString());
             };
-
-            _removeServer.Click += (o, a) =>
-            {
-                if(_serverList.SelectedItem!=null)
-                {
-                    var server = _server.SavedServers.FirstOrDefault(x => x.Name == _serverList.SelectedItem.Value);
-                    if(server != null)
-                    {
-                        _infobox.ShowYesNo("Remove server", "Are you sure you want to remove the server \"" + server.Name + "\"?", (answer) =>
-                        {
-                            if(answer)
-                            {
-                                _server.RemoveServer(server);
-                                addServers();
-                            }
-                        });
-                    }
-                }
-            };
-
-            _clearServers.Click += (o, a) =>
-            {
-                _server.ClearServers();
-                addServers();
-            };
-
-            _addServer.Click += (o, a) =>
-            {
-                _infobox.PromptText("Add server", "Please enter a name for the new server.", (name) =>
-                {
-                    _infobox.PromptText($"{name} - Add server", "Please enter the IP address or hostname of the server. Note that the default port for Peacenet servers is 3251.", (address) =>
-                    {
-                        _server.AddServer(new SavedServer
-                        {
-                            Address = address,
-                            Name = name
-                        });
-                        addServers();
-                    }, (address) =>
-                    {
-                        if(string.IsNullOrWhiteSpace(address))
-                        {
-                            _infobox.Show("Add server", "You can't enter an empty address!");
-                            return false;
-                        }
-                        return true;
-                    });
-                }, (name) =>
-                {
-                    if(string.IsNullOrWhiteSpace(name))
-                    {
-                        _infobox.Show("Add server", "Your server's name must not be blank!");
-                        return false;
-                    }
-                    if(_server.SavedServers.FirstOrDefault(x=>x.Name == name) != null)
-                    {
-                        _infobox.Show("Add server", "A server with that name already exists.");
-                        return false;
-                    }
-                    return true;
-                });
-            };
-
 
             _wall = content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
 

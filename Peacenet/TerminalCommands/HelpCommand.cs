@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Plex.Objects;
 using System.IO;
 using Plex.Engine;
-using Peacenet.Server;
 
 namespace Peacenet.TerminalCommands
 {
@@ -85,9 +84,6 @@ namespace Peacenet.TerminalCommands
         [Dependency]
         private TerminalManager _terminal = null;
         
-        [Dependency]
-        private AsyncServerManager _server = null;
-
         /// <inheritdoc/>
         public string Description
         {
@@ -122,27 +118,7 @@ namespace Peacenet.TerminalCommands
             var commandDescriptor = _terminal.GetCommandList().FirstOrDefault(x => x.Name == command);
             if(commandDescriptor == null || commandDescriptor?.ManPage == null)
             {
-                if (_server.Connected)
-                {
-                    using(var memstr = new MemoryStream())
-                    {
-                        using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
-                        {
-                            writer.Write(command);
-                            _server.SendMessage(ServerMessageType.TRM_MANPAGE, memstr.ToArray(), (res, reader) =>
-                            {
-                                if(res == ServerResponseType.REQ_SUCCESS)
-                                {
-                                    console.WriteLine(reader.ReadString());
-                                }
-                            }).Wait();
-                        }
-                    }
-                }
-                else
-                {
-                    console.WriteLine("No manpage found for this command.");
-                }
+                console.WriteLine("No manpage found for this command.");
                 return;
             }
             console.WriteLine(commandDescriptor.ManPage);

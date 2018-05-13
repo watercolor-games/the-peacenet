@@ -19,7 +19,6 @@ using Plex.Engine.Themes;
 using Peacenet.Filesystem;
 using System.Threading;
 using Plex.Engine.Config;
-using Peacenet.Server;
 using Plex.Objects;
 
 namespace Peacenet
@@ -46,25 +45,6 @@ namespace Peacenet
             get
             {
                 return _osEntity.IsReceivingConnection;
-            }
-        }
-
-        public void SimulateConnectionFromSystem(string ip)
-        {
-            if (_server.IsMultiplayer)
-                return;
-            var ipaddr = GetIPFromString(ip);
-            using (var memstr = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(memstr, Encoding.UTF8))
-                {
-                    writer.Write(ipaddr);
-                    writer.Flush();
-                    _server.SendMessage(Plex.Objects.ServerMessageType.SP_SIMULATE_CONNECTION_TO_PLAYER, memstr.ToArray(), (res, reader) =>
-                    {
-
-                    }).Wait();
-                }
             }
         }
 
@@ -182,14 +162,9 @@ namespace Peacenet
             "/root"
         };
 
-        private Backend.Backend _localBackend = null;
-
         [Dependency]
         private AppDataManager _appdata = null;
 
-
-        [Dependency]
-        private AsyncServerManager _server = null;
 
         private Texture2D _peacegate = null;
 
@@ -208,21 +183,7 @@ namespace Peacenet
 
         internal void StartLocalServer()
         {
-            _localBackend = new Backend.Backend(3252, false, Path.Combine(_appdata.GamePath, "world"));
-            _localBackend.Listen();
-            _localBackend.ServerReady.WaitOne();
-            Logger.Log("Starting internal single-player server.");
-
-            var result = _server.Connect("localhost:3252");
-
-            result.Wait();
-
-            Logger.Log("*** Connected To Internal Server ***", System.ConsoleColor.Green);
-
-            if (result.Result.Result != ConnectionResultType.Success)
-                throw new Exception("An error has occurred starting the internal server.");
-
-            EnsureProperEnvironment();
+            throw new NotImplementedException("The game is currently undergoing a major infrastructure change.");
         }
 
         internal void OnReady()
@@ -278,21 +239,7 @@ namespace Peacenet
 
         internal void EnsureProperEnvironment()
         {
-            try
-            {
-                _fs.SetBackend(new AsyncServerFSBackend());
-                foreach (var dir in requiredPaths)
-                {
-                    if (!_fs.DirectoryExists(dir))
-                        _fs.CreateDirectory(dir);
-                }
-
-                
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
         private void startBoot()
@@ -314,12 +261,6 @@ namespace Peacenet
                 _osEntity = null;
             }
             _splash.Reset();
-            if (_localBackend != null)
-            {
-                if (_server.Connected)
-                    _server.Disconnect();
-                _localBackend.Shutdown("");
-            }
         }
 
         public void Dispose()

@@ -248,13 +248,13 @@ namespace Peacenet.PeacegateThemes
         /// <inheritdoc/>
         public override void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, _bgRegular);
+            graphics.DrawRectangle(x, y, width, height, _bgDark);
         }
 
         /// <inheritdoc/>
         public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, _bgDark);
+            graphics.DrawRectangle(x, y, width, height, _bgRegular);
         }
 
         /// <inheritdoc/>

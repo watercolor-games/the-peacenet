@@ -11,7 +11,6 @@ using Peacenet.Filesystem;
 using Plex.Engine.Saves;
 using WatercolorGames.CommandLine;
 using Peacenet.RichPresence;
-using Peacenet.Server;
 using Plex.Engine.Themes;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.Interfaces;
@@ -71,9 +70,6 @@ namespace Peacenet
 
         [Dependency]
         private OS _os = null;
-
-        [Dependency]
-        private AsyncServerManager _server = null;
 
         [Dependency]
         private SaveManager _save = null;
@@ -151,7 +147,7 @@ namespace Peacenet
                 return;
             }
             bool hasDoneTutorial = true;
-            bool isSinglePlayer = !_server.IsMultiplayer;
+            bool isSinglePlayer = false;
             if (isSinglePlayer)
             {
                 hasDoneTutorial = _save.GetValue<bool>("boot.hasDoneCmdTutorial", false);

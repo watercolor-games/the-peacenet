@@ -12,10 +12,8 @@ using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Saves;
 using Peacenet.Filesystem;
 using Peacenet.CoreUtils;
-using Peacenet.Server;
 using Peacenet.DesktopUI;
 using Peacenet.Filesystem;
-using Peacenet.Email;
 using Peacenet.PeacegateThemes.PanelThemes;
 using Plex.Engine.Themes;
 using Plex.Engine.TextRenderers;
@@ -78,9 +76,6 @@ namespace Peacenet
         #region Engine dependencies
 
         [Dependency]
-        private GovernmentAlert.AlertService _notoriety = null;
-
-        [Dependency]
         private Plexgate _plexgate = null;
 
         [Dependency]
@@ -93,9 +88,6 @@ namespace Peacenet
         private SaveManager _save = null;
 
         [Dependency]
-        private AsyncServerManager _server = null;
-
-        [Dependency]
         private OS _os = null;
 
         [Dependency]
@@ -106,9 +98,6 @@ namespace Peacenet
 
         [Dependency]
         private FileUtilities _utils = null;
-
-        [Dependency]
-        private EmailClient _email = null;
 
         #endregion
 
@@ -409,8 +398,6 @@ namespace Peacenet
 
             _emailButton.Click += (o, a) =>
             {
-                var email = new Applications.EmailViewer(WindowSystem);
-                email.Show();
             };
 
 
@@ -511,9 +498,9 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            _emailButton.Text = _email.UnreadMessages.ToString();
+            _emailButton.Text = "";
             _emailButton.ShowImage = true;
-            _emailButton.Image = (_email.UnreadMessages == 0) ? _iconEmail : _iconEmailUnread;
+            _emailButton.Image = _iconEmail;
 
             
 
@@ -637,27 +624,27 @@ namespace Peacenet
             _desktopIconsView.Y = _topPanel.Y + _topPanel.Height;
             _desktopIconsView.Height = _bottomPanel.Y - _desktopIconsView.Y;
 
-            if (_server.Connected)
-            {
+//            if (_server.Connected)
+//            {
                 if (_needsDesktopReset)
                 {
                     SetupIcons();
                     _needsDesktopReset = false;
                 }
-            }
-            else
-            {
-                if (_animState < 3)
-                {
-                    foreach (var win in WindowSystem.WindowList.ToArray())
-                    {
-                        if (win.Border != this.Parent)
-                            WindowSystem.Close(win.WindowID);
-                    }
-                    _animState = 3;
+//            }
+//            else
+//            {
+//                if (_animState < 3)
+//                {
+//                    foreach (var win in WindowSystem.WindowList.ToArray())
+//                    {
+//                        if (win.Border != this.Parent)
+//                            WindowSystem.Close(win.WindowID);
+//                    }
+//                    _animState = 3;
 
-                }
-            }
+//                }
+//            }
 
             string rtime = DateTime.Now.ToShortTimeString();
             var rtmeasure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
