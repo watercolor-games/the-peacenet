@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
+using Peacenet.CoreUtils;
 using Peacenet.Filesystem;
 using Plex.Engine;
 using Plex.Engine.Config;
@@ -42,9 +43,14 @@ namespace Peacenet.GameState
         [Dependency]
         private FSManager _fs = null;
 
+        [Dependency]
+        private GUIUtils _gui = null;
+
         public SinglePlayerStateInfo()
         {
         }
+
+
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -61,6 +67,26 @@ namespace Peacenet.GameState
 
         public void OnKeyEvent(KeyboardEventArgs e)
         {
+#if DEBUG
+            if (e.Modifiers.HasFlag(KeyboardModifiers.Control) && e.Key == Keys.I)
+            {
+                var opener = new System.Windows.Forms.OpenFileDialog();
+                opener.Filter = "All files|*.*";
+                opener.Title = "Import file into Peacegate OS";
+                if (opener.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    using (var fileStream = File.OpenRead(opener.FileName))
+                    {
+                        byte[] data = new byte[fileStream.Length];
+                        fileStream.Read(data, 0, data.Length);
+                        _gui.AskForFile(true, (path) =>
+                        {
+                            _fs.WriteAllBytes(path, data);
+                        });
+                    }
+                }
+            }
+            #endif
         }
 
         public void OnMouseUpdate(MouseState mouse)

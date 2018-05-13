@@ -34,7 +34,7 @@ namespace Peacenet
         }
         void load(string path)
         {
-            using (var fobj = new MemoryStream(fs.ReadAllBytes(path)))
+            using (var fobj = fs.OpenRead(path))
                 img = Texture2D.FromStream(plex.GraphicsDevice, fobj);
             Title = $"{path} - Image Viewer";
         }
