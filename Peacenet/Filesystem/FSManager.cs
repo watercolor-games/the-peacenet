@@ -31,7 +31,7 @@ namespace Peacenet.Filesystem
 
         public Stream OpenRead(string file)
         {
-            return _backend.Open(file, FileOpenMode.Read);
+            return new ReadOnlyStream(_backend.Open(file, OpenMode.Open));
         }
 
         [Dependency]
@@ -45,12 +45,12 @@ namespace Peacenet.Filesystem
 
         public Stream OpenWrite(string file)
         {
-            var ret = _backend.Open(file, FileOpenMode.Write);
+            var ret = new WriteOnlyStream(_backend.Open(file, OpenMode.OpenOrCreate));
             WriteOperation?.Invoke(file); // Won't fire if the stream is written to afterwards... FIXME?
             return ret;
         }
 
-        public Stream Open(string file, FileOpenMode mode)
+        public Stream Open(string file, OpenMode mode)
         {
             var ret = _backend.Open(file, mode);
             WriteOperation?.Invoke(file);
@@ -405,6 +405,6 @@ namespace Peacenet.Filesystem
         /// <returns>An open stream.</returns>
         /// <param name="path">The path to a file.</param>
         /// <param name="mode">The open mode.</param>
-        Stream Open(string path, FileOpenMode mode);
+        Stream Open(string path, OpenMode mode);
     }
 }

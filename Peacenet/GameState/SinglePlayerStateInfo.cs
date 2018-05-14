@@ -277,298 +277,137 @@ namespace Peacenet.GameState
         [Dependency]
         private OS _os = null;
 
-        private readonly DirectoryEntry _root = new DirectoryEntry
+        private string _baseDirectory = null;
+
+        private string mapPath(string path)
         {
-            ID = null,
-            Name = "Root",
-            ParentID = null
-        };
-
-        private LiteDatabase _db = null;
-
-        private LiteCollection<DirectoryEntry> _dirs = null;
-        private LiteCollection<FileEntry> _files = null;
-
-        private string[] getComponents(string path)
-        {
+            while (path.EndsWith("/"))
+                path = path.Remove(path.LastIndexOf("/"), 1);
             while (path.StartsWith("/"))
                 path = path.Remove(0, 1);
-            while (path.EndsWith("/"))
-                path = path.Remove(path.LastIndexOf("/"), 1);
-            return path.Split('/');
-        }
+            if (path.Contains("../") || path.Contains("/.."))
+                throw new FormatException("This path has not properly been resolved from a relative path to an absolute path. Absolute paths cannot contain '..' or '.' in any component of the path (i.e /home/user/../user2. This is to prevent a possible sandbox breach as this filesystem backend interacts directly with the player's REAL filesystem and you can easily break out of the fake FS by requesting to read /.. (i.e, one level up from root). This is not permitted. Nice try, l337 h4xx0r.");
+            return Path.Combine(_baseDirectory, path.Replace('/', Path.AltDirectorySeparatorChar));
 
-        private string getParent(string path)
-        {
-            if (path == "/")
-                return null;
-            while (path.EndsWith("/"))
-                path = path.Remove(path.LastIndexOf("/"), 1);
-            if (path.LastIndexOf("/") == 0)
-                return "/";
-            return path.Substring(0, path.LastIndexOf("/"));
-        }
-
-        private DirectoryEntry findDirectory(string path)
-        {
-            if (path == "/")
-                return _root;
-            string[] components = getComponents(path);
-            string parent = null;
-            DirectoryEntry entry = null;
-            foreach(var component in components)
-            {
-                entry = _dirs.FindOne(x => x.Name == component && x.ParentID == parent);
-                if (entry == null)
-                    return null;
-                parent = entry.ID;
-                
-            }
-            return entry;
-        }
-
-        private FileEntry findFile(string path)
-        {
-            string parent = getParent(path);
-            var dir = findDirectory(parent);
-            if (dir == null)
-                return null;
-            return _files.FindOne(x => x.ParentDirectory == dir.ID && x.Name == path.Substring(parent.Length));
         }
 
         public void CreateDirectory(string path)
         {
             if (DirectoryExists(path))
-                return;
-            if (path == "/")
-                return;
-            string[] components = getComponents(path);
-            string parent = null;
-            foreach (var c in components)
-            {
-                if (c == ".." || c == ".")
-                    throw new IOException("A directory cannot be named '.' or '..'.");
-                var dir = _dirs.FindOne(x => x.Name == c && x.ParentID == parent);
-                if(dir == null)
-                {
-                    dir = new DirectoryEntry
-                    {
-                        ID = Guid.NewGuid().ToString(),
-                        Name = c,
-                        ParentID = parent
-                    };
-                    _dirs.Insert(dir);
-                }
-                parent = dir.ID;
-            }
-        }
-
-        private void recursiveDelete(DirectoryEntry entry)
-        {
-            foreach(var dir in _dirs.Find(x=>x.ParentID==entry.ID).ToArray())
-            {
-                recursiveDelete(dir);
-            }
-            foreach(var file in _files.Find(x=>x.ParentDirectory==entry.ID))
-            {
-                _db.FileStorage.Delete(file.ID);
-            }
-            _files.Delete(x => x.ParentDirectory == entry.ID);
-            _dirs.Delete(x => x.ID == entry.ID);
+                throw new IOException("Directory exists");
+            Directory.CreateDirectory(mapPath(path));
         }
 
         public void Delete(string path)
         {
-            if (path == "/")
-                throw new IOException("You cannot delete the root of the filesystem.");
-            if(DirectoryExists(path))
-            {
-                recursiveDelete(findDirectory(path));
-            }
-            else if(FileExists(path))
-            {
-                var file = findFile(path);
-                _db.FileStorage.Delete(file.ID);
-                _files.Delete(x => x.ID == file.ID);
-            }
+            if (FileExists(path))
+                File.Delete(mapPath(path));
+            else if (DirectoryExists(path))
+                Directory.Delete(mapPath(path), true);
             else
-            {
-                throw new IOException("The file or directory was not found in the file system.");
-            }
+                throw new IOException("File or directory was not found.");
         }
 
         public bool DirectoryExists(string path)
         {
-            return findDirectory(path) != null;
+            return Directory.Exists(mapPath(path));
         }
 
         public bool FileExists(string path)
         {
-            return findFile(path) != null;
-        }
-
-        private string combine(params string[] paths)
-        {
-            string path = "";
-            foreach (var c in paths)
-            {
-                if (c == null)
-                    continue;
-                if (c.EndsWith("/") || Array.LastIndexOf(paths, c) == paths.Length - 1)
-                {
-                    path += c;
-                }
-                else
-                {
-                    path += c + "/";
-                }
-            }
-            return path;
+            return File.Exists(mapPath(path));
         }
 
         public string[] GetDirectories(string path)
         {
+            if (!DirectoryExists(path))
+                throw new IOException("Directory not found.");
             List<string> dirs = new List<string>();
-            var entry = findDirectory(path);
-            if (entry == null)
-                return null;
-            foreach (var child in _dirs.Find(x => x.ParentID == entry.ID))
+            foreach (var dir in Directory.GetDirectories(mapPath(path)))
             {
-                if (string.IsNullOrWhiteSpace(child.Name))
-                    continue;
-                dirs.Add(combine(path, child.Name));
+                var name = Path.GetFileName(dir);
+                if (path.EndsWith("/"))
+                    dirs.Add(path + name);
+                else
+                    dirs.Add(path + "/" + name);
             }
             return dirs.ToArray();
         }
 
         public FileRecord GetFileRecord(string path)
         {
-            if(DirectoryExists(path))
+            if(FileExists(path))
             {
-                var dir = findDirectory(path);
-                return new FileRecord
-                {
-                    IsDirectory = true,
-                    Name = dir.Name,
-                    SizeBytes = 0
-                };
-            }
-            else if(FileExists(path))
-            {
-                var file = findFile(path);
-                var meta = _db.FileStorage.FindById(file.ID);
+                var finf = new FileInfo(mapPath(path));
                 return new FileRecord
                 {
                     IsDirectory = false,
-                    Name = file.Name,
-                    SizeBytes = meta.Length
+                    Name = finf.Name,
+                    SizeBytes = finf.Length
                 };
             }
-            return null;
+            else if(DirectoryExists(path))
+            {
+                var dinf = new DirectoryInfo(mapPath(path));
+                return new FileRecord
+                {
+                    IsDirectory = true,
+                    Name = dinf.Name,
+                    SizeBytes = 0
+                };
+            }
+            throw new IOException("Directory or file not found.");
         }
 
         public string[] GetFiles(string path)
         {
+            if (!DirectoryExists(path))
+                throw new IOException("Directory not found.");
             List<string> dirs = new List<string>();
-            var entry = findDirectory(path);
-            if (entry == null)
-                return null;
-            foreach (var child in _files.Find(x => x.ParentDirectory == entry.ID))
+            foreach (var dir in Directory.GetFiles(mapPath(path)))
             {
-                dirs.Add(combine(path, child.Name));
+                var name = Path.GetFileName(dir);
+                if (path.EndsWith("/"))
+                    dirs.Add(path + name);
+                else
+                    dirs.Add(path + "/" + name);
             }
             return dirs.ToArray();
+
         }
 
         public void Initialize()
         {
-            Plex.Objects.Logger.Log("Loading client-side filesystem database");
-            _db = new LiteDatabase(Path.Combine(_os.SinglePlayerSaveDirectory, "filesystem.db"));
-            Plex.Objects.Logger.Log("Gatekeeper is shrinking the database...");
-            _db.Shrink();
-            _dirs = _db.GetCollection<DirectoryEntry>("directories");
-            _files = _db.GetCollection<FileEntry>("fileEntries");
-            _dirs.EnsureIndex(x => x.ID);
-            _files.EnsureIndex(x => x.ID);
-            Plex.Objects.Logger.Log("Gatekeeper is now removing invalid file directory entries...");
-            var deletedDirs = _dirs.Delete(x => string.IsNullOrEmpty(x.Name));
-            var deletedFiles = _files.Delete(x => string.IsNullOrEmpty(x.Name));
-            Plex.Objects.Logger.Log($"Gatekeeper has removed {deletedDirs} directory entries and {deletedFiles} file entries with no names.");
-            Plex.Objects.Logger.Log($"Gatekeeper has removed {_dirs.Delete(x => (x.ParentID != null) && (_dirs.FindOne(y => y.ID == x.ParentID) == null))} orphaned directory entries.");
-            Plex.Objects.Logger.Log($"Gatekeeper has removed {_files.Delete(x => (x.ParentDirectory != null) && (_dirs.FindOne(y => y.ID == x.ParentDirectory) == null))} orphaned file entries.");
-
+            _baseDirectory = Path.Combine(_os.SinglePlayerSaveDirectory, "rootfs");
         }
 
-        public Stream Open(string path, FileOpenMode mode)
+        public Stream Open(string path, OpenMode mode)
         {
-            var record = findFile(path);
-            if (record == null)
-            {
-                switch (mode)
-                {
-                    case FileOpenMode.Read:
-                        return null;
-                    case FileOpenMode.Write:
-                        var parentDir = getParent(path);
-                        if (string.IsNullOrWhiteSpace(parentDir))
-                            parentDir = "/";
-                        if (!DirectoryExists(parentDir))
-                            CreateDirectory(parentDir);
-                        var direntry = findDirectory(parentDir);
-                        record = new FileEntry
-                        {
-                            ID = Guid.NewGuid().ToString(),
-                            Name = path.Substring(parentDir.Length),
-                            ParentDirectory = direntry.ID
-                        };
-                        _files.Insert(record);
-                        break;
-                }
-            }
-
-            if (mode == FileOpenMode.Read)
-                return _db.FileStorage.OpenRead(record.ID);
-            else
-                return _db.FileStorage.OpenWrite(record.ID, record.ID);
+            if (!FileExists(path) && mode != OpenMode.OpenOrCreate)
+                throw new IOException("File not found.");
+            return File.Open(mapPath(path), (mode == OpenMode.Open) ? System.IO.FileMode.Open : System.IO.FileMode.OpenOrCreate);
         }
 
         public byte[] ReadAllBytes(string path)
         {
-            var stream = Open(path, FileOpenMode.Read);
-            byte[] data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
-            return data;
+            using (var fstream = Open(path, OpenMode.Open))
+            {
+                byte[] data = new byte[fstream.Length];
+                fstream.Read(data, 0, data.Length);
+                return data;
+            }
         }
 
         public void Unload()
         {
-            _dirs = null;
-            _files = null;
-            _db.Shrink();
-            _db.Dispose();
-            _db = null;
         }
 
         public void WriteAllBytes(string path, byte[] data)
         {
-            if (FileExists(path))
-                Delete(path);
-            var stream = Open(path, FileOpenMode.Write);
-            stream.Write(data, 0, data.Length);
-        }
-
-        private class DirectoryEntry
-        {
-            public string ID { get; set; }
-            public string Name { get; set; }
-            public string ParentID { get; set; }
-        }
-
-        public class FileEntry
-        {
-            public string ID { get; set; }
-            public string Name { get; set; }
-            public string ParentDirectory { get; set; }
+            using (var fstream = Open(path, OpenMode.OpenOrCreate))
+            {
+                fstream.Write(data, 0, data.Length);
+            }
         }
     }
 }
