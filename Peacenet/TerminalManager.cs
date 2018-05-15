@@ -11,7 +11,6 @@ using Plex.Engine.GraphicsSubsystem;
 using System.IO;
 using Newtonsoft.Json;
 using Plex.Engine;
-using Peacenet.Missions.Prologue;
 using Plex.Objects.Pty;
 using Microsoft.Xna.Framework.Input;
 using System.Threading;

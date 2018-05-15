@@ -113,8 +113,8 @@
     <Compile Include="MainMenu\SplashEntity.cs" />
     <Compile Include="MissionManager.cs" />
     <Compile Include="Missions\MissionCompleteScreen.cs" />
-    <Compile Include="Missions\Prologue\SideMissions\SentienceTriesOut.cs" />
-    <Compile Include="Missions\Prologue\TerminalTutorial.cs" />
+    <Compile Include="Missions\MissionFailScreen.cs" />
+    <Compile Include="Missions\Test\FailTest.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="OSEntity.cs" />
     <Compile Include="PeacegateThemes\PanelThemes\PanelTheme.cs" />
@@ -596,6 +596,7 @@
     <Folder Include="CountryChallenges\" />
     <Folder Include="Email\" />
     <Folder Include="GovernmentAlert\" />
+    <Folder Include="Missions\Prologue\SideMissions\" />
     <Folder Include="Themes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

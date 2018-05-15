@@ -12,8 +12,8 @@ namespace Peacenet.GameState
         void EndGame();
 
         float AlertLevel { get; }
-        float GameCompletion { get; }
-        float Reputation { get; }
+        float GameCompletion { get; set; }
+        float Reputation { get; set; }
 
         bool AlertFalling { get; }
 
@@ -22,7 +22,10 @@ namespace Peacenet.GameState
         bool IsMissionComplete(string missionID);
         bool IsCountryUnlocked(Country country);
         bool IsPackageInstalled(string packageID);
-        
-        
+
+        void UnlockCountry(Country country);
+        void CompleteMission(string missionID);
+        void InstallPackage(string packageID);
+
     }
 }

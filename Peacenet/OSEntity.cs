@@ -21,7 +21,6 @@ using System.IO;
 using Microsoft.Xna.Framework.Audio;
 using Plex.Engine.Themes;
 using Plex.Engine.Saves;
-using Peacenet.Missions.Prologue;
 
 namespace Peacenet
 {

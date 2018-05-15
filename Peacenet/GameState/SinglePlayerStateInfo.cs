@@ -32,9 +32,9 @@ namespace Peacenet.GameState
         private double _timeInAlert = 0;
         private float _lastAlert = 0f;
 
-        public float GameCompletion => 0f;
+        public float GameCompletion { get => GetValue("game.completion", 0f); set => SetValue("game.completion", value); }
 
-        public float Reputation => 0f;
+        public float Reputation { get => GetValue("player.rep", 0f); set => SetValue("player.rep", value); }
 
         [Dependency]
         private SaveManager _save = null;
@@ -172,17 +172,17 @@ namespace Peacenet.GameState
 
         public bool IsMissionComplete(string missionID)
         {
-            return false;
+            return GetValue($"m.{missionID}.complete", false);
         }
 
         public bool IsCountryUnlocked(Country country)
         {
-            return false;
+            return GetValue($"{country.ToString().ToLower()}.unlocked", false);
         }
 
         public bool IsPackageInstalled(string packageID)
         {
-            return false;
+            return GetValue($"package.{packageID}.installed", false);
         }
 
         public T GetValue<T>(string key, T defaultValue)
@@ -258,6 +258,21 @@ namespace Peacenet.GameState
             }
             _saveDB.FileStorage.Delete(snapshot.ID);
             _snapshots.Delete(x => x.ID == id);
+        }
+
+        public void UnlockCountry(Country country)
+        {
+            SetValue($"{country.ToString().ToLower()}.unlocked", true);
+        }
+
+        public void CompleteMission(string missionID)
+        {
+            SetValue($"m.{missionID}.complete", true);
+        }
+
+        public void InstallPackage(string packageID)
+        {
+            SetValue($"package.{packageID}.installed", true);
         }
 
         private class SaveValue

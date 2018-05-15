@@ -16,6 +16,7 @@ using Plex.Engine.Themes;
 using Peacenet.Applications;
 using Peacenet.RichPresence;
 using Plex.Engine.Cutscene;
+using Peacenet.Missions;
 
 namespace Peacenet
 {
@@ -30,15 +31,23 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
-        private MissionEntity _entity = null;
+        [Dependency]
+        private GameManager _game = null;
 
         public void AbandonMission()
         {
-            if (_entity == null)
-                return;
-            if (!_entity.IsPlayingMission)
-                return;
-            _entity.AbandonMission();
+            var mission = getCurrent();
+            if (mission == null)
+                throw new InvalidOperationException("There are currently no missions active.");
+            mission.Abandon();
+        }
+
+        private Mission getCurrent()
+        {
+            var mission = _plexgate.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission);
+            if (mission != null)
+                return (Mission)mission;
+            return null;
         }
 
         /// <summary>
@@ -48,242 +57,204 @@ namespace Peacenet
         {
             get
             {
-                return _entity.IsPlayingMission;
+                return getCurrent() != null;
             }
         }
+
+        public Mission[] Missions => _missions;
+
+        public Mission CurrentMission => getCurrent();
 
         private Mission[] _missions = null;
-
-        /// <summary>
-        /// Retrieves a list of all available missions in the game.
-        /// </summary>
-        public Mission[] Missions
-        {
-            get
-            {
-                return _missions.Where(x => (x.Completed == false) && x.Available).ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Retrieves the current mission if any.
-        /// </summary>
-        public Mission CurrentMission
-        {
-            get
-            {
-                return _entity.CurrentMission;
-            }
-        }
 
         /// <inheritdoc/>
         public void Initiate()
         {
-            _entity = _plexgate.New<MissionEntity>();
-
-            _os.SessionStart += () =>
-            {
-                _plexgate.GetLayer(LayerType.Foreground).AddEntity(_entity);
-                _entity.NotifyOfNewMissions();
-            };
-
-            _os.SessionEnd += () =>
-            {
-                if(_entity.IsPlayingMission)
-                {
-                    _entity.AbandonMission();
-                }
-                _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(_entity);
-            };
-
+            Logger.Log("Looking for missions...");
             List<Mission> missions = new List<Mission>();
-            Logger.Log("Looking for mission objects...");
             foreach(var type in ReflectMan.Types.Where(x=>x.BaseType == typeof(Mission)))
             {
-                var mission = (Mission)_plexgate.Inject(Activator.CreateInstance(type, null));
-                Logger.Log($"Found: {mission.Name} ({type.FullName})");
+                var mission = (Mission)_plexgate.New(type);
                 missions.Add(mission);
+                Logger.Log($"Found: {mission.Name} (ID {mission.ID})");
             }
             _missions = missions.ToArray();
+            
         }
 
         /// <summary>
         /// Start a mission.
         /// </summary>
         /// <param name="mission">The mission to start</param>
+        [Obsolete("Please use Mission.Start().")]
         public void StartMission(Mission mission)
         {
-            if (IsPlayingMission)
-                throw new InvalidOperationException("The player is already playing a mission.");
-            if (mission == null)
-                throw new ArgumentNullException(nameof(mission));
-            if (mission.Completed)
-                throw new InvalidOperationException("You cannot play a completed mission.");
-            if (mission.Available == false)
-                throw new InvalidOperationException("The specified mission is not available yet.");
-            _entity.StartMission(mission);
+            mission.Start();
         }
     }
 
-    internal class MissionEntity : IEntity
+    /// <summary>
+    /// Represents a Peacenet Campaign mission entity with a name, description, objective list, and a lot of useful things for scripting out the story.
+    /// </summary>
+    public abstract class Mission : IEntity
     {
-        /// <inheritdoc/>
-        public void OnGameExit()
-        {
-            if(_current != null)
-            {
-                Logger.Log("Restoring pre-mission snapshot...");
-                if(!string.IsNullOrWhiteSpace(_preMissionSnapshotId))
-                {
-                    Logger.Log("Restoring pre-mission snapshot...");
-                    _save.RestoreSnapshot(_preMissionSnapshotId);
-                }
-            }
-        }
-
-
-        private Mission _current = null;
-        private int _state = -1;
-        private Objective[] _objectives = null;
-        private int _currentObjective = 0;
-        private int _animState = -1;
-
         [Dependency]
-        private DiscordRPCModule _discord = null;
-
-        private float _shroudFade = 0.0f;
-
-        private float _missionStartFade = 0f;
-        private float _missionNameFade = 0f;
-
-        private double _missionStartRide = 0;
-
-        private Color _shroudColor = Color.Black;
-
-        private float _objectiveNameFade = 0f;
-        private float _objectiveDescFade = 0f;
-        private double _objectiveRide = 0f;
-
-        private string _preMissionSnapshotId = null;
-        private string _lastCheckpointSnapshotId = null;
+        private Plexgate _plexgate = null;
 
         [Dependency]
         private SaveManager _save = null;
 
         [Dependency]
-        private ThemeManager _theme = null;
+        private WindowSystem _win = null;
 
-        public Mission CurrentMission
+        [Dependency]
+        private GameManager _game = null;
+
+        private string _preMissionSaveState = null;
+        private string _preObjectiveSaveState = null;
+
+        private string _name = "Mission name";
+        private string _desc = "This is a Peacenet mission.";
+        private string _id = "mission_id";
+        private const string _idValid = "abcdefghijklmnopqrstuvwxyz0123456789-_";
+
+        private List<Objective> _objectives = new List<Objective>();
+
+        private int _index = -1;
+        private Objective _current = Objective.Empty;
+        private double _timeout = 0;
+        private bool _hasTimeout = false;
+
+        private List<ObjectiveMedalData> _medals = new List<ObjectiveMedalData>();
+
+        private struct ObjectiveMedalData
+        {
+            private string _name;
+            private Medal _medal;
+
+            public string Name => _name;
+            public Medal Medal => _medal;
+
+            public ObjectiveMedalData(string name, Medal medal)
+            {
+                _medal = medal;
+                _name = name;
+            }
+
+            public static ObjectiveMedalData Empty => new ObjectiveMedalData("", Medal.Bronze);
+        }
+
+        private string[] _deps = null;
+
+        public string Name => _name;
+        public string Description => _desc;
+        public string ObjectiveName => _current.Name;
+        public string ID => _id;
+        public string[] DependencyIDs => _deps;
+
+        private string makeID(string str)
+        {
+            string text = "";
+            foreach(var c in str.ToLower())
+            {
+                if (_idValid.Contains(c))
+                    text += c;
+                else
+                    text += "_";
+            }
+            return text;
+        }
+
+
+        public Mission(string name, string desc)
+        {
+            _id = makeID(name);
+            _name = name;
+            _desc = desc;
+
+            var type = GetType();
+            var attributes = type.GetCustomAttributes(true).Where(x => x is RequiresMissionAttribute).Select(x => (x as RequiresMissionAttribute).ID);
+            _deps = attributes.ToArray();
+        }
+
+        public bool Available
         {
             get
             {
-                return _current;
+                return _deps.Where(x => !_game.State.IsMissionComplete(x)).Count() == 0;
             }
         }
 
-        public bool IsPlayingMission
+        public bool Completed
         {
             get
             {
-                return _current != null;
+                return _game.State.IsMissionComplete(_id);
             }
         }
 
-        public void NotifyOfNewMissions()
+        protected void AddObjective(string name, double timeout = 0)
         {
-            _state = 0;
+            _objectives.Add(new Objective(name, timeout));
         }
 
-        /// <summary>
-        /// Start a mission
-        /// </summary>
-        /// <param name="mission">The mission to start.</param>
-        public void StartMission(Mission mission)
+        private void nextObjective()
         {
-            _current = mission;
-            _objectives = _current.ObjectiveList.ToArray();
-            _animState = 0;
-            _preMissionSnapshotId = _save.CreateSnapshot();
-            _current.OnStart();
+            _preObjectiveSaveState = _save.CreateSnapshot();
+            _index++;
+            _current = _objectives[_index];
+            _hasTimeout = _current.Timeout > 0;
+            _timeout = _current.Timeout;
         }
 
-        [Dependency]
-        private WindowSystem _winsys = null;
+        public void Start()
+        {
+            if (Completed)
+                throw new InvalidOperationException("The mission is already completed.");
+            if (!Available)
+                throw new InvalidOperationException("The mission isn't available yet");
+            if (_plexgate.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission) != null)
+                throw new InvalidOperationException("Another mission is currently in progress.");
+            if (_objectives.Count == 0)
+                throw new InvalidOperationException("No objectives have been defined for this mission.");
 
-        [Dependency]
-        private OS _os = null;
+            _index = -1;
 
-        [Dependency]
-        private Plexgate _plexgate = null;
+            _preMissionSaveState = _save.CreateSnapshot(); //If the user abandons the mission, revert to this state.
+            
+            _plexgate.GetLayer(LayerType.Foreground).AddEntity(this);
 
-        [Dependency]
-        private MissionManager _manager = null;
+            nextObjective();
+
+        }
+
+        public void Abandon()
+        {
+            if (!_plexgate.GetLayer(LayerType.Foreground).HasEntity(this))
+                throw new InvalidOperationException("The mission is not being played and cannot be abandoned.");
+            Fail("You abandoned the mission.");
+        }
+
+        protected void CompleteObjective(Medal medal)
+        {
+            _medals.Add(new ObjectiveMedalData(_current.Name, medal));
+            nextObjective();
+        }
+
+        protected void Fail(string message)
+        {
+            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+            var fail = new MissionFailScreen(this, message, _preMissionSaveState, _preObjectiveSaveState, _win);
+            fail.Show();
+        }
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            if (_current == null)
-                return;
-            gfx.BeginDraw();
-            //Draw the shroud.
-            gfx.Clear(_shroudColor * (_shroudFade / 2));
+            
+        }
 
-            var headFont = _theme.Theme.GetFont(TextFontStyle.Header1);
-            var nameFont = _theme.Theme.GetFont(TextFontStyle.Header3);
-
-            var headColor = _theme.Theme.GetFontColor(TextFontStyle.Header1);
-            var nameColor = _theme.Theme.GetFontColor(TextFontStyle.Header3);
-
-            string headString = "Mission Start";
-            string nameString = _current.Name;
-
-            var headMeasure = TextRenderer.MeasureText(headString, headFont, _winsys.Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-            var nameMeasure = TextRenderer.MeasureText(nameString, nameFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            float totalHeight = headMeasure.Y + 5 + nameMeasure.Y;
-            float totalCenterY = (_winsys.Height - totalHeight) / 2;
-            float headYMin = (totalCenterY + (_winsys.Height * 0.10f));
-
-            gfx.DrawString(headString, (_winsys.Width - (int)headMeasure.X) / 2, (int)MathHelper.Lerp(headYMin, totalCenterY, _missionStartFade), headColor * _missionStartFade, headFont, TextAlignment.Left);
-
-            float nameYMax = totalCenterY + headMeasure.Y + 5;
-            float nameYMin = nameYMax + (_winsys.Height * 0.10f);
-
-            gfx.DrawString(nameString, (_winsys.Width - (int)nameMeasure.X) / 2, (int)MathHelper.Lerp(nameYMin, nameYMax, _missionNameFade), nameColor * _missionNameFade, nameFont, TextAlignment.Left);
-
-            gfx.EndDraw();
-
-            if (_objectives == null)
-                return;
-
-            gfx.BeginDraw();
-
-            string objectiveName = _objectives[_currentObjective].Name;
-            string objectiveDesc = _objectives[_currentObjective].Description;
-            string pressF6 = "Press [F6] to view objective info";
-
-            var objDescFont = _theme.Theme.GetFont(TextFontStyle.System);
-            var objDescColor = _theme.Theme.GetFontColor(TextFontStyle.System);
-
-            var f6measure = TextRenderer.MeasureText(pressF6, objDescFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            float f6max = (_winsys.Height - f6measure.Y) - 45;
-            float f6min = f6max + (_winsys.Height * 0.1f);
-            gfx.DrawString(pressF6, 45, (int)MathHelper.Lerp(f6min, f6max, _objectiveDescFade), (objDescColor * 0.45F) * _objectiveDescFade, objDescFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-
-            var odescmeasure = TextRenderer.MeasureText(objectiveDesc, objDescFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            float odescMax = (f6max - odescmeasure.Y) - 15;
-            float odescMin = odescMax + (_winsys.Height * 0.1f);
-            gfx.DrawString(objectiveDesc, 45, (int)MathHelper.Lerp(odescMin, odescMax, _objectiveDescFade), objDescColor * _objectiveDescFade, objDescFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-
-            var onamemeasure = TextRenderer.MeasureText(objectiveName, nameFont, (_winsys.Width / 2), Plex.Engine.TextRenderers.WrapMode.Words);
-
-            float onameMax = (((((_winsys.Height - 45) - f6measure.Y) - 15) - odescmeasure.Y) - 5) - onamemeasure.Y;
-            float onameMin = onameMax + (_winsys.Height * 0.1f);
-            gfx.DrawString(objectiveName, 45, (int)MathHelper.Lerp(onameMin, onameMax, _objectiveNameFade), nameColor * _objectiveNameFade, nameFont, TextAlignment.Left, (_winsys.Width) / 2, Plex.Engine.TextRenderers.WrapMode.Words);
-
-
-            gfx.EndDraw();
+        public void OnGameExit()
+        {
         }
 
         public void OnKeyEvent(KeyboardEventArgs e)
@@ -294,408 +265,52 @@ namespace Peacenet
         {
         }
 
-        public void AbandonMission()
-        {
-            if (!IsPlayingMission)
-                return;
-            _save.RestoreSnapshot(_preMissionSnapshotId);
-            _currentObjective = 0;
-            _current.OnEnd();
-            _current = null;
-            _objectives = null;
-            _preMissionSnapshotId = null;
-            _lastCheckpointSnapshotId = null;
-            _state = 0;
-            _objectiveNameFade = 0;
-            _objectiveDescFade = 0;
-            _animState = -1;
-
-        }
-
-        [Dependency]
-        private CutsceneManager _cutscene = null;
+        protected abstract void UpdateObjective(GameTime time, int objectiveIndex);
 
         public void Update(GameTime time)
         {
-            if(_current == null)
+            if(_hasTimeout)
             {
-                _discord.GameState = "In Singleplayer";
-                _discord.GameDetails = "Roaming the Peacenet";
+                _timeout -= time.ElapsedGameTime.TotalSeconds;
+                if(_timeout<= 0)
+                {
+                    Fail("You ran out of time.");
+                    return;
+                }
             }
-
-            switch(_state)
-            {
-                case 0:
-                    if (_os.IsDesktopOpen)
-                    {
-                        var desk = _os.Desktop;
-                        if (!desk.Visible)
-                            return;
-                        if (_plexgate.GetLayer(LayerType.UserInterface).Entities.FirstOrDefault(x => x is TutorialInstructionEntity) != null)
-                            return;
-                        int count = _manager.Missions.Length;
-                        if(count>0)
-                        {
-                            if (count == 1)
-                                desk.ShowNotification("New mission available", "A new mission has been added to your Missions list for you to play.  Press [F6] to see it.");
-                            else
-                                desk.ShowNotification("New missions available", $"There are {count} new missions in your Missions list available for you to play.  Press [F6] to see them.");
-                        }
-                        _state=-1;
-                    }
-                    break;
-                case 1:
-                    _discord.GameDetails = $"{_current.Name}";
-                    _discord.GameState = "In Mission";
-                    var obj = _objectives[_currentObjective];
-                    var objState = obj.Update(time);
-                    if(objState == ObjectiveState.Complete)
-                    {
-                        _current.OnObjectiveComplete(_currentObjective, _objectives[_currentObjective]);
-                        if (_animState == 10)
-                        {
-                            _animState = 11;
-                        }
-                        else if(_animState < 10)
-                        {
-                            _animState = 7;
-                            _objectiveNameFade = 0;
-                            _objectiveDescFade = 0;
-                            if (_currentObjective < _objectives.Length - 1)
-                            {
-                                _lastCheckpointSnapshotId = _save.CreateSnapshot();
-                                _currentObjective++;
-                                _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
-                            }
-                            else
-                            {
-                                _animState = 12;
-                            }
-
-                        }
-                    }
-                    else if(objState == ObjectiveState.Failed)
-                    {
-                        _current.OnObjectiveFail(_currentObjective, _objectives[_currentObjective]);
-                        _save.RestoreSnapshot(_preMissionSnapshotId);
-                        _currentObjective = 0;
-                        _current.OnEnd();
-                        _current = null;
-                        _objectives = null;
-                        _preMissionSnapshotId = null;
-                        _lastCheckpointSnapshotId = null;
-                        _state = 0;
-                        _objectiveNameFade = 0;
-                        _objectiveDescFade = 0;
-                        _animState = -1;
-                    }
-                    break;
-            }
-
-            switch(_animState)
-            {
-                case 0:
-                    if(!string.IsNullOrWhiteSpace(_current.PrerollCutscene))
-                    {
-                        _cutscene.Play(_current.PrerollCutscene, ()=>
-                        {
-                            _animState = 1;
-                        });
-                        _animState--;
-                    }
-                    else
-                    {
-                        _animState++;
-                    }
-                    break;
-                case 1:
-                    _shroudFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if(_shroudFade>=1)
-                    {
-                        _shroudFade = 1;
-                        _animState++;
-                    }
-                    break;
-                case 2:
-                    _missionStartFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_missionStartFade >= 1)
-                    {
-                        _missionStartFade = 1;
-                        _animState++;
-                    }
-                    break;
-                case 3:
-                    _missionNameFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_missionNameFade >= 1)
-                    {
-                        _missionNameFade = 1;
-                        _animState++;
-                        _missionStartRide = 0;
-                    }
-                    break;
-                case 4:
-                    _missionStartRide += time.ElapsedGameTime.TotalSeconds;
-                    if(_missionStartRide>=5)
-                    {
-                        _missionStartRide = 0;
-                        _animState++;
-                    }
-                    break;
-                case 5:
-                    _missionStartFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_missionStartFade <= 0)
-                    {
-                        _missionStartFade = 0;
-                        _animState++;
-                    }
-                    break;
-                case 6:
-                    _missionNameFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_missionNameFade <= 0)
-                    {
-                        _missionNameFade = 0;
-                        _animState++;
-                    }
-                    break;
-                case 7:
-                    _shroudFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_shroudFade <= 0)
-                    {
-                        _shroudFade = 0;
-                        _animState++;
-                        _state = 1;
-                        _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
-                    }
-                    break;
-                case 8:
-                    _objectiveNameFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_objectiveNameFade >= 1)
-                    {
-                        _objectiveNameFade = 1;
-                        _animState++;
-                    }
-                    break;
-                case 9:
-                    _objectiveDescFade += (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_objectiveDescFade >= 1)
-                    {
-                        _objectiveDescFade = 1;
-                        _animState++;
-                        _objectiveRide = 0;
-                    }
-                    break;
-                case 11:
-                    _objectiveDescFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_objectiveDescFade <= 0)
-                    {
-                        _objectiveDescFade = 0;
-                        _animState++;
-                    }
-                    break;
-                case 12:
-                    _objectiveNameFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_objectiveNameFade <= 0)
-                    {
-                        _objectiveNameFade = 0;
-                        if (_currentObjective < _objectives.Length - 1)
-                        {
-                            _lastCheckpointSnapshotId = _save.CreateSnapshot();
-                            _currentObjective++;
-                            _current.OnObjectiveStart(_currentObjective, _objectives[_currentObjective]);
-                            _animState = 8;
-                        }
-                        else
-                        {
-                            _save.SetValue("mission." + _current.Name.ToLower().Replace(" ", "_") + ".completed", true);
-                            _current.OnComplete();
-                            _current.OnEnd();
-                            _objectives = null;
-                            _currentObjective = 0;
-                            _animState++;
-                            NotifyOfNewMissions();
-                        }
-                    }
-                    break;
-                case 13:
-                    if (!string.IsNullOrWhiteSpace(_current.AfterCompleteCutscene))
-                    {
-                        _cutscene.Play(_current.AfterCompleteCutscene, () =>
-                        {
-                            _animState = 15;
-                        });
-                        _animState++;
-                    }
-                    else
-                    {
-                        _animState = 15;
-                    }
-                    break;
-                case 15:
-                    _infobox.Show("Mission complete.", "You have completed the mission successfully. Check the Missions list for new missions to play.");
-                    _animState = -1;
-                    break;
-
-            }
+            UpdateObjective(time, _index);
         }
 
-        [Dependency]
-        private InfoboxManager _infobox = null;
+
     }
 
-    
-
-    /// <summary>
-    /// Represents a Peacenet Campaign mission.
-    /// </summary>
-    public abstract class Mission
+    public struct Objective
     {
-        [Dependency]
-        private SaveManager _save = null;
+        private double _timeout;
+        private string _name;
 
-        public virtual void OnObjectiveStart(int index, Objective data)
+        public string Name => _name;
+        public double Timeout => _timeout;
+
+        public Objective(string name, double timeout)
         {
-
+            _name = name;
+            _timeout = timeout;
         }
 
-        public virtual void OnObjectiveFail(int index, Objective data)
-        {
-
-        }
-
-        public virtual void OnObjectiveComplete(int index, Objective data)
-        {
-
-        }
-
-
-        public virtual string PrerollCutscene
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public virtual string AfterCompleteCutscene
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Retrieves the name of this mission.
-        /// </summary>
-        public abstract string Name { get; }
-        /// <summary>
-        /// Retrieves the description of the mission.
-        /// </summary>
-        public abstract string Description { get; }
-
-        /// <summary>
-        /// Retrieves whether the mission is currently available.
-        /// </summary>
-        public abstract bool Available { get; }
-
-        /// <summary>
-        /// A method to be run when the mission is started.
-        /// </summary>
-        public virtual void OnStart()
-        {
-
-        }
-
-        /// <summary>
-        /// A method to be run just after the mission has ended.
-        /// </summary>
-        public virtual void OnEnd()
-        {
-
-        }
-
-        /// <summary>
-        /// A method to be run when the mission is complete. You should only need to override this if you have special things to do on mission complete. The mission manager will mark your mission as complete in the save file automatically.
-        /// </summary>
-        public virtual void OnComplete()
-        {
-
-        }
-
-        /// <summary>
-        /// Retrieves the objectives assigned to this mission
-        /// </summary>
-        public abstract IEnumerable<Objective> ObjectiveList
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Retrieves whether the mission has been completed.
-        /// </summary>
-        public bool Completed
-        {
-            get
-            {
-                return _save.GetValue<bool>("mission." + Name.ToLower().Replace(" ", "_") + ".completed", false);
-            }
-        }
+        public static Objective Empty => new Objective("", 0);
     }
 
-    /// <summary>
-    /// Represents an objective for a Peacenet mission.
-    /// </summary>
-    public class Objective
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class RequiresMissionAttribute : Attribute
     {
-        /// <summary>
-        /// Retrieves the name of the objective.
-        /// </summary>
-        public string Name { get; private set; }
-        /// <summary>
-        /// Retrieves the description of the objective.
-        /// </summary>
-        public string Description { get; private set; }
+        private string _id = null;
 
-        private Func<GameTime, ObjectiveState> _onUpdate = null;
+        public string ID => _id;
 
-        /// <summary>
-        /// Creates a new instance of the <see cref="Objective"/> class. 
-        /// </summary>
-        /// <param name="name">The name of the objective.</param>
-        /// <param name="desc">The description of the objective</param>
-        /// <param name="onUpdate">A function to be run every frame to determine if the objective has been completed</param>
-        public Objective(string name, string desc, Func<GameTime, ObjectiveState> onUpdate)
+        public RequiresMissionAttribute(string id)
         {
-            if (onUpdate == null)
-                throw new ArgumentNullException(nameof(onUpdate));
-
-            Name = name;
-            Description = desc;
-            _onUpdate = onUpdate;
+            _id = id;
         }
-
-        public ObjectiveState Update(GameTime time)
-        {
-            return _onUpdate(time);
-        }
-    }
-
-    /// <summary>
-    /// Describes the state of an objective in a Peacenet mission.
-    /// </summary>
-    public enum ObjectiveState
-    {
-        /// <summary>
-        /// The objective is currently in progress.
-        /// </summary>
-        Active,
-        /// <summary>
-        /// The objective has been complete.
-        /// </summary>
-        Complete,
-        /// <summary>
-        /// The objective has been failed.
-        /// </summary>
-        Failed
     }
 }
