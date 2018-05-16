@@ -153,7 +153,7 @@ namespace Peacenet.Cutscene
 
             if(_showInstallCounter)
             {
-                var installText = "Commensing installation in ";
+                var installText = "Commencing installation in ";
                 var timeText = string.Format("{0:N2}s", _installTime);
                 var measure = mono.MeasureString(installText + timeText);
                 var installWidth = mono.MeasureString(installText).X;
