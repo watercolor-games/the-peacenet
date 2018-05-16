@@ -21,6 +21,8 @@ namespace Peacenet
 
         }
 
+        public event Action<string> MissionCompleted;
+
         public void BeginGame(IGameStateInfo state)
         {
             if (state == null)
@@ -39,6 +41,7 @@ namespace Peacenet
                 throw new InvalidOperationException("Game state class must implement Peacenet.GameState.IGameStateInfo.");
             State = (IGameStateInfo)_plexgate.New<T>();
             State.StartGame();
+            State.MissionCompleted += (id) => MissionCompleted?.Invoke(id);
         }
 
         public void EndGame()

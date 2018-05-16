@@ -36,6 +36,8 @@ namespace Peacenet.GameState
 
         public float Reputation { get => GetValue("player.rep", 0f); set => SetValue("player.rep", value); }
 
+        public event Action<string> MissionCompleted;
+
         [Dependency]
         private SaveManager _save = null;
 
@@ -267,7 +269,10 @@ namespace Peacenet.GameState
 
         public void CompleteMission(string missionID)
         {
+            if (IsMissionComplete(missionID))
+                return;
             SetValue($"m.{missionID}.complete", true);
+            MissionCompleted?.Invoke(missionID);
         }
 
         public void InstallPackage(string packageID)

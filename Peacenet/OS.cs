@@ -249,8 +249,8 @@ namespace Peacenet
         private void startBoot()
         {
             updHostname();
-            SessionStart?.Invoke();
             _osEntity = _plexgate.New<OSEntity>();
+            _osEntity.SessionStarted += () => SessionStart?.Invoke();
             _plexgate.GetLayer(LayerType.Main).AddEntity(_osEntity);
         }
 

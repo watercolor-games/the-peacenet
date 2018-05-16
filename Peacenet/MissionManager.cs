@@ -79,7 +79,37 @@ namespace Peacenet
                 Logger.Log($"Found: {mission.Name} (ID {mission.ID})");
             }
             _missions = missions.ToArray();
-            
+            _game.MissionCompleted += (id) =>
+            {
+                Logger.Log($"Good job, player! Mission {id} completed.", System.ConsoleColor.Green);
+                int mCount = _missions.Where(x => x.Available && !x.Completed).Count();
+                if (mCount > 0)
+                {
+                    if(mCount == 1)
+                    {
+                        _os.Desktop.ShowNotification("New mission available", "Check your World Map or Missions menu to see the new mission.");
+                    }
+                    else
+                    {
+                        _os.Desktop.ShowNotification("New missions available", $"There are {mCount} Missions available. Check your World Map or Missions menu for more info.");
+                    }
+                }
+            };
+            _os.SessionStart += () =>
+            {
+                int mCount = _missions.Where(x => x.Available && !x.Completed).Count();
+                if (mCount > 0)
+                {
+                    if (mCount == 1)
+                    {
+                        _os.Desktop.ShowNotification("New mission available", "Check your World Map or Missions menu to see the new mission.");
+                    }
+                    else
+                    {
+                        _os.Desktop.ShowNotification("New missions available", $"There are {mCount} Missions available. Check your World Map or Missions menu for more info.");
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -90,6 +120,14 @@ namespace Peacenet
         public void StartMission(Mission mission)
         {
             mission.Start();
+        }
+
+        public Mission[] Available
+        {
+            get
+            {
+                return _missions.Where(x => x.Available).ToArray();
+            }
         }
     }
 
@@ -125,24 +163,7 @@ namespace Peacenet
         private double _timeout = 0;
         private bool _hasTimeout = false;
 
-        private List<ObjectiveMedalData> _medals = new List<ObjectiveMedalData>();
-
-        private struct ObjectiveMedalData
-        {
-            private string _name;
-            private Medal _medal;
-
-            public string Name => _name;
-            public Medal Medal => _medal;
-
-            public ObjectiveMedalData(string name, Medal medal)
-            {
-                _medal = medal;
-                _name = name;
-            }
-
-            public static ObjectiveMedalData Empty => new ObjectiveMedalData("", Medal.Bronze);
-        }
+        private List<ObjectiveMedal> _medals = new List<ObjectiveMedal>();
 
         private string[] _deps = null;
 
@@ -181,6 +202,8 @@ namespace Peacenet
         {
             get
             {
+                if (Completed)
+                    return false;
                 return _deps.Where(x => !_game.State.IsMissionComplete(x)).Count() == 0;
             }
         }
@@ -235,10 +258,30 @@ namespace Peacenet
             Fail("You abandoned the mission.");
         }
 
-        protected void CompleteObjective(Medal medal)
+        private void Complete()
         {
-            _medals.Add(new ObjectiveMedalData(_current.Name, medal));
-            nextObjective();
+            var completeDialog = new MissionCompleteScreen(new MissionData
+            {
+                ID = _id,
+                Name = _name,
+                ObjectiveMedals = _medals.ToArray(),
+                Unlocks = null
+            }, _win);
+            completeDialog.Show();
+            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+        }
+
+        protected void CompleteObjective(Medal medal = Medal.Gold, string description = "For successfully completing the objective")
+        {
+            _medals.Add(new ObjectiveMedal(_current.Name, description, medal));
+            if (_index == _objectives.Count - 1)
+            {
+                Complete();
+            }
+            else
+            {
+                nextObjective();
+            }
         }
 
         protected void Fail(string message)

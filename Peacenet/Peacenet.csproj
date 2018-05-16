@@ -112,6 +112,7 @@
     <Compile Include="ItchOAuthClient.cs" />
     <Compile Include="MainMenu\SplashEntity.cs" />
     <Compile Include="MissionManager.cs" />
+    <Compile Include="Missions\InstantCompleteMission.cs" />
     <Compile Include="Missions\MissionCompleteScreen.cs" />
     <Compile Include="Missions\MissionFailScreen.cs" />
     <Compile Include="Missions\Test\FailTest.cs" />

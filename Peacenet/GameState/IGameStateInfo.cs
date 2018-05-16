@@ -27,5 +27,6 @@ namespace Peacenet.GameState
         void CompleteMission(string missionID);
         void InstallPackage(string packageID);
 
+        event Action<string> MissionCompleted;
     }
 }

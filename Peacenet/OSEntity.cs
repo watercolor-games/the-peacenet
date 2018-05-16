@@ -36,7 +36,9 @@ namespace Peacenet
         private SoundEffectInstance _hackedBgmInstance = null;
 
         private HackedAnimationEntity _anim = null;
-        
+
+        public event Action SessionStarted;
+
         public bool IsReceivingConnection
         {
             get
@@ -247,6 +249,7 @@ namespace Peacenet
                     desk.Show();
                     _desktop = desk;
                     _osIntroState = -1;
+                    SessionStarted?.Invoke();
                     break;
                 case 7:
                     if (_hackedBgmInstance.Pitch > -1F)

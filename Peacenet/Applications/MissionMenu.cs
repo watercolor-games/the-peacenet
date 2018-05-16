@@ -58,10 +58,10 @@ namespace Peacenet.Applications
             }
             else
             {
-                if(_missionManager.Missions.Length == 1)
+                if(_missionManager.Available.Length == 1)
                 {
                     _state = 1;
-                    _selected = _missionManager.Missions[0];
+                    _selected = _missionManager.Available[0];
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace Peacenet.Applications
             _currentView.AddChild(_currentDesc);
             _currentView.AddChild(_startMission);
 
-            foreach(var mission in _missionManager.Missions)
+            foreach(var mission in _missionManager.Available)
             {
                 var lvitem = new ListViewItem();
                 lvitem.Value = mission.Name;

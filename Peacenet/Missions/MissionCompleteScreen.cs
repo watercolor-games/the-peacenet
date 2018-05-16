@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Peacenet.DesktopUI;
+using Plex.Engine;
 using Plex.Engine.GraphicsSubsystem;
 using Plex.Engine.GUI;
 using System;
@@ -16,10 +17,23 @@ namespace Peacenet.Missions
         private Label _missionComplete = new Label();
         private Label _missionName = new Label();
         private Stacker _objectiveMedals = new Stacker();
+        private Panel _view = new Panel();
+        private ScrollView _objectiveListView = new ScrollView();
+        private Label _objectivesHead = new Label();
+        private Label _avgMedalHead = new Label();
         private MedalDisplay _averageMedal = new MedalDisplay();
-        private int _currentObjective = 0;
         private Button _next = new Button();
         private int _state = 0;
+        private float _bgFade = 0;
+        private float _headerFade = 0f;
+        private float _viewWidth = 0f;
+        private float _viewHeight = 0f;
+        private Label _totalXP = new Label();
+        private int _total = 0;
+        private float _totalXPPercent = 0;
+
+        [Dependency]
+        private GameManager _game = null;
 
         public MissionCompleteScreen(MissionData data, WindowSystem _winsys) : base(_winsys)
         {
@@ -28,9 +42,211 @@ namespace Peacenet.Missions
             _data = data;
             AddChild(_missionComplete);
             AddChild(_missionName);
-            AddChild(_objectiveMedals);
-            AddChild(_averageMedal);
+            AddChild(_view);
+            _view.AutoSize = false;
+            _view.AddChild(_objectivesHead);
+            _view.AddChild(_objectiveListView);
+            _objectiveListView.AddChild(_objectiveMedals);
+            _view.AddChild(_avgMedalHead);
+            _view.AddChild(_averageMedal);
+
+            _averageMedal.Medal = GetAverageMedal();
+            _avgMedalHead.Text = "Mission medal:";
+            _avgMedalHead.AutoSize = true;
+            _avgMedalHead.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+
+            _objectivesHead.Text = "Objectives";
+            _objectivesHead.AutoSize = true;
+            _objectivesHead.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+
+            _view.AddChild(_averageMedal);
             AddChild(_next);
+
+            _missionComplete.Text = "Mission complete";
+            _missionComplete.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
+            _missionComplete.AutoSize = true;
+            _missionName.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
+            _missionName.AutoSize = true;
+            _totalXP.AutoSize = true;
+            _totalXP.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _view.AddChild(_totalXP);
+            _view.DrawBackground = true;
+
+            _total = GetTotal();
+            _next.Text = "Continue";
+            _next.Click += (o, a) =>
+            {
+                _state = 9;
+                _next.Enabled = false;
+            };
+        }
+
+        private int GetTotal()
+        {
+            int xp = 0;
+            foreach (var medal in _data.ObjectiveMedals)
+                xp += (int)medal.Medal;
+            xp += (int)GetAverageMedal();
+            return xp;
+        }
+
+        private Medal GetAverageMedal()
+        {
+            int medal = 0;
+            int count = _data.ObjectiveMedals.Length;
+            foreach (var m in _data.ObjectiveMedals)
+                medal += (int)m.Medal;
+            return (Medal)(medal/count);
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
+            gfx.Clear(Color.Black * (_bgFade * 0.75F));
+            
+        }
+
+        protected override void OnUpdate(GameTime time)
+        {
+            Parent.X = 0;
+            Parent.Y = 0;
+            Width = Manager.ScreenWidth;
+            Height = Manager.ScreenHeight;
+
+            _missionName.Text = _data.Name;
+            _missionName.MaxWidth = Width / 2;
+            _missionComplete.MaxWidth = Width / 2;
+
+            switch(_state)
+            {
+                case 0:
+                    _next.Enabled = false;
+                    _bgFade = MathHelper.Clamp(_bgFade + ((float)time.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                    if(_bgFade==1)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 1:
+                    _headerFade = MathHelper.Clamp(_headerFade + (float)time.ElapsedGameTime.TotalSeconds, 0, 0.5f);
+                    if(_headerFade>=0.5F)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 2:
+                    _viewWidth = MathHelper.Clamp(_viewWidth + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_viewWidth >= 1)
+                        _state++;
+                    break;
+                case 3:
+                    _view.AddChild(_objectiveMedals);
+                    _state++;
+                    break;
+                case 4:
+                    _viewHeight = MathHelper.Clamp(_viewHeight + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_viewHeight >= 1)
+                        _state++;
+                    break;
+                case 5:
+                    _avgMedalHead.Opacity = MathHelper.Clamp(_avgMedalHead.Opacity + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_avgMedalHead.Opacity >= 1)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 6:
+                    _totalXP.Opacity = MathHelper.Clamp(_totalXP.Opacity + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_totalXP.Opacity >= 1)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 7:
+                    _totalXPPercent = MathHelper.Clamp((float)_totalXPPercent + ((float)time.ElapsedGameTime.TotalSeconds / 2.5f), 0, 1);
+                    if(_totalXPPercent==1)
+                    {
+                        _state++;
+                        _next.Enabled = true;
+                    }
+                    break;
+                case 9:
+                    _viewHeight = MathHelper.Clamp(_viewHeight - ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_viewHeight <= 0)
+                        _state++;
+                    break;
+                case 10:
+                    _viewWidth = MathHelper.Clamp(_viewWidth - ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
+                    if (_viewWidth <= 0)
+                        _state++;
+                    break;
+                case 11:
+                    _headerFade = MathHelper.Clamp(_headerFade + (float)time.ElapsedGameTime.TotalSeconds, 0, 1f);
+                    if (_headerFade >= 1F)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 12:
+                    _bgFade = MathHelper.Clamp(_bgFade - ((float)time.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                    if (_bgFade >0)
+                    {
+                        _state++;
+                        _game.State.CompleteMission(_data.ID);
+                        Close();
+                    }
+                    break;
+                    
+            }
+
+            _view.Opacity = _viewWidth;
+            _view.Width = (int)MathHelper.Lerp(0, Width, _viewWidth);
+            _view.Height = (int)MathHelper.Lerp(2, Height / 2, _viewHeight);
+            _view.X = (Width - _view.Width) / 2;
+            _view.Y = (Height - _view.Height) / 2;
+            _next.Opacity = _viewHeight;
+            _next.Y = _view.Y + _view.Height + 15;
+            _next.X = (Width - _next.Width) / 2;
+
+            _objectivesHead.Opacity = _viewHeight;
+            _objectiveListView.Opacity = _viewHeight;
+            _averageMedal.Opacity = _avgMedalHead.Opacity;
+            float headOpacity = (_headerFade <= 0.5F) ? (_headerFade * 2) : 2 - (_headerFade * 2);
+
+            int missionSeparator = 4;
+            int missionHeight = _missionComplete.Height + missionSeparator + _missionName.Height;
+            int missionBase = _view.Y - 7 - (missionHeight);
+            int screenTenth = Height / 10;
+            int missionY = (int)MathHelper.Lerp(missionBase + screenTenth, missionBase - screenTenth, _headerFade);
+
+            _missionComplete.Y = missionY;
+            _missionName.Y = _missionComplete.Y + _missionComplete.Height + missionSeparator;
+            _missionComplete.X = (Width - _missionComplete.Width) / 2;
+            _missionName.X = (Width - _missionName.Width) / 2;
+
+            int quarterWidth = Width / 4;
+            _objectiveListView.Width = quarterWidth;
+            int halfSeparator = 45;
+            int total = (quarterWidth * 2) + halfSeparator;
+
+            _objectiveListView.X = (Width - total) / 2;
+            _objectivesHead.X = _objectiveListView.X;
+            _objectivesHead.Y = 30;
+            _objectivesHead.MaxWidth = quarterWidth;
+            _objectiveListView.Y = _objectivesHead.Y + _objectivesHead.Height + 15;
+            _objectiveListView.Height = (_view.Height - _objectiveListView.Y) - 30;
+
+            _avgMedalHead.X = _objectiveListView.X + quarterWidth + halfSeparator;
+            _avgMedalHead.Y = _objectivesHead.Y;
+            _avgMedalHead.MaxWidth = quarterWidth;
+            _averageMedal.X = _avgMedalHead.X;
+            _averageMedal.Y = _avgMedalHead.Y + _avgMedalHead.Height + 15;
+
+            _totalXP.MaxWidth = quarterWidth;
+            _totalXP.X = _avgMedalHead.X;
+            _totalXP.Y = (_objectiveListView.Y + _objectiveListView.Height) - _totalXP.Height;
+
+            int xp = (int)Math.Round((double)_total * _totalXPPercent);
+            _totalXP.Text = $"Total XP Earned: {xp}";
         }
     }
 
@@ -156,11 +372,11 @@ namespace Peacenet.Missions
         private Label _head = new Label();
         private Label _xp = new Label();
 
-        private const int _medalCircleRadius = 16;
-        private const int _padH = 7;
-        private const int _padV = 5;
+        private const int _medalCircleRadius = 8;
+        private const int _padH = 4;
+        private const int _padV = 2;
         private const int _medalSeparator = 4;
-        private const int _textSeparator = 3;
+        private const int _textSeparator = 0;
 
         public Medal Medal
         {
@@ -180,7 +396,7 @@ namespace Peacenet.Missions
             AddChild(_xp);
             _head.AutoSize = true;
             _xp.AutoSize = true;
-            _xp.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _xp.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
         }
 
         protected override void OnUpdate(GameTime time)
@@ -193,7 +409,7 @@ namespace Peacenet.Missions
             Width = (_padH * 2) + w;
             Height = (_padV * 2) + h;
             _head.Y = _padV;
-            _xp.X = _head.Y + _head.Height + _textSeparator;
+            _xp.Y = _head.Y + _head.Height + _textSeparator;
             _head.X = _padH + (_medalCircleRadius * 2) + _medalSeparator;
             _xp.X = _head.X;
         }
@@ -211,7 +427,7 @@ namespace Peacenet.Missions
                     medalColor = Color.Gold;
                     break;
             }
-            gfx.DrawCircle(new Vector2(_padH + _medalCircleRadius, _padV + _medalCircleRadius), _medalCircleRadius, medalColor);
+            gfx.DrawCircle(new Vector2(_padH + _medalCircleRadius, (Height/2)), _medalCircleRadius, medalColor);
         }
 
 
@@ -219,6 +435,7 @@ namespace Peacenet.Missions
 
     public class MissionData
     {
+        public string ID { get; set; }
         public string Name { get; set; }
         public ObjectiveMedal[] ObjectiveMedals { get; set; }
         public ItemUnlock[] Unlocks { get; set; }
