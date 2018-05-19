@@ -98,6 +98,8 @@ namespace Peacenet
             _picture.Texture = _plexgate.Content.Load<Texture2D>("Infobox/warning");
             _inputBox = new TextBox();
             AddChild(_inputBox);
+
+            _messageLabel.MaxWidth = _plexgate.GameRenderTarget.Width / 2;
         }
 
         private Action _okCallback = null;

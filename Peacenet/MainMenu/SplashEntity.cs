@@ -1,4 +1,6 @@
-﻿using Plex.Engine.Interfaces;
+﻿#define DISABLED_MP
+
+using Plex.Engine.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -352,6 +354,13 @@ namespace Peacenet.MainMenu
             };
             _hbMultiplayer.Click += (o, a) =>
             {
+#if DISABLED_MP
+                _infobox.Show("Feature disabled.", "Multiplayer features are currently disabled in this build of The Peacenet.\n" +
+                    "\n" +
+                    "This is because this build was compiled with the \"DISABLED_MP\" preprocessor constant defined in " + GetType().FullName + ". You must compile the game without this constant defined to access Multiplayer.");
+                return;
+#endif
+
                 if (_connecting)
                     return;
                 if (animState < 22)
