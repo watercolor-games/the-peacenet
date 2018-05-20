@@ -48,6 +48,7 @@ namespace Peacenet
 
         #region Textures
 
+        private Texture2D _xp = null;
         private Texture2D _wallpaper = null;
         private Texture2D _iconEmail = null;
         private Texture2D _iconEmailUnread = null;
@@ -70,6 +71,9 @@ namespace Peacenet
         private Hitbox _applauncherHitbox = new Hitbox();
         private Hitbox _hbTime = new Hitbox();
         private Hitbox _mailHitbox = new Hitbox();
+        private Hitbox _xpHitbox = new Hitbox();
+
+        private XPDisplay _xpDisplay = new XPDisplay();
 
         #endregion
 
@@ -365,6 +369,9 @@ namespace Peacenet
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            _xpDisplay.HideOnFocusLoss = true;
+            AddChild(_xpDisplay);
+            _xp = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flash");
             AddChild(_applauncherHitbox);
             AddChild(_hbTime);
 
@@ -466,6 +473,23 @@ namespace Peacenet
             {
                 var mail = new EmailViewer(WindowSystem);
                 mail.Show();
+            };
+
+            AddChild(_xpHitbox);
+
+            _xpHitbox.Click += (o, a) =>
+            {
+                if (_xpDisplay.Visible)
+                {
+                    _xpDisplay.Visible = false;
+                }
+                else
+                {
+                    _xpDisplay.Visible = true;
+                    Manager.SetFocus(_xpDisplay);
+                    _xpDisplay.ApplyAnim();
+                    _xpDisplay.TotalXP = _game.State.TotalXP;
+                }
             };
         }
 
@@ -676,6 +700,23 @@ namespace Peacenet
             _mailHitbox.Y = _topPanel.Y;
             _mailHitbox.X = _topPanel.Width - _mailHitbox.Width;
 
+            string xp = _game.State.SkillLevel.ToString();
+            var xpMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(xp);
+
+            int xpWidth = 14 + 16 + (int)xpMeasure.X;
+            _xpHitbox.Width = xpWidth;
+            _xpHitbox.Height = _topPanel.Height;
+            _xpHitbox.Visible = _topPanel.Visible;
+            _xpHitbox.Y = _topPanel.Y;
+            _xpHitbox.X = _mailHitbox.X - _xpHitbox.Width;
+
+            _xpDisplay.Y = _xpHitbox.Y + _xpHitbox.Height;
+            _xpDisplay.X = (_xpHitbox.X + _xpHitbox.Width) - _xpDisplay.Width;
+
+            _xpDisplay.SkillLevel = _game.State.SkillLevel;
+            _xpDisplay.SkillLevelPercentage = _game.State.SkillLevelPercentage;
+
+
             base.OnUpdate(time);
         }
 
@@ -723,6 +764,21 @@ namespace Peacenet
                 int mailY = _mailHitbox.Y + ((_mailHitbox.Height - (int)unreadMeasure.Y) / 2);
                 gfx.DrawRectangle(new Vector2(iconX, iconY), new Vector2(16, 16), icon, mailColor);
                 gfx.DrawString(unread, new Vector2(mailX, mailY), mailColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+
+                string xp = _game.State.SkillLevel.ToString();
+                var xpMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(xp);
+
+                var xpColor = _xpHitbox.ContainsMouse ? Theme.GetAccentColor() : _pn.PanelTheme.StatusTextColor;
+
+                var xpIcon = _xp;
+
+                int xpIconY = _xpHitbox.Y + ((_xpHitbox.Height - 16) / 2);
+                int xpIconX = _xpHitbox.X + 5;
+                int xpX = xpIconX + 20;
+                int xpY = _xpHitbox.Y + ((_xpHitbox.Height - (int)xpMeasure.Y) / 2);
+                gfx.DrawRectangle(new Vector2(xpIconX, xpIconY), new Vector2(16, 16), xpIcon, xpColor);
+                gfx.DrawString(xp, new Vector2(xpX, xpY), xpColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+
 
             }
         }

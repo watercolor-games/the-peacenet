@@ -1,0 +1,26 @@
+//Peacenet skill level definition file
+//
+//Decides how much XP is required to pass each skill level.
+//
+//Editing this file is ineffective if you have an existing save. A copy of this file is stored in the save database so you can't cheat the system.
+//
+//Also, modifying the amount of entries in this file can mess up your game if you create a new save with these skill level definitions, because some areas of the game (like PPM packages) may require a certain skill level to be available. If that skill level doesn't exist, you may never see that feature. This may cause you to be unable to progress through the game. APPROACH THIS FILE WITH EXTREME CAUTION.
+
+
+//Note for devs: The amount of XP for each level should increment by 200 + (100 * previousLevel).
+[
+  0, //initial
+  200, //up 200
+  500, //up 300
+  900, //up 400
+  1400, //up 500
+  2000, //up 600
+  2700, //up 700
+  3100, //up 800
+  4000, //up 900
+  5000, //up 1000
+  6100, //up 1100
+  7300, //up 1200
+  8600, //up 1300
+  10000 //up 1400
+]

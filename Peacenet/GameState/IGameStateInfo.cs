@@ -12,6 +12,12 @@ namespace Peacenet.GameState
         void StartGame();
         void EndGame();
 
+        int SkillLevel { get; }
+        float SkillLevelPercentage { get; }
+        int TotalXP { get; }
+
+        void AddXP(int xp);
+
         float AlertLevel { get; }
         float GameCompletion { get; set; }
         float Reputation { get; set; }

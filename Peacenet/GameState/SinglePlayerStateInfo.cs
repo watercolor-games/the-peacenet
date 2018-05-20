@@ -30,6 +30,13 @@ namespace Peacenet.GameState
         public float AlertLevel => _alertLevel;
         public bool AlertFalling => _alertFalling;
 
+        private int _level = 0;
+        private float _levelPercentage = 0;
+
+        public int SkillLevel => _level;
+        public float SkillLevelPercentage => _levelPercentage;
+
+
         private double _timeInAlert = 0;
         private float _lastAlert = 0f;
 
@@ -38,6 +45,14 @@ namespace Peacenet.GameState
         public float Reputation { get => GetValue("player.rep", 0f); set => SetValue("player.rep", value); }
 
         public event Action<string> MissionCompleted;
+
+        public int TotalXP => GetValue<int>("sys.xp", 0);
+
+        public void AddXP(int xp)
+        {
+            SetValue("sys.xp", TotalXP + xp);
+            updateSkillLevel();
+        }
 
         [Dependency]
         private SaveManager _save = null;
@@ -66,6 +81,7 @@ namespace Peacenet.GameState
         private LiteCollection<EmailThread> _threads = null;
         private LiteCollection<EmailMessage> _messages = null;
 
+        private int[] _levels = null;
 
         public SinglePlayerStateInfo()
         {
@@ -146,6 +162,54 @@ namespace Peacenet.GameState
             _os.EnsureProperEnvironment();
 
             _unread = _messages.Find(x => x.IsUnread).Count();
+
+            if(_levels == null)
+            {
+                if(_saveDB.FileStorage.Exists("levels"))
+                {
+                    using (var s = _saveDB.FileStorage.OpenRead("levels"))
+                    {
+                        byte[] data = new byte[s.Length];
+                        s.Read(data, 0, data.Length);
+                        _levels = JsonConvert.DeserializeObject<int[]>(Encoding.UTF8.GetString(data));
+                    }
+                }
+                else
+                {
+                    using (var s = _saveDB.FileStorage.OpenWrite("levels", "levels"))
+                    {
+                        var contentLevels = _plexgate.Content.Load<int[]>("SkillLevels");
+                        _levels = contentLevels;
+                        string json = JsonConvert.SerializeObject(_levels);
+                        byte[] data = Encoding.UTF8.GetBytes(json);
+                        s.Write(data, 0, data.Length);
+                    }
+                }
+            }
+
+            updateSkillLevel();
+        }
+
+        private void updateSkillLevel()
+        {
+            int xp = TotalXP;
+            int levelIndex = Array.IndexOf(_levels, _levels.Last(x => xp >= x));
+            if (levelIndex + 1 >= _levels.Length)
+            {
+                //We're on the last skill level.
+                _level = levelIndex + 1;
+                _levelPercentage = 1f;
+                return;
+            }
+
+            int levelStart = _levels[levelIndex];
+            int levelEnd = _levels[levelIndex + 1];
+
+            int rangeUpper = levelEnd - levelStart;
+            int rangeLower = xp - levelStart;
+
+            _level = levelIndex;
+            _levelPercentage = (float)rangeLower / rangeUpper;
         }
 
         public IEnumerable<EmailThread> Emails => _threads.FindAll();

@@ -31,6 +31,11 @@ namespace Peacenet.Missions
         private Label _totalXP = new Label();
         private int _total = 0;
         private float _totalXPPercent = 0;
+        private XPDisplay _xpDisplay = new XPDisplay();
+
+        private Label _newLevel = new Label();
+
+        private bool _hasNewLevel = false;
 
         [Dependency]
         private GameManager _game = null;
@@ -49,6 +54,12 @@ namespace Peacenet.Missions
             _objectiveListView.AddChild(_objectiveMedals);
             _view.AddChild(_avgMedalHead);
             _view.AddChild(_averageMedal);
+            _view.AddChild(_xpDisplay);
+            _view.AddChild(_newLevel);
+
+            _newLevel.AutoSize = true;
+            _newLevel.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
+            _newLevel.Text = "New skill level!";
 
             _averageMedal.Medal = GetAverageMedal();
             _avgMedalHead.Text = "Mission medal:";
@@ -72,13 +83,21 @@ namespace Peacenet.Missions
             _view.AddChild(_totalXP);
             _view.DrawBackground = true;
 
+            int level = _game.State.SkillLevel;
             _total = GetTotal();
+            _game.State.AddXP(_total);
+            _hasNewLevel = _game.State.SkillLevel != level;
             _next.Text = "Continue";
             _next.Click += (o, a) =>
             {
                 _state = 9;
                 _next.Enabled = false;
             };
+
+            _avgMedalHead.Opacity = 0;
+            _totalXP.Opacity = 0;
+            _xpDisplay.Opacity = 0;
+            _newLevel.Opacity = 0;
         }
 
         private int GetTotal()
@@ -165,7 +184,7 @@ namespace Peacenet.Missions
                     _totalXPPercent = MathHelper.Clamp((float)_totalXPPercent + ((float)time.ElapsedGameTime.TotalSeconds / 2.5f), 0, 1);
                     if(_totalXPPercent==1)
                     {
-                        _state++;
+                        _state = 14;
                         _next.Enabled = true;
                     }
                     break;
@@ -195,6 +214,34 @@ namespace Peacenet.Missions
                         Close();
                     }
                     break;
+                case 14:
+                    _xpDisplay.Opacity = MathHelper.Clamp(_xpDisplay.Opacity + ((float)time.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                    if(_xpDisplay.Opacity>=1)
+                    {
+                        _state++;
+                    }
+                    break;
+                case 15:
+                    if(_hasNewLevel)
+                    {
+                        _newLevel.Opacity = MathHelper.Clamp(_newLevel.Opacity + ((float)time.ElapsedGameTime.TotalSeconds * 3), 0, 1);
+                        if (_newLevel.Opacity >= 1)
+                        {
+                            _state++;
+                        }
+                    }
+                    else
+                    {
+                        _state++;
+                    }
+                    break;
+                case 16:
+                    _xpDisplay.TotalXP = _game.State.TotalXP;
+                    _xpDisplay.SkillLevel = _game.State.SkillLevel;
+                    _xpDisplay.SkillLevelPercentage = _game.State.SkillLevelPercentage;
+                    _xpDisplay.ApplyAnim();
+                    _state = 8;
+                    break;
                     
             }
 
@@ -217,6 +264,8 @@ namespace Peacenet.Missions
             int missionBase = _view.Y - 7 - (missionHeight);
             int screenTenth = Height / 10;
             int missionY = (int)MathHelper.Lerp(missionBase + screenTenth, missionBase - screenTenth, _headerFade);
+
+            float mOpacity = (_headerFade <= 0.5F) ? _headerFade * 2 : 2 - (_headerFade * 2);
 
             _missionComplete.Y = missionY;
             _missionName.Y = _missionComplete.Y + _missionComplete.Height + missionSeparator;
@@ -243,10 +292,25 @@ namespace Peacenet.Missions
 
             _totalXP.MaxWidth = quarterWidth;
             _totalXP.X = _avgMedalHead.X;
-            _totalXP.Y = (_objectiveListView.Y + _objectiveListView.Height) - _totalXP.Height;
-
+            
             int xp = (int)Math.Round((double)_total * _totalXPPercent);
             _totalXP.Text = $"Total XP Earned: {xp}";
+
+            _newLevel.Y = (_objectiveListView.Y + _objectiveListView.Height) - _newLevel.Height;
+
+            int skillYLow = (_newLevel.Y + _newLevel.Height) - _xpDisplay.Height;
+            int skillYHigh = (_newLevel.Y - _xpDisplay.Height) - 7;
+            _xpDisplay.Y = (int)MathHelper.Lerp(skillYLow, skillYHigh, _newLevel.Opacity);
+
+            int xpYLow = (_xpDisplay.Y + _xpDisplay.Height) - _totalXP.Height;
+            int xpYHigh = (_xpDisplay.Y - _totalXP.Height) - 14;
+            _totalXP.Y = (int)MathHelper.Lerp(xpYLow, xpYHigh, _xpDisplay.Opacity);
+
+            _xpDisplay.Width = _totalXP.MaxWidth;
+            _newLevel.MaxWidth = _totalXP.MaxWidth;
+
+            _newLevel.X = _totalXP.X;
+            _xpDisplay.X = _totalXP.X;
         }
     }
 
