@@ -68,7 +68,7 @@ namespace Peacenet.Cutscene
                 case 0:
                     _cursorTime = 0.25;
                     _ride += time.ElapsedGameTime.TotalSeconds;
-                    if (_ride >= 0.05)
+                    if (_ride >= 0.015)
                     {
                         if (_charIndex < _lines[_lineIndex].Length)
                         {
@@ -131,7 +131,9 @@ namespace Peacenet.Cutscene
         {
             var mono = _font;
 
-            string introText = TextRenderer.WrapText(mono, _lines[_lineIndex].Substring(0, _charIndex), (int)(gfx.Width * 0.75), Plex.Engine.TextRenderers.WrapMode.Words);
+            string introText = TextRenderer.WrapText(mono, _lines[_lineIndex], (int)(gfx.Width * 0.75), Plex.Engine.TextRenderers.WrapMode.Words);
+            string introCulledText = TextRenderer.WrapText(mono, _lines[_lineIndex].Substring(0, _charIndex), (int)(gfx.Width * 0.75), Plex.Engine.TextRenderers.WrapMode.Words);
+
             var introTextMeasure = mono.MeasureString(introText);
             var cursorMeasure = mono.MeasureString("#");
 
@@ -139,15 +141,16 @@ namespace Peacenet.Cutscene
 
             var textLocation = new Vector2((gfx.Width - introTextMeasure.X) / 2, (gfx.Height - introTextMeasure.Y) / 2);
             var lines = introText.Split('\n');
-            for (int i = 0; i < lines.Length; i++)
+            var cullLines = introCulledText.Split('\n');
+            for (int i = 0; i < cullLines.Length; i++)
             {
                 var line = lines[i];
                 var measure = mono.MeasureString(line);
                 var loc = new Vector2((gfx.Width - measure.X) / 2, textLocation.Y + (measure.Y * i));
-                gfx.Batch.DrawString(mono, line, loc, _theme.Theme.GetAccentColor().Lighten(0.5F));
-                if (i == lines.Length - 1 && _cursorTime >= 0.25)
+                gfx.Batch.DrawString(mono, cullLines[i], loc, _theme.Theme.GetAccentColor().Lighten(0.5F));
+                if (i == cullLines.Length - 1 && _cursorTime >= 0.25)
                 {
-                    gfx.DrawRectangle(new Vector2(loc.X + measure.X, loc.Y), cursorMeasure, Color.White);
+                    gfx.DrawRectangle(new Vector2(loc.X + mono.MeasureString(cullLines[i]).X, loc.Y), cursorMeasure, Color.White);
                 }
             }
 

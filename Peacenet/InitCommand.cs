@@ -129,8 +129,10 @@ namespace Peacenet
                 yield return "Primary Terminal Slave (PTS) 0 active. Beginning boot sequence.";
                 yield return "Enumerating system components...";
                 yield return $"Local GPU: {GraphicsAdapter.DefaultAdapter.Description}";
-                yield return $"Remote FS size: 512MiB";
-                yield return "Remote FS has been mounted to local mountpoint /.";
+                yield return "VESA driver active.";
+                yield return "System mounted at root directory /.";
+                yield return "/etc/hostname says: " + _os.Hostname;
+                yield return "Network stack active.";
                 yield return "Kernel is ready. Entering userland on PTS 1.";
             }
         }
@@ -222,7 +224,7 @@ namespace Peacenet
                 skipStory:
 #endif
                 console.WriteLine("");
-                console.WriteKernelMessage("Preparing mountpoint / for full Peacegate OS installation.");
+                console.WriteKernelMessage("Preparing mountpoint /mnt for full Peacegate OS installation.");
                 foreach (var dir in getDirs())
                 {
                     Thread.Sleep(200);
@@ -244,7 +246,7 @@ namespace Peacenet
                         int progressLength = (int)Math.Round(percentage * 50);
                         string progressBar = "[" + "#".Repeat(progressLength) + "-".Repeat(50 - progressLength) + "]";
                         console.Write(progressBar);
-                        Thread.Sleep(75);
+                        Thread.Sleep(25);
                     }
                     console.WriteLine("");
                     console.WriteKernelMessage("Done.");
