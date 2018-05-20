@@ -72,6 +72,7 @@
     <Compile Include="Applications\Clock.cs" />
     <Compile Include="Applications\CutscenePlayer.cs" />
     <Compile Include="Applications\DesktopPanelSettings.cs" />
+    <Compile Include="Applications\EmailViewer.cs" />
     <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
@@ -97,6 +98,9 @@
     <Compile Include="Cutscene\PrologueCutscene.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopWindow.cs" />
+    <Compile Include="Email\ClientEmailProvider.cs" />
+    <Compile Include="Email\EmailThread.cs" />
+    <Compile Include="Email\EmailMessage.cs" />
     <Compile Include="Filesystem\ClientMount.cs" />
     <Compile Include="Filesystem\ClientMounts\BinDirectory.cs" />
     <Compile Include="Filesystem\ClientMounts\MenuDirectory.cs" />
@@ -595,7 +599,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CountryChallenges\" />
-    <Folder Include="Email\" />
     <Folder Include="GovernmentAlert\" />
     <Folder Include="Missions\Prologue\SideMissions\" />
     <Folder Include="Themes\" />

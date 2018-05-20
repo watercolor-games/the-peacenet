@@ -17,6 +17,7 @@ using Peacenet.Filesystem;
 using Peacenet.PeacegateThemes.PanelThemes;
 using Plex.Engine.Themes;
 using Plex.Engine.TextRenderers;
+using Peacenet.Applications;
 
 namespace Peacenet
 {
@@ -26,8 +27,6 @@ namespace Peacenet
     public class DesktopWindow : Window
     {
         #region Notification buttons.
-
-        private Button _emailButton = new Button();
 
         #endregion
 
@@ -70,6 +69,7 @@ namespace Peacenet
         private Hitbox _bottomPanel = new Hitbox();
         private Hitbox _applauncherHitbox = new Hitbox();
         private Hitbox _hbTime = new Hitbox();
+        private Hitbox _mailHitbox = new Hitbox();
 
         #endregion
 
@@ -98,6 +98,9 @@ namespace Peacenet
 
         [Dependency]
         private FileUtilities _utils = null;
+
+        [Dependency]
+        private GameManager _game = null;
 
         #endregion
 
@@ -369,8 +372,6 @@ namespace Peacenet
             _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
 
 
-            _notificationTray.AddChild(_emailButton);
-
             _desktopRightClick = new ContextMenu(_winsys);
 
             _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
@@ -396,9 +397,6 @@ namespace Peacenet
             RightClick += Desktop_RightClick;
             _desktopIconsView.RightClick += Desktop_RightClick;
 
-            _emailButton.Click += (o, a) =>
-            {
-            };
 
 
             _hbTime.Click += (o, a) =>
@@ -460,9 +458,15 @@ namespace Peacenet
 
             AddChild(this._showDesktopIcon);
             AddChild(_notificationTray);
-            _notificationTray.AddChild(_emailButton);
-
+            
             AddChild(_windowList);
+            AddChild(_mailHitbox);
+
+            _mailHitbox.Click += (o, a) =>
+            {
+                var mail = new EmailViewer(WindowSystem);
+                mail.Show();
+            };
         }
 
         #endregion
@@ -498,12 +502,6 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            _emailButton.Text = "";
-            _emailButton.ShowImage = true;
-            _emailButton.Image = _iconEmail;
-
-            
-
             if (IsAppLauncherOpen)
                 _applauncher.CloseOnFocusLoss = _appLauncherClosesWhenFocusLost;
 
@@ -631,21 +629,23 @@ namespace Peacenet
                     SetupIcons();
                     _needsDesktopReset = false;
                 }
-//            }
-//            else
-//            {
-//                if (_animState < 3)
-//                {
-//                    foreach (var win in WindowSystem.WindowList.ToArray())
-//                    {
-//                        if (win.Border != this.Parent)
-//                            WindowSystem.Close(win.WindowID);
-//                    }
-//                    _animState = 3;
+            //            }
+            //            else
+            //            {
+            //                if (_animState < 3)
+            //                {
+            //                    foreach (var win in WindowSystem.WindowList.ToArray())
+            //                    {
+            //                        if (win.Border != this.Parent)
+            //                            WindowSystem.Close(win.WindowID);
+            //                    }
+            //                    _animState = 3;
 
-//                }
-//            }
+            //                }
+            //            }
 
+            if (_game.State == null)
+                return;
             string rtime = DateTime.Now.ToShortTimeString();
             var rtmeasure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
@@ -661,11 +661,20 @@ namespace Peacenet
             var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
             _hbTime.Y = _topPanel.Y;
-            _hbTime.X = _topPanel.Width - ((int)measure.X + 10);
+            _hbTime.X = (_topPanel.Width - _hbTime.Width) / 2;
             _hbTime.Width = (int)measure.X + 10;
             _hbTime.Height = _topPanel.Height;
 
             WindowSystem.Workspace = new Rectangle(Parent.X, Parent.Y + ((_showPanels) ? _topPanel.Height : 0), Width, Height - ((_showPanels) ? _topPanel.Height + _bottomPanel.Height : 0));
+            string unread = (_game.State.UnreadEmails > 0) ? _game.State.UnreadEmails.ToString() : "";
+            var unreadMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(unread);
+
+            int totalWidth = 14 + 16 + (int)unreadMeasure.X;
+            _mailHitbox.Width = totalWidth;
+            _mailHitbox.Height = _topPanel.Height;
+            _mailHitbox.Visible = _topPanel.Visible;
+            _mailHitbox.Y = _topPanel.Y;
+            _mailHitbox.X = _topPanel.Width - _mailHitbox.Width;
 
             base.OnUpdate(time);
         }
@@ -698,8 +707,23 @@ namespace Peacenet
                 string rtime = DateTime.Now.ToShortTimeString();
                 var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
-                gfx.DrawString(rtime, new Vector2(_topPanel.Bounds.Width - ((measure.X + 5)), _topPanel.Y + (((_topPanel.Height - (measure.Y)) / 2))), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 
+                gfx.DrawString(rtime, new Vector2((_topPanel.Bounds.Width - measure.X) / 2, _topPanel.Y + (((_topPanel.Height - (measure.Y)) / 2))), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 
                     _pn.PanelTheme.StatusTextColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+
+                var mailColor = _mailHitbox.ContainsMouse ? Theme.GetAccentColor() : _pn.PanelTheme.StatusTextColor;
+
+                string unread = (_game.State.UnreadEmails > 0) ? _game.State.UnreadEmails.ToString() : "";
+                var unreadMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(unread);
+
+                var icon = (unread.Length > 0) ? _iconEmailUnread : _iconEmail;
+
+                int iconY = _mailHitbox.Y + ((_mailHitbox.Height - 16) / 2);
+                int iconX = _mailHitbox.X + 5;
+                int mailX = iconX + 20;
+                int mailY = _mailHitbox.Y + ((_mailHitbox.Height - (int)unreadMeasure.Y) / 2);
+                gfx.DrawRectangle(new Vector2(iconX, iconY), new Vector2(16, 16), icon, mailColor);
+                gfx.DrawString(unread, new Vector2(mailX, mailY), mailColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
+
             }
         }
 

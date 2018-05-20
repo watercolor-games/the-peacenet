@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
 using Peacenet.CoreUtils;
+using Peacenet.Email;
 using Peacenet.Filesystem;
 using Plex.Engine;
 using Plex.Engine.Config;
@@ -56,10 +57,15 @@ namespace Peacenet.GameState
         [Dependency]
         private GUIUtils _gui = null;
 
+        private int _unread = 0;
+
         private LiteDatabase _saveDB = null;
 
         private LiteCollection<Snapshot> _snapshots = null;
         private LiteCollection<SaveValue> _values = null;
+        private LiteCollection<EmailThread> _threads = null;
+        private LiteCollection<EmailMessage> _messages = null;
+
 
         public SinglePlayerStateInfo()
         {
@@ -81,6 +87,9 @@ namespace Peacenet.GameState
             _saveDB = null;
             _values = null;
             _snapshots = null;
+            _threads = null;
+            _messages = null;
+
         }
 
         public void OnGameExit()
@@ -129,12 +138,49 @@ namespace Peacenet.GameState
             _values.EnsureIndex(x => x.ID);
             _snapshots.EnsureIndex(x => x.ID);
 
+            _threads = _saveDB.GetCollection<EmailThread>("emailthreads");
+            _messages = _saveDB.GetCollection<EmailMessage>("emailmessages");
+
+
             _save.SetBackend(this);
             _os.EnsureProperEnvironment();
+
+            _unread = _messages.Find(x => x.IsUnread).Count();
         }
+
+        public IEnumerable<EmailThread> Emails => _threads.FindAll();
+
+        public IEnumerable<EmailMessage> GetMessages(string threadId)
+        {
+            return _messages.Find(x => x.EmailId == threadId);
+        }
+
+        public void MarkRead(string messageId)
+        {
+            var message = _messages.FindOne(x => x.Id == messageId);
+            if (message == null)
+                return;
+            message.IsUnread = false;
+            _messages.Update(message);
+            _unread = _messages.Find(x => x.IsUnread).Count();
+        }
+
+        [Dependency]
+        private ClientEmailProvider _emailService = null;
+
 
         public void Update(GameTime time)
         {
+            if(_emailService.Incoming > 0)
+            {
+                var npcMail = _emailService.Dequeue();
+                this.sendNPCMail(npcMail.Subject, npcMail.From, npcMail.Message);
+                if(_os.IsDesktopOpen)
+                {
+                    _os.Desktop.ShowNotification(npcMail.From, npcMail.Subject);
+                }
+            }
+
             if(_alertLevel > 0 && _alertLevel < 0.8F)
             {
                 if(_alertFalling)
@@ -201,6 +247,37 @@ namespace Peacenet.GameState
                 return defaultValue;
             }
             return JsonConvert.DeserializeObject<T>(val.Value);
+        }
+
+        public int UnreadEmails
+        {
+            get
+            {
+                return _unread;
+            }
+        }
+
+        private void sendNPCMail(string subject, string from, string message)
+        {
+            var thread = new EmailThread
+            {
+                Id = Guid.NewGuid().ToString(),
+                Sent = DateTime.Now,
+                Subject = subject
+            };
+            var messageObject = new EmailMessage
+            {
+                EmailId = thread.Id,
+                From = from,
+                Id = Guid.NewGuid().ToString(),
+                IsUnread = true,
+                Message = message,
+                Sent = DateTime.Now,
+                To = "{you}"
+            };
+            _threads.Insert(thread);
+            _messages.Insert(messageObject);
+            _unread = _messages.Find(x => x.IsUnread).Count();
         }
 
         public bool TutorialCompleted

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Peacenet.Email;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,12 @@ namespace Peacenet.GameState
         void UnlockCountry(Country country);
         void CompleteMission(string missionID);
         void InstallPackage(string packageID);
+
+        int UnreadEmails { get; }
+
+        IEnumerable<EmailThread> Emails { get; }
+        IEnumerable<EmailMessage> GetMessages(string threadId);
+        void MarkRead(string messageId);
 
         event Action<string> MissionCompleted;
     }
