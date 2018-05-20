@@ -174,7 +174,7 @@ namespace Peacenet.GameState
             if(_emailService.Incoming > 0)
             {
                 var npcMail = _emailService.Dequeue();
-                this.sendNPCMail(npcMail.Subject, npcMail.From, npcMail.Message);
+                this.sendNPCMail(npcMail.Subject, npcMail.From, npcMail.Message, npcMail.MissionID);
                 if(_os.IsDesktopOpen)
                 {
                     _os.Desktop.ShowNotification(npcMail.From, npcMail.Subject);
@@ -257,7 +257,7 @@ namespace Peacenet.GameState
             }
         }
 
-        private void sendNPCMail(string subject, string from, string message)
+        private void sendNPCMail(string subject, string from, string message, string mission)
         {
             var thread = new EmailThread
             {
@@ -273,7 +273,8 @@ namespace Peacenet.GameState
                 IsUnread = true,
                 Message = message,
                 Sent = DateTime.Now,
-                To = "{you}"
+                To = "{you}",
+                MissionID = mission
             };
             _threads.Insert(thread);
             _messages.Insert(messageObject);

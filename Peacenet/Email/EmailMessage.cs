@@ -15,5 +15,7 @@ namespace Peacenet.Email
         public string Message { get; set; }
         public bool IsUnread { get; set; }
         public DateTime Sent { get; set; }
+
+        public string MissionID { get; set; }
     }
 }

@@ -23,6 +23,9 @@ namespace Peacenet.Applications
         private EmailThread _currentThread = null;
 
         [Dependency]
+        private MissionManager _mission = null;
+
+        [Dependency]
         private GameManager _game = null;
 
         public EmailViewer(WindowSystem _winsys) : base(_winsys)
@@ -116,6 +119,16 @@ namespace Peacenet.Applications
                         var display = new EmailMessageDisplay();
                         display.Header = $"From {message.From} to {message.To} at {message.Sent.ToShortDateString()} {message.Sent.ToShortTimeString()}".Replace("{you}", "me");
                         display.Message = message.Message;
+                        display.MissionID = message.MissionID;
+                        display.MissionStart += () =>
+                          {
+                              var m = _mission.Available.FirstOrDefault(x => x.ID == display.MissionID);
+                              if(m!=null)
+                              {
+                                  Close();
+                                  m.Start();
+                              }
+                          };
                         _inboxStacker.AddChild(display);
                     }
                     break;
@@ -197,13 +210,37 @@ namespace Peacenet.Applications
 
     public class EmailMessageDisplay : Control
     {
-        public Label _head = new Label();
-        public Label _message = new Label();
+        private Label _head = new Label();
+        private Label _message = new Label();
+        private Button _missionButton = new Button();
+        private string _missionID = null;
+
+        [Dependency]
+        private MissionManager _mission = null;
 
         public EmailMessageDisplay()
         {
             AddChild(_head);
             AddChild(_message);
+            AddChild(_missionButton);
+            _missionButton.Click += (o, a) =>
+            {
+                MissionStart?.Invoke();
+            };
+        }
+
+        public event Action MissionStart;
+
+        public string MissionID
+        {
+            get
+            {
+                return _missionID;
+            }
+            set
+            {
+                _missionID = value;
+            }
         }
 
         public string Header
@@ -242,6 +279,23 @@ namespace Peacenet.Applications
             if (Parent == null)
                 return;
 
+            bool hasMission = !string.IsNullOrWhiteSpace(_missionID) && !_mission.IsPlayingMission;
+            if(hasMission)
+            {
+                var m = _mission.Available.FirstOrDefault(x => x.ID == _missionID);
+                if (m == null)
+                    hasMission = false;
+                else
+                {
+                    _missionButton.Text = $"Start \"{m.Name}\"";
+                }
+            }
+
+            _missionButton.Visible = hasMission;
+
+            _missionButton.X = (Width - 45) - _missionButton.Width;
+            
+
             Width = Parent.Width;
 
             int labelWidth = Width - 60;
@@ -258,8 +312,16 @@ namespace Peacenet.Applications
             _message.X = 30;
             _message.Y = _head.Y + _head.Height + 7;
 
-            Height = _message.Y + _message.Height + 30;
+            _missionButton.Y = _message.Y + _message.Height + 10;
 
+            if (_missionButton.Visible)
+            {
+                Height = _missionButton.Y + _missionButton.Height + 45;
+            }
+            else
+            { 
+                Height = _message.Y + _message.Height + 30;
+            }
             base.OnUpdate(time);
         }
     }

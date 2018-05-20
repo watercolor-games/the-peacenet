@@ -39,9 +39,9 @@ We thank you for choosing Peacegate as your primary Peacenet access gateway, and
 
         public int Incoming => _incomingQueue.Count;
 
-        public void Enqueue(string from, string subject, string message)
+        public void Enqueue(string from, string subject, string message, string mission = null)
         {
-            _incomingQueue.Enqueue(new Email(from, subject, message));
+            _incomingQueue.Enqueue(new Email(from, subject, message, mission));
         }
 
         public Email Dequeue()
@@ -56,9 +56,11 @@ We thank you for choosing Peacegate as your primary Peacenet access gateway, and
             public string Subject { get; private set; }
             public string From { get; private set; }
             public string Message { get; private set; }
+            public string MissionID { get; private set; }
 
-            public Email(string from, string subject, string message)
+            public Email(string from, string subject, string message, string mission)
             {
+                MissionID = mission;
                 Message = message;
                 From = from;
                 Subject = subject;
