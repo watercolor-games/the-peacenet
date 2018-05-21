@@ -680,7 +680,7 @@ namespace Peacenet.Applications
                             char last = _textBuffer[_textBuffer.Length - 1];
                             _textBuffer = _textBuffer.Remove(_textBuffer.Length - 1, 1);
                             if (last == (char)0x1B)
-                                _textBuffer = _textBuffer.Remove(_textBuffer.LastIndexOf((char)0x02), _textBuffer.Length - _textBuffer.LastIndexOf((char)0x02));
+                                _textBuffer = _textBuffer.Remove(_textBuffer.LastIndexOf((char)0x1B), _textBuffer.Length - _textBuffer.LastIndexOf((char)0x1B));
                         }
                     }
                     else

@@ -545,8 +545,13 @@ namespace Peacenet.GameState
 
         public Stream Open(string path, OpenMode mode)
         {
+            if (DirectoryExists(path))
+                throw new IOException("Is a directory.");
             if (!FileExists(path) && mode != OpenMode.OpenOrCreate)
                 throw new IOException("File not found.");
+            string dir = path.Substring(0, path.LastIndexOf("/"));
+            if (!DirectoryExists(dir))
+                CreateDirectory(dir);
             return File.Open(mapPath(path), (mode == OpenMode.Open) ? System.IO.FileMode.Open : System.IO.FileMode.OpenOrCreate);
         }
 

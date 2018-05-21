@@ -40,7 +40,7 @@ namespace Peacenet
             {
                 if (type.GetCustomAttributes(true).Any(x => x is TerminalSkipAutoloadAttribute))
                     continue;
-                var command = (ITerminalCommand)Activator.CreateInstance(type, null);
+                var command = (ITerminalCommand)_plexgate.New(type);
                 Logger.Log($"Found: {command.Name} (from {type.FullName})");
                 //Avoid commands with the same name!
                 if(_localCommands.FirstOrDefault(x=>x.Name == command.Name) != null)
@@ -50,9 +50,6 @@ namespace Peacenet
                 }
 
                 _localCommands.Add(command);
-                Logger.Log("Injecting dependencies for the command...");
-                _plexgate.Inject(command);
-                Logger.Log("Done.");
                 Logger.Log("Creating usage string...");
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"{command.Name}");
