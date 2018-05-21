@@ -30,6 +30,9 @@ namespace Peacenet
         [Dependency]
         private Plexgate _plexgate = null;
 
+        [Dependency]
+        private PackageManager _packages = null;
+
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -150,6 +153,8 @@ namespace Peacenet
         {
             foreach (var cmd in _localCommands)
             {
+                if (!_packages.ArePackagesInstalled(cmd.GetType()))
+                    continue;
                 if (cmd.GetType().GetCustomAttributes(true).Any(x => x is HideInHelpAttribute))
                     continue;
                 yield return new CommandDescriptor(cmd.Name, cmd.Description, _usages[cmd.Name]);
@@ -174,7 +179,7 @@ namespace Peacenet
             //If we get to this stage, the query is OK. Let's find a local command.
             var local = _localCommands.FirstOrDefault(x => x.Name == query.Name);
             //If this is null we'll send it off to the server. Well, I haven't implemented the server yet so we'll just return false.
-            if(local == null)
+            if(local == null || !_packages.ArePackagesInstalled(local.GetType()))
             {
                 return false;
             }

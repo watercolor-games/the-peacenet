@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Peacenet
 {
+    [Package("ppm", "Peacenet Package Manager", "Provides access to the Peacenet package repositories.", "Base")]
+    [BasePackage]
     public class PackageManager : IEngineComponent
     {
         private List<PackageData> _all = new List<PackageData>();
@@ -22,32 +24,66 @@ namespace Peacenet
         [Dependency]
         private GameManager _game = null;
 
+        [Dependency]
+        private Plexgate _plexgate = null;
+
+        public IEnumerable<PackageData> AvailablePackages
+        {
+            get
+            {
+                return _all.Where(x => x.Metadata.MinimumSkillLevel <= _game.State.SkillLevel);
+            }
+        }
+
+        public PackageData[] BasePackages => _all.Where(x => x.IsBasePackage).ToArray();
+
+        public bool ArePackagesInstalled(Type type)
+        {
+            bool metaInstalled = true;
+            var meta = type.GetCustomAttributes(false).FirstOrDefault(x => x is PackageAttribute) as PackageAttribute;
+            if (meta == null)
+                metaInstalled = true;
+            if (meta != null && !_game.State.IsPackageInstalled(meta.Id))
+                metaInstalled = false;
+
+            if (type.GetCustomAttributes(false).Any(x => x is BasePackageAttribute))
+                return true;
+
+            if (type.GetCustomAttributes(false).Any(x => x is PackageDependencyAttribute && !_game.State.IsPackageInstalled((x as PackageDependencyAttribute).Id)))
+                return false;
+
+            if (_plexgate.GetDependencyTypes(type).Any(x => !ArePackagesInstalled(x)))
+                return false;
+
+            return metaInstalled;
+        }
+
         public void Initiate()
         {
             Logger.Log("Peacegate is looking for PPM packages...");
 
-            foreach (var type in ReflectMan.Types.Where(x => x.Inherits(typeof(Window)) || x.GetInterfaces().Contains(typeof(ITerminalCommand))))
+            foreach (var type in ReflectMan.Types)
             {
                 var packageData = type.GetCustomAttributes(false).FirstOrDefault(x => x is PackageAttribute) as PackageAttribute;
                 if(packageData != null)
                 {
                     bool isBase = type.GetCustomAttributes(false).Any(x => x is BasePackageAttribute);
-                    string[] dependencies = type.GetCustomAttributes(false).Where(x => x is PackageDependencyAttribute).Select(x => (x as PackageDependencyAttribute).Id).ToArray();
-                    var data = new PackageData(packageData, dependencies, isBase);
+                    List<string> dependencies = type.GetCustomAttributes(false).Where(x => x is PackageDependencyAttribute).Select(x => (x as PackageDependencyAttribute).Id).ToList();
+                    
+                    foreach(var subtype in _plexgate.GetDependencyTypes(type))
+                    {
+                        var subData = subtype.GetCustomAttributes(false).FirstOrDefault(x => x is PackageAttribute) as PackageAttribute;
+                        if(subData != null)
+                        {
+                            if (!dependencies.Contains(subData.Id))
+                                dependencies.Add(subData.Id);
+                        }
+                    }
+                    var data = new PackageData(packageData, dependencies.ToArray(), isBase);
                     Logger.Log($"Found {data.Metadata.Id}");
                     _all.Add(data);
                 }
             }
-
-            _os.SessionStart += () =>
-            {
-                resetAvailable();
-            };
-        }
-
-        private void resetAvailable()
-        {
-            _available = _all.Where(x => !_game.State.IsPackageInstalled(x.Metadata.Id) && !x.Dependencies.Any(y => !_game.State.IsPackageInstalled(y)) && (x.IsBasePackage || _game.State.SkillLevel >= x.Metadata.MinimumSkillLevel)).ToArray();
         }
     }
 

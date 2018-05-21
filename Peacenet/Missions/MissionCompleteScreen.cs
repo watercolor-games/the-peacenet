@@ -267,6 +267,9 @@ namespace Peacenet.Missions
 
             float mOpacity = (_headerFade <= 0.5F) ? _headerFade * 2 : 2 - (_headerFade * 2);
 
+            _missionComplete.Opacity = mOpacity;
+            _missionName.Opacity = mOpacity;
+
             _missionComplete.Y = missionY;
             _missionName.Y = _missionComplete.Y + _missionComplete.Height + missionSeparator;
             _missionComplete.X = (Width - _missionComplete.Width) / 2;

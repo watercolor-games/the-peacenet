@@ -83,6 +83,9 @@ namespace Peacenet.GameState
 
         private int[] _levels = null;
 
+        [Dependency]
+        private PackageManager _pkg = null;
+
         public SinglePlayerStateInfo()
         {
         }
@@ -185,6 +188,15 @@ namespace Peacenet.GameState
                         s.Write(data, 0, data.Length);
                     }
                 }
+            }
+
+            foreach(var package in _pkg.BasePackages)
+            {
+                if (!IsPackageInstalled(package.Metadata.Id))
+                    InstallPackage(package.Metadata.Id);
+                foreach (var dep in package.Dependencies)
+                    if (!IsPackageInstalled(dep))
+                        InstallPackage(dep);
             }
 
             updateSkillLevel();
@@ -438,6 +450,7 @@ namespace Peacenet.GameState
     {
         [Dependency]
         private OS _os = null;
+
 
         private string _baseDirectory = null;
 

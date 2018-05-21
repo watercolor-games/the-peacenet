@@ -21,6 +21,12 @@ namespace Peacenet
 
         private List<AppLauncherItem> _items = new List<AppLauncherItem>();
 
+        [Dependency]
+        private GameManager _game = null;
+
+        [Dependency]
+        private PackageManager _packages = null;
+
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -56,9 +62,13 @@ namespace Peacenet
         /// <returns>A list of all the App Launcher categories found in the database.</returns>
         public string[] GetAllCategories()
         {
+            if (_game.State == null)
+                return null;
             var cats = new List<string>();
             foreach(var item in _items)
             {
+                if (!_packages.ArePackagesInstalled(item.WindowType))
+                    continue;
                 if (!cats.Contains(item.Attribute.Category))
                     cats.Add(item.Attribute.Category);
             }
@@ -72,7 +82,16 @@ namespace Peacenet
         /// <returns>An array of <see cref="AppLauncherItem"/> objects representing items found in the category.</returns>
         public AppLauncherItem[] GetAllInCategory(string cat)
         {
-            return _items.Where(x => x.Attribute.Category == cat).ToArray();
+            if (_game.State == null)
+                return null;
+            var items = new List<AppLauncherItem>();
+            foreach(var item in _items.Where(x=>x.Attribute.Category==cat))
+            {
+                if (!_packages.ArePackagesInstalled(item.WindowType))
+                    continue;
+                items.Add(item);
+            }
+            return items.ToArray();
         }
     }
 
