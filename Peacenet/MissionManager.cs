@@ -172,9 +172,17 @@ namespace Peacenet
         public string ObjectiveName => _current.Name;
         public string ID => _id;
         public string[] DependencyIDs => _deps;
+        private TimeoutType _timeoutType = TimeoutType.Complete;
+
+        private double _timeoutDuration = 0;
+
+        public TimeoutType TimeoutType => _timeoutType;
+        public bool HasTimeout => _hasTimeout;
+        public double TimeoutDuration => _timeoutDuration;
 
         private string makeID(string str)
         {
+            
             string text = "";
             foreach(var c in str.ToLower())
             {
@@ -186,6 +194,8 @@ namespace Peacenet
             return text;
         }
 
+        public int ObjectiveIndex => _index;
+        public double Timeout => _timeout;
 
         public Mission(string name, string desc)
         {
@@ -216,9 +226,9 @@ namespace Peacenet
             }
         }
 
-        protected void AddObjective(string name, double timeout = 0)
+        protected void AddObjective(string name, double timeout = 0, TimeoutType timeoutType = TimeoutType.Fail)
         {
-            _objectives.Add(new Objective(name, timeout));
+            _objectives.Add(new Objective(name, timeout, timeoutType));
         }
 
         private void nextObjective()
@@ -228,6 +238,8 @@ namespace Peacenet
             _current = _objectives[_index];
             _hasTimeout = _current.Timeout > 0;
             _timeout = _current.Timeout;
+            _timeoutDuration = _current.Timeout;
+            _timeoutType = _current.TimeoutType;
         }
 
         public void Start()
@@ -246,6 +258,8 @@ namespace Peacenet
             _preMissionSaveState = _save.CreateSnapshot(); //If the user abandons the mission, revert to this state.
             
             _plexgate.GetLayer(LayerType.Foreground).AddEntity(this);
+
+            OnStart();
 
             nextObjective();
 
@@ -267,6 +281,7 @@ namespace Peacenet
                 ObjectiveMedals = _medals.ToArray(),
                 Unlocks = null
             }, _win);
+            OnEnd();
             completeDialog.Show();
             _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
         }
@@ -284,8 +299,13 @@ namespace Peacenet
             }
         }
 
+        protected virtual void OnStart() { }
+        protected virtual void OnEnd() { }
+
+
         protected void Fail(string message)
         {
+            OnEnd();
             _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
             var fail = new MissionFailScreen(this, message, _preMissionSaveState, _preObjectiveSaveState, _win);
             fail.Show();
@@ -315,9 +335,17 @@ namespace Peacenet
             if(_hasTimeout)
             {
                 _timeout -= time.ElapsedGameTime.TotalSeconds;
-                if(_timeout<= 0)
+                if (_timeout <= 0)
                 {
-                    Fail("You ran out of time.");
+                    switch (_timeoutType)
+                    {
+                        case TimeoutType.Fail:
+                            Fail("You ran out of time.");
+                            break;
+                        case TimeoutType.Complete:
+                            CompleteObjective();
+                            break;
+                    }
                     return;
                 }
             }
@@ -331,17 +359,35 @@ namespace Peacenet
     {
         private double _timeout;
         private string _name;
+        private TimeoutType _timeoutType;
 
         public string Name => _name;
         public double Timeout => _timeout;
+        public TimeoutType TimeoutType => _timeoutType;
 
-        public Objective(string name, double timeout)
+        public Objective(string name, double timeout, TimeoutType timeoutType)
         {
             _name = name;
             _timeout = timeout;
+            _timeoutType = timeoutType;
         }
 
-        public static Objective Empty => new Objective("", 0);
+        public static Objective Empty => new Objective("", 0, TimeoutType.Complete);
+    }
+
+    /// <summary>
+    /// Represents a value indicating how the mission system should handle an objective timeout.
+    /// </summary>
+    public enum TimeoutType
+    {
+        /// <summary>
+        /// Specifies that a mission should fail when an objective times out.
+        /// </summary>
+        Fail,
+        /// <summary>
+        /// Specifies that an objective should complete if it times out.
+        /// </summary>
+        Complete
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]

@@ -67,17 +67,17 @@ namespace Peacenet.RichPresence
 
             private void DiscordReady()
             {
-
+                Logger.Log("Discord is ready to receive RPC updates.");
             }
 
             private void DiscordDisconnected(int errorcode, string message)
             {
-
+                Logger.Log($"Disconnected from Discord (error code {errorcode}: {message})", System.ConsoleColor.Red);
             }
 
             private void DiscordError(int errorcode, string message)
             {
-
+                Logger.Log($"Discord RPC error (error code {errorcode}: {message})", System.ConsoleColor.Magenta);
             }
 
             private void DiscordJoin(string secret) { }

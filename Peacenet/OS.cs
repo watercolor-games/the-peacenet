@@ -40,14 +40,6 @@ namespace Peacenet
 
         public string Hostname { get; private set; } = "localhost";
         
-        public bool IsPlayingNewConnectionAnimation
-        {
-            get
-            {
-                return _osEntity.IsReceivingConnection;
-            }
-        }
-
         public uint CombineToUint(byte[] values)
         {
             if (values == null)

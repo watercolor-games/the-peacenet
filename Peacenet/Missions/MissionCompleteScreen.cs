@@ -57,6 +57,14 @@ namespace Peacenet.Missions
             _view.AddChild(_xpDisplay);
             _view.AddChild(_newLevel);
 
+            foreach(var m in _data.ObjectiveMedals)
+            {
+                var d = new ObjectiveMedalDisplay();
+                d.Medal = m;
+                d.Show = false;
+                _objectiveMedals.AddChild(d);
+            }
+
             _newLevel.AutoSize = true;
             _newLevel.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
             _newLevel.Text = "New skill level!";
@@ -155,11 +163,7 @@ namespace Peacenet.Missions
                 case 2:
                     _viewWidth = MathHelper.Clamp(_viewWidth + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
                     if (_viewWidth >= 1)
-                        _state++;
-                    break;
-                case 3:
-                    _view.AddChild(_objectiveMedals);
-                    _state++;
+                        _state=4;
                     break;
                 case 4:
                     _viewHeight = MathHelper.Clamp(_viewHeight + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
@@ -170,6 +174,11 @@ namespace Peacenet.Missions
                     _avgMedalHead.Opacity = MathHelper.Clamp(_avgMedalHead.Opacity + ((float)time.ElapsedGameTime.TotalSeconds * 4), 0, 1);
                     if (_avgMedalHead.Opacity >= 1)
                     {
+                        foreach(var m in _objectiveMedals.Children)
+                        {
+                            if (m is ObjectiveMedalDisplay)
+                                (m as ObjectiveMedalDisplay).Show = true;
+                        }
                         _state++;
                     }
                     break;
@@ -277,6 +286,8 @@ namespace Peacenet.Missions
 
             int quarterWidth = Width / 4;
             _objectiveListView.Width = quarterWidth;
+            _objectiveMedals.Width = _objectiveListView.Width;
+            _objectiveMedals.AutoSize = true;
             int halfSeparator = 45;
             int total = (quarterWidth * 2) + halfSeparator;
 
@@ -401,34 +412,65 @@ namespace Peacenet.Missions
                 _objectiveName.Y = 7;
                 _medal.Y = _objectiveName.Y + ((textHeight - _medal.Height) / 2);
                 _desc.Y = _objectiveName.Y + 3 + _objectiveName.Height;
+                Height = textHeight + 14;
             }
             else
             {
                 _medal.Y = 7;
                 _objectiveName.Y = _medal.Y + ((_medal.Height - textHeight) / 2);
                 _desc.Y = _objectiveName.Y + _objectiveName.Height + 3;
+                Height = _medal.Height + 14;
             }
 
-            if(_objectiveName.Opacity<1)
+            if (Show)
             {
-                _objectiveName.Opacity = MathHelper.Clamp(_objectiveName.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
-            }
-            else
-            {
-                if (_medal.Opacity < 1)
+                if (_objectiveName.Opacity < 1)
                 {
-                    _medal.Opacity = MathHelper.Clamp(_medal.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                    _objectiveName.Opacity = MathHelper.Clamp(_objectiveName.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
                 }
                 else
                 {
-                    if (_desc.Opacity < 1)
+                    if (_medal.Opacity < 1)
                     {
-                        _desc.Opacity = MathHelper.Clamp(_desc.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        _medal.Opacity = MathHelper.Clamp(_medal.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                    }
+                    else
+                    {
+                        if (_desc.Opacity < 1)
+                        {
+                            _desc.Opacity = MathHelper.Clamp(_desc.Opacity + (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        }
                     }
                 }
             }
+            else
+            {
+                if (_objectiveName.Opacity > 0)
+                {
+                    _objectiveName.Opacity = MathHelper.Clamp(_objectiveName.Opacity - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                }
+                else
+                {
+                    if (_medal.Opacity > 0)
+                    {
+                        _medal.Opacity = MathHelper.Clamp(_medal.Opacity - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                    }
+                    else
+                    {
+                        if (_desc.Opacity > 0)
+                        {
+                            _desc.Opacity = MathHelper.Clamp(_desc.Opacity - (float)time.ElapsedGameTime.TotalSeconds * 2, 0, 1);
+                        }
+                    }
+                }
+
+            }
 
             base.OnUpdate(time);
+        }
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
+        {
         }
     }
 

@@ -9,7 +9,7 @@ namespace Peacenet.Missions
 {
     public class InstantCompleteMission : Mission
     {
-        public InstantCompleteMission() : base("Instant completion test", "Playing this mission will cause an instant Gold completion.")
+        public InstantCompleteMission() : base("Instant completion test " + Guid.NewGuid().ToString(), "Playing this mission will cause an instant Gold completion.")
         {
             AddObjective("Instantly complete the mission");
         }

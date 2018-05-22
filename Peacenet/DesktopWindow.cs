@@ -18,6 +18,7 @@ using Peacenet.PeacegateThemes.PanelThemes;
 using Plex.Engine.Themes;
 using Plex.Engine.TextRenderers;
 using Peacenet.Applications;
+using Peacenet.RichPresence;
 
 namespace Peacenet
 {
@@ -33,6 +34,12 @@ namespace Peacenet
         #endregion
 
         #region Animation and state
+
+        private float _objectiveTextFade = 0f;
+        private bool _objectiveJustStarted = false;
+        private double _objectiveStartedCooldown = 0f;
+        private string _objectiveText = "";
+        private string _objectiveTime = "";
 
         private int _animState = 0;
         private float _scaleAnim = 0;
@@ -50,6 +57,8 @@ namespace Peacenet
 
         #region Textures
 
+        private Texture2D _objectiveTask = null;
+        private Texture2D _objectiveTimeout = null;
         private Texture2D _xp = null;
         private Texture2D _wallpaper = null;
         private Texture2D _iconEmail = null;
@@ -59,6 +68,7 @@ namespace Peacenet
 
         #region UI elements
 
+        private Hitbox _objectiveHitbox = new Hitbox();
         private HorizontalStacker _notificationTray = new HorizontalStacker();
         private ContextMenu _desktopRightClick = null;
         private Label _notificationTitle = new Label();
@@ -80,6 +90,12 @@ namespace Peacenet
         #endregion
 
         #region Engine dependencies
+
+        [Dependency]
+        private DiscordRPCModule _discord = null;
+
+        [Dependency]
+        private MissionManager _mission = null;
 
         [Dependency]
         private Plexgate _plexgate = null;
@@ -371,6 +387,11 @@ namespace Peacenet
         /// <inheritdoc/>
         public DesktopWindow(WindowSystem _winsys) : base(_winsys)
         {
+            AddChild(_objectiveHitbox);
+
+            _objectiveTask = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/check-square");
+            _objectiveTimeout = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/clock-o");
+
             _xpDisplay.HideOnFocusLoss = true;
             AddChild(_xpDisplay);
             _xp = _plexgate.Content.Load<Texture2D>("Desktop/UIIcons/flash");
@@ -522,8 +543,10 @@ namespace Peacenet
         }
 
         #endregion
-        
+
         #region Update and Draw methods
+
+        private int _lastObjective = -1;
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
@@ -718,6 +741,76 @@ namespace Peacenet
             _xpDisplay.SkillLevel = _game.State.SkillLevel;
             _xpDisplay.SkillLevelPercentage = _game.State.SkillLevelPercentage;
 
+            if (_mission.IsPlayingMission)
+            {
+                _objectiveHitbox.Visible = true;
+                if (_lastObjective != _mission.CurrentMission.ObjectiveIndex)
+                {
+                    _lastObjective = _mission.CurrentMission.ObjectiveIndex;
+                    _objectiveJustStarted = true;
+                    _objectiveStartedCooldown = 5;
+                    _objectiveTextFade = 0f;
+                }
+                _discord.GameState = "In Mission: " + _mission.CurrentMission.Name;
+                _discord.GameDetails = _mission.CurrentMission.ObjectiveName;
+
+                _objectiveText = _mission.CurrentMission.ObjectiveName;
+                if (_mission.CurrentMission.HasTimeout)
+                {
+                    switch (_mission.CurrentMission.TimeoutType)
+                    {
+                        case TimeoutType.Complete:
+                            _objectiveTime = (Math.Round((_mission.CurrentMission.TimeoutDuration - _mission.CurrentMission.Timeout) / _mission.CurrentMission.TimeoutDuration, 2)*100).ToString() + "%";
+                            break;
+                        case TimeoutType.Fail:
+                            _objectiveTime = Math.Round(_mission.CurrentMission.Timeout).ToString() + "s";
+                            break;
+                    }
+                }
+                else
+                {
+                    _objectiveTime = "";
+                }
+            }
+            else
+            {
+                _objectiveHitbox.Visible = false;
+                _lastObjective = -1;
+                _objectiveJustStarted = false;
+                _objectiveStartedCooldown = 0;
+                _discord.GameState = "Free roam";
+                _discord.GameDetails = $"{_os.Hostname} - Skill Level: {_game.State.SkillLevel} - Alert Level: {_game.State.AlertLevel}";
+            }
+
+            if(_objectiveStartedCooldown>0)
+            {
+                _objectiveStartedCooldown -= time.ElapsedGameTime.TotalSeconds;
+            }
+            else
+            {
+                _objectiveJustStarted = false;
+            }
+
+            if (_objectiveHitbox.ContainsMouse || _objectiveJustStarted)
+            {
+                _objectiveTextFade = MathHelper.Clamp(_objectiveTextFade + ((float)time.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+            }
+            else
+            {
+                _objectiveTextFade = MathHelper.Clamp(_objectiveTextFade - ((float)time.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+            }
+
+            if(_objectiveHitbox.Visible)
+            {
+                _objectiveHitbox.Y = _topPanel.Y;
+                _objectiveHitbox.Height = _topPanel.Height;
+                var objMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(_objectiveTime);
+                _objectiveHitbox.Width = 14 + 16 + (int)objMeasure.X;
+                _objectiveHitbox.X = _xpHitbox.X - _objectiveHitbox.Width;
+            }
+
+
+
 
             base.OnUpdate(time);
         }
@@ -781,7 +874,31 @@ namespace Peacenet
                 gfx.DrawRectangle(new Vector2(xpIconX, xpIconY), new Vector2(16, 16), xpIcon, xpColor);
                 gfx.DrawString(xp, new Vector2(xpX, xpY), xpColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
 
+                if(_objectiveHitbox.Visible && _mission.CurrentMission!=null)
+                {
+                    var oIcon = (_mission.CurrentMission.HasTimeout) ? _objectiveTimeout : _objectiveTask;
+                    int oIconX = _objectiveHitbox.X + 5;
+                    int oIconY = _objectiveHitbox.Y + ((_objectiveHitbox.Height - 16) / 2);
+                    var color = _objectiveHitbox.ContainsMouse ? Theme.GetAccentColor() : _pn.PanelTheme.StatusTextColor;
+                    gfx.DrawRectangle(oIconX, oIconY, 16, 16, oIcon, color);
 
+                    var otMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(_objectiveTime);
+                    int oTextX = oIconX + 20;
+                    int oTextY = _objectiveHitbox.Y + ((_objectiveHitbox.Height - (int)otMeasure.Y) / 2);
+                    gfx.DrawString(_objectiveTime, new Vector2(oTextX, oTextY), color, _pn.PanelTheme.StatusTextFont);
+
+                    int len = _objectiveText.Length;
+                    float take = (float)len * _objectiveTextFade;
+                    int takeInt = (int)Math.Round(take);
+                    if (takeInt > 0)
+                    {
+                        string oName = _objectiveText.Substring(0, takeInt);
+                        var oNameMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(oName);
+                        int oNameX = (_objectiveHitbox.X - 5) - (int)oNameMeasure.X;
+                        int oNameY = _topPanel.Y + ((_topPanel.Height - (int)oNameMeasure.Y) / 2);
+                        gfx.DrawString(oName, new Vector2(oNameX, oNameY), _pn.PanelTheme.StatusTextColor * _objectiveTextFade, _pn.PanelTheme.StatusTextFont);
+                    }
+                }
             }
         }
 
