@@ -1,0 +1,23 @@
+[
+	{
+		"Id": "medal_value_increase_1",
+		"Name": "Medal value increase 1",
+		"Description": "Increases the value of Medals awarded from objectives by 10%.\n\nA medal a day keeps the government at bay.",
+		"MinSkillLevel": 2,
+		"Dependencies": null
+	},
+	{
+		"Id": "alert_fast_decay_1",
+		"Name": "Alert Faster Decay 1",
+		"Description": "Increase the decay rate of Government Alert by 25%.\n\nBecause sometimes you just have to live on the edge.",
+		"MinSkillLevel": 5,
+		"Dependencies": null
+	},
+	{
+		"Id": "window_switching",
+		"Name": "Quick window switching",
+		"Description": "Cycle through each open window on your Desktop with CTRL+Tab.\n\nAin't nobody got time for panel buttons in this cruel world.",
+		"MinSkillLevel": 1,
+		"Dependencies": null,
+	},
+]

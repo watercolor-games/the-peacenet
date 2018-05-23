@@ -27,8 +27,50 @@ namespace Peacenet.GameState
         private float _alertLevel = 0f;
         private bool _alertFalling = false;
 
+        //Amount of upgrade slots granted to a Skill Level 0 player
+        private const int _baseUpgradeSlots = 5;
+        //Amount of additional upgrade slots granted per skill level.
+        private const int _upgradesPerSkillLevel = 3;
+
         public float AlertLevel => _alertLevel;
         public bool AlertFalling => _alertFalling;
+
+        public bool IsUpgradeInstalled(string upgradeID)
+        {
+            return GetValue($"upgrade.{upgradeID}.enabled", false);
+        }
+
+        public IEnumerable<string> UpgradeIDs => _upgrades.Select(x => x.Id);
+
+        public bool DisableUpgrade(string upgradeID)
+        {
+            if (!IsUpgradeInstalled(upgradeID))
+                return false;
+            var children = _upgrades.Where(x => x.Dependencies != null && x.Dependencies.Contains(upgradeID) && IsUpgradeInstalled(x.Id));
+            foreach (var upgrade in children)
+                DisableUpgrade(upgrade.Id);
+            SetValue($"upgrade.{upgradeID}.enabled", false);
+            return true;
+        }
+
+        public bool EnableUpgrade(string upgradeID)
+        {
+            if (IsUpgradeInstalled(upgradeID))
+                return false;
+            var children = _upgrades.Where(x => x.Dependencies != null && x.Dependencies.Contains(upgradeID) && !IsUpgradeInstalled(x.Id));
+            if (children.Count() > 0)
+                return false;
+            int enabledCount = _upgrades.Where(x => IsUpgradeInstalled(x.Id)).Count();
+            if (enabledCount + 1 > _maxUpgradeSlots)
+                return false;
+            SetValue($"upgrade.{upgradeID}.enabled", true);
+            return true;
+        }
+
+        public Upgrade GetUpgradeInfo(string upgradeID)
+        {
+            return _upgrades.FirstOrDefault(x => x.Id == upgradeID);
+        }
 
         private int _level = 0;
         private float _levelPercentage = 0;
@@ -54,6 +96,10 @@ namespace Peacenet.GameState
             updateSkillLevel();
         }
 
+        private int _maxUpgradeSlots = 0;
+
+        public int UpgradeSlotCount => _maxUpgradeSlots;
+
         [Dependency]
         private SaveManager _save = null;
 
@@ -73,6 +119,8 @@ namespace Peacenet.GameState
         private GUIUtils _gui = null;
 
         private int _unread = 0;
+
+        private Upgrade[] _upgrades = null;
 
         private LiteDatabase _saveDB = null;
 
@@ -187,6 +235,9 @@ namespace Peacenet.GameState
                 }
             }
 
+            //Upgrades are localizable and should NEVER be altered by the player, so we'll deserialize them from an embedded resource.
+            _upgrades = JsonConvert.DeserializeObject<Upgrade[]>(Properties.Resources.Upgrades);
+
             updateSkillLevel();
         }
 
@@ -210,6 +261,8 @@ namespace Peacenet.GameState
 
             _level = levelIndex;
             _levelPercentage = (float)rangeLower / rangeUpper;
+
+            _maxUpgradeSlots = _baseUpgradeSlots + (_upgradesPerSkillLevel * _level);
         }
 
         public IEnumerable<EmailThread> Emails => _threads.FindAll();

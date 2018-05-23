@@ -12,6 +12,13 @@ namespace Peacenet.GameState
         void StartGame();
         void EndGame();
 
+        IEnumerable<string> UpgradeIDs { get; }
+        bool IsUpgradeInstalled(string upgradeID);
+        int UpgradeSlotCount { get; }
+        bool EnableUpgrade(string upgradeID);
+        bool DisableUpgrade(string upgradeID);
+        Upgrade GetUpgradeInfo(string upgradeID);
+
         int SkillLevel { get; }
         float SkillLevelPercentage { get; }
         int TotalXP { get; }
@@ -41,5 +48,31 @@ namespace Peacenet.GameState
         void MarkRead(string messageId);
 
         event Action<string> MissionCompleted;
+    }
+
+    public struct Upgrade
+    {
+        public string Id;
+        public string Name;
+        public string Description;
+        public int MinSkillLevel;
+        public string[] Dependencies;
+        
+        public Upgrade(string id, string name, string desc, int minSkillLevel, params string[] dependencies)
+        {
+            Id = id;
+            Name = name;
+            Description = desc;
+            MinSkillLevel = minSkillLevel;
+            Dependencies = dependencies;
+        }
+
+        public static Upgrade Empty
+        {
+            get
+            {
+                return new Upgrade("", "", "", 0, null);
+            }
+        }
     }
 }
