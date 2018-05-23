@@ -41,6 +41,7 @@ namespace Peacenet.TerminalCommands
             bool doEnable = (bool)arguments["enable"];
             bool doDisable = (bool)arguments["disable"];
             bool showSlots = (bool)arguments["slots"];
+            bool showInfo = (bool)arguments["info"];
             string requestedID = arguments["<id>"]?.ToString();
 
             if(showAvailable)
@@ -60,7 +61,7 @@ namespace Peacenet.TerminalCommands
                     }
                     else if(!e)
                     {
-                        bool s = _game.State.SkillLevel >= info.MinSkillLevel;
+                        bool s = _game.State.SkillLevel >= info.MinSkillLevel && !(info.Dependencies != null && info.Dependencies.Any(x => !_game.State.IsUpgradeInstalled(x)));
                         if(s)
                         {
                             console.WriteLine($" - {id}");
@@ -71,13 +72,22 @@ namespace Peacenet.TerminalCommands
                             {
                                 console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
                                 console.SetBold(false);
-                                console.Write($" - {id} [requires skill level ");
-                                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
-                                console.SetBold(true);
-                                console.Write(info.MinSkillLevel.ToString());
-                                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
-                                console.SetBold(false);
-                                console.WriteLine("]");
+                                console.Write($" - {id}");
+                                if (info.Dependencies != null && info.Dependencies.Any(x => !_game.State.IsUpgradeInstalled(x)))
+                                {
+                                    console.Write(" [dependencies disabled]");
+                                }
+                                if (info.MinSkillLevel > _game.State.SkillLevel)
+                                {
+                                    console.Write(" [requires skill level ");
+                                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
+                                    console.SetBold(true);
+                                    console.Write(info.MinSkillLevel.ToString());
+                                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
+                                    console.SetBold(false);
+                                    console.Write("]");
+                                }
+                                console.WriteLine("");
                             }
                         }
                     }
@@ -119,7 +129,41 @@ namespace Peacenet.TerminalCommands
             }
             else if(doDisable)
             {
+                if (!_game.State.UpgradeIDs.Contains(requestedID))
+                {
+                    console.WriteLine($"error: {requestedID}: upgrade not found.");
+                    return;
+                }
 
+                if (!_game.State.IsUpgradeInstalled(requestedID))
+                {
+                    console.WriteLine($"error: {requestedID}: upgrade not enabled!");
+                    return;
+                }
+
+                //If we get this far, we'll want to check if an upgrade that's enabled depends on this one.
+                if(_game.State.UpgradeIDs.Any(x=>_game.State.GetUpgradeInfo(x).Dependencies?.Contains(requestedID) == true && _game.State.IsUpgradeInstalled(x)))
+                {
+                    console.WriteLine($"error: {requestedID}: An enabled upgrade depends on this upgrade, please disable it first. (Use 'upgrade list -e' to see enabled upgrades)");
+                    return;
+                }
+
+                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Red);
+                console.SetBold(true);
+                console.Write("WARNING: ");
+                console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
+                console.SetBold(false);
+                warning:
+                console.Write("Disabling a Peacegate System Upgrade may cause some dependent programs to cease functionality! Proceed? [y/N]: ");
+                string answer = console.ReadLine();
+                if (string.IsNullOrWhiteSpace(answer) || answer.ToLower() == "n")
+                    return;
+                if (answer.ToLower() != "y")
+                    goto warning;
+
+
+                _game.State.DisableUpgrade(requestedID);
+                console.WriteLine("Success.");
             }
             else if(showSlots)
             {
@@ -134,6 +178,25 @@ namespace Peacenet.TerminalCommands
                 console.WriteLine("Max slots: " + _game.State.UpgradeSlotCount);
                 console.WriteLine("Used: " + getInstalledCount());
 
+            }
+            else if (showInfo)
+            {
+                if(!_game.State.UpgradeIDs.Contains(requestedID))
+                {
+                    console.WriteLine($"error: {requestedID}: upgrade not found.");
+                    return;
+                }
+
+                var info = _game.State.GetUpgradeInfo(requestedID);
+                console.WriteLine($"Name: {info.Name}");
+                console.WriteLine($"Minimum skill level: {info.MinSkillLevel}");
+                console.Write("Dependencies: ");
+                if (info.Dependencies == null || info.Dependencies.Length == 0)
+                    console.WriteLine("None.");
+                else
+                    console.WriteLine(string.Join(", ", info.Dependencies));
+                console.WriteLine("");
+                console.WriteLine(info.Description);
             }
         }
     }
