@@ -248,14 +248,12 @@ namespace Peacenet.Applications
             _audio.AutoSize = true;
             _audio.Text = "Audio";
 
-            _audioVolumeSlider.Height = 5;
-
             _audioVolume.X = 20;
             _audioVolume.Y = _audio.Y + _audio.Height + 10;
-            _audioVolume.Text = $"Audio volume: {_audioVolumeSlider.Value * 100: 0.0}%";
+            _audioVolume.Text = $"Audio volume:";
             _audioVolume.AutoSize = true;
 
-            _audioVolumeSlider.X = 350;
+            _audioVolumeSlider.X = _audioVolume.X + _audioVolume.Width + 15;
             _audioVolumeSlider.Width = (_configPanel.Width - _audioVolumeSlider.X) - 15;
             _audioVolumeSlider.Y = _audioVolume.Y + ((_audioVolume.Height - _audioVolumeSlider.Height) / 2);
 

@@ -8,7 +8,6 @@ using Plex.Engine.Themes;
 
 namespace Peacenet
 {
-    [Package("shiftos.knowledgeinput", "Knowledge Input", "One of the most popular programs from the revolutionary pre-Peacenet operating system, ShiftOS, Knowledge Input has been ported to Peacegate OS and put on the PPM for you to download and install.\n\nMuch like in ShiftOS, you can earn XP by playing this game... if you don't get too bored...", "Time-wasters", 10, "ShiftSyndicate")]
     [AppLauncher("Knowledge Input", "Accessories", "A game that rewards Code Points when you list enough words within a category such as fruits")]
     [SpecialEventAppLauncher(1, 4)]
     public class KnowledgeInput : Window

@@ -30,8 +30,6 @@ namespace Peacenet
     /// A command which runs when the in-game Peacegate OS boots.
     /// </summary>
     [HideInHelp]
-    [Package("peacegate.base", "Peacegate Base System", "A meta-package containing all necessary programs for a Peacegate OS interactive install. This package cannot be uninstalled.", "Base")]
-    [BasePackage]
     public class InitCommand : ITerminalCommand, ILoadable
     {
         /// <inheritdoc/>

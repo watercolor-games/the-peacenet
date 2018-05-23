@@ -18,8 +18,6 @@ namespace Peacenet.CoreUtils
     /// <summary>
     /// Provides an engine component for retrieving client-side information about a given file or directory path.
     /// </summary>
-    [Package("coreutils", "Core Utilities", "Provides core command-line utilities for the Peacegate OS.", "Base")]
-    [BasePackage]
     public class FileUtils : IEngineComponent
     {
 
@@ -121,9 +119,6 @@ namespace Peacenet.CoreUtils
     /// <summary>
     /// Provides an engine component allowing the creation of dialogs for retrieving file paths from the player.
     /// </summary>
-    [Package("guiextensions", "GUI extensions", "Provides the ability for Peacegate programs to integrate with the Peacegate Desktop Environment.", "Base")]
-    [BasePackage]
-    [PackageDependency("pde-core")]
     public class GUIUtils : IEngineComponent
     {
         [Dependency]

@@ -125,7 +125,6 @@
     <Compile Include="Missions\Test\RichPresenceTest.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="OSEntity.cs" />
-    <Compile Include="PackageManager.cs" />
     <Compile Include="PeacegateThemes\PanelThemes\PanelTheme.cs" />
     <Compile Include="PeacegateThemes\PanelThemes\Ubuntu.cs" />
     <Compile Include="PeacegateThemes\PanelThemes\WindowTheme.cs" />
@@ -139,7 +138,6 @@
     <Compile Include="SplashScreenComponent.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
     <Compile Include="TerminalCommands\NotificationTestCommand.cs" />
-    <Compile Include="TerminalCommands\PPMCommand.cs" />
     <Compile Include="TerminalManager.cs" />
     <Compile Include="ThemeConfigurationCommand.cs" />
     <Compile Include="Tutorial\PeacegateSetup.cs" />

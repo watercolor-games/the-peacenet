@@ -25,8 +25,6 @@ namespace Peacenet
     /// <summary>
     /// The Peacegate OS Desktop Environment user interface.
     /// </summary>
-    [Package("pde-core", "Peacegate Desktop", "Provides the graphical shell and window manager of Peacegate OS.", "Base")]
-    [BasePackage]
     public class DesktopWindow : Window
     {
         #region Notification buttons.

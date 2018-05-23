@@ -24,9 +24,6 @@ namespace Peacenet
         [Dependency]
         private GameManager _game = null;
 
-        [Dependency]
-        private PackageManager _packages = null;
-
         /// <inheritdoc/>
         public void Initiate()
         {
@@ -67,8 +64,6 @@ namespace Peacenet
             var cats = new List<string>();
             foreach(var item in _items)
             {
-                if (!_packages.ArePackagesInstalled(item.WindowType))
-                    continue;
                 if (!cats.Contains(item.Attribute.Category))
                     cats.Add(item.Attribute.Category);
             }
@@ -87,8 +82,6 @@ namespace Peacenet
             var items = new List<AppLauncherItem>();
             foreach(var item in _items.Where(x=>x.Attribute.Category==cat))
             {
-                if (!_packages.ArePackagesInstalled(item.WindowType))
-                    continue;
                 items.Add(item);
             }
             return items.ToArray();
