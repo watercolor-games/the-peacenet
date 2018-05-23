@@ -1,3 +1,6 @@
 [submodule "peace-engine"]
 	path = peace-engine
 	url = https://github.com/watercolor-games/peace-engine
+[submodule "peacenet-world-generator"]
+	path = peacenet-world-generator
+	url = https://github.com/watercolor-games/peacenet-world-generator
