@@ -78,6 +78,7 @@
     <Compile Include="Applications\GPLInfo.cs" />
     <Compile Include="Applications\MissionMenu.cs" />
     <Compile Include="Applications\PPM.cs" />
+    <Compile Include="Applications\ReverseShellInjectionUI.cs" />
     <Compile Include="Applications\ScreenScaleSetter.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />

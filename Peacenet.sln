@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeaceEngine", "peace-engine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatercolorGames.Utilities", "peace-engine\WatercolorGames.Utilities\WatercolorGames.Utilities.csproj", "{A069089A-8962-4607-B2B2-4CF4A371066E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peacenet.WorldGenerator", "peacenet-world-generator\Peacenet.WorldGenerator\Peacenet.WorldGenerator.csproj", "{50E4AA42-41D1-4C93-A2B1-80398D86E098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x64.Build.0 = Release|Any CPU
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x86.ActiveCfg = Release|Any CPU
 		{A069089A-8962-4607-B2B2-4CF4A371066E}.Release|x86.Build.0 = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|x64.Build.0 = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Debug|x86.Build.0 = Debug|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|x64.ActiveCfg = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|x64.Build.0 = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|x86.ActiveCfg = Release|Any CPU
+		{50E4AA42-41D1-4C93-A2B1-80398D86E098}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
