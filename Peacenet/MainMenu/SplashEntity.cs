@@ -446,6 +446,11 @@ namespace Peacenet.MainMenu
                                 Directory.Delete(_os.SinglePlayerSaveDirectory, true);
                             startSinglePlayer();
                         }
+                        else
+                        {
+                            _continue.Enabled = true;
+                            _newGame.Enabled = true;
+                        }
                     });
                 }
                 else
