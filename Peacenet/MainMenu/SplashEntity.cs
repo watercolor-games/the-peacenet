@@ -428,12 +428,16 @@ namespace Peacenet.MainMenu
 
             _continue.Click += (o, a) =>
             {
+                _continue.Enabled = false;
+                _newGame.Enabled = false;
                 startSinglePlayer();
             };
             _newGame.Click += (o, a) =>
             {
                 if(_continue.Enabled)
                 {
+                    _continue.Enabled = false;
+                    _newGame.Enabled = false;
                     _infobox.ShowYesNo("Start new game", "Are you sure you want to start a new game? Doing this will wipe all data stored on the current Peacegate instance!", (answer) =>
                     {
                         if(answer)
@@ -446,6 +450,8 @@ namespace Peacenet.MainMenu
                 }
                 else
                 {
+                    _continue.Enabled = false;
+                    _newGame.Enabled = false;
                     startSinglePlayer();
                 }
             };
