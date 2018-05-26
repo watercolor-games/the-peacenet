@@ -32,7 +32,7 @@ namespace Peacenet.Applications
             Parent.Y = 0;
 
             _tunnel.Width = Width;
-            _tunnel.Height = (Height / 4)*3;
+            _tunnel.Height = (Height / 4) * 3;
             _tunnel.X = 0;
             _tunnel.Y = (Height - _tunnel.Height) / 2;
 
@@ -42,161 +42,136 @@ namespace Peacenet.Applications
 
     public class PayloadTunnel2D : Control
     {
-        private float _playerY = 0.5f;
-        private float _burst = 0;
-        private float _speedLineLoc = 0;
-        private List<DataPacket> _packets = new List<DataPacket>();
+        private float _tunnelWidth = 10000;
+        private float _tunnelPosition = 0;
+        private Vector2 _playerPosition = Vector2.Zero;
+        private int _playerRadius = 32;
+        private const float _playerSpeed = 250;
+        private const float _playerBurstSpeed = 500;
 
-        private class DataPacket
+        private float _burstTransition = 0;
+
+        private bool _burst = false;
+        private double _burstCooldown = 0;
+
+        protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            public DataPacketType Type { get; set; }
-            public Vector2 Location { get; set; }
-            public float PlayerY { get; set; }
+            float scroll = -MathHelper.Clamp(_tunnelPosition, 0, _tunnelWidth - gfx.Width);
+
+            gfx.Clear(Color.Black);
+
+            gfx.DrawRectangle(new Vector2(scroll, 0), new Vector2(250, Height), Color.Red);
+            gfx.DrawRectangle(new Vector2((_tunnelWidth + scroll)-250, 0), new Vector2(250, Height), Color.Green);
+
+            //Debug.
+            //When the player hits these positions, the game will slide.
+            float playerWall = (Width / 4);
+            float playerWallBurst = (Width / 2);
+
+            float playerWallLerped = MathHelper.Lerp(playerWall, playerWallBurst, _burstTransition);
+            gfx.DrawRectangle(new Vector2(playerWallLerped, 0), new Vector2(150, Height), Color.Gray);
 
 
-            public float Radius
-            {
-                get
-                {
-                    switch(Type)
-                    {
-                        case DataPacketType.Antivirus:
-                            return 24;
-                        case DataPacketType.Security:
-                            return 8;
-                        case DataPacketType.Burst:
-                            return 16;
-                        default:
-                            return 4;
-                    }
-                }
-            }
+            string status = $"Completion: {Math.Round(_tunnelPosition / _tunnelWidth, 2) * 100}% | Bursting: {_burst} | Burst cooldown: {Math.Round(_burstCooldown, 2)}s";
+
+            gfx.Batch.DrawString(Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Mono), status, new Vector2(X,Y), Color.White);
+
+            gfx.DrawCircle(_playerPosition.OffsetX(scroll), _playerRadius, Color.White);
         }
 
-        private enum DataPacketType
-        {
-            Security,
-            Antivirus,
-            Burst
-        }
-
-#if DEBUG
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
-            if(e.Key == Microsoft.Xna.Framework.Input.Keys.S)
+            if(e.Key == Microsoft.Xna.Framework.Input.Keys.B)
             {
-                var packet = new DataPacket
+                if(!_burst)
                 {
-                    Type = DataPacketType.Security,
-                    Location = new Vector2(0.75F, 0.1F),
-                    PlayerY=_playerY
-                };
-                _packets.Add(packet);
-            }
-            if (e.Key == Microsoft.Xna.Framework.Input.Keys.A)
-            {
-                var packet = new DataPacket
-                {
-                    Type = DataPacketType.Antivirus,
-                    Location = new Vector2(0.75F, 0.1F),
-                    PlayerY = _playerY
-                };
-                _packets.Add(packet);
-            }
-            if (e.Key == Microsoft.Xna.Framework.Input.Keys.B)
-            {
-                var packet = new DataPacket
-                {
-                    Type = DataPacketType.Burst,
-                    Location = new Vector2(0.75F, 0.1F),
-                    PlayerY = _playerY
-                };
-                _packets.Add(packet);
+                    if(_burstCooldown==0)
+                    {
+                        _burst = true;
+                        _burstCooldown = 5;
+                    }
+                }
             }
 
             base.OnKeyEvent(e);
         }
-#endif
-
-        protected override void OnPaint(GameTime time, GraphicsContext gfx)
-        {
-            gfx.Clear(Color.Black);
-
-            float playerY = MathHelper.Lerp(0, gfx.Height, _playerY);
-            float playerX = MathHelper.Lerp(gfx.Width / 4, gfx.Width / 2, _burst);
-
-            gfx.DrawCircle(new Vector2(playerX, playerY), 32, Color.Yellow);
-
-            //It's time for a speedline miracle masterpiece.
-            int speedLineWidth = gfx.Width / 2;
-            float speedlineX = MathHelper.Lerp(gfx.Width, -speedLineWidth, _speedLineLoc);
-
-            gfx.DrawRectangle(new Vector2(speedlineX, gfx.Height - (gfx.Height / 8)), new Vector2(speedlineX, 1), Color.White);
-            gfx.DrawRectangle(new Vector2(speedlineX, gfx.Height / 8), new Vector2(speedlineX, 1), Color.White);
-
-            foreach (var packet in _packets)
-            {
-                var loc = new Vector2(MathHelper.Lerp(0, gfx.Width, packet.Location.X), MathHelper.Lerp(0, gfx.Height, packet.Location.Y));
-                var radius = packet.Radius;
-                var color = Color.Gray;
-                switch (packet.Type)
-                {
-                    case DataPacketType.Security:
-                        color = Color.Red;
-                        break;
-                    case DataPacketType.Burst:
-                        color = Color.Blue;
-                        break;
-                    case DataPacketType.Antivirus:
-                        color = Color.Orange;
-                        break;
-                }
-
-                gfx.DrawCircle(loc, radius, color);
-            }
-        }
 
         protected override void OnUpdate(GameTime time)
         {
-            float velocity = (((float)time.ElapsedGameTime.TotalSeconds) * (1 + _burst));
+            if (!HasFocused)
+                Manager.SetFocus(this);
 
-            _playerY = MathHelper.Clamp((float)MouseY / Height, 0, 1);
+            //When the player hits these positions, the game will slide.
+            float playerWall = _tunnelPosition + (Width / 4);
+            float playerWallBurst = _tunnelPosition + (Width / 2);
 
-            _speedLineLoc = MathHelper.Clamp(_speedLineLoc + velocity, 0, 1);
-            if (_speedLineLoc >= 1)
-                _speedLineLoc = 0;
+            float playerWallLerped = MathHelper.Lerp(playerWall, playerWallBurst, _burstTransition);
 
-            Vector2 player = new Vector2(MathHelper.Lerp(Width / 4, Width / 2, _burst), MathHelper.Lerp(0, Height, _playerY));
-            Rectangle playerRect = new Rectangle((int)player.X - 32, (int)player.Y - 32, 64, 64);
+            _playerPosition.Y = MathHelper.Clamp(MouseY, 0, Height);
 
-            for(int i = 0; i < _packets.Count;i++)
+            float playerSpeed = MathHelper.Lerp(_playerSpeed, _playerBurstSpeed, _burstTransition);
+            if (!_burst && _burstTransition > 0)
+                playerSpeed = -playerSpeed * 2f;
+
+            var playerVelocity = _playerPosition.GetVelocity(new Vector2(_tunnelWidth, _playerPosition.Y), playerSpeed);
+            _playerPosition += playerVelocity * (float)time.ElapsedGameTime.TotalSeconds;
+
+
+            if(_burst)
             {
-                var packet = _packets[i];
-                switch (packet.Type)
+                _burstTransition = MathHelper.Clamp(_burstTransition + ((float)time.ElapsedGameTime.TotalSeconds * 2), 0, 1);
+                _burstCooldown = MathHelper.Clamp((float)_burstCooldown - (float)time.ElapsedGameTime.TotalSeconds, 0, 5);
+                if(_burstCooldown==0)
                 {
-                    case DataPacketType.Security:
-                        float vertDistance = (float)Math.Round(packet.PlayerY - packet.Location.Y, 2);
-                        float v = 0;
-                        if (vertDistance < 0)
-                            v = -(float)time.ElapsedGameTime.TotalSeconds;
-                        else if(vertDistance > 0)
-                            v = (float)time.ElapsedGameTime.TotalSeconds;
-                        packet.Location = new Vector2(packet.Location.X - (velocity / 4), packet.Location.Y + v);
-                        break;
-                }
-
-                //Despawn a data packet if it goes offscreen
-                if(packet.Location.X < 0 || packet.Location.X > 1)
-                {
-                    _packets.RemoveAt(i);
-                    i--;
-                    continue;
+                    _burst = false;
+                    _burstCooldown = 30;
                 }
             }
+            else
+            {
+                _burstTransition = MathHelper.Clamp(_burstTransition - ((float)time.ElapsedGameTime.TotalSeconds), 0, 1);
+                _burstCooldown = MathHelper.Clamp((float)_burstCooldown - (float)time.ElapsedGameTime.TotalSeconds, 0, 30);
+            }
 
-
+            if(_playerPosition.X >= playerWallLerped)
+            {
+                var sVector = new Vector2(playerWallLerped, 0);
+                var dVector = new Vector2(_tunnelWidth, 0);
+                float speed = playerSpeed;
+                var vel = sVector.GetVelocity(dVector, speed);
+                _tunnelPosition += vel.X * (float)time.ElapsedGameTime.TotalSeconds;
+            }
 
             base.OnUpdate(time);
+        }
+    }
+
+    public static class VectorMathHelpers
+    {
+        /// <summary>
+        /// Computes the velocity of an object toward a target.
+        /// </summary>
+        /// <param name="source">The source vector, i.e where a missile was launched.</param>
+        /// <param name="destination">The destination vector, i.e the missile's target.</param>
+        /// <param name="speed">The speed of the theoretical missile.</param>
+        /// <returns>A normalized <see cref="Vector2"></see> containing the velocity of the source object towards its destination, multiplied by the source's speed.</returns>
+        public static Vector2 GetVelocity(this Vector2 source, Vector2 destination, float speed)
+        {
+            //Calculate the distance between the source and destination.
+            var distance = destination - source;
+
+            //Now we have the direction in which the source object is travelling.
+
+            //Now we want to normalize it. Thankfully MonoGame can do that for us.
+            var normalized = Vector2.Normalize(distance);
+
+            //Now we multiply it by the speed.
+            return normalized * speed;
+        }
+
+        public static Vector2 OffsetX(this Vector2 vector, float value)
+        {
+            return new Vector2(vector.X + value, vector.Y);
         }
     }
 }
