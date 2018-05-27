@@ -693,7 +693,7 @@ namespace Peacenet
 
             if (_game.State == null)
                 return;
-            string rtime = DateTime.Now.ToShortTimeString();
+            string rtime = _game.State.CurrentCountry + " - " + DateTime.Now.ToShortTimeString();
             var rtmeasure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
             int timePos = _topPanel.Width - ((int)rtmeasure.X + 5);
@@ -838,7 +838,7 @@ namespace Peacenet
                     _pn.PanelTheme.DrawAppLauncher(gfx, _applauncherHitbox.Bounds, alState);
                 }
 
-                string rtime = DateTime.Now.ToShortTimeString();
+                string rtime = _game.State.CurrentCountry + " - " + DateTime.Now.ToShortTimeString();
                 var measure = _pn.PanelTheme.StatusTextFont.MeasureString(rtime);
 
                 gfx.DrawString(rtime, new Vector2((_topPanel.Bounds.Width - measure.X) / 2, _topPanel.Y + (((_topPanel.Height - (measure.Y)) / 2))), (_hbTime.ContainsMouse) ? _pn.PanelTheme.StatusTextHoverColor : 

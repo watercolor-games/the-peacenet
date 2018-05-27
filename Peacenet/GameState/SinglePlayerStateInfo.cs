@@ -1,11 +1,13 @@
 ﻿using LiteDB;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
 using Peacenet.CoreUtils;
 using Peacenet.Email;
 using Peacenet.Filesystem;
+using Peacenet.WorldGenerator;
 using Plex.Engine;
 using Plex.Engine.Config;
 using Plex.Engine.GraphicsSubsystem;
@@ -34,6 +36,54 @@ namespace Peacenet.GameState
 
         public float AlertLevel => _alertLevel;
         public bool AlertFalling => _alertFalling;
+
+        public Country CurrentCountry => GetValue("country.current", Country.Elytrose);
+        public bool IsCountryUnlocked(Country country)
+        {
+            return GetValue($"country.{country.ToString().ToLower()}.unlocked", (country == Country.Elytrose) ? true : false);
+        }
+
+        public void SwitchCountry(Country country)
+        {
+            if (!IsCountryUnlocked(country)) return;
+            SetValue("country.current", country);
+
+            EnsureCountryDataExists();
+        }
+
+        private int[] _npcTypeMap = null;
+
+        private void LoadCountryData(Country country)
+        {
+            if (_countryTexture != null)
+            {
+                _countryTexture.Dispose();
+                _countryTexture = null;
+            }
+
+            _npcTypeMap = null;
+
+            string terrainID = $"{country.ToString().ToLower()}_terrain";
+
+            if (_saveDB.FileStorage.Exists(terrainID))
+            {
+                using (var s = _saveDB.FileStorage.OpenRead(terrainID))
+                {
+                    using (var r = new BinaryReader(s))
+                    {
+                        uint[] u = new uint[r.ReadInt32()];
+                        for (int i = 0; i < u.Length; i++)
+                            u[i] = r.ReadUInt32();
+                        _countryTexture = new Texture2D(_plexgate.GraphicsDevice, 512, 512);
+                        _countryTexture.SetData(u);
+                        _npcTypeMap = new int[r.ReadInt32()];
+                        for (int i = 0; i < _npcTypeMap.Length; i++)
+                            _npcTypeMap[i] = r.ReadInt32();
+                    }
+                }
+            }
+
+        }
 
         public bool IsUpgradeInstalled(string upgradeID)
         {
@@ -156,6 +206,10 @@ namespace Peacenet.GameState
 
         }
 
+        private Texture2D _countryTexture = null;
+
+        public Texture2D CountryTexture => _countryTexture;
+
         public void OnGameExit()
         {
         }
@@ -187,6 +241,8 @@ namespace Peacenet.GameState
         public void OnMouseUpdate(MouseState mouse)
         {
         }
+
+        private const string _seed = "PeacenetSingleplayer";
 
         public void StartGame()
         {
@@ -239,6 +295,63 @@ namespace Peacenet.GameState
             _upgrades = JsonConvert.DeserializeObject<Upgrade[]>(Properties.Resources.Upgrades);
 
             updateSkillLevel();
+
+            EnsureCountryDataExists();
+        }
+
+        private void EnsureCountryDataExists()
+        {
+            //Do we have the Elytrose terrain map?
+            if (!_saveDB.FileStorage.Exists($"{CurrentCountry.ToString().ToLower()}_terrain"))
+            {
+                var hmap = new Heightmap(Heightmap.GetSeed(_seed + "." + CurrentCountry.ToString().ToLower()));
+                hmap.Width = 512;
+                hmap.Height = 512;
+                Task.Run(() =>
+                {
+                    _os.PreventStartup = true;
+
+                    var m = hmap.Generate();
+                    uint[] pdata = new uint[hmap.Width * hmap.Height];
+                    for (int i = 0; i < pdata.Length; i++)
+                    {
+                        double h = m[i];
+                        if (h > 0)
+                        {
+                            pdata[i] = uint.MaxValue;
+                        }
+                    }
+
+                    var npc = new NPCMap(hmap.Seed, m);
+                    var densityMap = npc.GenerateDensityMap();
+                    var typeMap = npc.GetTypeMap(densityMap);
+
+                    _plexgate.Invoke(() =>
+                    {
+                        using (var s = _saveDB.FileStorage.OpenWrite($"{CurrentCountry.ToString().ToLower()}_terrain", $"{CurrentCountry.ToString().ToLower()}_terrain"))
+                        {
+                            using (var w = new BinaryWriter(s, Encoding.UTF8))
+                            {
+                                w.Write(pdata.Length);
+                                foreach (var i in pdata)
+                                    w.Write(i);
+                                w.Write(typeMap.Length);
+                                foreach (var t in typeMap)
+                                    w.Write(t);
+                            }
+                        }
+                    
+                        _os.PreventStartup = false;
+                        LoadCountryData(CurrentCountry);
+                    });
+
+                });
+            }
+            else
+            {
+                LoadCountryData(CurrentCountry);
+            }
+
         }
 
         private void updateSkillLevel()
@@ -338,11 +451,6 @@ namespace Peacenet.GameState
         public bool IsMissionComplete(string missionID)
         {
             return GetValue($"m.{missionID}.complete", false);
-        }
-
-        public bool IsCountryUnlocked(Country country)
-        {
-            return GetValue($"{country.ToString().ToLower()}.unlocked", false);
         }
 
         public bool IsPackageInstalled(string packageID)
@@ -455,11 +563,6 @@ namespace Peacenet.GameState
             }
             _saveDB.FileStorage.Delete(snapshot.ID);
             _snapshots.Delete(x => x.ID == id);
-        }
-
-        public void UnlockCountry(Country country)
-        {
-            SetValue($"{country.ToString().ToLower()}.unlocked", true);
         }
 
         public void CompleteMission(string missionID)

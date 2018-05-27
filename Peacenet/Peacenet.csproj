@@ -77,13 +77,12 @@
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
     <Compile Include="Applications\MissionMenu.cs" />
-    <Compile Include="Applications\PPM.cs" />
-    <Compile Include="Applications\ReverseShellInjectionUI.cs" />
     <Compile Include="Applications\ScreenScaleSetter.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
     <Compile Include="Applications\TextEditorApp.cs" />
     <Compile Include="Applications\ThemeChooser.cs" />
+    <Compile Include="Applications\WorldMap.cs" />
     <Compile Include="CoreUtils\date.cs" />
     <Compile Include="CoreUtils\echo.cs" />
     <Compile Include="Country.cs" />
@@ -627,6 +626,10 @@
     <ProjectReference Include="..\peace-engine\WatercolorGames.Utilities\WatercolorGames.Utilities.csproj">
       <Project>{a069089a-8962-4607-b2b2-4cf4a371066e}</Project>
       <Name>WatercolorGames.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\peacenet-world-generator\Peacenet.WorldGenerator\Peacenet.WorldGenerator.csproj">
+      <Project>{50e4aa42-41d1-4c93-a2b1-80398d86e098}</Project>
+      <Name>Peacenet.WorldGenerator</Name>
     </ProjectReference>
     <ProjectReference Include="..\WatercolorGames.CommandLine\WatercolorGames.CommandLine.csproj">
       <Project>{583edb9b-f51c-4bc9-87ad-8bc203da5f92}</Project>

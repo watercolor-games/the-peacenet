@@ -1,4 +1,5 @@
-﻿using Peacenet.Email;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Peacenet.Email;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,10 @@ namespace Peacenet.GameState
     {
         void StartGame();
         void EndGame();
+
+        Country CurrentCountry { get; }
+
+        void SwitchCountry(Country country);
 
         IEnumerable<string> UpgradeIDs { get; }
         bool IsUpgradeInstalled(string upgradeID);
@@ -37,7 +42,8 @@ namespace Peacenet.GameState
         bool IsCountryUnlocked(Country country);
         bool IsPackageInstalled(string packageID);
 
-        void UnlockCountry(Country country);
+        Texture2D CountryTexture { get; }
+
         void CompleteMission(string missionID);
         void InstallPackage(string packageID);
 
