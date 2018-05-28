@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Peacenet.GameState
@@ -83,8 +84,133 @@ namespace Peacenet.GameState
                 }
             }
 
+            int playerSlot = Array.IndexOf(_npcTypeMap, 8);
+            var player = _sentiences.FindOne(x => x.Id == $"{country}_player");
+            if (player != null)
+            {
+                player.Hostname = _os.Hostname;
+                player.XP = this.TotalXP;
+                player.SkillLevel = _level;
+                _sentiences.Update(player);
+            }
+            else
+            {
+                var loc = getMapLoc(playerSlot);
+                player = new Sentience
+                {
+                    FactionID = null,
+                    Hostname = _os.Hostname,
+                    Country = country,
+                    Id = $"{country}_player",
+                    IPAddress = genIP(country),
+                    X = loc.X,
+                    Y = loc.Y,
+                    Reputation = 0,
+                    SkillLevel = _level,
+                    XP = TotalXP
+                };
+                _sentiences.Insert(player);
+            }
+
+            Task.Run(() =>
+            {
+                var added = new ManualResetEvent(false);
+
+                List<NPCDefinition> _def = new List<NPCDefinition>();
+                for(int i = 0; i < _npcTypeMap.Length; i++)
+                {
+                    if (_npcTypeMap[i] > 1 && _npcTypeMap[i] < 8)
+                        _def.Add(new NPCDefinition(i, _npcTypeMap[i]));
+                }
+
+                foreach (var npc in _def)
+                {
+                    added.Reset();
+                    if (_sentiences.FindOne(x => x.Id == npc.Index.ToString() && x.Country == country) != null)
+                        continue;
+                    double rep = 0;
+                    switch (npc.Type)
+                    {
+                        case 2:
+                        case 3:
+                            rep = -_rnd.NextDouble();
+                            break;
+                        case 6:
+                        case 7:
+                            rep = _rnd.NextDouble();
+                            break;
+                    }
+
+                    var nloc = getMapLoc(npc.Index);
+
+                    if (npc.Type % 2 == 0)
+                    {
+                        int skill = _rnd.Next(_levels.Length);
+                        int min = _levels[skill];
+                        int max = (skill + 1 >= _levels.Length) ? min + (min / 2) : _levels[skill + 1] - 1;
+                        int xp = _rnd.Next(min, max);
+                        //singular sentience.
+
+                        var npcData = new Sentience
+                        {
+                            Id = npc.Index.ToString(),
+                            Country = country,
+                            FactionID = null,
+                            Hostname = null,
+                            IPAddress = genIP(country),
+                            Reputation = (float)rep,
+                            SkillLevel = skill,
+                            XP = xp,
+                            X = nloc.X,
+                            Y = nloc.Y
+                        };
+                        _plexgate.Invoke(() =>
+                        {
+                            Plex.Objects.Logger.Log($"Spawning {country} NPC '{npcData.Id} at {npcData.MapLocation}");
+                            _sentiences.Insert(npcData);
+                            added.Set();
+                        });
+                        added.WaitOne();
+                    }
+                    else
+                    {
+                        _plexgate.Invoke(() =>
+                        {
+                            Plex.Objects.Logger.Log("Skipping spawn of NPC '" + npc.Index + ". Factions are NYI.");
+                        });
+                    }
+                }
+                Plex.Objects.Logger.Log("Done spawning NPCs for " + country + ".");
+            });
         }
 
+        public Sentience Player => _sentiences.FindOne(x => x.Id == $"{CurrentCountry}_player");
+        public IEnumerable<Sentience> SingularSentiences => _sentiences.Find(x => x.Country == CurrentCountry && x.FactionID == null);
+        public IEnumerable<Faction> Factions => _factions.Find(x => x.Country == CurrentCountry);
+        public IEnumerable<Sentience> GetSentiences(Faction faction)
+        {
+            if (faction == null)
+                return null;
+            return _sentiences.Find(x => x.FactionID == faction.Id);
+        }
+
+        private Random _rnd = new Random();
+
+        private Vector2 getMapLoc(int index)
+        {
+            return new Vector2((float)index % 512, (float)index / 512);
+        }
+
+        private uint genIP(Country country)
+        {
+            byte cByte1 = (byte)((255 / 2) - (64 / ((int)country+1)));
+            byte cByte2 = (byte)((255 / 2) + (16 * ((int)country+1)));
+            byte eByte1 = (byte)_rnd.Next(255);
+            byte eByte2 = (byte)_rnd.Next(255);
+
+            return (uint)((cByte1 << 24) + (cByte2 << 16) + (eByte1 << 8) + eByte2);
+        }
+        
         public bool IsUpgradeInstalled(string upgradeID)
         {
             return GetValue($"upgrade.{upgradeID}.enabled", false);
@@ -185,7 +311,17 @@ namespace Peacenet.GameState
         {
         }
 
+        private class NPCDefinition
+        {
+            public int Index { get; private set; }
+            public int Type { get; private set; }
 
+            public NPCDefinition(int index, int type)
+            {
+                Index = index;
+                Type = type;
+            }
+        }
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
@@ -237,6 +373,9 @@ namespace Peacenet.GameState
             }
             #endif
         }
+
+        private LiteCollection<Faction> _factions = null;
+        private LiteCollection<Sentience> _sentiences { get; set; }
 
         public void OnMouseUpdate(MouseState mouse)
         {
@@ -296,6 +435,9 @@ namespace Peacenet.GameState
 
             updateSkillLevel();
 
+            _factions = _saveDB.GetCollection<Faction>("factions");
+            _sentiences = _saveDB.GetCollection<Sentience>("sentiences");
+
             EnsureCountryDataExists();
         }
 
@@ -323,6 +465,7 @@ namespace Peacenet.GameState
                     }
 
                     var npc = new NPCMap(hmap.Seed, m);
+                    npc.SpawnStoryNPCs = true;
                     var densityMap = npc.GenerateDensityMap();
                     var typeMap = npc.GetTypeMap(densityMap);
 

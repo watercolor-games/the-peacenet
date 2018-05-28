@@ -111,6 +111,7 @@
     <Compile Include="Filesystem\IFileHandler.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="GameState\IGameStateInfo.cs" />
+    <Compile Include="GameState\Sentience.cs" />
     <Compile Include="GameState\SinglePlayerStateInfo.cs" />
     <Compile Include="HideInHelpAttribute.cs" />
     <Compile Include="InfoboxManager.cs" />

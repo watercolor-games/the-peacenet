@@ -47,6 +47,11 @@ namespace Peacenet.GameState
         void CompleteMission(string missionID);
         void InstallPackage(string packageID);
 
+        Sentience Player { get; }
+        IEnumerable<Sentience> SingularSentiences { get; }
+        IEnumerable<Faction> Factions { get; }
+        IEnumerable<Sentience> GetSentiences(Faction faction);
+
         int UnreadEmails { get; }
 
         IEnumerable<EmailThread> Emails { get; }
