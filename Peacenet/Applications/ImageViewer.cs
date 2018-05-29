@@ -49,7 +49,7 @@ namespace Peacenet
             base.OnPaint(time, gfx);
             var drawy = open.Y + open.Height + 3;
             if (img != null)   
-                gfx.DrawRectangle(0, drawy, Width, Height - drawy, img, System.Windows.Forms.ImageLayout.Zoom);
+                gfx.FillRectangle(0, drawy, Width, Height - drawy, img);
         }
     }
 }

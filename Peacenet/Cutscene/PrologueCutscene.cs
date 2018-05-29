@@ -123,8 +123,6 @@ namespace Peacenet.Cutscene
             var introTextMeasure = mono.MeasureString(introText);
             var cursorMeasure = mono.MeasureString("#");
 
-            gfx.BeginDraw();
-
             var textLocation = new Vector2((gfx.Width - introTextMeasure.X) / 2, (gfx.Height - introTextMeasure.Y) / 2);
             var lines = introText.Split('\n');
             var cullLines = introCulledText.Split('\n');
@@ -133,14 +131,13 @@ namespace Peacenet.Cutscene
                 var line = lines[i];
                 var measure = mono.MeasureString(line);
                 var loc = new Vector2((gfx.Width - measure.X) / 2, textLocation.Y + (measure.Y * i));
-                gfx.Batch.DrawString(mono, cullLines[i], loc, _theme.Theme.GetAccentColor().Lighten(0.5F));
+                gfx.DrawString(mono, cullLines[i], loc, _theme.Theme.GetAccentColor().Lighten(0.5F));
                 if (i == cullLines.Length - 1 && _cursorTime >= 0.25)
                 {
-                    gfx.DrawRectangle(new Vector2(loc.X + mono.MeasureString(cullLines[i]).X, loc.Y), cursorMeasure, Color.White);
+                    gfx.FillRectangle(new Vector2(loc.X + mono.MeasureString(cullLines[i]).X, loc.Y), cursorMeasure, Color.White);
                 }
             }
 
-            gfx.EndDraw();
         }
     }
 }

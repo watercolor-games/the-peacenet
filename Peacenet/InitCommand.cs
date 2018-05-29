@@ -890,7 +890,7 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor() * _colorFade);
+            gfx.FillRectangle(0, 0, Width, Height, Theme.GetAccentColor() * _colorFade);
         }
     }
 }

@@ -414,7 +414,7 @@ Press 'Finish' to exit Setup and continue system boot. When the system starts up
             if(_loadedWallpaper != null)
             {
                 gfx.Clear(Color.Black);
-                gfx.DrawRectangle(0, 0, Width, Height, _loadedWallpaper, Color.White * (MathHelper.Lerp(1, 0.5F, _uiAnim)));
+                gfx.FillRectangle(0, 0, Width, Height, Color.White * (MathHelper.Lerp(1, 0.5F, _uiAnim)), _loadedWallpaper);
             }
             else
             {

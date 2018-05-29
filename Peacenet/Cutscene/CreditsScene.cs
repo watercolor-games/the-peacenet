@@ -61,8 +61,6 @@ namespace Peacenet.Cutscenes
         /// <inheritdoc/>
         public override void Draw(GameTime time, GraphicsContext gfx)
         {
-            gfx.BeginDraw();
-
             var head1 = _theme.Theme.GetFont(TextFontStyle.Header1);
             var head2 = _theme.Theme.GetFont(TextFontStyle.Header3);
             var sys = _theme.Theme.GetFont(TextFontStyle.System);
@@ -88,13 +86,11 @@ namespace Peacenet.Cutscenes
                 }
             }
 
-            gfx.DrawRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity);
+            gfx.FillRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, Color.White * _peacenetOpacity, _peacenet);
 
             string thanksText = "Thanks for playing.";
             var thanksMeasure = head1.MeasureString(thanksText);
-            gfx.Batch.DrawString(head1, thanksText, new Vector2((_ui.ScreenWidth - thanksMeasure.X) / 2, (_ui.ScreenHeight - thanksMeasure.Y) / 2), _theme.Theme.GetFontColor(TextFontStyle.Header1) * _thanksOpacity);
-
-            gfx.EndDraw();
+            gfx.DrawString(head1, thanksText, new Vector2((_ui.ScreenWidth - thanksMeasure.X) / 2, (_ui.ScreenHeight - thanksMeasure.Y) / 2), _theme.Theme.GetFontColor(TextFontStyle.Header1) * _thanksOpacity);
         }
 
         /// <inheritdoc/>

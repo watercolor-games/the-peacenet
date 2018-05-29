@@ -476,7 +476,7 @@ namespace Peacenet.DesktopUI
             if(_active)
             {
                 Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
-                gfx.DrawRectangle(0, Height - 2, Width, 2, Theme.GetAccentColor());
+                gfx.FillRectangle(0, Height - 2, Width, 2, Theme.GetAccentColor());
             }
             else
             {
@@ -625,11 +625,11 @@ namespace Peacenet.DesktopUI
             var hover = accent.Darken(0.25F);
             if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _description.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                gfx.DrawRectangle(0, 0, Width, Height, down);
+                gfx.FillRectangle(0, 0, Width, Height, down);
             }
             else if (ContainsMouse)
             {
-                gfx.DrawRectangle(0, 0, Width, Height, hover);
+                gfx.FillRectangle(0, 0, Width, Height, hover);
             }
             else
             {

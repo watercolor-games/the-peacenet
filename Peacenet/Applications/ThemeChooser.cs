@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Plex.Engine;
 using Plex.Engine.Themes;
 using Microsoft.Xna.Framework;
+using Plex.Engine.GraphicsSubsystem;
 
 namespace Peacenet.Applications
 {
@@ -95,7 +96,7 @@ namespace Peacenet.Applications
                 _themeName.Text = info.Name;
                 _themeDesc.Text = info.Description;
             }
-            _preview.Layout = System.Windows.Forms.ImageLayout.Zoom;
+            _preview.Layout = ImageLayout.Zoom;
 
             _themeName.MaxWidth = _preview.Width;
             _themeDesc.MaxWidth = _preview.Width;

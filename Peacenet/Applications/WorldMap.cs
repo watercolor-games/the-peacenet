@@ -110,8 +110,8 @@ namespace Peacenet.Applications
 
             var terrainPos = new Vector2(terrainStartX, terrainStartY);
 
-            gfx.DrawRectangle(terrainPos - new Vector2(_terrainBorderWidth*_zoom,_terrainBorderWidth*_zoom), new Vector2(terrainWidth + (_terrainBorderWidth*_zoom), terrainHeight+(_terrainBorderWidth*_zoom)), terrain, Theme.GetAccentColor());
-            gfx.DrawRectangle(terrainPos, new Vector2(terrainWidth, terrainHeight), terrain, _terrainColor);
+            gfx.FillRectangle(terrainPos - new Vector2(_terrainBorderWidth * _zoom, _terrainBorderWidth * _zoom), new Vector2(terrainWidth + (_terrainBorderWidth * _zoom), terrainHeight + (_terrainBorderWidth * _zoom)), Theme.GetAccentColor(), terrain);
+            gfx.FillRectangle(terrainPos, new Vector2(terrainWidth, terrainHeight), _terrainColor, terrain);
 
             foreach (var sentience in _game.State.SingularSentiences)
             {

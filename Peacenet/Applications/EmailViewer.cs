@@ -174,7 +174,7 @@ namespace Peacenet.Applications
 
             if(ContainsMouse)
             {
-                gfx.DrawRectangle(0, 0, Width, Height, Theme.GetAccentColor());
+                gfx.FillRectangle(0, 0, Width, Height, Theme.GetAccentColor());
             }
             else if(IsUnread)
             {

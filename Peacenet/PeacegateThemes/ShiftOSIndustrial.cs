@@ -61,12 +61,12 @@ namespace Peacenet.PeacegateThemes
                     break;
             }
 
-            gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, Color.Black);
-            gfx.DrawRectangle(2, 2, gfx.Width - 4, gfx.Height - 4, bg);
+            gfx.FillRectangle(0, 0, gfx.Width, gfx.Height, Color.Black);
+            gfx.FillRectangle(2, 2, gfx.Width - 4, gfx.Height - 4, bg);
 
             if(showImage)
             {
-                gfx.DrawRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
+                gfx.FillRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, fg, image);
             }
 
             gfx.DrawString(text, new Vector2(textRect.X, textRect.Y), fg, GetFont(TextFontStyle.Highlight), TextAlignment.Left, textRect.Width, WrapMode.Words);
@@ -83,30 +83,30 @@ namespace Peacenet.PeacegateThemes
                 fg = Color.White;
             }
 
-            gfx.DrawRectangle(x, y, width, height, Color.Black);
-            gfx.DrawRectangle(x+2, y+2, width - 4, height - 4, bg);
+            gfx.FillRectangle(x, y, width, height, Color.Black);
+            gfx.FillRectangle(x+2, y+2, width - 4, height - 4, bg);
 
             if(isChecked)
-                gfx.DrawRectangle(x+2, y+2, width-4, height-4, _check, fg);
+                gfx.FillRectangle(x+2, y+2, width-4, height-4, fg, _check);
 
         }
 
         public override void DrawControlBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, Color.White);
+            graphics.FillRectangle(x, y, width, height, Color.White);
         }
 
         public override void DrawControlDarkBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, Color.Black);
-            graphics.DrawRectangle(x+2, y+2, width-4, height-4, Color.White);
+            graphics.FillRectangle(x, y, width, height, Color.Black);
+            graphics.FillRectangle(x+2, y+2, width-4, height-4, Color.White);
 
         }
 
         public override void DrawControlLightBG(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, Color.Black);
-            graphics.DrawRectangle(x + 1, y + 1, width - 2, height - 2, Color.White);
+            graphics.FillRectangle(x, y, width, height, Color.Black);
+            graphics.FillRectangle(x + 1, y + 1, width - 2, height - 2, Color.White);
         }
 
         public override void DrawDisabledString(GraphicsContext graphics, string text, int x, int y, int width, int height, TextFontStyle style)
@@ -128,30 +128,30 @@ namespace Peacenet.PeacegateThemes
 
         public override void DrawTextCaret(GraphicsContext graphics, int x, int y, int width, int height)
         {
-            graphics.DrawRectangle(x, y, width, height, Color.Black);
+            graphics.FillRectangle(x, y, width, height, Color.Black);
         }
 
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
-            graphics.DrawRectangle(title.X, title.Y, _titlebarleft.Width, title.Height, _titlebarleft);
-            graphics.DrawRectangle(title.X + (title.Width - _titlebarright.Width), title.Y, _titlebarright.Width, title.Height, _titlebarright);
-            graphics.DrawRectangle(title.X + _titlebarleft.Width, title.Y, (title.Width - _titlebarleft.Width) - _titlebarright.Width, title.Height, _titlebar);
+            graphics.FillRectangle(title.X, title.Y, _titlebarleft.Width, title.Height, _titlebarleft);
+            graphics.FillRectangle(title.X + (title.Width - _titlebarright.Width), title.Y, _titlebarright.Width, title.Height, _titlebarright);
+            graphics.FillRectangle(title.X + _titlebarleft.Width, title.Y, (title.Width - _titlebarleft.Width) - _titlebarright.Width, title.Height, _titlebar);
 
-            graphics.DrawRectangle(leftBorder.X, leftBorder.Y, 5, leftBorder.Height, _borderleft);
-            graphics.DrawRectangle(rightBorder.X, rightBorder.Y, 5, rightBorder.Height, _borderright);
-            graphics.DrawRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, 5, _borderbottom);
+            graphics.FillRectangle(leftBorder.X, leftBorder.Y, 5, leftBorder.Height, _borderleft);
+            graphics.FillRectangle(rightBorder.X, rightBorder.Y, 5, rightBorder.Height, _borderright);
+            graphics.FillRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, 5, _borderbottom);
 
-            graphics.DrawRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, _cornerleft);
-            graphics.DrawRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, _cornerright);
+            graphics.FillRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, _cornerleft);
+            graphics.FillRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, _cornerright);
 
             graphics.DrawString(titletext, new Vector2(26, 3), Color.White, GetFont(TextFontStyle.Highlight), TextAlignment.Left);
 
             if(close.Visible)
-                graphics.DrawRectangle(close.X, close.Y, close.Width, close.Height, _close);
+                graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, _close);
             if(minimize.Visible)
-                graphics.DrawRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize);
+                graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize);
             if(maximize.Visible)
-                graphics.DrawRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize);
+                graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize);
 
 
         }

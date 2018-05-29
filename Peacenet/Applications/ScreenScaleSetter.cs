@@ -162,21 +162,13 @@ namespace Peacenet.Applications
             int w = gfx.Width;
             int h = gfx.Height;
 
-            gfx.EndDraw();
-
-            gfx.Device.SetRenderTarget(_scalePreview);
-
-            gfx.X = 0;
-            gfx.Y = 0;
-            gfx.Width = _scalePreview.Width;
-            gfx.Height = _scalePreview.Height;
-
-            gfx.BeginDraw();
+            
+            gfx.SetRenderTarget(_scalePreview);
 
             int rectWidth = 800;
             int rectHeight = 600;
 
-            gfx.DrawRectangle(new Vector2((gfx.Width - rectWidth) / 2, (gfx.Height - rectHeight) / 2), new Vector2(rectWidth, rectHeight), Theme.GetAccentColor().Darken(0.5F));
+            gfx.FillRectangle(new Vector2((gfx.Width - rectWidth) / 2, (gfx.Height - rectHeight) / 2), new Vector2(rectWidth, rectHeight), Theme.GetAccentColor().Darken(0.5F));
 
             var font = Theme.GetFont(Plex.Engine.Themes.TextFontStyle.System);
             var fontColor = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
@@ -197,27 +189,16 @@ namespace Peacenet.Applications
 
             gfx.DrawString(text, new Vector2(textX, textY), fontColor, font, TextAlignment.Center, fontWidth, WrapMode.Words);
 
-            gfx.EndDraw();
+            gfx.SetRenderTarget(GetControlBuffer);
 
-            gfx.Device.SetRenderTarget(GetControlBuffer);
-
-            gfx.X = x;
-            gfx.Y = y;
-            gfx.Width = w;
-            gfx.Height = h;
-
-            gfx.BeginDraw();
+            gfx.ScissorRectangle = new Rectangle(x, y, w, h);
 
             base.OnPaint(time, gfx);
 
             Theme.DrawControlDarkBG(gfx, 0, 0, Width, _title.Y + _title.Height + 30);
             Theme.DrawControlDarkBG(gfx, 0, _description.Y - 30, Width, Height - (_description.Y - 30));
 
-            gfx.DrawRectangle(Vector2.Zero, new Vector2(Width, Height), _scalePreview);
-
-            gfx.EndDraw();
-
-
+            gfx.FillRectangle(Vector2.Zero, new Vector2(Width, Height), _scalePreview);
         }
     }
 }

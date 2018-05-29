@@ -632,8 +632,6 @@ If you don't see a browser window, you may need to press F11 to exit Fullscreen 
 
         public void Draw(GameTime time, GraphicsContext gfx)
         {
-            gfx.BeginDraw();
-
             gfx.Clear(Color.Black * MathHelper.Lerp(0, 0.75F, _textHeadAnim));
 
             int _half = (gfx.Width - (gfx.Width / 2)) / 2;
@@ -656,17 +654,10 @@ If you don't see a browser window, you may need to press F11 to exit Fullscreen 
             int y = gfx.Y;
             int w = gfx.Width;
             int h = gfx.Height;
-            gfx.X = _button.X;
-            gfx.Y = _button.Y;
-            gfx.Width = _button.Width;
-            gfx.Height = _button.Height;
+            gfx.ScissorRectangle = new Rectangle(_button.X, _button.Y, _button.Width, _button.Height);
             _theme.Theme.DrawButton(gfx, _buttonText, null, GetButtonState(), false, Rectangle.Empty, new Rectangle(_buttonMarginH, _buttonMarginV, _button.Width - (_buttonMarginH * 2), _button.Height - (_buttonMarginV * 2)));
-            gfx.X = x;
-            gfx.Y = y;
-            gfx.Width = w;
-            gfx.Height = h;
+            gfx.ScissorRectangle = new Rectangle(x, y, w, h);
 
-            gfx.EndDraw();
         }
 
         private UIButtonState GetButtonState()

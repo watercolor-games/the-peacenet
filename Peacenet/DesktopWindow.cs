@@ -816,8 +816,8 @@ namespace Peacenet
         /// <inheritdoc/>
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
-            gfx.DrawRectangle(0, 0, Width, Height, _wallpaper);
-            gfx.DrawRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
+            gfx.FillRectangle(0, 0, Width, Height, _wallpaper);
+            gfx.FillRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
             if(_showPanels)
             {
                 if(_topPanel.Visible)
@@ -855,7 +855,7 @@ namespace Peacenet
                 int iconX = _mailHitbox.X + 5;
                 int mailX = iconX + 20;
                 int mailY = _mailHitbox.Y + ((_mailHitbox.Height - (int)unreadMeasure.Y) / 2);
-                gfx.DrawRectangle(new Vector2(iconX, iconY), new Vector2(16, 16), icon, mailColor);
+                gfx.FillRectangle(new Vector2(iconX, iconY), new Vector2(16, 16), mailColor, icon);
                 gfx.DrawString(unread, new Vector2(mailX, mailY), mailColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
 
                 string xp = _game.State.SkillLevel.ToString();
@@ -869,7 +869,7 @@ namespace Peacenet
                 int xpIconX = _xpHitbox.X + 5;
                 int xpX = xpIconX + 20;
                 int xpY = _xpHitbox.Y + ((_xpHitbox.Height - (int)xpMeasure.Y) / 2);
-                gfx.DrawRectangle(new Vector2(xpIconX, xpIconY), new Vector2(16, 16), xpIcon, xpColor);
+                gfx.FillRectangle(new Vector2(xpIconX, xpIconY), new Vector2(16, 16), xpColor, xpIcon);
                 gfx.DrawString(xp, new Vector2(xpX, xpY), xpColor, _pn.PanelTheme.StatusTextFont, TextAlignment.Left, int.MaxValue, WrapMode.None);
 
                 if(_objectiveHitbox.Visible && _mission.CurrentMission!=null)
@@ -878,7 +878,7 @@ namespace Peacenet
                     int oIconX = _objectiveHitbox.X + 5;
                     int oIconY = _objectiveHitbox.Y + ((_objectiveHitbox.Height - 16) / 2);
                     var color = _objectiveHitbox.ContainsMouse ? Theme.GetAccentColor() : _pn.PanelTheme.StatusTextColor;
-                    gfx.DrawRectangle(oIconX, oIconY, 16, 16, oIcon, color);
+                    gfx.FillRectangle(oIconX, oIconY, 16, 16, color, oIcon);
 
                     var otMeasure = _pn.PanelTheme.StatusTextFont.MeasureString(_objectiveTime);
                     int oTextX = oIconX + 20;

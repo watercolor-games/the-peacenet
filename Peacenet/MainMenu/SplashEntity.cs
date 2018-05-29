@@ -1234,28 +1234,25 @@ namespace Peacenet.MainMenu
             float wallHeight = MathHelper.Lerp(gfx.Height / 2, gfx.Height, _wallFade);
 
 
-            gfx.BeginDraw();
-
             //gfx.Batch.Draw(_wall, new Rectangle((gfx.Width - (int)wallWidth) / 2, (gfx.Height - (int)wallHeight) / 2, (int)wallWidth, (int)wallHeight), Color.White * _wallFade);
             if (!IsSettingsOpen)
             {
-                gfx.Batch.Draw(_peacenet, new Vector2(peacenetX, peacenetY), Color.White * _peacenetFade);
-                gfx.Batch.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
+                gfx.FillRectangle(peacenetX, peacenetY, _peacenet.Width, _peacenet.Height, Color.White * _peacenetFade, _peacenet);
+                gfx.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
             }
-            gfx.Batch.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);
-            gfx.Batch.DrawString(highlightFont, greetText, new Vector2(greetX, greetY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _greetFade);
-            gfx.Batch.DrawString(headerFont, serverSelect, new Vector2(serverSelectX, serverSelectY), _thememgr.Theme.GetFontColor(TextFontStyle.Header1) * _mpUIFade);
+            gfx.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);
+            gfx.DrawString(highlightFont, greetText, new Vector2(greetX, greetY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _greetFade);
+            gfx.DrawString(headerFont, serverSelect, new Vector2(serverSelectX, serverSelectY), _thememgr.Theme.GetFontColor(TextFontStyle.Header1) * _mpUIFade);
 
             if(_connecting)
             {
-                gfx.DrawRectangle(0, 0, gfx.Width, gfx.Height, Color.Black * 0.75F);
+                gfx.FillRectangle(0, 0, gfx.Width, gfx.Height, Color.Black * 0.75F);
 
                 var connectingMeasure = headerFont.MeasureString(_connectingText);
-                gfx.Batch.DrawString(headerFont, _connectingText, new Vector2((gfx.Width - connectingMeasure.X) / 2, (gfx.Height - connectingMeasure.Y) / 2), _thememgr.Theme.GetFontColor(TextFontStyle.Header1));
+                gfx.DrawString(headerFont, _connectingText, new Vector2((gfx.Width - connectingMeasure.X) / 2, (gfx.Height - connectingMeasure.Y) / 2), _thememgr.Theme.GetFontColor(TextFontStyle.Header1));
             }
 
-            gfx.EndDraw();
-
+            
         }
 
     }
