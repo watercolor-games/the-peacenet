@@ -1,0 +1,79 @@
+// Defines the categories, descriptions, etc of various settings in the game.
+
+{
+	"categories": [
+		{
+			"name": "Audio",
+			"desc": "Adjust the volume of sound effects/music and change other audio-related settings."
+		},
+		{
+			"name": "User experience",
+			"desc": "Fine-tune The Peacenet's user interface to suit your preferred user experience."
+		},
+		{
+			"name": "Graphics",
+			"desc": "Adjust the visual appearance of The Peacenet to increase performance and/or usability."
+		},
+		{
+			"name": "Discord",
+			"desc": "Determine how The Peacenet will behave when interacting with Discord and Discord Rich Presence. These settings only apply to you if you have the Discord desktop app installed, running, and logged in."
+		},
+		{
+			"name": "Itch Login",
+			"desc": "Adjust how The Peacenet will behave when you are signed into itch.io."
+		},
+		{
+			"name": "Hidden",
+			"desc": "Settings in this category will not be rendered in the settings UI.",
+			"show": false
+		}
+	],
+	"metadata": [
+		{
+			"key": "itch.apikey",
+			"category": "Hidden" //Probably a bad idea to have that in the UI.
+		},
+		{
+			"key": "uiFullscreen",
+			"category": "Graphics",
+			"name": "Fullscreen",
+			"desc": "Toggle whether the game will run in fullscreen or windowed mode."
+		},
+		{
+			"key": "audioSfxVolume",
+			"category": "Audio",
+			"name": "Audio volume",
+			"desc": "Set the volume of music and sound effects."
+		},
+		{
+			"key": "anisotropicFiltering",
+			"category": "Graphics",
+			"name": "Anisotropic Filtering",
+			"desc": "Enable anisotropic filtering throughout the user interface of Peacenet?"
+		},
+		{
+			"key": "ui.smoothScrolling",
+			"category": "User experience",
+			"name": "Smooth scrolling",
+			"desc": "Enable or disable smooth scrolling effects in the user interface. If you're experiencing lag (or you don't like smooth scrolling) when scrolling in a UI element, consider turning this off."
+		},
+		{
+			"key": "itch.showUsername",
+			"category": "User experience",
+			"name": "Use itch.io username in Peacegate",
+			"desc": "Should Peacegate OS display your itch.io username as your Peacegate username in Singleplayer when you are signed into itch?"
+		},
+		{
+			"key": "uiIgnoreControlOpacity",
+			"category": "Graphics",
+			"name": "Force opaque UI elements (disable translucency)",
+			"desc": "Should Peacenet disable translucent UI element rendering? Enabling this setting may make the user interface look more ugly, but will make things easier to run when GPU memory is scarce."
+		},
+		{
+			"key": "windowManagerTranslucentWindowsWhileDragging",
+			"category": "User experience",
+			"name": "Translucent windows while dragging",
+			"desc": "If enabled, windows will be translucent while you are dragging (similar to the KWin Window Manager), allowing you to see through the contents of the window while still keeping them visible.\n\nOnly effective if translucent UI element rendering is enabled."
+		}
+	]
+}

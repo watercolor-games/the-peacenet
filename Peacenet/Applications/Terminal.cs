@@ -320,23 +320,14 @@ namespace Peacenet.Applications
         public void Run(ConsoleContext console, Dictionary<string, object> arguments)
         {
             _history = new List<CommandInstruction>();
-            string user = "user";
+            string user = _os.Username;
             string workdir = "/home";
             console.WorkingDirectory = workdir;
             while (true)
             {
                 try
                 {
-                    if (_Api.LoggedIn)
-                    {
-                        user = _Api.User.username;
-                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Orange);
-                    }
-                    else
-                    {
-                        user = "user";
-                        console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
-                    }
+                    console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
                     console.Write(user);
                     console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Gray);
                     console.Write("@");

@@ -20,6 +20,7 @@ using Peacenet.Filesystem;
 using System.Threading;
 using Plex.Engine.Config;
 using Plex.Objects;
+using Peacenet.GameState;
 
 namespace Peacenet
 {
@@ -201,15 +202,35 @@ namespace Peacenet
             WallpaperChanged?.Invoke();
         }
 
+        [Dependency]
+        private GameManager _game = null;
+
+        [Dependency]
+        private ConfigManager _config = null;
+
+        public string Username
+        {
+            get
+            {
+                if (!_api.LoggedIn)
+                    return "user";
+
+                if(_game.State is SinglePlayerStateInfo)
+                {
+                    if (!_config.GetValue("itch.showUsername", true))
+                        return "user";
+                }
+                return _api.User.username;
+            }
+        }
+
         /// <summary>
         /// Retrieves all shell folders.
         /// </summary>
         /// <returns>A list containing all shell folders.</returns>
         public IEnumerable<ShellDirectoryInformation> GetShellDirs()
         {
-            string uname = "Your";
-            if (_api.LoggedIn)
-                uname = (_api.User.display_name.ToLower().EndsWith("s")) ? _api.User.display_name + "'" : _api.User.display_name + "'s";
+            string uname = (Username != "user") ? Username + "'s" : "Your";
             yield return new ShellDirectoryInformation($"{uname} Home", "/home", _plexgate.Content.Load<Texture2D>("UIIcons/home"));
             yield return new ShellDirectoryInformation("Desktop", "/home/Desktop", null);
             yield return new ShellDirectoryInformation("Documents", "/home/Documents", null);

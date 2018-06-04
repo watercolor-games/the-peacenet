@@ -69,6 +69,8 @@ namespace Peacenet
         /// <inheritdoc/>
         public void Initiate()
         {
+            _config.GetValue("itch.showUsername", false); //set default value to false. User can choose if they want to display their itch username in Peacegate OS.
+
             _entity = _plebgate.New<ItchEntity>();
             _token = _config.GetValue<string>("itch.apikey", _token);
             _callbackSrv = _plebgate.New<ItchOAuthCallbackServer>();

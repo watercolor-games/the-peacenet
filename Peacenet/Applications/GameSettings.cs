@@ -11,6 +11,9 @@ using Plex.Engine;
 using Plex.Engine.Config;
 using System.Reflection;
 using Peacenet.PeacegateThemes;
+using Peacenet.DesktopUI;
+using Newtonsoft.Json;
+using Plex.Objects;
 
 namespace Peacenet.Applications
 {
@@ -33,37 +36,36 @@ namespace Peacenet.Applications
         private Button _cancel = new Button();
 
         private ScrollView _configView = new ScrollView();
-        private Panel _configPanel = new Panel();
+        private Stacker _configPanel = new Stacker();
+        
+        private string getSettingCategory(string confKey)
+        {
+            var metadata = _settingsData.metadata.FirstOrDefault(x => x.key == confKey);
+            if (metadata != null)
+                return metadata.category;
+            return "Hidden";
+        }
+        
+        private CategoryMetadata getCategory(string catname)
+        {
+            return _settingsData.categories.FirstOrDefault(x => x.name == catname);
+        }
 
-        private Label _graphics = new Label();
+        public string getCategoryDescription(string category)
+        {
+            var first = _settingsData.categories.FirstOrDefault(x => x.name == category);
+            if (first != null)
+                return first.desc;
+            return "There is no description for this setting group.";
+        }
 
-        private CheckLabel _gfxFullscreen = new CheckLabel();
-        private Label _gfxGuiScale = new Label();
-        private Button _gfxSetGuiScale = new Button();
-
-
-        private Label _audio = new Label();
-
-        private CheckLabel _ignoreOpacity = new CheckLabel();
-        private CheckLabel _fadingWindows = new CheckLabel();
-
-        private Label _audioVolume = new Label();
-        private SliderBar _audioVolumeSlider = new SliderBar();
-
-        private Label _aboutHeader = new Label();
-
-        private Label _ux = new Label();
-
-        private Label _aboutText = new Label();
-
-        private Button _license = new Button();
-
-        private Label _fontSizeLabel = new Label();
-        private ListView _fontSizeList = new ListView();
+        private SettingsData _settingsData = null;
 
         /// <inheritdoc/>
         public GameSettings(WindowSystem _winsys) : base(_winsys)
         {
+            _settingsData = JsonConvert.DeserializeObject<SettingsData>(Properties.Resources.SettingsData);
+
             Width = 800;
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
@@ -82,12 +84,19 @@ namespace Peacenet.Applications
             };
             _apply.Click += (o, a) =>
             {
+                foreach(var group in _groups)
+                {
+                    foreach(var setting in group.Settings)
+                    {
+                        var valueSetter = setting.SettingValue;
+                        if(_config.Keys.Contains(valueSetter.ConfigKey))
+                        {
+                            _config.SetValue(valueSetter.ConfigKey, valueSetter.Value);
+                        }
+                    }
+                }
+
                 _config.SetValue("screenResolution", _resolutions.SelectedItem.Value.ToString());
-                _config.SetValue("uiFullscreen", _gfxFullscreen.Checked);
-                _config.SetValue("audioSfxVolume", _audioVolumeSlider.Value);
-                _config.SetValue("uiIgnoreControlOpacity", _ignoreOpacity.Checked);
-                _config.SetValue("windowManagerTranslucentWindowsWhileDragging", _fadingWindows.Checked);
-                _config.SetValue("theme.fontsize", (PeacenetFontSize)_fontSizeList.SelectedItem.Tag);
                 _config.Apply();
                 Close();
             };
@@ -95,65 +104,110 @@ namespace Peacenet.Applications
             AddChild(_configView);
             _configView.AddChild(_configPanel);
 
-            _configPanel.AddChild(_graphics);
-            _configPanel.AddChild(_audio);
-            _configPanel.AddChild(_aboutHeader);
-
-            _configPanel.AddChild(_audioVolumeSlider);
-            _configPanel.AddChild(_audioVolume);
-
-            _configPanel.AddChild(_ux);
-            _configPanel.AddChild(_ignoreOpacity);
-            _configPanel.AddChild(_fadingWindows);
-
-            _configPanel.AddChild(_gfxFullscreen);
-            _configPanel.AddChild(_gfxSetGuiScale);
-            _configPanel.AddChild(_gfxGuiScale);
-
-            _gfxGuiScale.AutoSize = true;
-            _gfxSetGuiScale.Text = "Change GUI Scale";
-            _gfxSetGuiScale.Click += (o, a) =>
-            {
-                var scalesettings = new ScreenScaleSetter(WindowSystem);
-                scalesettings.Show();
-            };
-            
             if (_needsPopulate)
             {
                 PopulateResolutions();
                 _needsPopulate = false;
             }
-            _configPanel.AddChild(_aboutText);
 
-            var peacenetVersion = this.GetType().Assembly.GetName().Version;
-            var engineVersion = typeof(Plexgate).Assembly.GetName().Version;
+            List<SettingGroup> autoGroups = new List<SettingGroup>();
 
-            if(peacenetVersion != null)
+            foreach(var key in _config.Keys)
             {
-                _aboutText.Text += $"Peacenet - Version {peacenetVersion.Major}.{peacenetVersion.Minor} - Milestone {peacenetVersion.Build} build {peacenetVersion.Revision}.";
+                string catName = getSettingCategory(key);
+                var group = autoGroups.FirstOrDefault(x => x.Category == catName);
+                if(group==null)
+                {
+                    var catdata = getCategory(catName);
+                    if (catdata==null || catdata.show==false)
+                        continue;
+                    group = new SettingGroup
+                    {
+                        Category = catName,
+                        Description = catdata.desc
+                    };
+                    _configPanel.AddChild(group);
+                    autoGroups.Add(group);
+                }
+
+                var metadata = _settingsData.metadata.FirstOrDefault(x => x.key == key);
+                if(metadata!=null)
+                    group.AddSetting(createSetting(metadata));
             }
-            if (engineVersion != null)
+
+            _groups.AddRange(autoGroups);
+            
+
+            var aboutGroup = new SettingGroup();
+            aboutGroup.Category = "About";
+            aboutGroup.Description = "Everything you need to know about this game and this game engine.";
+
+            aboutGroup.AddSetting(new Setting
             {
-                _aboutText.Text += $"\nPeace Engine - Version {engineVersion.Major}.{engineVersion.Minor} - Milestone {engineVersion.Build} build {engineVersion.Revision}.";
-            }
-            _license.Text = "License";
-
-            _configPanel.AddChild(_license);
-
-            _license.Click += (o, a) =>
+                Name = "License info",
+                Description = "The Peacenet and Peace Engine are licensed under the GNU GPL v3.",
+                SettingValue = new ButtonSettingValue
+                {
+                    ConfigKey = null,
+                    Value = null,
+                    Text = "Read the license",
+                }
+            });
+            (aboutGroup.Settings[0].SettingValue as Button).Click += (o, a) =>
             {
                 var gpl = new GPLInfo(WindowSystem);
                 gpl.Show();
             };
 
-            _fontSizeLabel.Text = "Font size";
-            _fontSizeLabel.AutoSize = true;
+            _groups.Add(aboutGroup);
+            _configPanel.AddChild(aboutGroup);
+        }
 
-            _configPanel.AddChild(_fontSizeLabel);
-            _configPanel.AddChild(_fontSizeList);
+        private Setting createSetting(SettingMetadata metadata)
+        {
+            var value = _config.GetValue(metadata.key);
+
+            ISettingValue settingValue = null;
+
+            if (value == null)
+            {
+                settingValue = new DummySettingValue
+                {
+                    Value = value,
+                    ConfigKey = metadata.key
+                };
+            }
+            else
+            {
+                var valueType = value.GetType();
+                var valueSetter = ReflectMan.Types.FirstOrDefault(x => x.GetInterfaces().Contains(typeof(ISettingValue)) && x.Inherits(typeof(Control)) && x.GetCustomAttributes(false).Any(y => (y is SettingValueTypeAttribute) && (y as SettingValueTypeAttribute).Type == valueType));
+                if (valueSetter == null)
+                {
+                    settingValue = new DummySettingValue
+                    {
+                        Value = value,
+                        ConfigKey = metadata.key
+                    };
+                }
+                else
+                {
+                    var obj = (ISettingValue)Activator.CreateInstance(valueSetter, null);
+                    obj.Value = value;
+                    obj.ConfigKey = metadata.key;
+                    settingValue = obj;
+                }
+            }
+            return new Setting
+            {
+                Name = metadata.name,
+                Description = metadata.desc,
+                SettingValue = settingValue
+            };
         }
 
         private bool _needsPopulate = true;
+
+        private List<SettingGroup> _groups = new List<SettingGroup>();
 
         /// <summary>
         /// Forces re-population of the list of available screen resolutions.
@@ -171,32 +225,11 @@ namespace Peacenet.Applications
                 _resolutions.AddItem(lvitem);
             }
             _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Items, _resolutions.Items.FirstOrDefault(x => x.Value == setres));
-
-            _gfxFullscreen.Checked = _config.GetValue("uiFullscreen", true);
-            _audioVolumeSlider.Value = _config.GetValue("audioSfxVolume", 1f);
-            _ignoreOpacity.Checked = _config.GetValue("uiIgnoreControlOpacity", false);
-            _fadingWindows.Checked = _config.GetValue("windowManagerTranslucentWindowsWhileDragging", true);
-
-            _fontSizeList.ClearItems();
-            foreach (var name in Enum.GetNames(typeof(PeacenetFontSize)))
-            {
-                var item = new ListViewItem
-                {
-                    Value = name,
-                    Tag = (PeacenetFontSize)Enum.Parse(typeof(PeacenetFontSize), name)
-                };
-                _fontSizeList.AddItem(item);
-            }
-            var fontsize = _config.GetValue<PeacenetFontSize>("theme.fontsize", PeacenetFontSize.Small);
-            _fontSizeList.SelectedIndex = Array.IndexOf(_fontSizeList.Items, _fontSizeList.Items.FirstOrDefault(x => (PeacenetFontSize)x.Tag == fontsize));
-            _fontSizeList.Layout = ListViewLayout.List;
         }
 
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
-            _gfxGuiScale.Text = $"GUI Scale: {Math.Round((float)_plexgate.BaseRenderHeight / _plexgate.GetRenderScreenSize().Y, 2)}x";
-
             _resolutionScroller.X = 15;
             _resolutionScroller.Y = 15;
             _resolutions.Width = (Width - 30) / 3;
@@ -214,104 +247,274 @@ namespace Peacenet.Applications
             _configPanel.Width = (Width - _configView.X) - 15;
             _configView.Height = _cancel.Y - 30;
 
-            _graphics.X = 15;
-            _graphics.Y = 15;
-            _graphics.AutoSize = true;
-            _graphics.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _graphics.Text = "Graphics";
-
-            _gfxFullscreen.X = 20;
-            _gfxFullscreen.Y = _graphics.Y + _graphics.Height + 10;
-            _gfxFullscreen.MaxWidth = (_configPanel.Width - 35);
-            _gfxFullscreen.Text = "Fullscreen";
-
-            _gfxSetGuiScale.X = (_configPanel.Width - _gfxSetGuiScale.Width) - 15;
-
-            _gfxGuiScale.MaxWidth = _gfxSetGuiScale.X - 30;
-            _gfxGuiScale.X = 15;
-
-            int guiScaleMax = Math.Max(_gfxGuiScale.Height, _gfxSetGuiScale.Height);
-            if (guiScaleMax == _gfxGuiScale.Height)
+            if(_needsPopulate)
             {
-                _gfxGuiScale.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 7;
-                _gfxSetGuiScale.Y = _gfxGuiScale.Y + ((_gfxGuiScale.Height - _gfxSetGuiScale.Height) / 2);
+                PopulateResolutions();
+                _needsPopulate = false;
             }
-            else
-            {
-                _gfxSetGuiScale.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + 7;
-                _gfxGuiScale.Y = _gfxSetGuiScale.Y + ((_gfxSetGuiScale.Height - _gfxGuiScale.Height) / 2);
-            }
-
-            _audio.X = 15;
-            _audio.Y = _gfxFullscreen.Y + _gfxFullscreen.Height + guiScaleMax + 17;
-            _audio.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _audio.AutoSize = true;
-            _audio.Text = "Audio";
-
-            _audioVolume.X = 20;
-            _audioVolume.Y = _audio.Y + _audio.Height + 10;
-            _audioVolume.Text = $"Audio volume:";
-            _audioVolume.AutoSize = true;
-
-            _audioVolumeSlider.X = _audioVolume.X + _audioVolume.Width + 15;
-            _audioVolumeSlider.Width = (_configPanel.Width - _audioVolumeSlider.X) - 15;
-            _audioVolumeSlider.Y = _audioVolume.Y + ((_audioVolume.Height - _audioVolumeSlider.Height) / 2);
-
-
-            _ux.Text = "User experience";
-            _ux.X = 15;
-            _ux.Y = _audioVolume.Y + _audioVolume.Height + 10;
-            _ux.AutoSize = true;
-            _ux.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-
-            _ignoreOpacity.X = 25;
-            _ignoreOpacity.Y = _ux.Y + _ux.Height + 10;
-            _ignoreOpacity.MaxWidth = (_configPanel.Width - 70);
-            _ignoreOpacity.Text = @"Disable Compositor
-
-To allow certain user interface effects (such as translucency), Peace Engine uses a Compositor, allowing certain UI elements to render to a separate buffer and have that buffer rendered to the screen with effects applied.
-
-Since these operations can be taxing on lower-end hardware, it is advised to disable the Compositor if you experience frequent frame drops or disappearing UI elements.
-
-(Note: Disabling the Compositor may affect the game's look and feel.)";
-
-            _fadingWindows.X = 25;
-            _fadingWindows.MaxWidth = _ignoreOpacity.MaxWidth;
-            _fadingWindows.Enabled = !_ignoreOpacity.Checked;
-            if (_ignoreOpacity.Checked)
-                _fadingWindows.Checked = false;
-            _fadingWindows.Y = _ignoreOpacity.Y + _ignoreOpacity.Height + 10;
-            _fadingWindows.Text = @"Fade windows while dragging?
-
-If enabled, windows will fade out as you are dragging them, much like they do in the KWin Window Manager. Requires transparent UI elements.";
-
-            if (_ignoreOpacity.Checked)
-                _fadingWindows.Text += "\n\n(Compositor must be enabled to turn this setting on.)";
-
-            _fontSizeLabel.MaxWidth = (_configPanel.Width - 30);
-            _fontSizeLabel.Y = _fadingWindows.Y + _fadingWindows.Height + 10;
-            _fontSizeLabel.X = 15;
-
-            _fontSizeList.X = 15;
-            _fontSizeList.Width = _fontSizeLabel.MaxWidth;
-            _fontSizeList.Y = _fontSizeLabel.Y + _fontSizeLabel.Height + 5;
-
-
-
-            _aboutHeader.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
-            _aboutHeader.Text = "About";
-            _aboutHeader.X = 15;
-            _aboutHeader.Y = _fontSizeList.Y + _fontSizeList.Height + 10;
-            _aboutHeader.AutoSize = true;
-
-            _aboutText.X = 15;
-            _aboutText.MaxWidth = _ignoreOpacity.MaxWidth;
-            _aboutText.AutoSize = true;
-            _aboutText.Y = _aboutHeader.Y + _aboutHeader.Height + 10;
-
-            _license.X = (_configPanel.Width - _license.Width) - 15;
-            _license.Y = _aboutText.Y + _aboutText.Height + 15;
         }
         
+        private class SettingGroup : Panel
+        {
+            private Label _categoryText = null;
+            private Label _description = null;
+
+            public string Category { get => _categoryText.Text; set => _categoryText.Text = value; }
+            public string Description { get => _description.Text; set => _description.Text = value; }
+
+            public SettingGroup()
+            {
+                _categoryText = new Label();
+                _description = new Label();
+
+                AddChild(_categoryText);
+                AddChild(_description);
+
+                _categoryText.FontStyle = Plex.Engine.Themes.TextFontStyle.Header2;
+                _categoryText.AutoSize = true;
+                _description.AutoSize = true;
+            }
+
+            protected override void OnPaint(GameTime time, GraphicsContext gfx)
+            {
+            }
+
+            public Setting[] Settings => _settings.ToArray();
+
+            protected override void OnUpdate(GameTime time)
+            {
+                Width = Math.Max(400, Width);
+
+                _categoryText.X = 15;
+                _categoryText.Y = 15;
+                _categoryText.MaxWidth = (Width - 30);
+                _description.X = 15;
+                _description.Y = _categoryText.Y + _categoryText.Height + 7;
+                _description.MaxWidth = _categoryText.MaxWidth;
+
+                int stackY = _description.Y + _description.Height + 10;
+
+                foreach(var setting in _settings)
+                {
+                    setting.X = 15;
+                    setting.Y = stackY;
+                    setting.Width = Width - 30;
+                    stackY += setting.Height+7;
+                }
+
+                Height = stackY + 15;
+
+                base.OnUpdate(time);
+            }
+
+            private List<Setting> _settings = new List<Setting>();
+
+            public void AddSetting(Setting setting)
+            {
+                if (_settings.Contains(setting))
+                    return;
+                _settings.Add(setting);
+                AddChild(setting);
+            }
+
+            public void RemoveSetting(Setting setting)
+            {
+                if (!_settings.Contains(setting))
+                    return;
+                _settings.Remove(setting);
+                RemoveChild(setting);
+            }
+
+
+            public void ClearSettings()
+            {
+                foreach (var setting in _settings)
+                    RemoveChild(setting);
+                _settings.Clear();
+            }
+        }
+
+        private class Setting : Control
+        {
+            private Label _name = null;
+            private Label _description = null;
+            
+            private ISettingValue _settingValue;
+            
+
+            public object Value => _settingValue.Value;
+
+            public string Name { get => _name.Text; set => _name.Text = value; }
+            public string Description { get => _description.Text; set => _description.Text = value; }
+            public GameSettings.ISettingValue SettingValue
+            {
+                get
+                {
+                    return _settingValue;
+                }
+                set
+                {
+                    if (_settingValue != value)
+                    {
+                        if (_settingValue != null)
+                            RemoveChild(_settingValue as Control);
+                            
+                        _settingValue = value;
+                        AddChild(_settingValue as Control);
+                    }
+
+                }
+            }
+
+            public Setting()
+            {
+                _name = new Label();
+                _description = new Label();
+
+                _name.AutoSize = true;
+                _description.AutoSize = true;
+                AddChild(_name);
+                AddChild(_description);
+
+                _name.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
+            }
+
+            protected override void OnPaint(GameTime time, GraphicsContext gfx)
+            {
+            }
+
+            protected override void OnUpdate(GameTime time)
+            {
+                var _settingText = _settingValue as Control;
+
+                Width = Math.Max(200, Width);
+
+                _settingText.X = (Width - _settingText.Width) - 5;
+
+                int textWidth = _settingText.X - 9;
+                _name.X = 5;
+                _description.X = 5;
+
+                _name.MaxWidth = textWidth;
+                _description.MaxWidth = textWidth;
+
+                if(Math.Max(_name.Height+4+_description.Height, _settingText.Height) == _settingText.Height)
+                {
+                    _settingText.Y = 5;
+                    Height = _settingText.Height + 10;
+                    _name.Y = _settingText.Y + ((_settingText.Height - (_name.Height + 4 + _description.Height)) / 2);
+                    _description.Y = _name.Y + _name.Height + 4;
+                }
+                else
+                {
+                    _name.Y = 5;
+                    _description.Y = _name.Y + _name.Height + 4;
+                    Height = _description.Y + _description.Height + 5;
+                    _settingText.Y = (Height - _settingText.Height) / 2;
+                }
+
+            }
+        }
+
+        public interface ISettingValue
+        {
+            string ConfigKey { get; set; }
+            object Value { get; set; }
+        }
+
+        public class DummySettingValue : Label, ISettingValue
+        {
+            public string ConfigKey { get; set; }
+
+            private object _val;
+
+            public DummySettingValue()
+            {
+                AutoSize = true;
+                FontStyle = Plex.Engine.Themes.TextFontStyle.Muted;
+            }
+
+            public object Value
+            {
+                get
+                {
+                    return _val;
+                }
+                set
+                {
+                    _val = value;
+                    Text = (_val == null) ? "<null>" : _val.ToString();
+                }
+            }
+        }
+
+        public class ButtonSettingValue : Button, ISettingValue
+        {
+            public string ConfigKey { get; set; }
+            public object Value { get; set; }
+
+        }
+
+        [SettingValueType(typeof(float))]
+        [SettingValueType(typeof(double))]
+        public class SliderSettingValue : SliderBar, ISettingValue
+        {
+            public SliderSettingValue()
+            {
+                Width = 175;
+            }
+
+            public string ConfigKey { get; set; }
+            public object Value { get => base.Value; set => base.Value = Convert.ToSingle(value); }
+        }
+
+        [SettingValueType(typeof(bool))]
+        public class BooleanSettingValue : CheckLabel, ISettingValue
+        {
+            public BooleanSettingValue()
+            {
+                Text = "Enable";
+            }
+
+            public string ConfigKey { get; set; }
+            public object Value { get => Checked; set => Checked = (bool)value; }
+        }
+    }
+
+    public class SettingsData
+    {
+        public CategoryMetadata[] categories { get; set; }
+        public SettingMetadata[] metadata { get; set; }
+    }
+
+    public class SettingMetadata
+    {
+        public string key { get; set; }
+        public string name { get; set; }
+        public string desc { get; set; }
+        public string category { get; set; }
+    }
+
+    public class CategoryMetadata
+    {
+        public CategoryMetadata() { show = true; }
+
+        public string name { get; set; }
+        public string desc { get; set; }
+
+        public bool show { get; set; }
+    }
+
+    
+    
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class SettingValueTypeAttribute : Attribute
+    {
+        public Type Type { get; private set; }
+
+        public SettingValueTypeAttribute(Type type)
+        {
+            this.Type = type;
+        }
     }
 }

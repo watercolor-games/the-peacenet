@@ -645,6 +645,7 @@ namespace Peacenet.DesktopUI
             int y = 0;
             foreach(var child in Children)
             {
+                child.Width = Width;
                 child.Y = y;
                 child.X = 0;
                 y += child.Height;

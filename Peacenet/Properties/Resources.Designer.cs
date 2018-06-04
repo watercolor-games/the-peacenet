@@ -61,6 +61,32 @@ namespace Peacenet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to // Defines the categories, descriptions, etc of various settings in the game.
+        ///
+        ///{
+        ///	&quot;categories&quot;: [
+        ///		{
+        ///			&quot;name&quot;: &quot;Audio&quot;,
+        ///			&quot;desc&quot;: &quot;Adjust the volume of sound effects/music and change other audio-related settings.&quot;
+        ///		},
+        ///		{
+        ///			&quot;name&quot;: &quot;User experience&quot;,
+        ///			&quot;desc&quot;: &quot;Fine-tune The Peacenet&apos;s user interface to suit your preferred user experience.&quot;
+        ///		},
+        ///		{
+        ///			&quot;name&quot;: &quot;Graphics&quot;,
+        ///			&quot;desc&quot;: &quot;Adjust the visual appearance of The Peacenet to increase performance and/or usability.&quot;
+        ///		},
+        ///		{
+        ///			&quot;n [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SettingsData {
+            get {
+                return ResourceManager.GetString("SettingsData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [
         ///	{
         ///		&quot;Id&quot;: &quot;medal_value_increase_1&quot;,
