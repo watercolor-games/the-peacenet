@@ -38,10 +38,10 @@ namespace Peacenet.Applications
 
         protected override void OnMouseScroll(int delta)
         {
-            if (delta < 0)
-                _zoom = MathHelper.Clamp(_zoom - _zoomIn, 1f/16, 4);
-            else if(delta>0)
-                _zoom = MathHelper.Clamp(_zoom + _zoomIn, 1f/16, 4);
+            //The maximum delta value that Peace Engine will give us is 60 units in either direction. Scroll factor will be a percentage value where 100% is 60 units.
+            float scrollFactor = delta / 60F;
+            //Get the new zoom
+            _zoom = MathHelper.Clamp(_zoom + (_zoomIn * scrollFactor), 1 / 16F, 4);
         }
 
         public WorldMap(WindowSystem _winsys) : base(_winsys)
