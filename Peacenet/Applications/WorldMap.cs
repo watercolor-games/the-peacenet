@@ -19,6 +19,8 @@ namespace Peacenet.Applications
         private const int _terrainBorderWidth = 2;
         private const float _zoomIn = 0.25f;
 
+        private Button _exit = new Button();
+
         private float _zoom = 1;
 
         private Label _title = new Label();
@@ -66,6 +68,13 @@ namespace Peacenet.Applications
             _title.Text = "World Map";
             _title.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
             _country.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
+
+            _exit.Text = "Return to Peacegate";
+            _exit.Click += (o, a) =>
+            {
+                Close();
+            };
+            AddChild(_exit);
         }
 
         private void WorldMap_MouseLeftUp(object sender, EventArgs e)
@@ -159,6 +168,9 @@ namespace Peacenet.Applications
             _country.X = 15;
             _country.Y = _title.Y + _title.Height + 5;
             _country.Text = _game.State.CurrentCountry.ToString();
+
+            _exit.Y = _title.Y + (((_title.Height + _country.Height + 5) - _exit.Height) / 2);
+            _exit.X = (Width - _exit.Width) - 15;
 
             if (_panning)
             {
