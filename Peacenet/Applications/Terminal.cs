@@ -61,11 +61,6 @@ namespace Peacenet.Applications
             Width = (80 * _emulator.CharacterWidth);
             Height = (25 * _emulator.CharacterHeight);
             Title = "Terminal";
-            Click += (o, a) =>
-            {
-                Manager.SetFocus(_emulator);
-            };
-
             AddChild(_scrollbar);
         }
 
@@ -131,6 +126,8 @@ namespace Peacenet.Applications
             _emulator.Width = Width;
             _scrollbar.Visible = WindowSystem.WindowList.FirstOrDefault(x => x.Border == this.Parent).Border.WindowStyle != WindowStyle.NoBorder;
 
+            if (HasFocused && !_emulator.IsFocused)
+                Manager.SetFocus(_emulator);
         }
 
         /// <inheritdoc/>

@@ -23,8 +23,8 @@ namespace Peacenet.Applications
 
         public Clock(WindowSystem _winsys) : base(_winsys)
         {
-            Width = 1000;
-            Height = 500;
+            Width = 500;
+            Height = 250;
             Title = "Clock";
 
             AddChild(_head);
