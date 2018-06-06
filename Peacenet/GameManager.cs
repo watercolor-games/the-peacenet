@@ -12,7 +12,7 @@ namespace Peacenet
     public class GameManager : IEngineComponent, IDisposable
     {
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         public IGameStateInfo State { get; private set; }
 
@@ -39,7 +39,7 @@ namespace Peacenet
                 throw new InvalidOperationException("A game is currently in progress.");
             if (!typeof(T).GetInterfaces().Contains(typeof(IGameStateInfo)))
                 throw new InvalidOperationException("Game state class must implement Peacenet.GameState.IGameStateInfo.");
-            State = (IGameStateInfo)_plexgate.New<T>();
+            State = (IGameStateInfo)_GameLoop.New<T>();
             State.StartGame();
             State.MissionCompleted += (id) => MissionCompleted?.Invoke(id);
         }

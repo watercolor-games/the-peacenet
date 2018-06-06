@@ -29,7 +29,7 @@ namespace Peacenet
         private OS _os = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private GameManager _game = null;
@@ -44,7 +44,7 @@ namespace Peacenet
 
         private Mission getCurrent()
         {
-            var mission = _plexgate.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission);
+            var mission = _GameLoop.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission);
             if (mission != null)
                 return (Mission)mission;
             return null;
@@ -74,7 +74,7 @@ namespace Peacenet
             List<Mission> missions = new List<Mission>();
             foreach(var type in ReflectMan.Types.Where(x=>x.BaseType == typeof(Mission)))
             {
-                var mission = (Mission)_plexgate.New(type);
+                var mission = (Mission)_GameLoop.New(type);
                 missions.Add(mission);
                 Logger.Log($"Found: {mission.Name} (ID {mission.ID})");
             }
@@ -137,7 +137,7 @@ namespace Peacenet
     public abstract class Mission : IEntity
     {
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private SaveManager _save = null;
@@ -248,7 +248,7 @@ namespace Peacenet
                 throw new InvalidOperationException("The mission is already completed.");
             if (!Available)
                 throw new InvalidOperationException("The mission isn't available yet");
-            if (_plexgate.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission) != null)
+            if (_GameLoop.GetLayer(LayerType.Foreground).Entities.FirstOrDefault(x => x is Mission) != null)
                 throw new InvalidOperationException("Another mission is currently in progress.");
             if (_objectives.Count == 0)
                 throw new InvalidOperationException("No objectives have been defined for this mission.");
@@ -257,7 +257,7 @@ namespace Peacenet
 
             _preMissionSaveState = _save.CreateSnapshot(); //If the user abandons the mission, revert to this state.
             
-            _plexgate.GetLayer(LayerType.Foreground).AddEntity(this);
+            _GameLoop.GetLayer(LayerType.Foreground).AddEntity(this);
 
             OnStart();
 
@@ -267,7 +267,7 @@ namespace Peacenet
 
         public void Abandon()
         {
-            if (!_plexgate.GetLayer(LayerType.Foreground).HasEntity(this))
+            if (!_GameLoop.GetLayer(LayerType.Foreground).HasEntity(this))
                 throw new InvalidOperationException("The mission is not being played and cannot be abandoned.");
             Fail("You abandoned the mission.");
         }
@@ -283,7 +283,7 @@ namespace Peacenet
             }, _win);
             OnEnd();
             completeDialog.Show();
-            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+            _GameLoop.GetLayer(LayerType.Foreground).RemoveEntity(this);
         }
 
         protected void CompleteObjective(Medal medal = Medal.Gold, string description = "For successfully completing the objective")
@@ -306,7 +306,7 @@ namespace Peacenet
         protected void Fail(string message)
         {
             OnEnd();
-            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+            _GameLoop.GetLayer(LayerType.Foreground).RemoveEntity(this);
             var fail = new MissionFailScreen(this, message, _preMissionSaveState, _preObjectiveSaveState, _win);
             fail.Show();
         }
@@ -321,10 +321,6 @@ namespace Peacenet
         }
 
         public void OnKeyEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void OnMouseUpdate(MouseState mouse)
         {
         }
 

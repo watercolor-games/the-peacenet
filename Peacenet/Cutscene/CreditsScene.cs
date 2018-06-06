@@ -118,7 +118,7 @@ namespace Peacenet.Cutscenes
         private double _grassTime = 0f;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         /// <inheritdoc/>
         public override void OnPlay()

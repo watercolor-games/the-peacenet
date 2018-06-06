@@ -32,27 +32,9 @@ namespace Peacenet.Applications
         private TerminalManager _manager = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
 
         private int _scrollOffset = 0;
-
-        protected override bool CanBeScrolled
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        protected override void OnMouseScroll(int delta)
-        {
-            if(_emulator.Height < Height)
-            {
-                _scrollOffset = 0;
-                return;
-            }
-            _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, _emulator.Height - Height);
-        }
 
         private ScrollBar _scrollbar = new ScrollBar();
 
@@ -145,7 +127,6 @@ namespace Peacenet.Applications
             if (_lastEmulatorY != _emulator.Y)
             {
                 _lastEmulatorY = _emulator.Y;
-                Invalidate(true);
             }
             _emulator.Width = Width;
             _scrollbar.Visible = WindowSystem.WindowList.FirstOrDefault(x => x.Border == this.Parent).Border.WindowStyle != WindowStyle.NoBorder;
@@ -462,7 +443,6 @@ namespace Peacenet.Applications
                 {
                     _cursorOn = true;
                     _cursorAnim = 0;
-                    Invalidate(true);
                 }
             };
         }
@@ -480,8 +460,6 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         protected override void OnKeyEvent(KeyboardEventArgs e)
         {
-            if (_cursorOn != true)
-                Invalidate(true);
             _cursorOn = true;
             _cursorAnim = 0;
 
@@ -682,7 +660,6 @@ namespace Peacenet.Applications
                     _cursorAnim = 0;
                     ch = _slave.ReadByte();
                 }
-                Invalidate(true);
             }
 
             if (Height != (_charY+1)*_charHeight)
@@ -691,12 +668,10 @@ namespace Peacenet.Applications
             }
 
             _cursorAnim += time.ElapsedGameTime.TotalMilliseconds;
-            if(_cursorAnim >= 250)
+            if (_cursorAnim >= 250)
             {
                 _cursorAnim = 0;
                 _cursorOn = !_cursorOn;
-                if(IsFocused)
-                    Invalidate(true);
             }
         }
 

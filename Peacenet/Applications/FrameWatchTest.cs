@@ -31,7 +31,6 @@ namespace Peacenet
             Width = 800;
             Height = 600;
             start = new Button { Text = "Start", Width = 170, Height = 100, X = 2, Y = 2 };
-            start.Click += (sender, e) => frame = Frame.TestA;
             AddChild(start);
             testa = new Label { Text = "Click", AutoSize = true, X = 2, Y = start.Y + start.Height + 2 };
             AddChild(testa);

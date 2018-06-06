@@ -22,7 +22,7 @@ namespace Peacenet.CoreUtils
     {
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private FSManager _fs = null;
@@ -104,9 +104,9 @@ namespace Peacenet.CoreUtils
             switch (mimetype)
             {
                 case "text/plain":
-                    return _plexgate.Content.Load<Texture2D>("UIIcons/FileIcons/file-text");
+                    return _GameLoop.Content.Load<Texture2D>("UIIcons/FileIcons/file-text");
                 default:
-                    return _plexgate.Content.Load<Texture2D>("UIIcons/FileIcons/unknown");
+                    return _GameLoop.Content.Load<Texture2D>("UIIcons/FileIcons/unknown");
             }
         }
 
@@ -140,10 +140,7 @@ namespace Peacenet.CoreUtils
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
 
-            var fs = new FileManager(_winsys);
-            fs.SetDialogCallback(callback, saving);
-            fs.SetWindowStyle(Plex.Engine.GUI.WindowStyle.Dialog);
-            fs.Show();
+            throw new NotImplementedException();
         }
     }
 }

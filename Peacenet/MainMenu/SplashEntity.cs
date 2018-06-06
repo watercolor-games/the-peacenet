@@ -133,7 +133,7 @@ namespace Peacenet.MainMenu
         private ThemeManager _thememgr = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
 
         [Dependency]
         private WindowSystem _windowManager = null;
@@ -178,7 +178,6 @@ namespace Peacenet.MainMenu
         #region Multiplayer UI elements
 
         private ScrollView _mpServerScroller = null;
-        private ListView _serverList = null;
         private Button _addServer = null;
         private Button _removeServer = null;
         private Button _clearServers = null;
@@ -270,15 +269,12 @@ namespace Peacenet.MainMenu
             _uimanager.Add(_backButton);
 
             _mpServerScroller = new ScrollView();
-            _serverList = new ListView();
             _addServer = new Button();
             _removeServer = new Button();
             _joinServer = new Button();
             _clearServers = new Button();
             
-            _serverList.Layout = ListViewLayout.List;
             _uimanager.Add(_mpServerScroller);
-            _mpServerScroller.AddChild(_serverList);
             _uimanager.Add(_addServer);
             _uimanager.Add(_removeServer);
             _uimanager.Add(_clearServers);
@@ -288,7 +284,7 @@ namespace Peacenet.MainMenu
 
             _joinServer.Click += (o, a) =>
             {
-                connectToMultiplayerServer(_serverList.SelectedItem.Tag.ToString());
+                //connectToMultiplayerServer(_serverList.SelectedItem.Tag.ToString());
             };
 
             _wall = content.Load<Texture2D>("Desktop/DesktopBackgroundImage2");
@@ -369,7 +365,7 @@ namespace Peacenet.MainMenu
                     animState = 22;
                 }
             };
-            EventHandler spstart;
+            EventHandler<MouseEventArgs> spstart;
             _hbSingleplayer.Click += spstart = (o, a) =>
             {
                 if (_connecting)
@@ -481,7 +477,7 @@ namespace Peacenet.MainMenu
             if (_plexgate.GameStarted)
                 animState = 3;
             else if (_plexgate.QuietMode)
-                spstart.Invoke(this, EventArgs.Empty);
+                spstart.Invoke(this, null);
             else
             {
                 try
@@ -951,10 +947,8 @@ namespace Peacenet.MainMenu
                     _joinServer.Visible = false;
                     _clearServers.Visible = false;
                     _removeServer.Visible = false;
-                    _serverList.Visible = false;
                     break;
                 case 0:
-                    _serverList.Visible = true;
                     _mpServerScroller.Visible = true;
                     _addServer.Visible = true;
                     _joinServer.Visible = true;
@@ -1012,9 +1006,6 @@ namespace Peacenet.MainMenu
 
             _mpServerScroller.Width = 600;
             _mpServerScroller.Height = 400;
-            _serverList.Width = 600;
-            _serverList.X = 0;
-            _serverList.Y = 0;
             _mpServerScroller.X = (_uimanager.ScreenWidth - _mpServerScroller.Width) / 2;
             int mpCenter = (_uimanager.ScreenHeight - _mpServerScroller.Height) / 2;
             _mpServerScroller.Y = (int)MathHelper.Lerp(mpCenter + 200, mpCenter - 200, _mpUIPosition);
@@ -1031,7 +1022,6 @@ namespace Peacenet.MainMenu
             _joinServer.X = (_mpServerScroller.X + _mpServerScroller.Width) - _joinServer.Width;
             _joinServer.Y = _clearServers.Y;
             _joinServer.Opacity = _clearServers.Opacity;
-            _joinServer.Enabled = (_serverList.SelectedItem != null);
             _removeServer.Enabled = _joinServer.Enabled;
 
             _hbMultiplayer.Width = 256;

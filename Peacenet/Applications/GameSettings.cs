@@ -23,12 +23,12 @@ namespace Peacenet.Applications
     public class GameSettings : Window
     {
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
 
         [Dependency]
         private ConfigManager _config = null;
 
-        private ListView _resolutions = null;
+        private ListBox _resolutions = null;
 
         private ScrollView _resolutionScroller = null;
 
@@ -37,7 +37,7 @@ namespace Peacenet.Applications
 
         private ScrollView _configView = new ScrollView();
         private Stacker _configPanel = new Stacker();
-        
+
         private string getSettingCategory(string confKey)
         {
             var metadata = _settingsData.metadata.FirstOrDefault(x => x.key == confKey);
@@ -45,7 +45,7 @@ namespace Peacenet.Applications
                 return metadata.category;
             return "Hidden";
         }
-        
+
         private CategoryMetadata getCategory(string catname)
         {
             return _settingsData.categories.FirstOrDefault(x => x.name == catname);
@@ -70,7 +70,7 @@ namespace Peacenet.Applications
             Height = 600;
             SetWindowStyle(WindowStyle.Dialog);
             Title = "System settings";
-            _resolutions = new ListView();
+            _resolutions = new ListBox();
             _resolutionScroller = new ScrollView();
             _resolutionScroller.AddChild(_resolutions);
             AddChild(_resolutionScroller);
@@ -84,19 +84,20 @@ namespace Peacenet.Applications
             };
             _apply.Click += (o, a) =>
             {
-                foreach(var group in _groups)
+                foreach (var group in _groups)
                 {
-                    foreach(var setting in group.Settings)
+                    foreach (var setting in group.Settings)
                     {
                         var valueSetter = setting.SettingValue;
-                        if(_config.Keys.Contains(valueSetter.ConfigKey))
+                        if (_config.Keys.Contains(valueSetter.ConfigKey))
                         {
                             _config.SetValue(valueSetter.ConfigKey, valueSetter.Value);
                         }
                     }
                 }
 
-                _config.SetValue("screenResolution", _resolutions.SelectedItem.Value.ToString());
+                if(_resolutions.SelectedItem!=null)
+                    _config.SetValue("screenResolution", _resolutions.SelectedItem.ToString());
                 _config.Apply();
                 Close();
             };
@@ -112,14 +113,14 @@ namespace Peacenet.Applications
 
             List<SettingGroup> autoGroups = new List<SettingGroup>();
 
-            foreach(var key in _config.Keys)
+            foreach (var key in _config.Keys)
             {
                 string catName = getSettingCategory(key);
                 var group = autoGroups.FirstOrDefault(x => x.Category == catName);
-                if(group==null)
+                if (group == null)
                 {
                     var catdata = getCategory(catName);
-                    if (catdata==null || catdata.show==false)
+                    if (catdata == null || catdata.show == false)
                         continue;
                     group = new SettingGroup
                     {
@@ -131,12 +132,12 @@ namespace Peacenet.Applications
                 }
 
                 var metadata = _settingsData.metadata.FirstOrDefault(x => x.key == key);
-                if(metadata!=null)
+                if (metadata != null)
                     group.AddSetting(createSetting(metadata));
             }
 
             _groups.AddRange(autoGroups);
-            
+
 
             var aboutGroup = new SettingGroup();
             aboutGroup.Category = "About";
@@ -214,17 +215,15 @@ namespace Peacenet.Applications
         /// </summary>
         public void PopulateResolutions()
         {
-            _resolutions.ClearItems();
+            _resolutions.Items.Clear();
             string[] resolutions = _plexgate.GetAvailableResolutions();
             string defres = _plexgate.GetSystemResolution();
             string setres = _config.GetValue("screenResolution", defres);
             foreach (var res in resolutions)
             {
-                var lvitem = new ListViewItem();
-                lvitem.Value = res;
-                _resolutions.AddItem(lvitem);
+                _resolutions.Items.Add(res);
             }
-            _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Items, _resolutions.Items.FirstOrDefault(x => x.Value == setres));
+            _resolutions.SelectedIndex = Array.IndexOf(_resolutions.Items.ToArray(), _resolutions.Items.FirstOrDefault(x => x.ToString() == setres));
         }
 
         /// <inheritdoc/>
@@ -233,9 +232,9 @@ namespace Peacenet.Applications
             _resolutionScroller.X = 15;
             _resolutionScroller.Y = 15;
             _resolutions.Width = (Width - 30) / 3;
+            _resolutions.AutoSize = true;
             _resolutionScroller.Height = (Height - 30);
-            _resolutions.Layout = ListViewLayout.List;
-
+            
             _apply.X = (Width - _apply.Width) - 15;
             _apply.Y = (Height - _apply.Height) - 15;
             _cancel.X = (_apply.X - _cancel.Width) - 5;
@@ -247,13 +246,13 @@ namespace Peacenet.Applications
             _configPanel.Width = (Width - _configView.X) - 15;
             _configView.Height = _cancel.Y - 30;
 
-            if(_needsPopulate)
+            if (_needsPopulate)
             {
                 PopulateResolutions();
                 _needsPopulate = false;
             }
         }
-        
+
         private class SettingGroup : Panel
         {
             private Label _categoryText = null;
@@ -294,12 +293,12 @@ namespace Peacenet.Applications
 
                 int stackY = _description.Y + _description.Height + 10;
 
-                foreach(var setting in _settings)
+                foreach (var setting in _settings)
                 {
                     setting.X = 15;
                     setting.Y = stackY;
                     setting.Width = Width - 30;
-                    stackY += setting.Height+7;
+                    stackY += setting.Height + 7;
                 }
 
                 Height = stackY + 15;
@@ -338,9 +337,9 @@ namespace Peacenet.Applications
         {
             private Label _name = null;
             private Label _description = null;
-            
+
             private ISettingValue _settingValue;
-            
+
 
             public object Value => _settingValue.Value;
 
@@ -358,7 +357,7 @@ namespace Peacenet.Applications
                     {
                         if (_settingValue != null)
                             RemoveChild(_settingValue as Control);
-                            
+
                         _settingValue = value;
                         AddChild(_settingValue as Control);
                     }
@@ -398,7 +397,7 @@ namespace Peacenet.Applications
                 _name.MaxWidth = textWidth;
                 _description.MaxWidth = textWidth;
 
-                if(Math.Max(_name.Height+4+_description.Height, _settingText.Height) == _settingText.Height)
+                if (Math.Max(_name.Height + 4 + _description.Height, _settingText.Height) == _settingText.Height)
                 {
                     _settingText.Y = 5;
                     Height = _settingText.Height + 10;
@@ -505,8 +504,8 @@ namespace Peacenet.Applications
         public bool show { get; set; }
     }
 
-    
-    
+
+
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class SettingValueTypeAttribute : Attribute
     {

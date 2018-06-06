@@ -63,19 +63,6 @@ namespace Peacenet.Missions
 
             SetWindowStyle(WindowStyle.NoBorder);
             Title = "Mission failed.";
-
-            _abandon.Click += (o, a) =>
-            {
-                _save.RestoreSnapshot(_abandonSnap);
-                _restartingMission = false;
-                _closing = true;
-            };
-            _retryMission.Click += (o, a) =>
-            {
-                _save.RestoreSnapshot(_abandonSnap);
-                _restartingMission = true;
-                _closing = true;
-            };
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

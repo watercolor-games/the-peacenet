@@ -75,7 +75,7 @@ namespace Peacenet.GameState
                         uint[] u = new uint[r.ReadInt32()];
                         for (int i = 0; i < u.Length; i++)
                             u[i] = r.ReadUInt32();
-                        _countryTexture = new Texture2D(_plexgate.GraphicsDevice, 512, 512);
+                        _countryTexture = new Texture2D(_GameLoop.GraphicsDevice, 512, 512);
                         _countryTexture.SetData(u);
                         _npcTypeMap = new int[r.ReadInt32()];
                         for (int i = 0; i < _npcTypeMap.Length; i++)
@@ -164,7 +164,7 @@ namespace Peacenet.GameState
                             X = nloc.X,
                             Y = nloc.Y
                         };
-                        _plexgate.Invoke(() =>
+                        _GameLoop.Invoke(() =>
                         {
                             Plex.Objects.Logger.Log($"Spawning {country} NPC '{npcData.Id} at {npcData.MapLocation}");
                             _sentiences.Insert(npcData);
@@ -174,7 +174,7 @@ namespace Peacenet.GameState
                     }
                     else
                     {
-                        _plexgate.Invoke(() =>
+                        _GameLoop.Invoke(() =>
                         {
                             Plex.Objects.Logger.Log("Skipping spawn of NPC '" + npc.Index + ". Factions are NYI.");
                         });
@@ -280,7 +280,7 @@ namespace Peacenet.GameState
         private SaveManager _save = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private OS _os = null;
@@ -329,7 +329,7 @@ namespace Peacenet.GameState
 
         public void EndGame()
         {
-            _plexgate.GetLayer(LayerType.NoDraw).RemoveEntity(this);
+            _GameLoop.GetLayer(LayerType.NoDraw).RemoveEntity(this);
             _fs.SetBackend(null);
             _save.SetBackend(null);
             _saveDB.Shrink();
@@ -377,18 +377,14 @@ namespace Peacenet.GameState
         private LiteCollection<Faction> _factions = null;
         private LiteCollection<Sentience> _sentiences { get; set; }
 
-        public void OnMouseUpdate(MouseState mouse)
-        {
-        }
-
         private const string _seed = "PeacenetSingleplayer";
 
         public void StartGame()
         {
             if (!Directory.Exists(_os.SinglePlayerSaveDirectory))
                 Directory.CreateDirectory(_os.SinglePlayerSaveDirectory);
-            _plexgate.GetLayer(LayerType.NoDraw).AddEntity(this);
-            _fs.SetBackend(_plexgate.New<SinglePlayerFilesystem>());
+            _GameLoop.GetLayer(LayerType.NoDraw).AddEntity(this);
+            _fs.SetBackend(_GameLoop.New<SinglePlayerFilesystem>());
 
             _saveDB = new LiteDatabase(Path.Combine(_os.SinglePlayerSaveDirectory, "savefile.db"));
 
@@ -421,7 +417,7 @@ namespace Peacenet.GameState
                 {
                     using (var s = _saveDB.FileStorage.OpenWrite("levels", "levels"))
                     {
-                        var contentLevels = _plexgate.Content.Load<int[]>("SkillLevels");
+                        var contentLevels = _GameLoop.Content.Load<int[]>("SkillLevels");
                         _levels = contentLevels;
                         string json = JsonConvert.SerializeObject(_levels);
                         byte[] data = Encoding.UTF8.GetBytes(json);
@@ -469,7 +465,7 @@ namespace Peacenet.GameState
                     var densityMap = npc.GenerateDensityMap();
                     var typeMap = npc.GetTypeMap(densityMap);
 
-                    _plexgate.Invoke(() =>
+                    _GameLoop.Invoke(() =>
                     {
                         using (var s = _saveDB.FileStorage.OpenWrite($"{CurrentCountry.ToString().ToLower()}_terrain", $"{CurrentCountry.ToString().ToLower()}_terrain"))
                         {

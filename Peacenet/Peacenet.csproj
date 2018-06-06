@@ -67,21 +67,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppLauncherManager.cs" />
-    <Compile Include="Applications\Appearance.cs" />
-    <Compile Include="Applications\Calculator.cs" />
     <Compile Include="Applications\Clock.cs" />
-    <Compile Include="Applications\CutscenePlayer.cs" />
-    <Compile Include="Applications\DesktopPanelSettings.cs" />
     <Compile Include="Applications\EmailViewer.cs" />
-    <Compile Include="Applications\FileManager.cs" />
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
-    <Compile Include="Applications\MissionMenu.cs" />
     <Compile Include="Applications\ScreenScaleSetter.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
-    <Compile Include="Applications\TextEditorApp.cs" />
-    <Compile Include="Applications\ThemeChooser.cs" />
     <Compile Include="Applications\WorldMap.cs" />
     <Compile Include="CoreUtils\date.cs" />
     <Compile Include="CoreUtils\echo.cs" />
@@ -147,10 +139,7 @@
     <Compile Include="TerminalCommands\UpgradeManager.cs" />
     <Compile Include="TerminalManager.cs" />
     <Compile Include="ThemeConfigurationCommand.cs" />
-    <Compile Include="Tutorial\PeacegateSetup.cs" />
-    <Compile Include="Applications\ImageViewer.cs" />
     <Compile Include="TerminalCommands\ImportCommand.cs" />
-    <Compile Include="Applications\KnowledgeInput.cs" />
     <Compile Include="Applications\FrameWatchTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -646,6 +635,7 @@
     <Folder Include="GovernmentAlert\" />
     <Folder Include="Missions\Prologue\SideMissions\" />
     <Folder Include="Themes\" />
+    <Folder Include="Tutorial\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

@@ -96,12 +96,7 @@ namespace Peacenet.Missions
             _game.State.AddXP(_total);
             _hasNewLevel = _game.State.SkillLevel != level;
             _next.Text = "Continue";
-            _next.Click += (o, a) =>
-            {
-                _state = 9;
-                _next.Enabled = false;
-            };
-
+            
             _avgMedalHead.Opacity = 0;
             _totalXP.Opacity = 0;
             _xpDisplay.Opacity = 0;

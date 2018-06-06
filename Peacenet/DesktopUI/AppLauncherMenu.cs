@@ -63,7 +63,7 @@ namespace Peacenet.DesktopUI
         [Dependency]
         private InfoboxManager _infobox = null;
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
         
         private AppLauncherSectionButton _apps = new AppLauncherSectionButton();
         private AppLauncherSectionButton _computer = new AppLauncherSectionButton();
@@ -244,9 +244,9 @@ namespace Peacenet.DesktopUI
                 shellItem.Description = dir.Path;
                 shellItem.Activated += () =>
                 {
-                    var fm = new FileManager(WindowSystem);
-                    fm.SetCurrentDirectory(dir.Path);
-                    fm.Show();
+//                    var fm = new FileManager(WindowSystem);
+//                    fm.SetCurrentDirectory(dir.Path);
+//                    fm.Show();
                 };
                 _computerStacker.AddChild(shellItem);
             }
@@ -401,7 +401,6 @@ namespace Peacenet.DesktopUI
                 if (_active == value)
                     return;
                 _active = value;
-                Invalidate();
             }
         }
 
@@ -480,7 +479,7 @@ namespace Peacenet.DesktopUI
             }
             else
             {
-                if(LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                if(LeftButtonPressed || _name.LeftButtonPressed || _icon.LeftButtonPressed)
                 {
                     Theme.DrawControlDarkBG(gfx, 0, 0, Width, Height);
                 }
@@ -623,7 +622,7 @@ namespace Peacenet.DesktopUI
             var accent = Theme.GetAccentColor();
             var down = accent.Darken(0.5f);
             var hover = accent.Darken(0.25F);
-            if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _icon.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _name.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed || _description.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (LeftButtonPressed || _icon.LeftButtonPressed || _name.LeftButtonPressed || _description.LeftButtonPressed)
             {
                 gfx.FillRectangle(0, 0, Width, Height, down);
             }

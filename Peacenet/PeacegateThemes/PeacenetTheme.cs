@@ -480,25 +480,16 @@ namespace Peacenet.PeacegateThemes
 
                 if (close.Visible)
                 {
-                    if(close.ContainsMouse)
-                        graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, (isFocused) ? this._getCloseAsset() : _closeinactive); //todo: dynamic accent textures
-                    else
-                        graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, this._close);
+                    graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, this._close);
                 }
                 if (minimize.Visible)
                 {
-                    if (minimize.ContainsMouse)
-                        graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._bStateTextHover, _minimize);
-                    else
-                        graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._bStateTextIdle, _minimize);
+                    graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._bStateTextIdle, _minimize);
 
                 }
                 if (maximize.Visible)
                 {
-                    if (maximize.ContainsMouse)
-                        graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._bStateTextHover, _maximize);
-                    else
-                        graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._bStateTextIdle, _maximize);
+                    graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._bStateTextIdle, _maximize);
                 }
             }
 

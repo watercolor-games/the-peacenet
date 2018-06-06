@@ -28,7 +28,7 @@ namespace Peacenet
         private Dictionary<string, string> _usages = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         /// <inheritdoc/>
         public void Initiate()
@@ -40,7 +40,7 @@ namespace Peacenet
             {
                 if (type.GetCustomAttributes(true).Any(x => x is TerminalSkipAutoloadAttribute))
                     continue;
-                var command = (ITerminalCommand)_plexgate.New(type);
+                var command = (ITerminalCommand)_GameLoop.New(type);
                 Logger.Log($"Found: {command.Name} (from {type.FullName})");
                 //Avoid commands with the same name!
                 if(_localCommands.FirstOrDefault(x=>x.Name == command.Name) != null)
@@ -93,7 +93,7 @@ namespace Peacenet
 
             _localCommands.Add(command);
             Logger.Log("Injecting dependencies for the command...");
-            _plexgate.Inject(command);
+            _GameLoop.Inject(command);
             Logger.Log("Done.");
             Logger.Log("Creating usage string...");
             StringBuilder sb = new StringBuilder();
@@ -392,10 +392,6 @@ namespace Peacenet
         }
 
         public void OnKeyEvent(KeyboardEventArgs e)
-        {
-        }
-
-        public void OnMouseUpdate(MouseState mouse)
         {
         }
 

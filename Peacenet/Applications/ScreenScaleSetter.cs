@@ -28,7 +28,7 @@ namespace Peacenet.Applications
         private float _scale = 0;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
 
         [Dependency]
         private ConfigManager _config = null;
@@ -101,7 +101,7 @@ namespace Peacenet.Applications
 
         public Vector2 GetScaleSize()
         {
-            float scaleHeight = _plexgate.BaseRenderHeight / _scale;
+            float scaleHeight = GameLoop.BaseRenderHeight / _scale;
 
             return new Vector2(_plexgate.AspectRatio * scaleHeight, scaleHeight);
         }
@@ -130,7 +130,7 @@ namespace Peacenet.Applications
                 _scalePreview = new RenderTarget2D(_plexgate.GraphicsDevice, (int)scaleSize.X, (int)scaleSize.Y, false, _plexgate.GraphicsDevice.Adapter.CurrentDisplayMode.Format, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
             }
 
-            _scaleSlider.Text = $"GUI Scale: {Math.Round((float)_plexgate.BaseRenderHeight/_scalePreview.Height, 2)}x";
+            _scaleSlider.Text = $"GUI Scale: {Math.Round((float)GameLoop.BaseRenderHeight/_scalePreview.Height, 2)}x";
 
             _title.MaxWidth = Width / 2;
             _description.MaxWidth = (int)(Width * 0.75);

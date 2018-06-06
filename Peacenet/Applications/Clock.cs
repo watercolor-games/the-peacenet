@@ -71,7 +71,7 @@ namespace Peacenet.Applications
 
 
 
-            Invalidate(true);
+            
         }
 
         protected override void OnPaint(GameTime time, GraphicsContext gfx)

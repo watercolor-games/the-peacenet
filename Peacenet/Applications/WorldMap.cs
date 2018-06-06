@@ -32,29 +32,17 @@ namespace Peacenet.Applications
         [Dependency]
         private GameManager _game = null;
 
-        protected override bool CanBeScrolled => true;
         private bool _panning = false;
         private Vector2 _mouseStart = Vector2.Zero;
 
         private Label _hostname = new Label();
-
-        protected override void OnMouseScroll(int delta)
-        {
-            //The maximum delta value that Peace Engine will give us is 60 units in either direction. Scroll factor will be a percentage value where 100% is 60 units.
-            float scrollFactor = delta / 60F;
-            //Get the new zoom
-            _zoom = MathHelper.Clamp(_zoom + (_zoomIn * scrollFactor), 1 / 16F, 4);
-        }
 
         public WorldMap(WindowSystem _winsys) : base(_winsys)
         {
             SetWindowStyle(WindowStyle.NoBorder);
             _zoom = 1.25f;
             _pan = GetPanFromLocation(_game.State.Player.MapLocation);
-
-            MouseLeftDown += WorldMap_MouseLeftDown;
-            MouseLeftUp += WorldMap_MouseLeftUp;
-
+            
             AddChild(_hostname);
             _hostname.Opacity = 0;
             _hostname.Visible = false;
@@ -77,18 +65,7 @@ namespace Peacenet.Applications
             AddChild(_exit);
         }
 
-        private void WorldMap_MouseLeftUp(object sender, EventArgs e)
-        {
-            _panning = false;
-        }
-
         private string _hostnameText = null;
-
-        private void WorldMap_MouseLeftDown(object sender, EventArgs e)
-        {
-            _panning = true;
-            _mouseStart = new Vector2(MouseX, MouseY);
-        }
 
         private Vector2 GetPanFromLocation(Vector2 loc)
         {
@@ -171,61 +148,6 @@ namespace Peacenet.Applications
 
             _exit.Y = _title.Y + (((_title.Height + _country.Height + 5) - _exit.Height) / 2);
             _exit.X = (Width - _exit.Width) - 15;
-
-            if (_panning)
-            {
-                var mouse = new Vector2(MouseX, MouseY);
-                if (mouse != _mouseStart)
-                {
-                    var diff = mouse - _mouseStart;
-                    _pan += diff / (_zoom * 16);
-                    _mouseStart = mouse;
-                }
-            }
-            else
-            {
-                var mouse = new Vector2(MouseX, MouseY);
-                if (mouse != _mouseStart)
-                {
-                    if (_game.State.CountryTexture == null)
-                        return;
-
-                    float z = _zoom * 16; //add a lot of spacing between entities
-
-                    var terrain = _game.State.CountryTexture;
-                    var terrainStartX = ((Width - (terrain.Width * z)) / 2) + ((_pan.X * z));
-                    var terrainStartY = ((Height - (terrain.Height * z)) / 2) + ((_pan.Y * z));
-                    var terrainWidth = terrain.Width * z;
-                    var terrainHeight = terrain.Height * z;
-
-                    var terrainPos = new Vector2(terrainStartX, terrainStartY);
-
-                    _hover = null;
-
-                    foreach (var sentience in _game.State.SingularSentiences)
-                    {
-                        float radius = _sentienceRadius * _zoom;
-                        var loc = terrainPos + ((sentience.MapLocation * z));
-                        if (loc.X + radius < 0)
-                            continue;
-                        if (loc.X - radius > Width)
-                            continue;
-                        if (loc.Y + radius < 0)
-                            continue;
-                        if (loc.Y - radius > Height)
-                            continue;
-                        var topleft = new Vector2(loc.X - radius, loc.Y - radius);
-                        if(mouse.X >= topleft.X && mouse.X <= topleft.X + (radius*2) && mouse.Y >= topleft.Y && mouse.Y <= topleft.Y + (radius*2))
-                        {
-                            _hostnameText = (string.IsNullOrWhiteSpace(sentience.Hostname)) ? sentience.IPAddress.ToIPv4String() : sentience.Hostname;
-                            _hover = sentience.Id;
-                            break;
-                        }
-                    }
-
-                    _mouseStart = mouse;
-                }
-            }
 
             if(_hover != null)
             {

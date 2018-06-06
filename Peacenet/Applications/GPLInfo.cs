@@ -33,11 +33,7 @@ namespace Peacenet.Applications
             _header.FontStyle = Plex.Engine.Themes.TextFontStyle.Header1;
 
             _close.Text = "Close";
-            _close.Click += (o, a) =>
-            {
-                Close();
-            };
-
+            
             _license.AutoSize = true;
             _license.FontStyle = Plex.Engine.Themes.TextFontStyle.Mono;
 
@@ -45,6 +41,11 @@ namespace Peacenet.Applications
 
             _license.Text = System.IO.File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "License.txt"));
             _panel.AutoSize = true;
+
+            _close.Click += (o, a) =>
+            {
+                Close();
+            };
         }
 
         protected override void OnUpdate(GameTime time)

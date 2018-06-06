@@ -52,7 +52,7 @@ namespace Peacenet
         private Plex.Engine.GraphicsSubsystem.UIManager _ui = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private PeacenetThemeManager _pn = null;

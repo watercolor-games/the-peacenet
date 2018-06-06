@@ -32,7 +32,7 @@ namespace Peacenet
         private HttpServer _callbackSrv = null;
 
         [Dependency]
-        private Plexgate _plebgate = null;
+        private GameLoop _plebgate = null;
 
         [Dependency]
         private ConfigManager _config = null;
@@ -597,7 +597,7 @@ namespace Peacenet
         private ItchOAuthClient _oauth = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         private string _head = "Waiting for itch.io login";
         private string _desc = @"You should see a browser window asking you to log in to itch.io or to authorize The Peacenet to access your account. Log in and authorize The Peacenet to sign in.
@@ -677,7 +677,7 @@ If you don't see a browser window, you may need to press F11 to exit Fullscreen 
             _textHeadAnim = 0;
             _textDescAnim = 0;
             _buttonAnim = 0;
-            _plexgate.GetLayer(LayerType.Foreground).AddEntity(this);
+            _GameLoop.GetLayer(LayerType.Foreground).AddEntity(this);
         }
 
         public void OnGameExit()
@@ -687,23 +687,6 @@ If you don't see a browser window, you may need to press F11 to exit Fullscreen 
 
         public void OnKeyEvent(KeyboardEventArgs e)
         {
-        }
-
-        public void OnMouseUpdate(MouseState mouse)
-        {
-            _buttonHovered = mouse.X >= _button.X && mouse.Y >= _button.Y && mouse.X <= _button.X + _button.Width && mouse.Y <= _button.Y + _button.Height;
-            if(_buttonHovered)
-            {
-                if(_buttonState == ButtonState.Pressed && mouse.LeftButton == ButtonState.Released)
-                {
-                    CancelLogin();
-                }
-                _buttonState = mouse.LeftButton;
-            }
-            else
-            {
-                _buttonState = ButtonState.Released;
-            }
         }
 
         private void CancelLogin()
@@ -761,7 +744,7 @@ If you don't see a browser window, you may need to press F11 to exit Fullscreen 
                         else
                         {
                             _ui.DoInput = true;
-                            _plexgate.GetLayer(LayerType.Foreground).RemoveEntity(this);
+                            _GameLoop.GetLayer(LayerType.Foreground).RemoveEntity(this);
                         }
                     }
                 }

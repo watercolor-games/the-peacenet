@@ -25,7 +25,7 @@ namespace Peacenet.Filesystem
         private IAsyncFSBackend _backend = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         public event Action<string> WriteOperation;
 
@@ -103,7 +103,7 @@ namespace Peacenet.Filesystem
             }
             if (backend != null)
             {
-                _plexgate.Inject(backend);
+                _GameLoop.Inject(backend);
                 _backend = backend;
                 _backend.Initialize();
             }

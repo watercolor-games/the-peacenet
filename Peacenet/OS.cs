@@ -33,7 +33,7 @@ namespace Peacenet
         private SplashScreenComponent _splash = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         private bool _preventStartup = false;
         private Layer _osLayer = new Layer();
@@ -231,7 +231,7 @@ namespace Peacenet
         public IEnumerable<ShellDirectoryInformation> GetShellDirs()
         {
             string uname = (Username != "user") ? Username + "'s" : "Your";
-            yield return new ShellDirectoryInformation($"{uname} Home", "/home", _plexgate.Content.Load<Texture2D>("UIIcons/home"));
+            yield return new ShellDirectoryInformation($"{uname} Home", "/home", _GameLoop.Content.Load<Texture2D>("UIIcons/home"));
             yield return new ShellDirectoryInformation("Desktop", "/home/Desktop", null);
             yield return new ShellDirectoryInformation("Documents", "/home/Documents", null);
             yield return new ShellDirectoryInformation("Downloads", "/home/Downloads", null);
@@ -262,9 +262,9 @@ namespace Peacenet
         private void startBoot()
         {
             updHostname();
-            _osEntity = _plexgate.New<OSEntity>();
+            _osEntity = _GameLoop.New<OSEntity>();
             _osEntity.SessionStarted += () => SessionStart?.Invoke();
-            _plexgate.GetLayer(LayerType.Main).AddEntity(_osEntity);
+            _GameLoop.GetLayer(LayerType.Main).AddEntity(_osEntity);
         }
 
 

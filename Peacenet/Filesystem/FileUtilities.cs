@@ -15,7 +15,7 @@ namespace Peacenet.Filesystem
         private List<IFileHandler> _handlers = new List<IFileHandler>();
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private FSManager _fs = null;
@@ -27,7 +27,7 @@ namespace Peacenet.Filesystem
         {
             foreach(var type in ReflectMan.Types.Where(x=>x.GetInterfaces().Contains(typeof(IFileHandler))))
             {
-                var obj = (IFileHandler)_plexgate.New(type);
+                var obj = (IFileHandler)_GameLoop.New(type);
                 Logger.Log($"Found {obj.Name} file handler from {type.FullName}. Handles the following MIME types:");
                 foreach (var mtype in obj.MimeTypes)
                     Logger.Log($" - {mtype}");

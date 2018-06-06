@@ -30,7 +30,7 @@ namespace Peacenet
     public class SplashScreenComponent : IEngineComponent, ILoadable
     {
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private ThemeManager _theme = null;
@@ -48,11 +48,11 @@ namespace Peacenet
         public void Initiate()
         {
             Logger.Log("Peacenet is loading its theme now!");
-            _theme.Theme = _plexgate.New<PeacenetTheme>();
+            _theme.Theme = _GameLoop.New<PeacenetTheme>();
             Logger.Log("And now for the save backend.");
             
 #if DEBUG
-            _plexgate.GetLayer(LayerType.NoDraw).AddEntity(_plexgate.New<DebugEntity>());
+            _GameLoop.GetLayer(LayerType.NoDraw).AddEntity(_GameLoop.New<DebugEntity>());
 #endif
 
 
@@ -68,16 +68,16 @@ namespace Peacenet
             float renderScale = _config.GetValue<float>("renderScale", 0);
             if (renderScale == 0)
             {
-                renderScale = (_plexgate.GetRenderScreenSize().Y / _plexgate.BackBufferHeight);
+                renderScale = (_GameLoop.GetRenderScreenSize().Y / _GameLoop.BackBufferHeight);
                 _config.SetValue("renderScale", renderScale);
-                _plexgate.RenderScale = renderScale;
+                _GameLoop.RenderScale = renderScale;
 
                 var screenScaleSetter = new Applications.ScreenScaleSetter(_winsys, (scale) =>
                 {
                     _config.SetValue("renderScale", scale);
                     _config.SaveToDisk();
-                    _plexgate.RenderScale = scale;
-                    splash = (_plexgate.New<SplashEntity>());
+                    _GameLoop.RenderScale = scale;
+                    splash = (_GameLoop.New<SplashEntity>());
                     MakeVisible();
                 });
                 screenScaleSetter.Show();
@@ -85,8 +85,8 @@ namespace Peacenet
             }
             else
             {
-                _plexgate.RenderScale = renderScale;
-                splash = (_plexgate.New<SplashEntity>());
+                _GameLoop.RenderScale = renderScale;
+                splash = (_GameLoop.New<SplashEntity>());
                 MakeVisible();
             }
         }
@@ -96,7 +96,7 @@ namespace Peacenet
         /// </summary>
         public void Reset()
         {
-            splash = _plexgate.New<SplashEntity>();
+            splash = _GameLoop.New<SplashEntity>();
             MakeVisible();
         }
 
@@ -105,7 +105,7 @@ namespace Peacenet
         /// </summary>
         public void MakeVisible()
         {
-            _plexgate.GetLayer(LayerType.UserInterface).AddEntity(splash);
+            _GameLoop.GetLayer(LayerType.UserInterface).AddEntity(splash);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Peacenet
         /// </summary>
         public void MakeHidden()
         {
-            _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(splash);
+            _GameLoop.GetLayer(LayerType.UserInterface).RemoveEntity(splash);
         }
 
     }
@@ -134,11 +134,6 @@ namespace Peacenet
 
         public void OnKeyEvent(KeyboardEventArgs e)
         {
-            if(e.Key == Keys.F7)
-            {
-                var player = new Applications.CutscenePlayer(_winsys);
-                player.Show();
-            }
         }
 
         public void OnMouseUpdate(MouseState mouse)

@@ -18,7 +18,7 @@ namespace Peacenet
         private PeacenetAccentColor _accent = PeacenetAccentColor.Blueberry;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         private PanelTheme _panelTheme = null;
         private List<PanelTheme> _panelThemes = null;
@@ -88,7 +88,7 @@ namespace Peacenet
                     if(!string.IsNullOrWhiteSpace(attribute.PreviewTexture))
                     {
                         Logger.Log($"Loading preview texture for theme {attribute.Name} ({attribute.PreviewTexture})");
-                        preview = _plexgate.Content.Load<Texture2D>(attribute.PreviewTexture);
+                        preview = _GameLoop.Content.Load<Texture2D>(attribute.PreviewTexture);
                     }
 
                     _themes.Add(new ThemeInfo
@@ -103,9 +103,9 @@ namespace Peacenet
 
             foreach (var type in ReflectMan.Types.Where(x => x.Inherits(typeof(PanelTheme))))
             {
-                _panelThemes.Add((PanelTheme)_plexgate.New(type));
+                _panelThemes.Add((PanelTheme)_GameLoop.New(type));
             }
-            _panelTheme = _plexgate.New<WindowTheme>();
+            _panelTheme = _GameLoop.New<WindowTheme>();
 
         }
     }

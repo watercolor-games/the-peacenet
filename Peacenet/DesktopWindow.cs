@@ -68,12 +68,10 @@ namespace Peacenet
 
         private Hitbox _objectiveHitbox = new Hitbox();
         private HorizontalStacker _notificationTray = new HorizontalStacker();
-        private ContextMenu _desktopRightClick = null;
         private Label _notificationTitle = new Label();
         private Label _notificationDescription = new Label();
         private PictureBox _showDesktopIcon = new PictureBox();
         private DesktopPanelItemGroup _windowList = new DesktopPanelItemGroup();
-        private ListView _desktopIconsView = null;
         private AppLauncherMenu _applauncher = null;
 
         private Hitbox _topPanel = new Hitbox();
@@ -96,7 +94,7 @@ namespace Peacenet
         private MissionManager _mission = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _plexgate = null;
 
         [Dependency]
         private PeacenetThemeManager _pn = null;
@@ -222,41 +220,6 @@ namespace Peacenet
             }
         }
 
-
-        /// <summary>
-        /// Repopulates the desktop icon list view.
-        /// </summary>
-        private void SetupIcons()
-        {
-            _desktopIconsView.ClearItems();
-            if (!_fs.DirectoryExists("/home/Desktop"))
-                _fs.CreateDirectory("/home/Desktop");
-            foreach (var dir in _fs.GetDirectories("/home/Desktop"))
-            {
-                if (_futils.GetNameFromPath(dir).StartsWith("."))
-                    continue;
-                var diritem = new ListViewItem();
-                diritem.Tag = dir;
-                diritem.Value = _futils.GetNameFromPath(dir);
-                diritem.ImageKey = "folder";
-                _desktopIconsView.AddItem(diritem);
-            }
-            foreach (var dir in _fs.GetFiles("/home/Desktop"))
-            {
-                if (_futils.GetNameFromPath(dir).StartsWith("."))
-                    continue;
-                var diritem = new ListViewItem();
-                diritem.Tag = dir;
-                diritem.Value = _futils.GetNameFromPath(dir);
-                diritem.ImageKey = _futils.GetMimeType(dir);
-                if (_desktopIconsView.GetImage(diritem.ImageKey) == null)
-                {
-                    _desktopIconsView.SetImage(diritem.ImageKey, _futils.GetMimeIcon(diritem.ImageKey));
-                }
-                _desktopIconsView.AddItem(diritem);
-            }
-        }
-
         private void WindowSystemUpdated(object o, EventArgs a)
         {
             ResetWindowList((WindowSystem)o);
@@ -276,107 +239,7 @@ namespace Peacenet
                 _save.SetValue("desktop.wallpaper", wallpaperId);
                 _wallpaper = _plexgate.Content.Load<Texture2D>("Desktop/" + wallpaperId);
             }
-            Invalidate(true);
         }
-
-        private void _desktopIconsView_ItemClicked(ListViewItem obj)
-        {
-            if (_fs.DirectoryExists(obj.Tag.ToString()))
-            {
-                var browser = new Applications.FileManager(WindowSystem);
-                browser.SetCurrentDirectory(obj.Tag.ToString());
-                browser.Show();
-            }
-            else
-            {
-                if (!_utils.OpenFile(obj.Tag.ToString()))
-                {
-                    _infobox.Show("Can't open file", "File Manager couldn't find a program that can open that file!");
-                }
-            }
-        }
-
-
-        private void Desktop_RightClick(object sender, EventArgs e)
-        {
-            _desktopRightClick.ClearItems();
-            var newFolder = new MenuItem
-            {
-                Text = "New Folder..."
-            };
-            newFolder.Activated += () =>
-            {
-                string folderPath = "/home/Desktop";
-                _infobox.PromptText("New folder", "Please enter a name for your new folder.", (name) =>
-                {
-                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + name : folderPath + "/" + name;
-                    _fs.CreateDirectory(fullPath);
-                }, (proposedName) =>
-                {
-                    if (string.IsNullOrWhiteSpace(proposedName))
-                    {
-                        _infobox.Show("New folder", "Your folder's name must not be blank.");
-                        return false;
-                    }
-
-                    foreach (char c in proposedName)
-                    {
-                        if (char.IsLetterOrDigit(c))
-                            continue;
-                        if (c == '_' || c == ' ' || c == '-' || c == '.')
-                            continue;
-                        _infobox.Show("Invalid path character", "Your new folder's name contains an invalid character. Valid characters include any letter or number as well as '.', '_', '-' or a space.");
-                        return false;
-                    }
-
-                    string fullPath = (folderPath.EndsWith("/")) ? folderPath + proposedName : folderPath + "/" + proposedName;
-                    if (_fs.DirectoryExists(fullPath) || _fs.FileExists(fullPath))
-                    {
-                        _infobox.Show("New folder", "A folder or file already exists with that name.");
-                        return false;
-                    }
-
-                    return true;
-                });
-
-            };
-            var changeDesktopBackground = new MenuItem
-            {
-                Text = "Change Desktop Background..."
-            };
-            changeDesktopBackground.Activated += () =>
-            {
-                var appearance = new Applications.Appearance(WindowSystem);
-                appearance.Show();
-            };
-            _desktopRightClick.AddItem(newFolder);
-            if (_desktopIconsView.SelectedItem != null)
-            {
-                var path = _desktopIconsView.SelectedItem.Tag.ToString();
-                var name = _desktopIconsView.SelectedItem.Value;
-
-                var delete = new MenuItem
-                {
-                    Text = (_fs.DirectoryExists(path)) ? "Delete folder" : "Delete file"
-                };
-                delete.Activated += () =>
-                {
-                    _infobox.ShowYesNo(delete.Text, "Are you sure you want to delete \"" + path + "\"?", (answer) =>
-                    {
-                        if (answer)
-                        {
-                            _fs.Delete(path);
-                        }
-                    });
-                };
-                _desktopRightClick.AddItem(delete);
-            }
-            _desktopRightClick.AddItem(changeDesktopBackground);
-
-            _desktopRightClick.Show(MouseX, MouseY);
-
-        }
-
 
         #endregion
 
@@ -400,8 +263,6 @@ namespace Peacenet
             _iconEmailUnread = _plexgate.Content.Load<Texture2D>("UIIcons/NotificationTray/EmailUnread");
 
 
-            _desktopRightClick = new ContextMenu(_winsys);
-
             _noteSound = _plexgate.Content.Load<SoundEffect>("SFX/DesktopNotification");
 
             _applauncher = new AppLauncherMenu(_winsys, this);
@@ -415,18 +276,7 @@ namespace Peacenet
             
             ResetWindowList(_winsys);
             _winsys.WindowListUpdated += WindowSystemUpdated;
-            _desktopIconsView = new ListView();
-            AddChild(_desktopIconsView);
-            _desktopIconsView.IconFlow = IconFlowDirection.TopDown;
-
-            _desktopIconsView.ItemClicked += _desktopIconsView_ItemClicked;
-            _desktopIconsView.SetImage("folder", _plexgate.Content.Load<Texture2D>("UIIcons/folder"));
             
-            RightClick += Desktop_RightClick;
-            _desktopIconsView.RightClick += Desktop_RightClick;
-
-
-
             _hbTime.Click += (o, a) =>
             {
                 var clock = new Applications.Clock(WindowSystem);
@@ -601,11 +451,9 @@ namespace Peacenet
                         _notificationAnimState++;
                         _notificationRide = 0;
                     }
-                    Invalidate(true);
                     break;
                 case 1:
                     _notificationRide += time.ElapsedGameTime.TotalSeconds;
-                    Invalidate(true);
                     if(_notificationRide>=5)
                     {
                         _notificationAnimState++;
@@ -619,7 +467,6 @@ namespace Peacenet
                         _notificationAnimState = -1;
                         _notificationRide = 0;
                     }
-                    Invalidate(true);
                     break;
             }
            Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
@@ -665,17 +512,9 @@ namespace Peacenet
             _windowList.X = _showDesktopIcon.X + _showDesktopIcon.Width + 2;
             _windowList.Width = _bottomPanel.Width - _windowList.X;
 
-            _desktopIconsView.X = 0;
-            _desktopIconsView.Y = _topPanel.Y + _topPanel.Height;
-            _desktopIconsView.Height = _bottomPanel.Y - _desktopIconsView.Y;
-
+            
 //            if (_server.Connected)
 //            {
-                if (_needsDesktopReset)
-                {
-                    SetupIcons();
-                    _needsDesktopReset = false;
-                }
             //            }
             //            else
             //            {
@@ -833,7 +672,7 @@ namespace Peacenet
                     var alState = UIButtonState.Idle;
                     if (_applauncherHitbox.ContainsMouse)
                         alState = UIButtonState.Hover;
-                    if (_applauncherHitbox.LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                    if (_applauncherHitbox.LeftButtonPressed)
                         alState = UIButtonState.Pressed;
                     _pn.PanelTheme.DrawAppLauncher(gfx, _applauncherHitbox.Bounds, alState);
                 }
@@ -1072,7 +911,7 @@ namespace Peacenet
             var state = Plex.Engine.Themes.UIButtonState.Idle;
             if (ContainsMouse)
                 state = Plex.Engine.Themes.UIButtonState.Hover;
-            if (LeftMouseState == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (LeftButtonPressed)
                 state = Plex.Engine.Themes.UIButtonState.Pressed;
 
             var winState = PanelButtonState.Default;

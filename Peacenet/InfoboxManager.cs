@@ -73,7 +73,7 @@ namespace Peacenet
         private TextBox _inputBox = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         /// <inheritdoc/>
         public Infobox(WindowSystem _winsys) : base(_winsys)
@@ -95,11 +95,11 @@ namespace Peacenet
             _picture.Width = 64;
             _picture.Height = 64;
             SetWindowStyle(WindowStyle.DialogNoDrag);
-            _picture.Texture = _plexgate.Content.Load<Texture2D>("Infobox/warning");
+            _picture.Texture = _GameLoop.Content.Load<Texture2D>("Infobox/warning");
             _inputBox = new TextBox();
             AddChild(_inputBox);
 
-            _messageLabel.MaxWidth = _plexgate.GameRenderTarget.Width / 2;
+            _messageLabel.MaxWidth = _GameLoop.GameRenderTarget.Width / 2;
         }
 
         private Action _okCallback = null;
@@ -113,12 +113,6 @@ namespace Peacenet
         /// <param name="callback">A callback to run when the infobox closes</param>
         public void Show(string title, string message, Action callback = null)
         {
-            _ok.Click += (o, a) =>
-            {
-                _doneCallbacks = true;
-                callback?.Invoke();
-                Close();
-            };
             _okCallback = callback;
             _yes.Visible = false;
             _no.Visible = false;
@@ -137,18 +131,6 @@ namespace Peacenet
         /// <param name="callback">A callback to run when the player chooses their answer.</param>
         public void ShowYesNo(string title, string message, Action<bool> callback = null)
         {
-            _yes.Click += (o, a) =>
-            {
-                _doneCallbacks = true;
-                callback?.Invoke(true);
-                Close();
-            };
-            _no.Click += (o, a) =>
-            {
-                _doneCallbacks = true;
-                callback?.Invoke(false);
-                Close();
-            };
             _yesNoCallback = callback;
             _yes.Visible = true;
             _no.Visible = true;
@@ -183,14 +165,6 @@ namespace Peacenet
         {
             if (validator == null)
                 validator = (value) => { return true; };
-            _ok.Click += (o, a) =>
-            {
-                if (validator.Invoke(_inputBox.Text) == true)
-                {
-                    callback?.Invoke(_inputBox.Text);
-                    Close();
-                }
-            };
             _yes.Visible = false;
             _no.Visible = false;
             _inputBox.Visible = true;

@@ -46,7 +46,7 @@ namespace Peacenet
             {
 
 #endif
-            using (var game = new Plexgate(args))
+            using (var game = new GameLoop(args))
                 game.Run();
 #if !DEBUG
         }

@@ -30,7 +30,7 @@ namespace Peacenet
     public class OSEntity : IEntity, ILoadable, IDisposable
     {
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         public event Action SessionStarted;
 
@@ -141,21 +141,11 @@ namespace Peacenet
                     var term = new Applications.Terminal(_winmgr);
                     term.Show();
                 }
-                if (e.Key == Keys.F6)
-                {
-                    var missionMenu = new MissionMenu(_winmgr);
-                    missionMenu.Show();
-                }
             }
         }
 
         [Dependency]
         private WindowSystem _windowSystem = null;
-
-        /// <inheritdoc/>
-        public void OnMouseUpdate(MouseState mouse)
-        {
-        }
 
         /// <inheritdoc/>
         public void Update(GameTime time)
@@ -189,7 +179,7 @@ namespace Peacenet
         public void Load(ContentManager content)
         {
             _osIntroState = 0;
-            if (_plexgate.QuietMode)
+            if (_GameLoop.QuietMode)
             {
                 _osIntroState = 2;
                 _term.RunCommand("init", _term.CreateContext(StreamWriter.Null, StreamReader.Null));

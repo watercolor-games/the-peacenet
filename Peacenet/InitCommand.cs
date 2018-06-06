@@ -60,7 +60,7 @@ namespace Peacenet
         }
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private ItchOAuthClient _api = null;
@@ -219,7 +219,7 @@ namespace Peacenet
                     int len = 52;
                     for (int i = 0; i <= pkg.Length; i++)
                     {
-                        if(i > 0)
+                        if (i > 0)
                         {
                             console.Write("\b".Repeat(len));
                         }
@@ -238,7 +238,7 @@ namespace Peacenet
                 console.WriteNPCChat("kernel", "Core installation complete.");
                 console.WriteNPCChat("kernel", "Users with interactive Peacegate access must be familiar with the command-line.");
                 console.WriteNPCChat("kernel", "To further prove your interactivity level, show a list of commands.");
-                var shell = _plexgate.New<ShellCommand>();
+                var shell = _GameLoop.New<ShellCommand>();
                 shell.AllowExit = false;
                 shell.CommandRun = (cmd) =>
                 {
@@ -275,8 +275,7 @@ namespace Peacenet
 
 
                 tutorial.Next = 2;
-                _os.PreventStartup = true;
-                new Tutorial.PeacegateSetup(_winsys, tutorial).Show(0, 0);
+                _os.PreventStartup = false;
             }
             else
             {
@@ -466,11 +465,6 @@ namespace Peacenet
         }
 
         /// <inheritdoc/>
-        public void OnMouseUpdate(MouseState mouse)
-        {
-        }
-
-        /// <inheritdoc/>
         public void Update(GameTime time)
         {
             switch(_animState)
@@ -564,10 +558,7 @@ namespace Peacenet
             _tutorialDescription.AutoSize = true;
             _tutorialLabel.FontStyle = TextFontStyle.Header1;
 
-            _tutorialButton.Click += (o, a) =>
-            {
-                _tutorialStage++;
-            };
+            
         }
 
         /// <inheritdoc/>
@@ -580,16 +571,11 @@ namespace Peacenet
         {
         }
 
-        /// <inheritdoc/>
-        public void OnMouseUpdate(MouseState mouse)
-        {
-        }
-
         [Dependency]
         private SaveManager _save = null;
 
         [Dependency]
-        private Plexgate _plexgate = null;
+        private GameLoop _GameLoop = null;
 
         [Dependency]
         private GameManager _game = null;
@@ -825,7 +811,7 @@ namespace Peacenet
                         _hitbox.Dispose();
                         _tutorialButton.Dispose();
                         _game.State.TutorialCompleted = true;
-                        _plexgate.GetLayer(LayerType.UserInterface).RemoveEntity(this);
+                        _GameLoop.GetLayer(LayerType.UserInterface).RemoveEntity(this);
                         this._music.StopNext();
                         _tutorialStage++;
                         break;
@@ -866,7 +852,7 @@ namespace Peacenet
             {
                 case 0:
                     _colorFade += (float)time.ElapsedGameTime.TotalSeconds;
-                    Invalidate(true);
+                    
                     if(_colorFade >= 1)
                     {
                         _colorFade = 1;
@@ -875,7 +861,7 @@ namespace Peacenet
                     break;
                 case 1:
                     _colorFade -= (float)time.ElapsedGameTime.TotalSeconds;
-                    Invalidate(true);
+                    
                     if (_colorFade <= 0)
                     {
                         _colorFade = 0;

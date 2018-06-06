@@ -109,10 +109,6 @@ namespace Peacenet.RichPresence
             {
             }
 
-            public void OnMouseUpdate(MouseState mouse)
-            {
-            }
-
             public void Update(GameTime time)
             {
                 if(_lastPresence != _rpcMod._presence)
@@ -125,7 +121,7 @@ namespace Peacenet.RichPresence
         }
 
         [Dependency]
-        private Plexgate _plebgate = null;
+        private GameLoop _plebgate = null;
 
         /// <inheritdoc/>
         public void Initiate()
