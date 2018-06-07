@@ -66,7 +66,7 @@ namespace Peacenet.PeacegateThemes
 
             if(showImage)
             {
-                gfx.FillRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, fg, image);
+                gfx.FillRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
 
             gfx.DrawString(text, new Vector2(textRect.X, textRect.Y), fg, GetFont(TextFontStyle.Highlight), TextAlignment.Left, textRect.Width, WrapMode.Words);
@@ -86,8 +86,8 @@ namespace Peacenet.PeacegateThemes
             gfx.FillRectangle(x, y, width, height, Color.Black);
             gfx.FillRectangle(x+2, y+2, width - 4, height - 4, bg);
 
-            if(isChecked)
-                gfx.FillRectangle(x+2, y+2, width-4, height-4, fg, _check);
+            if (isChecked)
+                gfx.FillRectangle(x + 2, y + 2, width - 4, height - 4, _check, fg);
 
         }
 
@@ -133,25 +133,25 @@ namespace Peacenet.PeacegateThemes
 
         public override void DrawWindowBorder(GraphicsContext graphics, string titletext, Hitbox leftBorder, Hitbox rightBorder, Hitbox bottomBorder, Hitbox leftCorner, Hitbox rightCorner, Hitbox title, Hitbox close, Hitbox minimize, Hitbox maximize, bool isFocused)
         {
-            graphics.FillRectangle(title.X, title.Y, _titlebarleft.Width, title.Height, _titlebarleft);
-            graphics.FillRectangle(title.X + (title.Width - _titlebarright.Width), title.Y, _titlebarright.Width, title.Height, _titlebarright);
-            graphics.FillRectangle(title.X + _titlebarleft.Width, title.Y, (title.Width - _titlebarleft.Width) - _titlebarright.Width, title.Height, _titlebar);
+            graphics.FillRectangle(title.X, title.Y, _titlebarleft.Width, title.Height, _titlebarleft, Color.White);
+            graphics.FillRectangle(title.X + (title.Width - _titlebarright.Width), title.Y, _titlebarright.Width, title.Height, _titlebarright, Color.White);
+            graphics.FillRectangle(title.X + _titlebarleft.Width, title.Y, (title.Width - _titlebarleft.Width) - _titlebarright.Width, title.Height, _titlebar, Color.White);
 
-            graphics.FillRectangle(leftBorder.X, leftBorder.Y, 5, leftBorder.Height, _borderleft);
-            graphics.FillRectangle(rightBorder.X, rightBorder.Y, 5, rightBorder.Height, _borderright);
-            graphics.FillRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, 5, _borderbottom);
+            graphics.FillRectangle(leftBorder.X, leftBorder.Y, 5, leftBorder.Height, _borderleft, Color.White);
+            graphics.FillRectangle(rightBorder.X, rightBorder.Y, 5, rightBorder.Height, _borderright, Color.White);
+            graphics.FillRectangle(bottomBorder.X, bottomBorder.Y, bottomBorder.Width, 5, _borderbottom, Color.White);
 
-            graphics.FillRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, _cornerleft);
-            graphics.FillRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, _cornerright);
+            graphics.FillRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, _cornerleft, Color.White);
+            graphics.FillRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, _cornerright, Color.White);
 
             graphics.DrawString(titletext, new Vector2(26, 3), Color.White, GetFont(TextFontStyle.Highlight), TextAlignment.Left);
 
             if(close.Visible)
-                graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, _close);
+                graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, _close, Color.White);
             if(minimize.Visible)
-                graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize);
-            if(maximize.Visible)
-                graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize);
+                graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize, Color.White);
+            if (maximize.Visible)
+                graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize, Color.White);
 
 
         }

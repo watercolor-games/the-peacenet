@@ -198,7 +198,7 @@ namespace Peacenet.Applications
             Theme.DrawControlDarkBG(gfx, 0, 0, Width, _title.Y + _title.Height + 30);
             Theme.DrawControlDarkBG(gfx, 0, _description.Y - 30, Width, Height - (_description.Y - 30));
 
-            gfx.FillRectangle(Vector2.Zero, new Vector2(Width, Height), _scalePreview);
+            gfx.FillRectangle(Vector2.Zero, new Vector2(Width, Height), _scalePreview, Color.White);
         }
     }
 }

@@ -86,7 +86,7 @@ namespace Peacenet.Cutscenes
                 }
             }
 
-            gfx.FillRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, Color.White * _peacenetOpacity, _peacenet);
+            gfx.FillRectangle((_ui.ScreenWidth - _peacenet.Width) / 2, (_ui.ScreenHeight - _peacenet.Height) / 2, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetOpacity);
 
             string thanksText = "Thanks for playing.";
             var thanksMeasure = head1.MeasureString(thanksText);

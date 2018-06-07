@@ -39,17 +39,17 @@ namespace Peacenet.PeacegateThemes.PanelThemes
 
         public override void DrawAppLauncher(GraphicsContext gfx, Rectangle rect, UIButtonState state)
         {
-            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _appBG);
+            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _appBG, Color.White);
         }
 
         public override void DrawPanel(GraphicsContext gfx, Rectangle rect)
         {
-            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _panelBG);
+            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _panelBG, Color.White);
         }
 
         public override void DrawPanelButton(GraphicsContext gfx, Rectangle rect, PanelButtonState state, UIButtonState mouseState, string text)
         {
-            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _buttonBG);
+            gfx.FillRectangle(rect.X, rect.Y, rect.Width, rect.Height, _buttonBG, Color.White);
 
             var measure = _theme.Theme.GetFont(TextFontStyle.System).MeasureString(text);
             gfx.DrawString(text, new Vector2(rect.X + 22, rect.Y + ((rect.Height - measure.Y) / 2)), Color.White, _theme.Theme.GetFont(TextFontStyle.System), TextAlignment.Left, rect.Width, WrapMode.None);

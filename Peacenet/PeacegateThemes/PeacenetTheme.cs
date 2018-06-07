@@ -201,7 +201,7 @@ namespace Peacenet.PeacegateThemes
                     cstate = _bStateTextPressed;
                     break;
             }
-            gfx.FillRectangle(x, y, width, height, cstate, arrow, ImageLayout.Zoom);
+            gfx.FillRectangle(x, y, width, height, arrow, cstate, ImageLayout.Zoom);
         }
 
         /// <inheritdoc/>
@@ -226,7 +226,7 @@ namespace Peacenet.PeacegateThemes
 
             if (showImage)
             {
-                gfx.FillRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, fg, image);
+                gfx.FillRectangle(imageRect.X, imageRect.Y, imageRect.Width, imageRect.Height, image, fg);
             }
             gfx.DrawString(text, textRect.X, textRect.Y, fg, _highlight, TextAlignment.Left, textRect.Width, Plex.Engine.TextRenderers.WrapMode.Words);
         }
@@ -242,7 +242,7 @@ namespace Peacenet.PeacegateThemes
             gfx.FillRectangle(x + 2, y + 2, width - 4, height - 4, bg);
 
             if(isChecked)
-            gfx.FillRectangle(x+2, y+2, width-4, height-4, fg, _check, ImageLayout.Zoom);
+            gfx.FillRectangle(x+2, y+2, width-4, height-4, _check, fg, ImageLayout.Zoom);
         }
 
         /// <inheritdoc/>
@@ -469,8 +469,8 @@ namespace Peacenet.PeacegateThemes
             if (title.Visible)
             {
                 //The background.
-                graphics.FillRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, ImageLayout.Stretch);
-                graphics.FillRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar);
+                graphics.FillRectangle(title.X, title.Y, leftlime.Width, title.Height, (isFocused) ? _getLeftAsset() : leftinactive, Color.White, ImageLayout.Stretch);
+                graphics.FillRectangle(title.X + leftlime.Width, title.Y, title.Width - leftlime.Width, title.Height, bar, Color.White);
                 //Now the text.
                 var titleTextMeasure = TextRenderer.MeasureText(titletext, _titleFont, title.Width, Plex.Engine.TextRenderers.WrapMode.None);
                 int _textX = 50;
@@ -480,16 +480,19 @@ namespace Peacenet.PeacegateThemes
 
                 if (close.Visible)
                 {
-                    graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, this._close);
+                    if (close.ContainsMouse)
+                        graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, this._getCloseAsset(), Color.White);
+                    else
+                        graphics.FillRectangle(close.X, close.Y, close.Width, close.Height, this._close, Color.White);
                 }
                 if (minimize.Visible)
                 {
-                    graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, this._bStateTextIdle, _minimize);
+                    graphics.FillRectangle(minimize.X, minimize.Y, minimize.Width, minimize.Height, _minimize, Color.White);
 
                 }
                 if (maximize.Visible)
                 {
-                    graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, this._bStateTextIdle, _maximize);
+                    graphics.FillRectangle(maximize.X, maximize.Y, maximize.Width, maximize.Height, _maximize, Color.White);
                 }
             }
 
@@ -497,10 +500,10 @@ namespace Peacenet.PeacegateThemes
             if (leftBorder.Visible)
             {
                 graphics.FillRectangle(leftBorder.X, leftBorder.Y, leftBorder.Width, leftBorder.Height, accent);
-                graphics.FillRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, bar);
-                graphics.FillRectangle(bottomBorder.X, bottomBorder.Y, _getLeftAsset().Width, bottomBorder.Height, (isFocused) ? _getLeftAsset() : leftinactive);
-                graphics.FillRectangle(bottomBorder.X+_getLeftAsset().Width, bottomBorder.Y, bottomBorder.Width-_getLeftAsset().Width, bottomBorder.Height, bar);
-                graphics.FillRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, bar);
+                graphics.FillRectangle(rightBorder.X, rightBorder.Y, rightBorder.Width, rightBorder.Height, bar, Color.White);
+                graphics.FillRectangle(bottomBorder.X, bottomBorder.Y, _getLeftAsset().Width, bottomBorder.Height, (isFocused) ? _getLeftAsset() : leftinactive, Color.White);
+                graphics.FillRectangle(bottomBorder.X+_getLeftAsset().Width, bottomBorder.Y, bottomBorder.Width-_getLeftAsset().Width, bottomBorder.Height, bar, Color.White);
+                graphics.FillRectangle(rightCorner.X, rightCorner.Y, rightCorner.Width, rightCorner.Height, bar, Color.White);
                 graphics.FillRectangle(leftCorner.X, leftCorner.Y, leftCorner.Width, leftCorner.Height, accent);
 
             }

@@ -1227,7 +1227,7 @@ namespace Peacenet.MainMenu
             //gfx.Batch.Draw(_wall, new Rectangle((gfx.Width - (int)wallWidth) / 2, (gfx.Height - (int)wallHeight) / 2, (int)wallWidth, (int)wallHeight), Color.White * _wallFade);
             if (!IsSettingsOpen)
             {
-                gfx.FillRectangle(peacenetX, peacenetY, _peacenet.Width, _peacenet.Height, Color.White * _peacenetFade, _peacenet);
+                gfx.FillRectangle(peacenetX, peacenetY, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetFade);
                 gfx.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
             }
             gfx.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);

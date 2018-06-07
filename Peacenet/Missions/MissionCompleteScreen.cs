@@ -531,7 +531,7 @@ namespace Peacenet.Missions
                     medalColor = Color.Gold;
                     break;
             }
-            gfx.DrawCircle(new Vector2(_padH + _medalCircleRadius, (Height/2)), _medalCircleRadius, medalColor);
+            gfx.FillCircle(new Vector2(_padH + _medalCircleRadius, (Height/2)), _medalCircleRadius, medalColor);
         }
 
 

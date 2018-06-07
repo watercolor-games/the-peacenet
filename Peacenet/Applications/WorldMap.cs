@@ -96,8 +96,8 @@ namespace Peacenet.Applications
 
             var terrainPos = new Vector2(terrainStartX, terrainStartY);
 
-            gfx.FillRectangle(terrainPos - new Vector2(_terrainBorderWidth * _zoom, _terrainBorderWidth * _zoom), new Vector2(terrainWidth + (_terrainBorderWidth * _zoom), terrainHeight + (_terrainBorderWidth * _zoom)), Theme.GetAccentColor(), terrain);
-            gfx.FillRectangle(terrainPos, new Vector2(terrainWidth, terrainHeight), _terrainColor, terrain);
+            gfx.FillRectangle(terrainPos - new Vector2(_terrainBorderWidth * _zoom, _terrainBorderWidth * _zoom), new Vector2(terrainWidth + (_terrainBorderWidth * _zoom), terrainHeight + (_terrainBorderWidth * _zoom)), terrain, Theme.GetAccentColor());
+            gfx.FillRectangle(terrainPos, new Vector2(terrainWidth, terrainHeight), terrain, _terrainColor);
 
             foreach (var sentience in _game.State.SingularSentiences)
             {
@@ -127,7 +127,7 @@ namespace Peacenet.Applications
                     lerpValue = (sentience.Reputation + 1) / 2;
                 }
                 
-                gfx.DrawCircle(loc, radius, Color.Lerp(neutral, target, lerpValue));
+                gfx.FillCircle(loc, radius, Color.Lerp(neutral, target, lerpValue));
 
                 
             }
