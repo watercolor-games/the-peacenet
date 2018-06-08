@@ -337,7 +337,7 @@ namespace Peacenet
     /// <summary>
     /// Contains information about a Peacegate shell directory.
     /// </summary>
-    public class ShellDirectoryInformation
+    public struct ShellDirectoryInformation
     {
         /// <summary>
         /// Creates a new instance of the <see cref="ShellDirectoryInformation"/> class. 
@@ -347,14 +347,26 @@ namespace Peacenet
         /// <param name="texture">The icon for the directory.</param>
         public ShellDirectoryInformation(string name, string path, Texture2D texture)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (name==null)
                 throw new ArgumentNullException(nameof(name));
-            if (string.IsNullOrWhiteSpace(path))
+            if (path==null)
                 throw new ArgumentNullException(nameof(path));
             FriendlyName = name;
             Path = path;
             Texture = texture;
         }
+
+        public static bool operator ==(ShellDirectoryInformation a, ShellDirectoryInformation b)
+        {
+            return (a.FriendlyName == b.FriendlyName && a.Path == b.Path && a.Texture == b.Texture);
+        }
+
+        public static bool operator !=(ShellDirectoryInformation a, ShellDirectoryInformation b)
+        {
+            return !(a.FriendlyName == b.FriendlyName && a.Path == b.Path && a.Texture == b.Texture);
+        }
+
+        public static ShellDirectoryInformation Empty => new ShellDirectoryInformation("", "", null);
 
         /// <summary>
         /// Retrieves the icon for this directory.
@@ -368,5 +380,10 @@ namespace Peacenet
         /// Retrieves the full path of the directory.
         /// </summary>
         public string Path { get; private set; }
+
+        public override string ToString()
+        {
+            return $"{FriendlyName} ({Path})";
+        }
     }
 }
