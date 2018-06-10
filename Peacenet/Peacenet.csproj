@@ -144,6 +144,7 @@
     <Compile Include="ThemeConfigurationCommand.cs" />
     <Compile Include="TerminalCommands\ImportCommand.cs" />
     <Compile Include="Applications\FrameWatchTest.cs" />
+    <Compile Include="TerminalCommands\Fortune.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DocoptNet, Version=0.6.1.4, Culture=neutral, PublicKeyToken=7a38c71da49a547e, processorArchitecture=MSIL">
@@ -609,6 +610,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Audio\Tutorial.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fortunes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
