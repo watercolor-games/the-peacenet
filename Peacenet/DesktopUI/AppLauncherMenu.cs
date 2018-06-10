@@ -210,7 +210,7 @@ namespace Peacenet.DesktopUI
             };
             _leaveStacker.AddChild(leavePeacegate);
 
-            foreach(var cat in _al.GetAllCategories())
+            foreach(var cat in _al.GetAllCategories().OrderBy(z=>z))
             {
                 var item = new AppLauncherItem();
                 item.Name = cat;
@@ -236,7 +236,7 @@ namespace Peacenet.DesktopUI
             };
             _computerStacker.AddChild(runCommand);
 
-            foreach(var dir in _os.GetShellDirs())
+            foreach(var dir in _os.GetShellDirs().OrderBy(z=>z.FriendlyName))
             {
                 var shellItem = new AppLauncherItem();
                 shellItem.Icon = dir.Texture;
@@ -244,9 +244,9 @@ namespace Peacenet.DesktopUI
                 shellItem.Description = dir.Path;
                 shellItem.Activated += () =>
                 {
-//                    var fm = new FileManager(WindowSystem);
-//                    fm.SetCurrentDirectory(dir.Path);
-//                    fm.Show();
+                    var fm = new FileManager(WindowSystem);
+                    fm.CurrentPath = dir.Path;
+                    fm.Show();
                 };
                 _computerStacker.AddChild(shellItem);
             }
@@ -259,7 +259,7 @@ namespace Peacenet.DesktopUI
         private void SetupCategory(string category)
         {
             _appsCategoryStacker.Clear();
-            foreach(var item in _al.GetAllInCategory(category))
+            foreach(var item in _al.GetAllInCategory(category).OrderBy(x=>x.Attribute.Name))
             {
                 var albutton = new AppLauncherItem();
                 albutton.Name = item.Attribute.Name;
