@@ -59,7 +59,7 @@ namespace Peacenet.Applications
             AddChild(_emulator);
             SetWindowStyle(WindowStyle.Default);
             Width = (80 * _emulator.CharacterWidth);
-            Height = (25 * _emulator.CharacterHeight);
+            Height = (20 * _emulator.CharacterHeight);
             Title = "Terminal";
             AddChild(_scrollbar);
         }

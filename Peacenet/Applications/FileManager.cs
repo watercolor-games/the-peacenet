@@ -180,6 +180,68 @@ namespace Peacenet.Applications
 
             _back.Texture = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-left");
             _forward.Texture = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-right");
+            _refresh.Texture = _gameloop.Content.Load<Texture2D>("UIIcons/refresh");
+            _newFolder.Texture = _gameloop.Content.Load<Texture2D>("UIIcons/folder");
+            _up.Texture = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-up");
+
+            _up.Click += (o, a) =>
+            {
+                string path = CurrentPath;
+                if (path.EndsWith("/"))
+                    path = path.Remove(path.LastIndexOf("/"), 1);
+                if(string.IsNullOrWhiteSpace(path))
+                {
+                    _infobox.Show("Invalid Operation", "You cannot move up beyond the root folder '/'.");
+                    return;
+                }
+                int lastSlash = path.LastIndexOf("/");
+                string parent = path.Substring(0, lastSlash);
+                if (string.IsNullOrWhiteSpace(parent))
+                    parent = "/";
+                _prevStack.Push(CurrentPath);
+                _nextStack.Clear();
+                CurrentPath = parent;
+            };
+
+            _newFolder.Click += (o, a) =>
+            {
+                string path = CurrentPath;
+                _infobox.PromptText("New folder", "Please enter a name for your new folder.", (name) =>
+                {
+                    if (path.EndsWith("/"))
+                        path += name;
+                    else
+                        path += "/" + name;
+                    if(_fs.DirectoryExists(path))
+                    {
+                        _infobox.Show("Folder exists", "There is already an existing folder with that name.");
+                        return;
+                    }
+
+                    _fs.CreateDirectory(path);
+                    ResetLists();
+                }, (name) =>
+                {
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        _infobox.Show("Invalid folder name", "Folder names cannot be blank.");
+                        return false;
+                    }
+                    string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_ ";
+                    if (name.Any(x => !validChars.Contains(x)))
+                    {
+                        _infobox.Show("Invalid folder name", "The name you entered contains characters not valid in a folder name.");
+                        return false;
+                    }
+                    return true;
+
+                });
+            };
+
+            _refresh.Click += (o, a) =>
+            {
+                ResetLists();
+            };
 
             _back.Click += (o, a) =>
             {
@@ -255,12 +317,31 @@ namespace Peacenet.Applications
             else if (_back.ContainsMouse)
                 _back.Tint = Theme.GetAccentColor();
 
+            _refresh.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_refresh.LeftButtonPressed)
+                _refresh.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_refresh.ContainsMouse)
+                _refresh.Tint = Theme.GetAccentColor();
+
             _forward.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
             if (_forward.LeftButtonPressed)
                 _forward.Tint = Theme.GetAccentColor().Darken(0.5F);
             else if (_forward.ContainsMouse)
                 _forward.Tint = Theme.GetAccentColor();
 
+            _newFolder.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_newFolder.LeftButtonPressed)
+                _newFolder.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_newFolder.ContainsMouse)
+                _newFolder.Tint = Theme.GetAccentColor();
+
+            _up.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_up.LeftButtonPressed)
+                _up.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_up.ContainsMouse)
+                _up.Tint = Theme.GetAccentColor();
+
+            _up.Enabled = (CurrentPath != "/");
             _back.Enabled = _prevStack.Count > 0;
             _forward.Enabled = _nextStack.Count > 0;
 
