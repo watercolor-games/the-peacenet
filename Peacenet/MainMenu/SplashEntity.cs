@@ -1190,6 +1190,9 @@ namespace Peacenet.MainMenu
         /// <inheritdoc/>
         public void Draw(GameTime time, GraphicsContext gfx)
         {
+            int peacenetWidth = _peacenet.Width / 3;
+            int peacenetHeight = _peacenet.Height / 3;
+
             var headerFont = _thememgr.Theme.GetFont(TextFontStyle.Header1);
             var highlightFont = _thememgr.Theme.GetFont(TextFontStyle.Highlight);
 
@@ -1207,27 +1210,23 @@ namespace Peacenet.MainMenu
             float serverSelectY = (_mpServerScroller.Y - serverSelectMeasure.Y) - 5;
 
             float welcomeX = (gfx.Width - welcomeMeasure.X) / 2;
-            float welcomeY = MathHelper.Lerp((gfx.Height / 2) + (_peacenet.Height / 2) + 25, (((gfx.Height / 2) - (_peacenet.Height / 2)) - 25), _welcomePosition);
+            float welcomeY = MathHelper.Lerp((gfx.Height / 2) + (peacenetHeight / 2) + 25, (((gfx.Height / 2) - (peacenetHeight / 2)) - 25), _welcomePosition);
 
-            float peacenetX = (gfx.Width - _peacenet.Width) / 2;
-            float peacenetY = MathHelper.Lerp((gfx.Height / 2) + (_peacenet.Height / 2), (gfx.Height / 2) - (_peacenet.Height / 2), _peacenetPosition);
+            float peacenetX = (gfx.Width - peacenetWidth) / 2;
+            float peacenetY = MathHelper.Lerp((gfx.Height / 2) + (peacenetHeight / 2), (gfx.Height / 2) - (peacenetHeight / 2), _peacenetPosition);
 
             float enterX = (gfx.Width - enterMeasure.X) / 2;
-            float enterYCenter = ((gfx.Height / 2) + (_peacenet.Height / 2) + 40) + (enterMeasure.Y / 2);
+            float enterYCenter = ((gfx.Height / 2) + (peacenetHeight / 2) + 40) + (enterMeasure.Y / 2);
             float enterY = MathHelper.Lerp(enterYCenter + (enterMeasure.Y / 2), enterYCenter - (enterMeasure.Y / 2), _pressEnterPosition);
 
             float greetX = (gfx.Width - greetMeasure.X) / 2;
-            float greetYCenter = ((gfx.Height / 2) + (_peacenet.Height / 2) + 40) + (greetMeasure.Y / 2);
+            float greetYCenter = ((gfx.Height / 2) + (peacenetHeight / 2) + 40) + (greetMeasure.Y / 2);
             float greetY = MathHelper.Lerp(greetYCenter + (greetMeasure.Y / 2), greetYCenter - (greetMeasure.Y / 2), _greetPosition);
 
-            float wallWidth = MathHelper.Lerp(gfx.Width / 2, gfx.Width, _wallFade);
-            float wallHeight = MathHelper.Lerp(gfx.Height / 2, gfx.Height, _wallFade);
 
-
-            //gfx.Batch.Draw(_wall, new Rectangle((gfx.Width - (int)wallWidth) / 2, (gfx.Height - (int)wallHeight) / 2, (int)wallWidth, (int)wallHeight), Color.White * _wallFade);
             if (!IsSettingsOpen)
             {
-                gfx.FillRectangle(peacenetX, peacenetY, _peacenet.Width, _peacenet.Height, _peacenet, Color.White * _peacenetFade);
+                gfx.FillRectangle(peacenetX, peacenetY, peacenetWidth, peacenetHeight, _peacenet, Color.White * _peacenetFade);
                 gfx.DrawString(headerFont, welcomeText, new Vector2(welcomeX, welcomeY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _welcomeFade);
             }
             gfx.DrawString(highlightFont, enterText, new Vector2(enterX, enterY), _thememgr.Theme.GetFontColor(TextFontStyle.Highlight) * _pressEnterFade);
