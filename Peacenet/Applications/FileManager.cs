@@ -27,6 +27,11 @@ namespace Peacenet.Applications
         private PictureBox _up = new PictureBox();
         private PictureBox _refresh = new PictureBox();
 
+        private PictureBox _action = new PictureBox();
+        private Texture2D _save = null;
+        private Texture2D _open = null;
+        private TextBox _filename = new TextBox();
+
         private const int _toolbarIconSize = 20;
 
         private ScrollView _sidebarView = new ScrollView();
@@ -37,6 +42,10 @@ namespace Peacenet.Applications
         private GridListView _fileList = new GridListView();
 
         private string _currentPath = "/home";
+
+        private string[] _filter = null;
+
+        private FileManagerMode _mode = FileManagerMode.Browse;
 
         [Dependency]
         private FileUtils _futils = null;
@@ -52,6 +61,32 @@ namespace Peacenet.Applications
 
         [Dependency]
         private OS _os = null;
+
+        public string[] FileFilter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                _filter = value;
+                ResetLists();
+            }
+        }
+        public FileManagerMode Mode
+        {
+            get
+            {
+                return _mode;
+            }
+            set
+            {
+                _mode = value;
+                ResetLists();
+            }
+        }
+
 
         private Texture2D _directoryTexture = null;
 
@@ -107,6 +142,10 @@ namespace Peacenet.Applications
                 var name = _futils.GetNameFromPath(file);
                 if (name.StartsWith("."))
                     continue;
+                if (_mode != FileManagerMode.Browse && _filter != null && _filter.Length > 0)
+                    if (!_filter.Contains(_futils.GetMimeType(name)))
+                        continue;
+
                 var mime = _futils.GetMimeType(name);
                 var existingMimeIcon = _fileList.GetImage(mime);
                 if (existingMimeIcon == null)
@@ -115,6 +154,18 @@ namespace Peacenet.Applications
                 _fileList.Items.Add(new ListViewItem(name, mime, file));
             }
 
+            if (_mode == FileManagerMode.Browse)
+            {
+                _action.Visible = false;
+                _filename.Visible = false;
+            }
+            else
+            {
+                _action.Visible = true;
+                _filename.Visible = true;
+             
+                _action.Texture = (_mode == FileManagerMode.SaveFile) ? _save : _open;
+            }
         }
 
         public FileManager(WindowSystem _winsys) : base(_winsys)
@@ -146,7 +197,23 @@ namespace Peacenet.Applications
 
             _fileList.SetImage("dir", _directoryTexture);
 
+            _save = _gameloop.Content.Load<Texture2D>("UIIcons/save");
+            _open = _gameloop.Content.Load<Texture2D>("UIIcons/folder-open-o");
+
+
             ResetLists();
+
+            _fileList.SelectedIndexChanged += (o, a) =>
+            {
+                if (_mode == FileManagerMode.Browse)
+                    return;
+
+                var selected = _fileList.SelectedItem;
+                if (selected == null)
+                    _filename.Text = "";
+                else
+                    _filename.Text = selected.Text;
+            };
 
             _sidebarFolderList.Click += (o, a) =>
             {
@@ -172,7 +239,13 @@ namespace Peacenet.Applications
                     }
                     else if (_fs.FileExists(selected.Tag.ToString()))
                     {
-                        _infobox.Show("Not yet implemented", "You cannot yet open files from File Manager.");
+                        if (_mode == FileManagerMode.Browse)
+                        {
+                            _infobox.Show("Not yet implemented", "You cannot yet open files from File Manager.");
+                            return;
+                        }
+
+                        HandleFileSelect(selected.Tag.ToString());
                     }
                         
                 }
@@ -253,6 +326,75 @@ namespace Peacenet.Applications
                 _prevStack.Push(CurrentPath);
                 CurrentPath = _nextStack.Pop();
             };
+
+            _action.Click += (o, a) =>
+            {
+                HandleActionClick();
+            };
+
+            _filename.KeyEvent += (o, a) =>
+            {
+                if(a.Key == Microsoft.Xna.Framework.Input.Keys.Enter)
+                {
+                    HandleActionClick();
+                }
+            };
+
+            AddChild(_filename);
+            AddChild(_action);
+        }
+
+        private void HandleActionClick()
+        {
+            string path = CurrentPath;
+            if (path.EndsWith("/"))
+                path += _filename.Text;
+            else
+                path += "/" + _filename.Text;
+
+            if(_fs.DirectoryExists(path))
+            {
+                _prevStack.Push(CurrentPath);
+                _nextStack.Clear();
+                CurrentPath = path;
+                _filename.Text = "";
+            }
+            else if(_fs.FileExists(path))
+            {
+                string name = _futils.GetNameFromPath(path);
+                if(_filter == null || _filter.Length == 0)
+                    HandleFileSelect(path);
+                else if(!_filter.Contains(_futils.GetMimeType(name)))
+                {
+                    _infobox.Show("File not found", "No file with that name exists in the current folder.");
+                    return;
+                }
+                HandleFileSelect(path);
+                    
+
+            }
+            else
+            {
+                _infobox.Show("File not found", "No file with that name exists in the current folder.");
+            }
+        }
+
+        public event Action<string> FileSelected;
+
+        private void HandleFileSelect(string path)
+        {
+            if (_mode == FileManagerMode.OpenFile)
+            {
+                FileSelected?.Invoke(path);
+            }
+            else if (_mode == FileManagerMode.SaveFile)
+            {
+                _infobox.ShowYesNo("Overwrite file?", "Are you sure you want to overwrite " + path + "?", (answer) =>
+                {
+                    if (answer)
+                        FileSelected?.Invoke(path);
+                });
+            }
         }
 
         protected override void OnUpdate(GameTime time)
@@ -284,6 +426,39 @@ namespace Peacenet.Applications
                 _pathLabel.Y = _back.Y + ((_back.Height - _pathLabel.Height) / 2);
             }
 
+            int bottomStart = Height;
+
+            if (_action.Visible)
+            {
+                _action.Width = 20;
+                _action.Height = 20;
+
+                int bottomHeight = Math.Max(_action.Height, _filename.Height);
+
+                if(bottomHeight == _action.Height)
+                {
+                    _action.Y = (Height - 3) - _action.Height;
+                    _filename.Y = _action.Y + ((_action.Height - _filename.Height) / 2);
+                    bottomStart = _action.Y - 3;
+                }
+                else
+                {
+                    _filename.Y = (Height - 3) - _filename.Height;
+                    _action.Y = _filename.Y + ((_filename.Height - _action.Height) / 2);
+                    bottomStart = _filename.Y - 3;
+                }
+
+                _action.X = (Width - 3) - _action.Width;
+
+                _filename.X = 3;
+                _filename.Width = _action.X - 6;
+
+                _filename.Label = "Filename";
+
+                _action.Enabled = string.IsNullOrEmpty(_filename.Text);
+            }
+
+
             _back.X = toolbarPaddingV;
             _forward.X = _back.X + _back.Width + toolbarPaddingV;
             _up.X = _forward.X + _forward.Width + toolbarPaddingV;
@@ -300,7 +475,7 @@ namespace Peacenet.Applications
             _sidebarView.Y = toolbarBaseHeight + (toolbarPaddingV * 2);
             _filesView.Y = _sidebarView.Y;
 
-            _sidebarView.Height = (Height - _sidebarView.Y);
+            _sidebarView.Height = (bottomStart - _sidebarView.Y);
             _filesView.Height = _sidebarView.Height;
 
             _sidebarView.X = 0;
@@ -341,11 +516,25 @@ namespace Peacenet.Applications
             else if (_up.ContainsMouse)
                 _up.Tint = Theme.GetAccentColor();
 
+            _action.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_action.LeftButtonPressed)
+                _action.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_action.ContainsMouse)
+                _action.Tint = Theme.GetAccentColor();
+
+
             _up.Enabled = (CurrentPath != "/");
             _back.Enabled = _prevStack.Count > 0;
             _forward.Enabled = _nextStack.Count > 0;
 
             base.OnUpdate(time);
         }
+    }
+
+    public enum FileManagerMode
+    {
+        Browse,
+        OpenFile,
+        SaveFile
     }
 }

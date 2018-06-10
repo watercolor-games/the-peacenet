@@ -136,13 +136,22 @@ namespace Peacenet.CoreUtils
         /// </summary>
         /// <param name="saving">Whether the player is saving to a file or opening an existing file.</param>
         /// <param name="callback">A callback to be run when the file is selected.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="callback"/> is null.</exception> 
-        public void AskForFile(bool saving, Action<string> callback)
+        /// <param name="filter">An array of MIME types that represents the types of files that should be shown in the file manager's file list. Empty or <see langword="null"/> for no filter.</param>
+            /// <exception cref="ArgumentNullException">Thrown if <paramref name="callback"/> is null.</exception> 
+        public void AskForFile(bool saving, string[] filter, Action<string> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
 
-            throw new NotImplementedException();
+            var fs = new FileManager(_winsys);
+            fs.Mode = (saving) ? FileManagerMode.SaveFile : FileManagerMode.OpenFile;
+            fs.FileFilter = filter;
+            fs.FileSelected += (p) =>
+            {
+                callback(p);
+                fs.Close();
+            };
+            fs.Show();
         }
     }
 }

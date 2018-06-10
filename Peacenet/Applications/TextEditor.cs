@@ -79,7 +79,7 @@ namespace Peacenet.Applications
             };
             _open.Click += (o, a) =>
             {
-                _guiutils.AskForFile(false, (file) =>
+                _guiutils.AskForFile(false, new[] { "text/plain" }, (file) =>
                 {
                     try
                     {
@@ -95,7 +95,7 @@ namespace Peacenet.Applications
             };
             _save.Click += (o, a) =>
             {
-                _guiutils.AskForFile(true, (file) =>
+                _guiutils.AskForFile(true, new[] { "text/plain" }, (file) =>
                 {
                     _fs.WriteAllText(file, _editor.Text);
                     Title = $"{_futils.GetNameFromPath(file)} - Text Editor";

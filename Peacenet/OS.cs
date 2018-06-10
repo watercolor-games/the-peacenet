@@ -383,7 +383,7 @@ namespace Peacenet
 
         public override string ToString()
         {
-            return $"{FriendlyName} ({Path})";
+            return $"{FriendlyName}";
         }
     }
 }
