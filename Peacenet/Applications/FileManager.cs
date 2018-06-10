@@ -16,6 +16,10 @@ namespace Peacenet.Applications
     [AppLauncher("File Manager", "System", "View and manage the files and folders on your system.")]
     public class FileManager : Window
     {
+        private Stack<string> _prevStack = new Stack<string>();
+        private Stack<string> _nextStack = new Stack<string>();
+
+
         private Label _pathLabel = new Label();
         private PictureBox _back = new PictureBox();
         private PictureBox _forward = new PictureBox();
@@ -143,6 +147,50 @@ namespace Peacenet.Applications
             _fileList.SetImage("dir", _directoryTexture);
 
             ResetLists();
+
+            _sidebarFolderList.Click += (o, a) =>
+            {
+                var selectedItem = _sidebarFolderList.SelectedItem;
+                if(selectedItem != null)
+                {
+                    _prevStack.Push(CurrentPath);
+                    _nextStack.Clear();
+                    CurrentPath = ((ShellDirectoryInformation)selectedItem).Path;
+                }
+            };
+
+            _fileList.DoubleClick += (o, a) =>
+            {
+                var selected = _fileList.SelectedItem;
+                if(selected != null)
+                {
+                    if (_fs.DirectoryExists(selected.Tag.ToString()))
+                    {
+                        _prevStack.Push(CurrentPath);
+                        _nextStack.Clear();
+                        CurrentPath = selected.Tag.ToString();
+                    }
+                    else if (_fs.FileExists(selected.Tag.ToString()))
+                    {
+                        _infobox.Show("Not yet implemented", "You cannot yet open files from File Manager.");
+                    }
+                        
+                }
+            };
+
+            _back.Texture = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-left");
+            _forward.Texture = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-right");
+
+            _back.Click += (o, a) =>
+            {
+                _nextStack.Push(CurrentPath);
+                CurrentPath = _prevStack.Pop();
+            };
+            _forward.Click += (o, a) =>
+            {
+                _prevStack.Push(CurrentPath);
+                CurrentPath = _nextStack.Pop();
+            };
         }
 
         protected override void OnUpdate(GameTime time)
@@ -201,6 +249,20 @@ namespace Peacenet.Applications
             _sidebarFolderList.Width = _sidebarView.Width;
             _fileList.Width = _filesView.Width;
 
+            _back.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_back.LeftButtonPressed)
+                _back.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_back.ContainsMouse)
+                _back.Tint = Theme.GetAccentColor();
+
+            _forward.Tint = Theme.GetFontColor(Plex.Engine.Themes.TextFontStyle.System);
+            if (_forward.LeftButtonPressed)
+                _forward.Tint = Theme.GetAccentColor().Darken(0.5F);
+            else if (_forward.ContainsMouse)
+                _forward.Tint = Theme.GetAccentColor();
+
+            _back.Enabled = _prevStack.Count > 0;
+            _forward.Enabled = _nextStack.Count > 0;
 
             base.OnUpdate(time);
         }

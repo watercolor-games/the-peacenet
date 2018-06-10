@@ -138,6 +138,26 @@ namespace Peacenet.Applications
 
             _groups.AddRange(autoGroups);
 
+            var guiScaleSetting = new Setting
+            {
+                Name = "GUI Scale",
+                Description = "Text too small? Are things not fitting on your screen? Set the GUI scale to change the size of user interface elements on-screen.",
+                SettingValue = new ButtonSettingValue
+                {
+                    Text = "Change GUI Scale",
+                }
+            };
+            var guiScaleButton = (guiScaleSetting.SettingValue as ButtonSettingValue);
+            guiScaleButton.Click += (o, a) =>
+            {
+                var scaleSettings = new ScreenScaleSetter(WindowSystem);
+                
+                scaleSettings.Show();
+            };
+
+            autoGroups.First(x => x.Category == "Graphics").AddSetting(guiScaleSetting);
+
+
 
             var aboutGroup = new SettingGroup();
             aboutGroup.Category = "About";
