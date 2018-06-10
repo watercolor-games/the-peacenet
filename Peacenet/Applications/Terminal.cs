@@ -124,7 +124,7 @@ namespace Peacenet.Applications
                 _lastEmulatorY = _emulator.Y;
             }
             _emulator.Width = Width;
-            _scrollbar.Visible = WindowSystem.WindowList.FirstOrDefault(x => x.Border == this.Parent).Border.WindowStyle != WindowStyle.NoBorder;
+            _scrollbar.Visible = (this.Parent as WindowBorder).WindowStyle != WindowStyle.NoBorder;
 
             if (HasFocused && !_emulator.IsFocused)
                 Manager.SetFocus(_emulator);

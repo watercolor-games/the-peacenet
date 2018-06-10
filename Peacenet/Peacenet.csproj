@@ -92,6 +92,7 @@
     <Compile Include="Cutscene\OSFTPeacegateIntro.cs" />
     <Compile Include="Cutscene\PrologueCutscene.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
+    <Compile Include="DesktopUI\NotificationBanner.cs" />
     <Compile Include="DesktopUI\XPDisplay.cs" />
     <Compile Include="DesktopWindow.cs" />
     <Compile Include="Email\ClientEmailProvider.cs" />

@@ -43,12 +43,8 @@ namespace Peacenet
         private float _scaleAnim = 0;
         private float _panelAnim = -1;
         private bool _showPanels = true;
-        private float _notificationBannerFade = 0f;
-        private double _notificationRide = 0;
-        private int _notificationAnimState = 0;
         private IEnumerable<int> hiddenWindows = null;
         private bool _appLauncherClosesWhenFocusLost = true;
-        private bool _needsDesktopReset = true;
         private bool _appLauncherButtonVisible = true;
 
         #endregion
@@ -66,10 +62,11 @@ namespace Peacenet
 
         #region UI elements
 
+        private Queue<NotificationBanner> _banners = new Queue<NotificationBanner>();
+        private NotificationBanner _currentBanner = null;
+
         private Hitbox _objectiveHitbox = new Hitbox();
         private HorizontalStacker _notificationTray = new HorizontalStacker();
-        private Label _notificationTitle = new Label();
-        private Label _notificationDescription = new Label();
         private PictureBox _showDesktopIcon = new PictureBox();
         private DesktopPanelItemGroup _windowList = new DesktopPanelItemGroup();
         private AppLauncherMenu _applauncher = null;
@@ -318,22 +315,6 @@ namespace Peacenet
                 }
             };
 
-            AddChild(_notificationTitle);
-            AddChild(_notificationDescription);
-
-            _notificationTitle.AutoSize = true;
-            _notificationDescription.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
-            
-            _notificationDescription.AutoSize = true;
-            _notificationDescription.MaxWidth = 450;
-            _notificationTitle.MaxWidth = _notificationDescription.MaxWidth;
-
-            _fs.WriteOperation += (path) =>
-            {
-                if (path.StartsWith("/home/Desktop"))
-                    _needsDesktopReset = true;
-            };
-
             AddChild(this._showDesktopIcon);
             AddChild(_notificationTray);
             
@@ -375,11 +356,10 @@ namespace Peacenet
         /// <param name="description">The message for the notification.</param>
         public void ShowNotification(string title, string description)
         {
-            _noteSound.Play();
-            _notificationTitle.Text = title;
-            _notificationDescription.Text = description;
-            _notificationAnimState = 0;
-            _notificationBannerFade = 0;
+            var banner = new NotificationBanner();
+            banner.Header = title;
+            banner.Description = description;
+            _banners.Enqueue(banner);
         }
 
         /// <summary>
@@ -441,34 +421,6 @@ namespace Peacenet
                     break;
             }
 
-            switch(_notificationAnimState)
-            {
-                case 0:
-                    _notificationBannerFade += (float)time.ElapsedGameTime.TotalSeconds * 4;
-                    if(_notificationBannerFade>=1)
-                    {
-                        _notificationBannerFade = 1;
-                        _notificationAnimState++;
-                        _notificationRide = 0;
-                    }
-                    break;
-                case 1:
-                    _notificationRide += time.ElapsedGameTime.TotalSeconds;
-                    if(_notificationRide>=5)
-                    {
-                        _notificationAnimState++;
-                    }
-                    break;
-                case 2:
-                    _notificationBannerFade -= (float)time.ElapsedGameTime.TotalSeconds * 2;
-                    if (_notificationBannerFade <= 0)
-                    {
-                        _notificationBannerFade = 0;
-                        _notificationAnimState = -1;
-                        _notificationRide = 0;
-                    }
-                    break;
-            }
            Width = (int)MathHelper.Lerp((Manager.ScreenWidth * 0.75f), Manager.ScreenWidth, _scaleAnim);
             Height = (int)MathHelper.Lerp((Manager.ScreenHeight * 0.75f), Manager.ScreenHeight, _scaleAnim);
             Parent.X = (Manager.ScreenWidth - Width) / 2;
@@ -492,17 +444,6 @@ namespace Peacenet
             _applauncherHitbox.Width = _pn.PanelTheme.AppLauncherRectangle.Width;
             _applauncherHitbox.Height = _pn.PanelTheme.AppLauncherRectangle.Height;
             
-            int noteYMin = 0;
-            int noteYMax = _topPanel.Y + _topPanel.Height + 15;
-            int noteY = (int)MathHelper.Lerp(noteYMin, noteYMax, _notificationBannerFade);
-            _notificationTitle.Opacity = _notificationBannerFade;
-            _notificationDescription.Opacity = _notificationTitle.Opacity;
-            _notificationTitle.Y = noteY;
-            _notificationDescription.Y = _notificationTitle.Y + _notificationTitle.Height + 10;
-            int noteWidthMax = Math.Max(_notificationTitle.Width, _notificationDescription.Width);
-            _notificationTitle.X = Width - noteWidthMax - 15;
-            _notificationDescription.X = _notificationTitle.X;
-
             _showDesktopIcon.X = 2;
             _showDesktopIcon.Y = _bottomPanel.Y + ((_bottomPanel.Height - _showDesktopIcon.Height)/2);
             _showDesktopIcon.Tint = (_showDesktopIcon.ContainsMouse ^ (hiddenWindows != null)) ? Color.White : new Color(191, 191, 191, 255);
@@ -512,23 +453,30 @@ namespace Peacenet
             _windowList.X = _showDesktopIcon.X + _showDesktopIcon.Width + 2;
             _windowList.Width = _bottomPanel.Width - _windowList.X;
 
-            
-//            if (_server.Connected)
-//            {
-            //            }
-            //            else
-            //            {
-            //                if (_animState < 3)
-            //                {
-            //                    foreach (var win in WindowSystem.WindowList.ToArray())
-            //                    {
-            //                        if (win.Border != this.Parent)
-            //                            WindowSystem.Close(win.WindowID);
-            //                    }
-            //                    _animState = 3;
+            if(_currentBanner==null)
+            {
+                if(_banners.Count>0)
+                {
+                    _currentBanner = _banners.Dequeue();
+                    _noteSound.Play();
+                    AddChild(_currentBanner);
+                }
+            }
+            else
+            {
+                if(_currentBanner.BannerState == BannerState.Finished)
+                {
+                    RemoveChild(_currentBanner);
+                    _currentBanner = null;
+                }
+                else
+                {
+                    _currentBanner.Y = _topPanel.Y + _topPanel.Height;
+                    _currentBanner.X = Width - _currentBanner.Width;
+                }
+            }
 
-            //                }
-            //            }
+
 
             if (_game.State == null)
                 return;
@@ -656,7 +604,6 @@ namespace Peacenet
         protected override void OnPaint(GameTime time, GraphicsContext gfx)
         {
             gfx.FillRectangle(0, 0, Width, Height, _wallpaper, Color.White);
-            gfx.FillRectangle(_notificationTitle.X - 15, _notificationTitle.Y - 15, (Math.Max(_notificationTitle.Width, _notificationDescription.Width) + 30), _notificationTitle.Height + 10 + _notificationDescription.Height + 30, Theme.GetAccentColor() * (_notificationBannerFade/2));
             if(_showPanels)
             {
                 if(_topPanel.Visible)
