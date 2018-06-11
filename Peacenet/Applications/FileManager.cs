@@ -375,7 +375,10 @@ namespace Peacenet.Applications
             }
             else
             {
-                _infobox.Show("File not found", "No file with that name exists in the current folder.");
+                if (_mode == FileManagerMode.SaveFile)
+                    HandleFileSelect(path);
+                else
+                    _infobox.Show("File not found", "No file with that name exists in the current folder.");
             }
         }
 
@@ -389,11 +392,18 @@ namespace Peacenet.Applications
             }
             else if (_mode == FileManagerMode.SaveFile)
             {
-                _infobox.ShowYesNo("Overwrite file?", "Are you sure you want to overwrite " + path + "?", (answer) =>
+                if (_fs.FileExists(path))
                 {
-                    if (answer)
-                        FileSelected?.Invoke(path);
-                });
+                    _infobox.ShowYesNo("Overwrite file?", "Are you sure you want to overwrite " + path + "?", (answer) =>
+                    {
+                        if (answer)
+                            FileSelected?.Invoke(path);
+                    });
+                }
+                else
+                {
+                    FileSelected?.Invoke(path);
+                }
             }
         }
 

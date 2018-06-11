@@ -364,7 +364,7 @@ namespace Peacenet.GameState
                     {
                         byte[] data = new byte[fileStream.Length];
                         fileStream.Read(data, 0, data.Length);
-                        _gui.AskForFile(true, (path) =>
+                        _gui.AskForFile(true, null, (path) =>
                         {
                             _fs.WriteAllBytes(path, data);
                         });
