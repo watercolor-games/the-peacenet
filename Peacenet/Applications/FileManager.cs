@@ -455,7 +455,7 @@ namespace Peacenet.Applications
 
                 _filename.Label = "Filename";
 
-                _action.Enabled = string.IsNullOrEmpty(_filename.Text);
+                _action.Enabled = !string.IsNullOrEmpty(_filename.Text);
             }
 
 
