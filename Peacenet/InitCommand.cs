@@ -143,8 +143,17 @@ namespace Peacenet
         [Dependency]
         private GameManager _game = null;
 
-        /// <inheritdoc/>
-        public void Run(ConsoleContext console, Dictionary<string, object> arguments)
+        private void RecursiveWriteDirectories(ConsoleContext console, string path)
+        {
+            if(path != "/")
+                console.WriteLine("Creating directory /mnt" + path);
+            Thread.Sleep(50);
+            foreach (var dir in _fs.GetDirectories(path))
+                if(dir != "." && dir != "..")
+                RecursiveWriteDirectories(console, dir);
+        }
+
+        public void Run(ConsoleContext console, Dictionary<string, object> args)
         {
             if (_os.IsDesktopOpen)
             {
@@ -152,136 +161,98 @@ namespace Peacenet
                 return;
             }
             bool hasDoneTutorial = _game.State.TutorialCompleted;
-            if (hasDoneTutorial == false)
-            {
-                var briefingDone = new ManualResetEvent(false);
-                _cutscene.Play("m00_briefing", () =>
-                {
-                    briefingDone.Set();
-                });
-                briefingDone.WaitOne();
-            }
-            _beep2.Play();
-            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
-            console.SetBold(false);
-            console.Write("Welcome to the");
-            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.Green);
-            console.SetBold(true);
-            console.Write("peacenet");
-            console.SetColors(Plex.Objects.ConsoleColor.Black, Plex.Objects.ConsoleColor.White);
-            console.SetBold(false);
-            console.WriteLine(".\n");
-            Thread.Sleep(200);
-            console.WriteKernelMessage($"Peacegate OS Interactive Instance starting on {_os.Hostname}...");
-            console.WriteLine("");
-            console.WriteLine("Peacegate OS is copyright (c) 2025 The Peace Foundation. All rights reserved.");
-            console.WriteLine("");
-            Thread.Sleep(500);
-            _beep1.Play();
-            foreach(var message in _kernelBootMessages)
-            {
-                console.WriteKernelMessage(message);
-                Thread.Sleep(150);
-            }
-            if (hasDoneTutorial == false)
-            {
-                AdvancedAudioPlayer tutorial = null;
-                try
-                {
-                    tutorial = new AdvancedAudioPlayer("Content/Audio/Tutorial");
-                }
-                catch (Exception ex)
-                {
-                    console.WriteKernelMessage("Now you have fucked up!  The Peacenet encountered an inexplicable exception.", KernelMessageType.Panic);
-                    console.WriteKernelMessage(ex.ToString(), KernelMessageType.Panic);
-                    console.WriteKernelMessage("The game will probably crash now", KernelMessageType.Warning);
-                }
-                console.WriteNPCChat("kernel", "Interactive user detected. Please validate your interactive access by sending text through the Terminal.");
-                tutorial.Play();
-                console.Write("> ");
-                string something = console.ReadLine();
-                _success.Play();
-                console.WriteNPCChat("kernel", "Text received: " + something);
-                console.WriteNPCChat("kernel", "Interactivity validated. Beginning Peacegate OS install in interactive mode.");
+            ManualResetEvent _pause = new ManualResetEvent(false);
 
+            console.SlowWrite("Starting Peacegate OS live environment...");
+            Thread.Sleep(500);
+
+            if (hasDoneTutorial)
+            {
+                foreach (var message in _kernelBootMessages)
+                {
+                    console.WriteKernelMessage(message);
+                    Thread.Sleep(75);
+                }
+
+                _cutscene.Play("m00_welcome", () =>
+                {
+                    _pause.Set();
+                });
+
+                Thread.Sleep(500);
 
                 console.WriteLine("");
-                console.WriteKernelMessage("Preparing mountpoint /mnt for full Peacegate OS installation.");
-                foreach (var dir in getDirs())
-                {
-                    Thread.Sleep(200);
-                    console.WriteKernelMessage($"Creating directory: /mnt{dir}");
-                }
-                console.WriteKernelMessage("Downloading base packages...");
-                foreach (var pkg in _base)
-                {
-                    console.WriteKernelMessage("pacman: installing package: " + pkg);
-                    int len = 52;
-                    for (int i = 0; i <= pkg.Length; i++)
-                    {
-                        if (i > 0)
-                        {
-                            console.Write("\b".Repeat(len));
-                        }
-                        float percentage = (float)i / pkg.Length;
-                        int progressLength = (int)Math.Round(percentage * 50);
-                        string progressBar = "[" + "#".Repeat(progressLength) + "-".Repeat(50 - progressLength) + "]";
-                        console.Write(progressBar);
-                        Thread.Sleep(25);
-                    }
-                    console.WriteLine("");
-                    console.WriteKernelMessage("Done.");
-                    Thread.Sleep(100);
-                }
+                console.WriteLine("Connecting to The Peacenet...");
 
-                _success.Play();
-                console.WriteNPCChat("kernel", "Core installation complete.");
-                console.WriteNPCChat("kernel", "Users with interactive Peacegate access must be familiar with the command-line.");
-                console.WriteNPCChat("kernel", "To further prove your interactivity level, show a list of commands.");
-                var shell = _GameLoop.New<ShellCommand>();
-                shell.AllowExit = false;
-                shell.CommandRun = (cmd) =>
-                {
-                    if (cmd.Commands.Length == 1 && cmd.Commands.Contains("help") && cmd.OutputFile == null)
-                        return true;
-                    return false;
-                };
-                shell.Run(console, new Dictionary<string, object>());
-                _success.Play();
-                console.WriteNPCChat("kernel", "Basic interactivity levels proven.");
-                console.WriteNPCChat("kernel", "You can view more information about a command by seeing its manual entry.");
-                console.WriteNPCChat("kernel", "Try using \"man echo\" to see the echo command's manual entry.");
-                shell.CommandRun = (cmd) =>
-                {
-                    if (cmd.Commands.Length == 1 && cmd.Commands.Contains("man echo") && cmd.OutputFile == null)
-                        return true;
-                    return false;
-                };
-                shell.Run(console, new Dictionary<string, object>());
-                _success.Play();
-                console.WriteNPCChat("kernel", "Command output can be redirected to a file using the '>' operator. Try using echo and the '>' operator to write text to /etc/hostname.");
-                console.WriteNPCChat("kernel", "Hint: The file path goes AFTER the command!");
-                shell.CommandRun = (cmd) =>
-                {
-                    if (cmd.Commands.Length == 1 && cmd.Commands[0].StartsWith("echo ") && cmd.OutputFile == "/etc/hostname" && cmd.OutputFileType == OutputFileType.Overwrite)
-                        return true;
-                    return false;
-                };
-                shell.Run(console, new Dictionary<string, object>());
-                _success.Play();
+                Thread.Sleep(250);
 
-                console.WriteNPCChat("kernel", "Full command-line interactivity level proven. You will now be taken to the GUI installer for further configuration.");
+                console.WriteLine("");
+                console.WriteLine("Connection successful.");
 
-
-
-                tutorial.Next = 2;
-                _os.PreventStartup = false;
+                _pause.WaitOne();
+                _pause.Reset();
             }
             else
             {
-                console.WriteLine("Loading GUI settings...");
-                var accent = _save.GetValue<PeacenetAccentColor>("theme.accent", PeacenetAccentColor.Blueberry);
-                _pn.AccentColor = accent;
+                _cutscene.Play("m00_watercolor", () =>
+                {
+                    _pause.Set();
+                });
+                _pause.WaitOne();
+                _pause.Reset();
+
+                foreach (var message in _kernelBootMessages)
+                {
+                    console.WriteKernelMessage(message);
+                    Thread.Sleep(75);
+                }
+
+                console.WriteLine("");
+                console.WriteLine("Formatting /dev/sda1 as ext4...");
+
+                _cutscene.Play("m00_alkaline", () =>
+                {
+                    _pause.Set();
+                });
+
+                Thread.Sleep(750);
+                console.WriteLine("");
+                console.WriteLine("Mounting /dev/sda1 to /mnt...");
+
+                _pause.WaitOne();
+                _pause.Reset();
+
+                _cutscene.Play("m00_peaceengine", () =>
+                {
+                    _pause.Set();
+                });
+
+                console.WriteLine("");
+                RecursiveWriteDirectories(console, "/");
+
+                _pause.WaitOne();
+                _pause.Reset();
+
+                console.WriteLine("");
+                console.WriteLine("Starting installation environment.");
+
+                _cutscene.Play("m00_welcome", () =>
+                {
+                    _pause.Set();
+                });
+
+                Thread.Sleep(500);
+
+                console.WriteLine("");
+                console.WriteLine("Connecting to The Peacenet...");
+
+                Thread.Sleep(250);
+
+                console.WriteLine("");
+                console.WriteLine("Connection successful.");
+
+                _pause.WaitOne();
+                _pause.Reset();
             }
         }
 

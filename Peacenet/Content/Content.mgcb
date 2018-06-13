@@ -200,3 +200,17 @@
 /processorParam:TextureFormat=Compressed
 /build:ThemeAssets/Fonts/PrologueFont.spritefont
 
+#begin Fonts/HugeOxygen.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/HugeOxygen.spritefont
+
+#begin Fonts/EvenHugerOxygen.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/EvenHugerOxygen.spritefont
+

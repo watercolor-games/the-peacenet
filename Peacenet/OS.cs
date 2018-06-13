@@ -52,6 +52,7 @@ namespace Peacenet
             return (uint)result;
         }
 
+
         public uint GetIPFromString(string iPAddress)
         {
             if (string.IsNullOrWhiteSpace(iPAddress))
@@ -136,6 +137,7 @@ namespace Peacenet
         public void Initiate()
         {
             _fs.WriteOperation += wcallback;
+
         }
 
         [Dependency]
@@ -174,13 +176,10 @@ namespace Peacenet
 
         private EventWaitHandle _clientReady = new ManualResetEvent(false);
 
-        internal void StartLocalServer()
-        {
-            throw new NotImplementedException("The game is currently undergoing a major infrastructure change.");
-        }
-
         internal void OnReady()
         {
+
+
             if(_osEntity != null)
             {
                 _osEntity.Dispose();
@@ -240,6 +239,8 @@ namespace Peacenet
             yield return new ShellDirectoryInformation("512MB Hard Disk Drive", "/", null);
         }
 
+
+
         /// <summary>
         /// Occurs once the Peacegate desktop starts.
         /// </summary>
@@ -252,6 +253,8 @@ namespace Peacenet
 
         internal void EnsureProperEnvironment()
         {
+            _fs.SetupSpecialFiles();
+
             foreach(var shellDir in GetShellDirs())
             {
                 if (!_fs.DirectoryExists(shellDir.Path))

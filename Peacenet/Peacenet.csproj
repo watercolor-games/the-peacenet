@@ -92,6 +92,10 @@
     <Compile Include="Cutscene\OSFTOutro.cs" />
     <Compile Include="Cutscene\OSFTPeacegateIntro.cs" />
     <Compile Include="Cutscene\PrologueCutscene.cs" />
+    <Compile Include="Cutscene\Prologue\PeaceEngineCutscene.cs" />
+    <Compile Include="Cutscene\Prologue\Alkaline.cs" />
+    <Compile Include="Cutscene\Prologue\Watercolor.cs" />
+    <Compile Include="Cutscene\Prologue\WelcomeToThePeacenet.cs" />
     <Compile Include="DesktopUI\AppLauncherMenu.cs" />
     <Compile Include="DesktopUI\NotificationBanner.cs" />
     <Compile Include="DesktopUI\XPDisplay.cs" />
@@ -137,6 +141,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RichPresence\DiscordRPCModule.cs" />
+    <Compile Include="SpecialFolders\SpecialFolder.cs" />
     <Compile Include="SplashScreenComponent.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
     <Compile Include="TerminalCommands\NotificationTestCommand.cs" />
@@ -192,6 +197,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Cutscenes\Prologue\peacenet icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Cutscenes\Prologue\peacenet word.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Desktop\ShiftOSSkin_Industrial.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

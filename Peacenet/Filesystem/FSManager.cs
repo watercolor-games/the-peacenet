@@ -14,6 +14,8 @@ using Plex.Objects.ShiftFS;
 using Plex.Engine;
 using Plex.Objects.Streams;
 using Plex.Engine.GUI;
+using Peacenet.SpecialFolders;
+using Plex.Objects;
 
 namespace Peacenet.Filesystem
 {
@@ -29,10 +31,52 @@ namespace Peacenet.Filesystem
 
         public event Action<string> WriteOperation;
 
+        private Type[] _specialFileTypes = null;
+        private SpecialFile[] _specialFiles = null;
+
+        public bool SpecialFileExists(string filepath)
+        {
+            if (_specialFiles == null)
+                return false;
+            return _specialFiles.Any(x => x.Path == filepath);
+        }
+
+        public byte[] ReadSpecialFile(string path)
+        {
+            if (!SpecialFileExists(path))
+                return null;
+            return _specialFiles.First(x => x.Path == path).Read();
+        }
+
+        public void WriteSpecialFile(string path, byte[] data)
+        {
+            if (!SpecialFileExists(path))
+                return;
+            _specialFiles.First(x => x.Path == path).Write(data);
+        }
+
+        public IEnumerable<string> GetSpecialFiles(string dirpath)
+        {
+            foreach (var file in _specialFiles)
+            {
+                var path = file.Path;
+                int slashIndex = path.LastIndexOf("/");
+                string dir = path.Substring(0, slashIndex);
+                if (string.IsNullOrWhiteSpace(dir) && dirpath == "/")
+                    yield return path;
+                if (dirpath == dir)
+                    yield return path;
+            }
+        }
+
+
         public Stream OpenRead(string file)
         {
             return new ReadOnlyStream(_backend.Open(file, OpenMode.Open));
         }
+
+        [Dependency]
+        private GameManager _game = null;
 
         [Dependency]
         private WindowSystem _winsys = null;
@@ -136,6 +180,8 @@ namespace Peacenet.Filesystem
         /// <returns>Whether the file exists</returns>
         public bool FileExists(string path)
         {
+            if (SpecialFileExists(path))
+                return true;
             return _backend.FileExists(path);
         }
 
@@ -146,6 +192,15 @@ namespace Peacenet.Filesystem
         /// <returns>The record information for the file/directory at the given path.</returns>
         public FileRecord GetFileRecord(string path)
         {
+            if(SpecialFileExists(path))
+            {
+                return new FileRecord
+                {
+                    Name = path.Split('/').Last(),
+                    IsDirectory = false,
+                    SizeBytes = ReadSpecialFile(path).Length
+                };
+            }
             return _backend.GetFileRecord(path);
         }
 
@@ -156,7 +211,10 @@ namespace Peacenet.Filesystem
         /// <returns>All files found in the directory</returns>
         public string[] GetFiles(string path)
         {
-            return _backend.GetFiles(path).OrderBy(x=>x).ToArray();
+            var be = _backend.GetFiles(path).ToList();
+            be.AddRange(GetSpecialFiles(path));
+            return be.OrderBy(x => x).ToArray();
+
         }
 
         /// <summary>
@@ -186,7 +244,10 @@ namespace Peacenet.Filesystem
         {
             if (data == null)
                 data = new byte[0];
-            _backend.WriteAllBytes(path, data);
+            if (SpecialFileExists(path))
+                WriteSpecialFile(path, data);
+            else
+                _backend.WriteAllBytes(path, data);
             WriteOperation?.Invoke(path);
         }
 
@@ -196,10 +257,29 @@ namespace Peacenet.Filesystem
         /// <param name="path">A path to the file or directory to delete</param>
         public void Delete(string path)
         {
+            if (SpecialFileExists(path))
+                throw new IOException("Permission denied.");
             if (IsOpenInProgram(path))
                 throw new IOException("The process cannot access the file because it is currently opened in another process.");
             _backend.Delete(path);
             WriteOperation?.Invoke(path);
+        }
+
+        internal void SetupSpecialFiles()
+        {
+            _specialFiles = new SpecialFile[_specialFileTypes.Length];
+            for (int i = 0; i < _specialFiles.Length; i++)
+            {
+                _specialFiles[i] = (SpecialFile)Activator.CreateInstance(_specialFileTypes[i], new[] { _game.State });
+                _GameLoop.Inject(_specialFiles[i]);
+                var path = _specialFiles[i].Path;
+                if (path.EndsWith("/")) throw new InvalidOperationException($"Cannot initiate special file {_specialFiles[i].GetType().FullName} at {path}. File paths cannot end with /.");
+                int slashIndex = path.LastIndexOf("/");
+                string dir = path.Substring(0, slashIndex);
+                if (!string.IsNullOrWhiteSpace(dir) && !DirectoryExists(dir))
+                    CreateDirectory(dir);
+            }
+
         }
 
         /// <summary>
@@ -209,6 +289,8 @@ namespace Peacenet.Filesystem
         /// <returns>The binary data of the file</returns>
         public byte[] ReadAllBytes(string path)
         {
+            if (SpecialFileExists(path))
+                return ReadSpecialFile(path);
             return _backend.ReadAllBytes(path);
         }
         /// <inheritdoc cref="CreateDirectory(string)"/>
@@ -238,7 +320,7 @@ namespace Peacenet.Filesystem
             bool result = false;
             await Task.Run(() =>
             {
-                result = _backend.FileExists(path);
+                result = FileExists(path);
             });
             return result;
         }
@@ -249,7 +331,7 @@ namespace Peacenet.Filesystem
             FileRecord result = null;
             await Task.Run(() =>
             {
-                result = _backend.GetFileRecord(path);
+                result = GetFileRecord(path);
             });
             return result;
         }
@@ -260,7 +342,7 @@ namespace Peacenet.Filesystem
             string[] result = null;
             await Task.Run(() =>
             {
-                result = _backend.GetFiles(path);
+                result = GetFiles(path);
             });
             return result;
         }
@@ -287,20 +369,16 @@ namespace Peacenet.Filesystem
         {
             await Task.Run(() =>
             {
-                _backend.WriteAllBytes(path, bytes);
-                WriteOperation?.Invoke(path);
+                WriteAllBytes(path, bytes);
             });
         }
 
         /// <inheritdoc cref="Delete(string)"/>
         public async Task DeleteAsync(string path)
         {
-            if (IsOpenInProgram(path))
-                throw new IOException("The process cannot access the file because it is currently opened in another process.");
             await Task.Run(() =>
             {
-                _backend.Delete(path);
-                WriteOperation?.Invoke(path);
+                Delete(path);
             });
         }
 
@@ -310,7 +388,7 @@ namespace Peacenet.Filesystem
             byte[] data = null;
             await Task.Run(() =>
             {
-                data = _backend.ReadAllBytes(path);
+                data = ReadAllBytes(path);
             });
             return data;
         }
@@ -318,7 +396,7 @@ namespace Peacenet.Filesystem
         /// <inheritdoc/>
         public void Initiate()
         {
-
+            _specialFileTypes = ReflectMan.Types.Where(x => x.Inherits(typeof(SpecialFile))).ToArray();
         }
 
         /// <inheritdoc/>
