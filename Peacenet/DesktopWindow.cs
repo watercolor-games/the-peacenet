@@ -39,6 +39,8 @@ namespace Peacenet
         private string _objectiveText = "";
         private string _objectiveTime = "";
 
+        private bool _openedInstaller = false;
+
         private int _animState = 0;
         private float _scaleAnim = 0;
         private float _panelAnim = -1;
@@ -381,6 +383,22 @@ namespace Peacenet
         {
             if (IsAppLauncherOpen)
                 _applauncher.CloseOnFocusLoss = _appLauncherClosesWhenFocusLost;
+
+            if(_openedInstaller==false)
+            {
+                bool hasDoneTutorial = _game.State.TutorialCompleted;
+                if(hasDoneTutorial)
+                {
+                    _openedInstaller = true;
+                }
+                else
+                {
+                    ShowPanels = false;
+                    var installer = new PeacegateInstaller(this, WindowSystem);
+                    installer.Show();
+                    _openedInstaller = true;
+                }
+            }
 
             switch (_animState)
             {

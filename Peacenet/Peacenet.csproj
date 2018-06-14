@@ -73,6 +73,7 @@
     <Compile Include="Applications\GameSettings.cs" />
     <Compile Include="Applications\GPLInfo.cs" />
     <Compile Include="Applications\ImageViewer.cs" />
+    <Compile Include="Applications\PeacegateInstaller.cs" />
     <Compile Include="Applications\ScreenScaleSetter.cs" />
     <Compile Include="Applications\SystemInitTerminal.cs" />
     <Compile Include="Applications\Terminal.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Missions\InstantCompleteMission.cs" />
     <Compile Include="Missions\MissionCompleteScreen.cs" />
     <Compile Include="Missions\MissionFailScreen.cs" />
+    <Compile Include="Missions\Prologue\WelcomeToThePeacenet.cs" />
     <Compile Include="Missions\Test\FailTest.cs" />
     <Compile Include="Missions\Test\RichPresenceTest.cs" />
     <Compile Include="OS.cs" />
