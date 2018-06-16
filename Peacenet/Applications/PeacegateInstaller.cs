@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -55,6 +56,35 @@ namespace Peacenet.Applications
 
         [Dependency]
         private MissionManager _mission = null;
+
+        private ProgressBar _installProgress = new ProgressBar();
+        private Label _installStatus = new Label();
+
+        private readonly string[] _installs = new string[]
+        {
+            "pde",
+            "pde-paneltheme-peacegate",
+            "pde-panel-email",
+            "pde-panel-peacenet",
+            "pde-panel-skill",
+            "pde-applaunchertheme-kde",
+            "peacegate-filemanager",
+            "peacegate-terminal",
+            "peacegate-texteditor",
+            "peacegate-peacenet-worldmap",
+            "peacegate-imageviewer",
+            "peacegate-settings-daemon",
+            "peacegate-clock-app",
+            "ftp",
+            "openssh-client",
+            "cowsay",
+            "fortune",
+            "peacenet-upgrade-system",
+            "peacenet-rep-system",
+            "peacenet-medal-daemon",
+            "nmap",
+            "gnu-coreutils"
+        };
 
         public PeacegateInstaller(DesktopWindow desktop, WindowSystem _winsys) : base(_winsys)
         {
@@ -151,6 +181,25 @@ Your hostname can only contain letters (a-z, A-Z), numbers (0-9), hyphens ('-') 
             return true;
         }
 
+        private void Install()
+        {
+            SetProgress("Beginning installation...", 0);
+            Thread.Sleep(5000);
+            var packages = _installs;
+            for(int i = 0; i < packages.Length; i++)
+            {
+                string pack = packages[i];
+                for(int j = 0; j <= pack.Length*4; j++)
+                {
+                    SetProgress($"Installing package: {pack} [{i + 1}/{packages.Length}]", (float)j / (pack.Length * 4));
+                    Thread.Sleep(25);
+                }
+            }
+            SetProgress("Done.", 1f);
+            _state = 5;
+            _gameloop.Invoke(() => UpdateUI());
+        }
+
         private void UpdateUI()
         {
             _bodyPanel.Clear();
@@ -191,17 +240,34 @@ To continue using Peacegate, you'll need to set a hostname and create the base c
                     _next.Text = "Next";
                     break;
                 case 3:
-                    _header.Text = "All done!";
+                    _header.Text = "Ready to install?";
+                    _bodyPanel.AddChild(_welcome);
+                    _next.Text = "Install";
+                    _welcome.X = 15;
+                    _welcome.Y = 7;
+                    _welcome.MaxWidth = Width - 30;
+                    _welcome.AutoSize = true;
+                    _welcome.Text = "You have supplied all the necessary details for Peacegate OS to install onto your system. Before you can use it, Peacegate must install its core packages and programs to your system.\n\nAt any time you may go back and reconfigure Peacegate OS by clicking 'Back'. If you're ready to go, click 'Install.'";
+                    _next.Text = "Finish";
+
+                    break;
+                case 4:
+                    _prev.Enabled = false;
+                    _next.Enabled = false;
+                    _bodyPanel.AddChild(_installStatus);
+                    _bodyPanel.AddChild(_installProgress);
+                    _header.Text = "Please wait.";
                     _bodyPanel.AddChild(_welcome);
                     _welcome.X = 15;
                     _welcome.Y = 7;
                     _welcome.MaxWidth = Width - 30;
                     _welcome.AutoSize = true;
-                    _welcome.Text = @"Peacegate OS should be all good to go now. You can gladly click 'Back' to readjust any of the settings you've just set, or click 'Finish' to start using your new desktop.";
-                    _next.Text = "Finish";
+                    _welcome.Text = @"Peacegate OS is now installing base packages to your system. This shouldn't take too long, The Peacenet's download speeds are extremely fast compared to the Internet. Maybe this is your first glimpse of just what kind of system you're dealing with...";
+
+                    Task.Run(() => Install());
 
                     break;
-                case 4:
+                case 5:
                     _desktop.ShowPanels = true;
                     Close();
                     var m = _mission.Available.FirstOrDefault(x => x.ID == "welcome_to_the_peacenet");
@@ -209,6 +275,15 @@ To continue using Peacegate, you'll need to set a hostname and create the base c
                         m.Start();
                     break;
             }
+        }
+
+        protected void SetProgress(string status, float progress)
+        {
+            _gameloop.Invoke(() =>
+            {
+                _installStatus.Text = status;
+                _installProgress.Value = progress;
+            });
         }
 
         protected override void OnUpdate(GameTime time)
@@ -261,8 +336,15 @@ To continue using Peacegate, you'll need to set a hostname and create the base c
             _wall1.Y = _personalizationDesc.Y + _personalizationDesc.Height + 3;
             _wall2.Y = _wall1.Y;
 
-
-
+            _installProgress.X = 15;
+            _installProgress.Y = _bodyPanel.Height - _installProgress.Height;
+            _installProgress.Width = _bodyPanel.Width - 30;
+            _installStatus.X = _installProgress.X;
+            _installStatus.Y = _installProgress.Y - _installStatus.Height - 4;
+            _installStatus.MaxWidth = _installProgress.Width;
+            _installStatus.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
+            _installStatus.AutoSize = true;
+            
             base.OnUpdate(time);
         }
     }

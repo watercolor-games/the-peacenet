@@ -22,6 +22,8 @@ namespace Peacenet.Applications
         private Label _selectedMetadata = new Label();
 
 
+        public Sentience Highlighted { get; private set; }
+
         private const int _sentienceRadius = 16;
         private const int _factionRadius = 32;
         private const int _terrainBorderWidth = 2;
@@ -154,6 +156,11 @@ namespace Peacenet.Applications
 
                 
             }
+        }
+
+        public void Highlight(string id)
+        {
+            Highlighted = _game.State.SingularSentiences.First(x => x.Id == id);
         }
 
         protected override void OnUpdate(GameTime time)
