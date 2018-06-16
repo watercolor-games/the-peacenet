@@ -323,15 +323,20 @@ namespace Peacenet.GameState
             }
         }
 
+        private bool _doSafeExit = true;
+
         public void Draw(GameTime time, GraphicsContext gfx)
         {
         }
 
         public void EndGame()
         {
-            _GameLoop.GetLayer(LayerType.NoDraw).RemoveEntity(this);
-            _fs.SetBackend(null);
-            _save.SetBackend(null);
+            if (_doSafeExit)
+            {
+                _GameLoop.GetLayer(LayerType.NoDraw)?.RemoveEntity(this);
+                _fs.SetBackend(null);
+                _save.SetBackend(null);
+            }
             _saveDB.Shrink();
             _saveDB.Dispose();
             _saveDB = null;
@@ -348,6 +353,7 @@ namespace Peacenet.GameState
 
         public void OnGameExit()
         {
+            _doSafeExit = false;
         }
 
         public void OnKeyEvent(KeyboardEventArgs e)

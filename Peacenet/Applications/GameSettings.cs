@@ -249,6 +249,13 @@ namespace Peacenet.Applications
         /// <inheritdoc/>
         protected override void OnUpdate(GameTime time)
         {
+            if((this.Parent as WindowBorder).WindowStyle == WindowStyle.NoBorder)
+            {
+                Parent.X = 0;
+                Parent.Y = 0;
+                Width = Manager.ScreenWidth;
+                Height = Manager.ScreenHeight;
+            }
             _resolutionScroller.X = 15;
             _resolutionScroller.Y = 15;
             _resolutions.Width = (Width - 30) / 3;
