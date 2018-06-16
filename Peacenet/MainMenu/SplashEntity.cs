@@ -272,7 +272,7 @@ before boot or 'c' for a command line. Press [BACKSPACE] or [ESC] to go back.";
                 string text = items[i];
                 Color bg = Color.Black;
                 if (i == _selectedEntry)
-                    bg = Color.Blue;
+                    bg = Color.Blue.Darken(0.5F);
                 float y = rectInnerY + (charsize.Y * i);
                 gfx.FillRectangle(rectInnerX, y, rectInnerWidth, charsize.Y, bg);
                 gfx.DrawString(_Font, text, new Vector2(rectInnerX, y), Color.White);
