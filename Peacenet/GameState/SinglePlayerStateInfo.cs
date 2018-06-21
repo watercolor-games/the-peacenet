@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Newtonsoft.Json;
+using Peacenet.Applications;
 using Peacenet.CoreUtils;
 using Peacenet.Email;
 using Peacenet.Filesystem;
@@ -117,20 +118,28 @@ namespace Peacenet.GameState
                 var added = new ManualResetEvent(false);
 
                 List<NPCDefinition> _def = new List<NPCDefinition>();
-                for(int i = 0; i < _npcTypeMap.Length; i++)
+                for (int i = 0; i < _npcTypeMap.Length; i++)
                 {
-                    if (_npcTypeMap[i] > 1 && _npcTypeMap[i] < 8)
+                    if (_npcTypeMap[i] > 0 && _npcTypeMap[i] < 8)
                         _def.Add(new NPCDefinition(i, _npcTypeMap[i]));
                 }
 
-                foreach (var npc in _def)
+                var storyQueue = new Queue<StoryNPC>(_storyNPCs.Where(x => x.Country == CurrentCountry));
+
+                foreach (var npc in _def.OrderBy(x => x.Type))
                 {
                     added.Reset();
+
                     if (_sentiences.FindOne(x => x.Id == npc.Index.ToString() && x.Country == country) != null)
                         continue;
+                    StoryNPC story = null;
                     double rep = 0;
                     switch (npc.Type)
                     {
+                        case 1:
+                            story = storyQueue.Dequeue();
+                            rep = story.Reputation;
+                            break;
                         case 2:
                         case 3:
                             rep = -_rnd.NextDouble();
@@ -142,8 +151,44 @@ namespace Peacenet.GameState
                     }
 
                     var nloc = getMapLoc(npc.Index);
+                    if (npc.Type == 1)
+                    {
+                        int skill = story.SkillLevel;
+                        int min = _levels[skill];
+                        int max = (skill + 1 >= _levels.Length) ? min + (min / 2) : _levels[skill + 1] - 1;
+                        int xp = _rnd.Next(min, max);
 
-                    if (npc.Type % 2 == 0)
+                        var npcData = new Sentience
+                        {
+                            Id = npc.Index.ToString(),
+                            Country = country,
+                            FactionID = null,
+                            Hostname = story.Hostname,
+                            IPAddress = genIP(country),
+                            Reputation = story.Reputation,
+                            SkillLevel = story.SkillLevel,
+                            XP = xp,
+                            X = nloc.X,
+                            Y = nloc.Y
+                        };
+                        var hackable = new Hackable
+                        {
+                            Credentials = story.Credentials ?? new Dictionary<string, string>(),
+                            Loot = story.Loot ?? new string[0],
+                            Dependencies = story.Dependencies ?? new string[0],
+                            GovernmentAlert = story.GovernmentAlert,
+                            Id = npcData.Id
+                        };
+                        _GameLoop.Invoke(() =>
+                        {
+                            Plex.Objects.Logger.Log($"Spawning {country} NPC '{npcData.Id} at {npcData.MapLocation}");
+                            _sentiences.Insert(npcData);
+                            _hackables.Insert(hackable);
+                            added.Set();
+                        });
+                        added.WaitOne();
+                    }
+                    else if (npc.Type % 2 == 0)
                     {
                         int skill = _rnd.Next(_levels.Length);
                         int min = _levels[skill];
@@ -203,14 +248,14 @@ namespace Peacenet.GameState
 
         private uint genIP(Country country)
         {
-            byte cByte1 = (byte)((255 / 2) - (64 / ((int)country+1)));
-            byte cByte2 = (byte)((255 / 2) + (16 * ((int)country+1)));
+            byte cByte1 = (byte)((255 / 2) - (64 / ((int)country + 1)));
+            byte cByte2 = (byte)((255 / 2) + (16 * ((int)country + 1)));
             byte eByte1 = (byte)_rnd.Next(255);
             byte eByte2 = (byte)_rnd.Next(255);
 
             return (uint)((cByte1 << 24) + (cByte2 << 16) + (eByte1 << 8) + eByte2);
         }
-        
+
         public bool IsUpgradeInstalled(string upgradeID)
         {
             return GetValue($"upgrade.{upgradeID}.enabled", false);
@@ -294,21 +339,64 @@ namespace Peacenet.GameState
         [Dependency]
         private GUIUtils _gui = null;
 
+        public void Highlight(string hostname)
+        {
+            _highlighted = SingularSentiences.FirstOrDefault(x => x.Hostname == hostname);
+        }
+
+
         private int _unread = 0;
+
+        private Sentience _highlighted = null;
+
+        public Sentience Highlighted => _highlighted;
 
         private Upgrade[] _upgrades = null;
 
         private LiteDatabase _saveDB = null;
 
+        private List<Connection> _connections = new List<Connection>();
+
         private LiteCollection<Snapshot> _snapshots = null;
         private LiteCollection<SaveValue> _values = null;
         private LiteCollection<EmailThread> _threads = null;
         private LiteCollection<EmailMessage> _messages = null;
-
+        private LiteCollection<Hackable> _hackables = null;
+        private StoryNPC[] _storyNPCs = null;
         private int[] _levels = null;
 
         public SinglePlayerStateInfo()
         {
+        }
+
+        public IEnumerable<Connection> ActiveConnections => _connections;
+
+        public bool StartConnection(string host)
+        {
+            if (string.IsNullOrWhiteSpace(host))
+                return false;
+            var sentience = _sentiences.FindOne(x => x.Country == CurrentCountry && (x.Hostname == host || x.IPAddress.ToIPv4String() == host));
+            if (sentience == null)
+                return false;
+            var hackable = _hackables.FindOne(x => x.Id == sentience.Id);
+            if (hackable == null)
+                return false;
+
+            var connection = new Connection(this, hackable, sentience);
+
+            _connections.Add(connection);
+
+            return true;
+        }
+
+        public bool EndConnection(string host)
+        {
+            var connection = _connections.FirstOrDefault(x => x.Sentience.Hostname == host || x.Sentience.IPAddress.ToIPv4String() == host);
+            if (connection == null)
+                return false;
+            connection.End();
+            _connections.Remove(connection);
+            return true;
         }
 
         private class NPCDefinition
@@ -344,7 +432,7 @@ namespace Peacenet.GameState
             _snapshots = null;
             _threads = null;
             _messages = null;
-
+            _hackables = null;
         }
 
         private Texture2D _countryTexture = null;
@@ -387,6 +475,8 @@ namespace Peacenet.GameState
 
         public void StartGame()
         {
+            _storyNPCs = JsonConvert.DeserializeObject<StoryNPC[]>(Properties.Resources.StoryNPCs);
+
             if (!Directory.Exists(_os.SinglePlayerSaveDirectory))
                 Directory.CreateDirectory(_os.SinglePlayerSaveDirectory);
             _GameLoop.GetLayer(LayerType.NoDraw).AddEntity(this);
@@ -401,7 +491,7 @@ namespace Peacenet.GameState
 
             _threads = _saveDB.GetCollection<EmailThread>("emailthreads");
             _messages = _saveDB.GetCollection<EmailMessage>("emailmessages");
-
+            _hackables = _saveDB.GetCollection<Hackable>("hackables");
 
             _save.SetBackend(this);
             _os.EnsureProperEnvironment();
@@ -443,6 +533,11 @@ namespace Peacenet.GameState
             EnsureCountryDataExists();
         }
 
+        public bool SentienceHacked(string id)
+        {
+            return _save.GetValue($"sentience.{id}.hacked", false);
+        }
+
         private void EnsureCountryDataExists()
         {
             //Do we have the Elytrose terrain map?
@@ -451,6 +546,7 @@ namespace Peacenet.GameState
                 var hmap = new Heightmap(Heightmap.GetSeed(_seed + "." + CurrentCountry.ToString().ToLower()));
                 hmap.Width = 512;
                 hmap.Height = 512;
+                
                 Task.Run(() =>
                 {
                     _os.PreventStartup = true;
@@ -468,6 +564,7 @@ namespace Peacenet.GameState
 
                     var npc = new NPCMap(hmap.Seed, m);
                     npc.SpawnStoryNPCs = true;
+                    npc.MinStoryNPCs = _storyNPCs.Where(x => x.Country == CurrentCountry).Count();
                     var densityMap = npc.GenerateDensityMap();
                     var typeMap = npc.GetTypeMap(densityMap);
 
@@ -879,4 +976,121 @@ namespace Peacenet.GameState
             }
         }
     }
+
+    public class StoryNPC
+    {
+        public string Hostname { get; set; }
+        public int SkillLevel { get; set; }
+        public float Reputation { get; set; }
+        public Country Country { get; set; }
+        public string[] Dependencies { get; set; }
+        public string[] Loot { get; set; }
+        public Dictionary<string, string> Credentials { get; set; }
+        public bool GovernmentAlert { get; set; } = true;
+    }
+
+    public class Hackable
+    {
+        public string Id { get; set; }
+        public string[] Loot { get; set; }
+        public string[] Dependencies { get; set; }
+        public bool GovernmentAlert { get; set; }
+        public Dictionary<string, string> Credentials { get; set; }
+    }
+
+    public class Connection : IAsyncFSBackend
+    {
+        private Hackable _hackable = null;
+        private IGameStateInfo _state = null;
+
+        public Connection(IGameStateInfo state, Hackable hackable, Sentience sentience)
+        {
+            Sentience = sentience;
+            _hackable = hackable;
+            _state = state;
+        }
+
+        public Sentience Sentience { get; private set; }
+        public bool Authenticated { get; private set; } = false;
+
+        public string AuthenticatedUsername { get; private set; }
+
+        public bool Authenticate(string user, string pass)
+        {
+            if (!_hackable.Credentials.ContainsKey(user))
+                return false;
+            if (_hackable.Credentials[user] != pass)
+                return false;
+            Authenticated = true;
+            AuthenticatedUsername = user;
+            return true;
+        }
+        
+        public void End()
+        {
+
+        }
+
+        public void CreateDirectory(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DirectoryExists(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FileExists(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] GetDirectories(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileRecord GetFileRecord(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] GetFiles(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream Open(string path, OpenMode mode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] ReadAllBytes(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unload()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteAllBytes(string path, byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
 }

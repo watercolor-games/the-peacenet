@@ -41,11 +41,21 @@ namespace Peacenet.GameState
         bool IsMissionComplete(string missionID);
         bool IsCountryUnlocked(Country country);
         bool IsPackageInstalled(string packageID);
+        bool SentienceHacked(string id);
+
+        IEnumerable<Connection> ActiveConnections { get; }
+
+        Sentience Highlighted { get; }
+
+        void Highlight(string hostname);
 
         Texture2D CountryTexture { get; }
 
         void CompleteMission(string missionID);
         void InstallPackage(string packageID);
+        bool StartConnection(string host);
+        bool EndConnection(string host);
+
 
         Sentience Player { get; }
         IEnumerable<Sentience> SingularSentiences { get; }

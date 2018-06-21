@@ -684,4 +684,16 @@ namespace Peacenet.Applications
 
         }
     }
+
+    public class CustomCommandTerminal : Terminal
+    {
+        private string _command = null;
+
+        public CustomCommandTerminal(string cmd, WindowSystem _winsys) : base(_winsys)
+        {
+            _command = cmd;
+        }
+
+        protected override string Shell => _command;
+    }
 }

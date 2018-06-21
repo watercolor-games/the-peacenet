@@ -1,0 +1,36 @@
+//SPOILER ALERT.
+//
+//This file defines every single NPC in Peacenet's single-player campaign. This includes every piece of loot, every story trigger, every set of credentials, everything the game needs to know to have a story.
+//Long story short (heh): DO NOT PROCEED IF YOU'RE NOT A DEV. YOU'LL RUIN THE FUN OF THE GAME.
+//
+//If you are a dev: 
+// - Passwords are in plaintext. Use LastPass's "Generate Secure Password" tool (or a similar tool) to generate passwords that are hard for players to crack. Keep their lengths and complexity in line with the NPC's skill level.
+// - An NPC that doesn't have a password is not a hackable.
+// - Reputation is also important, it dictates how the game handles Government Alert during a hack.
+// - If you don't want the Alert system activated for an NPC, set "GovernmentAlert" to false. Default is true.
+// - Loot lists are based off loot IDs found in the "LootTable" resource.
+// - NPCs whose "Dependencies" have not been hacked do not show in World Map and cannot be connected to.
+// - Dependencies are based on an NPC's hostname.
+// - Never use an IP address as an NPC hostname. IP addresses are procedurally generated.
+// - Country value dictates which part of the storyline this NPC is available in.
+// - Elytrose is the player's starting country.
+// - 
+
+[
+	{
+		"Hostname": "darwin0110-filestorage",
+		"SkillLevel": 2,
+		"Reputation": 0.15,
+		"Country": "Elytrose",
+		"Loot": [
+			"package.netstat",
+			"package.brutal",
+			"package.openssh",
+			"package.ppm"
+		],
+		"Credentials": {
+			"thelma": "TW6Or1bg"
+		},
+		"GovernmentAlert": false
+	}
+]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Input.InputListeners;
 using Peacenet.GameState;
 using Plex.Engine;
@@ -22,7 +23,16 @@ namespace Peacenet.Applications
         private Label _selectedMetadata = new Label();
 
 
-        public Sentience Highlighted { get; private set; }
+        private Texture2D _arrowUpLeft = null;
+        private Texture2D _arrowUpRight = null;
+        private Texture2D _arrowDownLeft = null;
+        private Texture2D _arrowDownRight = null;
+        private Texture2D _arrowUp = null;
+        private Texture2D _arrowDown = null;
+        private Texture2D _arrowLeft = null;
+        private Texture2D _arrowRight = null;
+        private Texture2D _chevron = null;
+        private Button _connect = new Button();
 
         private const int _sentienceRadius = 16;
         private const int _factionRadius = 32;
@@ -47,8 +57,22 @@ namespace Peacenet.Applications
 
         private Label _hostname = new Label();
 
+        [Dependency]
+        private GameLoop _gameloop = null;
+
         public WorldMap(WindowSystem _winsys) : base(_winsys)
         {
+            _arrowUpLeft = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-upleft");
+            _arrowUpRight = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-upright");
+            _arrowDownLeft = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-downleft");
+            _arrowDownRight = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-downright");
+            _arrowLeft = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-left");
+            _arrowRight = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-right");
+            _arrowUp = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-up");
+            _arrowDown = _gameloop.Content.Load<Texture2D>("UIIcons/arrow-circle-o-down");
+            _chevron = _gameloop.Content.Load<Texture2D>("ThemeAssets/Arrows/chevron-down");
+
+
             SetWindowStyle(WindowStyle.NoBorder);
             _zoom = 1.25f;
             _pan = GetPanFromLocation(_game.State.Player.MapLocation);
@@ -79,6 +103,9 @@ namespace Peacenet.Applications
             _selectedSentiencePanel.AddChild(_selectedHostname);
             _selectedSentiencePanel.AddChild(_selectedIP);
             _selectedSentiencePanel.AddChild(_selectedMetadata);
+            _selectedSentiencePanel.AddChild(_connect);
+
+            _connect.Text = "Connect";
 
             _selectedHostname.AutoSize = true;
             _selectedIP.AutoSize = true;
@@ -87,7 +114,12 @@ namespace Peacenet.Applications
             _selectedIP.FontStyle = Plex.Engine.Themes.TextFontStyle.Highlight;
             _selectedHostname.FontStyle = Plex.Engine.Themes.TextFontStyle.Header3;
 
-
+            _connect.Click += (o, a) =>
+            {
+                var term = new CustomCommandTerminal("connect " + _selected.IPAddress.ToIPv4String(), WindowSystem);
+                term.Show();
+                Close();
+            };
         }
 
         private string _hostnameText = null;
@@ -106,7 +138,7 @@ namespace Peacenet.Applications
 
             gfx.Clear(Color.Black * 0.5F);
 
-            if(_game.State.CountryTexture == null)
+            if (_game.State.CountryTexture == null)
             {
                 string text = "Retrieving terrain data from The Peacenet...";
                 var measure = TextRenderer.MeasureText(text, Theme.GetFont(Plex.Engine.Themes.TextFontStyle.Header1), Width / 2, Plex.Engine.TextRenderers.WrapMode.Words);
@@ -128,14 +160,17 @@ namespace Peacenet.Applications
             {
                 float radius = _sentienceRadius * _zoom;
                 var loc = terrainPos + ((sentience.MapLocation * z));
-                if (loc.X + radius < 0)
-                    continue;
-                if (loc.X - radius > gfx.Width)
-                    continue;
-                if (loc.Y + radius < 0)
-                    continue;
-                if (loc.Y - radius > gfx.Height)
-                    continue;
+                if (_game.State.Highlighted == null || _game.State.Highlighted.Id != sentience.Id)
+                {
+                    if (loc.X + radius < 0)
+                        continue;
+                    if (loc.X - radius > gfx.Width)
+                        continue;
+                    if (loc.Y + radius < 0)
+                        continue;
+                    if (loc.Y - radius > gfx.Height)
+                        continue;
+                }
 
 
                 Color neutral = Color.White;
@@ -151,20 +186,66 @@ namespace Peacenet.Applications
                     target = Color.Green;
                     lerpValue = (sentience.Reputation + 1) / 2;
                 }
-                
+
                 gfx.FillCircle(loc, radius, Color.Lerp(neutral, target, lerpValue));
+
+                if (_game.State.Highlighted != null && _game.State.Highlighted.Id == sentience.Id)
+                {
+                    var clamped = Vector2.Clamp(loc, new Vector2(75, 75), new Vector2(gfx.Width - (75 * 2), gfx.Height - (75 * 2)));
+                    gfx.FillCircle(loc, radius * 2, Theme.GetAccentColor() * 0.5F);
+                    if (clamped == loc)
+                    {
+                        var chevronLoc = new Vector2(loc.X - (_arrowUp.Width / 2), loc.Y - (radius * 3) - (_arrowUp.Height/2));
+                        gfx.FillRectangle(chevronLoc, new Vector2(_arrowUp.Width, _arrowUp.Height), _chevron, Color.White);
+                    }
+                    else
+                    {
+                        Texture2D arrow = null;
+                        var direction = Vector2.Normalize(loc - clamped);
+
+                        if(direction.X < -0.25F)
+                        {
+                            if (direction.Y < -0.25F)
+                                arrow = _arrowUpLeft;
+                            else if (direction.Y > 0.25F)
+                                arrow = _arrowDownLeft;
+                            else
+                                arrow = _arrowLeft;
+                        }
+                        else if(direction.X > 0.25F)
+                        {
+                            if (direction.Y < -0.25F)
+                                arrow = _arrowUpRight;
+                            else if (direction.Y > 0.25F)
+                                arrow = _arrowDownRight;
+                            else
+                                arrow = _arrowRight;
+                        }
+                        else if(direction.Y < -0.25F)
+                        {
+                            arrow = _arrowUp;
+                        }
+                        else
+                        {
+                            arrow = _arrowDown;
+                        }
+
+                        gfx.FillRectangle(new Vector2(clamped.X - (arrow.Width / 2), clamped.Y - (arrow.Height / 2)), new Vector2(arrow.Width, arrow.Height), arrow, Color.White);
+                    }
+                }
+
 
                 
             }
         }
 
-        public void Highlight(string id)
-        {
-            Highlighted = _game.State.SingularSentiences.First(x => x.Id == id);
-        }
+
+        public Sentience Selected => _selected;
 
         protected override void OnUpdate(GameTime time)
         {
+            _exit.Visible = CanClose;
+
             Width = Manager.ScreenWidth;
             Height = Manager.ScreenHeight;
             Parent.X = 0;
@@ -273,6 +354,9 @@ Reputation: {repName}";
             _selectedSentiencePanel.Width = 350;
             _selectedSentiencePanel.X = (Width - _selectedSentiencePanel.Width) - 30;
             _selectedSentiencePanel.Y = _exit.Y + _exit.Height + 45;
+
+            _connect.X = _selectedMetadata.X;
+            _connect.Y = _selectedSentiencePanel.Height - _connect.Height - 7;
 
             base.OnUpdate(time);
         }

@@ -26,8 +26,12 @@ namespace Peacenet.Missions.Prologue
         private TutorialTerminal _tutorialTerminal = null;
 
         private ManualResetEvent _worldMapOpen = new ManualResetEvent(false);
+        private ManualResetEvent _sentienceSelected = new ManualResetEvent(false);
 
         public EventWaitHandle WorldMapOpen => _worldMapOpen;
+        public EventWaitHandle SentienceSelected => _sentienceSelected;
+        public readonly EventWaitHandle Connected = new ManualResetEvent(false);
+
 
         private WorldMap _map = null;
 
@@ -36,10 +40,16 @@ namespace Peacenet.Missions.Prologue
             AddObjective("Pay attention to the Terminal");
             AddObjective("Find and open World Map");
             AddObjective("Select the highlighted system");
+            AddObjective("Connect to darwin0110-filestorage");
+            AddObjective("Find darwin0110's /bin directory", 180, TimeoutType.Fail);
         }
 
         protected override void UpdateObjective(GameTime time, int objectiveIndex)
         {
+            if(_tutorialTerminal != null)
+            {
+                _winsys.BringToFront(_tutorialTerminal);
+            }
             switch(objectiveIndex)
             {
                 case 1:
@@ -48,7 +58,25 @@ namespace Peacenet.Missions.Prologue
                         CompleteObjective(Medal.Gold);
                         WorldMapOpen.Set();
                         _map = _winsys.WindowList.First(x => x.Border.Window is WorldMap).Border.Window as WorldMap;
-                        _map.Highlight(_game.State.SingularSentiences.Where(x => x.Country == Country.Elytrose).First().Id);
+                        _map.CanClose = false;
+                        _game.State.Highlight("darwin0110-filestorage");
+                    }
+                    break;
+                case 2:
+                    if (_map.Selected != null)
+                    {
+                        if (_map.Selected.Id == _game.State.Highlighted.Id)
+                        {
+                            _sentienceSelected.Set();
+                            CompleteObjective(Medal.Gold);
+                        }
+                    }
+                    break;
+                case 3:
+                    if(_game.State.ActiveConnections.Any(x=>x.Authenticated && x.Sentience.Hostname == "darwin0110-filestorage"))
+                    {
+                        CompleteObjective(Medal.Gold);
+                        Connected.Set();
                     }
                     break;
             }
@@ -129,10 +157,26 @@ namespace Peacenet.Missions.Prologue
                 console.Clear();
                 console.WriteNPCChat("thelma", "The world Map lets you see a map of all people and companies within The Peacenet.");
                 console.WriteNPCChat("thelma", "You are currently in the country of Elytrose.");
-                console.WriteNPCChat("thelma", "In the lower left corner, Peacegate OS will tell you what you're supposed to be doing.");
-                console.WriteNPCChat("thelma", "Find the highlighted system and click on it.");
+                console.WriteNPCChat("thelma", "I have a friend in The Peacenet who's got a storage repository in Elytrose.");
+                console.WriteNPCChat("thelma", "He has some useful programs that you'll need to install on your Peacegate.");
+                console.WriteNPCChat("thelma", "Follow the marker on the World Map to find his repository. His hostname is 'darwin0110-filestorage'.");
 
+                _mission.SentienceSelected.WaitOne();
 
+                console.Clear();
+                console.WriteNPCChat("thelma", "Connect to the repo by clicking the 'Connect' button.");
+                console.WriteNPCChat("thelma", "Use my credentials to log in - username is 'thelma', password is 'TW6Or1bg'.");
+
+                _mission.Connected.WaitOne();
+
+                console.Clear();
+                console.WriteNPCChat("thelma", "You've connected to his system.");
+                console.WriteNPCChat("thelma", "Just a warning though. It is illegal to do things like this in The Peacenet, even with consent.");
+                console.WriteNPCChat("thelma", "Peacegate OS and the Peacenet are supposed to be locked down super tightly. You shouldn't even be aware of Peacegate's existence.");
+                console.WriteNPCChat("thelma", "But... that's a whole other can of worms I'd need to explain.");
+                console.WriteNPCChat("thelma", "darwin0110 and I will explain everything you need to know. But you need these programs first.");
+                console.WriteNPCChat("thelma", "Go ahead and open your File Manager and browse to his /bin directory.");
+                console.WriteNPCChat("thelma", "I'll keep the feds off your back while you do this, but I won't be able to keep them off for a long time.");
 
 
                 console.ReadLine();

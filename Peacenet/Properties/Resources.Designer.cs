@@ -87,6 +87,21 @@ namespace Peacenet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to //SPOILER ALERT.
+        /////
+        /////This file defines every single NPC in Peacenet&apos;s single-player campaign. This includes every piece of loot, every story trigger, every set of credentials, everything the game needs to know to have a story.
+        /////Long story short (heh): DO NOT PROCEED IF YOU&apos;RE NOT A DEV. YOU&apos;LL RUIN THE FUN OF THE GAME.
+        /////
+        /////If you are a dev: 
+        ///// - Passwords are in plaintext. Use LastPass&apos;s &quot;Generate Secure Password&quot; tool (or a similar tool) to generate passwords that are hard for players to crack. K [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string StoryNPCs {
+            get {
+                return ResourceManager.GetString("StoryNPCs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [
         ///	{
         ///		&quot;Id&quot;: &quot;medal_value_increase_1&quot;,

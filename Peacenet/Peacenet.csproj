@@ -110,7 +110,7 @@
     <Compile Include="Filesystem\FileUtilities.cs" />
     <Compile Include="Filesystem\FSManager.cs" />
     <Compile Include="Filesystem\IFileHandler.cs" />
-    <Compile Include="GameManager.cs" />
+    <Compile Include="GameState\GameManager.cs" />
     <Compile Include="GameState\IGameStateInfo.cs" />
     <Compile Include="GameState\Sentience.cs" />
     <Compile Include="GameState\SinglePlayerStateInfo.cs" />
@@ -145,6 +145,7 @@
     <Compile Include="RichPresence\DiscordRPCModule.cs" />
     <Compile Include="SpecialFolders\SpecialFolder.cs" />
     <Compile Include="SplashScreenComponent.cs" />
+    <Compile Include="TerminalCommands\connect.cs" />
     <Compile Include="TerminalCommands\HelpCommand.cs" />
     <Compile Include="TerminalCommands\NotificationTestCommand.cs" />
     <Compile Include="TerminalCommands\UpgradeManager.cs" />
@@ -271,6 +272,30 @@
     <Content Include="Content\ThemePreviews\Industrial.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-downleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-downright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-upleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIIcons\arrow-circle-o-upright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\UIIcons\folder-open-o.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -310,6 +335,7 @@
     <Content Include="discord-rpc.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\StoryNPCs.txt" />
     <None Include="Resources\SettingsData.txt" />
     <None Include="Resources\Upgrades.txt" />
     <MonoGameContentReference Include="Content\Content.mgcb" />
